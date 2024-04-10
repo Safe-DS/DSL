@@ -18,7 +18,7 @@ export class SafeDsNodeInfoProvider {
      * Returns the detail string for the given node. This can be used, for example, to provide document symbols or call
      * hierarchies.
      */
-    getDetails(node: AstNode): string | undefined {
+    getDetails(node: AstNode | undefined): string | undefined {
         if (isSdsAttribute(node)) {
             return `: ${this.typeComputer.computeType(node)}`;
         } else if (isSdsFunction(node) || isSdsSegment(node)) {
@@ -32,7 +32,7 @@ export class SafeDsNodeInfoProvider {
      * Returns the tags for the given node. This can be used, for example, to provide document symbols or call
      * hierarchies.
      */
-    getTags(node: AstNode): SymbolTag[] | undefined {
+    getTags(node: AstNode | undefined): SymbolTag[] | undefined {
         if (isSdsAnnotatedObject(node) && this.builtinAnnotations.callsDeprecated(node)) {
             return [SymbolTag.Deprecated];
         } else {

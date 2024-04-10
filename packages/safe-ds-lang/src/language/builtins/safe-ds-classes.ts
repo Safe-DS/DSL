@@ -1,8 +1,10 @@
 import { isSdsClass, SdsClass } from '../generated/ast.js';
 import { SafeDsModuleMembers } from './safe-ds-module-members.js';
 import { resourceNameToUri } from '../../helpers/resources.js';
+import { URI } from 'langium';
 
 const CORE_CLASSES_URI = resourceNameToUri('builtins/safeds/lang/coreClasses.sdsstub');
+const TABLE_URI = resourceNameToUri('builtins/safeds/data/tabular/containers/table.sdsstub');
 
 export class SafeDsClasses extends SafeDsModuleMembers<SdsClass> {
     get Any(): SdsClass | undefined {
@@ -41,6 +43,10 @@ export class SafeDsClasses extends SafeDsModuleMembers<SdsClass> {
         return this.getClass('String');
     }
 
+    get Table(): SdsClass | undefined {
+        return this.getClass('Table', TABLE_URI);
+    }
+
     /**
      * Returns whether the given node is a builtin class.
      */
@@ -61,7 +67,7 @@ export class SafeDsClasses extends SafeDsModuleMembers<SdsClass> {
         );
     }
 
-    private getClass(name: string): SdsClass | undefined {
-        return this.getModuleMember(CORE_CLASSES_URI, name, isSdsClass);
+    private getClass(name: string, uri: URI = CORE_CLASSES_URI): SdsClass | undefined {
+        return this.getModuleMember(uri, name, isSdsClass);
     }
 }

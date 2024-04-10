@@ -14,8 +14,8 @@ export const CODE_EXPERIMENTAL_LANGUAGE_FEATURE = 'experimental/language-feature
 export const constraintListsShouldBeUsedWithCaution = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
 
-    return async (node: SdsConstraintList, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateExperimentalLanguageFeatures())) {
+    return (node: SdsConstraintList, accept: ValidationAcceptor) => {
+        if (!settingsProvider.shouldValidateExperimentalLanguageFeatures()) {
             /* c8 ignore next 2 */
             return;
         }
@@ -31,8 +31,8 @@ export const constraintListsShouldBeUsedWithCaution = (services: SafeDsServices)
 export const literalTypesShouldBeUsedWithCaution = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
 
-    return async (node: SdsLiteralType, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateExperimentalLanguageFeatures())) {
+    return (node: SdsLiteralType, accept: ValidationAcceptor) => {
+        if (!settingsProvider.shouldValidateExperimentalLanguageFeatures()) {
             /* c8 ignore next 2 */
             return;
         }
@@ -48,8 +48,8 @@ export const literalTypesShouldBeUsedWithCaution = (services: SafeDsServices) =>
 export const mapsShouldBeUsedWithCaution = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
 
-    return async (node: SdsMap, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateExperimentalLanguageFeatures())) {
+    return (node: SdsMap, accept: ValidationAcceptor) => {
+        if (!settingsProvider.shouldValidateExperimentalLanguageFeatures()) {
             /* c8 ignore next 2 */
             return;
         }
@@ -69,8 +69,8 @@ export const mapsShouldBeUsedWithCaution = (services: SafeDsServices) => {
 export const unionTypesShouldBeUsedWithCaution = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
 
-    return async (node: SdsUnionType, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateExperimentalLanguageFeatures())) {
+    return (node: SdsUnionType, accept: ValidationAcceptor) => {
+        if (!settingsProvider.shouldValidateExperimentalLanguageFeatures()) {
             /* c8 ignore next 2 */
             return;
         }

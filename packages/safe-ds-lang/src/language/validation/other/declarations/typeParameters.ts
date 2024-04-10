@@ -4,6 +4,7 @@ import {
     isSdsClass,
     isSdsClassMember,
     isSdsDeclaration,
+    isSdsNamedType,
     isSdsNamedTypeDeclaration,
     isSdsParameter,
     isSdsParameterList,
@@ -93,7 +94,7 @@ export const typeParameterMustBeUsedInCorrectPosition = (services: SafeDsService
 
         AstUtils.findLocalReferences(node).forEach((it) => {
             const reference = it.$refNode?.astNode;
-            if (!reference) {
+            if (!reference || !isSdsNamedType(reference)) {
                 /* c8 ignore next 2 */
                 return;
             }
@@ -145,7 +146,7 @@ const isInConstructor = (node: AstNode) => {
     return isSdsClass(parameterList?.$container);
 };
 
-const classTypeParameterIsUsedInCorrectPosition = (classWithTypeParameter: SdsClass, reference: AstNode) => {
+export const classTypeParameterIsUsedInCorrectPosition = (classWithTypeParameter: SdsClass, reference: AstNode) => {
     const containingClassMember = AstUtils.getContainerOfType(reference, isSdsClassMember);
 
     // Handle usage in constructor

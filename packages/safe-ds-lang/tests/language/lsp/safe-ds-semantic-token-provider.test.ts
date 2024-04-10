@@ -41,6 +41,17 @@ describe('SafeDsSemanticTokenProvider', async () => {
             expectedTokenTypes: [SemanticTokenTypes.property, SemanticTokenTypes.property],
         },
         {
+            testName: 'block lambda result declaration',
+            code: `
+                pipeline myPipeline {
+                    () {
+                        yield <|result|> = 1;
+                    };
+                }
+            `,
+            expectedTokenTypes: [SemanticTokenTypes.parameter],
+        },
+        {
             testName: 'class declaration',
             code: 'class <|C|>',
             expectedTokenTypes: [SemanticTokenTypes.class],

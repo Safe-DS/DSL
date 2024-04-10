@@ -1,53 +1,93 @@
-import { ConfigurationProvider } from 'langium';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsLanguageMetaData } from '../generated/module.js';
+import { SafeDsConfigurationProvider } from './safe-ds-configuration-provider.js';
+import { DeepPartial, Disposable } from 'langium';
 
 export class SafeDsSettingsProvider {
-    private readonly configurationProvider: ConfigurationProvider;
+    private readonly configurationProvider: SafeDsConfigurationProvider;
+
+    private cachedSettings: DeepPartial<Settings> = {};
+    private watchers = new Set<SettingsWatcher<any>>();
 
     constructor(services: SafeDsServices) {
         this.configurationProvider = services.shared.workspace.ConfigurationProvider;
+
+        /* c8 ignore start */
+        this.configurationProvider.onConfigurationSectionUpdate(async ({ section, configuration }) => {
+            if (section === SafeDsLanguageMetaData.languageId) {
+                await this.updateCachedSettings(configuration);
+            }
+        });
+        /* c8 ignore stop */
     }
 
-    async shouldShowAssigneeTypeInlayHints(): Promise<boolean> {
-        return (await this.getInlayHintsSettings()).assigneeTypes?.enabled ?? true;
+    shouldShowAssigneeTypeInlayHints(): boolean {
+        return this.cachedSettings.inlayHints?.assigneeTypes?.enabled ?? true;
     }
 
-    async shouldShowLambdaParameterTypeInlayHints(): Promise<boolean> {
-        return (await this.getInlayHintsSettings()).lambdaParameterTypes?.enabled ?? true;
+    shouldShowLambdaParameterTypeInlayHints(): boolean {
+        return this.cachedSettings.inlayHints?.lambdaParameterTypes?.enabled ?? true;
     }
 
-    async shouldShowParameterNameInlayHints(): Promise<boolean> {
-        return (await this.getInlayHintsSettings()).parameterNames?.enabled ?? true;
+    shouldShowParameterNameInlayHints(): InlayHintsSettings['parameterNames']['enabled'] {
+        return this.cachedSettings.inlayHints?.parameterNames?.enabled ?? 'onlyLiterals';
     }
 
-    private async getInlayHintsSettings(): Promise<Partial<InlayHintsSettings>> {
-        return (
-            (await this.configurationProvider.getConfiguration(SafeDsLanguageMetaData.languageId, 'inlayHints')) ?? {}
-        );
+    /* c8 ignore start */
+    getRunnerCommand(): string {
+        return this.cachedSettings.runner?.command ?? 'safe-ds-runner';
+    }
+    /* c8 ignore stop */
+
+    onRunnerCommandUpdate(callback: (newValue: string | undefined) => void): Disposable {
+        const watcher: SettingsWatcher<string | undefined> = {
+            accessor: (settings) => settings.runner?.command,
+            callback,
+        };
+
+        this.watchers.add(watcher);
+
+        return Disposable.create(() => {
+            /* c8 ignore next */
+            this.watchers.delete(watcher);
+        });
     }
 
-    async shouldValidateCodeStyle(): Promise<boolean> {
-        return (await this.getValidationSettings()).codeStyle?.enabled ?? true;
+    shouldValidateCodeStyle(): boolean {
+        return this.cachedSettings.validation?.codeStyle?.enabled ?? true;
     }
 
-    async shouldValidateExperimentalLanguageFeatures(): Promise<boolean> {
-        return (await this.getValidationSettings()).experimentalLanguageFeatures?.enabled ?? true;
+    shouldValidateExperimentalLanguageFeatures(): boolean {
+        return this.cachedSettings.validation?.experimentalLanguageFeatures?.enabled ?? true;
     }
 
-    async shouldValidateExperimentalLibraryElements(): Promise<boolean> {
-        return (await this.getValidationSettings()).experimentalLibraryElements?.enabled ?? true;
+    shouldValidateExperimentalLibraryElements(): boolean {
+        return this.cachedSettings.validation?.experimentalLibraryElements?.enabled ?? true;
     }
 
-    async shouldValidateNameConvention(): Promise<boolean> {
-        return (await this.getValidationSettings()).nameConvention?.enabled ?? true;
+    shouldValidateNameConvention(): boolean {
+        return this.cachedSettings.validation?.nameConvention?.enabled ?? true;
     }
 
-    private async getValidationSettings(): Promise<Partial<ValidationSettings>> {
-        return (
-            (await this.configurationProvider.getConfiguration(SafeDsLanguageMetaData.languageId, 'validation')) ?? {}
-        );
+    private async updateCachedSettings(newSettings: Settings): Promise<void> {
+        const oldSettings = this.cachedSettings;
+        this.cachedSettings = newSettings;
+
+        // Notify watchers
+        for (const watcher of this.watchers) {
+            const oldValue = watcher.accessor(oldSettings);
+            const newValue = watcher.accessor(this.cachedSettings);
+            if (oldValue !== newValue) {
+                watcher.callback(newValue);
+            }
+        }
     }
+}
+
+export interface Settings {
+    inlayHints: InlayHintsSettings;
+    runner: RunnerSettings;
+    validation: ValidationSettings;
 }
 
 interface InlayHintsSettings {
@@ -58,8 +98,12 @@ interface InlayHintsSettings {
         enabled: boolean;
     };
     parameterNames: {
-        enabled: boolean;
+        enabled: 'none' | 'onlyLiterals' | 'exceptReferences' | 'all';
     };
+}
+
+interface RunnerSettings {
+    command: string;
 }
 
 interface ValidationSettings {
@@ -75,4 +119,9 @@ interface ValidationSettings {
     nameConvention: {
         enabled: boolean;
     };
+}
+
+interface SettingsWatcher<T> {
+    accessor: (settings: DeepPartial<Settings>) => T;
+    callback: (newValue: T) => void;
 }

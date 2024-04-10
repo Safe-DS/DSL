@@ -10,26 +10,32 @@ import {
     ProgramCodeMap,
     PythonServerMessage,
     RuntimeErrorBacktraceFrame,
+    RuntimeErrorMessage,
 } from './messages.js';
-import { BasicSourceMapConsumer, SourceMapConsumer } from 'source-map';
+import { SourceMapConsumer } from 'source-map-js';
 import treeKill from 'tree-kill';
 import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import { SafeDsPythonGenerator } from '../generation/safe-ds-python-generator.js';
 import { isSdsModule } from '../generated/ast.js';
 import semver from 'semver';
+import { SafeDsMessagingProvider } from '../lsp/safe-ds-messaging-provider.js';
 
 // Most of the functionality cannot be tested automatically as a functioning runner setup would always be required
 
-const LOWEST_SUPPORTED_VERSION = '0.8.0';
-const LOWEST_UNSUPPORTED_VERSION = '0.9.0';
+export const RPC_RUNNER_STARTED = 'runner/started';
+
+const LOWEST_SUPPORTED_VERSION = '0.10.0';
+const LOWEST_UNSUPPORTED_VERSION = '0.11.0';
 const npmVersionRange = `>=${LOWEST_SUPPORTED_VERSION} <${LOWEST_UNSUPPORTED_VERSION}`;
 const pipVersionRange = `>=${LOWEST_SUPPORTED_VERSION},<${LOWEST_UNSUPPORTED_VERSION}`;
+
+const RUNNER_TAG = 'Runner';
 
 export class SafeDsRunner {
     private readonly annotations: SafeDsAnnotations;
     private readonly generator: SafeDsPythonGenerator;
+    private readonly messaging: SafeDsMessagingProvider;
 
-    private logging: RunnerLoggingOutput;
     private runnerCommand: string = 'safe-ds-runner';
     private runnerProcess: child_process.ChildProcessWithoutNullStreams | undefined = undefined;
     private port: number | undefined = undefined;
@@ -48,14 +54,82 @@ export class SafeDsRunner {
         PipelineExecutionInformation
     >();
 
+    /* c8 ignore start */
     constructor(services: SafeDsServices) {
         this.annotations = services.builtins.Annotations;
         this.generator = services.generation.PythonGenerator;
-        this.logging = {
-            outputError(_value: string) {},
-            outputInfo(_value: string) {},
-            displayError(_value: string) {},
-        };
+        this.messaging = services.lsp.MessagingProvider;
+
+        // Register listeners
+        this.registerMessageLoggingCallbacks();
+
+        services.workspace.SettingsProvider.onRunnerCommandUpdate(async (newValue) => {
+            await this.updateRunnerCommand(newValue);
+        });
+
+        services.shared.lsp.Connection?.onShutdown(async () => {
+            await this.stopPythonServer();
+        });
+    }
+
+    private registerMessageLoggingCallbacks() {
+        this.addMessageCallback((message) => {
+            this.info(
+                `Placeholder value is (${message.id}): ${message.data.name} of type ${message.data.type} = ${message.data.value}`,
+            );
+        }, 'placeholder_value');
+        this.addMessageCallback((message) => {
+            this.info(`Placeholder was calculated (${message.id}): ${message.data.name} of type ${message.data.type}`);
+            const execInfo = this.getExecutionContext(message.id);
+            execInfo?.calculatedPlaceholders.set(message.data.name, message.data.type);
+            // this.sendMessageToPythonServer(
+            //    messages.createPlaceholderQueryMessage(message.id, message.data.name),
+            //);
+        }, 'placeholder_type');
+        this.addMessageCallback((message) => {
+            this.info(`Runner-Progress (${message.id}): ${message.data}`);
+        }, 'runtime_progress');
+        this.addMessageCallback(async (message) => {
+            let readableStacktraceSafeDs: string[] = [];
+            const execInfo = this.getExecutionContext(message.id)!;
+            const readableStacktracePython = await Promise.all(
+                (<RuntimeErrorMessage>message).data.backtrace.map(async (frame) => {
+                    const mappedFrame = await this.tryMapToSafeDSSource(message.id, frame);
+                    if (mappedFrame) {
+                        readableStacktraceSafeDs.push(
+                            `\tat ${URI.file(execInfo.path)}#${mappedFrame.line} (${execInfo.path} line ${
+                                mappedFrame.line
+                            })`,
+                        );
+                        return `\tat ${frame.file} line ${frame.line} (mapped to '${mappedFrame.file}' line ${mappedFrame.line})`;
+                    }
+                    return `\tat ${frame.file} line ${frame.line}`;
+                }),
+            );
+            this.error(
+                `Runner-RuntimeError (${message.id}): ${
+                    (<RuntimeErrorMessage>message).data.message
+                } \n${readableStacktracePython.join('\n')}`,
+            );
+            this.error(
+                `Safe-DS Error (${message.id}): ${(<RuntimeErrorMessage>message).data.message} \n${readableStacktraceSafeDs
+                    .reverse()
+                    .join('\n')}`,
+            );
+        }, 'runtime_error');
+    }
+
+    async connectToPort(port: number): Promise<void> {
+        if (this.isPythonServerAvailable()) {
+            return;
+        }
+
+        this.port = port;
+        try {
+            await this.connectToWebSocket();
+        } catch (error) {
+            await this.stopPythonServer();
+        }
     }
 
     /**
@@ -63,20 +137,14 @@ export class SafeDsRunner {
      *
      * @param command New Runner Command.
      */
-    /* c8 ignore start */
-    public updateRunnerCommand(command: string | undefined): void {
+    public async updateRunnerCommand(command: string | undefined): Promise<void> {
         if (command) {
             this.runnerCommand = command;
+            await this.startPythonServer();
+            if (this.isPythonServerAvailable()) {
+                await this.messaging.sendNotification(RPC_RUNNER_STARTED, this.port);
+            }
         }
-    }
-
-    /**
-     * Change the output functions for runner logging and error information to those provided.
-     *
-     * @param logging New Runner output functions.
-     */
-    public updateRunnerLogging(logging: RunnerLoggingOutput): void {
-        this.logging = logging;
     }
 
     /**
@@ -84,6 +152,11 @@ export class SafeDsRunner {
      * Uses the 'safe-ds.runner.command' setting to execute the process.
      */
     public async startPythonServer(): Promise<void> {
+        if (this.isPythonServerAvailable()) {
+            this.info('As the Safe-DS Runner is currently successfully running, no attempt to start it will be made');
+            return;
+        }
+
         this.acceptsConnections = false;
         const runnerCommandParts = this.runnerCommand.split(/\s/u);
         const runnerCommand = runnerCommandParts.shift()!; // After shift, only the actual args are left
@@ -92,30 +165,28 @@ export class SafeDsRunner {
             const pythonServerTest = child_process.spawn(runnerCommand, [...runnerCommandParts, '-V']);
             const versionString = await this.getPythonServerVersion(pythonServerTest);
             if (!semver.satisfies(versionString, npmVersionRange)) {
-                this.logging.outputError(
-                    `Installed runner version ${versionString} does not meet requirements: ${pipVersionRange}`,
-                );
-                this.logging.displayError(
+                this.error(`Installed runner version ${versionString} does not meet requirements: ${pipVersionRange}`);
+                this.messaging.showErrorMessage(
                     `The installed runner version ${versionString} is not compatible with this version of the extension. The installed version should match these requirements: ${pipVersionRange}. Please update to a matching version.`,
                 );
                 return;
             } else {
-                this.logging.outputInfo(`Using safe-ds-runner version: ${versionString}`);
+                this.info(`Using safe-ds-runner version: ${versionString}`);
             }
         } catch (error) {
-            this.logging.outputError(`Could not start runner: ${error instanceof Error ? error.message : error}`);
-            this.logging.displayError(
+            this.error(`Could not start runner: ${error instanceof Error ? error.message : error}`);
+            this.messaging.showErrorMessage(
                 `The runner process could not be started: ${error instanceof Error ? error.message : error}`,
             );
             return;
         }
         // Start the runner at the specified port
         this.port = await this.findFirstFreePort(5000);
-        this.logging.outputInfo(`Trying to use port ${this.port} to start python server...`);
-        this.logging.outputInfo(`Using command '${this.runnerCommand}' to start python server...`);
+        this.info(`Trying to use port ${this.port} to start python server...`);
+        this.info(`Using command '${this.runnerCommand}' to start python server...`);
 
         const runnerArgs = [...runnerCommandParts, 'start', '--port', String(this.port)];
-        this.logging.outputInfo(`Running ${runnerCommand}; Args: ${runnerArgs.join(' ')}`);
+        this.info(`Running ${runnerCommand}; Args: ${runnerArgs.join(' ')}`);
         this.runnerProcess = child_process.spawn(runnerCommand, runnerArgs);
         this.manageRunnerSubprocessOutputIO();
         try {
@@ -124,7 +195,7 @@ export class SafeDsRunner {
             await this.stopPythonServer();
             return;
         }
-        this.logging.outputInfo('Started python server successfully');
+        this.info('Started python server successfully');
     }
 
     /**
@@ -132,17 +203,17 @@ export class SafeDsRunner {
      * If that fails, the whole process tree (starting at the child process spawned by startPythonServer) will get killed.
      */
     async stopPythonServer(): Promise<void> {
-        this.logging.outputInfo('Stopping python server...');
+        this.info('Stopping python server...');
         if (this.runnerProcess !== undefined) {
             if ((this.acceptsConnections && !(await this.requestGracefulShutdown(2500))) || !this.acceptsConnections) {
-                this.logging.outputInfo(`Tree-killing python server process ${this.runnerProcess.pid}...`);
+                this.info(`Tree-killing python server process ${this.runnerProcess.pid}...`);
                 const pid = this.runnerProcess.pid!;
                 // Wait for tree-kill to finish killing the tree
                 await new Promise<void>((resolve, _reject) => {
                     treeKill(pid, (error) => {
                         resolve();
                         if (error) {
-                            this.logging.outputError(`Error while killing runner process tree: ${error}`);
+                            this.error(`Error while killing runner process tree: ${error}`);
                         }
                     });
                 });
@@ -154,7 +225,7 @@ export class SafeDsRunner {
     }
 
     private async requestGracefulShutdown(maxTimeoutMs: number): Promise<boolean> {
-        this.logging.outputInfo('Trying graceful shutdown...');
+        this.info('Trying graceful shutdown...');
         this.sendMessageToPythonServer(createShutdownMessage());
         return new Promise((resolve, _reject) => {
             this.runnerProcess?.on('close', () => resolve(true));
@@ -244,7 +315,7 @@ export class SafeDsRunner {
      * @param executionId Id that uniquely identifies the execution that produced this stack frame
      * @param frame Stack frame from the python execution
      */
-    public async tryMapToSafeDSSource(
+    private async tryMapToSafeDSSource(
         executionId: string,
         frame: RuntimeErrorBacktraceFrame | undefined,
     ): Promise<RuntimeErrorBacktraceFrame | undefined> {
@@ -265,7 +336,7 @@ export class SafeDsRunner {
         if (!execInfo.sourceMappings.has(sourceMapKey)) {
             const sourceMapObject = JSON.parse(execInfo.generatedSource.get(sourceMapKey)!);
             sourceMapObject.sourcesContent = [execInfo.source];
-            const consumer = await new SourceMapConsumer(sourceMapObject);
+            const consumer = new SourceMapConsumer(sourceMapObject);
             execInfo.sourceMappings.set(sourceMapKey, consumer);
         }
         const outputPosition = execInfo.sourceMappings.get(sourceMapKey)!.originalPositionFor({
@@ -312,7 +383,7 @@ export class SafeDsRunner {
         // Store information about the run
         this.executionInformation.set(id, {
             generatedSource: lastGeneratedSources,
-            sourceMappings: new Map<string, BasicSourceMapConsumer>(),
+            sourceMappings: new Map<string, SourceMapConsumer>(),
             path: pipelineDocument.uri.fsPath,
             source: pipelineDocument.textDocument.getText(),
             calculatedPlaceholders: new Map<string, string>(),
@@ -326,6 +397,7 @@ export class SafeDsRunner {
                     module: mainModuleName,
                     pipeline: pipelineName,
                 },
+                cwd: path.parse(pipelineDocument.uri.fsPath).dir,
             }),
         );
     }
@@ -392,13 +464,13 @@ export class SafeDsRunner {
     /* c8 ignore start */
     public sendMessageToPythonServer(message: PythonServerMessage): void {
         const messageString = JSON.stringify(message);
-        this.logging.outputInfo(`Sending message to python server: ${messageString}`);
+        this.info(`Sending message to python server: ${messageString}`);
         this.serverConnection!.send(messageString);
     }
 
     private async getPythonServerVersion(process: child_process.ChildProcessWithoutNullStreams) {
         process.stderr.on('data', (data: Buffer) => {
-            this.logging.outputInfo(`[Runner-Err] ${data.toString().trim()}`);
+            this.info(`[Runner-Err] ${data.toString().trim()}`);
         });
         return new Promise<string>((resolve, reject) => {
             process.stdout.on('data', (data: Buffer) => {
@@ -421,13 +493,13 @@ export class SafeDsRunner {
             return;
         }
         this.runnerProcess.stdout.on('data', (data: Buffer) => {
-            this.logging.outputInfo(`[Runner-Out] ${data.toString().trim()}`);
+            this.info(`[Runner-Out] ${data.toString().trim()}`);
         });
         this.runnerProcess.stderr.on('data', (data: Buffer) => {
-            this.logging.outputInfo(`[Runner-Err] ${data.toString().trim()}`);
+            this.info(`[Runner-Err] ${data.toString().trim()}`);
         });
         this.runnerProcess.on('close', (code) => {
-            this.logging.outputInfo(`[Runner] Exited: ${code}`);
+            this.info(`Exited: ${code}`);
             // when the server shuts down, no connections will be accepted
             this.acceptsConnections = false;
             this.runnerProcess = undefined;
@@ -446,25 +518,21 @@ export class SafeDsRunner {
                 });
                 this.serverConnection.onopen = (event) => {
                     this.acceptsConnections = true;
-                    this.logging.outputInfo(`[Runner] Now accepting connections: ${event.type}`);
+                    this.info(`Now accepting connections: ${event.type}`);
                     resolve();
                 };
                 this.serverConnection.onerror = (event) => {
                     currentTry += 1;
                     if (event.message.includes('ECONNREFUSED')) {
                         if (currentTry > maxConnectionTries) {
-                            this.logging.outputInfo(
-                                '[Runner] Max retries reached. No further attempt at connecting is made.',
-                            );
+                            this.info('Max retries reached. No further attempt at connecting is made.');
                         } else {
-                            this.logging.outputInfo(`[Runner] Server is not yet up. Retrying...`);
+                            this.info(`Server is not yet up. Retrying...`);
                             setTimeout(tryConnect, timeoutMs * (2 ** currentTry - 1)); // use exponential backoff
                             return;
                         }
                     }
-                    this.logging.outputError(
-                        `[Runner] An error occurred: ${event.message} (${event.type}) {${event.error}}`,
-                    );
+                    this.error(`An error occurred: ${event.message} (${event.type}) {${event.error}}`);
                     if (this.isPythonServerAvailable()) {
                         return;
                     }
@@ -472,19 +540,17 @@ export class SafeDsRunner {
                 };
                 this.serverConnection.onmessage = (event) => {
                     if (typeof event.data !== 'string') {
-                        this.logging.outputInfo(
-                            `[Runner] Message received: (${event.type}, ${typeof event.data}) ${event.data}`,
-                        );
+                        this.info(`Message received: (${event.type}, ${typeof event.data}) ${event.data}`);
                         return;
                     }
-                    this.logging.outputInfo(
-                        `[Runner] Message received: '${
+                    this.info(
+                        `Message received: '${
                             event.data.length > 128 ? event.data.substring(0, 128) + '<truncated>' : event.data
                         }'`,
                     );
                     const pythonServerMessage: PythonServerMessage = JSON.parse(<string>event.data);
                     if (!this.messageCallbacks.has(pythonServerMessage.type)) {
-                        this.logging.outputInfo(`[Runner] Message type '${pythonServerMessage.type}' is not handled`);
+                        this.info(`Message type '${pythonServerMessage.type}' is not handled`);
                         return;
                     }
                     for (const callback of this.messageCallbacks.get(pythonServerMessage.type)!) {
@@ -495,7 +561,7 @@ export class SafeDsRunner {
                     if (this.isPythonServerAvailable()) {
                         // The connection was interrupted
                         this.acceptsConnections = false;
-                        this.logging.outputError('[Runner] Connection was unexpectedly closed');
+                        this.error('Connection was unexpectedly closed');
                     }
                 };
             };
@@ -529,15 +595,16 @@ export class SafeDsRunner {
             tryNextPort();
         });
     }
-}
 
-/**
- * Runner Logging interface
- */
-export interface RunnerLoggingOutput {
-    outputInfo: (value: string) => void;
-    outputError: (value: string) => void;
-    displayError: (value: string) => void;
+    /* c8 ignore start */
+    private info(message: string) {
+        this.messaging.info(RUNNER_TAG, message);
+    }
+
+    private error(message: string) {
+        this.messaging.error(RUNNER_TAG, message);
+    }
+    /* c8 ignore stop */
 }
 
 /**
@@ -546,7 +613,7 @@ export interface RunnerLoggingOutput {
 export interface PipelineExecutionInformation {
     source: string;
     generatedSource: Map<string, string>;
-    sourceMappings: Map<string, BasicSourceMapConsumer>;
+    sourceMappings: Map<string, SourceMapConsumer>;
     path: string;
     /**
      * Maps placeholder name to placeholder type

@@ -43,6 +43,11 @@ import { SafeDsRenameProvider } from './lsp/safe-ds-rename-provider.js';
 import { SafeDsRunner } from './runner/safe-ds-runner.js';
 import { SafeDsTypeFactory } from './typing/safe-ds-type-factory.js';
 import { SafeDsMarkdownGenerator } from './generation/safe-ds-markdown-generator.js';
+import { SafeDsCompletionProvider } from './lsp/safe-ds-completion-provider.js';
+import { SafeDsFuzzyMatcher } from './lsp/safe-ds-fuzzy-matcher.js';
+import { type Logger, SafeDsMessagingProvider, type UserMessageProvider } from './lsp/safe-ds-messaging-provider.js';
+import { SafeDsConfigurationProvider } from './workspace/safe-ds-configuration-provider.js';
+import { SafeDsCodeLensProvider } from './lsp/safe-ds-code-lens-provider.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -71,10 +76,14 @@ export type SafeDsAddedServices = {
         NodeMapper: SafeDsNodeMapper;
     };
     lsp: {
+        MessagingProvider: SafeDsMessagingProvider;
         NodeInfoProvider: SafeDsNodeInfoProvider;
     };
     purity: {
         PurityComputer: SafeDsPurityComputer;
+    };
+    runtime: {
+        Runner: SafeDsRunner;
     };
     typing: {
         ClassHierarchy: SafeDsClassHierarchy;
@@ -87,8 +96,11 @@ export type SafeDsAddedServices = {
         PackageManager: SafeDsPackageManager;
         SettingsProvider: SafeDsSettingsProvider;
     };
-    runtime: {
-        Runner: SafeDsRunner;
+};
+
+export type SafeDsAddedSharedServices = {
+    workspace: {
+        ConfigurationProvider: SafeDsConfigurationProvider;
     };
 };
 
@@ -96,7 +108,12 @@ export type SafeDsAddedServices = {
  * Union of Langium default services and your custom services - use this as constructor parameter
  * of custom service classes.
  */
-export type SafeDsServices = LangiumServices & SafeDsAddedServices;
+export type SafeDsServices = LangiumServices &
+    SafeDsAddedServices & {
+        shared: SafeDsAddedSharedServices;
+    };
+
+export type SafeDsSharedServices = LangiumSharedServices & SafeDsAddedSharedServices;
 
 /**
  * Dependency injection module that overrides Langium default services and contributes the
@@ -129,9 +146,12 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
     },
     lsp: {
         CallHierarchyProvider: (services) => new SafeDsCallHierarchyProvider(services),
+        CodeLensProvider: (services) => new SafeDsCodeLensProvider(services),
+        CompletionProvider: (services) => new SafeDsCompletionProvider(services),
         DocumentSymbolProvider: (services) => new SafeDsDocumentSymbolProvider(services),
         Formatter: () => new SafeDsFormatter(),
         InlayHintProvider: (services) => new SafeDsInlayHintProvider(services),
+        MessagingProvider: (services) => new SafeDsMessagingProvider(services),
         NodeInfoProvider: (services) => new SafeDsNodeInfoProvider(services),
         RenameProvider: (services) => new SafeDsRenameProvider(services),
         SemanticTokenProvider: (services) => new SafeDsSemanticTokenProvider(services),
@@ -148,6 +168,9 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         ScopeComputation: (services) => new SafeDsScopeComputation(services),
         ScopeProvider: (services) => new SafeDsScopeProvider(services),
     },
+    runtime: {
+        Runner: (services) => new SafeDsRunner(services),
+    },
     typing: {
         ClassHierarchy: (services) => new SafeDsClassHierarchy(services),
         CoreTypes: (services) => new SafeDsCoreTypes(services),
@@ -159,18 +182,15 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         PackageManager: (services) => new SafeDsPackageManager(services),
         SettingsProvider: (services) => new SafeDsSettingsProvider(services),
     },
-    runtime: {
-        Runner: (services) => new SafeDsRunner(services),
-    },
 };
-
-export type SafeDsSharedServices = LangiumSharedServices;
 
 export const SafeDsSharedModule: Module<SafeDsSharedServices, DeepPartial<SafeDsSharedServices>> = {
     lsp: {
+        FuzzyMatcher: () => new SafeDsFuzzyMatcher(),
         NodeKindProvider: () => new SafeDsNodeKindProvider(),
     },
     workspace: {
+        ConfigurationProvider: (services) => new SafeDsConfigurationProvider(services),
         DocumentBuilder: (services) => new SafeDsDocumentBuilder(services),
         WorkspaceManager: (services) => new SafeDsWorkspaceManager(services),
     },
@@ -199,7 +219,11 @@ export const createSafeDsServices = async function (
     shared: LangiumSharedServices;
     SafeDs: SafeDsServices;
 }> {
-    const shared = inject(createDefaultSharedModule(context), SafeDsGeneratedSharedModule, SafeDsSharedModule);
+    const shared: SafeDsSharedServices = inject(
+        createDefaultSharedModule(context),
+        SafeDsGeneratedSharedModule,
+        SafeDsSharedModule,
+    );
     const SafeDs = inject(createDefaultModule({ shared }), SafeDsGeneratedModule, SafeDsModule);
 
     shared.ServiceRegistry.register(SafeDs);
@@ -211,12 +235,20 @@ export const createSafeDsServices = async function (
     }
 
     // Apply options
+    if (options?.logger) {
+        /* c8 ignore next 2 */
+        SafeDs.lsp.MessagingProvider.setLogger(options.logger);
+    }
     if (!options?.omitBuiltins) {
         await shared.workspace.WorkspaceManager.initializeWorkspace([]);
     }
     if (options?.runnerCommand) {
         /* c8 ignore next 2 */
-        SafeDs.runtime.Runner.updateRunnerCommand(options?.runnerCommand);
+        SafeDs.runtime.Runner.updateRunnerCommand(options.runnerCommand);
+    }
+    if (options?.userMessageProvider) {
+        /* c8 ignore next 2 */
+        SafeDs.lsp.MessagingProvider.setUserMessageProvider(options.userMessageProvider);
     }
 
     return { shared, SafeDs };
@@ -227,6 +259,12 @@ export const createSafeDsServices = async function (
  */
 export interface ModuleOptions {
     /**
+     * A logging provider. If the logger lacks a capability, we fall back to the logger provided by the language server
+     * connection, if available.
+     */
+    logger?: Logger;
+
+    /**
      * By default, builtins are loaded into the workspace. If this option is set to true, builtins are omitted.
      */
     omitBuiltins?: boolean;
@@ -235,4 +273,10 @@ export interface ModuleOptions {
      * Command to start the runner.
      */
     runnerCommand?: string;
+
+    /**
+     * A service for showing messages to the user. If the provider lacks a capability, we fall back to the language
+     * server connection, if available.
+     */
+    userMessageProvider?: UserMessageProvider;
 }

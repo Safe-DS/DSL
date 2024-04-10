@@ -81,26 +81,19 @@ export class EDAPanel {
                     break;
                 }
                 case 'setCurrentGlobalState': {
-                    if (!data.value) {
-                        return;
-                    }
-                    const existingStates = (EDAPanel.context.globalState.get('webviewState') ?? []) as [
-                        State,
-                        number,
-                    ][];
+                    // if (!data.value) {
+                    //     return;
+                    // }
+                    // const existingStates = (EDAPanel.context.globalState.get('webviewState') ?? []) as State[];
+                    // const stateExists = existingStates.some((s) => s.tableIdentifier === data.value.tableIdentifier);
 
-                    let stateExists = false;
-                    let newWebviewState: [State, number][] = existingStates.map((s) => {
-                        if (s[0].tableIdentifier === data.value.tableIdentifier) {
-                            stateExists = true;
-                            return [data.value, Date.now()];
-                        } else {
-                            return s;
-                        }
-                    });
-                    if (!stateExists) newWebviewState.push([data.value, Date.now()]);
+                    // const newWebviewState = stateExists
+                    //     ? (existingStates.map((s) =>
+                    //           s.tableIdentifier === data.value.tableIdentifier ? data.value : s,
+                    //       ) as State[])
+                    //     : existingStates.concat(data.value);
 
-                    EDAPanel.context.globalState.update('webviewState', newWebviewState);
+                    // EDAPanel.context.globalState.update('webviewState', newWebviewState);
                     break;
                 }
                 case 'resetGlobalState': {

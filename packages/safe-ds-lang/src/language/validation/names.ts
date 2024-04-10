@@ -105,8 +105,8 @@ export const nameMustNotOccurOnCoreDeclaration = (services: SafeDsServices) => {
 export const nameShouldHaveCorrectCasing = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
 
-    return async (node: SdsDeclaration, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateNameConvention())) {
+    return (node: SdsDeclaration, accept: ValidationAcceptor) => {
+        if (!settingsProvider.shouldValidateNameConvention()) {
             /* c8 ignore next 2 */
             return;
         }

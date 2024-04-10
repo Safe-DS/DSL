@@ -5,7 +5,10 @@
 [![codecov](https://codecov.io/gh/Safe-DS/DSL/branch/main/graph/badge.svg?token=ma0ytglhO1)](https://codecov.io/gh/Safe-DS/DSL)
 [![Documentation Status](https://readthedocs.org/projects/safe-ds-dsl/badge/?version=stable)](https://dsl.safeds.com)
 
-Safely develop Data Science programs with a statically checked domain specific language (DSL).
+Safely develop Data Science programs with a statically checked domain specific language (DSL) and integrated tools for data
+inspection.
+
+![demo](img/readme/demo.gif)
 
 ## Installation
 
@@ -15,12 +18,10 @@ Safely develop Data Science programs with a statically checked domain specific l
 2. To _execute_ Safe-DS programs, the [Safe-DS Runner](https://github.com/Safe-DS/Runner) has to be installed and
    configured additionally:
     1. Install [Python](https://www.python.org/) (3.11 or 3.12).
-    2. Run `pip install "safe-ds-runner>=0.8.0,<0.9.0"` in a command line to download the latest matching Runner version
+    2. Run `pip install "safe-ds-runner>=0.10.0,<0.11.0"` in a command line to download the latest matching Runner version
        from [PyPI](https://pypi.org/project/safe-ds-runner/).
-    3. If the Visual Studio Code extension cannot start the runner, adjust the setting `safe-ds.runner.command`.
-       Enter the absolute path to the Runner executable, as seen in the image below.
-
-        ![vscode-settings-safeds-runner-path.png](./img/vscode-settings-safeds-runner-path.png)
+   3. If the Visual Studio Code extension cannot start the runner, adjust the setting `safe-ds.runner.command`.
+      Enter the absolute path to the Runner executable.
 
 ## Documentation
 

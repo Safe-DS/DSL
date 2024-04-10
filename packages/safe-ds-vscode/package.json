@@ -1,6 +1,6 @@
 {
     "name": "safe-ds",
-    "version": "0.9.0",
+    "version": "0.11.0",
     "private": true,
     "description": "Statically checked Data Science programs.",
     "author": {
@@ -94,14 +94,43 @@
                     "description": "Show inferred types for lambda parameters without manifest types."
                 },
                 "safe-ds.inlayHints.parameterNames.enabled": {
-                    "type": "boolean",
-                    "default": true,
+                    "type": "string",
+                    "enum": [
+                        "none",
+                        "onlyLiterals",
+                        "exceptReferences",
+                        "all"
+                    ],
+                    "enumItemLabels": [
+                        "None",
+                        "Only literals",
+                        "Except references",
+                        "All"
+                    ],
+                    "enumDescriptions": [
+                        "Do not show any inlay hints.",
+                        "Show inlay hints only for literals.",
+                        "Show inlay hints for everything except references.",
+                        "Show all inlay hints."
+                    ],
+                    "default": "onlyLiterals",
                     "description": "Show parameter names for positional arguments."
                 },
                 "safe-ds.runner.command": {
-                    "description": "Command to start the Safe-DS runner",
                     "type": "string",
-                    "default": "safe-ds-runner"
+                    "default": "safe-ds-runner",
+                    "description": "Command to start the Safe-DS runner"
+                },
+                "safe-ds.trace.server": {
+                    "scope": "window",
+                    "type": "string",
+                    "enum": [
+                        "off",
+                        "messages",
+                        "verbose"
+                    ],
+                    "default": "off",
+                    "description": "Traces the communication between VS Code and the language server."
                 },
                 "safe-ds.validation.codeStyle.enabled": {
                     "type": "boolean",
@@ -128,6 +157,8 @@
         "configurationDefaults": {
             "[safe-ds]": {
                 "editor.semanticHighlighting.enabled": true,
+                "editor.suggest.snippetsPreventQuickSuggestions": true,
+                "editor.wordBasedSuggestions": "off",
                 "editor.wordSeparators": "`~!@#%^&*()-=+[]{}\\|;:'\",.<>/?»«",
                 "files.trimTrailingWhitespace": true
             }
