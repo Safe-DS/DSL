@@ -767,7 +767,6 @@ export class SafeDsPythonGenerator {
             return traceToNode(expression)(frame.getUniqueLambdaBlockName(expression));
         } else if (isSdsCall(expression)) {
             const callable = this.nodeMapper.callToCallable(expression);
-            const sortedArgs = this.sortArguments(getArguments(expression));
             const receiver = this.generateExpression(expression.receiver, frame);
             let call: CompositeGeneratorNode | undefined = undefined;
 
@@ -789,12 +788,12 @@ export class SafeDsPythonGenerator {
                     if (isSdsMemberAccess(expression.receiver)) {
                         thisParam = this.generateExpression(expression.receiver.receiver, frame);
                     }
-                    call = this.generateMemoizedCall(expression, sortedArgs, frame, thisParam);
+                    call = this.generateMemoizedCall(expression, frame, thisParam);
                 }
             }
 
             if (!call) {
-                call = this.generatePlainCall(expression, sortedArgs, frame);
+                call = this.generatePlainCall(expression, frame);
             }
 
             if (expression.isNullSafe) {
@@ -915,11 +914,9 @@ export class SafeDsPythonGenerator {
         throw new Error(`Unknown expression type: ${expression.$type}`);
     }
 
-    private generatePlainCall(
-        expression: SdsCall,
-        sortedArgs: SdsArgument[],
-        frame: GenerationInfoFrame,
-    ): CompositeGeneratorNode {
+    private generatePlainCall(expression: SdsCall, frame: GenerationInfoFrame): CompositeGeneratorNode {
+        const sortedArgs = this.sortArguments(getArguments(expression));
+
         return expandTracedToNode(expression)`${this.generateExpression(expression.receiver, frame)}(${joinTracedToNode(
             expression.argumentList,
             'arguments',
@@ -1019,7 +1016,6 @@ export class SafeDsPythonGenerator {
 
     private generateMemoizedCall(
         expression: SdsCall,
-        sortedArgs: SdsArgument[],
         frame: GenerationInfoFrame,
         thisParam: CompositeGeneratorNode | undefined = undefined,
     ): CompositeGeneratorNode {
@@ -1031,7 +1027,7 @@ export class SafeDsPythonGenerator {
         );
         // For a static function, the thisParam would be the class containing the function. We do not need to generate it in this case
         const generateThisParam = thisParam && isSdsFunction(callable) && !isStatic(callable);
-        const containsOptionalArgs = sortedArgs.some((arg) =>
+        const containsOptionalArgs = getArguments(expression).some((arg) =>
             Parameter.isOptional(this.nodeMapper.argumentToParameter(arg)),
         );
         const fullyQualifiedTargetName = this.generateFullyQualifiedFunctionName(expression);
@@ -1041,7 +1037,7 @@ export class SafeDsPythonGenerator {
             )`${RUNNER_PACKAGE}.memoized_dynamic_call("${this.getPythonNameOrDefault(callable)}", ${
                 containsOptionalArgs ? 'lambda *_ : ' : ''
             }${
-                containsOptionalArgs ? this.generatePlainCall(expression, sortedArgs, frame) : 'None'
+                containsOptionalArgs ? this.generatePlainCall(expression, frame) : 'None'
             }, [${generateThisParam ? thisParam : ''}${
                 generateThisParam && memoizedArgs.length > 0 ? ', ' : ''
             }${joinTracedToNode(expression.argumentList, 'arguments')(
@@ -1061,7 +1057,7 @@ export class SafeDsPythonGenerator {
             containsOptionalArgs ? 'lambda *_ : ' : ''
         }${
             containsOptionalArgs
-                ? this.generatePlainCall(expression, sortedArgs, frame)
+                ? this.generatePlainCall(expression, frame)
                 : isSdsMemberAccess(expression.receiver)
                   ? this.getClassQualifiedNameForMember(<SdsClassMember>callable)
                   : this.generateExpression(expression.receiver, frame)
