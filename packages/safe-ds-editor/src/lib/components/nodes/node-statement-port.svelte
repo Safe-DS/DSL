@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { cn } from '$lib/utils';
     import { Handle, Position } from '@xyflow/svelte';
 
     export let nameFunction: string;

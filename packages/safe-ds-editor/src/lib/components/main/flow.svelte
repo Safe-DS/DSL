@@ -14,6 +14,7 @@
     import NodePlaceholder from '../nodes/node-placeholder.svelte';
     import NodeStatement from '../nodes/node-statement.svelte';
     import NodeExpression from '../nodes/node-expression.svelte';
+    import NodeExtension from '../nodes/node-extension.svelte';
     import { getIconFromDatatype } from 'src/assets/dataTypes/dataTypes';
 
     const parameters: Parameter<DataType>[] = [
@@ -66,6 +67,12 @@
         status: 'done',
     };
 
+    const testExtension: Extension = {
+        name: 'testExtension',
+        parameters: parameters,
+        status: 'done',
+    };
+
     const nodes: Writable<NodeCustom[]> = writable([
         {
             id: '0',
@@ -91,6 +98,12 @@
             data: { expression: testExpression },
             position: { x: 300, y: 0 },
         },
+        {
+            id: '5',
+            type: 'extension',
+            data: { extension: testExtension },
+            position: { x: 300, y: 150 },
+        },
     ]);
 
     const edges = writable([]);
@@ -99,6 +112,7 @@
         statement: NodeStatement,
         placeholder: NodePlaceholder,
         expression: NodeExpression,
+        extension: NodeExtension,
     };
 
     const snapGrid: [number, number] = [20, 20];

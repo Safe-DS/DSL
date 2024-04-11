@@ -3,11 +3,7 @@
 </script>
 
 <script lang="ts">
-    import tooltip from '$lib/traits/tooltip';
-
     import { Handle, Position, type NodeProps } from '@xyflow/svelte';
-    import ChevonRight from 'svelte-radix/ChevronRight.svelte';
-    import Port from './port.svelte';
     import statusIndicator from '$lib/traits/status-indicator';
     import { node } from 'src/assets/node/node';
 
@@ -18,21 +14,32 @@
 </script>
 
 <div
-    class=" rounded-placeholderFrame bg-node_main shadow-node w-[180px] cursor-default"
+    use:statusIndicator={{ status: expression.status }}
+    class="rounded-expressionFrame shadow-node relative cursor-default pr-1"
 >
-    <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <div
-        class=" flex cursor-pointer flex-row items-center p-1 [&[data-state=open]>svg:last-of-type]:rotate-90"
-    >
-        <svelte:component
-            this={node.expressionIcon}
-            className="h-6 w-6 flex-shrink-0 stroke-node_main_text mr-1"
-        />
+    <div class="bg-node_main rounded-expressionCore core relative">
+        <div class="flex flex-row p-3 pr-6">
+            <svelte:component
+                this={node.expressionIcon}
+                className="active:opacity-50 transition-opacity duration-75 cursor-pointer h-10 w-10 flex-shrink-0 stroke-node_main_text p-1 shadow-node"
+            />
+            <Handle
+                class="-left-2 h-2.5 w-2.5"
+                id={`$expression|target`}
+                type="target"
+                position={Position.Left}
+            /><Handle
+                class="-right-3 h-2.5 w-2.5"
+                id={`$expression|source`}
+                type="source"
+                position={Position.Right}
+            />
+        </div>
     </div>
-    <div
-        use:statusIndicator={{ status: expression.status }}
-        class=" h-1 w-full"
-    ></div>
-
-    <Port nameFunction="testfunction" type="both"></Port>
 </div>
+
+<style>
+    .core {
+        height: calc(100% + 100px);
+    }
+</style>

@@ -7,7 +7,7 @@
 
     import { Handle, Position, type NodeProps } from '@xyflow/svelte';
     import ChevonRight from 'svelte-radix/ChevronRight.svelte';
-    import Port from './port.svelte';
+    import Port from './node-statement-port.svelte';
     import statusIndicator from '$lib/traits/status-indicator';
     import { getIconFromDatatype } from 'src/assets/dataTypes/dataTypes';
 

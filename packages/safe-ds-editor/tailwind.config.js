@@ -81,6 +81,8 @@ const config = {
                 sm: 'calc(var(--radius) - 4px)',
                 placeholderFrame: '80px / 50px',
                 placeholderCore: '80px / 40px',
+                expressionFrame: '100% 60px 60px 100% / 100% 50px 50px 100%',
+                expressionCore: '4px 50px 50px 4px / 4px 50px 50px 4px',
             },
             fontFamily: {
                 sans: [...fontFamily.sans],

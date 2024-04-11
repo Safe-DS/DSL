@@ -7,7 +7,7 @@
 
     import { Handle, Position, type NodeProps } from '@xyflow/svelte';
     import ChevonRight from 'svelte-radix/ChevronRight.svelte';
-    import Port from './port.svelte';
+    import Port from './node-statement-port.svelte';
     import statusIndicator from '$lib/traits/status-indicator';
 
     type $$Props = NodeProps;
@@ -20,7 +20,7 @@
 
 <div
     use:tooltip={{ content: statement.name, delay: 150 }}
-    class=" bg-node_main shadow-node w-[180px] cursor-default rounded-sm"
+    class=" bg-node_main shadow-node w-[160px] cursor-default rounded-sm"
 >
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div
@@ -37,9 +37,9 @@
             this={statement.category.icon}
             className="h-6 w-6 flex-shrink-0 stroke-node_main_text mr-1"
         />
-        <ChevonRight
+        <!-- <ChevonRight
             class="duration-35 text-vscode_foreground mr-1 h-4 w-4 shrink-0 transition-transform focus:outline-none"
-        />
+        /> -->
         <span class="text-node_main_text truncate">{statement.name}</span>
     </div>
     <div
