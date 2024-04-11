@@ -65,6 +65,7 @@
 
     const testExpression: Expression = {
         status: 'done',
+        text: 'TestvariablenName\n*\n(\n    1\n    +\n    3\n)',
     };
 
     const testExtension: Extension = {
@@ -102,7 +103,7 @@
             id: '5',
             type: 'extension',
             data: { extension: testExtension },
-            position: { x: 300, y: 150 },
+            position: { x: 300, y: 250 },
         },
     ]);
 

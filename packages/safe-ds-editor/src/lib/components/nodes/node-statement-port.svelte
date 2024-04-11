@@ -6,8 +6,6 @@
     export let nameParameter: string = '';
     export let type: 'target' | 'source' | 'both';
     export let optional: boolean = false;
-
-    console.log(nameParameter + '  ' + optional);
 </script>
 
 <div

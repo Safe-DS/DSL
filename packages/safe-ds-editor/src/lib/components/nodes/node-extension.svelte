@@ -5,9 +5,9 @@
 <script lang="ts">
     import tooltip from '$lib/traits/tooltip';
 
-    import { Handle, Position, type NodeProps } from '@xyflow/svelte';
+    import { type NodeProps } from '@xyflow/svelte';
     import ChevonRight from 'svelte-radix/ChevronRight.svelte';
-    import Port from './node-statement-port.svelte';
+    import Port from './port.svelte';
     import statusIndicator from '$lib/traits/status-indicator';
     import { menu } from 'src/assets/menu/menu';
     import Button from '../ui/button/button.svelte';
@@ -60,33 +60,52 @@
 
         {#if expanded}
             <div class=" bg-vscode_main_background grid py-1">
-                <Port
-                    nameFunction="testfunction"
-                    nameParameter="Testparameter1"
-                    type="source"
-                ></Port>
-                <Port
-                    nameFunction="testfunction"
-                    nameParameter="Testparameter2"
-                    type="target"
-                ></Port>
-                <Port
-                    nameFunction="testfunction"
-                    nameParameter="Testparameter3"
-                    type="target"
-                ></Port>
-                <Port
-                    nameFunction="testfunction"
-                    nameParameter="Testparameter4"
-                    type="target"
-                    optional={true}
-                ></Port>
+                <div
+                    class="text-node_secondary_text relative w-full justify-center px-1 text-right text-sm"
+                >
+                    Testparameter1
+                    <Port
+                        nameNode="testfunction"
+                        namePort="Testparameter1"
+                        type="source"
+                    ></Port>
+                </div>
+                <div
+                    class="text-node_secondary_text relative w-full justify-center px-1 text-sm"
+                >
+                    Testparameter2
+                    <Port
+                        nameNode="testfunction"
+                        namePort="Testparameter2"
+                        type="target"
+                    ></Port>
+                </div>
+                <div
+                    class="text-node_secondary_text relative w-full justify-center px-1 text-sm"
+                >
+                    Testparameter3
+                    <Port
+                        nameNode="testfunction"
+                        namePort="Testparameter3"
+                        type="target"
+                    ></Port>
+                </div>
+                <div
+                    class="text-node_secondary_text relative w-full justify-center px-1 text-sm"
+                >
+                    Testparameter4
+                    <Port
+                        nameNode="testfunction"
+                        namePort="Testparameter4"
+                        type="target"
+                        optional={true}
+                    ></Port>
+                </div>
             </div>
         {/if}
-        <div class="bg-node_main min-h-2 rounded-b-sm">
-            {#if !expanded}
-                <Port nameFunction="testfunction" type="both"></Port>
-            {/if}
-        </div>
+        <div class="bg-node_main min-h-2 rounded-b-sm"></div>
+        {#if !expanded}
+            <Port nameNode="testfunction" type="both"></Port>
+        {/if}
     </div>
 </div>

@@ -5,11 +5,9 @@
 <script lang="ts">
     import tooltip from '$lib/traits/tooltip';
 
-    import { Handle, Position, type NodeProps } from '@xyflow/svelte';
-    import ChevonRight from 'svelte-radix/ChevronRight.svelte';
-    import Port from './node-statement-port.svelte';
+    import { type NodeProps } from '@xyflow/svelte';
+    import Port from './port.svelte';
     import statusIndicator from '$lib/traits/status-indicator';
-    import { getIconFromDatatype } from 'src/assets/dataTypes/dataTypes';
 
     type $$Props = NodeProps;
 
@@ -33,17 +31,7 @@
                 this={placeholder.type.icon}
                 className="h-14 w-14 stroke-node_main_text p-1"
             />
-            <Handle
-                class="-left-2 h-2.5 w-2.5"
-                id={`${placeholder.name}|target`}
-                type="target"
-                position={Position.Left}
-            /><Handle
-                class="-right-2 h-2.5 w-2.5"
-                id={`${placeholder.name}|source`}
-                type="source"
-                position={Position.Right}
-            />
+            <Port nameNode={placeholder.name} type="both"></Port>
         </div>
     </div>
 </div>

@@ -45,6 +45,7 @@ declare type Placeholder = {
 
 declare type Expression = {
     status: NodeStatus;
+    text: string;
 };
 
 declare type Extension = {
