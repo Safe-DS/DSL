@@ -1,7 +1,7 @@
 import { ValidationAcceptor } from 'langium';
-import { isSdsDeclaration, isSdsPipeline, isSdsSegment, SdsDeclaration, SdsModule } from '../../generated/ast.js';
+import { isSdsDeclaration, SdsModule } from '../../generated/ast.js';
 import { isInPipelineFile, isInStubFile } from '../../helpers/fileExtensions.js';
-import { getModuleMembers } from '../../helpers/nodeProperties.js';
+import { getModuleMembers, isImplementedDeclaration, isStubDeclaration } from '../../helpers/nodeProperties.js';
 import { BUILTINS_ROOT_PACKAGE } from '../../builtins/packageNames.js';
 
 export const CODE_MODULE_FORBIDDEN_IN_PIPELINE_FILE = 'module/forbidden-in-pipeline-file';
@@ -14,7 +14,7 @@ export const moduleDeclarationsMustMatchFileKind = (node: SdsModule, accept: Val
 
     if (isInPipelineFile(node)) {
         for (const declaration of declarations) {
-            if (!declarationIsAllowedInPipelineFile(declaration)) {
+            if (!isImplementedDeclaration(declaration)) {
                 accept('error', 'A pipeline file must only declare pipelines and segments.', {
                     node: declaration,
                     property: 'name',
@@ -24,7 +24,7 @@ export const moduleDeclarationsMustMatchFileKind = (node: SdsModule, accept: Val
         }
     } else if (isInStubFile(node)) {
         for (const declaration of declarations) {
-            if (!declarationIsAllowedInStubFile(declaration)) {
+            if (!isStubDeclaration(declaration)) {
                 accept('error', 'A stub file must not declare pipelines or segments.', {
                     node: declaration,
                     property: 'name',
@@ -33,14 +33,6 @@ export const moduleDeclarationsMustMatchFileKind = (node: SdsModule, accept: Val
             }
         }
     }
-};
-
-export const declarationIsAllowedInPipelineFile = (declaration: SdsDeclaration): boolean => {
-    return isSdsPipeline(declaration) || isSdsSegment(declaration);
-};
-
-export const declarationIsAllowedInStubFile = (declaration: SdsDeclaration): boolean => {
-    return !isSdsPipeline(declaration) && !isSdsSegment(declaration);
 };
 
 export const moduleWithDeclarationsMustStatePackage = (node: SdsModule, accept: ValidationAcceptor): void => {

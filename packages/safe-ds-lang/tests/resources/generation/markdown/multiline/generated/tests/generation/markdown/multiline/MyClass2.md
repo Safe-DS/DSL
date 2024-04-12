@@ -9,7 +9,7 @@ Description of MyClass2.
 | `param1` | `#!sds Int` | Description of param1. That spans multiple lines. | - |
 | `param2` | `#!sds Int` | Description of param2. That spans multiple lines. | - |
 
-??? quote "Source code in `main.sdsstub`"
+??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="26"
     class MyClass2(param1: Int, param2: Int)

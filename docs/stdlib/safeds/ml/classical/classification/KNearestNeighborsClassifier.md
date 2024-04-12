@@ -10,7 +10,7 @@ K-nearest-neighbors classification.
 |------|------|-------------|---------|
 | `numberOfNeighbors` | [`Int`][safeds.lang.Int] | The number of neighbors to use for interpolation. Has to be greater than 0 (validated in the constructor) and less than or equal to the sample size (validated when calling `fit`). | - |
 
-??? quote "Source code in `k_nearest_neighbors.sdsstub`"
+??? quote "Stub code in `k_nearest_neighbors.sdsstub`"
 
     ```sds linenums="12"
     class KNearestNeighborsClassifier(
@@ -63,7 +63,7 @@ This classifier is not modified.
 |------|------|-------------|
 | `fittedClassifier` | [`KNearestNeighborsClassifier`][safeds.ml.classical.classification.KNearestNeighborsClassifier] | The fitted classifier. |
 
-??? quote "Source code in `k_nearest_neighbors.sdsstub`"
+??? quote "Stub code in `k_nearest_neighbors.sdsstub`"
 
     ```sds linenums="31"
     @Pure

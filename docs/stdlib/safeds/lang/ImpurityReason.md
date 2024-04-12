@@ -2,7 +2,7 @@
 
 A reason why a function is impure.
 
-??? quote "Source code in `purity.sdsstub`"
+??? quote "Stub code in `purity.sdsstub`"
 
     ```sds linenums="27"
     enum ImpurityReason {

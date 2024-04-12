@@ -6,7 +6,7 @@
 
     - **Reason:** To annoy you
 
-??? quote "Source code in `main.sdsstub`"
+??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="14"
     schema MySchema3 {}

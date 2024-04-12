@@ -9,7 +9,7 @@ A map of keys to values.
 | `K` | [`Any?`][safeds.lang.Any] | - | - |
 | `V` | [`Any?`][safeds.lang.Any] | - | - |
 
-??? quote "Source code in `coreClasses.sdsstub`"
+??? quote "Stub code in `coreClasses.sdsstub`"
 
     ```sds linenums="71"
     class Map<K, out V> {
@@ -47,7 +47,7 @@ Returns the keys of the map.
 |------|------|-------------|
 | `keys` | [`List<K>`][safeds.lang.List] | - |
 
-??? quote "Source code in `coreClasses.sdsstub`"
+??? quote "Stub code in `coreClasses.sdsstub`"
 
     ```sds linenums="83"
     @Pure
@@ -65,7 +65,7 @@ Returns the number of entries in the map.
 |------|------|-------------|
 | `size` | [`Int`][safeds.lang.Int] | - |
 
-??? quote "Source code in `coreClasses.sdsstub`"
+??? quote "Stub code in `coreClasses.sdsstub`"
 
     ```sds linenums="76"
     @Pure
@@ -83,7 +83,7 @@ Returns the values of the map.
 |------|------|-------------|
 | `values` | [`List<V>`][safeds.lang.List] | - |
 
-??? quote "Source code in `coreClasses.sdsstub`"
+??? quote "Stub code in `coreClasses.sdsstub`"
 
     ```sds linenums="90"
     @Pure

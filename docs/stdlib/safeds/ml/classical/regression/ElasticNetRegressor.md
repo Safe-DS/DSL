@@ -11,7 +11,7 @@ Elastic net regression.
 | `alpha` | [`Float`][safeds.lang.Float] | Controls the regularization of the model. The higher the value, the more regularized it becomes. | `#!sds 1.0` |
 | `lassoRatio` | [`Float`][safeds.lang.Float] | Number between 0 and 1 that controls the ratio between Lasso and Ridge regularization. If 0, only Ridge regularization is used. If 1, only Lasso regularization is used. | `#!sds 0.5` |
 
-??? quote "Source code in `elastic_net_regression.sdsstub`"
+??? quote "Stub code in `elastic_net_regression.sdsstub`"
 
     ```sds linenums="13"
     class ElasticNetRegressor(
@@ -77,7 +77,7 @@ This regressor is not modified.
 |------|------|-------------|
 | `fittedRegressor` | [`ElasticNetRegressor`][safeds.ml.classical.regression.ElasticNetRegressor] | The fitted regressor. |
 
-??? quote "Source code in `elastic_net_regression.sdsstub`"
+??? quote "Stub code in `elastic_net_regression.sdsstub`"
 
     ```sds linenums="39"
     @Pure

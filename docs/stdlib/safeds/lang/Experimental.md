@@ -14,7 +14,7 @@ The declaration might change without a major version bump.
 - `Result`
 - `Segment`
 
-??? quote "Source code in `maturity.sdsstub`"
+??? quote "Stub code in `maturity.sdsstub`"
 
     ```sds linenums="43"
     annotation Experimental

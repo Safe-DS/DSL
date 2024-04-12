@@ -17,7 +17,7 @@ call. `$this` is replaced by the receiver of the call. `$param` is replaced by t
 
 - `Function`
 
-??? quote "Source code in `codeGeneration.sdsstub`"
+??? quote "Stub code in `codeGeneration.sdsstub`"
 
     ```sds linenums="13"
     annotation PythonCall(

@@ -2,7 +2,7 @@
 
 Abstract base class for all regressors.
 
-??? quote "Source code in `regressor.sdsstub`"
+??? quote "Stub code in `regressor.sdsstub`"
 
     ```sds linenums="8"
     class Regressor {
@@ -87,7 +87,7 @@ This regressor is not modified.
 |------|------|-------------|
 | `fittedRegressor` | [`Regressor`][safeds.ml.classical.regression.Regressor] | The fitted regressor. |
 
-??? quote "Source code in `regressor.sdsstub`"
+??? quote "Stub code in `regressor.sdsstub`"
 
     ```sds linenums="18"
     @Pure
@@ -106,7 +106,7 @@ Check if the classifier is fitted.
 |------|------|-------------|
 | `isFitted` | [`Boolean`][safeds.lang.Boolean] | Whether the regressor is fitted. |
 
-??? quote "Source code in `regressor.sdsstub`"
+??? quote "Stub code in `regressor.sdsstub`"
 
     ```sds linenums="40"
     @Pure
@@ -130,7 +130,7 @@ Compute the mean absolute error (MAE) of the regressor on the given data.
 |------|------|-------------|
 | `meanAbsoluteError` | [`Float`][safeds.lang.Float] | The calculated mean absolute error (the average of the distance of each individual row). |
 
-??? quote "Source code in `regressor.sdsstub`"
+??? quote "Stub code in `regressor.sdsstub`"
 
     ```sds linenums="64"
     @Pure
@@ -156,7 +156,7 @@ Compute the mean squared error (MSE) on the given data.
 |------|------|-------------|
 | `meanSquaredError` | [`Float`][safeds.lang.Float] | The calculated mean squared error (the average of the distance of each individual row squared). |
 
-??? quote "Source code in `regressor.sdsstub`"
+??? quote "Stub code in `regressor.sdsstub`"
 
     ```sds linenums="51"
     @Pure
@@ -182,7 +182,7 @@ Predict a target vector using a dataset containing feature vectors. The model ha
 |------|------|-------------|
 | `prediction` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A dataset containing the given feature vectors and the predicted target vector. |
 
-??? quote "Source code in `regressor.sdsstub`"
+??? quote "Stub code in `regressor.sdsstub`"
 
     ```sds linenums="30"
     @Pure

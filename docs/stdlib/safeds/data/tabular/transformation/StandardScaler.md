@@ -4,7 +4,7 @@ The StandardScaler transforms column values to a range by removing the mean and 
 
 **Parent type:** [`InvertibleTableTransformer`][safeds.data.tabular.transformation.InvertibleTableTransformer]
 
-??? quote "Source code in `standard_scaler.sdsstub`"
+??? quote "Stub code in `standard_scaler.sdsstub`"
 
     ```sds linenums="9"
     class StandardScaler() sub InvertibleTableTransformer {
@@ -45,7 +45,7 @@ This transformer is not modified.
 |------|------|-------------|
 | `result1` | [`StandardScaler`][safeds.data.tabular.transformation.StandardScaler] | The fitted transformer. |
 
-??? quote "Source code in `standard_scaler.sdsstub`"
+??? quote "Stub code in `standard_scaler.sdsstub`"
 
     ```sds linenums="20"
     @Pure

@@ -20,6 +20,7 @@ import {
     isSdsNamedType,
     isSdsParameter,
     isSdsParameterBound,
+    isSdsPipeline,
     isSdsPlaceholder,
     isSdsQualifiedImport,
     isSdsSegment,
@@ -184,6 +185,20 @@ export namespace TypeParameter {
         return isSdsTypeParameter(node) && !node.variance;
     };
 }
+
+/**
+ * Checks whether the declaration has an implementation.
+ */
+export const isImplementedDeclaration = (declaration: SdsDeclaration): boolean => {
+    return isSdsPipeline(declaration) || isSdsSegment(declaration);
+};
+
+/**
+ * Checks whether the declaration is just a stub.
+ */
+export const isStubDeclaration = (declaration: SdsDeclaration): boolean => {
+    return !isSdsPipeline(declaration) && !isSdsSegment(declaration);
+};
 
 // -------------------------------------------------------------------------------------------------
 // Accessors for list elements

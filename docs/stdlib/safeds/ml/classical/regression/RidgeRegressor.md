@@ -10,7 +10,7 @@ Ridge regression.
 |------|------|-------------|---------|
 | `alpha` | [`Float`][safeds.lang.Float] | Controls the regularization of the model. The higher the value, the more regularized it becomes. | `#!sds 1.0` |
 
-??? quote "Source code in `ridge_regression.sdsstub`"
+??? quote "Stub code in `ridge_regression.sdsstub`"
 
     ```sds linenums="11"
     class RidgeRegressor(
@@ -63,7 +63,7 @@ This regressor is not modified.
 |------|------|-------------|
 | `fittedRegressor` | [`RidgeRegressor`][safeds.ml.classical.regression.RidgeRegressor] | The fitted regressor. |
 
-??? quote "Source code in `ridge_regression.sdsstub`"
+??? quote "Stub code in `ridge_regression.sdsstub`"
 
     ```sds linenums="30"
     @Pure

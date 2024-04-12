@@ -11,7 +11,7 @@ Gradient boosting classification.
 | `numberOfTrees` | [`Int`][safeds.lang.Int] | The number of boosting stages to perform. Gradient boosting is fairly robust to over-fitting so a large number usually results in better performance. | `#!sds 100` |
 | `learningRate` | [`Float`][safeds.lang.Float] | The larger the value, the more the model is influenced by each additional tree. If the learning rate is too low, the model might underfit. If the learning rate is too high, the model might overfit. | `#!sds 0.1` |
 
-??? quote "Source code in `gradient_boosting.sdsstub`"
+??? quote "Stub code in `gradient_boosting.sdsstub`"
 
     ```sds linenums="14"
     class GradientBoostingClassifier(
@@ -76,7 +76,7 @@ This classifier is not modified.
 |------|------|-------------|
 | `fittedClassifier` | [`GradientBoostingClassifier`][safeds.ml.classical.classification.GradientBoostingClassifier] | The fitted classifier. |
 
-??? quote "Source code in `gradient_boosting.sdsstub`"
+??? quote "Stub code in `gradient_boosting.sdsstub`"
 
     ```sds linenums="39"
     @Pure

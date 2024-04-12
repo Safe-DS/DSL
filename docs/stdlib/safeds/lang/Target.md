@@ -12,7 +12,7 @@ The annotation must target only the specified declaration types. By default, any
 
 - `Annotation`
 
-??? quote "Source code in `annotationUsage.sdsstub`"
+??? quote "Stub code in `annotationUsage.sdsstub`"
 
     ```sds linenums="9"
     annotation Target(

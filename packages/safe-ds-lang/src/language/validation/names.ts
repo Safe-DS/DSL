@@ -38,11 +38,12 @@ import {
     getParameters,
     getResults,
     getTypeParameters,
+    isImplementedDeclaration,
+    isStubDeclaration,
     streamBlockLambdaResults,
     streamPlaceholders,
 } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
-import { declarationIsAllowedInPipelineFile, declarationIsAllowedInStubFile } from './other/modules.js';
 
 export const CODE_NAME_CODEGEN_PREFIX = 'name/codegen-prefix';
 export const CODE_NAME_CORE_DECLARATION = 'name/core-declaration';
@@ -317,14 +318,14 @@ export const moduleMustContainUniqueNames = (node: SdsModule, accept: Validation
             getModuleMembers(node),
             (name) => `A declaration with name '${name}' exists already in this file.`,
             accept,
-            declarationIsAllowedInPipelineFile,
+            isImplementedDeclaration,
         );
     } else if (isInStubFile(node)) {
         namesMustBeUnique(
             getModuleMembers(node),
             (name) => `A declaration with name '${name}' exists already in this file.`,
             accept,
-            declarationIsAllowedInStubFile,
+            isStubDeclaration,
         );
     } else if (isInTestFile(node)) {
         namesMustBeUnique(

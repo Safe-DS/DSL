@@ -10,7 +10,7 @@ The Discretizer bins continuous data into intervals.
 |------|------|-------------|---------|
 | `numberOfBins` | [`Int`][safeds.lang.Int] | The number of bins to be created. | `#!sds 5` |
 
-??? quote "Source code in `discretizer.sdsstub`"
+??? quote "Stub code in `discretizer.sdsstub`"
 
     ```sds linenums="11"
     class Discretizer(
@@ -55,7 +55,7 @@ This transformer is not modified.
 |------|------|-------------|
 | `result1` | [`Discretizer`][safeds.data.tabular.transformation.Discretizer] | The fitted transformer. |
 
-??? quote "Source code in `discretizer.sdsstub`"
+??? quote "Stub code in `discretizer.sdsstub`"
 
     ```sds linenums="26"
     @Pure

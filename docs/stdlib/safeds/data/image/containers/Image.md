@@ -2,7 +2,7 @@
 
 A container for image data.
 
-??? quote "Source code in `image.sdsstub`"
+??? quote "Stub code in `image.sdsstub`"
 
     ```sds linenums="6"
     class Image {
@@ -328,7 +328,7 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The image with added noise. |
 
-??? quote "Source code in `image.sdsstub`"
+??? quote "Stub code in `image.sdsstub`"
 
     ```sds linenums="163"
     @Pure
@@ -358,7 +358,7 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The Image with adjusted brightness. |
 
-??? quote "Source code in `image.sdsstub`"
+??? quote "Stub code in `image.sdsstub`"
 
     ```sds linenums="146"
     @Pure
@@ -388,7 +388,7 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The new, adjusted image. |
 
-??? quote "Source code in `image.sdsstub`"
+??? quote "Stub code in `image.sdsstub`"
 
     ```sds linenums="203"
     @Pure
@@ -418,7 +418,7 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | New image with adjusted contrast. |
 
-??? quote "Source code in `image.sdsstub`"
+??? quote "Stub code in `image.sdsstub`"
 
     ```sds linenums="183"
     @Pure
@@ -448,7 +448,7 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The blurred image. |
 
-??? quote "Source code in `image.sdsstub`"
+??? quote "Stub code in `image.sdsstub`"
 
     ```sds linenums="221"
     @Pure
@@ -471,7 +471,7 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The grayscale image. |
 
-??? quote "Source code in `image.sdsstub`"
+??? quote "Stub code in `image.sdsstub`"
 
     ```sds linenums="82"
     @Pure
@@ -500,7 +500,7 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The cropped image. |
 
-??? quote "Source code in `image.sdsstub`"
+??? quote "Stub code in `image.sdsstub`"
 
     ```sds linenums="98"
     @Pure
@@ -529,7 +529,7 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The image with edges found. |
 
-??? quote "Source code in `image.sdsstub`"
+??? quote "Stub code in `image.sdsstub`"
 
     ```sds linenums="287"
     @Pure
@@ -549,7 +549,7 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The flipped image. |
 
-??? quote "Source code in `image.sdsstub`"
+??? quote "Stub code in `image.sdsstub`"
 
     ```sds linenums="129"
     @Pure
@@ -569,7 +569,7 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The flipped image. |
 
-??? quote "Source code in `image.sdsstub`"
+??? quote "Stub code in `image.sdsstub`"
 
     ```sds linenums="118"
     @Pure
@@ -589,7 +589,7 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The image with inverted colors. |
 
-??? quote "Source code in `image.sdsstub`"
+??? quote "Stub code in `image.sdsstub`"
 
     ```sds linenums="254"
     @Pure
@@ -616,7 +616,7 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The image with the given width and height. |
 
-??? quote "Source code in `image.sdsstub`"
+??? quote "Stub code in `image.sdsstub`"
 
     ```sds linenums="66"
     @Pure
@@ -641,7 +641,7 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The image rotated 90 degrees counter-clockwise. |
 
-??? quote "Source code in `image.sdsstub`"
+??? quote "Stub code in `image.sdsstub`"
 
     ```sds linenums="276"
     @Pure
@@ -661,7 +661,7 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The image rotated 90 degrees clockwise. |
 
-??? quote "Source code in `image.sdsstub`"
+??? quote "Stub code in `image.sdsstub`"
 
     ```sds linenums="265"
     @Pure
@@ -687,7 +687,7 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The image sharpened by the given factor. |
 
-??? quote "Source code in `image.sdsstub`"
+??? quote "Stub code in `image.sdsstub`"
 
     ```sds linenums="240"
     @Pure
@@ -708,7 +708,7 @@ Save the image as a JPEG file.
 |------|------|-------------|---------|
 | `path` | [`String`][safeds.lang.String] | The path to the JPEG file. | - |
 
-??? quote "Source code in `image.sdsstub`"
+??? quote "Stub code in `image.sdsstub`"
 
     ```sds linenums="39"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
@@ -728,7 +728,7 @@ Save the image as a PNG file.
 |------|------|-------------|---------|
 | `path` | [`String`][safeds.lang.String] | The path to the PNG file. | - |
 
-??? quote "Source code in `image.sdsstub`"
+??? quote "Stub code in `image.sdsstub`"
 
     ```sds linenums="50"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
@@ -754,7 +754,7 @@ Create an image from a file.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The image. |
 
-??? quote "Source code in `image.sdsstub`"
+??? quote "Stub code in `image.sdsstub`"
 
     ```sds linenums="28"
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])

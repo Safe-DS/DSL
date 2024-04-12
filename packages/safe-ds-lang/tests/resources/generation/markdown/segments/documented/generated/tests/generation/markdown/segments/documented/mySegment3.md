@@ -2,7 +2,7 @@
 
 Description of mySegment3.
 
-??? quote "Source code in `main.sdspipe`"
+??? quote "Implementation code in `main.sdspipe`"
 
     ```sds linenums="16"
     internal segment mySegment3() {}

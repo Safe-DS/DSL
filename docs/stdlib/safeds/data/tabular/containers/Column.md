@@ -15,7 +15,7 @@ A column is a named collection of values.
 |------|-------------|-------------|---------|
 | `T` | [`Any?`][safeds.lang.Any] | - | [`Any?`][safeds.lang.Any] |
 
-??? quote "Source code in `column.sdsstub`"
+??? quote "Stub code in `column.sdsstub`"
 
     ```sds linenums="12"
     class Column<out T = Any?>(
@@ -308,7 +308,7 @@ Check if all values have a given property.
 |------|------|-------------|
 | `result1` | [`Boolean`][safeds.lang.Boolean] | True if all match. |
 
-??? quote "Source code in `column.sdsstub`"
+??? quote "Stub code in `column.sdsstub`"
 
     ```sds linenums="58"
     @Pure
@@ -333,7 +333,7 @@ Check if any value has a given property.
 |------|------|-------------|
 | `result1` | [`Boolean`][safeds.lang.Boolean] | True if any match. |
 
-??? quote "Source code in `column.sdsstub`"
+??? quote "Stub code in `column.sdsstub`"
 
     ```sds linenums="70"
     @Pure
@@ -358,7 +358,7 @@ Calculate Pearson correlation between this and another column. Both columns have
 |------|------|-------------|
 | `result1` | [`Float`][safeds.lang.Float] | Correlation between the two columns. |
 
-??? quote "Source code in `column.sdsstub`"
+??? quote "Stub code in `column.sdsstub`"
 
     ```sds linenums="129"
     @Pure
@@ -378,7 +378,7 @@ Return a list of all unique values in the column.
 |------|------|-------------|
 | `result1` | [`List<T>`][safeds.lang.List] | List of unique values in the column. |
 
-??? quote "Source code in `column.sdsstub`"
+??? quote "Stub code in `column.sdsstub`"
 
     ```sds linenums="34"
     @Pure
@@ -402,7 +402,7 @@ Return column value at specified index, starting at 0.
 |------|------|-------------|
 | `result1` | `#!sds T` | Value at index in column. |
 
-??? quote "Source code in `column.sdsstub`"
+??? quote "Stub code in `column.sdsstub`"
 
     ```sds linenums="45"
     @Pure
@@ -422,7 +422,7 @@ Return whether the column has missing values.
 |------|------|-------------|
 | `result1` | [`Boolean`][safeds.lang.Boolean] | True if missing values exist. |
 
-??? quote "Source code in `column.sdsstub`"
+??? quote "Stub code in `column.sdsstub`"
 
     ```sds linenums="92"
     @Pure
@@ -446,7 +446,7 @@ $$
 |------|------|-------------|
 | `result1` | [`Float`][safeds.lang.Float] | The idness of the column. |
 
-??? quote "Source code in `column.sdsstub`"
+??? quote "Stub code in `column.sdsstub`"
 
     ```sds linenums="146"
     @Pure
@@ -463,7 +463,7 @@ Return the maximum value of the column. The column has to be numerical.
 |------|------|-------------|
 | `result1` | [`Float`][safeds.lang.Float] | The maximum value. |
 
-??? quote "Source code in `column.sdsstub`"
+??? quote "Stub code in `column.sdsstub`"
 
     ```sds linenums="154"
     @Pure
@@ -480,7 +480,7 @@ Return the mean value of the column. The column has to be numerical.
 |------|------|-------------|
 | `result1` | [`Float`][safeds.lang.Float] | The mean value. |
 
-??? quote "Source code in `column.sdsstub`"
+??? quote "Stub code in `column.sdsstub`"
 
     ```sds linenums="162"
     @Pure
@@ -497,7 +497,7 @@ Return the median value of the column. The column has to be numerical.
 |------|------|-------------|
 | `result1` | [`Float`][safeds.lang.Float] | The median value. |
 
-??? quote "Source code in `column.sdsstub`"
+??? quote "Stub code in `column.sdsstub`"
 
     ```sds linenums="170"
     @Pure
@@ -514,7 +514,7 @@ Return the minimum value of the column. The column has to be numerical.
 |------|------|-------------|
 | `result1` | [`Float`][safeds.lang.Float] | The minimum value. |
 
-??? quote "Source code in `column.sdsstub`"
+??? quote "Stub code in `column.sdsstub`"
 
     ```sds linenums="178"
     @Pure
@@ -531,7 +531,7 @@ Return the ratio of missing values to the total number of elements in the column
 |------|------|-------------|
 | `result1` | [`Float`][safeds.lang.Float] | The ratio of missing values to the total number of elements in the column. |
 
-??? quote "Source code in `column.sdsstub`"
+??? quote "Stub code in `column.sdsstub`"
 
     ```sds linenums="186"
     @Pure
@@ -549,7 +549,7 @@ Return the mode of the column.
 |------|------|-------------|
 | `result1` | [`List<T>`][safeds.lang.List] | Returns a list with the most common values. |
 
-??? quote "Source code in `column.sdsstub`"
+??? quote "Stub code in `column.sdsstub`"
 
     ```sds linenums="195"
     @Pure
@@ -572,7 +572,7 @@ Check if no values has a given property.
 |------|------|-------------|
 | `result1` | [`Boolean`][safeds.lang.Boolean] | True if none match. |
 
-??? quote "Source code in `column.sdsstub`"
+??? quote "Stub code in `column.sdsstub`"
 
     ```sds linenums="82"
     @Pure
@@ -591,7 +591,7 @@ Plot this column in a boxplot. This function can only plot real numerical data.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
-??? quote "Source code in `column.sdsstub`"
+??? quote "Stub code in `column.sdsstub`"
 
     ```sds linenums="244"
     @Pure
@@ -609,7 +609,7 @@ Plot a column in a histogram.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
-??? quote "Source code in `column.sdsstub`"
+??? quote "Stub code in `column.sdsstub`"
 
     ```sds linenums="253"
     @Pure
@@ -635,7 +635,7 @@ The original column is not modified.
 |------|------|-------------|
 | `result1` | [`Column<Any?>`][safeds.data.tabular.containers.Column] | A new column with the new name. |
 
-??? quote "Source code in `column.sdsstub`"
+??? quote "Stub code in `column.sdsstub`"
 
     ```sds linenums="105"
     @Pure
@@ -662,7 +662,7 @@ The stability is not defined for a column with only null values.
 |------|------|-------------|
 | `result1` | [`Float`][safeds.lang.Float] | The stability of the column. |
 
-??? quote "Source code in `column.sdsstub`"
+??? quote "Stub code in `column.sdsstub`"
 
     ```sds linenums="211"
     @Pure
@@ -679,7 +679,7 @@ Return the standard deviation of the column. The column has to be numerical.
 |------|------|-------------|
 | `result1` | [`Float`][safeds.lang.Float] | The standard deviation of all values. |
 
-??? quote "Source code in `column.sdsstub`"
+??? quote "Stub code in `column.sdsstub`"
 
     ```sds linenums="219"
     @Pure
@@ -697,7 +697,7 @@ Return the sum of the column. The column has to be numerical.
 |------|------|-------------|
 | `result1` | [`Float`][safeds.lang.Float] | The sum of all values. |
 
-??? quote "Source code in `column.sdsstub`"
+??? quote "Stub code in `column.sdsstub`"
 
     ```sds linenums="228"
     @Pure
@@ -714,7 +714,7 @@ Return an HTML representation of the column.
 |------|------|-------------|
 | `result1` | [`String`][safeds.lang.String] | The generated HTML. |
 
-??? quote "Source code in `column.sdsstub`"
+??? quote "Stub code in `column.sdsstub`"
 
     ```sds linenums="262"
     @Pure
@@ -746,7 +746,7 @@ The original column is not modified.
 |------|-------------|-------------|---------|
 | `R` | [`Any?`][safeds.lang.Any] | - | - |
 
-??? quote "Source code in `column.sdsstub`"
+??? quote "Stub code in `column.sdsstub`"
 
     ```sds linenums="119"
     @Pure
@@ -765,7 +765,7 @@ Return the variance of the column. The column has to be numerical.
 |------|------|-------------|
 | `result1` | [`Float`][safeds.lang.Float] | The variance of all values. |
 
-??? quote "Source code in `column.sdsstub`"
+??? quote "Stub code in `column.sdsstub`"
 
     ```sds linenums="236"
     @Pure

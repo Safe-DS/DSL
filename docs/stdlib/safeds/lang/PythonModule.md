@@ -12,7 +12,7 @@ The qualified name of the corresponding Python module. By default, this is the q
 
 - `Module`
 
-??? quote "Source code in `codeGeneration.sdsstub`"
+??? quote "Stub code in `codeGeneration.sdsstub`"
 
     ```sds linenums="21"
     annotation PythonModule(

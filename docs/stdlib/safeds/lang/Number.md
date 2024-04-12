@@ -2,7 +2,7 @@
 
 A number.
 
-??? quote "Source code in `coreClasses.sdsstub`"
+??? quote "Stub code in `coreClasses.sdsstub`"
 
     ```sds linenums="29"
     class Number

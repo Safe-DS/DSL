@@ -11,7 +11,7 @@ The RangeScaler transforms column values by scaling each value to a given range.
 | `minimum` | [`Float`][safeds.lang.Float] | The minimum of the new range after the transformation | `#!sds 0.0` |
 | `maximum` | [`Float`][safeds.lang.Float] | The maximum of the new range after the transformation | `#!sds 1.0` |
 
-??? quote "Source code in `range_scaler.sdsstub`"
+??? quote "Stub code in `range_scaler.sdsstub`"
 
     ```sds linenums="12"
     class RangeScaler(
@@ -55,7 +55,7 @@ This transformer is not modified.
 |------|------|-------------|
 | `result1` | [`RangeScaler`][safeds.data.tabular.transformation.RangeScaler] | The fitted transformer. |
 
-??? quote "Source code in `range_scaler.sdsstub`"
+??? quote "Stub code in `range_scaler.sdsstub`"
 
     ```sds linenums="26"
     @Pure

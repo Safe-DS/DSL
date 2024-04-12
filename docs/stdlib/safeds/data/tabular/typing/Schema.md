@@ -2,7 +2,7 @@
 
 Store column names and corresponding data types for a `Table` or `Row`.
 
-??? quote "Source code in `schema.sdsstub`"
+??? quote "Stub code in `schema.sdsstub`"
 
     ```sds linenums="10"
     class Schema {
@@ -70,7 +70,7 @@ Return the type of the given column.
 |------|------|-------------|
 | `result1` | [`ColumnType`][safeds.data.tabular.typing.ColumnType] | The type of the column. |
 
-??? quote "Source code in `schema.sdsstub`"
+??? quote "Stub code in `schema.sdsstub`"
 
     ```sds linenums="36"
     @Pure
@@ -96,7 +96,7 @@ Return whether the schema contains a given column.
 |------|------|-------------|
 | `result1` | [`Boolean`][safeds.lang.Boolean] | True if the schema contains the column. |
 
-??? quote "Source code in `schema.sdsstub`"
+??? quote "Stub code in `schema.sdsstub`"
 
     ```sds linenums="23"
     @Pure
@@ -116,7 +116,7 @@ Return a dictionary that maps column names to column types.
 |------|------|-------------|
 | `result1` | [`Map<String, ColumnType>`][safeds.lang.Map] | Dictionary representation of the schema. |
 
-??? quote "Source code in `schema.sdsstub`"
+??? quote "Stub code in `schema.sdsstub`"
 
     ```sds linenums="47"
     @Pure

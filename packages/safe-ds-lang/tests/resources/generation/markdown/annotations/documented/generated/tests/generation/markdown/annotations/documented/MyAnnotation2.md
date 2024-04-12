@@ -24,7 +24,7 @@ Description of MyAnnotation2.
 - `Segment`
 - `TypeParameter`
 
-??? quote "Source code in `main.sdsstub`"
+??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="14"
     annotation MyAnnotation2(param1: MyEnum1, param2: Float = 1.0)

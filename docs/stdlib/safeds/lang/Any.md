@@ -2,7 +2,7 @@
 
 The common superclass of all classes.
 
-??? quote "Source code in `coreClasses.sdsstub`"
+??? quote "Stub code in `coreClasses.sdsstub`"
 
     ```sds linenums="6"
     class Any {
@@ -26,7 +26,7 @@ Returns a string representation of the object.
 |------|------|-------------|
 | `s` | [`String`][safeds.lang.String] | - |
 
-??? quote "Source code in `coreClasses.sdsstub`"
+??? quote "Stub code in `coreClasses.sdsstub`"
 
     ```sds linenums="11"
     @Pure

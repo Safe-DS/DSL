@@ -23,7 +23,7 @@ The declaration should no longer be used.
 - `Result`
 - `Segment`
 
-??? quote "Source code in `maturity.sdsstub`"
+??? quote "Stub code in `maturity.sdsstub`"
 
     ```sds linenums="22"
     annotation Deprecated(

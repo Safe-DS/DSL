@@ -10,7 +10,7 @@ Random forest classification.
 |------|------|-------------|---------|
 | `numberOfTrees` | [`Int`][safeds.lang.Int] | The number of trees to be used in the random forest. Has to be greater than 0. | `#!sds 100` |
 
-??? quote "Source code in `random_forest.sdsstub`"
+??? quote "Stub code in `random_forest.sdsstub`"
 
     ```sds linenums="11"
     class RandomForestClassifier(
@@ -63,7 +63,7 @@ This classifier is not modified.
 |------|------|-------------|
 | `fittedClassifier` | [`RandomForestClassifier`][safeds.ml.classical.classification.RandomForestClassifier] | The fitted classifier. |
 
-??? quote "Source code in `random_forest.sdsstub`"
+??? quote "Stub code in `random_forest.sdsstub`"
 
     ```sds linenums="30"
     @Pure

@@ -10,7 +10,7 @@ reordering of calls or parallelization.
 
 - `Function`
 
-??? quote "Source code in `purity.sdsstub`"
+??? quote "Stub code in `purity.sdsstub`"
 
     ```sds linenums="12"
     annotation Pure

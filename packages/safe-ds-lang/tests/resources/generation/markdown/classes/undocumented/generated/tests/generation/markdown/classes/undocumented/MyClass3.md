@@ -8,7 +8,7 @@
 | `TypeParam2` | `#!sds Int` | - | - |
 | `TypeParam3` | `#!sds Any?` | - | `#!sds Int` |
 
-??? quote "Source code in `main.sdsstub`"
+??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="7"
     class MyClass3<TypeParam1, TypeParam2 sub Int, TypeParam3 = Int>

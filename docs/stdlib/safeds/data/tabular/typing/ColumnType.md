@@ -2,7 +2,7 @@
 
 Abstract base class for column types.
 
-??? quote "Source code in `column_type.sdsstub`"
+??? quote "Stub code in `column_type.sdsstub`"
 
     ```sds linenums="8"
     class ColumnType {
@@ -36,7 +36,7 @@ Return whether the given column type is nullable.
 |------|------|-------------|
 | `result1` | [`Boolean`][safeds.lang.Boolean] | True if the column is nullable. |
 
-??? quote "Source code in `column_type.sdsstub`"
+??? quote "Stub code in `column_type.sdsstub`"
 
     ```sds linenums="14"
     @Pure
@@ -54,7 +54,7 @@ Return whether the given column type is numeric.
 |------|------|-------------|
 | `result1` | [`Boolean`][safeds.lang.Boolean] | True if the column is numeric. |
 
-??? quote "Source code in `column_type.sdsstub`"
+??? quote "Stub code in `column_type.sdsstub`"
 
     ```sds linenums="23"
     @Pure

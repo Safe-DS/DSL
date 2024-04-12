@@ -12,7 +12,7 @@ Ada Boost classification.
 | `maximumNumberOfLearners` | [`Int`][safeds.lang.Int] | The maximum number of learners at which boosting is terminated. In case of perfect fit, the learning procedure is stopped early. Has to be greater than 0. | `#!sds 50` |
 | `learningRate` | [`Float`][safeds.lang.Float] | Weight applied to each classifier at each boosting iteration. A higher learning rate increases the contribution of each classifier. Has to be greater than 0. | `#!sds 1.0` |
 
-??? quote "Source code in `ada_boost.sdsstub`"
+??? quote "Stub code in `ada_boost.sdsstub`"
 
     ```sds linenums="15"
     class AdaBoostClassifier(
@@ -88,7 +88,7 @@ This classifier is not modified.
 |------|------|-------------|
 | `fittedClassifier` | [`AdaBoostClassifier`][safeds.ml.classical.classification.AdaBoostClassifier] | The fitted classifier. |
 
-??? quote "Source code in `ada_boost.sdsstub`"
+??? quote "Stub code in `ada_boost.sdsstub`"
 
     ```sds linenums="45"
     @Pure

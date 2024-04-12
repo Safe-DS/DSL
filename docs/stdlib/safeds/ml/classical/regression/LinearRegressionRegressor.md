@@ -4,7 +4,7 @@ Linear regression.
 
 **Parent type:** [`Regressor`][safeds.ml.classical.regression.Regressor]
 
-??? quote "Source code in `linear_regression.sdsstub`"
+??? quote "Stub code in `linear_regression.sdsstub`"
 
     ```sds linenums="9"
     class LinearRegressionRegressor() sub Regressor {
@@ -42,7 +42,7 @@ This regressor is not modified.
 |------|------|-------------|
 | `fittedRegressor` | [`LinearRegressionRegressor`][safeds.ml.classical.regression.LinearRegressionRegressor] | The fitted regressor. |
 
-??? quote "Source code in `linear_regression.sdsstub`"
+??? quote "Stub code in `linear_regression.sdsstub`"
 
     ```sds linenums="19"
     @Pure

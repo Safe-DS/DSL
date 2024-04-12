@@ -6,7 +6,7 @@
 
     - **Alternative:** Something else
 
-??? quote "Source code in `main.sdsstub`"
+??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="9"
     schema MySchema2 {}

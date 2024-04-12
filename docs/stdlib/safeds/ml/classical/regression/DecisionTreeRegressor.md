@@ -4,7 +4,7 @@ Decision tree regression.
 
 **Parent type:** [`Regressor`][safeds.ml.classical.regression.Regressor]
 
-??? quote "Source code in `decision_tree.sdsstub`"
+??? quote "Stub code in `decision_tree.sdsstub`"
 
     ```sds linenums="9"
     class DecisionTreeRegressor() sub Regressor {
@@ -42,7 +42,7 @@ This regressor is not modified.
 |------|------|-------------|
 | `fittedRegressor` | [`DecisionTreeRegressor`][safeds.ml.classical.regression.DecisionTreeRegressor] | The fitted regressor. |
 
-??? quote "Source code in `decision_tree.sdsstub`"
+??? quote "Stub code in `decision_tree.sdsstub`"
 
     ```sds linenums="19"
     @Pure

@@ -4,7 +4,7 @@ Decision tree classification.
 
 **Parent type:** [`Classifier`][safeds.ml.classical.classification.Classifier]
 
-??? quote "Source code in `decision_tree.sdsstub`"
+??? quote "Stub code in `decision_tree.sdsstub`"
 
     ```sds linenums="9"
     class DecisionTreeClassifier() sub Classifier {
@@ -42,7 +42,7 @@ This classifier is not modified.
 |------|------|-------------|
 | `fittedClassifier` | [`DecisionTreeClassifier`][safeds.ml.classical.classification.DecisionTreeClassifier] | The fitted classifier. |
 
-??? quote "Source code in `decision_tree.sdsstub`"
+??? quote "Stub code in `decision_tree.sdsstub`"
 
     ```sds linenums="19"
     @Pure

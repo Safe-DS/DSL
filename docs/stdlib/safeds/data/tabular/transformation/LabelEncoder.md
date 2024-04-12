@@ -4,7 +4,7 @@ The LabelEncoder encodes one or more given columns into labels.
 
 **Parent type:** [`InvertibleTableTransformer`][safeds.data.tabular.transformation.InvertibleTableTransformer]
 
-??? quote "Source code in `label_encoder.sdsstub`"
+??? quote "Stub code in `label_encoder.sdsstub`"
 
     ```sds linenums="9"
     class LabelEncoder() sub InvertibleTableTransformer {
@@ -45,7 +45,7 @@ This transformer is not modified.
 |------|------|-------------|
 | `result1` | [`LabelEncoder`][safeds.data.tabular.transformation.LabelEncoder] | The fitted transformer. |
 
-??? quote "Source code in `label_encoder.sdsstub`"
+??? quote "Stub code in `label_encoder.sdsstub`"
 
     ```sds linenums="20"
     @Pure

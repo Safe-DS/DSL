@@ -11,7 +11,7 @@ Support vector machine.
 | `c` | [`Float`][safeds.lang.Float] | The strength of regularization. Must be strictly positive. | `#!sds 1.0` |
 | `kernel` | [`Kernel`][safeds.ml.classical.regression.SupportVectorMachineRegressor.Kernel] | The type of kernel to be used. Defaults to None. | `#!sds SupportVectorMachineRegressor.Kernel.RadialBasisFunction` |
 
-??? quote "Source code in `support_vector_machine.sdsstub`"
+??? quote "Stub code in `support_vector_machine.sdsstub`"
 
     ```sds linenums="12"
     class SupportVectorMachineRegressor(
@@ -102,7 +102,7 @@ This regressor is not modified.
 |------|------|-------------|
 | `fittedRegressor` | [`SupportVectorMachineRegressor`][safeds.ml.classical.regression.SupportVectorMachineRegressor] | The fitted regressor. |
 
-??? quote "Source code in `support_vector_machine.sdsstub`"
+??? quote "Stub code in `support_vector_machine.sdsstub`"
 
     ```sds linenums="63"
     @Pure
@@ -115,7 +115,7 @@ This regressor is not modified.
 
 The kernel functions that can be used in the support vector machine.
 
-??? quote "Source code in `support_vector_machine.sdsstub`"
+??? quote "Stub code in `support_vector_machine.sdsstub`"
 
     ```sds linenums="21"
     enum Kernel {

@@ -12,7 +12,7 @@ Ada Boost regression.
 | `maximumNumberOfLearners` | [`Int`][safeds.lang.Int] | The maximum number of learners at which boosting is terminated. In case of perfect fit, the learning procedure is stopped early. Has to be greater than 0. | `#!sds 50` |
 | `learningRate` | [`Float`][safeds.lang.Float] | Weight applied to each regressor at each boosting iteration. A higher learning rate increases the contribution of each regressor. Has to be greater than 0. | `#!sds 1.0` |
 
-??? quote "Source code in `ada_boost.sdsstub`"
+??? quote "Stub code in `ada_boost.sdsstub`"
 
     ```sds linenums="15"
     class AdaBoostRegressor(
@@ -88,7 +88,7 @@ This regressor is not modified.
 |------|------|-------------|
 | `fittedRegressor` | [`AdaBoostRegressor`][safeds.ml.classical.regression.AdaBoostRegressor] | The fitted regressor. |
 
-??? quote "Source code in `ada_boost.sdsstub`"
+??? quote "Stub code in `ada_boost.sdsstub`"
 
     ```sds linenums="45"
     @Pure

@@ -10,7 +10,7 @@ Replace missing values with the given strategy.
 |------|------|-------------|---------|
 | `strategy` | [`Strategy`][safeds.data.tabular.transformation.Imputer.Strategy] | The strategy used to impute missing values. Use the classes nested inside `Imputer.Strategy` to specify it. | - |
 
-??? quote "Source code in `imputer.sdsstub`"
+??? quote "Stub code in `imputer.sdsstub`"
 
     ```sds linenums="11"
     class Imputer(
@@ -77,7 +77,7 @@ This transformer is not modified.
 |------|------|-------------|
 | `result1` | [`Imputer`][safeds.data.tabular.transformation.Imputer] | The fitted transformer. |
 
-??? quote "Source code in `imputer.sdsstub`"
+??? quote "Stub code in `imputer.sdsstub`"
 
     ```sds linenums="48"
     @Pure
@@ -89,7 +89,7 @@ This transformer is not modified.
 
 ## `#!sds enum` Strategy {#safeds.data.tabular.transformation.Imputer.Strategy data-toc-label='Strategy'}
 
-??? quote "Source code in `imputer.sdsstub`"
+??? quote "Stub code in `imputer.sdsstub`"
 
     ```sds linenums="14"
     enum Strategy {
