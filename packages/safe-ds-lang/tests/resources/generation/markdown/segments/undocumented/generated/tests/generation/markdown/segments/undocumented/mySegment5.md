@@ -7,7 +7,7 @@
 | `result1` | `#!sds Int` | - |
 | `result2` | `#!sds Float` | - |
 
-??? quote "Source code in `main.sdspipe`"
+??? quote "Implementation code in `main.sdspipe`"
 
     ```sds linenums="11"
     segment mySegment5() -> (result1: Int, result2: Float) {

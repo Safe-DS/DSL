@@ -1,6 +1,6 @@
 # `#!sds enum` MyEnum2 {#tests.generation.markdown.enums.undocumented.MyEnum2 data-toc-label='MyEnum2'}
 
-??? quote "Source code in `main.sdsstub`"
+??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="5"
     enum MyEnum2 {

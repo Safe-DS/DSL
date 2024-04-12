@@ -2,7 +2,7 @@
 
 Description of MyClass6.
 
-??? quote "Source code in `main.sdsstub`"
+??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="38"
     class MyClass6 {
@@ -55,7 +55,7 @@ Description of myAttribute1.
 
 Description of myFunction1.
 
-??? quote "Source code in `main.sdsstub`"
+??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="61"
     @Pure fun myFunction1()
@@ -71,7 +71,7 @@ Description of myAttribute2.
 
 Description of myFunction2.
 
-??? quote "Source code in `main.sdsstub`"
+??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="65"
     @Pure static fun myFunction2()
@@ -81,7 +81,7 @@ Description of myFunction2.
 
 Description of MyClass7.
 
-??? quote "Source code in `main.sdsstub`"
+??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="42"
     class MyClass7 {
@@ -112,7 +112,7 @@ Description of myAttribute3.
 
 Description of MyEnum1.
 
-??? quote "Source code in `main.sdsstub`"
+??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="56"
     enum MyEnum1

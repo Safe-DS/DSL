@@ -6,7 +6,7 @@ $$
 n
 $$
 
-??? quote "Source code in `main.sdsstub`"
+??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="10"
     class MyClass1

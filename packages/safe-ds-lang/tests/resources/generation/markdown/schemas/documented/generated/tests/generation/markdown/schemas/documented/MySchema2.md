@@ -9,7 +9,7 @@ Description of MySchema2.
 | `column1` | [`MyClass`][tests.generation.markdown.schemas.documented.MyClass] |
 | `column2` | `#!sds Int` |
 
-??? quote "Source code in `main.sdsstub`"
+??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="13"
     schema MySchema2 {

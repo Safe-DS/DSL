@@ -7,7 +7,7 @@
 | `param1` | `#!sds Int` | - | - |
 | `param2` | `#!sds Float` | - | `#!sds 1.0` |
 
-??? quote "Source code in `main.sdsstub`"
+??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="9"
     class MyClass4(param1: Int, param2: Float = 1.0)

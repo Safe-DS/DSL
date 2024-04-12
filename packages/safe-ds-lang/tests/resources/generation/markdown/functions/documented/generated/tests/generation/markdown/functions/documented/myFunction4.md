@@ -9,7 +9,7 @@ Description of myFunction4.
 | `result1` | [`MyClass1`][tests.generation.markdown.functions.documented.MyClass1] | Description of result1. |
 | `result2` | `#!sds Float` | Description of result2. |
 
-??? quote "Source code in `main.sdsstub`"
+??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="39"
     fun myFunction4() -> (result1: MyClass1, result2: Float)

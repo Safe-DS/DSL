@@ -37,6 +37,7 @@ import {
     getQualifiedName,
     getResults,
     getTypeParameters,
+    isImplementedDeclaration,
     isInternal,
     isPrivate,
     isStatic,
@@ -520,11 +521,12 @@ export class SafeDsMarkdownGenerator {
             start: { line: startLine, character: 0 },
             end: cstNode.range.start,
         });
+
         const text = removeLinePrefix(cstNode.text, firstLineIndent);
-
         const fileName = AstUtils.getDocument(node).uri.path.split('/').pop();
+        const kind = isImplementedDeclaration(node) ? 'Implementation' : 'Stub';
 
-        let result = `??? quote "Source code in \`${fileName}\`"\n\n`;
+        let result = `??? quote "${kind} code in \`${fileName}\`"\n\n`;
         result += indent(`\`\`\`sds linenums="${startLine + 1}"\n${text}\n\`\`\``);
 
         return result + '\n';

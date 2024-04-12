@@ -4,7 +4,7 @@
 
     This function is deprecated.
 
-??? quote "Source code in `main.sdsstub`"
+??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="5"
     fun myFunction1()
