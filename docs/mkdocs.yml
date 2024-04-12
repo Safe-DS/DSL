@@ -11,41 +11,43 @@ exclude_docs: |
 
 nav:
   - Home:
-      - README.md
+    - README.md
   - Language:
-      - language/README.md
-      - Pipeline Language:
-          - language/pipeline-language/README.md
-          - Pipelines: language/pipeline-language/pipelines.md
-          - Segments: language/pipeline-language/segments.md
-          - Statements: language/pipeline-language/statements.md
-          - Expressions: language/pipeline-language/expressions.md
-      - Common:
-          - language/common/README.md
-          - Comments: language/common/comments.md
-          - Packages: language/common/packages.md
-          - Imports: language/common/imports.md
-          - Parameters: language/common/parameters.md
-          - Results: language/common/results.md
-          - Types: language/common/types.md
-          - Variance: language/common/variance.md
-      - Stub Language:
-          - language/stub-language/README.md
-          - Classes: language/stub-language/classes.md
-          - Global Functions: language/stub-language/global-functions.md
-          - Enumerations: language/stub-language/enumerations.md
-          - Annotations: language/stub-language/annotations.md
-          - Type Parameters: language/stub-language/type-parameters.md
+    - language/README.md
+    - Pipeline Language:
+      - language/pipeline-language/README.md
+      - Pipelines: language/pipeline-language/pipelines.md
+      - Segments: language/pipeline-language/segments.md
+      - Statements: language/pipeline-language/statements.md
+      - Expressions: language/pipeline-language/expressions.md
+    - Common:
+      - language/common/README.md
+      - Comments: language/common/comments.md
+      - Packages: language/common/packages.md
+      - Imports: language/common/imports.md
+      - Parameters: language/common/parameters.md
+      - Results: language/common/results.md
+      - Types: language/common/types.md
+      - Variance: language/common/variance.md
+    - Stub Language:
+      - language/stub-language/README.md
+      - Classes: language/stub-language/classes.md
+      - Global Functions: language/stub-language/global-functions.md
+      - Enumerations: language/stub-language/enumerations.md
+      - Annotations: language/stub-language/annotations.md
+      - Type Parameters: language/stub-language/type-parameters.md
   - Standard Library: stdlib/
   - Development:
-      - Call Graph Testing: development/call-graph-testing.md
-      - Formatting Testing: development/formatting-testing.md
-      - Generation Testing: development/generation-testing.md
-      - Grammar Testing: development/grammar-testing.md
-      - Partial Evaluation Testing: development/partial-evaluation-testing.md
-      - Scoping Testing: development/scoping-testing.md
-      - Typing Testing: development/typing-testing.md
-      - Validation Testing: development/validation-testing.md
+    - Testing:
+      - Call Graph Testing: development/testing/call-graph-testing.md
+      - Formatting Testing: development/testing/formatting-testing.md
+      - Generation Testing: development/testing/generation-testing.md
+      - Grammar Testing: development/testing/grammar-testing.md
+      - Partial Evaluation Testing: development/testing/partial-evaluation-testing.md
+      - Scoping Testing: development/testing/scoping-testing.md
+      - Typing Testing: development/testing/typing-testing.md
+      - Validation Testing: development/testing/validation-testing.md
+    - Contributing 🌐: https://github.com/Safe-DS/DSL/contribute
 
 # Configuration of MkDocs & Material for MkDocs --------------------------------
 
