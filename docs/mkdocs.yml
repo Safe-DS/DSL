@@ -72,11 +72,15 @@ theme:
   features:
     - content.code.copy
     - content.tooltips
-    - navigation.tabs
     - navigation.indexes
     - navigation.instant
+    - navigation.instant.progress
+    - navigation.prune
     - navigation.sections
+    - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.top
+    - toc.follow
 
 plugins:
   - literate-nav:
