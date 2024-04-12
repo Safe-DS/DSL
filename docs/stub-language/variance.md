@@ -77,7 +77,7 @@ The variance of a [type parameter][type-parameters] can only be declared at its 
 [type-arguments]: types.md#type-arguments
 [parameters]: parameters.md
 [results]: results.md
-[classes]: ../stub-language/classes.md
-[methods]: ../stub-language/classes.md#defining-methods
-[type-parameters]: ../stub-language/type-parameters.md
-[declaration-site-variance]: ../stub-language/type-parameters.md#declaration-site-variance
+[classes]: classes.md
+[methods]: classes.md#defining-methods
+[type-parameters]: type-parameters.md
+[declaration-site-variance]: type-parameters.md#declaration-site-variance

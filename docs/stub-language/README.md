@@ -12,10 +12,10 @@ The stub language is the part of the Safe-DS DSL that is used to integrate funct
 
 Files that use the stub language must have the extension `.sdsstub`.
 
-[packages]: ../common/packages.md
-[imports]: ../common/imports.md
+[packages]: packages.md
+[imports]: imports.md
 [classes]: classes.md
 [global-functions]: global-functions.md
 [enumerations]: enumerations.md
 [annotations]: annotations.md
-[comments]: ../common/comments.md
+[comments]: comments.md

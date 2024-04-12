@@ -233,23 +233,6 @@ To now allow only instances of the [variant][variants] `#!sds SomeEnumVariant` w
 SomeEnum.SomeEnumVariant<Int>
 ```
 
-### Union Types
-
-If a declaration can have one of multiple types you can denote that with a _union type_:
-
-```sds
-union<String, Int>
-```
-
-Here is a breakdown of the syntax:
-
-- The keyword `#!sds union`.
-- An opening angle bracket.
-- A list of types, which are separated by commas. A trailing comma is allowed.
-- A closing angle bracket
-
-Note that it is preferable to write the common superclass if this is equivalent to the union type. For example, `#!sds Number` has the two subclasses `#!sds Int` and `#!sds Float`. Therefore, it is usually better to write `#!sds Number` as the type rather than `#!sds union<Int, Float>`. Use the union type only when you are not able to handle the later addition of further subclasses of `#!sds Number` other than `#!sds Int` or `#!sds Float`.
-
 ### Callable Types
 
 A _callable type_ denotes that only values that can be [called][calls] are accepted. This includes:
@@ -309,67 +292,6 @@ If exactly one result is expected, the surrounding parentheses may be also remov
 (a: Int, b: Int) -> r: Int
 ```
 
-### Unknown
-
-If the actual type of a declaration is not known, you can denote that with the special type `#!sds unknown`. However, to later use the declaration in any meaningful way, you will have to cast it to another type.
-
-## Corresponding Python Code
-
-**Note:** This section is only relevant if you are interested in the [stub language][stub-language].
-
-Optionally, [type hints][type-hints] can be used in Python to denote the type of a declaration. This is generally advisable, since IDEs can use this information to offer additional feature, like improved refactorings. Moreover, static type checker like [mypy][mypy] can detect misuse of an API without running the code. We will now briefly describe how to best use Python's [type hints][type-hints] and explain how they relate to Safe-DS types.
-
-First, to get [type hints][type-hints] in Python closer to the expected behavior, add the following import to your Python file:
-
-```py
-from __future__ import annotations
-```
-
-Also add the following import, which brings the declarations that are used by the [type hints][type-hints] into scope. You can remove any declaration you do not need:
-
-```py
-from typing import Callable, Optional, Tuple, TypeVar, Union
-```
-
-The following table shows how Safe-DS types can be written as Python [type hints][type-hints]:
-
-| Safe-DS Type                           | Python Type Hint                             |
-|----------------------------------------|----------------------------------------------|
-| `#!sds Boolean`                              | `#!py bool`                                  |
-| `#!sds Float`                                | `#!py float`                                 |
-| `#!sds Int`                                  | `#!py int`                                   |
-| `#!sds String`                               | `#!py str`                                   |
-| `#!sds SomeClass`                            | `#!py SomeClass`                             |
-| `#!sds SomeEnum`                             | `#!py SomeEnum`                              |
-| `#!sds SomeClass?`                           | `#!py Optional[SomeClass]`                   |
-| `#!sds SomeEnum?`                            | `#!py Optional[SomeEnum]`                    |
-| `#!sds SomeSpecialList<Int>`                 | `#!py SomeSpecialList[int]`                  |
-| `#!sds SomeOuterClass.SomeInnerClass`        | `#!py SomeOuterClass.SomeInnerClass`         |
-| `#!sds SomeEnum.SomeEnumVariant`             | `#!py SomeEnum.SomeEnumVariant`              |
-| `#!sds union<String, Int>`                   | `#!py Union[str, int]`                       |
-| `#!sds (a: Int, b: Int) -> r: Int`           | `#!py Callable[[int, int], int]`             |
-| `#!sds (a: Int, b: Int) -> (r: Int, s: Int)` | `#!py Callable[[int, int], Tuple[int, int]]` |
-
-Most of these are rather self-explanatory. We will, however, cover the translation of [callable types](#callable-types) in a little more detail: In Python, the type hint for a callable type has the following general syntax:
-
-```txt
-Callable[<list of parameter types>, <result type>]
-```
-
-To get the `<list of parameter types>`, simply
-
-1. convert the types of the parameters to their Python syntax,
-2. separate them all by commas,
-3. surround them by square brackets.
-
-Getting the `<result type`> depends on the number of results. If there is only a single result, simply write down its type. If there are multiple types, do this instead:
-
-1. convert the types of the results to their Python syntax,
-2. separate them all by commas,
-3. add the prefix `Tuple[`,
-4. add the suffix `]`.
-
-[variance]: variance.md
 [parameters]: parameters.md
 [results]: results.md
 [stub-language]: ../stub-language/README.md
@@ -379,13 +301,12 @@ Getting the `<result type`> depends on the number of results. If there is only a
 [variants]: ../stub-language/enumerations.md#enum-variants
 [type-parameters]: ../stub-language/type-parameters.md
 [type-parameter-bounds]: ../stub-language/type-parameters.md#bounds
-[declaration-site-variance]: ../stub-language/type-parameters.md#declaration-site-variance
 [class-constructors]: ../stub-language/classes.md
 [enum-variant-constructors]: ../stub-language/enumerations.md#constructors
 [methods]: ../stub-language/classes.md#defining-methods
 [global-functions]: ../stub-language/global-functions.md
 [member-accesses]: ../pipeline-language/expressions.md#member-access-of-enum-variants
-[null-literal]: ../pipeline-language/expressions.md#null-literal
+[null-literal]: ../pipeline-language/expressions.md#sds-null-literal
 [calls]: ../pipeline-language/expressions.md#calls
 [segments]: ../pipeline-language/segments.md
 [lambdas]: ../pipeline-language/expressions.md#lambdas

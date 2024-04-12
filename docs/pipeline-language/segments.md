@@ -121,11 +121,11 @@ val features, val target = loadMovieRatingsSample(nInstances = 1000);
 
 More information about calls can be found in the [linked document][calls].
 
-[imports]: ../common/imports.md
-[parameters]: ../common/parameters.md
-[results]: ../common/results.md
-[types]: ../common/types.md
-[packages]: ../common/packages.md
+[imports]: imports.md
+[parameters]: parameters.md
+[results]: results.md
+[types]: types.md
+[packages]: packages.md
 [statements]: statements.md
 [assignments]: statements.md#assignments
 [assignments-to-placeholders]: statements.md#declaring-placeholders
