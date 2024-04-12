@@ -23,7 +23,7 @@ nav:
     - Parameters: pipeline-language/parameters.md
     - Types: pipeline-language/types.md
     - Imports: pipeline-language/imports.md
-  - API Reference: stdlib/
+  - API Reference: api/
   - Integrating Other Libraries:
     - stub-language/README.md
     - Packages: stub-language/packages.md

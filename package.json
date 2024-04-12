@@ -15,7 +15,7 @@
         "watch": "concurrently -n tsc,cli,lang,vscode,eda -c blue,yellow,red,green \"tsc -b tsconfig.json\" \"npm run watch -w=@safe-ds/cli\" \"npm run watch -w=@safe-ds/lang\" \"npm run watch -w=safe-ds\" \"npm run watch -w=@safe-ds/eda\"",
         "test": "vitest",
         "test-with-coverage": "vitest --coverage",
-        "docs:stdlib": "safe-ds document packages/safe-ds-lang/src/resources/builtins -o docs/stdlib"
+        "docs:api": "safe-ds document packages/safe-ds-lang/src/resources/builtins -o docs/api"
     },
     "devDependencies": {
         "@lars-reimann/eslint-config-svelte": "^7.0.0",
