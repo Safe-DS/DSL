@@ -71,6 +71,7 @@ theme:
       accent: indigo
   features:
     - content.code.copy
+    - content.tabs.link
     - content.tooltips
     - navigation.indexes
     - navigation.instant
