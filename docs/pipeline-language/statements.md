@@ -135,7 +135,7 @@ Let us sum up the complete syntax of an assignment:
 
 Assignment happens by index, so the first result is assigned to the first assignee, the second result is assigned to the second assignee, and so forth. If there are more results than assignees, any trailing results are implicitly ignored.
 
-[results]: results.md
+[results]: segments.md#results
 [stub-language]: ../stub-language/README.md
 [pipeline-language]: README.md
 [expressions]: expressions.md

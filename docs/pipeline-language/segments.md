@@ -47,19 +47,62 @@ segment loadMovieRatingsSample(nInstances: Int) {
 
 More information about references can be found in the [linked document][references].
 
-### Statements
+### Results
 
-In order to describe what should be done when the segment is executed, we need to add [statements][statements] to its body. The previous example in the section ["References to Parameters"](#references-to-parameters) already contained a statement - an [expression statement][expression-statements] to be precise. Here is another example, this time showing an [assignment][assignments]:
+_Results_ define the outputs of some declaration when it is [called][calls]. Here is an example:
 
 ```sds
-segment loadMovieRatingsSample(nInstances: Int) {
-    val movieRatingsSample = loadDataset("movieRatings").sample(nInstances = 1000);
+result: Int
+```
+
+Here is a breakdown of the syntax:
+
+- The name of the result (here `#!sds result`). This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `#!sds lowerCamelCase` for the names of parameters.
+- A colon.
+- The [type][types] of the parameter (here `#!sds Int`).
+
+## Complete Example
+
+Let us now look at a full example of a [segment][segments] called `#!sds doSomething` with two results:
+
+```sds
+segment doSomething() -> (result1: Int, result2: Boolean) {
+    // ...
 }
 ```
 
-More information about statements can be found in the [linked document][statements]. Note particularly, that all statements must end with a semicolon.
+The interesting part is the list of results, which uses the following syntactic elements:
 
-### Results
+- An arrow `#!sds ->`.
+- An opening parenthesis.
+- A list of results, the syntax is as described above. They are separated by commas. A trailing commas is permitted.
+- A closing parenthesis.
+
+## Shorthand Version: Single Result
+
+In case that the callable produces only a single result, we can omit the parentheses. The following two declarations are, hence, equivalent:
+
+```sds
+segment doSomething1() -> (result: Int) {}
+```
+
+```sds
+segment doSomething2() -> result: Int {}
+```
+
+## Shorthand Version: No Results
+
+In case that the callable produces no results, we can usually omit the entire results list. The following two declarations are, hence equivalent:
+
+```sds
+segment doSomething1() -> () {}
+```
+
+```sds
+segment doSomething2() {}
+```
+
+The notable exception are [callable types][callable-types], where the result list must always be specified even when it is empty.
 
 [Results][results] (outputs) are used to return values that are produced inside the segment back to the caller. First, we show how to [declare the available results](#result-declaration) of the segment and then how to [assign a value to them](#assigning-to-results).
 
@@ -99,6 +142,18 @@ In the assignment beginning with `#!sds yield features =` we specify the value o
 
 The order of the [result declarations](#result-declaration) does not need to match the order of assignment. However, **each result must be assigned exactly once**. Note that unlike the `#!sds return` in other programming languages, `#!sds yield` does not stop the execution of the segment, which allows [assignments][assignments] to different results to be split across multiple [statements][statements].
 
+### Statements
+
+In order to describe what should be done when the segment is executed, we need to add [statements][statements] to its body. The previous example in the section ["References to Parameters"](#references-to-parameters) already contained a statement - an [expression statement][expression-statements] to be precise. Here is another example, this time showing an [assignment][assignments]:
+
+```sds
+segment loadMovieRatingsSample(nInstances: Int) {
+    val movieRatingsSample = loadDataset("movieRatings").sample(nInstances = 1000);
+}
+```
+
+More information about statements can be found in the [linked document][statements]. Note particularly, that all statements must end with a semicolon.
+
 ## Visibility
 
 By default, a segment can be [imported][imports] in any other file and reused there. We say they have public visibility. However, it is possible to restrict the visibility of a segment with modifiers:
@@ -123,7 +178,7 @@ More information about calls can be found in the [linked document][calls].
 
 [imports]: imports.md
 [parameters]: parameters.md
-[results]: results.md
+[results]: segments.md#results
 [types]: types.md
 [packages]: packages.md
 [statements]: statements.md
@@ -134,3 +189,6 @@ More information about calls can be found in the [linked document][calls].
 [lambdas]: expressions.md#lambdas
 [references]: expressions.md#references
 [pipelines]: pipelines.md
+
+[stub-language]: ../stub-language/README.md
+[callable-types]: types.md#callable-types

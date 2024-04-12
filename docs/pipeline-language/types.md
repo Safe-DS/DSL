@@ -293,7 +293,7 @@ If exactly one result is expected, the surrounding parentheses may be also remov
 ```
 
 [parameters]: parameters.md
-[results]: results.md
+[results]: segments.md#results
 [stub-language]: ../stub-language/README.md
 [classes]: ../stub-language/classes.md
 [subclassing]: ../stub-language/classes.md#subclassing

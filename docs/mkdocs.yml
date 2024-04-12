@@ -12,7 +12,7 @@ exclude_docs: |
 nav:
   - Home:
     - README.md
-  - Pipeline Language:
+  - Language Reference:
     - pipeline-language/README.md
     - Packages: pipeline-language/packages.md
     - Pipelines: pipeline-language/pipelines.md
@@ -21,11 +21,10 @@ nav:
     - Comments: pipeline-language/comments.md
     - Segments: pipeline-language/segments.md
     - Parameters: pipeline-language/parameters.md
-    - Results: pipeline-language/results.md
     - Types: pipeline-language/types.md
     - Imports: pipeline-language/imports.md
-  - Standard Library: stdlib/
-  - Stub Language:
+  - API Reference: stdlib/
+  - Integrating Other Libraries:
     - stub-language/README.md
     - Packages: stub-language/packages.md
     - Imports: stub-language/imports.md

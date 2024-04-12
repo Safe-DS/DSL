@@ -606,7 +606,7 @@ If the default precedence of operators is not sufficient, parentheses can be use
 [packages]: packages.md
 [parameters]: parameters.md
 [required-parameters]: parameters.md#required-parameters
-[results]: results.md
+[results]: segments.md#results
 [types]: types.md
 [callable-types]: types.md#callable-types
 [classes]: ../stub-language/classes.md
