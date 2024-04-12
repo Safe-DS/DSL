@@ -15,7 +15,7 @@ segment loadMovieRatingsSample() {}
 This declaration of a segment has the following syntactic elements:
 
 - The keyword `#!sds segment`.
-- The name of the segment, here `#!sds loadMovieRatingsSample`. This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `#!sds lowerCamelCase` for the names of segments.
+- The name of the segment, here `#!sds loadMovieRatingsSample`. This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest using `#!sds lowerCamelCase` for the names of segments.
 - The list of parameters (i.e. inputs) of the segment. This is delimited by parentheses. In the example above, the segment has no parameters.
 - The _body_ of the segment, which contains the [statements][statements] that should be run when the segment is [called](#calling-a-segment). The body is delimited by curly braces. In this example, the body is empty, so running this segment does nothing.
 

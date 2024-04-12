@@ -15,7 +15,7 @@ pipeline predictSpeed {}
 This declaration of a pipeline has the following syntactic elements:
 
 - The keyword `#!sds pipeline`.
-- The name of the pipeline, here `#!sds predictSpeed`, which can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `#!sds lowerCamelCase` for the names of pipelines.
+- The name of the pipeline, here `#!sds predictSpeed`, which can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest using `#!sds lowerCamelCase` for the names of pipelines.
 - The body of the pipeline, which contains the [statements][statements] that should be run when the pipeline is executed. The body is delimited by curly braces. In this example, the body is empty, so running this pipeline does nothing.
 
 ### Statements
