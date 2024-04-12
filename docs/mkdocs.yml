@@ -17,9 +17,9 @@ nav:
     - Pipeline Language:
       - language/pipeline-language/README.md
       - Pipelines: language/pipeline-language/pipelines.md
-      - Segments: language/pipeline-language/segments.md
       - Statements: language/pipeline-language/statements.md
       - Expressions: language/pipeline-language/expressions.md
+      - Segments: language/pipeline-language/segments.md
     - Common:
       - language/common/README.md
       - Comments: language/common/comments.md
