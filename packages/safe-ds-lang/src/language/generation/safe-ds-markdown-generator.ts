@@ -544,7 +544,9 @@ export class SafeDsMarkdownGenerator {
             options.destination,
             details.map((document) => URI.parse(document.uri)),
         );
-        const content = this.describeSummary('', summary);
+
+        const frontMatter = `---\nsearch:\n  exclude: true\n---\n\n`;
+        const content = frontMatter + this.describeSummary('', summary);
 
         return TextDocument.create(uri, 'md', 0, content);
     }
