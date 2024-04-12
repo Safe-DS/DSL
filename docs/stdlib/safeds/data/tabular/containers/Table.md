@@ -20,7 +20,7 @@ Note: When removing the last column of the table, the `number_of_columns` proper
 |------|------|-------------|---------|
 | `data` | [`Map<String, List<Any>>?`][safeds.lang.Map] | The data. If None, an empty table is created. | `#!sds null` |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="25"
     class Table(
@@ -780,7 +780,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The table with the column attached. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="201"
     @Pure
@@ -808,7 +808,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A new table combining the original table and the given columns. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="216"
     @Pure
@@ -841,7 +841,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A new table with the added row at the end. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="236"
     @Pure
@@ -872,7 +872,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A new table which combines the original table and the given rows. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="254"
     @Pure
@@ -900,7 +900,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A table containing only the rows filtered by the query. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="269"
     @Pure
@@ -926,7 +926,7 @@ Return a column with the data of the specified column.
 |------|------|-------------|
 | `result1` | [`Column<Any?>`][safeds.data.tabular.containers.Column] | The column. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="134"
     @Pure
@@ -954,7 +954,7 @@ Alias for self.schema.get_type_of_column(column_name: str) -> ColumnType.
 |------|------|-------------|
 | `result1` | [`ColumnType`][safeds.data.tabular.typing.ColumnType] | The type of the column. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="164"
     @Pure
@@ -980,7 +980,7 @@ Return the row at a specified index.
 |------|------|-------------|
 | `result1` | [`Row`][safeds.data.tabular.containers.Row] | The row of the table at the index. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="177"
     @Pure
@@ -1014,7 +1014,7 @@ The original table is not modified.
 |------|-------------|-------------|---------|
 | `T` | [`Any?`][safeds.lang.Any] | - | - |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="284"
     @Pure
@@ -1042,7 +1042,7 @@ Alias for self.schema.hasColumn(column_name: str) -> bool.
 |------|------|-------------|
 | `result1` | [`Boolean`][safeds.lang.Boolean] | True if the column exists. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="149"
     @Pure
@@ -1070,7 +1070,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The original table. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="591"
     @Pure
@@ -1100,7 +1100,7 @@ Note: When removing the last column of the table, the `number_of_columns` proper
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A table containing only the given column(s). |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="301"
     @Pure
@@ -1120,7 +1120,7 @@ Plot a boxplot for every numerical column.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="644"
     @Pure
@@ -1138,7 +1138,7 @@ Plot a correlation heatmap for all numerical columns of this `Table`.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="602"
     @Pure
@@ -1156,7 +1156,7 @@ Plot a histogram for every column.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="653"
     @Pure
@@ -1184,7 +1184,7 @@ and the lower-transparency area around the line representing the 95% confidence 
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="617"
     @Pure
@@ -1212,7 +1212,7 @@ Plot two columns against each other in a scatterplot.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="632"
     @Pure
@@ -1243,7 +1243,7 @@ Note: When removing the last column of the table, the `number_of_columns` proper
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A table without the given columns. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="318"
     @Pure
@@ -1267,7 +1267,7 @@ Note: When removing the last column of the table, the `number_of_columns` proper
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A table without the columns that contain missing values. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="333"
     @Pure
@@ -1289,7 +1289,7 @@ Note: When removing the last column of the table, the `number_of_columns` proper
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A table without the columns that contain non-numerical values. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="346"
     @Pure
@@ -1309,7 +1309,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The table with the duplicate rows removed. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="357"
     @Pure
@@ -1329,7 +1329,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A table without the rows that contain missing values. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="368"
     @Pure
@@ -1353,7 +1353,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A new table without rows containing outliers. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="383"
     @Pure
@@ -1380,7 +1380,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The Table with the renamed column. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="397"
     @Pure
@@ -1412,7 +1412,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A table with the old column replaced by the new columns. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="416"
     @Pure
@@ -1435,7 +1435,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The shuffled Table. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="430"
     @Pure
@@ -1463,7 +1463,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The resulting table. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="445"
     @Pure
@@ -1502,7 +1502,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A new table with sorted columns. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="471"
     @Pure
@@ -1537,7 +1537,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A new table with sorted rows. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="493"
     @Pure
@@ -1566,7 +1566,7 @@ The original table is not modified.
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A tuple containing the two resulting tables. The first table has the specified size, the second table contains the rest of the data. |
 | `result2` | [`Table`][safeds.data.tabular.containers.Table] | A tuple containing the two resulting tables. The first table has the specified size, the second table contains the rest of the data. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="511"
     @Pure
@@ -1588,7 +1588,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The table with statistics. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="190"
     @Pure
@@ -1615,7 +1615,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A new tagged table with the given target and feature names. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="527"
     @Pure
@@ -1646,7 +1646,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A new time series with the given target, time and feature names. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="545"
     @Pure
@@ -1668,7 +1668,7 @@ Return a list of the columns.
 |------|------|-------------|
 | `result1` | [`List<Column<Any?>>`][safeds.lang.List] | List of columns. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="723"
     @Pure
@@ -1689,7 +1689,7 @@ overwritten.
 |------|------|-------------|---------|
 | `path` | [`String`][safeds.lang.String] | The path to the output file. | - |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="665"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
@@ -1709,7 +1709,7 @@ Return a dictionary that maps column names to column values.
 |------|------|-------------|
 | `result1` | [`Map<String, List<Any>>`][safeds.lang.Map] | Dictionary representation of the table. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="705"
     @Pure
@@ -1731,7 +1731,7 @@ overwritten.
 |------|------|-------------|---------|
 | `path` | [`String`][safeds.lang.String] | The path to the output file. | - |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="680"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
@@ -1751,7 +1751,7 @@ Return an HTML representation of the table.
 |------|------|-------------|
 | `result1` | [`String`][safeds.lang.String] | The generated HTML. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="714"
     @Pure
@@ -1772,7 +1772,7 @@ overwritten.
 |------|------|-------------|---------|
 | `path` | [`String`][safeds.lang.String] | The path to the output file. | - |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="694"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
@@ -1792,7 +1792,7 @@ Return a list of the rows.
 |------|------|-------------|
 | `result1` | [`List<Row>`][safeds.lang.List] | List of rows. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="732"
     @Pure
@@ -1819,7 +1819,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The table with the transformed column. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="560"
     @Pure
@@ -1848,7 +1848,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The transformed table. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="576"
     @Pure
@@ -1874,7 +1874,7 @@ Return a table created from a list of columns.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The generated table. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="108"
     @Pure
@@ -1900,7 +1900,7 @@ Read data from a CSV file into a table.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The table created from the CSV file. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="54"
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
@@ -1926,7 +1926,7 @@ Create a table from a dictionary that maps column names to column values.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The generated table. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="95"
     @Pure
@@ -1954,7 +1954,7 @@ Valid file extensions are `.xls`, `.xlsx`, `.xlsm`, `.xlsb`, `.odf`, `.ods` and 
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The table created from the Excel file. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="69"
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
@@ -1980,7 +1980,7 @@ Read data from a JSON file into a table.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The table created from the JSON file. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="82"
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
@@ -2006,7 +2006,7 @@ Return a table created from a list of rows.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The generated table. |
 
-??? quote "Source code in `table.sdsstub`"
+??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="121"
     @Pure

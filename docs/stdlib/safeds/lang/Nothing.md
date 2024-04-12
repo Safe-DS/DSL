@@ -2,7 +2,7 @@
 
 The common subclass of all classes.
 
-??? quote "Source code in `coreClasses.sdsstub`"
+??? quote "Stub code in `coreClasses.sdsstub`"
 
     ```sds linenums="19"
     class Nothing

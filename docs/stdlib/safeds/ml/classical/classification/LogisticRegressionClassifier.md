@@ -4,7 +4,7 @@ Regularized logistic regression.
 
 **Parent type:** [`Classifier`][safeds.ml.classical.classification.Classifier]
 
-??? quote "Source code in `logistic_regression.sdsstub`"
+??? quote "Stub code in `logistic_regression.sdsstub`"
 
     ```sds linenums="9"
     class LogisticRegressionClassifier() sub Classifier {
@@ -42,7 +42,7 @@ This classifier is not modified.
 |------|------|-------------|
 | `fittedClassifier` | [`LogisticRegressionClassifier`][safeds.ml.classical.classification.LogisticRegressionClassifier] | The fitted classifier. |
 
-??? quote "Source code in `logistic_regression.sdsstub`"
+??? quote "Stub code in `logistic_regression.sdsstub`"
 
     ```sds linenums="19"
     @Pure

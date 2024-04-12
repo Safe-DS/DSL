@@ -7,7 +7,7 @@
 | `outputSize` | [`Int`][safeds.lang.Int] | The number of neurons in this layer | - |
 | `inputSize` | [`Int?`][safeds.lang.Int] | The number of neurons in the previous layer | `#!sds null` |
 
-??? quote "Source code in `layer.sdsstub`"
+??? quote "Stub code in `layer.sdsstub`"
 
     ```sds linenums="7"
     class FNNLayer(

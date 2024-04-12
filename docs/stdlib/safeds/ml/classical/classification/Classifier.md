@@ -2,7 +2,7 @@
 
 Abstract base class for all classifiers.
 
-??? quote "Source code in `classifier.sdsstub`"
+??? quote "Stub code in `classifier.sdsstub`"
 
     ```sds linenums="8"
     class Classifier {
@@ -117,7 +117,7 @@ Compute the accuracy of the classifier on the given data.
 |------|------|-------------|
 | `accuracy` | [`Float`][safeds.lang.Float] | The calculated accuracy score, i.e. the percentage of equal data. |
 
-??? quote "Source code in `classifier.sdsstub`"
+??? quote "Stub code in `classifier.sdsstub`"
 
     ```sds linenums="51"
     @Pure
@@ -143,7 +143,7 @@ Compute the classifier's $F_1$-score on the given data.
 |------|------|-------------|
 | `f1Score` | [`Float`][safeds.lang.Float] | The calculated $F_1$-score, i.e. the harmonic mean between precision and recall. Return 1 if there are no positive expectations and predictions. |
 
-??? quote "Source code in `classifier.sdsstub`"
+??? quote "Stub code in `classifier.sdsstub`"
 
     ```sds linenums="95"
     @Pure
@@ -172,7 +172,7 @@ This classifier is not modified.
 |------|------|-------------|
 | `fittedClassifier` | [`Classifier`][safeds.ml.classical.classification.Classifier] | The fitted classifier. |
 
-??? quote "Source code in `classifier.sdsstub`"
+??? quote "Stub code in `classifier.sdsstub`"
 
     ```sds linenums="18"
     @Pure
@@ -191,7 +191,7 @@ Check if the classifier is fitted.
 |------|------|-------------|
 | `isFitted` | [`Boolean`][safeds.lang.Boolean] | Whether the classifier is fitted. |
 
-??? quote "Source code in `classifier.sdsstub`"
+??? quote "Stub code in `classifier.sdsstub`"
 
     ```sds linenums="40"
     @Pure
@@ -216,7 +216,7 @@ Compute the classifier's precision on the given data.
 |------|------|-------------|
 | `precision` | [`Float`][safeds.lang.Float] | The calculated precision score, i.e. the ratio of correctly predicted positives to all predicted positives. Return 1 if no positive predictions are made. |
 
-??? quote "Source code in `classifier.sdsstub`"
+??? quote "Stub code in `classifier.sdsstub`"
 
     ```sds linenums="65"
     @Pure
@@ -242,7 +242,7 @@ Predict a target vector using a dataset containing feature vectors. The model ha
 |------|------|-------------|
 | `prediction` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A dataset containing the given feature vectors and the predicted target vector. |
 
-??? quote "Source code in `classifier.sdsstub`"
+??? quote "Stub code in `classifier.sdsstub`"
 
     ```sds linenums="30"
     @Pure
@@ -268,7 +268,7 @@ Compute the classifier's recall on the given data.
 |------|------|-------------|
 | `recall` | [`Float`][safeds.lang.Float] | The calculated recall score, i.e. the ratio of correctly predicted positives to all expected positives. Return 1 if there are no positive expectations. |
 
-??? quote "Source code in `classifier.sdsstub`"
+??? quote "Stub code in `classifier.sdsstub`"
 
     ```sds linenums="80"
     @Pure

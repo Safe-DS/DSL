@@ -10,7 +10,7 @@ Random forest regression.
 |------|------|-------------|---------|
 | `numberOfTrees` | [`Int`][safeds.lang.Int] | The number of trees to be used in the random forest. Has to be greater than 0. | `#!sds 100` |
 
-??? quote "Source code in `random_forest.sdsstub`"
+??? quote "Stub code in `random_forest.sdsstub`"
 
     ```sds linenums="11"
     class RandomForestRegressor(
@@ -63,7 +63,7 @@ This regressor is not modified.
 |------|------|-------------|
 | `fittedRegressor` | [`RandomForestRegressor`][safeds.ml.classical.regression.RandomForestRegressor] | The fitted regressor. |
 
-??? quote "Source code in `random_forest.sdsstub`"
+??? quote "Stub code in `random_forest.sdsstub`"
 
     ```sds linenums="30"
     @Pure

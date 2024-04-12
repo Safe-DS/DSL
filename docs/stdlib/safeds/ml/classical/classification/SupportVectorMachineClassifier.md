@@ -11,7 +11,7 @@ Support vector machine.
 | `c` | [`Float`][safeds.lang.Float] | The strength of regularization. Must be strictly positive. | `#!sds 1.0` |
 | `kernel` | [`Kernel`][safeds.ml.classical.classification.SupportVectorMachineClassifier.Kernel] | The type of kernel to be used. Defaults to None. | `#!sds SupportVectorMachineClassifier.Kernel.RadialBasisFunction` |
 
-??? quote "Source code in `support_vector_machine.sdsstub`"
+??? quote "Stub code in `support_vector_machine.sdsstub`"
 
     ```sds linenums="12"
     class SupportVectorMachineClassifier(
@@ -102,7 +102,7 @@ This classifier is not modified.
 |------|------|-------------|
 | `fittedClassifier` | [`SupportVectorMachineClassifier`][safeds.ml.classical.classification.SupportVectorMachineClassifier] | The fitted classifier. |
 
-??? quote "Source code in `support_vector_machine.sdsstub`"
+??? quote "Stub code in `support_vector_machine.sdsstub`"
 
     ```sds linenums="63"
     @Pure
@@ -115,7 +115,7 @@ This classifier is not modified.
 
 The kernel functions that can be used in the support vector machine.
 
-??? quote "Source code in `support_vector_machine.sdsstub`"
+??? quote "Stub code in `support_vector_machine.sdsstub`"
 
     ```sds linenums="21"
     enum Kernel {

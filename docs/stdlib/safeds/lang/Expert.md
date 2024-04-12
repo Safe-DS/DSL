@@ -6,7 +6,7 @@ This parameter should only be used by expert users.
 
 - `Parameter`
 
-??? quote "Source code in `ideIntegration.sdsstub`"
+??? quote "Stub code in `ideIntegration.sdsstub`"
 
     ```sds linenums="8"
     annotation Expert

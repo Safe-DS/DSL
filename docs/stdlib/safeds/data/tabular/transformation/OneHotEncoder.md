@@ -27,7 +27,7 @@ One-hot encoding is closely related to dummy variable / indicator variables, whi
 
 **Parent type:** [`InvertibleTableTransformer`][safeds.data.tabular.transformation.InvertibleTableTransformer]
 
-??? quote "Source code in `one_hot_encoder.sdsstub`"
+??? quote "Stub code in `one_hot_encoder.sdsstub`"
 
     ```sds linenums="32"
     class OneHotEncoder() sub InvertibleTableTransformer {
@@ -68,7 +68,7 @@ This transformer is not modified.
 |------|------|-------------|
 | `result1` | [`OneHotEncoder`][safeds.data.tabular.transformation.OneHotEncoder] | The fitted transformer. |
 
-??? quote "Source code in `one_hot_encoder.sdsstub`"
+??? quote "Stub code in `one_hot_encoder.sdsstub`"
 
     ```sds linenums="43"
     @Pure

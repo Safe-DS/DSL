@@ -8,7 +8,7 @@ A list of elements.
 |------|-------------|-------------|---------|
 | `E` | [`Any?`][safeds.lang.Any] | - | - |
 
-??? quote "Source code in `coreClasses.sdsstub`"
+??? quote "Stub code in `coreClasses.sdsstub`"
 
     ```sds linenums="58"
     class List<out E> {
@@ -32,7 +32,7 @@ Returns the number of elements in the list.
 |------|------|-------------|
 | `size` | [`Int`][safeds.lang.Int] | - |
 
-??? quote "Source code in `coreClasses.sdsstub`"
+??? quote "Stub code in `coreClasses.sdsstub`"
 
     ```sds linenums="63"
     @Pure

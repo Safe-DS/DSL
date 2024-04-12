@@ -6,7 +6,7 @@
 |------|------|-------------|---------|
 | `layers` | [`List<FNNLayer>`][safeds.lang.List] | - | - |
 
-??? quote "Source code in `regressor.sdsstub`"
+??? quote "Stub code in `regressor.sdsstub`"
 
     ```sds linenums="6"
     class NeuralNetworkRegressor(
@@ -86,7 +86,7 @@ The original model is not modified.
 |------|------|-------------|
 | `trainedRegressor` | [`NeuralNetworkRegressor`][safeds.ml.nn.NeuralNetworkRegressor] | The trained Model |
 
-??? quote "Source code in `regressor.sdsstub`"
+??? quote "Stub code in `regressor.sdsstub`"
 
     ```sds linenums="27"
     @Pure
@@ -120,7 +120,7 @@ The original Model is not modified.
 |------|------|-------------|
 | `prediction` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The given test_data with an added "prediction" column at the end |
 
-??? quote "Source code in `regressor.sdsstub`"
+??? quote "Stub code in `regressor.sdsstub`"
 
     ```sds linenums="48"
     @Pure

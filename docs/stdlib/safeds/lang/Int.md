@@ -4,7 +4,7 @@ An integer.
 
 **Parent type:** [`Number`][safeds.lang.Number]
 
-??? quote "Source code in `coreClasses.sdsstub`"
+??? quote "Stub code in `coreClasses.sdsstub`"
 
     ```sds linenums="34"
     class Int sub Number {
@@ -27,7 +27,7 @@ Converts this integer to a floating-point number.
 |------|------|-------------|
 | `f` | [`Float`][safeds.lang.Float] | - |
 
-??? quote "Source code in `coreClasses.sdsstub`"
+??? quote "Stub code in `coreClasses.sdsstub`"
 
     ```sds linenums="38"
     @Pure

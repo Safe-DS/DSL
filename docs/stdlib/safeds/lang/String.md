@@ -2,7 +2,7 @@
 
 Some text.
 
-??? quote "Source code in `coreClasses.sdsstub`"
+??? quote "Stub code in `coreClasses.sdsstub`"
 
     ```sds linenums="98"
     class String {
@@ -35,7 +35,7 @@ Parses the string to a floating-point number.
 |------|------|-------------|
 | `f` | [`Float`][safeds.lang.Float] | - |
 
-??? quote "Source code in `coreClasses.sdsstub`"
+??? quote "Stub code in `coreClasses.sdsstub`"
 
     ```sds linenums="103"
     @Pure
@@ -59,7 +59,7 @@ Parses the string to an integer.
 |------|------|-------------|
 | `i` | [`Int`][safeds.lang.Int] | - |
 
-??? quote "Source code in `coreClasses.sdsstub`"
+??? quote "Stub code in `coreClasses.sdsstub`"
 
     ```sds linenums="112"
     @Pure

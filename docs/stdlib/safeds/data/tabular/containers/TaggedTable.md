@@ -12,7 +12,7 @@ A tagged table is a table that additionally knows which columns are features and
 | `targetName` | [`String`][safeds.lang.String] | Name of the target column. | - |
 | `featureNames` | [`List<String>?`][safeds.lang.List] | Names of the feature columns. If None, all columns except the target column are used. | `#!sds null` |
 
-??? quote "Source code in `tagged_table.sdsstub`"
+??? quote "Stub code in `tagged_table.sdsstub`"
 
     ```sds linenums="12"
     class TaggedTable(
@@ -383,7 +383,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The table with the column attached as neither target nor feature column. |
 
-??? quote "Source code in `tagged_table.sdsstub`"
+??? quote "Stub code in `tagged_table.sdsstub`"
 
     ```sds linenums="65"
     @Pure
@@ -411,7 +411,7 @@ the original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The table with the attached feature column. |
 
-??? quote "Source code in `tagged_table.sdsstub`"
+??? quote "Stub code in `tagged_table.sdsstub`"
 
     ```sds linenums="35"
     @Pure
@@ -439,7 +439,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A new table combining the original table and the given columns as neither target nor feature columns. |
 
-??? quote "Source code in `tagged_table.sdsstub`"
+??? quote "Stub code in `tagged_table.sdsstub`"
 
     ```sds linenums="80"
     @Pure
@@ -467,7 +467,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The table with the attached feature columns. |
 
-??? quote "Source code in `tagged_table.sdsstub`"
+??? quote "Stub code in `tagged_table.sdsstub`"
 
     ```sds linenums="50"
     @Pure
@@ -495,7 +495,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A new tagged table with the added row at the end. |
 
-??? quote "Source code in `tagged_table.sdsstub`"
+??? quote "Stub code in `tagged_table.sdsstub`"
 
     ```sds linenums="95"
     @Pure
@@ -523,7 +523,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A new tagged table which combines the original table and the given rows. |
 
-??? quote "Source code in `tagged_table.sdsstub`"
+??? quote "Stub code in `tagged_table.sdsstub`"
 
     ```sds linenums="110"
     @Pure
@@ -551,7 +551,7 @@ The original tagged table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A new tagged table containing only the rows to match the query. |
 
-??? quote "Source code in `tagged_table.sdsstub`"
+??? quote "Stub code in `tagged_table.sdsstub`"
 
     ```sds linenums="125"
     @Pure
@@ -579,7 +579,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A table containing only the given column(s). |
 
-??? quote "Source code in `tagged_table.sdsstub`"
+??? quote "Stub code in `tagged_table.sdsstub`"
 
     ```sds linenums="140"
     @Pure
@@ -607,7 +607,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A table without the given columns. |
 
-??? quote "Source code in `tagged_table.sdsstub`"
+??? quote "Stub code in `tagged_table.sdsstub`"
 
     ```sds linenums="155"
     @Pure
@@ -629,7 +629,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A table without the columns that contain missing values. |
 
-??? quote "Source code in `tagged_table.sdsstub`"
+??? quote "Stub code in `tagged_table.sdsstub`"
 
     ```sds linenums="168"
     @Pure
@@ -649,7 +649,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A table without the columns that contain non-numerical values. |
 
-??? quote "Source code in `tagged_table.sdsstub`"
+??? quote "Stub code in `tagged_table.sdsstub`"
 
     ```sds linenums="179"
     @Pure
@@ -669,7 +669,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The table with the duplicate rows removed. |
 
-??? quote "Source code in `tagged_table.sdsstub`"
+??? quote "Stub code in `tagged_table.sdsstub`"
 
     ```sds linenums="190"
     @Pure
@@ -689,7 +689,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A table without the rows that contain missing values. |
 
-??? quote "Source code in `tagged_table.sdsstub`"
+??? quote "Stub code in `tagged_table.sdsstub`"
 
     ```sds linenums="201"
     @Pure
@@ -713,7 +713,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A new table without rows containing outliers. |
 
-??? quote "Source code in `tagged_table.sdsstub`"
+??? quote "Stub code in `tagged_table.sdsstub`"
 
     ```sds linenums="216"
     @Pure
@@ -740,7 +740,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The Table with the renamed column. |
 
-??? quote "Source code in `tagged_table.sdsstub`"
+??? quote "Stub code in `tagged_table.sdsstub`"
 
     ```sds linenums="230"
     @Pure
@@ -774,7 +774,7 @@ The order of columns is kept. The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A table with the old column replaced by the new column. |
 
-??? quote "Source code in `tagged_table.sdsstub`"
+??? quote "Stub code in `tagged_table.sdsstub`"
 
     ```sds linenums="251"
     @Pure
@@ -797,7 +797,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The shuffled Table. |
 
-??? quote "Source code in `tagged_table.sdsstub`"
+??? quote "Stub code in `tagged_table.sdsstub`"
 
     ```sds linenums="265"
     @Pure
@@ -825,7 +825,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The resulting table. |
 
-??? quote "Source code in `tagged_table.sdsstub`"
+??? quote "Stub code in `tagged_table.sdsstub`"
 
     ```sds linenums="280"
     @Pure
@@ -864,7 +864,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A new table with sorted columns. |
 
-??? quote "Source code in `tagged_table.sdsstub`"
+??? quote "Stub code in `tagged_table.sdsstub`"
 
     ```sds linenums="306"
     @Pure
@@ -899,7 +899,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A new table with sorted rows. |
 
-??? quote "Source code in `tagged_table.sdsstub`"
+??? quote "Stub code in `tagged_table.sdsstub`"
 
     ```sds linenums="328"
     @Pure
@@ -928,7 +928,7 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The table with the transformed column. |
 
-??? quote "Source code in `tagged_table.sdsstub`"
+??? quote "Stub code in `tagged_table.sdsstub`"
 
     ```sds linenums="341"
     @Pure

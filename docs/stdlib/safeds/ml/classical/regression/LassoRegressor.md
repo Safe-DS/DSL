@@ -10,7 +10,7 @@ Lasso regression.
 |------|------|-------------|---------|
 | `alpha` | [`Float`][safeds.lang.Float] | Controls the regularization of the model. The higher the value, the more regularized it becomes. | `#!sds 1.0` |
 
-??? quote "Source code in `lasso_regression.sdsstub`"
+??? quote "Stub code in `lasso_regression.sdsstub`"
 
     ```sds linenums="11"
     class LassoRegressor(
@@ -63,7 +63,7 @@ This regressor is not modified.
 |------|------|-------------|
 | `fittedRegressor` | [`LassoRegressor`][safeds.ml.classical.regression.LassoRegressor] | The fitted regressor. |
 
-??? quote "Source code in `lasso_regression.sdsstub`"
+??? quote "Stub code in `lasso_regression.sdsstub`"
 
     ```sds linenums="30"
     @Pure

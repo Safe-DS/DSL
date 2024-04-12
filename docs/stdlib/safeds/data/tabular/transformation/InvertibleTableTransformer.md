@@ -4,7 +4,7 @@ A `TableTransformer` that can also undo the learned transformation after it has 
 
 **Parent type:** [`TableTransformer`][safeds.data.tabular.transformation.TableTransformer]
 
-??? quote "Source code in `table_transformer.sdsstub`"
+??? quote "Stub code in `table_transformer.sdsstub`"
 
     ```sds linenums="96"
     class InvertibleTableTransformer sub TableTransformer {
@@ -56,7 +56,7 @@ Learn a transformation for a set of columns in a table.
 |------|------|-------------|
 | `result1` | [`InvertibleTableTransformer`][safeds.data.tabular.transformation.InvertibleTableTransformer] | The fitted transformer. |
 
-??? quote "Source code in `table_transformer.sdsstub`"
+??? quote "Stub code in `table_transformer.sdsstub`"
 
     ```sds linenums="105"
     @Pure
@@ -84,7 +84,7 @@ The table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The original table. |
 
-??? quote "Source code in `table_transformer.sdsstub`"
+??? quote "Stub code in `table_transformer.sdsstub`"
 
     ```sds linenums="120"
     @Pure

@@ -2,7 +2,7 @@
 
 The declaration types that can be targeted by annotations.
 
-??? quote "Source code in `annotationUsage.sdsstub`"
+??? quote "Stub code in `annotationUsage.sdsstub`"
 
     ```sds linenums="16"
     enum AnnotationTarget {

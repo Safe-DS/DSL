@@ -12,7 +12,7 @@ Indicates that the function has side effects and/or does not always return the s
 
 - `Function`
 
-??? quote "Source code in `purity.sdsstub`"
+??? quote "Stub code in `purity.sdsstub`"
 
     ```sds linenums="22"
     annotation Impure(allReasons: List<ImpurityReason>)

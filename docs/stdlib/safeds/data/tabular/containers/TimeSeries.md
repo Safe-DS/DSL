@@ -11,7 +11,7 @@
 | `timeName` | [`String`][safeds.lang.String] | Name of the time column | - |
 | `featureNames` | [`List<String>?`][safeds.lang.List] | Names of the feature columns. If None, all columns except the target and time columns are used. | `#!sds null` |
 
-??? quote "Source code in `time_series.sdsstub`"
+??? quote "Stub code in `time_series.sdsstub`"
 
     ```sds linenums="12"
     class TimeSeries(
@@ -412,7 +412,7 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | The time series with the column attached as neither target nor feature column. |
 
-??? quote "Source code in `time_series.sdsstub`"
+??? quote "Stub code in `time_series.sdsstub`"
 
     ```sds linenums="40"
     @Pure
@@ -440,7 +440,7 @@ the original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | The time series with the attached feature column. |
 
-??? quote "Source code in `time_series.sdsstub`"
+??? quote "Stub code in `time_series.sdsstub`"
 
     ```sds linenums="55"
     @Pure
@@ -468,7 +468,7 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A new time series combining the original table and the given columns as neither target nor feature columns. |
 
-??? quote "Source code in `time_series.sdsstub`"
+??? quote "Stub code in `time_series.sdsstub`"
 
     ```sds linenums="85"
     @Pure
@@ -496,7 +496,7 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | The time series with the attached feature columns. |
 
-??? quote "Source code in `time_series.sdsstub`"
+??? quote "Stub code in `time_series.sdsstub`"
 
     ```sds linenums="70"
     @Pure
@@ -524,7 +524,7 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A new time series with the added row at the end. |
 
-??? quote "Source code in `time_series.sdsstub`"
+??? quote "Stub code in `time_series.sdsstub`"
 
     ```sds linenums="100"
     @Pure
@@ -552,7 +552,7 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A new time series which combines the original time series and the given rows. |
 
-??? quote "Source code in `time_series.sdsstub`"
+??? quote "Stub code in `time_series.sdsstub`"
 
     ```sds linenums="115"
     @Pure
@@ -580,7 +580,7 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A time series containing only the rows to match the query. |
 
-??? quote "Source code in `time_series.sdsstub`"
+??? quote "Stub code in `time_series.sdsstub`"
 
     ```sds linenums="130"
     @Pure
@@ -608,7 +608,7 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A time series containing only the given column(s). |
 
-??? quote "Source code in `time_series.sdsstub`"
+??? quote "Stub code in `time_series.sdsstub`"
 
     ```sds linenums="145"
     @Pure
@@ -634,7 +634,7 @@ Plot a lagplot for the target column.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
-??? quote "Source code in `time_series.sdsstub`"
+??? quote "Stub code in `time_series.sdsstub`"
 
     ```sds linenums="330"
     @Pure
@@ -664,7 +664,7 @@ default value for x_column_name.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
-??? quote "Source code in `time_series.sdsstub`"
+??? quote "Stub code in `time_series.sdsstub`"
 
     ```sds linenums="347"
     @Pure
@@ -695,7 +695,7 @@ default value for y_column_name.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
-??? quote "Source code in `time_series.sdsstub`"
+??? quote "Stub code in `time_series.sdsstub`"
 
     ```sds linenums="365"
     @Pure
@@ -724,7 +724,7 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A time series without the given columns. |
 
-??? quote "Source code in `time_series.sdsstub`"
+??? quote "Stub code in `time_series.sdsstub`"
 
     ```sds linenums="160"
     @Pure
@@ -746,7 +746,7 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A time series without the columns that contain missing values. |
 
-??? quote "Source code in `time_series.sdsstub`"
+??? quote "Stub code in `time_series.sdsstub`"
 
     ```sds linenums="173"
     @Pure
@@ -766,7 +766,7 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A time series without the columns that contain non-numerical values. |
 
-??? quote "Source code in `time_series.sdsstub`"
+??? quote "Stub code in `time_series.sdsstub`"
 
     ```sds linenums="184"
     @Pure
@@ -786,7 +786,7 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | The time series with the duplicate rows removed. |
 
-??? quote "Source code in `time_series.sdsstub`"
+??? quote "Stub code in `time_series.sdsstub`"
 
     ```sds linenums="195"
     @Pure
@@ -806,7 +806,7 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A time series without the rows that contain missing values. |
 
-??? quote "Source code in `time_series.sdsstub`"
+??? quote "Stub code in `time_series.sdsstub`"
 
     ```sds linenums="206"
     @Pure
@@ -830,7 +830,7 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A new time series without rows containing outliers. |
 
-??? quote "Source code in `time_series.sdsstub`"
+??? quote "Stub code in `time_series.sdsstub`"
 
     ```sds linenums="221"
     @Pure
@@ -857,7 +857,7 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | The time series with the renamed column. |
 
-??? quote "Source code in `time_series.sdsstub`"
+??? quote "Stub code in `time_series.sdsstub`"
 
     ```sds linenums="235"
     @Pure
@@ -891,7 +891,7 @@ The order of columns is kept. The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A time series with the old column replaced by the new columns. |
 
-??? quote "Source code in `time_series.sdsstub`"
+??? quote "Stub code in `time_series.sdsstub`"
 
     ```sds linenums="256"
     @Pure
@@ -922,7 +922,7 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | The resulting time series. |
 
-??? quote "Source code in `time_series.sdsstub`"
+??? quote "Stub code in `time_series.sdsstub`"
 
     ```sds linenums="274"
     @Pure
@@ -961,7 +961,7 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A new time series with sorted columns. |
 
-??? quote "Source code in `time_series.sdsstub`"
+??? quote "Stub code in `time_series.sdsstub`"
 
     ```sds linenums="300"
     @Pure
@@ -990,7 +990,7 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | The time series with the transformed column. |
 
-??? quote "Source code in `time_series.sdsstub`"
+??? quote "Stub code in `time_series.sdsstub`"
 
     ```sds linenums="316"
     @Pure

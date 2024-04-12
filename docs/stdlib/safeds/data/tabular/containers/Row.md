@@ -8,7 +8,7 @@ A row is a collection of named values.
 |------|------|-------------|---------|
 | `data` | [`Map<String, List<Any>>?`][safeds.lang.Map] | The data. If None, an empty row is created. | `#!sds null` |
 
-??? quote "Source code in `row.sdsstub`"
+??? quote "Stub code in `row.sdsstub`"
 
     ```sds linenums="10"
     class Row(
@@ -156,7 +156,7 @@ Return the type of the specified column.
 |------|------|-------------|
 | `result1` | [`ColumnType`][safeds.data.tabular.typing.ColumnType] | The type of the column. |
 
-??? quote "Source code in `row.sdsstub`"
+??? quote "Stub code in `row.sdsstub`"
 
     ```sds linenums="72"
     @Pure
@@ -182,7 +182,7 @@ Return the value of a specified column.
 |------|------|-------------|
 | `result1` | [`Any`][safeds.lang.Any] | The column value. |
 
-??? quote "Source code in `row.sdsstub`"
+??? quote "Stub code in `row.sdsstub`"
 
     ```sds linenums="46"
     @Pure
@@ -208,7 +208,7 @@ Check whether the row contains a given column.
 |------|------|-------------|
 | `result1` | [`Boolean`][safeds.lang.Boolean] | True, if the row contains the column, False otherwise. |
 
-??? quote "Source code in `row.sdsstub`"
+??? quote "Stub code in `row.sdsstub`"
 
     ```sds linenums="59"
     @Pure
@@ -228,7 +228,7 @@ Return a dictionary that maps column names to column values.
 |------|------|-------------|
 | `result1` | [`Map<String, Any>`][safeds.lang.Map] | Dictionary representation of the row. |
 
-??? quote "Source code in `row.sdsstub`"
+??? quote "Stub code in `row.sdsstub`"
 
     ```sds linenums="106"
     @Pure
@@ -246,7 +246,7 @@ Return an HTML representation of the row.
 |------|------|-------------|
 | `result1` | [`String`][safeds.lang.String] | The generated HTML. |
 
-??? quote "Source code in `row.sdsstub`"
+??? quote "Stub code in `row.sdsstub`"
 
     ```sds linenums="115"
     @Pure
@@ -270,7 +270,7 @@ Create a row from a dictionary that maps column names to column values.
 |------|------|-------------|
 | `result1` | [`Row`][safeds.data.tabular.containers.Row] | The created row. |
 
-??? quote "Source code in `row.sdsstub`"
+??? quote "Stub code in `row.sdsstub`"
 
     ```sds linenums="33"
     @Pure

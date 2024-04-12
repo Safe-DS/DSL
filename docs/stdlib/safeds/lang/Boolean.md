@@ -2,7 +2,7 @@
 
 A truth value.
 
-??? quote "Source code in `coreClasses.sdsstub`"
+??? quote "Stub code in `coreClasses.sdsstub`"
 
     ```sds linenums="24"
     class Boolean

@@ -2,7 +2,7 @@
 
 Learn a transformation for a set of columns in a `Table` and transform another `Table` with the same columns.
 
-??? quote "Source code in `table_transformer.sdsstub`"
+??? quote "Stub code in `table_transformer.sdsstub`"
 
     ```sds linenums="8"
     class TableTransformer {
@@ -110,7 +110,7 @@ This transformer is not modified.
 |------|------|-------------|
 | `result1` | [`TableTransformer`][safeds.data.tabular.transformation.TableTransformer] | The fitted transformer. |
 
-??? quote "Source code in `table_transformer.sdsstub`"
+??? quote "Stub code in `table_transformer.sdsstub`"
 
     ```sds linenums="19"
     @Pure
@@ -139,7 +139,7 @@ The table is not modified. If you also need the fitted transformer, use `fit` an
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The transformed table. |
 
-??? quote "Source code in `table_transformer.sdsstub`"
+??? quote "Stub code in `table_transformer.sdsstub`"
 
     ```sds linenums="85"
     @Pure
@@ -160,7 +160,7 @@ Get the names of all new columns that have been added by the transformer.
 |------|------|-------------|
 | `result1` | [`List<String>`][safeds.lang.List] | A list of names of the added columns, ordered as they will appear in the table. |
 
-??? quote "Source code in `table_transformer.sdsstub`"
+??? quote "Stub code in `table_transformer.sdsstub`"
 
     ```sds linenums="44"
     @Pure
@@ -178,7 +178,7 @@ Get the names of all columns that have been changed by the transformer.
 |------|------|-------------|
 | `result1` | [`List<String>`][safeds.lang.List] | A list of names of changed columns, ordered as they appear in the table. |
 
-??? quote "Source code in `table_transformer.sdsstub`"
+??? quote "Stub code in `table_transformer.sdsstub`"
 
     ```sds linenums="53"
     @Pure
@@ -196,7 +196,7 @@ Get the names of all columns that have been removed by the transformer.
 |------|------|-------------|
 | `result1` | [`List<String>`][safeds.lang.List] | A list of names of the removed columns, ordered as they appear in the table the transformer was fitted on. |
 
-??? quote "Source code in `table_transformer.sdsstub`"
+??? quote "Stub code in `table_transformer.sdsstub`"
 
     ```sds linenums="62"
     @Pure
@@ -214,7 +214,7 @@ Check if the transformer is fitted.
 |------|------|-------------|
 | `result1` | [`Boolean`][safeds.lang.Boolean] | Whether the transformer is fitted. |
 
-??? quote "Source code in `table_transformer.sdsstub`"
+??? quote "Stub code in `table_transformer.sdsstub`"
 
     ```sds linenums="71"
     @Pure
@@ -240,7 +240,7 @@ The table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The transformed table. |
 
-??? quote "Source code in `table_transformer.sdsstub`"
+??? quote "Stub code in `table_transformer.sdsstub`"
 
     ```sds linenums="34"
     @Pure
