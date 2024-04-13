@@ -11,6 +11,7 @@ export class SafeDsMessagingProvider {
     private readonly connection: Connection | undefined;
     private logger: Logger | undefined = undefined;
     private userMessageProvider: UserMessageProvider | undefined = undefined;
+    private messageBroker: MessageBroker | undefined = undefined;
 
     constructor(services: SafeDsServices) {
         this.connection = services.shared.lsp.Connection;
@@ -143,25 +144,29 @@ export class SafeDsMessagingProvider {
      * @param method The method to register a request handler for.
      * @param handler The handler to install.
      */
-    onNotification(method: string, handler: (...params: any[]) => void): Disposable {
+    onNotification(method: string, handler: (...args: any[]) => void): Disposable {
         if (this.connection) {
             return this.connection.onNotification(method, handler);
+        } else if (this.messageBroker?.onNotification) {
+            return this.messageBroker.onNotification(method, handler);
+        } else {
+            return {
+                dispose() {},
+            };
         }
-
-        return {
-            dispose() {},
-        };
     }
 
     /**
      * Send a notification to the client.
      *
      * @param method The method to invoke on the client.
-     * @param params The notification's parameters.
+     * @param args The notification's parameters.
      */
-    async sendNotification(method: string, ...params: any): Promise<void> {
+    async sendNotification(method: string, ...args: any): Promise<void> {
         if (this.connection) {
-            await this.connection.sendNotification(method, params);
+            await this.connection.sendNotification(method, args);
+        } else if (this.messageBroker?.sendNotification) {
+            await this.messageBroker.sendNotification(method, ...args);
         }
     }
 
@@ -177,6 +182,13 @@ export class SafeDsMessagingProvider {
      */
     setUserMessageProvider(userMessageProvider: UserMessageProvider) {
         this.userMessageProvider = userMessageProvider;
+    }
+
+    /**
+     * Set the message broker to use for communicating with the client.
+     */
+    setMessageBroker(messageBroker: MessageBroker) {
+        this.messageBroker = messageBroker;
     }
 }
 
@@ -230,4 +242,25 @@ export interface UserMessageProvider {
      * Prominently show an error message. The message should be short and human-readable.
      */
     showErrorMessage?: <T extends MessageActionItem>(message: string, ...actions: T[]) => Thenable<T | undefined>;
+}
+
+/**
+ * A message broker for communicating with the client.
+ */
+export interface MessageBroker {
+    /**
+     * Installs a notification handler for the given method.
+     *
+     * @param method The method to register a request handler for.
+     * @param handler The handler to install.
+     */
+    onNotification?: (method: string, handler: (...args: any[]) => void) => Disposable;
+
+    /**
+     * Send a notification to the client.
+     *
+     * @param method The method to invoke on the client.
+     * @param args The notification's parameters.
+     */
+    sendNotification?: (method: string, ...args: any[]) => Promise<void>;
 }
