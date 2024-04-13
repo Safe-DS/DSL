@@ -1,5 +1,5 @@
 import { SafeDsServices } from '../safe-ds-module.js';
-import { Connection } from 'vscode-languageserver';
+import { Connection, MessageActionItem } from 'vscode-languageserver';
 import { Disposable } from 'vscode-languageserver-protocol';
 
 /* c8 ignore start */
@@ -86,11 +86,18 @@ export class SafeDsMessagingProvider {
      * Depending on the client this might be a modal dialog with a confirmation button or a notification in a
      * notification center.
      */
-    showInformationMessage(message: string): void {
+    showInformationMessage(message: string): void;
+    async showInformationMessage<T extends MessageActionItem>(message: string, ...actions: T[]): Promise<T | undefined>;
+    async showInformationMessage<T extends MessageActionItem>(
+        message: string,
+        ...actions: T[]
+    ): Promise<T | undefined> {
         if (this.userMessageProvider?.showInformationMessage) {
-            this.userMessageProvider.showInformationMessage(message);
+            return this.userMessageProvider.showInformationMessage(message, ...actions);
         } else if (this.connection) {
-            this.connection.window.showInformationMessage(message);
+            return this.connection.window.showInformationMessage(message, ...actions);
+        } else {
+            return undefined;
         }
     }
 
@@ -100,11 +107,15 @@ export class SafeDsMessagingProvider {
      * Depending on the client this might be a modal dialog with a confirmation button or a notification in a
      * notification center.
      */
-    showWarningMessage(message: string): void {
+    showWarningMessage(message: string): void;
+    async showWarningMessage<T extends MessageActionItem>(message: string, ...actions: T[]): Promise<T | undefined>;
+    async showWarningMessage<T extends MessageActionItem>(message: string, ...actions: T[]): Promise<T | undefined> {
         if (this.userMessageProvider?.showWarningMessage) {
-            this.userMessageProvider.showWarningMessage(message);
+            return this.userMessageProvider.showWarningMessage(message, ...actions);
         } else if (this.connection) {
-            this.connection.window.showWarningMessage(message);
+            return this.connection.window.showWarningMessage(message, ...actions);
+        } else {
+            return undefined;
         }
     }
 
@@ -114,11 +125,15 @@ export class SafeDsMessagingProvider {
      * Depending on the client this might be a modal dialog with a confirmation button or a notification in a
      * notification center.
      */
-    showErrorMessage(message: string): void {
+    showErrorMessage(message: string): void;
+    async showErrorMessage<T extends MessageActionItem>(message: string, ...actions: T[]): Promise<T | undefined>;
+    async showErrorMessage<T extends MessageActionItem>(message: string, ...actions: T[]): Promise<T | undefined> {
         if (this.userMessageProvider?.showErrorMessage) {
-            this.userMessageProvider.showErrorMessage(message);
+            return this.userMessageProvider.showErrorMessage(message, ...actions);
         } else if (this.connection) {
-            this.connection.window.showErrorMessage(message);
+            return this.connection.window.showErrorMessage(message, ...actions);
+        } else {
+            return undefined;
         }
     }
 
@@ -204,15 +219,15 @@ export interface UserMessageProvider {
     /**
      * Prominently show an information message. The message should be short and human-readable.
      */
-    showInformationMessage?: (message: string) => void;
+    showInformationMessage?: <T extends MessageActionItem>(message: string, ...actions: T[]) => Thenable<T | undefined>;
 
     /**
      * Prominently show a warning message. The message should be short and human-readable.
      */
-    showWarningMessage?: (message: string) => void;
+    showWarningMessage?: <T extends MessageActionItem>(message: string, ...actions: T[]) => Thenable<T | undefined>;
 
     /**
      * Prominently show an error message. The message should be short and human-readable.
      */
-    showErrorMessage?: (message: string) => void;
+    showErrorMessage?: <T extends MessageActionItem>(message: string, ...actions: T[]) => Thenable<T | undefined>;
 }
