@@ -47,7 +47,7 @@ export const activate = async function (context: vscode.ExtensionContext) {
 
 const registerNotificationListeners = function (context: vscode.ExtensionContext) {
     client.onNotification(rpc.runnerInstall, async () => {
-        await installRunner(context)();
+        await installRunner(context, services)();
     });
     client.onNotification(rpc.runnerStarted, async (port: number) => {
         await services.runtime.Runner.connectToPort(port);
@@ -111,7 +111,9 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
     };
 
     context.subscriptions.push(vscode.commands.registerCommand('safe-ds.dumpDiagnostics', dumpDiagnostics(context)));
-    context.subscriptions.push(vscode.commands.registerCommand('safe-ds.installRunner', installRunner(context)));
+    context.subscriptions.push(
+        vscode.commands.registerCommand('safe-ds.installRunner', installRunner(context, services)),
+    );
     context.subscriptions.push(
         vscode.commands.registerCommand('safe-ds.openDiagnosticsDumps', openDiagnosticsDumps(context)),
     );
