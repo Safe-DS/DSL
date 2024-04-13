@@ -170,11 +170,6 @@
                     "when": "resourceLangId == safe-ds",
                     "group": "navigation@1"
                 }
-            ],
-            "editor/context": [
-                {
-                    "command": "safe-ds.runEdaFromContext"
-                }
             ]
         },
         "commands": [
@@ -196,11 +191,6 @@
             {
                 "command": "safe-ds.refreshWebview",
                 "title": "Refresh Webview",
-                "category": "Safe-DS"
-            },
-            {
-                "command": "safe-ds.runEdaFromContext",
-                "title": "Explore Table",
                 "category": "Safe-DS"
             },
             {
