@@ -138,21 +138,6 @@ description as arguments. Since a callable can have multiple results, this tag c
 fun sum(a: Int, b: Int): sum: Int
 ```
 
-#### `@typeParam`
-
-Use `@typeParam` to document a [type parameter][type-parameter] of a generic declaration. This tag takes the name of the
-type parameter and its description as arguments. Since a generic declaration can have multiple type parameters, this
-tag can be used multiple times.
-
-```sds hl_lines="4"
-/**
- * ...
- *
- * @typeParam T The type of the elements in the list.
- */
-class List<T>
-```
-
 #### `@since`
 
 The `@since` tag can be used to specify when a declaration was added. It takes the version as argument and should be
