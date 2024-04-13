@@ -1,9 +1,10 @@
 import vscode, { ExtensionContext, Uri } from 'vscode';
 import child_process from 'node:child_process';
 import semver from 'semver';
-import { dependencies, SafeDsServices } from '@safe-ds/lang';
+import { dependencies, rpc, SafeDsServices } from '@safe-ds/lang';
 import { logError, printOutputMessage } from '../output.js';
 import fs from 'node:fs';
+import { LanguageClient } from 'vscode-languageclient/node.js';
 
 const pythonCommandCandidates = ['python3', 'python', 'py'];
 
@@ -11,27 +12,33 @@ const LOWEST_SUPPORTED_PYTHON_VERSION = '3.11.0';
 const LOWEST_UNSUPPORTED_PYTHON_VERSION = '3.13.0';
 const npmVersionRange = `>=${LOWEST_SUPPORTED_PYTHON_VERSION} <${LOWEST_UNSUPPORTED_PYTHON_VERSION}`;
 
-export const installRunner = (context: ExtensionContext, services: SafeDsServices) => async () => {
-    // If the runner is already started, do nothing
-    if (services.runtime.Runner.isPythonServerAvailable()) {
-        vscode.window.showInformationMessage('The runner is already installed and running.');
-        return;
-    }
-
-    // Install the runner if it is not already installed
-    if (!fs.existsSync(getRunnerCommand(context))) {
-        const success = await doInstallRunner(context);
-        if (!success) {
+export const installRunner = (context: ExtensionContext, client: LanguageClient, services: SafeDsServices) => {
+    return async () => {
+        // If the runner is already started, do nothing
+        if (services.runtime.Runner.isPythonServerAvailable()) {
+            vscode.window.showInformationMessage('The runner is already installed and running.');
             return;
         }
-    }
 
-    // Set the runner command in the configuration
-    await vscode.workspace
-        .getConfiguration()
-        .update('safe-ds.runner.command', getRunnerCommand(context), vscode.ConfigurationTarget.Global);
+        // Install the runner if it is not already installed
+        if (!fs.existsSync(getRunnerCommand(context))) {
+            const success = await doInstallRunner(context);
+            if (!success) {
+                return;
+            }
+        }
 
-    vscode.window.showInformationMessage('The runner has been installed successfully.');
+        // Set the runner command in the configuration
+        await vscode.workspace
+            .getConfiguration()
+            .update('safe-ds.runner.command', getRunnerCommand(context), vscode.ConfigurationTarget.Global);
+
+        // Start the runner (needed if the configuration did not change, so no event is fired)
+        await client.sendNotification(rpc.runnerStart);
+
+        // Inform the user
+        vscode.window.showInformationMessage('The runner has been installed successfully.');
+    };
 };
 
 /**

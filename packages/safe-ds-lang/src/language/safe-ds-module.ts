@@ -64,6 +64,9 @@ export type SafeDsAddedServices = {
         Enums: SafeDsEnums;
         ImpurityReasons: SafeDsImpurityReasons;
     };
+    communication: {
+        MessagingProvider: SafeDsMessagingProvider;
+    };
     documentation: {
         DocumentationProvider: SafeDsDocumentationProvider;
     };
@@ -81,7 +84,6 @@ export type SafeDsAddedServices = {
         NodeMapper: SafeDsNodeMapper;
     };
     lsp: {
-        MessagingProvider: SafeDsMessagingProvider;
         NodeInfoProvider: SafeDsNodeInfoProvider;
     };
     purity: {
@@ -132,6 +134,9 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         Enums: (services) => new SafeDsEnums(services),
         ImpurityReasons: (services) => new SafeDsImpurityReasons(services),
     },
+    communication: {
+        MessagingProvider: (services) => new SafeDsMessagingProvider(services),
+    },
     documentation: {
         CommentProvider: (services) => new SafeDsCommentProvider(services),
         DocumentationProvider: (services) => new SafeDsDocumentationProvider(services),
@@ -156,7 +161,6 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         DocumentSymbolProvider: (services) => new SafeDsDocumentSymbolProvider(services),
         Formatter: () => new SafeDsFormatter(),
         InlayHintProvider: (services) => new SafeDsInlayHintProvider(services),
-        MessagingProvider: (services) => new SafeDsMessagingProvider(services),
         NodeInfoProvider: (services) => new SafeDsNodeInfoProvider(services),
         RenameProvider: (services) => new SafeDsRenameProvider(services),
         SemanticTokenProvider: (services) => new SafeDsSemanticTokenProvider(services),
@@ -242,11 +246,11 @@ export const createSafeDsServices = async function (
     // Apply options
     if (options?.logger) {
         /* c8 ignore next 2 */
-        SafeDs.lsp.MessagingProvider.setLogger(options.logger);
+        SafeDs.communication.MessagingProvider.setLogger(options.logger);
     }
     if (options?.messageBroker) {
         /* c8 ignore next 2 */
-        SafeDs.lsp.MessagingProvider.setMessageBroker(options.messageBroker);
+        SafeDs.communication.MessagingProvider.setMessageBroker(options.messageBroker);
     }
     if (!options?.omitBuiltins) {
         await shared.workspace.WorkspaceManager.initializeWorkspace([]);
@@ -257,7 +261,7 @@ export const createSafeDsServices = async function (
     }
     if (options?.userMessageProvider) {
         /* c8 ignore next 2 */
-        SafeDs.lsp.MessagingProvider.setUserMessageProvider(options.userMessageProvider);
+        SafeDs.communication.MessagingProvider.setUserMessageProvider(options.userMessageProvider);
     }
 
     return { shared, SafeDs };

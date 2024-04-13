@@ -23,6 +23,7 @@ import { SafeDsMessagingProvider } from '../../communication/safe-ds-messaging-p
 // Most of the functionality cannot be tested automatically as a functioning runner setup would always be required
 
 export const RPC_RUNNER_INSTALL = 'runner/install';
+export const RPC_RUNNER_START = 'runner/start';
 export const RPC_RUNNER_STARTED = 'runner/started';
 
 const LOWEST_SUPPORTED_RUNNER_VERSION = '0.10.0';
@@ -59,13 +60,19 @@ export class SafeDsRunner {
     constructor(services: SafeDsServices) {
         this.annotations = services.builtins.Annotations;
         this.generator = services.generation.PythonGenerator;
-        this.messaging = services.lsp.MessagingProvider;
+        this.messaging = services.communication.MessagingProvider;
 
         // Register listeners
         this.registerMessageLoggingCallbacks();
 
         services.workspace.SettingsProvider.onRunnerCommandUpdate(async (newValue) => {
             await this.updateRunnerCommand(newValue);
+        });
+
+        this.messaging.onNotification(RPC_RUNNER_START, async () => {
+            if (!this.isPythonServerAvailable()) {
+                await this.startPythonServer();
+            }
         });
 
         services.shared.lsp.Connection?.onShutdown(async () => {
