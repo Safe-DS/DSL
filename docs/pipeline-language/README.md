@@ -1,7 +1,6 @@
 # Language Reference
 
-This part of the documentation provides a detailed reference for the Safe-DS DSL. It is divided into the following
-sections:
+This part of the documentation provides a detailed reference for the Safe-DS language. It is divided into the following sections:
 
 -
 
