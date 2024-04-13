@@ -119,7 +119,8 @@
                 "safe-ds.runner.command": {
                     "type": "string",
                     "default": "safe-ds-runner",
-                    "description": "Command to start the Safe-DS runner"
+                    "description": "Command to start the Safe-DS runner",
+                    "ignoreSync": true
                 },
                 "safe-ds.trace.server": {
                     "scope": "window",
