@@ -7,11 +7,10 @@ import { ast, createSafeDsServices, getModuleMembers, messages, rpc, SafeDsServi
 import { NodeFileSystem } from 'langium/node';
 import { initializeLog, logError, logOutput, printOutputMessage } from './output.js';
 import crypto from 'crypto';
-import { AstNode, AstUtils, LangiumDocument } from 'langium';
+import { AstUtils, LangiumDocument } from 'langium';
 import { EDAPanel } from './eda/edaPanel.ts';
 import { dumpDiagnostics } from './commands/dumpDiagnostics.js';
 import { openDiagnosticsDumps } from './commands/openDiagnosticsDumps.js';
-import { Range } from 'vscode-languageclient';
 import { isSdsPlaceholder, SdsPipeline } from '../../../safe-ds-lang/src/language/generated/ast.js';
 import { installRunner } from './commands/installRunner.js';
 
@@ -100,16 +99,6 @@ const createLanguageClient = function (context: vscode.ExtensionContext): Langua
 };
 
 const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
-    const registerCommandWithCheck = (commandId: string, callback: (...args: any[]) => Promise<any>) => {
-        return vscode.commands.registerCommand(commandId, (...args: any[]) => {
-            if (!services.runtime.Runner.isPythonServerAvailable()) {
-                vscode.window.showErrorMessage('Extension not fully started yet.');
-                return;
-            }
-            return callback(...args);
-        });
-    };
-
     context.subscriptions.push(vscode.commands.registerCommand('safe-ds.dumpDiagnostics', dumpDiagnostics(context)));
     context.subscriptions.push(
         vscode.commands.registerCommand('safe-ds.installRunner', installRunner(context, client, services)),
@@ -147,58 +136,6 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
             }
 
             runEda(editor, context, pipelineNode, pipelineNode.name, node.name);
-        }),
-    );
-
-    context.subscriptions.push(
-        registerCommandWithCheck('safe-ds.runEdaFromContext', async () => {
-            const editor = vscode.window.activeTextEditor;
-            if (editor) {
-                const position = editor.selection.active;
-                const range = editor.document.getWordRangeAtPosition(position);
-                if (range) {
-                    const requestedPlaceholderName = editor.document.getText(range);
-                    // Check if file ends with .sdspipe or .sdstest
-                    if (
-                        !editor.document.fileName.endsWith('.sdspipe') &&
-                        !editor.document.fileName.endsWith('.sdstest')
-                    ) {
-                        vscode.window.showErrorMessage('No .sdspipe file selected!');
-                        return;
-                    }
-
-                    // Getting of pipeline name
-                    const document = await getPipelineDocument(editor.document.uri);
-                    if (!document) {
-                        vscode.window.showErrorMessage('Internal error');
-                        return;
-                    }
-
-                    // Find node of placeholder
-                    let placeholderNode = findPlaceholderNode(document, range);
-
-                    if (!placeholderNode) {
-                        vscode.window.showErrorMessage('Internal error');
-                        return;
-                    }
-
-                    // Get pipeline container
-                    const container = AstUtils.getContainerOfType(placeholderNode, ast.isSdsPipeline);
-                    if (!container) {
-                        vscode.window.showErrorMessage('Internal error');
-                        return;
-                    }
-
-                    const pipelineName = container.name;
-
-                    runEda(editor, context, container, pipelineName, requestedPlaceholderName);
-                } else {
-                    vscode.window.showErrorMessage('No placeholder selected!');
-                }
-            } else {
-                vscode.window.showErrorMessage('No ative text editor!');
-                return;
-            }
         }),
     );
 
@@ -459,32 +396,4 @@ const validateDocuments = async function (
         return 'Cannot run the main pipeline, because some files have errors.';
     }
     return undefined;
-};
-
-const isRangeEqual = function (lhs: Range, rhs: Range): boolean {
-    return (
-        lhs.start.character === rhs.start.character &&
-        lhs.start.line === rhs.start.line &&
-        lhs.end.character === rhs.end.character &&
-        lhs.end.line === rhs.end.line
-    );
-};
-
-const findPlaceholderNode = function (document: LangiumDocument<AstNode>, range: vscode.Range): AstNode | undefined {
-    let placeholderNode: AstNode | undefined;
-    const module = document.parseResult.value as ast.SdsModule;
-    for (const node of AstUtils.streamAllContents(module, { range })) {
-        // Entire node matches the range
-        const actualRange = node.$cstNode?.range;
-        if (actualRange && isRangeEqual(actualRange, range)) {
-            placeholderNode = node;
-        }
-
-        // The node has a name node that matches the range
-        const actualNameRange = services.references.NameProvider.getNameNode(node)?.range;
-        if (actualNameRange && isRangeEqual(actualNameRange, range)) {
-            placeholderNode = node;
-        }
-    }
-    return placeholderNode;
 };
