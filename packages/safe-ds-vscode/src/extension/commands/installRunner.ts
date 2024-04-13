@@ -14,26 +14,34 @@ const npmVersionRange = `>=${LOWEST_SUPPORTED_PYTHON_VERSION} <${LOWEST_UNSUPPOR
 export const installRunner = (context: ExtensionContext) => async () => {
     // Install the runner if it is not already installed
     if (!fs.existsSync(getRunnerCommand(context))) {
-        await doInstallRunner(context);
+        const success = await doInstallRunner(context);
+        if (!success) {
+            return;
+        }
     }
 
     // Set the runner command in the configuration
     await vscode.workspace
         .getConfiguration()
         .update('safe-ds.runner.command', getRunnerCommand(context), vscode.ConfigurationTarget.Global);
+
+    vscode.window.showInformationMessage('The runner has been installed successfully.');
 };
 
-const doInstallRunner = async (context: ExtensionContext) => {
+/**
+ * Installs the runner in a virtual environment. Returns true if the installation was successful.
+ */
+const doInstallRunner = async (context: ExtensionContext): Promise<boolean> => {
     // Check if a matching Python interpreter is available
     const pythonCommand = await getPythonCommand();
     if (!pythonCommand) {
         vscode.window.showErrorMessage('Could not find a matching Python interpreter.');
         logError('Could not find a matching Python interpreter.');
-        return;
+        return false;
     }
 
     // Create a virtual environment for the runner
-    await vscode.window.withProgress(
+    let success = await vscode.window.withProgress(
         {
             location: vscode.ProgressLocation.Window,
             title: 'Creating a virtual environment...',
@@ -45,14 +53,18 @@ const doInstallRunner = async (context: ExtensionContext) => {
             } catch (error) {
                 vscode.window.showErrorMessage('Failed to create a virtual environment.');
                 logError(String(error));
-                return;
+                return false;
             }
             progress.report({ increment: 100 });
+            return true;
         },
     );
+    if (!success) {
+        return false;
+    }
 
     // Install the runner in the virtual environment
-    await vscode.window.withProgress(
+    success = await vscode.window.withProgress(
         {
             location: vscode.ProgressLocation.Window,
             title: 'Installing the runner (this may take a few minutes)...',
@@ -64,11 +76,13 @@ const doInstallRunner = async (context: ExtensionContext) => {
             } catch (error) {
                 vscode.window.showErrorMessage('Failed to install the runner.');
                 logError(String(error));
-                return;
+                return false;
             }
             progress.report({ increment: 100 });
+            return true;
         },
     );
+    return success;
 };
 
 const getPythonCommand = async (): Promise<string | undefined> => {
