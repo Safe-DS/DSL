@@ -28,7 +28,6 @@ import { annotationCallMustHaveCorrectTarget, targetShouldNotHaveDuplicateEntrie
 import {
     constraintListsShouldBeUsedWithCaution,
     literalTypesShouldBeUsedWithCaution,
-    mapsShouldBeUsedWithCaution,
     unionTypesShouldBeUsedWithCaution,
 } from './experimentalLanguageFeatures.js';
 import {
@@ -305,7 +304,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             literalTypesShouldBeUsedWithCaution(services),
             literalTypeShouldNotHaveDuplicateLiteral(services),
         ],
-        SdsMap: [mapMustNotContainNamedTuples(services), mapsShouldBeUsedWithCaution(services)],
+        SdsMap: [mapMustNotContainNamedTuples(services)],
         SdsMemberAccess: [memberAccessOfEnumVariantMustNotLackInstantiation],
         SdsModule: [
             moduleDeclarationsMustMatchFileKind,
