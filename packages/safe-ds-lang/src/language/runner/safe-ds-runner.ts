@@ -24,10 +24,10 @@ import { SafeDsMessagingProvider } from '../lsp/safe-ds-messaging-provider.js';
 
 export const RPC_RUNNER_STARTED = 'runner/started';
 
-const LOWEST_SUPPORTED_VERSION = '0.10.0';
-const LOWEST_UNSUPPORTED_VERSION = '0.11.0';
-const npmVersionRange = `>=${LOWEST_SUPPORTED_VERSION} <${LOWEST_UNSUPPORTED_VERSION}`;
-const pipVersionRange = `>=${LOWEST_SUPPORTED_VERSION},<${LOWEST_UNSUPPORTED_VERSION}`;
+const LOWEST_SUPPORTED_RUNNER_VERSION = '0.10.0';
+const LOWEST_UNSUPPORTED_RUNNER_VERSION = '0.11.0';
+const npmVersionRange = `>=${LOWEST_SUPPORTED_RUNNER_VERSION} <${LOWEST_UNSUPPORTED_RUNNER_VERSION}`;
+export const pipVersionRange = `>=${LOWEST_SUPPORTED_RUNNER_VERSION},<${LOWEST_UNSUPPORTED_RUNNER_VERSION}`;
 
 const RUNNER_TAG = 'Runner';
 

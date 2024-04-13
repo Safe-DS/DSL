@@ -13,6 +13,7 @@ import { dumpDiagnostics } from './commands/dumpDiagnostics.js';
 import { openDiagnosticsDumps } from './commands/openDiagnosticsDumps.js';
 import { Range } from 'vscode-languageclient';
 import { isSdsPlaceholder, SdsPipeline } from '../../../safe-ds-lang/src/language/generated/ast.js';
+import { installRunner } from './commands/installRunner.js';
 
 let client: LanguageClient;
 let services: SafeDsServices;
@@ -103,6 +104,7 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
     };
 
     context.subscriptions.push(vscode.commands.registerCommand('safe-ds.dumpDiagnostics', dumpDiagnostics(context)));
+    context.subscriptions.push(vscode.commands.registerCommand('safe-ds.installRunner', installRunner(context)));
     context.subscriptions.push(
         vscode.commands.registerCommand('safe-ds.openDiagnosticsDumps', openDiagnosticsDumps(context)),
     );
