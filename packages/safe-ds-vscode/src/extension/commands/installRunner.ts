@@ -3,7 +3,6 @@ import child_process from 'node:child_process';
 import semver from 'semver';
 import { dependencies, rpc, SafeDsServices } from '@safe-ds/lang';
 import { logError, printOutputMessage } from '../output.js';
-import fs from 'node:fs';
 import { LanguageClient } from 'vscode-languageclient/node.js';
 
 const pythonCommandCandidates = ['python3', 'python', 'py'];
@@ -21,11 +20,9 @@ export const installRunner = (context: ExtensionContext, client: LanguageClient,
         }
 
         // Install the runner if it is not already installed
-        if (!fs.existsSync(getRunnerCommand(context))) {
-            const success = await doInstallRunner(context);
-            if (!success) {
-                return;
-            }
+        const success = await doInstallRunner(context);
+        if (!success) {
+            return;
         }
 
         // Set the runner command in the configuration
@@ -82,7 +79,7 @@ const doInstallRunner = async (context: ExtensionContext): Promise<boolean> => {
         },
         async () => {
             try {
-                await installRunnerInVirtualEnvironment(context);
+                await installRunnerInVirtualEnvironment(getPipCommand(context));
                 return true;
             } catch (error) {
                 vscode.window.showErrorMessage('Failed to install the runner.');
@@ -131,9 +128,9 @@ const createRunnerVirtualEnvironment = async (context: ExtensionContext, pythonC
     });
 };
 
-const installRunnerInVirtualEnvironment = async (context: ExtensionContext): Promise<void> => {
+export const installRunnerInVirtualEnvironment = async (pipCommand: string): Promise<void> => {
     return new Promise((resolve, reject) => {
-        const installCommand = `${getPipCommand(context)} install "safe-ds-runner${dependencies['safe-ds-runner'].pipVersionRange}"`;
+        const installCommand = `${pipCommand} install "safe-ds-runner${dependencies['safe-ds-runner'].pipVersionRange}"`;
         const process = child_process.spawn(installCommand, { shell: true });
 
         process.stdout.on('data', (data: Buffer) => {

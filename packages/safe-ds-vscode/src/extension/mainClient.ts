@@ -13,6 +13,7 @@ import { dumpDiagnostics } from './commands/dumpDiagnostics.js';
 import { openDiagnosticsDumps } from './commands/openDiagnosticsDumps.js';
 import { isSdsPlaceholder, SdsPipeline } from '../../../safe-ds-lang/src/language/generated/ast.js';
 import { installRunner } from './commands/installRunner.js';
+import { updateRunner } from './commands/updateRunner.js';
 
 let client: LanguageClient;
 let services: SafeDsServices;
@@ -50,6 +51,9 @@ const registerNotificationListeners = function (context: vscode.ExtensionContext
     });
     client.onNotification(rpc.runnerStarted, async (port: number) => {
         await services.runtime.Runner.connectToPort(port);
+    });
+    client.onNotification(rpc.runnerUpdate, async () => {
+        await updateRunner(context, client, services)();
     });
 };
 
@@ -105,6 +109,9 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
     );
     context.subscriptions.push(
         vscode.commands.registerCommand('safe-ds.openDiagnosticsDumps', openDiagnosticsDumps(context)),
+    );
+    context.subscriptions.push(
+        vscode.commands.registerCommand('safe-ds.updateRunner', updateRunner(context, client, services)),
     );
 
     context.subscriptions.push(vscode.commands.registerCommand('safe-ds.runPipelineFile', commandRunPipelineFile));

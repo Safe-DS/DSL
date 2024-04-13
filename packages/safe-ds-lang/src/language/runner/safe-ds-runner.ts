@@ -25,6 +25,7 @@ import { SafeDsMessagingProvider } from '../../communication/safe-ds-messaging-p
 export const RPC_RUNNER_INSTALL = 'runner/install';
 export const RPC_RUNNER_START = 'runner/start';
 export const RPC_RUNNER_STARTED = 'runner/started';
+export const RPC_RUNNER_UPDATE = 'runner/update';
 
 const LOWEST_SUPPORTED_RUNNER_VERSION = '0.10.0';
 const LOWEST_UNSUPPORTED_RUNNER_VERSION = '0.11.0';
@@ -174,9 +175,13 @@ export class SafeDsRunner {
             const versionString = await this.getPythonServerVersion(pythonServerTest);
             if (!semver.satisfies(versionString, npmVersionRange)) {
                 this.error(`Installed runner version ${versionString} does not meet requirements: ${pipVersionRange}`);
-                this.messaging.showErrorMessage(
+                const action = await this.messaging.showErrorMessage(
                     `The installed runner version ${versionString} is not compatible with this version of the extension. The installed version should match these requirements: ${pipVersionRange}. Please update to a matching version.`,
+                    { title: 'Update runner' },
                 );
+                if (action?.title === 'Update runner') {
+                    await this.messaging.sendNotification(RPC_RUNNER_UPDATE);
+                }
                 return;
             } else {
                 this.info(`Using safe-ds-runner version: ${versionString}`);
