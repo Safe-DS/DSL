@@ -45,7 +45,12 @@ import { SafeDsTypeFactory } from './typing/safe-ds-type-factory.js';
 import { SafeDsMarkdownGenerator } from './generation/safe-ds-markdown-generator.js';
 import { SafeDsCompletionProvider } from './lsp/safe-ds-completion-provider.js';
 import { SafeDsFuzzyMatcher } from './lsp/safe-ds-fuzzy-matcher.js';
-import { type Logger, SafeDsMessagingProvider, type UserMessageProvider } from './lsp/safe-ds-messaging-provider.js';
+import {
+    type Logger,
+    MessageBroker,
+    SafeDsMessagingProvider,
+    type UserMessageProvider,
+} from '../communication/safe-ds-messaging-provider.js';
 import { SafeDsConfigurationProvider } from './workspace/safe-ds-configuration-provider.js';
 import { SafeDsCodeLensProvider } from './lsp/safe-ds-code-lens-provider.js';
 
@@ -239,12 +244,16 @@ export const createSafeDsServices = async function (
         /* c8 ignore next 2 */
         SafeDs.lsp.MessagingProvider.setLogger(options.logger);
     }
+    if (options?.messageBroker) {
+        /* c8 ignore next 2 */
+        SafeDs.lsp.MessagingProvider.setMessageBroker(options.messageBroker);
+    }
     if (!options?.omitBuiltins) {
         await shared.workspace.WorkspaceManager.initializeWorkspace([]);
     }
     if (options?.runnerCommand) {
         /* c8 ignore next 2 */
-        SafeDs.runtime.Runner.updateRunnerCommand(options.runnerCommand);
+        await SafeDs.runtime.Runner.updateRunnerCommand(options.runnerCommand);
     }
     if (options?.userMessageProvider) {
         /* c8 ignore next 2 */
@@ -268,6 +277,12 @@ export interface ModuleOptions {
      * By default, builtins are loaded into the workspace. If this option is set to true, builtins are omitted.
      */
     omitBuiltins?: boolean;
+
+    /**
+     * A message broker for communicating with the client. If the broker lacks a capability, we fall back to the
+     * language server connection, if available.
+     */
+    messageBroker?: MessageBroker;
 
     /**
      * Command to start the runner.

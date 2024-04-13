@@ -13,6 +13,7 @@ import { dumpDiagnostics } from './commands/dumpDiagnostics.js';
 import { openDiagnosticsDumps } from './commands/openDiagnosticsDumps.js';
 import { Range } from 'vscode-languageclient';
 import { isSdsPlaceholder, SdsPipeline } from '../../../safe-ds-lang/src/language/generated/ast.js';
+import { installRunner } from './commands/installRunner.js';
 
 let client: LanguageClient;
 let services: SafeDsServices;
@@ -38,12 +39,19 @@ export const activate = async function (context: vscode.ExtensionContext) {
     ).SafeDs;
 
     client = createLanguageClient(context);
-    client.onNotification(rpc.runnerStarted, async (port: number) => {
-        await services.runtime.Runner.connectToPort(port);
-    });
+    registerNotificationListeners(context);
     await client.start();
 
     registerVSCodeCommands(context);
+};
+
+const registerNotificationListeners = function (context: vscode.ExtensionContext) {
+    client.onNotification(rpc.runnerInstall, async () => {
+        await installRunner(context, services)();
+    });
+    client.onNotification(rpc.runnerStarted, async (port: number) => {
+        await services.runtime.Runner.connectToPort(port);
+    });
 };
 
 // This function is called when the extension is deactivated.
@@ -103,6 +111,9 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
     };
 
     context.subscriptions.push(vscode.commands.registerCommand('safe-ds.dumpDiagnostics', dumpDiagnostics(context)));
+    context.subscriptions.push(
+        vscode.commands.registerCommand('safe-ds.installRunner', installRunner(context, services)),
+    );
     context.subscriptions.push(
         vscode.commands.registerCommand('safe-ds.openDiagnosticsDumps', openDiagnosticsDumps(context)),
     );

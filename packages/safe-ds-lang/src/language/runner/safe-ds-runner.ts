@@ -18,16 +18,17 @@ import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import { SafeDsPythonGenerator } from '../generation/safe-ds-python-generator.js';
 import { isSdsModule } from '../generated/ast.js';
 import semver from 'semver';
-import { SafeDsMessagingProvider } from '../lsp/safe-ds-messaging-provider.js';
+import { SafeDsMessagingProvider } from '../../communication/safe-ds-messaging-provider.js';
 
 // Most of the functionality cannot be tested automatically as a functioning runner setup would always be required
 
+export const RPC_RUNNER_INSTALL = 'runner/install';
 export const RPC_RUNNER_STARTED = 'runner/started';
 
-const LOWEST_SUPPORTED_VERSION = '0.10.0';
-const LOWEST_UNSUPPORTED_VERSION = '0.11.0';
-const npmVersionRange = `>=${LOWEST_SUPPORTED_VERSION} <${LOWEST_UNSUPPORTED_VERSION}`;
-const pipVersionRange = `>=${LOWEST_SUPPORTED_VERSION},<${LOWEST_UNSUPPORTED_VERSION}`;
+const LOWEST_SUPPORTED_RUNNER_VERSION = '0.10.0';
+const LOWEST_UNSUPPORTED_RUNNER_VERSION = '0.11.0';
+const npmVersionRange = `>=${LOWEST_SUPPORTED_RUNNER_VERSION} <${LOWEST_UNSUPPORTED_RUNNER_VERSION}`;
+export const pipVersionRange = `>=${LOWEST_SUPPORTED_RUNNER_VERSION},<${LOWEST_UNSUPPORTED_RUNNER_VERSION}`;
 
 const RUNNER_TAG = 'Runner';
 
@@ -175,9 +176,13 @@ export class SafeDsRunner {
             }
         } catch (error) {
             this.error(`Could not start runner: ${error instanceof Error ? error.message : error}`);
-            this.messaging.showErrorMessage(
+            const action = await this.messaging.showErrorMessage(
                 `The runner process could not be started: ${error instanceof Error ? error.message : error}`,
+                { title: 'Install runner' },
             );
+            if (action?.title === 'Install runner') {
+                await this.messaging.sendNotification(RPC_RUNNER_INSTALL);
+            }
             return;
         }
         // Start the runner at the specified port
