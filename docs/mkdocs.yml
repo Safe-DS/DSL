@@ -12,8 +12,11 @@ exclude_docs: |
 nav:
   - Home:
     - README.md
+  - Getting Started:
+    - Installation: getting-started/installation.md
   - Language Reference:
     - pipeline-language/README.md
+    - Files: pipeline-language/files.md
     - Packages: pipeline-language/packages.md
     - Pipelines: pipeline-language/pipelines.md
     - Statements: pipeline-language/statements.md
@@ -24,7 +27,7 @@ nav:
     - Types: pipeline-language/types.md
     - Imports: pipeline-language/imports.md
   - API Reference: api/
-  - Integrating Other Libraries:
+  - Integrating New Libraries:
     - stub-language/README.md
     - Packages: stub-language/packages.md
     - Imports: stub-language/imports.md
@@ -141,9 +144,9 @@ markdown_extensions:
       permalink: true
 
 extra_css:
-  - stylesheets/extra.css
+  - src/stylesheets/extra.css
 
 extra_javascript:
-  - javascript/mathjax.js
+  - src/javascript/mathjax.js
   - https://polyfill.io/v3/polyfill.min.js?features=es6
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js

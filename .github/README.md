@@ -8,7 +8,7 @@
 Safely develop Data Science programs with a statically checked domain specific language (DSL) and integrated tools for data
 inspection.
 
-![demo](../docs/img/readme/demo.gif)
+![demo](../docs/img/home/demo.gif)
 
 ## Installation
 

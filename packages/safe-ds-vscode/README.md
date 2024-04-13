@@ -3,7 +3,7 @@
 Safely develop Data Science programs with a statically checked domain specific language (DSL) and integrated tools for data
 inspection.
 
-![demo](https://github.com/Safe-DS/DSL/raw/main/docs/img/readme/demo.gif)
+![demo](https://github.com/Safe-DS/DSL/raw/main/docs/img/home/demo.gif)
 
 ## Installation
 

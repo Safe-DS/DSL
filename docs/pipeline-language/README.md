@@ -1,4 +1,12 @@
-# Pipeline Language
+# Language Reference
+
+This part of the documentation provides a detailed reference for the Safe-DS DSL. It is divided into the following
+sections:
+
+-
+
+
+
 
 The pipeline language is the part of the Safe-DS DSL that is designed to solve specific data science problems. It has the following concepts:
 
