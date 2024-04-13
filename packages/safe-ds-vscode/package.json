@@ -198,6 +198,11 @@
                 "title": "Run Pipeline",
                 "category": "Safe-DS",
                 "icon": "$(play)"
+            },
+            {
+                "command": "safe-ds.updateRunner",
+                "title": "Update the Safe-DS Runner",
+                "category": "Safe-DS"
             }
         ],
         "snippets": [
