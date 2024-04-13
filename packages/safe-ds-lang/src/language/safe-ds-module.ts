@@ -45,7 +45,11 @@ import { SafeDsTypeFactory } from './typing/safe-ds-type-factory.js';
 import { SafeDsMarkdownGenerator } from './generation/safe-ds-markdown-generator.js';
 import { SafeDsCompletionProvider } from './lsp/safe-ds-completion-provider.js';
 import { SafeDsFuzzyMatcher } from './lsp/safe-ds-fuzzy-matcher.js';
-import { type Logger, SafeDsMessagingProvider, type UserMessageProvider } from './lsp/safe-ds-messaging-provider.js';
+import {
+    type Logger,
+    SafeDsMessagingProvider,
+    type UserMessageProvider,
+} from '../communication/safe-ds-messaging-provider.js';
 import { SafeDsConfigurationProvider } from './workspace/safe-ds-configuration-provider.js';
 import { SafeDsCodeLensProvider } from './lsp/safe-ds-code-lens-provider.js';
 
