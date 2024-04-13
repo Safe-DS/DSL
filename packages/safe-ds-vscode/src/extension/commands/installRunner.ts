@@ -2,7 +2,7 @@ import vscode, { ExtensionContext, Uri } from 'vscode';
 import child_process from 'node:child_process';
 import semver from 'semver';
 import { dependencies } from '@safe-ds/lang';
-import { logError } from '../output.js';
+import { logError, printOutputMessage } from '../output.js';
 import fs from 'node:fs';
 
 const pythonCommandCandidates = ['python3', 'python', 'py'];
@@ -121,11 +121,23 @@ const createRunnerVirtualEnvironment = async (context: ExtensionContext, pythonC
 const installRunnerInVirtualEnvironment = async (context: ExtensionContext): Promise<void> => {
     return new Promise((resolve, reject) => {
         const installCommand = `${getPipCommand(context)} install "safe-ds-runner${dependencies['safe-ds-runner'].pipVersionRange}"`;
-        child_process.exec(installCommand, (error) => {
-            if (error) {
-                reject(error);
-            } else {
+        const process = child_process.spawn(installCommand, { shell: true });
+
+        process.stdout.on('data', (data: Buffer) => {
+            printOutputMessage(data.toString().trim());
+        });
+        process.stderr.on('data', (data: Buffer) => {
+            logError(data.toString().trim());
+        });
+
+        process.on('error', (error) => {
+            reject(error);
+        });
+        process.on('close', (code) => {
+            if (code === 0) {
                 resolve();
+            } else {
+                reject(`Runner installation failed with code ${code}.`);
             }
         });
     });
