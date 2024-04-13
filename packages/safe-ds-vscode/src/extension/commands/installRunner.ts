@@ -55,7 +55,7 @@ const doInstallRunner = async (context: ExtensionContext) => {
     await vscode.window.withProgress(
         {
             location: vscode.ProgressLocation.Window,
-            title: 'Installing the runner...',
+            title: 'Installing the runner (this may take a few minutes)...',
         },
         async (progress) => {
             progress.report({ increment: 0 });
