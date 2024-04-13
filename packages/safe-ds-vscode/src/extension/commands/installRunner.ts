@@ -46,17 +46,15 @@ const doInstallRunner = async (context: ExtensionContext): Promise<boolean> => {
             location: vscode.ProgressLocation.Window,
             title: 'Creating a virtual environment...',
         },
-        async (progress) => {
-            progress.report({ increment: 0 });
+        async () => {
             try {
                 await createRunnerVirtualEnvironment(context, pythonCommand);
+                return true;
             } catch (error) {
                 vscode.window.showErrorMessage('Failed to create a virtual environment.');
                 logError(String(error));
                 return false;
             }
-            progress.report({ increment: 100 });
-            return true;
         },
     );
     if (!success) {
@@ -69,17 +67,15 @@ const doInstallRunner = async (context: ExtensionContext): Promise<boolean> => {
             location: vscode.ProgressLocation.Window,
             title: 'Installing the runner (this may take a few minutes)...',
         },
-        async (progress) => {
-            progress.report({ increment: 0 });
+        async () => {
             try {
                 await installRunnerInVirtualEnvironment(context);
+                return true;
             } catch (error) {
                 vscode.window.showErrorMessage('Failed to install the runner.');
                 logError(String(error));
                 return false;
             }
-            progress.report({ increment: 100 });
-            return true;
         },
     );
     return success;
@@ -137,7 +133,7 @@ const installRunnerInVirtualEnvironment = async (context: ExtensionContext): Pro
 
 const getPipCommand = (context: ExtensionContext): string => {
     if (process.platform === 'win32') {
-        return `${runnerVirtualEnvironmentUri(context).fsPath}/Scripts/pip.exe`;
+        return `${runnerVirtualEnvironmentUri(context).fsPath}\\Scripts\\pip.exe`;
     } else {
         return `${runnerVirtualEnvironmentUri(context).fsPath}/bin/pip`;
     }
@@ -145,7 +141,7 @@ const getPipCommand = (context: ExtensionContext): string => {
 
 const getRunnerCommand = (context: ExtensionContext): string => {
     if (process.platform === 'win32') {
-        return `${runnerVirtualEnvironmentUri(context).fsPath}/Scripts/safe-ds-runner.exe`;
+        return `${runnerVirtualEnvironmentUri(context).fsPath}\\Scripts\\safe-ds-runner.exe`;
     } else {
         return `${runnerVirtualEnvironmentUri(context).fsPath}/bin/safe-ds-runner`;
     }

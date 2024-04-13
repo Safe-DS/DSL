@@ -39,12 +39,19 @@ export const activate = async function (context: vscode.ExtensionContext) {
     ).SafeDs;
 
     client = createLanguageClient(context);
-    client.onNotification(rpc.runnerStarted, async (port: number) => {
-        await services.runtime.Runner.connectToPort(port);
-    });
+    registerNotificationListeners(context);
     await client.start();
 
     registerVSCodeCommands(context);
+};
+
+const registerNotificationListeners = function (context: vscode.ExtensionContext) {
+    client.onNotification(rpc.runnerInstall, async () => {
+        await installRunner(context)();
+    });
+    client.onNotification(rpc.runnerStarted, async (port: number) => {
+        await services.runtime.Runner.connectToPort(port);
+    });
 };
 
 // This function is called when the extension is deactivated.
