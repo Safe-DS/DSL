@@ -1,8 +1,9 @@
 import vscode, { ExtensionContext, Uri } from 'vscode';
-import child_process from 'child_process';
+import child_process from 'node:child_process';
 import semver from 'semver';
 import { dependencies } from '@safe-ds/lang';
 import { logError } from '../output.js';
+import fs from 'node:fs';
 
 const pythonCommandCandidates = ['python3', 'python', 'py'];
 
@@ -11,6 +12,18 @@ const LOWEST_UNSUPPORTED_PYTHON_VERSION = '3.13.0';
 const npmVersionRange = `>=${LOWEST_SUPPORTED_PYTHON_VERSION} <${LOWEST_UNSUPPORTED_PYTHON_VERSION}`;
 
 export const installRunner = (context: ExtensionContext) => async () => {
+    // Install the runner if it is not already installed
+    if (!fs.existsSync(getRunnerCommand(context))) {
+        await doInstallRunner(context);
+    }
+
+    // Set the runner command in the configuration
+    await vscode.workspace
+        .getConfiguration()
+        .update('safe-ds.runner.command', getRunnerCommand(context), vscode.ConfigurationTarget.Global);
+};
+
+const doInstallRunner = async (context: ExtensionContext) => {
     // Check if a matching Python interpreter is available
     const pythonCommand = await getPythonCommand();
     if (!pythonCommand) {
@@ -56,11 +69,6 @@ export const installRunner = (context: ExtensionContext) => async () => {
             progress.report({ increment: 100 });
         },
     );
-
-    // Set the runner command in the configuration
-    await vscode.workspace
-        .getConfiguration()
-        .update('safe-ds.runner.command', getRunnerCommand(context), vscode.ConfigurationTarget.Global);
 };
 
 const getPythonCommand = async (): Promise<string | undefined> => {
