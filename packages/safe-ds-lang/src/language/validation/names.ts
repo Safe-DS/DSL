@@ -26,7 +26,7 @@ import {
     SdsTypeParameter,
 } from '../generated/ast.js';
 import { CODEGEN_PREFIX } from '../generation/safe-ds-python-generator.js';
-import { isInPipelineFile, isInStubFile, isInTestFile } from '../helpers/fileExtensions.js';
+import { isInDevFile, isInPipelineFile, isInStubFile } from '../helpers/fileExtensions.js';
 import {
     getClassMembers,
     getColumns,
@@ -327,7 +327,7 @@ export const moduleMustContainUniqueNames = (node: SdsModule, accept: Validation
             accept,
             isStubDeclaration,
         );
-    } else if (isInTestFile(node)) {
+    } else if (isInDevFile(node)) {
         namesMustBeUnique(
             getModuleMembers(node),
             (name) => `A declaration with name '${name}' exists already in this file.`,

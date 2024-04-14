@@ -10,7 +10,7 @@ import {
 import { Range } from 'vscode-languageserver';
 import { URI } from 'langium';
 
-const uri = 'file:///test.sdstest';
+const uri = 'file:///test.sdsdev';
 
 describe('findTestChecks', () => {
     it.each([
