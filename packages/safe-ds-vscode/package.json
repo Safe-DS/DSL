@@ -113,8 +113,8 @@
             },
             {
                 "language": "safe-ds-dev",
-                "scopeName": "source.safe-ds-stub",
-                "path": "./syntaxes/safe-ds-stub.tmLanguage.json"
+                "scopeName": "source.safe-ds-dev",
+                "path": "./syntaxes/safe-ds-dev.tmLanguage.json"
             }
         ],
         "snippets": [

@@ -29,9 +29,9 @@ pipeline myPipeline {
     // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
     // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
     »0« + »0«;
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
-    »""« + »""«;
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<true>'."
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<false>'."
+    »true« + »false«;
     // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
     // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
     »unresolved« + »unresolved«;
@@ -166,3 +166,12 @@ class MyClass<T sub Any>(
     // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
     c4: Any? = »p1« > »p1«,
 )
+
+pipeline stringConcatenation {
+    // $TEST$ error "Use template strings for concatenation."
+    »"" + 0.0«;
+    // $TEST$ error "Use template strings for concatenation."
+    »0 + ""«;
+    // $TEST$ error "Use template strings for concatenation."
+    »"" + ""«;
+}
