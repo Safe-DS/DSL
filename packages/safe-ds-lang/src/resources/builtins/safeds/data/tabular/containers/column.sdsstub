@@ -23,7 +23,8 @@ class Column<out T = Any?>(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val column = Column("test", [1, 2, 3]);
+     *     val name = column.name; // "test"
      * }
      */
     attr name: String
@@ -32,7 +33,8 @@ class Column<out T = Any?>(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val column = Column("test", [1, 2, 3]);
+     *     val numberOfRows = column.numberOfRows; // 3
      * }
      */
     @PythonName("number_of_rows") attr numberOfRows: Int
@@ -41,7 +43,14 @@ class Column<out T = Any?>(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val column = Column("test", [1, 2, 3]);
+     *     val type = column.type; // Integer
+     * }
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("test", ["a", "b", "c"]);
+     *     val type = column.type; // String
      * }
      */
     attr type: ColumnType
@@ -53,7 +62,8 @@ class Column<out T = Any?>(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val column = Column("test", [1, 2, 3, 2, 4, 3]);
+     *     val uniqueValues = column.getUniqueValues(); // [1, 2, 3, 4]
      * }
      */
     @Pure
@@ -69,7 +79,8 @@ class Column<out T = Any?>(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val column = Column("test", [1, 2, 3]);
+     *     val value = column.getValue(1); // 2
      * }
      */
     @Pure
@@ -87,7 +98,14 @@ class Column<out T = Any?>(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val column = Column("test", [1, 2, 3]);
+     *     val allMatch = column.all((value) -> value < 4); // true
+     * }
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("test", [1, 2, 3]);
+     *     val allMatch = column.all((value) -> value < 2); // false
      * }
      */
     @Pure

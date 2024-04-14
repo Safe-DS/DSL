@@ -35,7 +35,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val column = Column("test", [1, 2, 3]);
+         *     val name = column.name; // "test"
          * }
          */
         attr name: String
@@ -44,7 +45,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val column = Column("test", [1, 2, 3]);
+         *     val numberOfRows = column.numberOfRows; // 3
          * }
          */
         @PythonName("number_of_rows") attr numberOfRows: Int
@@ -53,7 +55,14 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val column = Column("test", [1, 2, 3]);
+         *     val type = column.type; // Integer
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("test", ["a", "b", "c"]);
+         *     val type = column.type; // String
          * }
          */
         attr type: ColumnType
@@ -65,7 +74,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val column = Column("test", [1, 2, 3, 2, 4, 3]);
+         *     val uniqueValues = column.getUniqueValues();
          * }
          */
         @Pure
@@ -422,7 +432,8 @@ Return the name of the column.
 
 ```sds
 pipeline example {
-    // TODO
+    val column = Column("test", [1, 2, 3]);
+    val name = column.name; // "test"
 }
 ```
 
@@ -436,7 +447,8 @@ Return the number of elements in the column.
 
 ```sds
 pipeline example {
-    // TODO
+    val column = Column("test", [1, 2, 3]);
+    val numberOfRows = column.numberOfRows; // 3
 }
 ```
 
@@ -450,7 +462,14 @@ Return the type of the column.
 
 ```sds
 pipeline example {
-    // TODO
+    val column = Column("test", [1, 2, 3]);
+    val type = column.type; // Integer
+}
+```
+```sds
+pipeline example {
+    val column = Column("test", ["a", "b", "c"]);
+    val type = column.type; // String
 }
 ```
 
@@ -480,7 +499,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="93"
+    ```sds linenums="103"
     @Pure
     fun all(
         predicate: (param1: T) -> param2: Boolean
@@ -513,7 +532,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="110"
+    ```sds linenums="120"
     @Pure
     fun any(
         predicate: (param1: T) -> param2: Boolean
@@ -546,7 +565,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="194"
+    ```sds linenums="204"
     @Pure
     @PythonName("correlation_with")
     fun correlationWith(
@@ -568,13 +587,14 @@ Return a list of all unique values in the column.
 
 ```sds
 pipeline example {
-    // TODO
+    val column = Column("test", [1, 2, 3, 2, 4, 3]);
+    val uniqueValues = column.getUniqueValues();
 }
 ```
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="59"
+    ```sds linenums="69"
     @Pure
     @PythonName("get_unique_values")
     fun getUniqueValues() -> result1: List<T>
@@ -606,7 +626,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="75"
+    ```sds linenums="85"
     @Pure
     @PythonName("get_value")
     fun getValue(
@@ -634,7 +654,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="142"
+    ```sds linenums="152"
     @Pure
     @PythonName("has_missing_values")
     fun hasMissingValues() -> result1: Boolean
@@ -666,7 +686,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="216"
+    ```sds linenums="226"
     @Pure
     fun idness() -> result1: Float
     ```
@@ -691,7 +711,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="229"
+    ```sds linenums="239"
     @Pure
     fun maximum() -> result1: Float
     ```
@@ -716,7 +736,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="242"
+    ```sds linenums="252"
     @Pure
     fun mean() -> result1: Float
     ```
@@ -741,7 +761,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="255"
+    ```sds linenums="265"
     @Pure
     fun median() -> result1: Float
     ```
@@ -766,7 +786,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="268"
+    ```sds linenums="278"
     @Pure
     fun minimum() -> result1: Float
     ```
@@ -791,7 +811,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="281"
+    ```sds linenums="291"
     @Pure
     @PythonName("missing_value_ratio")
     fun missingValueRatio() -> result1: Float
@@ -817,7 +837,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="295"
+    ```sds linenums="305"
     @Pure
     fun mode() -> result1: List<T>
     ```
@@ -848,7 +868,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="127"
+    ```sds linenums="137"
     @Pure
     fun none(
         predicate: (param1: T) -> param2: Boolean
@@ -875,7 +895,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="369"
+    ```sds linenums="379"
     @Pure
     @PythonName("plot_boxplot")
     fun plotBoxplot() -> result1: Image
@@ -901,7 +921,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="383"
+    ```sds linenums="393"
     @Pure
     @PythonName("plot_histogram")
     fun plotHistogram() -> result1: Image
@@ -935,7 +955,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="160"
+    ```sds linenums="170"
     @Pure
     fun rename(
         @PythonName("new_name") newName: String
@@ -970,7 +990,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="316"
+    ```sds linenums="326"
     @Pure
     fun stability() -> result1: Float
     ```
@@ -995,7 +1015,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="329"
+    ```sds linenums="339"
     @Pure
     @PythonName("standard_deviation")
     fun standardDeviation() -> result1: Float
@@ -1021,7 +1041,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="343"
+    ```sds linenums="353"
     @Pure
     fun sum() -> result1: Float
     ```
@@ -1046,7 +1066,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="397"
+    ```sds linenums="407"
     @Pure
     @PythonName("to_html")
     fun toHtml() -> result1: String
@@ -1086,7 +1106,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="179"
+    ```sds linenums="189"
     @Pure
     fun transform<R>(
         transformer: (param1: T) -> param2: R
@@ -1113,7 +1133,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="356"
+    ```sds linenums="366"
     @Pure
     fun variance() -> result1: Float
     ```
