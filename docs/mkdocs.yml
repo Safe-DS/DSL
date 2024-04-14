@@ -21,9 +21,9 @@ nav:
     - Pipelines: pipeline-language/pipelines.md
     - Statements: pipeline-language/statements.md
     - Expressions: pipeline-language/expressions.md
-    - Comments: pipeline-language/comments.md
     - Segments: pipeline-language/segments.md
     - Types: pipeline-language/types.md
+    - Comments: pipeline-language/comments.md
     - Imports: pipeline-language/imports.md
   - API Reference: api/
   - Integrating New Libraries:

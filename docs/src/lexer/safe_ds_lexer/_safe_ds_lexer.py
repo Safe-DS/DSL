@@ -72,7 +72,7 @@ qualified_name_regex = rf"({identifier_regex})(\.({identifier_regex}))*"
 
 
 class SafeDsLexer(RegexLexer):
-    name = "safe-ds"
+    name = "safe-ds-dev"
     aliases = [
         "Safe-DS",
         "safe-ds",

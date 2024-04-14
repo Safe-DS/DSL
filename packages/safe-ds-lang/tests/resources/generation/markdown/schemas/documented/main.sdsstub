@@ -15,4 +15,11 @@ schema MySchema2 {
     "column2": Int,
 }
 
+/**
+ * Description of MySchema3.
+ *
+ * @example // Example of MySchema3.
+ */
+schema MySchema3 {}
+
 class MyClass

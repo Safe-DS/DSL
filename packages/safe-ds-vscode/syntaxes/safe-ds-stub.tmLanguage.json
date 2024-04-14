@@ -13,6 +13,10 @@
         {
             "name": "storage.modifier.safe-ds-stub",
             "match": "\\b(const|in|out|static)\\b"
+        },
+        {
+            "name": "keyword.operator.expression.safe-ds-stub",
+            "match": "\\b(and|not|or|sub)\\b"
         }
     ]
 }

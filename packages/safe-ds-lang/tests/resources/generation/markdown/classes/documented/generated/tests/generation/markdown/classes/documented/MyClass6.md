@@ -16,6 +16,8 @@ Description of MyClass6.
             attr myAttribut4: Int
             /**
              * Description of myAttribute3.
+             *
+             * @example // Example of myAttribute3.
              */
             attr myAttribute3: Int
         }
@@ -57,7 +59,7 @@ Description of myFunction1.
 
 ??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="61"
+    ```sds linenums="63"
     @Pure fun myFunction1()
     ```
 
@@ -73,7 +75,7 @@ Description of myFunction2.
 
 ??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="65"
+    ```sds linenums="67"
     @Pure static fun myFunction2()
     ```
 
@@ -91,6 +93,8 @@ Description of MyClass7.
         attr myAttribut4: Int
         /**
          * Description of myAttribute3.
+         *
+         * @example // Example of myAttribute3.
          */
         attr myAttribute3: Int
     }
@@ -108,12 +112,18 @@ Description of myAttribute3.
 
 **Type:** `#!sds Int`
 
+**Examples:**
+
+```sds
+// Example of myAttribute3.
+```
+
 ## `#!sds enum` MyEnum1 {#tests.generation.markdown.classes.documented.MyClass6.MyEnum1 data-toc-label='MyEnum1'}
 
 Description of MyEnum1.
 
 ??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="56"
+    ```sds linenums="58"
     enum MyEnum1
     ```

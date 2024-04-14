@@ -8,6 +8,11 @@ from safeds.data.tabular.typing import ColumnType
  *
  * @param name The name of the column.
  * @param data The data.
+ *
+ * @example
+ * pipeline example {
+ *     val column = Column("test", [1, 2, 3]);
+ * }
  */
 class Column<out T = Any?>(
     name: String,

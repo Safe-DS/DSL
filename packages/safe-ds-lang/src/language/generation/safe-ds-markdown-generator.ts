@@ -49,6 +49,7 @@ import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import { NamedType, Type, TypeParameterType } from '../typing/model.js';
 import path from 'path';
 import { addLinePrefix, removeLinePrefix } from '../../helpers/strings.js';
+import { expandToStringLF } from 'langium/generate';
 
 const INDENTATION = '    ';
 const LIB = path.join('packages', 'safe-ds-lang', 'lib', 'resources');
@@ -178,6 +179,12 @@ export class SafeDsMarkdownGenerator {
             });
         }
 
+        // Examples
+        const examples = this.renderExamples(node);
+        if (examples) {
+            result += `\n**Examples:**\n\n${examples}`;
+        }
+
         // Source code
         const sourceCode = this.renderSourceCode(node);
         if (sourceCode) {
@@ -194,6 +201,12 @@ export class SafeDsMarkdownGenerator {
         // Type
         const type = this.typeComputer.computeType(node.type);
         result += `\n**Type:** ${this.renderType(type, knownPaths)}\n`;
+
+        // Examples
+        const examples = this.renderExamples(node);
+        if (examples) {
+            result += `\n**Examples:**\n\n${examples}`;
+        }
 
         return result;
     }
@@ -219,6 +232,12 @@ export class SafeDsMarkdownGenerator {
         const typeParameters = this.renderTypeParameters(getTypeParameters(node), knownPaths);
         if (typeParameters) {
             result += `\n**Type parameters:**\n\n${typeParameters}`;
+        }
+
+        // Examples
+        const examples = this.renderExamples(node);
+        if (examples) {
+            result += `\n**Examples:**\n\n${examples}`;
         }
 
         // Source code
@@ -249,6 +268,12 @@ export class SafeDsMarkdownGenerator {
     private describeEnum(node: SdsEnum, level: number, knownPaths: Set<string>): string {
         let result = this.renderPreamble(node, level, 'enum');
 
+        // Examples
+        const examples = this.renderExamples(node);
+        if (examples) {
+            result += `\n**Examples:**\n\n${examples}`;
+        }
+
         // Source code
         const sourceCode = this.renderSourceCode(node);
         if (sourceCode) {
@@ -274,6 +299,12 @@ export class SafeDsMarkdownGenerator {
             result += `\n**Parameters:**\n\n${parameters}`;
         }
 
+        // Examples
+        const examples = this.renderExamples(node);
+        if (examples) {
+            result += `\n**Examples:**\n\n${examples}`;
+        }
+
         return result;
     }
 
@@ -297,6 +328,12 @@ export class SafeDsMarkdownGenerator {
         const typeParameters = this.renderTypeParameters(getTypeParameters(node), knownPaths);
         if (typeParameters) {
             result += `\n**Type parameters:**\n\n${typeParameters}`;
+        }
+
+        // Examples
+        const examples = this.renderExamples(node);
+        if (examples) {
+            result += `\n**Examples:**\n\n${examples}`;
         }
 
         // Source code
@@ -326,6 +363,12 @@ export class SafeDsMarkdownGenerator {
             }
         }
 
+        // Examples
+        const examples = this.renderExamples(node);
+        if (examples) {
+            result += `\n**Examples:**\n\n${examples}`;
+        }
+
         // Source code
         const sourceCode = this.renderSourceCode(node);
         if (sourceCode) {
@@ -349,6 +392,12 @@ export class SafeDsMarkdownGenerator {
         const results = this.renderResults(getResults(node.resultList), knownPaths);
         if (results) {
             result += `\n**Results:**\n\n${results}`;
+        }
+
+        // Examples
+        const examples = this.renderExamples(node);
+        if (examples) {
+            result += `\n**Examples:**\n\n${examples}`;
         }
 
         // Source code
@@ -507,6 +556,26 @@ export class SafeDsMarkdownGenerator {
         }
 
         return `\`#!sds ${type}\``;
+    }
+
+    private renderExamples(node: SdsDeclaration): string {
+        const examples = this.documentationProvider.getExamples(node);
+        if (isEmpty(examples)) {
+            return '';
+        }
+
+        const result = examples
+            .map(
+                (example) =>
+                    expandToStringLF`
+                        \`\`\`sds
+                        ${example}
+                        \`\`\`
+                    `,
+            )
+            .join('\n');
+
+        return result + '\n';
     }
 
     private renderSourceCode(node: SdsDeclaration): string {

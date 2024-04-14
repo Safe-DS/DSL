@@ -20,3 +20,10 @@ annotation MyAnnotation2(param1: MyEnum1, param2: Float = 1.0)
 annotation MyAnnotation3
 
 enum MyEnum1
+
+/**
+ * Description of MyAnnotation4.
+ *
+ * @example // Example of MyAnnotation4.
+ */
+annotation MyAnnotation4
