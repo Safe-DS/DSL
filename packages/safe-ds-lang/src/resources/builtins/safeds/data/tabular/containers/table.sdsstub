@@ -21,6 +21,11 @@ from safeds.data.tabular.typing import ColumnType, Schema
  * Note: When removing the last column of the table, the `number_of_columns` property will be set to 0.
  *
  * @param data The data. If None, an empty table is created.
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 class Table(
     data: Map<String, List<Any>>? = null // TODO: update default value to empty map
@@ -29,18 +34,38 @@ class Table(
      * Return a list of all column names in this table.
      *
      * Alias for self.schema.column_names -> list[str].
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @PythonName("column_names") attr columnNames: List<String>
     /**
      * Return the number of columns.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @PythonName("number_of_columns") attr numberOfColumns: Int
     /**
      * Return the number of rows.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @PythonName("number_of_rows") attr numberOfRows: Int
     /**
      * Return the schema of the table.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     attr `schema`: Schema
 
@@ -50,6 +75,11 @@ class Table(
      * @param path The path to the CSV file.
      *
      * @result result1 The table created from the CSV file.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
     @PythonName("from_csv_file")
@@ -65,6 +95,11 @@ class Table(
      * @param path The path to the Excel file.
      *
      * @result result1 The table created from the Excel file.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
     @PythonName("from_excel_file")
@@ -78,6 +113,11 @@ class Table(
      * @param path The path to the JSON file.
      *
      * @result result1 The table created from the JSON file.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
     @PythonName("from_json_file")
@@ -91,6 +131,11 @@ class Table(
      * @param data The data.
      *
      * @result result1 The generated table.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("from_dict")
@@ -104,6 +149,11 @@ class Table(
      * @param columns The columns to be combined. They need to have the same size.
      *
      * @result result1 The generated table.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("from_columns")
@@ -117,6 +167,11 @@ class Table(
      * @param rows The rows to be combined. They need to have a matching schema.
      *
      * @result result1 The generated table.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("from_rows")
@@ -130,6 +185,11 @@ class Table(
      * @param columnName The name of the column.
      *
      * @result result1 The column.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("get_column")
@@ -145,6 +205,11 @@ class Table(
      * @param columnName The name of the column.
      *
      * @result result1 True if the column exists.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("has_column")
@@ -160,6 +225,11 @@ class Table(
      * @param columnName The name of the column to be queried.
      *
      * @result result1 The type of the column.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("get_column_type")
@@ -173,6 +243,11 @@ class Table(
      * @param index The index.
      *
      * @result result1 The row of the table at the index.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("get_row")
@@ -186,6 +261,11 @@ class Table(
      * The original table is not modified.
      *
      * @result result1 The table with statistics.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("summarize_statistics")
@@ -197,6 +277,11 @@ class Table(
      * The original table is not modified.
      *
      * @result result1 The table with the column attached.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("add_column")
@@ -212,6 +297,11 @@ class Table(
      * @param columns The columns to be added.
      *
      * @result result1 A new table combining the original table and the given columns.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("add_columns")
@@ -232,6 +322,11 @@ class Table(
      * @param row The row to be added.
      *
      * @result result1 A new table with the added row at the end.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("add_row")
@@ -250,6 +345,11 @@ class Table(
      * @param rows The rows to be added.
      *
      * @result result1 A new table which combines the original table and the given rows.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("add_rows")
@@ -265,6 +365,11 @@ class Table(
      * @param query A Callable that is applied to all rows.
      *
      * @result result1 A table containing only the rows filtered by the query.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("filter_rows")
@@ -280,6 +385,11 @@ class Table(
      * @param keySelector A Callable that is applied to all rows and returns the key of the group.
      *
      * @result result1 A dictionary containing the new tables as values and the selected keys as keys.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("group_rows_by")
@@ -297,6 +407,11 @@ class Table(
      * @param columnNames A list containing only the columns to be kept.
      *
      * @result result1 A table containing only the given column(s).
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("keep_only_columns")
@@ -314,6 +429,11 @@ class Table(
      * @param columnNames A list containing all columns to be dropped.
      *
      * @result result1 A table without the given columns.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("remove_columns")
@@ -329,6 +449,11 @@ class Table(
      * Note: When removing the last column of the table, the `number_of_columns` property will be set to 0.
      *
      * @result result1 A table without the columns that contain missing values.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("remove_columns_with_missing_values")
@@ -342,6 +467,11 @@ class Table(
      * Note: When removing the last column of the table, the `number_of_columns` property will be set to 0.
      *
      * @result result1 A table without the columns that contain non-numerical values.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("remove_columns_with_non_numerical_values")
@@ -353,6 +483,11 @@ class Table(
      * The original table is not modified.
      *
      * @result result1 The table with the duplicate rows removed.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("remove_duplicate_rows")
@@ -364,6 +499,11 @@ class Table(
      * The original table is not modified.
      *
      * @result result1 A table without the rows that contain missing values.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("remove_rows_with_missing_values")
@@ -379,6 +519,11 @@ class Table(
      * The original table is not modified.
      *
      * @result result1 A new table without rows containing outliers.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("remove_rows_with_outliers")
@@ -393,6 +538,11 @@ class Table(
      * @param newName The new name of the target column.
      *
      * @result result1 The Table with the renamed column.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("rename_column")
@@ -412,6 +562,11 @@ class Table(
      * @param newColumns The list of new columns replacing the old column.
      *
      * @result result1 A table with the old column replaced by the new columns.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("replace_column")
@@ -426,6 +581,11 @@ class Table(
      * The original table is not modified.
      *
      * @result result1 The shuffled Table.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("shuffle_rows")
@@ -441,6 +601,11 @@ class Table(
      * @param step The step size used to iterate through the table, 1 by default.
      *
      * @result result1 The resulting table.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("slice_rows")
@@ -467,6 +632,11 @@ class Table(
      * @param comparator The function used to compare two columns.
      *
      * @result result1 A new table with sorted columns.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("sort_columns")
@@ -489,6 +659,11 @@ class Table(
      * @param comparator The function used to compare two rows.
      *
      * @result result1 A new table with sorted rows.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("sort_rows")
@@ -507,6 +682,11 @@ class Table(
      * contains the rest of the data.
      * @result result2 A tuple containing the two resulting tables. The first table has the specified size, the second table
      * contains the rest of the data.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("split_rows")
@@ -523,6 +703,11 @@ class Table(
      * @param featureNames Names of the feature columns. If None, all columns except the target column are used.
      *
      * @result result1 A new tagged table with the given target and feature names.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("tag_columns")
@@ -541,6 +726,11 @@ class Table(
      * @param featureNames Names of the feature columns. If None, all columns except the target and time columns are used.
      *
      * @result result1 A new time series with the given target, time and feature names.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("time_columns")
@@ -556,6 +746,11 @@ class Table(
      * The original table is not modified.
      *
      * @result result1 The table with the transformed column.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("transform_column")
@@ -572,6 +767,11 @@ class Table(
      * @param transformer The transformer which transforms the given table.
      *
      * @result result1 The transformed table.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("transform_table")
@@ -587,6 +787,11 @@ class Table(
      * @param transformer A transformer that was fitted with columns, which are all present in the table.
      *
      * @result result1 The original table.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("inverse_transform_table")
@@ -598,6 +803,11 @@ class Table(
      * Plot a correlation heatmap for all numerical columns of this `Table`.
      *
      * @result result1 The plot as an image.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("plot_correlation_heatmap")
@@ -613,6 +823,11 @@ class Table(
      * @param yColumnName The column name of the column to be plotted on the y-Axis.
      *
      * @result result1 The plot as an image.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("plot_lineplot")
@@ -628,6 +843,11 @@ class Table(
      * @param yColumnName The column name of the column to be plotted on the y-Axis.
      *
      * @result result1 The plot as an image.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("plot_scatterplot")
@@ -640,6 +860,11 @@ class Table(
      * Plot a boxplot for every numerical column.
      *
      * @result result1 The plot as an image.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("plot_boxplots")
@@ -649,6 +874,11 @@ class Table(
      * Plot a histogram for every column.
      *
      * @result result1 The plot as an image.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("plot_histograms")
@@ -661,6 +891,11 @@ class Table(
      * overwritten.
      *
      * @param path The path to the output file.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_csv_file")
@@ -676,6 +911,11 @@ class Table(
      * overwritten.
      *
      * @param path The path to the output file.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_excel_file")
@@ -690,6 +930,11 @@ class Table(
      * overwritten.
      *
      * @param path The path to the output file.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_json_file")
@@ -701,6 +946,11 @@ class Table(
      * Return a dictionary that maps column names to column values.
      *
      * @result result1 Dictionary representation of the table.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("to_dict")
@@ -710,6 +960,11 @@ class Table(
      * Return an HTML representation of the table.
      *
      * @result result1 The generated HTML.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("to_html")
@@ -719,6 +974,11 @@ class Table(
      * Return a list of the columns.
      *
      * @result result1 List of columns.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("to_columns")
@@ -728,6 +988,11 @@ class Table(
      * Return a list of the rows.
      *
      * @result result1 List of rows.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("to_rows")

@@ -7,6 +7,11 @@ from safeds.data.tabular.transformation import TableTransformer
  * Replace missing values with the given strategy.
  *
  * @param strategy The strategy used to impute missing values. Use the classes nested inside `Imputer.Strategy` to specify it.
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 class Imputer(
     strategy: Imputer.Strategy
@@ -44,6 +49,11 @@ class Imputer(
      * @param columnNames The list of columns from the table used to fit the transformer. If `None`, all columns are used.
      *
      * @result result1 The fitted transformer.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun fit(

@@ -20,14 +20,29 @@ class Column<out T = Any?>(
 ) {
     /**
      * Return the name of the column.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     attr name: String
     /**
      * Return the number of elements in the column.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @PythonName("number_of_rows") attr numberOfRows: Int
     /**
      * Return the type of the column.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     attr type: ColumnType
 
@@ -35,6 +50,11 @@ class Column<out T = Any?>(
      * Return a list of all unique values in the column.
      *
      * @result result1 List of unique values in the column.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("get_unique_values")
@@ -46,6 +66,11 @@ class Column<out T = Any?>(
      * @param index Index of requested element.
      *
      * @result result1 Value at index in column.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("get_value")
@@ -59,6 +84,11 @@ class Column<out T = Any?>(
      * @param predicate Callable that is used to find matches.
      *
      * @result result1 True if all match.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun all(
@@ -71,6 +101,11 @@ class Column<out T = Any?>(
      * @param predicate Callable that is used to find matches.
      *
      * @result result1 True if any match.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun any(
@@ -83,6 +118,11 @@ class Column<out T = Any?>(
      * @param predicate Callable that is used to find matches.
      *
      * @result result1 True if none match.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun none(
@@ -93,6 +133,11 @@ class Column<out T = Any?>(
      * Return whether the column has missing values.
      *
      * @result result1 True if missing values exist.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("has_missing_values")
@@ -106,6 +151,11 @@ class Column<out T = Any?>(
      * @param newName The new name of the column.
      *
      * @result result1 A new column with the new name.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun rename(
@@ -120,6 +170,11 @@ class Column<out T = Any?>(
      * @param transformer Function that will be applied to all data points.
      *
      * @result result1 The transformed column.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun transform<R>(
@@ -130,6 +185,11 @@ class Column<out T = Any?>(
      * Calculate Pearson correlation between this and another column. Both columns have to be numerical.
      *
      * @result result1 Correlation between the two columns.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("correlation_with")
@@ -147,6 +207,11 @@ class Column<out T = Any?>(
      * $$
      *
      * @result result1 The idness of the column.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun idness() -> result1: Float
@@ -155,6 +220,11 @@ class Column<out T = Any?>(
      * Return the maximum value of the column. The column has to be numerical.
      *
      * @result result1 The maximum value.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun maximum() -> result1: Float
@@ -163,6 +233,11 @@ class Column<out T = Any?>(
      * Return the mean value of the column. The column has to be numerical.
      *
      * @result result1 The mean value.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun mean() -> result1: Float
@@ -171,6 +246,11 @@ class Column<out T = Any?>(
      * Return the median value of the column. The column has to be numerical.
      *
      * @result result1 The median value.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun median() -> result1: Float
@@ -179,6 +259,11 @@ class Column<out T = Any?>(
      * Return the minimum value of the column. The column has to be numerical.
      *
      * @result result1 The minimum value.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun minimum() -> result1: Float
@@ -187,6 +272,11 @@ class Column<out T = Any?>(
      * Return the ratio of missing values to the total number of elements in the column.
      *
      * @result result1 The ratio of missing values to the total number of elements in the column.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("missing_value_ratio")
@@ -196,6 +286,11 @@ class Column<out T = Any?>(
      * Return the mode of the column.
      *
      * @result result1 Returns a list with the most common values.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun mode() -> result1: List<T>
@@ -212,6 +307,11 @@ class Column<out T = Any?>(
      * The stability is not defined for a column with only null values.
      *
      * @result result1 The stability of the column.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun stability() -> result1: Float
@@ -220,6 +320,11 @@ class Column<out T = Any?>(
      * Return the standard deviation of the column. The column has to be numerical.
      *
      * @result result1 The standard deviation of all values.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("standard_deviation")
@@ -229,6 +334,11 @@ class Column<out T = Any?>(
      * Return the sum of the column. The column has to be numerical.
      *
      * @result result1 The sum of all values.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun sum() -> result1: Float
@@ -237,6 +347,11 @@ class Column<out T = Any?>(
      * Return the variance of the column. The column has to be numerical.
      *
      * @result result1 The variance of all values.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun variance() -> result1: Float
@@ -245,6 +360,11 @@ class Column<out T = Any?>(
      * Plot this column in a boxplot. This function can only plot real numerical data.
      *
      * @result result1 The plot as an image.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("plot_boxplot")
@@ -254,6 +374,11 @@ class Column<out T = Any?>(
      * Plot a column in a histogram.
      *
      * @result result1 The plot as an image.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("plot_histogram")
@@ -263,6 +388,11 @@ class Column<out T = Any?>(
      * Return an HTML representation of the column.
      *
      * @result result1 The generated HTML.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("to_html")

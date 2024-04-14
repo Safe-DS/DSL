@@ -4,12 +4,22 @@ package safeds.data.tabular.typing
  * Abstract base class for column types.
  *
  * @param isNullable Whether the columntype is nullable.
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 class ColumnType {
     /**
      * Return whether the given column type is nullable.
      *
      * @result result1 True if the column is nullable.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("is_nullable")
@@ -19,6 +29,11 @@ class ColumnType {
      * Return whether the given column type is numeric.
      *
      * @result result1 True if the column is numeric.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("is_numeric")

@@ -8,6 +8,11 @@ from safeds.data.tabular.transformation import InvertibleTableTransformer
  *
  * @param minimum The minimum of the new range after the transformation
  * @param maximum The maximum of the new range after the transformation
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 class RangeScaler(
     const minimum: Float = 0.0,
@@ -22,6 +27,11 @@ class RangeScaler(
      * @param columnNames The list of columns from the table used to fit the transformer. If `None`, all columns are used.
      *
      * @result result1 The fitted transformer.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun fit(

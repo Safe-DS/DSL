@@ -8,6 +8,11 @@ class NeuralNetworkRegressor(
 ) {
     /**
      * Check if the model is fitted.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @PythonName("is_fitted") attr isFitted: Boolean
 
@@ -24,6 +29,11 @@ class NeuralNetworkRegressor(
      * @param callbackOnEpochCompletion Function used to view metrics while training. Gets called after an epoch is completed with the index of the last epoch and the overall loss average.
      *
      * @result trainedRegressor The trained Model
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun fit(
@@ -46,6 +56,11 @@ class NeuralNetworkRegressor(
      * @param testData The data the network should predict.
      *
      * @result prediction The given test_data with an added "prediction" column at the end
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun predict(
