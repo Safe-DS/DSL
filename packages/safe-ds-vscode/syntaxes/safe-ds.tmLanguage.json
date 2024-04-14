@@ -78,6 +78,10 @@
                     "end": "\\*/",
                     "patterns": [
                         {
+                            "match": "(@example)\\b",
+                            "name": "keyword.other.safe-ds"
+                        },
+                        {
                             "match": "(@param|@result)\\s+([_a-zA-Z][_a-zA-Z0-9]*)?",
                             "captures": {
                                 "1": {
