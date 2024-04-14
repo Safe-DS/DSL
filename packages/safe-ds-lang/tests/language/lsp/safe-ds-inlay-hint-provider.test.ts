@@ -460,7 +460,7 @@ const getActualSimpleInlayHints = async (code: string): Promise<SimpleInlayHint[
 };
 
 const getExpectedSimpleInlayHints = (code: string): SimpleInlayHint[] => {
-    const testChecks = findTestChecks(code, URI.file('file:///test.sdstest'), { failIfFewerRangesThanComments: true });
+    const testChecks = findTestChecks(code, URI.file('file:///test.sdsdev'), { failIfFewerRangesThanComments: true });
     if (testChecks.isErr) {
         throw new Error(testChecks.error.message);
     }

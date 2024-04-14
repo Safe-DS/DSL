@@ -85,7 +85,7 @@ const createLanguageClient = function (context: vscode.ExtensionContext): Langua
         debug: { module: serverModule, transport: TransportKind.ipc, options: debugOptions },
     };
 
-    const fileSystemWatcher = vscode.workspace.createFileSystemWatcher('**/*.{sdspipe,sdsstub,sdstest}');
+    const fileSystemWatcher = vscode.workspace.createFileSystemWatcher('**/*.{sdspipe,sdsstub,sdsdev}');
     context.subscriptions.push(fileSystemWatcher);
 
     // Options to control the language client
@@ -341,7 +341,7 @@ export const getPipelineDocument = async function (
         .forEach((oldDocument) => {
             services.shared.workspace.LangiumDocuments.deleteDocument(oldDocument.uri);
         });
-    const workspaceSdsFiles = await vscode.workspace.findFiles('**/*.{sdspipe,sdsstub,sdstest}');
+    const workspaceSdsFiles = await vscode.workspace.findFiles('**/*.{sdspipe,sdsstub,sdsdev}');
     // Load all documents
     const unvalidatedSdsDocuments = await Promise.all(
         workspaceSdsFiles.map((newDocumentUri) =>

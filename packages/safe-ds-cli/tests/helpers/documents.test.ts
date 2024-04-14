@@ -24,13 +24,13 @@ describe('processPaths', async () => {
         },
         {
             testName: 'test file',
-            paths: ['c.sdstest'],
-            expected: Result.ok(['c.sdstest']),
+            paths: ['c.sdsdev'],
+            expected: Result.ok(['c.sdsdev']),
         },
         {
             testName: 'multiple files',
-            paths: ['a.sdspipe', 'b.sdsstub', 'c.sdstest'],
-            expected: Result.ok(['a.sdspipe', 'b.sdsstub', 'c.sdstest']),
+            paths: ['a.sdspipe', 'b.sdsstub', 'c.sdsdev'],
+            expected: Result.ok(['a.sdspipe', 'b.sdsstub', 'c.sdsdev']),
         },
         {
             testName: 'duplicates',
@@ -43,10 +43,10 @@ describe('processPaths', async () => {
             expected: Result.ok([
                 'a.sdspipe',
                 'b.sdsstub',
-                'c.sdstest',
+                'c.sdsdev',
                 'nested/a.sdspipe',
                 'nested/b.sdsstub',
-                'nested/c.sdstest',
+                'nested/c.sdsdev',
             ]),
         },
         {

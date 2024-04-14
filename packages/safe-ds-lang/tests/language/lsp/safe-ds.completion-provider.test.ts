@@ -40,12 +40,12 @@ describe('SafeDsCompletionProvider', async () => {
                 },
             },
             {
-                testName: 'after package (sdstest)',
+                testName: 'after package (sdsdev)',
                 code: `
                     package myPackage
                     <|>
                 `,
-                uri: `file:///test3.sdstest`,
+                uri: `file:///test3.sdsdev`,
                 expectedLabels: {
                     shouldEqual: [
                         'from',
