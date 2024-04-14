@@ -26,7 +26,9 @@ import {
 import { isEmpty } from '../../helpers/collections.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { getClassMembers, getEnumVariants } from '../helpers/nodeProperties.js';
+import { expandToStringLF } from 'langium/generate';
 
+const EXAMPLE_TAG = 'example';
 const PARAM_TAG = 'param';
 const RESULT_TAG = 'result';
 const SINCE_TAG = 'since';
@@ -86,17 +88,21 @@ export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
             }
 
             // Remove a single leading space from each line
-            const [first, ...rest] = comment
-                .toMarkdown(this.createRenderOptions(node, linkRenderer))
-                .split('\n')
-                .map((it) => it.trimEnd());
-
-            if (rest.every((it) => isEmpty(it) || it.startsWith(' '))) {
-                return [first, ...rest.map((it) => it.slice(1))].join('\n');
-            } else {
-                return [first, ...rest].join('\n');
-            }
+            const text = comment.toMarkdown(this.createRenderOptions(node, linkRenderer));
+            return withoutIndentation(text);
         }
+    }
+
+    /**
+     * Returns the text of all `@example` tags of the given node.
+     */
+    getExamples(node: AstNode): string[] {
+        const comment = this.getJSDocComment(node);
+        const exampleTags = comment?.getTags(EXAMPLE_TAG) ?? [];
+        return exampleTags.map((it) => {
+            const code = it.content.toString();
+            return withoutIndentation(code).trim();
+        });
     }
 
     /**
@@ -157,6 +163,14 @@ export class SafeDsDocumentationProvider extends JSDocDocumentationProvider {
                     const contentMd = tag.content.toMarkdown();
                     const [name, description] = contentMd.split(/\s(.*)/su);
                     return `**@${tag.name}** *${name}* — ${(description ?? '').trim()}`;
+                } else if (tag.name === EXAMPLE_TAG) {
+                    const code = tag.content.toString();
+                    return expandToStringLF`
+                        **@${tag.name}**
+                        \`\`\`safe-ds-dev
+                        ${withoutIndentation(code)}
+                        \`\`\`
+                    `;
                 } else {
                     return super.documentationTagRenderer(node, tag);
                 }
@@ -235,6 +249,20 @@ const isBlockTag = (element: JSDocElement): element is JSDocTag => {
 
 const isTag = (element: JSDocElement): element is JSDocTag => {
     return 'name' in element;
+};
+
+const withoutIndentation = (text: string): string => {
+    let [first, ...rest] = text.split('\n').map((it) => it.trimEnd());
+
+    if (first?.startsWith(' ')) {
+        first = first.slice(1);
+    }
+
+    if (rest.every((it) => isEmpty(it) || it.startsWith(' '))) {
+        return [first, ...rest.map((it) => it.slice(1))].join('\n');
+    } else {
+        return [first, ...rest].join('\n');
+    }
 };
 
 type LinkRenderer = (target: SdsDeclaration, display: string) => string | undefined;
