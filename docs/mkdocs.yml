@@ -23,7 +23,6 @@ nav:
     - Expressions: pipeline-language/expressions.md
     - Comments: pipeline-language/comments.md
     - Segments: pipeline-language/segments.md
-    - Parameters: pipeline-language/parameters.md
     - Types: pipeline-language/types.md
     - Imports: pipeline-language/imports.md
   - API Reference: api/

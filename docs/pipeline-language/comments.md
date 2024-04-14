@@ -159,6 +159,6 @@ respectively.
 [class]: ../stub-language/classes.md
 [enum]: ../stub-language/enumerations.md
 [enum-variant]: ../stub-language/enumerations.md#enum-variants
-[parameter]: parameters.md
+[parameter]: segments.md#parameters
 [result]: segments.md#results
 [type-parameter]: ../stub-language/type-parameters.md

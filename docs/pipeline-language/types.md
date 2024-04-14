@@ -292,7 +292,7 @@ If exactly one result is expected, the surrounding parentheses may be also remov
 (a: Int, b: Int) -> r: Int
 ```
 
-[parameters]: parameters.md
+[parameters]: segments.md#parameters
 [results]: segments.md#results
 [stub-language]: ../stub-language/README.md
 [classes]: ../stub-language/classes.md

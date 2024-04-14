@@ -604,8 +604,8 @@ If the default precedence of operators is not sufficient, parentheses can be use
 
 [imports]: imports.md
 [packages]: packages.md
-[parameters]: parameters.md
-[required-parameters]: parameters.md#required-parameters
+[parameters]: segments.md#parameters
+[required-parameters]: segments.md#required-parameters
 [results]: segments.md#results
 [types]: types.md
 [callable-types]: types.md#callable-types
