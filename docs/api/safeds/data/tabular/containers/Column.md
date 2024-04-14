@@ -15,9 +15,17 @@ A column is a named collection of values.
 |------|-------------|-------------|---------|
 | `T` | [`Any?`][safeds.lang.Any] | - | [`Any?`][safeds.lang.Any] |
 
+**Examples:**
+
+```sds
+pipeline example {
+    val column = Column("test", [1, 2, 3]);
+}
+```
+
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="12"
+    ```sds linenums="17"
     class Column<out T = Any?>(
         name: String,
         data: List<T> = []
@@ -310,7 +318,7 @@ Check if all values have a given property.
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="58"
+    ```sds linenums="63"
     @Pure
     fun all(
         predicate: (param1: T) -> param2: Boolean
@@ -335,7 +343,7 @@ Check if any value has a given property.
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="70"
+    ```sds linenums="75"
     @Pure
     fun any(
         predicate: (param1: T) -> param2: Boolean
@@ -360,7 +368,7 @@ Calculate Pearson correlation between this and another column. Both columns have
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="129"
+    ```sds linenums="134"
     @Pure
     @PythonName("correlation_with")
     fun correlationWith(
@@ -380,7 +388,7 @@ Return a list of all unique values in the column.
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="34"
+    ```sds linenums="39"
     @Pure
     @PythonName("get_unique_values")
     fun getUniqueValues() -> result1: List<T>
@@ -404,7 +412,7 @@ Return column value at specified index, starting at 0.
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="45"
+    ```sds linenums="50"
     @Pure
     @PythonName("get_value")
     fun getValue(
@@ -424,7 +432,7 @@ Return whether the column has missing values.
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="92"
+    ```sds linenums="97"
     @Pure
     @PythonName("has_missing_values")
     fun hasMissingValues() -> result1: Boolean
@@ -448,7 +456,7 @@ $$
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="146"
+    ```sds linenums="151"
     @Pure
     fun idness() -> result1: Float
     ```
@@ -465,7 +473,7 @@ Return the maximum value of the column. The column has to be numerical.
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="154"
+    ```sds linenums="159"
     @Pure
     fun maximum() -> result1: Float
     ```
@@ -482,7 +490,7 @@ Return the mean value of the column. The column has to be numerical.
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="162"
+    ```sds linenums="167"
     @Pure
     fun mean() -> result1: Float
     ```
@@ -499,7 +507,7 @@ Return the median value of the column. The column has to be numerical.
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="170"
+    ```sds linenums="175"
     @Pure
     fun median() -> result1: Float
     ```
@@ -516,7 +524,7 @@ Return the minimum value of the column. The column has to be numerical.
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="178"
+    ```sds linenums="183"
     @Pure
     fun minimum() -> result1: Float
     ```
@@ -533,7 +541,7 @@ Return the ratio of missing values to the total number of elements in the column
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="186"
+    ```sds linenums="191"
     @Pure
     @PythonName("missing_value_ratio")
     fun missingValueRatio() -> result1: Float
@@ -551,7 +559,7 @@ Return the mode of the column.
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="195"
+    ```sds linenums="200"
     @Pure
     fun mode() -> result1: List<T>
     ```
@@ -574,7 +582,7 @@ Check if no values has a given property.
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="82"
+    ```sds linenums="87"
     @Pure
     fun none(
         predicate: (param1: T) -> param2: Boolean
@@ -593,7 +601,7 @@ Plot this column in a boxplot. This function can only plot real numerical data.
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="244"
+    ```sds linenums="249"
     @Pure
     @PythonName("plot_boxplot")
     fun plotBoxplot() -> result1: Image
@@ -611,7 +619,7 @@ Plot a column in a histogram.
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="253"
+    ```sds linenums="258"
     @Pure
     @PythonName("plot_histogram")
     fun plotHistogram() -> result1: Image
@@ -637,7 +645,7 @@ The original column is not modified.
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="105"
+    ```sds linenums="110"
     @Pure
     fun rename(
         @PythonName("new_name") newName: String
@@ -664,7 +672,7 @@ The stability is not defined for a column with only null values.
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="211"
+    ```sds linenums="216"
     @Pure
     fun stability() -> result1: Float
     ```
@@ -681,7 +689,7 @@ Return the standard deviation of the column. The column has to be numerical.
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="219"
+    ```sds linenums="224"
     @Pure
     @PythonName("standard_deviation")
     fun standardDeviation() -> result1: Float
@@ -699,7 +707,7 @@ Return the sum of the column. The column has to be numerical.
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="228"
+    ```sds linenums="233"
     @Pure
     fun sum() -> result1: Float
     ```
@@ -716,7 +724,7 @@ Return an HTML representation of the column.
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="262"
+    ```sds linenums="267"
     @Pure
     @PythonName("to_html")
     fun toHtml() -> result1: String
@@ -748,7 +756,7 @@ The original column is not modified.
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="119"
+    ```sds linenums="124"
     @Pure
     fun transform<R>(
         transformer: (param1: T) -> param2: R
@@ -767,7 +775,7 @@ Return the variance of the column. The column has to be numerical.
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="236"
+    ```sds linenums="241"
     @Pure
     fun variance() -> result1: Float
     ```
