@@ -1,4 +1,4 @@
-import { SafeDsServices } from '../language/safe-ds-module.js';
+import { SafeDsServices } from '../safe-ds-module.js';
 import { Connection, MessageActionItem } from 'vscode-languageserver';
 import { Disposable } from 'vscode-languageserver-protocol';
 

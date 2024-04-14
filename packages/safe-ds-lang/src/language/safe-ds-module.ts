@@ -49,7 +49,7 @@ import {
     MessageBroker,
     SafeDsMessagingProvider,
     type UserMessageProvider,
-} from '../communication/safe-ds-messaging-provider.js';
+} from './communication/safe-ds-messaging-provider.js';
 import { SafeDsConfigurationProvider } from './workspace/safe-ds-configuration-provider.js';
 import { SafeDsCodeLensProvider } from './lsp/safe-ds-code-lens-provider.js';
 
