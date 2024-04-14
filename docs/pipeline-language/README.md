@@ -16,7 +16,7 @@ This remaining documentation provides a detailed reference for the concepts of t
 - [Expressions][expressions] are computations that produce some value.
 - [Comments][comments] document the code.
 - [Segments][segments] encapsulate parts of program and make them reusable.
-- [Types][types] describe the kind of data that a declaration accepts.
+- [Types][types] describe the kind of data that a declaration can hold.
 - [Imports][imports] make declarations in other packages accessible.
 
 
