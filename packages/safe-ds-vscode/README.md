@@ -20,7 +20,7 @@ To run Safe-DS programs, you also need the [Safe-DS Runner](https://github.com/S
 2. **Open VS Code**.
 3. **Open the command palette** (Menu bar > View > Command Palette).
 4. **Type `Install the Safe-DS Runner`**.
-5. **Press ++enter++**. Installation may take a few minutes, since it downloads and installs several large libraries
+5. **Press Enter**. Installation may take a few minutes, since it downloads and installs several large libraries
    like PyTorch.
 
 ## Documentation
