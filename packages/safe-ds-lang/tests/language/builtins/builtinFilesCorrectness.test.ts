@@ -46,6 +46,7 @@ describe('source code', () => {
             ) ?? [];
 
         if (!isEmpty(errorsOrWarnings)) {
+            // eslint-disable-next-line @typescript-eslint/no-throw-literal
             throw new InvalidBuiltinFileError(errorsOrWarnings, uri);
         }
     });
@@ -82,6 +83,7 @@ describe('examples', () => {
                 );
 
                 if (!isEmpty(errorsOrWarnings)) {
+                    // eslint-disable-next-line @typescript-eslint/no-throw-literal
                     throw new InvalidExampleError(errorsOrWarnings, uri, range);
                 }
             } finally {
