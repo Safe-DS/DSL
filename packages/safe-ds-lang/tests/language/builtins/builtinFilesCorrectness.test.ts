@@ -1,8 +1,8 @@
 import { AssertionError } from 'assert';
-import { URI } from 'langium';
+import { AstUtils, URI } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { beforeAll, describe, it } from 'vitest';
-import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver';
+import { Diagnostic, DiagnosticSeverity, Range } from 'vscode-languageserver';
 import { isEmpty } from '../../../src/helpers/collections.js';
 import { uriToShortenedResourceName } from '../../../src/helpers/resources.js';
 import { listBuiltinFiles } from '../../../src/language/builtins/fileFinder.js';
@@ -11,8 +11,12 @@ import { CODE_EXPERIMENTAL_LIBRARY_ELEMENT } from '../../../src/language/validat
 import { CODE_EXPERIMENTAL_LANGUAGE_FEATURE } from '../../../src/language/validation/experimentalLanguageFeatures.js';
 import { locationToString } from '../../../src/helpers/locations.js';
 import { loadDocuments } from '../../helpers/testResources.js';
+import { CODE_MODULE_MISSING_PACKAGE } from '../../../src/language/validation/other/modules.js';
+import { validationHelper } from 'langium/test';
+import { isSdsDeclaration } from '../../../src/language/generated/ast.js';
 
 const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
+const documentProvider = services.documentation.DocumentationProvider;
 const langiumDocuments = services.shared.workspace.LangiumDocuments;
 const builtinFiles = listBuiltinFiles();
 
@@ -21,7 +25,7 @@ const ignoredWarnings: (number | string | undefined)[] = [
     CODE_EXPERIMENTAL_LIBRARY_ELEMENT,
 ];
 
-describe('builtin files', () => {
+describe('source code', () => {
     beforeAll(async () => {
         await loadDocuments(services, builtinFiles, { validation: true });
     });
@@ -42,9 +46,48 @@ describe('builtin files', () => {
             ) ?? [];
 
         if (!isEmpty(errorsOrWarnings)) {
-            // eslint-disable-next-line @typescript-eslint/no-throw-literal
             throw new InvalidBuiltinFileError(errorsOrWarnings, uri);
         }
+    });
+});
+
+describe('examples', () => {
+    const ignoredErrors: (number | string | undefined)[] = [CODE_MODULE_MISSING_PACKAGE];
+
+    const files = builtinFiles.map((uri) => ({
+        uri,
+        shortenedResourceName: uriToShortenedResourceName(uri, 'builtins'),
+    }));
+
+    describe.each(files)('[$shortenedResourceName]', ({ uri }) => {
+        const document = langiumDocuments.getDocument(uri)!;
+
+        const examples = AstUtils.streamAst(document.parseResult.value)
+            .filter(isSdsDeclaration)
+            .flatMap((node) => {
+                const range = node.$cstNode?.range;
+                return documentProvider.getExamples(node).map((example) => ({ example, name: node.name, range }));
+            })
+            .toArray();
+
+        it.each(examples)('$name', async ({ example, range }) => {
+            const result = await validationHelper(services)(example);
+            try {
+                const errorsOrWarnings = result.diagnostics.filter(
+                    (diagnostic) =>
+                        (diagnostic.severity === DiagnosticSeverity.Error &&
+                            !ignoredErrors.includes(diagnostic.code)) ||
+                        (diagnostic.severity === DiagnosticSeverity.Warning &&
+                            !ignoredWarnings.includes(diagnostic.code)),
+                );
+
+                if (!isEmpty(errorsOrWarnings)) {
+                    throw new InvalidExampleError(errorsOrWarnings, uri, range);
+                }
+            } finally {
+                await result.dispose();
+            }
+        });
     });
 });
 
@@ -66,8 +109,27 @@ class InvalidBuiltinFileError extends AssertionError {
     }
 }
 
-const diagnosticToString = (diagnostic: Diagnostic, uri: URI): string => {
+/**
+ * An example has errors or warnings.
+ */
+class InvalidExampleError extends AssertionError {
+    constructor(
+        readonly diagnostics: Diagnostic[],
+        uri: URI,
+        range: Range | undefined,
+    ) {
+        const diagnosticsAsString = diagnostics.map((d) => diagnosticToString(d, uri, range)).join(`\n`);
+
+        super({
+            message: `Example has errors or warnings:\n${diagnosticsAsString}`,
+            actual: diagnostics,
+            expected: [],
+        });
+    }
+}
+
+const diagnosticToString = (diagnostic: Diagnostic, uri: URI, range?: Range): string => {
     const codeString = diagnostic.data?.code ?? diagnostic.code;
-    const locationString = locationToString({ uri: uri.toString(), range: diagnostic.range });
+    const locationString = locationToString({ uri: uri.toString(), range: range ?? diagnostic.range });
     return `    - ${codeString}: ${diagnostic.message}\n      at ${locationString}`;
 };
