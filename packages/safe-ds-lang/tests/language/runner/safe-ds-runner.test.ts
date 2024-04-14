@@ -31,36 +31,30 @@ describe('SafeDsRunner', async () => {
         });
     });
     describe('getMainModuleName', async () => {
-        it('sdspipe', async () => {
-            const document = services.shared.workspace.LangiumDocumentFactory.fromString(
-                '',
-                URI.file('/a-b c.sdspipe'),
-            );
+        it('sds', async () => {
+            const document = services.shared.workspace.LangiumDocumentFactory.fromString('', URI.file('/a-b c.sds'));
             const mainModuleName = runner.getMainModuleName(document);
             expect(mainModuleName).toBe('a_b_c');
         });
-        it('sdstest', async () => {
-            const document = services.shared.workspace.LangiumDocumentFactory.fromString(
-                '',
-                URI.file('/a-b c.sdstest'),
-            );
+        it('sdsdev', async () => {
+            const document = services.shared.workspace.LangiumDocumentFactory.fromString('', URI.file('/a-b c.sdsdev'));
             const mainModuleName = runner.getMainModuleName(document);
             expect(mainModuleName).toBe('a_b_c');
         });
         it('other', async () => {
             const document = services.shared.workspace.LangiumDocumentFactory.fromString(
                 '',
-                URI.file('/a-b c.sdstest2'),
+                URI.file('/a-b c.sdsdev2'),
             );
             const mainModuleName = runner.getMainModuleName(document);
-            expect(mainModuleName).toBe('a_b_c_sdstest2');
+            expect(mainModuleName).toBe('a_b_c_sdsdev2');
         });
     });
     describe('generateCodeForRunner', async () => {
         it('generateCodeForRunner', async () => {
             const document = services.shared.workspace.LangiumDocumentFactory.fromString(
                 'package a\n\npipeline mainpipeline {}',
-                URI.file('/b.sdstest'),
+                URI.file('/b.sdsdev'),
             );
             const [programCodeMap] = runner.generateCodeForRunner(document, undefined);
             expect(JSON.stringify(programCodeMap).replaceAll('\\r\\n', '\\n')).toBe(

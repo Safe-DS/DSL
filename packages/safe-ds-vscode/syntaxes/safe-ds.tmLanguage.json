@@ -1,62 +1,70 @@
 {
     "name": "safe-ds",
     "scopeName": "source.safe-ds",
-    "fileTypes": [".sdspipe", ".sdsstub", ".sdstest"],
+    "fileTypes": [".sds"],
     "patterns": [
         {
-            "include": "#comments"
+            "include": "#shared"
         },
-        {
-            "name": "constant.numeric.safe-ds",
-            "match": "\\b([0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?)\\b"
-        },
-        {
-            "name": "constant.language.safe-ds",
-            "match": "\\b(false|null|true|unknown)\\b"
-        },
+
         {
             "name": "storage.type.safe-ds",
-            "match": "\\b(annotation|attr|class|enum|fun|package|pipeline|schema|segment|val)\\b"
+            "match": "\\b(package|pipeline|segment|val)\\b"
         },
         {
             "name": "storage.modifier.safe-ds",
-            "match": "\\b(const|in|internal|out|private|static)\\b"
-        },
-        {
-            "name": "keyword.operator.expression.safe-ds",
-            "match": "\\b(and|not|or|sub)\\b"
-        },
-        {
-            "name": "keyword.other.safe-ds",
-            "match": "\\b(as|from|import|literal|union|where|yield)\\b"
-        },
-        {
-            "name": "meta.safe-ds",
-            "begin": "\\`",
-            "end": "\\`"
-        },
-        {
-            "name": "string.interpolated.safe-ds",
-            "begin": "\"|}}",
-            "end": "{{|\"",
-            "patterns": [
-                {
-                    "include": "#string-character-escape"
-                }
-            ]
-        },
-        {
-            "name": "string.quoted.double.safe-ds",
-            "begin": "\"",
-            "end": "\"",
-            "patterns": [
-                {
-                    "include": "#string-character-escape"
-                }
-            ]
+            "match": "\\b(const|internal|private)\\b"
         }
     ],
     "repository": {
+        "shared": {
+            "patterns": [
+                {
+                    "name": "constant.numeric.safe-ds",
+                    "match": "\\b([0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?)\\b"
+                },
+                {
+                    "name": "constant.language.safe-ds",
+                    "match": "\\b(false|null|true|unknown)\\b"
+                },
+                {
+                    "name": "keyword.operator.expression.safe-ds",
+                    "match": "\\b(and|not|or)\\b"
+                },
+                {
+                    "name": "keyword.other.safe-ds",
+                    "match": "\\b(as|from|import|literal|union|where|yield)\\b"
+                },
+                {
+                    "name": "meta.safe-ds",
+                    "begin": "\\`",
+                    "end": "\\`"
+                },
+                {
+                    "name": "string.interpolated.safe-ds",
+                    "begin": "\"|}}",
+                    "end": "{{|\"",
+                    "patterns": [
+                        {
+                            "include": "#string-character-escape"
+                        }
+                    ]
+                },
+                {
+                    "name": "string.quoted.double.safe-ds",
+                    "begin": "\"",
+                    "end": "\"",
+                    "patterns": [
+                        {
+                            "include": "#string-character-escape"
+                        }
+                    ]
+                },
+                {
+                    "include": "#comments"
+                }
+            ]
+        },
         "comments": {
             "patterns": [
                 {

@@ -464,10 +464,10 @@ export class SafeDsRunner {
     }
 
     public getMainModuleName(pipelineDocument: LangiumDocument): string {
-        if (pipelineDocument.uri.fsPath.endsWith('.sdspipe')) {
-            return this.generator.sanitizeModuleNameForPython(path.basename(pipelineDocument.uri.fsPath, '.sdspipe'));
-        } else if (pipelineDocument.uri.fsPath.endsWith('.sdstest')) {
-            return this.generator.sanitizeModuleNameForPython(path.basename(pipelineDocument.uri.fsPath, '.sdstest'));
+        if (pipelineDocument.uri.fsPath.endsWith('.sds')) {
+            return this.generator.sanitizeModuleNameForPython(path.basename(pipelineDocument.uri.fsPath, '.sds'));
+        } else if (pipelineDocument.uri.fsPath.endsWith('.sdsdev')) {
+            return this.generator.sanitizeModuleNameForPython(path.basename(pipelineDocument.uri.fsPath, '.sdsdev'));
         } else {
             return this.generator.sanitizeModuleNameForPython(path.basename(pipelineDocument.uri.fsPath));
         }

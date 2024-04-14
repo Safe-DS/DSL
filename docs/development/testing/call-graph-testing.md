@@ -5,7 +5,7 @@ graph test.
 
 ## Adding a call graph test
 
-1. Create a new file with the extension `.sdstest` in the `tests/resources/call graph` directory or any subdirectory.
+1. Create a new file with the extension `.sdsdev` in the `tests/resources/call graph` directory or any subdirectory.
    Give the file a descriptive name, since the file name becomes part of the test name.
 
     !!! tip "Skipping a test"

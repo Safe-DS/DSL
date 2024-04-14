@@ -14,7 +14,7 @@ const nameProvider = services.references.NameProvider;
 const renameProvider = services.lsp.RenameProvider!;
 
 const resourceUri = 'file:///resource.sdsstub';
-const mainUri = 'file:///main.sdspipe';
+const mainUri = 'file:///main.sds';
 
 describe('SafeDsRenameProvider', async () => {
     const testCases: RenameProviderTest[] = [
