@@ -176,11 +176,25 @@ export const infixOperationOperandsMustHaveCorrectType = (services: SafeDsServic
                     });
                 }
                 return;
+            case '+':
+                if (
+                    typeChecker.isSubtypeOf(leftType, coreTypes.String) ||
+                    typeChecker.isSubtypeOf(rightType, coreTypes.String)
+                ) {
+                    accept('error', `Use template strings for concatenation.`, {
+                        node,
+                        code: CODE_TYPE_MISMATCH,
+                        codeDescription: {
+                            href: 'https://dsl.safeds.com/en/stable/language/pipeline-language/expressions/#template-strings',
+                        },
+                    });
+                    return;
+                }
+            // fallthrough
             case '<':
             case '<=':
             case '>=':
             case '>':
-            case '+':
             case '-':
             case '*':
             case '/':
