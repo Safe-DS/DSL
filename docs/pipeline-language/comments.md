@@ -53,11 +53,13 @@ Documentation comments are special [block comments](#block-comments) that are us
 documentation is used in various places, e.g. when hovering over a declaration or one of its usage in VS Code. Here is
 an example:
 
-```sds
+```sds hl_lines="1 2 3"
 /**
  * This is a documentation comment.
  */
-class C
+segment sum(a: Int, b: Int) -> sum: Int {
+    yield sum = a + b;
+}
 ```
 
 They start with `#!sds /**` and end with `#!sds */`. There must be no spaces inside the delimiters. Documentation
@@ -74,7 +76,9 @@ Documentation comments support [Markdown](https://www.markdownguide.org/) to for
 /**
  * This is a documentation comment with **bold** and *italic* text.
  */
-class C
+segment sum(a: Int, b: Int) -> sum: Int {
+    yield sum = a + b;
+}
 ```
 
 ### Tags
@@ -90,44 +94,32 @@ an argument:
 /**
  * Computes the sum of two {@link Int}s.
  */
-fun sum(a: Int, b: Int): sum: Int
-```
-
-To point to a member of a [class][class] or an [enum variant][enum-variant] of an [enum][enum], write the name of the
-containing declaration followed by a dot and the name of the member or enum variant:
-
-```sds hl_lines="2"
-/**
- * To create a Configuration, use {@link Configuration.fromFile}.
- */
-class Configuration {
-
-    /**
-     * Creates a Configuration from a file.
-     */
-    fun fromFile(file: String) -> result: Configuration
+segment sum(a: Int, b: Int) -> sum: Int {
+    yield sum = a + b;
 }
 ```
 
 #### `@param`
 
-Use `@param` to document a [parameter][parameter] of a callable declaration. This tag takes the name of the parameter
-and its description as arguments. Since a callable can have multiple parameters, this tag can be used multiple times.
+Use `@param` to document a [parameter][parameter] of a [segment][segment]. This tag takes the name of the parameter
+and its description as arguments. Since a segment can have multiple parameters, this tag can be used multiple times.
 
 ```sds  hl_lines="4 5"
 /**
  * ...
  *
- * @param a The first integer.
- * @param b The second integer.
+ * @param a The first summand.
+ * @param b The second summand.
  */
-fun sum(a: Int, b: Int): sum: Int
+segment sum(a: Int, b: Int) -> sum: Int {
+    yield sum = a + b;
+}
 ```
 
 #### `@result`
 
-Use `@result` to document a [result][result] of a callable declaration. This tag takes the name of the result and its
-description as arguments. Since a callable can have multiple results, this tag can be used multiple times.
+Use `@result` to document a [result][result] of a [segment][segment]. This tag takes the name of the result and its
+description as arguments. Since a segment can have multiple results, this tag can be used multiple times.
 
 ```sds hl_lines="4"
 /**
@@ -135,8 +127,33 @@ description as arguments. Since a callable can have multiple results, this tag c
  *
  * @result sum The sum of `a` and `b`.
  */
-fun sum(a: Int, b: Int): sum: Int
+segment sum(a: Int, b: Int) -> sum: Int {
+    yield sum = a + b;
+}
 ```
+
+#### `@example`
+
+Use `@example` to provide an example of how to use a declaration. This tag takes the example code as an argument.
+
+```sds hl_lines="4 5 6 7"
+/**
+ * ...
+ *
+ * @example
+ * pipeline main {
+ *     val result = sum(1, 2);
+ * }
+ */
+segment sum(a: Int, b: Int) -> sum: Int {
+    yield sum = a + b;
+}
+```
+
+!!! warning "Limitation"
+
+    The example code must not contain any blank lines. Otherwise, only the code up to the first blank line is
+    considered.
 
 #### `@since`
 
@@ -149,16 +166,15 @@ used only once.
  *
  * @since 1.0.0
  */
-fun sum(a: Int, b: Int): sum: Int
+segment sum(a: Int, b: Int) -> sum: Int {
+    yield sum = a + b;
+}
 ```
 
-[^1]: Except [parameter][parameter], [results][result], and [type parameters][type-parameter], which are documented with
-the [`@param`](#param), [`@result`](#result), and [`@typeParam`](#typeparam) tags on the containing declaration,
-respectively.
+[^1]: Except [parameter][parameter] and [results][result], which are documented with the [`@param`](#param) and
+      [`@result`](#result) tags on the containing declaration, respectively.
 
-[class]: ../stub-language/classes.md
-[enum]: ../stub-language/enumerations.md
-[enum-variant]: ../stub-language/enumerations.md#enum-variants
+
+[segment]: segments.md
 [parameter]: segments.md#parameters
 [result]: segments.md#results
-[type-parameter]: ../stub-language/type-parameters.md
