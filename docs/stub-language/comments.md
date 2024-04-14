@@ -171,9 +171,9 @@ fun sum(a: Int, b: Int): sum: Int
 the [`@param`](#param), [`@result`](#result), and [`@typeParam`](#typeparam) tags on the containing declaration,
 respectively.
 
-[class]: ../stub-language/classes.md
-[enum]: ../stub-language/enumerations.md
-[enum-variant]: ../stub-language/enumerations.md#enum-variants
+[class]: classes.md
+[enum]: enumerations.md
+[enum-variant]: enumerations.md#enum-variants
 [parameter]: parameters.md
 [result]: results.md
-[type-parameter]: ../stub-language/type-parameters.md
+[type-parameter]: type-parameters.md

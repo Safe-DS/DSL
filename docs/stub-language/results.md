@@ -63,7 +63,7 @@ Results must be ordered the same way in Python as they are in Safe-DS. Moreover,
 
 Since Python results do not have a name, the names of Safe-DS results can be arbitrary. Naturally, a name should be chosen that captures the purpose of the result.
 
-[stub-language]: ../stub-language/README.md
+[stub-language]: README.md
 [types]: types.md
 [types-python]: types.md#corresponding-python-code
 [callable-types]: types.md#callable-types

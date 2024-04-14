@@ -42,7 +42,7 @@ val one = 1;
 This assignment to a placeholder has the following syntactic elements:
 
 - The keyword `#!sds val`, which indicates that we want to declare a placeholder.
-- The name of the placeholder, here `#!sds one`. This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `#!sds lowerCamelCase` for the names of placeholders.
+- The name of the placeholder, here `#!sds one`. This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest using `#!sds lowerCamelCase` for the names of placeholders.
 - An `#!sds =` sign.
 - The expression to evaluate (right-hand side).
 - A semicolon at the end.
@@ -95,7 +95,7 @@ Similar syntax is used to yield results of [block lambdas][block-lambdas]. The d
 The assignment here has the following syntactic elements:
 
 - The keyword `#!sds yield`, which indicates that we want to declare a result.
-- The name of the result, here `#!sds result`. This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest to use `#!sds lowerCamelCase` for the names of results.
+- The name of the result, here `#!sds result`. This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest using `#!sds lowerCamelCase` for the names of results.
 - An `#!sds =` sign.
 - The expression to evaluate (right-hand side).
 - A semicolon at the end.
@@ -135,7 +135,7 @@ Let us sum up the complete syntax of an assignment:
 
 Assignment happens by index, so the first result is assigned to the first assignee, the second result is assigned to the second assignee, and so forth. If there are more results than assignees, any trailing results are implicitly ignored.
 
-[results]: ../common/results.md
+[results]: segments.md#results
 [stub-language]: ../stub-language/README.md
 [pipeline-language]: README.md
 [expressions]: expressions.md

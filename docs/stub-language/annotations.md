@@ -92,15 +92,15 @@ The package `#!sds safeds.lang` contains several annotations that are processed 
 - [`Target`][safeds.lang.Target], which can restrict the possible targets of an annotation, and
 - [`Repeatable`][safeds.lang.Repeatable], which allows an annotation to be called multiple times on the same declaration.
 
-[parameters]: ../common/parameters.md
-[types]: ../common/types.md
+[parameters]: parameters.md
+[types]: types.md
 [attributes]: classes.md#defining-attributes
 [classes]: classes.md#defining-classes
 [enums]: enumerations.md#declaring-an-enumeration
 [enum-variants]: enumerations.md#enum-variants
 [global-functions]: global-functions.md
 [methods]: classes.md#defining-methods
-[results]: ../common/parameters.md
+[results]: parameters.md
 [segments]: ../pipeline-language/segments.md
 [type-parameters]: type-parameters.md
 [pipelines]: ../pipeline-language/pipelines.md

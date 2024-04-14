@@ -1,16 +1,9 @@
-# Safe-DS
-
-Safely develop Data Science programs with a statically checked domain specific language (DSL) and integrated tools for data
-inspection.
-
-![demo](https://github.com/Safe-DS/DSL/raw/main/docs/img/home/demo.gif)
-
-## Installation
+# Installation
 
 To set up a powerful _integrated development environment_ (_IDE_) for Safe-DS, follow these steps:
 
 1. **Install [Visual Studio Code](https://code.visualstudio.com/)** (VS Code).
-2. **Install this extension** for VS Code.
+2. **Install the [Safe-DS extension](https://marketplace.visualstudio.com/items?itemName=safe-ds.safe-ds)** for VS Code.
 
 To run Safe-DS programs, you also need the [Safe-DS Runner](https://github.com/Safe-DS/Runner):
 
@@ -23,16 +16,18 @@ To run Safe-DS programs, you also need the [Safe-DS Runner](https://github.com/S
 5. **Press ++enter++**. Installation may take a few minutes, since it downloads and installs several large libraries
    like PyTorch.
 
-## Documentation
+## Updating the Safe-DS Extension
 
-You can find the full documentation [here](https://dsl.safeds.com).
+By default, VS Code automatically updates extensions. You only need to restart VS Code to apply the update.
 
-## Contributing
+## Updating the Safe-DS Runner
 
-We welcome contributions from everyone. As a starting point, check the following resources:
+You need to update the Safe-DS Runner if you see an error message like this:
 
-* [Contributing page](https://github.com/Safe-DS/DSL/contribute)
+!!! failure "Error message"
 
-If you need further help, please [use our discussion forum][forum].
+    The installed runner version `0.9.0` is not compatible with this version of the extension.
 
-[forum]: https://github.com/orgs/Safe-DS/discussions
+    The installed version should match these requirements: `>=0.10.0,<0.11.0`. Please update to a matching version.
+
+Click on the button "Update runner" in the error message to trigger the update process.

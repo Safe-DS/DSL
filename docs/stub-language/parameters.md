@@ -147,11 +147,11 @@ Most commonly, default values in Python are literals, since default values are o
 [types-python]: types.md#corresponding-python-code
 [segments]: ../pipeline-language/segments.md
 [calls]: ../pipeline-language/expressions.md#calls
-[stub-language]: ../stub-language/README.md
+[stub-language]: README.md
 [int-literals]: ../pipeline-language/expressions.md#int-literals
 [float-literals]: ../pipeline-language/expressions.md#float-literals
 [string-literals]: ../pipeline-language/expressions.md#string-literals
 [boolean-literals]: ../pipeline-language/expressions.md#boolean-literals
-[null-literals]: ../pipeline-language/expressions.md#null-literal
+[null-literals]: ../pipeline-language/expressions.md#sds-null-literal
 [python-keyword-only]: https://peps.python.org/pep-3102/
 [python-positional-only]: https://peps.python.org/pep-0570/

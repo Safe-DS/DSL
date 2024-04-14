@@ -602,13 +602,13 @@ We all know that `#!sds 2 + 3 * 7` is `#!sds 23` and not `#!sds 35`. The reason 
 
 If the default precedence of operators is not sufficient, parentheses can be used to force a part of an expression to be evaluated first.
 
-[imports]: ../common/imports.md
-[packages]: ../common/packages.md
-[parameters]: ../common/parameters.md
-[required-parameters]: ../common/parameters.md#required-parameters
-[results]: ../common/results.md
-[types]: ../common/types.md
-[callable-types]: ../common/types.md#callable-types
+[imports]: imports.md
+[packages]: packages.md
+[parameters]: segments.md#parameters
+[required-parameters]: segments.md#required-parameters
+[results]: segments.md#results
+[types]: types.md
+[callable-types]: types.md#callable-types
 [classes]: ../stub-language/classes.md
 [attributes]: ../stub-language/classes.md#defining-attributes
 [methods]: ../stub-language/classes.md#defining-methods

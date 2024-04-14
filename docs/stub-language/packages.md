@@ -126,9 +126,9 @@ from safeds.model.regression import DecisionTree
 
 It is important to note that the `#!sds @PythonModule` annotation only affects the one Safe-DS file that contains it rather than the entire Safe-DS package. This allows different Safe-DS files in the same package to point to different [Python modules][python-modules].
 
-[stub-language]: ../stub-language/README.md
-[annotations]: ../stub-language/annotations.md
-[annotation-calls]: ../stub-language/annotations.md#calling-an-annotation
+[stub-language]: README.md
+[annotations]: annotations.md
+[annotation-calls]: annotations.md#calling-an-annotation
 [imports]: imports.md
 [string-literals]: ../pipeline-language/expressions.md#string-literals
 [python-modules]: https://docs.python.org/3/tutorial/modules.html#modules
