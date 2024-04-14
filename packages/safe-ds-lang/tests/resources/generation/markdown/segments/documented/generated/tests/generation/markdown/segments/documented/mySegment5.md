@@ -9,7 +9,7 @@ Description of mySegment4.
 | `result1` | [`MyClass1`][tests.generation.markdown.segments.documented.MyClass1] | Description of result1. |
 | `result2` | `#!sds Float` | Description of result2. |
 
-??? quote "Implementation code in `main.sdspipe`"
+??? quote "Implementation code in `main.sds`"
 
     ```sds linenums="32"
     segment mySegment5() -> (result1: MyClass1, result2: Float) {

@@ -14,8 +14,8 @@ describe('processPaths', async () => {
     const tests: ProcessPathsTest[] = [
         {
             testName: 'pipe file',
-            paths: ['a.sdspipe'],
-            expected: Result.ok(['a.sdspipe']),
+            paths: ['a.sds'],
+            expected: Result.ok(['a.sds']),
         },
         {
             testName: 'stub file',
@@ -29,22 +29,22 @@ describe('processPaths', async () => {
         },
         {
             testName: 'multiple files',
-            paths: ['a.sdspipe', 'b.sdsstub', 'c.sdsdev'],
-            expected: Result.ok(['a.sdspipe', 'b.sdsstub', 'c.sdsdev']),
+            paths: ['a.sds', 'b.sdsstub', 'c.sdsdev'],
+            expected: Result.ok(['a.sds', 'b.sdsstub', 'c.sdsdev']),
         },
         {
             testName: 'duplicates',
-            paths: ['a.sdspipe', 'a.sdspipe'],
-            expected: Result.ok(['a.sdspipe']),
+            paths: ['a.sds', 'a.sds'],
+            expected: Result.ok(['a.sds']),
         },
         {
             testName: 'directory',
             paths: ['.'],
             expected: Result.ok([
-                'a.sdspipe',
+                'a.sds',
                 'b.sdsstub',
                 'c.sdsdev',
-                'nested/a.sdspipe',
+                'nested/a.sds',
                 'nested/b.sdsstub',
                 'nested/c.sdsdev',
             ]),

@@ -81,7 +81,7 @@ class SafeDsLexer(RegexLexer):
         "SDS",
         "sds",
     ]
-    filenames = ["*.sdspipe", "*.sdsstub", "*.sdsdev"]
+    filenames = ["*.sds", "*.sdsstub", "*.sdsdev"]
 
     tokens = {
         "root": [

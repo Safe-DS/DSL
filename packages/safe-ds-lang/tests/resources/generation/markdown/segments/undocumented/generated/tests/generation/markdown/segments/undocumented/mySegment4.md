@@ -7,7 +7,7 @@
 | `param1` | `#!sds Int` | - | - |
 | `param2` | `#!sds Float` | - | `#!sds 1.0` |
 
-??? quote "Implementation code in `main.sdspipe`"
+??? quote "Implementation code in `main.sds`"
 
     ```sds linenums="9"
     segment mySegment4(param1: Int, param2: Float = 1.0) {}

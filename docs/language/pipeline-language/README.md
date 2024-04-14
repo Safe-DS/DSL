@@ -10,7 +10,7 @@ The pipeline language is the part of the Safe-DS DSL that is designed to solve s
 - [Expressions][expressions] are computations that produce some value.
 - [Comments][comments] document the code.
 
-Files that use the pipeline language must have the extension `.sdspipe`.
+Files that use the pipeline language must have the extension `.sds`.
 
 [packages]: ../common/packages.md
 [imports]: ../common/imports.md

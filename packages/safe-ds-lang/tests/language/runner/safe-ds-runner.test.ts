@@ -31,11 +31,8 @@ describe('SafeDsRunner', async () => {
         });
     });
     describe('getMainModuleName', async () => {
-        it('sdspipe', async () => {
-            const document = services.shared.workspace.LangiumDocumentFactory.fromString(
-                '',
-                URI.file('/a-b c.sdspipe'),
-            );
+        it('sds', async () => {
+            const document = services.shared.workspace.LangiumDocumentFactory.fromString('', URI.file('/a-b c.sds'));
             const mainModuleName = runner.getMainModuleName(document);
             expect(mainModuleName).toBe('a_b_c');
         });

@@ -18,12 +18,12 @@ describe('SafeDsCompletionProvider', async () => {
                 },
             },
             {
-                testName: 'after package (sdspipe)',
+                testName: 'after package (sds)',
                 code: `
                     package myPackage
                     <|>
                 `,
-                uri: `file:///test1.sdspipe`,
+                uri: `file:///test1.sds`,
                 expectedLabels: {
                     shouldEqual: ['from', 'pipeline', 'internal', 'private', 'segment'],
                 },

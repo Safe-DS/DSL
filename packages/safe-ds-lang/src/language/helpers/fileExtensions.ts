@@ -6,7 +6,7 @@ import { AstNode, AstUtils, LangiumDocument } from 'langium';
  * @see isInPipelineFile
  * @see isPipelineFile
  */
-export const PIPELINE_FILE_EXTENSION = 'sdspipe';
+export const PIPELINE_FILE_EXTENSION = 'sds';
 
 /**
  * Marks the file as a stub file, which describes an external API.
