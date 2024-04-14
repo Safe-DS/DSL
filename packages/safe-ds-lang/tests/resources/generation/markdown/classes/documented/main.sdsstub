@@ -46,6 +46,8 @@ class MyClass6 {
         attr myAttribut4: Int
         /**
          * Description of myAttribute3.
+         *
+         * @example // Example of myAttribute3.
          */
         attr myAttribute3: Int
     }
@@ -73,3 +75,10 @@ class MyClass6 {
      */
     static attr myAttribute2: Float
 }
+
+/**
+ * Description of MyClass7.
+ *
+ * @example // Example of MyClass7.
+ */
+class MyClass7
