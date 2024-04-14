@@ -14,6 +14,10 @@
         {
             "name": "storage.modifier.safe-ds",
             "match": "\\b(const|internal|private)\\b"
+        },
+        {
+            "name": "keyword.operator.expression.safe-ds",
+            "match": "\\b(and|not|or)\\b"
         }
     ],
     "repository": {
@@ -26,10 +30,6 @@
                 {
                     "name": "constant.language.safe-ds",
                     "match": "\\b(false|null|true|unknown)\\b"
-                },
-                {
-                    "name": "keyword.operator.expression.safe-ds",
-                    "match": "\\b(and|not|or)\\b"
                 },
                 {
                     "name": "keyword.other.safe-ds",
