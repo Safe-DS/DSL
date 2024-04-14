@@ -1,40 +1,28 @@
 # Language Reference
 
 Safe-DS is a domain-specific language (DSL) to quickly and safely develop data science programs. In this context,
-safety means that we try to prevent errors or detect them early in the development process, so you do not waste time
-running a program that will fail.
+safety means that it tries to prevent errors or detect them while you program, so you do not waste time running a
+program that will fail.
 
-Files that use the Safe-DS language must have the extension `.sdspipe`.
+!!! note "File extension"
 
-This part of the documentation provides a detailed reference for the Safe-DS language.
+    Safe-DS programs must have the file extension `sds`, like in `titanic.sds`.
 
-
-
-
-It is divided into the following sections:
-
--
-
-
-
-
-The pipeline language is the part of the Safe-DS DSL that is designed to solve specific data science problems. It has the following concepts:
+This remaining documentation provides a detailed reference for the concepts of the Safe-DS language:
 
 - [Packages][packages] help avoid conflicts that could arise if two declarations have the same name.
-- [Pipelines][pipelines] define the entry point of a data science program.
-- [Statements][statements] are the instructions that are executed as part of a [pipeline][pipelines], [segment][segments], or [block lambda][block-lambdas].
+- [Pipelines][pipelines] define the entry point of a program.
+- [Statements][statements] are the instructions that are executed as part of a program.
 - [Expressions][expressions] are computations that produce some value.
 - [Comments][comments] document the code.
-- [Segments][segments] encapsulate parts of a Data Science program and make them reusable.
+- [Segments][segments] encapsulate parts of program and make them reusable.
 - [Imports][imports] make declarations in other packages accessible.
 
-Files that use the pipeline language must have the extension `.sdspipe`.
 
 [packages]: packages.md
 [pipelines]: pipelines.md
 [statements]: statements.md
 [expressions]: expressions.md
-[block-lambdas]: expressions.md#block-lambdas
 [comments]: comments.md
 [segments]: segments.md
 [imports]: imports.md
