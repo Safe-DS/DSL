@@ -1,6 +1,17 @@
 # Language Reference
 
-This part of the documentation provides a detailed reference for the Safe-DS language. It is divided into the following sections:
+Safe-DS is a domain-specific language (DSL) to quickly and safely develop data science programs. In this context,
+safety means that we try to prevent errors or detect them early in the development process, so you do not waste time
+running a program that will fail.
+
+Files that use the Safe-DS language must have the extension `.sdspipe`.
+
+This part of the documentation provides a detailed reference for the Safe-DS language.
+
+
+
+
+It is divided into the following sections:
 
 -
 

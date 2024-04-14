@@ -17,7 +17,6 @@ nav:
     - First Program: getting-started/first-program.md
   - Language Reference:
     - pipeline-language/README.md
-    - Files: pipeline-language/files.md
     - Packages: pipeline-language/packages.md
     - Pipelines: pipeline-language/pipelines.md
     - Statements: pipeline-language/statements.md
