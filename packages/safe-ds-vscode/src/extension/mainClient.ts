@@ -90,7 +90,11 @@ const createLanguageClient = function (context: vscode.ExtensionContext): Langua
 
     // Options to control the language client
     const clientOptions: LanguageClientOptions = {
-        documentSelector: [{ scheme: 'file', language: 'safe-ds' }],
+        documentSelector: [
+            { scheme: 'file', language: 'safe-ds' },
+            { scheme: 'file', language: 'safe-ds-stub' },
+            { scheme: 'file', language: 'safe-ds-dev' },
+        ],
         synchronize: {
             // Notify the server about file changes to files contained in the workspace
             fileEvents: fileSystemWatcher,
