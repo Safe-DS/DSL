@@ -24,9 +24,17 @@ The declaration should no longer be used.
 - `Schema`
 - `Segment`
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `maturity.sdsstub`"
 
-    ```sds linenums="23"
+    ```sds linenums="28"
     annotation Deprecated(
         alternative: String? = null,
         reason: String? = null,

@@ -2,35 +2,43 @@
 
 A step in the data science process.
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `ideIntegration.sdsstub`"
 
-    ```sds linenums="25"
+    ```sds linenums="40"
     enum DataScienceCategory {
         /**
          * Load your data into the program.
          */
         DataImport
-    
+
         /**
          * Prepare your data for analysis.
          */
         DataPreparation
-    
+
         /**
          * Explore your data.
          */
         DataExploration
-    
+
         /**
          * Save your data for later use.
          */
         DataExport
-    
+
         /**
          * Configure a model and train it on your data.
          */
         Modeling
-    
+
         /**
          * Evaluate the performance of your model.
          */

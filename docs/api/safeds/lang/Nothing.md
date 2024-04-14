@@ -7,8 +7,16 @@ search:
 
 The common subclass of all classes.
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="19"
+    ```sds linenums="34"
     class Nothing
     ```

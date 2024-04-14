@@ -12,9 +12,17 @@ A tagged table is a table that additionally knows which columns are features and
 | `targetName` | [`String`][safeds.lang.String] | Name of the target column. | - |
 | `featureNames` | [`List<String>?`][safeds.lang.List] | Names of the feature columns. If None, all columns except the target column are used. | `#!sds null` |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="12"
+    ```sds linenums="17"
     class TaggedTable(
         data: Map<String, List<Any>>,
         @PythonName("target_name") targetName: String,
@@ -22,13 +30,23 @@ A tagged table is a table that additionally knows which columns are features and
     ) sub Table {
         /**
          * Get the feature columns of the tagged table.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         attr features: Table
         /**
          * Get the target column of the tagged table.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         attr target: Column
-    
+
         /**
          * Return a new table with the provided column attached at the end, as a feature column.
          *
@@ -37,13 +55,18 @@ A tagged table is a table that additionally knows which columns are features and
          * @param column The column to be added.
          *
          * @result result1 The table with the attached feature column.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("add_column_as_feature")
         fun addColumnAsFeature(
             column: Column
         ) -> result1: TaggedTable
-    
+
         /**
          * Return a new `TaggedTable` with the provided columns attached at the end, as feature columns.
          *
@@ -52,13 +75,18 @@ A tagged table is a table that additionally knows which columns are features and
          * @param columns The columns to be added as features.
          *
          * @result result1 The table with the attached feature columns.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("add_columns_as_features")
         fun addColumnsAsFeatures(
             columns: union<List<Column>, Table>
         ) -> result1: TaggedTable
-    
+
         /**
          * Return a new `TaggedTable` with the provided column attached at the end, as neither target nor feature column.
          *
@@ -67,13 +95,18 @@ A tagged table is a table that additionally knows which columns are features and
          * @param column The column to be added.
          *
          * @result result1 The table with the column attached as neither target nor feature column.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("add_column")
         fun addColumn(
             column: Column
         ) -> result1: TaggedTable
-    
+
         /**
          * Return a new `TaggedTable` with multiple added columns, as neither target nor feature columns.
          *
@@ -82,13 +115,18 @@ A tagged table is a table that additionally knows which columns are features and
          * @param columns The columns to be added.
          *
          * @result result1 A new table combining the original table and the given columns as neither target nor feature columns.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("add_columns")
         fun addColumns(
             columns: union<List<Column>, Table>
         ) -> result1: TaggedTable
-    
+
         /**
          * Return a new `TaggedTable` with an added Row attached.
          *
@@ -97,13 +135,18 @@ A tagged table is a table that additionally knows which columns are features and
          * @param row The row to be added.
          *
          * @result result1 A new tagged table with the added row at the end.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("add_row")
         fun addRow(
             row: Row
         ) -> result1: TaggedTable
-    
+
         /**
          * Return a new `TaggedTable` with multiple added Rows attached.
          *
@@ -112,13 +155,18 @@ A tagged table is a table that additionally knows which columns are features and
          * @param rows The rows to be added.
          *
          * @result result1 A new tagged table which combines the original table and the given rows.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("add_rows")
         fun addRows(
             rows: union<List<Row>, Table>
         ) -> result1: TaggedTable
-    
+
         /**
          * Return a new `TaggedTable` containing only rows that match the given Callable (e.g. lambda function).
          *
@@ -127,13 +175,18 @@ A tagged table is a table that additionally knows which columns are features and
          * @param query A Callable that is applied to all rows.
          *
          * @result result1 A new tagged table containing only the rows to match the query.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("filter_rows")
         fun filterRows(
             query: (param1: Row) -> param2: Boolean
         ) -> result1: TaggedTable
-    
+
         /**
          * Return a new `TaggedTable` with only the given column(s).
          *
@@ -142,13 +195,18 @@ A tagged table is a table that additionally knows which columns are features and
          * @param columnNames A list containing only the columns to be kept.
          *
          * @result result1 A table containing only the given column(s).
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("keep_only_columns")
         fun keepOnlyColumns(
             @PythonName("column_names") columnNames: List<String>
         ) -> result1: TaggedTable
-    
+
         /**
          * Return a new `TaggedTable` with the given column(s) removed from the table.
          *
@@ -157,57 +215,82 @@ A tagged table is a table that additionally knows which columns are features and
          * @param columnNames The names of all columns to be dropped.
          *
          * @result result1 A table without the given columns.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("remove_columns")
         fun removeColumns(
             @PythonName("column_names") columnNames: List<String>
         ) -> result1: TaggedTable
-    
+
         /**
          * Return a new `TaggedTable` with every column that misses values removed.
          *
          * The original table is not modified.
          *
          * @result result1 A table without the columns that contain missing values.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("remove_columns_with_missing_values")
         fun removeColumnsWithMissingValues() -> result1: TaggedTable
-    
+
         /**
          * Return a new `TaggedTable` with every column that contains non-numerical values removed.
          *
          * The original table is not modified.
          *
          * @result result1 A table without the columns that contain non-numerical values.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("remove_columns_with_non_numerical_values")
         fun removeColumnsWithNonNumericalValues() -> result1: TaggedTable
-    
+
         /**
          * Return a new `TaggedTable` with all row duplicates removed.
          *
          * The original table is not modified.
          *
          * @result result1 The table with the duplicate rows removed.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("remove_duplicate_rows")
         fun removeDuplicateRows() -> result1: TaggedTable
-    
+
         /**
          * Return a new `TaggedTable` without the rows that contain missing values.
          *
          * The original table is not modified.
          *
          * @result result1 A table without the rows that contain missing values.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("remove_rows_with_missing_values")
         fun removeRowsWithMissingValues() -> result1: TaggedTable
-    
+
         /**
          * Return a new `TaggedTable` with all rows that contain at least one outlier removed.
          *
@@ -218,11 +301,16 @@ A tagged table is a table that additionally knows which columns are features and
          * The original table is not modified.
          *
          * @result result1 A new table without rows containing outliers.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("remove_rows_with_outliers")
         fun removeRowsWithOutliers() -> result1: TaggedTable
-    
+
         /**
          * Return a new `TaggedTable` with a single column renamed.
          *
@@ -232,6 +320,11 @@ A tagged table is a table that additionally knows which columns are features and
          * @param newName The new name of the target column.
          *
          * @result result1 The Table with the renamed column.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("rename_column")
@@ -239,7 +332,7 @@ A tagged table is a table that additionally knows which columns are features and
             @PythonName("old_name") oldName: String,
             @PythonName("new_name") newName: String
         ) -> result1: TaggedTable
-    
+
         /**
          * Return a new `TaggedTable` with the specified old column replaced by a list of new columns.
          *
@@ -253,6 +346,11 @@ A tagged table is a table that additionally knows which columns are features and
          * @param newColumns The new columns replacing the old column.
          *
          * @result result1 A table with the old column replaced by the new column.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("replace_column")
@@ -260,18 +358,23 @@ A tagged table is a table that additionally knows which columns are features and
             @PythonName("old_column_name") oldColumnName: String,
             @PythonName("new_columns") newColumns: List<Column>
         ) -> result1: TaggedTable
-    
+
         /**
          * Return a new `TaggedTable` with randomly shuffled rows of this table.
          *
          * The original table is not modified.
          *
          * @result result1 The shuffled Table.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("shuffle_rows")
         fun shuffleRows() -> result1: TaggedTable
-    
+
         /**
          * Slice a part of the table into a new `TaggedTable`.
          *
@@ -282,6 +385,11 @@ A tagged table is a table that additionally knows which columns are features and
          * @param step The step size used to iterate through the table, 1 by default.
          *
          * @result result1 The resulting table.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("slice_rows")
@@ -290,7 +398,7 @@ A tagged table is a table that additionally knows which columns are features and
             end: Int? = null,
             step: Int = 1
         ) -> result1: TaggedTable
-    
+
         /**
          * Sort the columns of a `TaggedTable` with the given comparator and return a new `TaggedTable`.
          *
@@ -308,13 +416,18 @@ A tagged table is a table that additionally knows which columns are features and
          * @param comparator The function used to compare two columns.
          *
          * @result result1 A new table with sorted columns.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("sort_columns")
         fun sortColumns(
             comparator: (param1: Column, param2: Column) -> param3: Int
         ) -> result1: TaggedTable
-    
+
         /**
          * Sort the rows of a `TaggedTable` with the given comparator and return a new `TaggedTable`.
          *
@@ -330,19 +443,29 @@ A tagged table is a table that additionally knows which columns are features and
          * @param comparator The function used to compare two rows.
          *
          * @result result1 A new table with sorted rows.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("sort_rows")
         fun sortRows(
             comparator: (param1: Row, param2: Row) -> param3: Int
         ) -> result1: TaggedTable
-    
+
         /**
          * Return a new `TaggedTable` with the provided column transformed by calling the provided transformer.
          *
          * The original table is not modified.
          *
          * @result result1 The table with the transformed column.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("transform_column")
@@ -361,11 +484,27 @@ Alias for self.schema.column_names -> list[str].
 
 **Type:** [`List<String>`][safeds.lang.List]
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ## `#!sds attr` features {#safeds.data.tabular.containers.TaggedTable.features data-toc-label='features'}
 
 Get the feature columns of the tagged table.
 
 **Type:** [`Table`][safeds.data.tabular.containers.Table]
+
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
 
 ## `#!sds attr` numberOfColumns {#safeds.data.tabular.containers.TaggedTable.numberOfColumns data-toc-label='numberOfColumns'}
 
@@ -373,11 +512,27 @@ Return the number of columns.
 
 **Type:** [`Int`][safeds.lang.Int]
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ## `#!sds attr` numberOfRows {#safeds.data.tabular.containers.TaggedTable.numberOfRows data-toc-label='numberOfRows'}
 
 Return the number of rows.
 
 **Type:** [`Int`][safeds.lang.Int]
+
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
 
 ## `#!sds attr` schema {#safeds.data.tabular.containers.TaggedTable.schema data-toc-label='schema'}
 
@@ -385,11 +540,27 @@ Return the schema of the table.
 
 **Type:** [`Schema`][safeds.data.tabular.typing.Schema]
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ## `#!sds attr` target {#safeds.data.tabular.containers.TaggedTable.target data-toc-label='target'}
 
 Get the target column of the tagged table.
 
 **Type:** [`Column<Any?>`][safeds.data.tabular.containers.Column]
+
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
 
 ## `#!sds fun` addColumn {#safeds.data.tabular.containers.TaggedTable.addColumn data-toc-label='addColumn'}
 
@@ -409,9 +580,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The table with the column attached as neither target nor feature column. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="65"
+    ```sds linenums="95"
     @Pure
     @PythonName("add_column")
     fun addColumn(
@@ -437,9 +616,17 @@ the original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The table with the attached feature column. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="35"
+    ```sds linenums="55"
     @Pure
     @PythonName("add_column_as_feature")
     fun addColumnAsFeature(
@@ -465,9 +652,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A new table combining the original table and the given columns as neither target nor feature columns. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="80"
+    ```sds linenums="115"
     @Pure
     @PythonName("add_columns")
     fun addColumns(
@@ -493,9 +688,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The table with the attached feature columns. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="50"
+    ```sds linenums="75"
     @Pure
     @PythonName("add_columns_as_features")
     fun addColumnsAsFeatures(
@@ -521,9 +724,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A new tagged table with the added row at the end. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="95"
+    ```sds linenums="135"
     @Pure
     @PythonName("add_row")
     fun addRow(
@@ -549,9 +760,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A new tagged table which combines the original table and the given rows. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="110"
+    ```sds linenums="155"
     @Pure
     @PythonName("add_rows")
     fun addRows(
@@ -577,9 +796,17 @@ The original tagged table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A new tagged table containing only the rows to match the query. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="125"
+    ```sds linenums="175"
     @Pure
     @PythonName("filter_rows")
     fun filterRows(
@@ -603,9 +830,17 @@ Return a column with the data of the specified column.
 |------|------|-------------|
 | `result1` | [`Column<Any?>`][safeds.data.tabular.containers.Column] | The column. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="134"
+    ```sds linenums="194"
     @Pure
     @PythonName("get_column")
     fun getColumn(
@@ -631,9 +866,17 @@ Alias for self.schema.get_type_of_column(column_name: str) -> ColumnType.
 |------|------|-------------|
 | `result1` | [`ColumnType`][safeds.data.tabular.typing.ColumnType] | The type of the column. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="164"
+    ```sds linenums="234"
     @Pure
     @PythonName("get_column_type")
     fun getColumnType(
@@ -657,9 +900,17 @@ Return the row at a specified index.
 |------|------|-------------|
 | `result1` | [`Row`][safeds.data.tabular.containers.Row] | The row of the table at the index. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="177"
+    ```sds linenums="252"
     @Pure
     @PythonName("get_row")
     fun getRow(
@@ -691,9 +942,17 @@ The original table is not modified.
 |------|-------------|-------------|---------|
 | `T` | [`Any?`][safeds.lang.Any] | - | - |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="284"
+    ```sds linenums="394"
     @Pure
     @PythonName("group_rows_by")
     fun groupRowsBy<T>(
@@ -719,9 +978,17 @@ Alias for self.schema.hasColumn(column_name: str) -> bool.
 |------|------|-------------|
 | `result1` | [`Boolean`][safeds.lang.Boolean] | True if the column exists. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="149"
+    ```sds linenums="214"
     @Pure
     @PythonName("has_column")
     fun hasColumn(
@@ -747,9 +1014,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The original table. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="591"
+    ```sds linenums="796"
     @Pure
     @PythonName("inverse_transform_table")
     fun inverseTransformTable(
@@ -775,9 +1050,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A table containing only the given column(s). |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="140"
+    ```sds linenums="195"
     @Pure
     @PythonName("keep_only_columns")
     fun keepOnlyColumns(
@@ -795,9 +1078,17 @@ Plot a boxplot for every numerical column.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="644"
+    ```sds linenums="869"
     @Pure
     @PythonName("plot_boxplots")
     fun plotBoxplots() -> result1: Image
@@ -813,9 +1104,17 @@ Plot a correlation heatmap for all numerical columns of this `Table`.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="602"
+    ```sds linenums="812"
     @Pure
     @PythonName("plot_correlation_heatmap")
     fun plotCorrelationHeatmap() -> result1: Image
@@ -831,9 +1130,17 @@ Plot a histogram for every column.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="653"
+    ```sds linenums="883"
     @Pure
     @PythonName("plot_histograms")
     fun plotHistograms() -> result1: Image
@@ -859,9 +1166,17 @@ and the lower-transparency area around the line representing the 95% confidence 
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="617"
+    ```sds linenums="832"
     @Pure
     @PythonName("plot_lineplot")
     fun plotLineplot(
@@ -887,9 +1202,17 @@ Plot two columns against each other in a scatterplot.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="632"
+    ```sds linenums="852"
     @Pure
     @PythonName("plot_scatterplot")
     fun plotScatterplot(
@@ -916,9 +1239,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A table without the given columns. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="155"
+    ```sds linenums="215"
     @Pure
     @PythonName("remove_columns")
     fun removeColumns(
@@ -938,9 +1269,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A table without the columns that contain missing values. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="168"
+    ```sds linenums="233"
     @Pure
     @PythonName("remove_columns_with_missing_values")
     fun removeColumnsWithMissingValues() -> result1: TaggedTable
@@ -958,9 +1297,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A table without the columns that contain non-numerical values. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="179"
+    ```sds linenums="249"
     @Pure
     @PythonName("remove_columns_with_non_numerical_values")
     fun removeColumnsWithNonNumericalValues() -> result1: TaggedTable
@@ -978,9 +1325,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The table with the duplicate rows removed. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="190"
+    ```sds linenums="265"
     @Pure
     @PythonName("remove_duplicate_rows")
     fun removeDuplicateRows() -> result1: TaggedTable
@@ -998,9 +1353,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A table without the rows that contain missing values. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="201"
+    ```sds linenums="281"
     @Pure
     @PythonName("remove_rows_with_missing_values")
     fun removeRowsWithMissingValues() -> result1: TaggedTable
@@ -1022,9 +1385,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A new table without rows containing outliers. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="216"
+    ```sds linenums="301"
     @Pure
     @PythonName("remove_rows_with_outliers")
     fun removeRowsWithOutliers() -> result1: TaggedTable
@@ -1049,9 +1420,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The Table with the renamed column. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="230"
+    ```sds linenums="320"
     @Pure
     @PythonName("rename_column")
     fun renameColumn(
@@ -1083,9 +1462,17 @@ The order of columns is kept. The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A table with the old column replaced by the new column. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="251"
+    ```sds linenums="346"
     @Pure
     @PythonName("replace_column")
     fun replaceColumn(
@@ -1106,9 +1493,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The shuffled Table. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="265"
+    ```sds linenums="365"
     @Pure
     @PythonName("shuffle_rows")
     fun shuffleRows() -> result1: TaggedTable
@@ -1134,9 +1529,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The resulting table. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="280"
+    ```sds linenums="385"
     @Pure
     @PythonName("slice_rows")
     fun sliceRows(
@@ -1173,9 +1576,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A new table with sorted columns. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="306"
+    ```sds linenums="416"
     @Pure
     @PythonName("sort_columns")
     fun sortColumns(
@@ -1208,9 +1619,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A new table with sorted rows. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="328"
+    ```sds linenums="443"
     @Pure
     @PythonName("sort_rows")
     fun sortRows(
@@ -1237,9 +1656,17 @@ The original table is not modified.
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A tuple containing the two resulting tables. The first table has the specified size, the second table contains the rest of the data. |
 | `result2` | [`Table`][safeds.data.tabular.containers.Table] | A tuple containing the two resulting tables. The first table has the specified size, the second table contains the rest of the data. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="511"
+    ```sds linenums="691"
     @Pure
     @PythonName("split_rows")
     fun splitRows(
@@ -1259,9 +1686,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The table with statistics. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="190"
+    ```sds linenums="270"
     @Pure
     @PythonName("summarize_statistics")
     fun summarizeStatistics() -> result1: Table
@@ -1286,9 +1721,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A new tagged table with the given target and feature names. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="527"
+    ```sds linenums="712"
     @Pure
     @PythonName("tag_columns")
     fun tagColumns(
@@ -1317,9 +1760,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A new time series with the given target, time and feature names. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="545"
+    ```sds linenums="735"
     @Pure
     @PythonName("time_columns")
     fun timeColumns(
@@ -1339,9 +1790,17 @@ Return a list of the columns.
 |------|------|-------------|
 | `result1` | [`List<Column<Any?>>`][safeds.lang.List] | List of columns. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="723"
+    ```sds linenums="983"
     @Pure
     @PythonName("to_columns")
     fun toColumns() -> result1: List<Column>
@@ -1360,9 +1819,17 @@ overwritten.
 |------|------|-------------|---------|
 | `path` | [`String`][safeds.lang.String] | The path to the output file. | - |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="665"
+    ```sds linenums="900"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_csv_file")
     fun toCsvFile(
@@ -1380,9 +1847,17 @@ Return a dictionary that maps column names to column values.
 |------|------|-------------|
 | `result1` | [`Map<String, List<Any>>`][safeds.lang.Map] | Dictionary representation of the table. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="705"
+    ```sds linenums="955"
     @Pure
     @PythonName("to_dict")
     fun toDict() -> result1: Map<String, List<Any>>
@@ -1402,9 +1877,17 @@ overwritten.
 |------|------|-------------|---------|
 | `path` | [`String`][safeds.lang.String] | The path to the output file. | - |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="680"
+    ```sds linenums="920"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_excel_file")
     fun toExcelFile(
@@ -1422,9 +1905,17 @@ Return an HTML representation of the table.
 |------|------|-------------|
 | `result1` | [`String`][safeds.lang.String] | The generated HTML. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="714"
+    ```sds linenums="969"
     @Pure
     @PythonName("to_html")
     fun toHtml() -> result1: String
@@ -1443,9 +1934,17 @@ overwritten.
 |------|------|-------------|---------|
 | `path` | [`String`][safeds.lang.String] | The path to the output file. | - |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="694"
+    ```sds linenums="939"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_json_file")
     fun toJsonFile(
@@ -1463,9 +1962,17 @@ Return a list of the rows.
 |------|------|-------------|
 | `result1` | [`List<Row>`][safeds.lang.List] | List of rows. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="732"
+    ```sds linenums="997"
     @Pure
     @PythonName("to_rows")
     fun toRows() -> result1: List<Row>
@@ -1490,9 +1997,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The table with the transformed column. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="341"
+    ```sds linenums="461"
     @Pure
     @PythonName("transform_column")
     fun transformColumn(
@@ -1519,9 +2034,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The transformed table. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="576"
+    ```sds linenums="776"
     @Pure
     @PythonName("transform_table")
     fun transformTable(

@@ -13,13 +13,26 @@ A list of elements.
 |------|-------------|-------------|---------|
 | `E` | [`Any?`][safeds.lang.Any] | - | - |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="58"
+    ```sds linenums="108"
     class List<out E> {
     
         /**
          * Returns the number of elements in the list.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonCall("len($this)")
@@ -37,9 +50,17 @@ Returns the number of elements in the list.
 |------|------|-------------|
 | `size` | [`Int`][safeds.lang.Int] | - |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="63"
+    ```sds linenums="118"
     @Pure
     @PythonCall("len($this)")
     fun size() -> size: Int

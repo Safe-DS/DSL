@@ -20,9 +20,17 @@ Abstract base class for all regressors.
 - [`RidgeRegressor`][safeds.ml.classical.regression.RidgeRegressor]
 - [`SupportVectorMachineRegressor`][safeds.ml.classical.regression.SupportVectorMachineRegressor]
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="8"
+    ```sds linenums="13"
     class Regressor {
         /**
          * Create a copy of this regressor and fit it with the given training data.
@@ -32,52 +40,77 @@ Abstract base class for all regressors.
          * @param trainingSet The training data containing the feature and target vectors.
          *
          * @result fittedRegressor The fitted regressor.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         fun fit(
             @PythonName("training_set") trainingSet: TaggedTable
         ) -> fittedRegressor: Regressor
-    
+
         /**
          * Predict a target vector using a dataset containing feature vectors. The model has to be trained first.
          *
          * @param dataset The dataset containing the feature vectors.
          *
          * @result prediction A dataset containing the given feature vectors and the predicted target vector.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         fun predict(
             dataset: Table
         ) -> prediction: TaggedTable
-    
+
         /**
          * Check if the classifier is fitted.
          *
          * @result isFitted Whether the regressor is fitted.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("is_fitted")
         fun isFitted() -> isFitted: Boolean
-    
+
         /**
          * Compute the mean squared error (MSE) on the given data.
          *
          * @param validationOrTestSet The validation or test set.
          *
          * @result meanSquaredError The calculated mean squared error (the average of the distance of each individual row squared).
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("mean_squared_error")
         fun meanSquaredError(
             @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable
         ) -> meanSquaredError: Float
-    
+
         /**
          * Compute the mean absolute error (MAE) of the regressor on the given data.
          *
          * @param validationOrTestSet The validation or test set.
          *
          * @result meanAbsoluteError The calculated mean absolute error (the average of the distance of each individual row).
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("mean_absolute_error")
@@ -105,9 +138,17 @@ This regressor is not modified.
 |------|------|-------------|
 | `fittedRegressor` | [`Regressor`][safeds.ml.classical.regression.Regressor] | The fitted regressor. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="18"
+    ```sds linenums="28"
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TaggedTable
@@ -124,9 +165,17 @@ Check if the classifier is fitted.
 |------|------|-------------|
 | `isFitted` | [`Boolean`][safeds.lang.Boolean] | Whether the regressor is fitted. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="40"
+    ```sds linenums="60"
     @Pure
     @PythonName("is_fitted")
     fun isFitted() -> isFitted: Boolean
@@ -148,9 +197,17 @@ Compute the mean absolute error (MAE) of the regressor on the given data.
 |------|------|-------------|
 | `meanAbsoluteError` | [`Float`][safeds.lang.Float] | The calculated mean absolute error (the average of the distance of each individual row). |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="64"
+    ```sds linenums="94"
     @Pure
     @PythonName("mean_absolute_error")
     fun meanAbsoluteError(
@@ -174,9 +231,17 @@ Compute the mean squared error (MSE) on the given data.
 |------|------|-------------|
 | `meanSquaredError` | [`Float`][safeds.lang.Float] | The calculated mean squared error (the average of the distance of each individual row squared). |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="51"
+    ```sds linenums="76"
     @Pure
     @PythonName("mean_squared_error")
     fun meanSquaredError(
@@ -200,9 +265,17 @@ Predict a target vector using a dataset containing feature vectors. The model ha
 |------|------|-------------|
 | `prediction` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A dataset containing the given feature vectors and the predicted target vector. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="30"
+    ```sds linenums="45"
     @Pure
     fun predict(
         dataset: Table

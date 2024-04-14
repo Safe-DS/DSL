@@ -14,9 +14,14 @@
     ) {
         /**
          * Check if the model is fitted.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @PythonName("is_fitted") attr isFitted: Boolean
-    
+
         /**
          * Train the neural network with given training data.
          *
@@ -30,6 +35,11 @@
          * @param callbackOnEpochCompletion Function used to view metrics while training. Gets called after an epoch is completed with the index of the last epoch and the overall loss average.
          *
          * @result fittedClassifier The trained Model
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         fun fit(
@@ -43,7 +53,7 @@
             epochSize >= 1,
             batchSize >= 1
         }
-    
+
         /**
          * Make a prediction for the given test data.
          *
@@ -52,6 +62,11 @@
          * @param testData The data the network should predict.
          *
          * @result result1 The given test_data with an added "prediction" column at the end
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         fun predict(
@@ -65,6 +80,14 @@
 Check if the model is fitted.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
+
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
 
 ## `#!sds fun` fit {#safeds.ml.nn.NeuralNetworkClassifier.fit data-toc-label='fit'}
 
@@ -89,9 +112,17 @@ The original model is not modified.
 |------|------|-------------|
 | `fittedClassifier` | [`NeuralNetworkClassifier`][safeds.ml.nn.NeuralNetworkClassifier] | The trained Model |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="28"
+    ```sds linenums="38"
     @Pure
     fun fit(
         @PythonName("train_data") trainData: TaggedTable,
@@ -124,9 +155,17 @@ The original Model is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The given test_data with an added "prediction" column at the end |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="50"
+    ```sds linenums="65"
     @Pure
     fun predict(
         @PythonName("test_data") testData: Table

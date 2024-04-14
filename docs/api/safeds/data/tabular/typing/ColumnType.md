@@ -7,14 +7,27 @@ search:
 
 Abstract base class for column types.
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `column_type.sdsstub`"
 
-    ```sds linenums="8"
+    ```sds linenums="13"
     class ColumnType {
         /**
          * Return whether the given column type is nullable.
          *
          * @result result1 True if the column is nullable.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("is_nullable")
@@ -24,6 +37,11 @@ Abstract base class for column types.
          * Return whether the given column type is numeric.
          *
          * @result result1 True if the column is numeric.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("is_numeric")
@@ -41,9 +59,17 @@ Return whether the given column type is nullable.
 |------|------|-------------|
 | `result1` | [`Boolean`][safeds.lang.Boolean] | True if the column is nullable. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `column_type.sdsstub`"
 
-    ```sds linenums="14"
+    ```sds linenums="24"
     @Pure
     @PythonName("is_nullable")
     fun isNullable() -> result1: Boolean
@@ -59,9 +85,17 @@ Return whether the given column type is numeric.
 |------|------|-------------|
 | `result1` | [`Boolean`][safeds.lang.Boolean] | True if the column is numeric. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `column_type.sdsstub`"
 
-    ```sds linenums="23"
+    ```sds linenums="38"
     @Pure
     @PythonName("is_numeric")
     fun isNumeric() -> result1: Boolean

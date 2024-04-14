@@ -9,12 +9,25 @@ A floating-point number.
 
 **Parent type:** [`Number`][safeds.lang.Number]
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="46"
+    ```sds linenums="86"
     class Float sub Number {
         /**
          * Converts this floating-point number to an integer by truncating the fractional part.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonCall("int($this)")
@@ -32,9 +45,17 @@ Converts this floating-point number to an integer by truncating the fractional p
 |------|------|-------------|
 | `i` | [`Int`][safeds.lang.Int] | - |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="50"
+    ```sds linenums="95"
     @Pure
     @PythonCall("int($this)")
     fun toInt() -> i: Int

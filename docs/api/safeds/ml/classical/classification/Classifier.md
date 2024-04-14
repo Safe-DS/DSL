@@ -17,9 +17,17 @@ Abstract base class for all classifiers.
 - [`RandomForestClassifier`][safeds.ml.classical.classification.RandomForestClassifier]
 - [`SupportVectorMachineClassifier`][safeds.ml.classical.classification.SupportVectorMachineClassifier]
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="8"
+    ```sds linenums="13"
     class Classifier {
         /**
          * Create a copy of this classifier and fit it with the given training data.
@@ -29,45 +37,65 @@ Abstract base class for all classifiers.
          * @param trainingSet The training data containing the feature and target vectors.
          *
          * @result fittedClassifier The fitted classifier.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         fun fit(
             @PythonName("training_set") trainingSet: TaggedTable
         ) -> fittedClassifier: Classifier
-    
+
         /**
          * Predict a target vector using a dataset containing feature vectors. The model has to be trained first.
          *
          * @param dataset The dataset containing the feature vectors.
          *
          * @result prediction A dataset containing the given feature vectors and the predicted target vector.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         fun predict(
             dataset: Table
         ) -> prediction: TaggedTable
-    
+
         /**
          * Check if the classifier is fitted.
          *
          * @result isFitted Whether the classifier is fitted.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("is_fitted")
         fun isFitted() -> isFitted: Boolean
-    
+
         /**
          * Compute the accuracy of the classifier on the given data.
          *
          * @param validationOrTestSet The validation or test set.
          *
          * @result accuracy The calculated accuracy score, i.e. the percentage of equal data.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         fun accuracy(
             @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable
         ) -> accuracy: Float
-    
+
         /**
          * Compute the classifier's precision on the given data.
          *
@@ -76,13 +104,18 @@ Abstract base class for all classifiers.
          *
          * @result precision The calculated precision score, i.e. the ratio of correctly predicted positives to all predicted positives.
          * Return 1 if no positive predictions are made.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         fun precision(
             @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable,
             @PythonName("positive_class") positiveClass: Any
         ) -> precision: Float
-    
+
         /**
          * Compute the classifier's recall on the given data.
          *
@@ -91,13 +124,18 @@ Abstract base class for all classifiers.
          *
          * @result recall The calculated recall score, i.e. the ratio of correctly predicted positives to all expected positives.
          * Return 1 if there are no positive expectations.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         fun recall(
             @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable,
             @PythonName("positive_class") positiveClass: Any
         ) -> recall: Float
-    
+
         /**
          * Compute the classifier's $F_1$-score on the given data.
          *
@@ -106,6 +144,11 @@ Abstract base class for all classifiers.
          *
          * @result f1Score The calculated $F_1$-score, i.e. the harmonic mean between precision and recall.
          * Return 1 if there are no positive expectations and predictions.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("f1_score")
@@ -132,9 +175,17 @@ Compute the accuracy of the classifier on the given data.
 |------|------|-------------|
 | `accuracy` | [`Float`][safeds.lang.Float] | The calculated accuracy score, i.e. the percentage of equal data. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="51"
+    ```sds linenums="76"
     @Pure
     fun accuracy(
         @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable
@@ -158,9 +209,17 @@ Compute the classifier's $F_1$-score on the given data.
 |------|------|-------------|
 | `f1Score` | [`Float`][safeds.lang.Float] | The calculated $F_1$-score, i.e. the harmonic mean between precision and recall. Return 1 if there are no positive expectations and predictions. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="95"
+    ```sds linenums="135"
     @Pure
     @PythonName("f1_score")
     fun f1Score(
@@ -187,9 +246,17 @@ This classifier is not modified.
 |------|------|-------------|
 | `fittedClassifier` | [`Classifier`][safeds.ml.classical.classification.Classifier] | The fitted classifier. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="18"
+    ```sds linenums="28"
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TaggedTable
@@ -206,9 +273,17 @@ Check if the classifier is fitted.
 |------|------|-------------|
 | `isFitted` | [`Boolean`][safeds.lang.Boolean] | Whether the classifier is fitted. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="40"
+    ```sds linenums="60"
     @Pure
     @PythonName("is_fitted")
     fun isFitted() -> isFitted: Boolean
@@ -231,9 +306,17 @@ Compute the classifier's precision on the given data.
 |------|------|-------------|
 | `precision` | [`Float`][safeds.lang.Float] | The calculated precision score, i.e. the ratio of correctly predicted positives to all predicted positives. Return 1 if no positive predictions are made. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="65"
+    ```sds linenums="95"
     @Pure
     fun precision(
         @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable,
@@ -257,9 +340,17 @@ Predict a target vector using a dataset containing feature vectors. The model ha
 |------|------|-------------|
 | `prediction` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A dataset containing the given feature vectors and the predicted target vector. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="30"
+    ```sds linenums="45"
     @Pure
     fun predict(
         dataset: Table
@@ -283,9 +374,17 @@ Compute the classifier's recall on the given data.
 |------|------|-------------|
 | `recall` | [`Float`][safeds.lang.Float] | The calculated recall score, i.e. the ratio of correctly predicted positives to all expected positives. Return 1 if there are no positive expectations. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="80"
+    ```sds linenums="115"
     @Pure
     fun recall(
         @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable,

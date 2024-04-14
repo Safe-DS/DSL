@@ -12,9 +12,17 @@ Ada Boost regression.
 | `maximumNumberOfLearners` | [`Int`][safeds.lang.Int] | The maximum number of learners at which boosting is terminated. In case of perfect fit, the learning procedure is stopped early. Has to be greater than 0. | `#!sds 50` |
 | `learningRate` | [`Float`][safeds.lang.Float] | Weight applied to each regressor at each boosting iteration. A higher learning rate increases the contribution of each regressor. Has to be greater than 0. | `#!sds 1.0` |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `ada_boost.sdsstub`"
 
-    ```sds linenums="15"
+    ```sds linenums="20"
     class AdaBoostRegressor(
         learner: Regressor = DecisionTreeRegressor(),
         @PythonName("maximum_number_of_learners") const maximumNumberOfLearners: Int = 50,
@@ -25,17 +33,32 @@ Ada Boost regression.
     } {
         /**
          * Get the base learner used for training the ensemble.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         attr learner: Regressor
         /**
          * Get the maximum number of learners in the ensemble.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @PythonName("maximum_number_of_learners") attr maximumNumberOfLearners: Int
         /**
          * Get the learning rate.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @PythonName("learning_rate") attr learningRate: Float
-    
+
         /**
          * Create a copy of this regressor and fit it with the given training data.
          *
@@ -44,6 +67,11 @@ Ada Boost regression.
          * @param trainingSet The training data containing the feature and target vectors.
          *
          * @result fittedRegressor The fitted regressor.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         fun fit(
@@ -58,17 +86,41 @@ Get the base learner used for training the ensemble.
 
 **Type:** [`Regressor`][safeds.ml.classical.regression.Regressor]
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ## `#!sds attr` learningRate {#safeds.ml.classical.regression.AdaBoostRegressor.learningRate data-toc-label='learningRate'}
 
 Get the learning rate.
 
 **Type:** [`Float`][safeds.lang.Float]
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ## `#!sds attr` maximumNumberOfLearners {#safeds.ml.classical.regression.AdaBoostRegressor.maximumNumberOfLearners data-toc-label='maximumNumberOfLearners'}
 
 Get the maximum number of learners in the ensemble.
 
 **Type:** [`Int`][safeds.lang.Int]
+
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
 
 ## `#!sds fun` fit {#safeds.ml.classical.regression.AdaBoostRegressor.fit data-toc-label='fit'}
 
@@ -88,9 +140,17 @@ This regressor is not modified.
 |------|------|-------------|
 | `fittedRegressor` | [`AdaBoostRegressor`][safeds.ml.classical.regression.AdaBoostRegressor] | The fitted regressor. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `ada_boost.sdsstub`"
 
-    ```sds linenums="45"
+    ```sds linenums="70"
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TaggedTable
@@ -107,9 +167,17 @@ Check if the classifier is fitted.
 |------|------|-------------|
 | `isFitted` | [`Boolean`][safeds.lang.Boolean] | Whether the regressor is fitted. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="40"
+    ```sds linenums="60"
     @Pure
     @PythonName("is_fitted")
     fun isFitted() -> isFitted: Boolean
@@ -131,9 +199,17 @@ Compute the mean absolute error (MAE) of the regressor on the given data.
 |------|------|-------------|
 | `meanAbsoluteError` | [`Float`][safeds.lang.Float] | The calculated mean absolute error (the average of the distance of each individual row). |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="64"
+    ```sds linenums="94"
     @Pure
     @PythonName("mean_absolute_error")
     fun meanAbsoluteError(
@@ -157,9 +233,17 @@ Compute the mean squared error (MSE) on the given data.
 |------|------|-------------|
 | `meanSquaredError` | [`Float`][safeds.lang.Float] | The calculated mean squared error (the average of the distance of each individual row squared). |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="51"
+    ```sds linenums="76"
     @Pure
     @PythonName("mean_squared_error")
     fun meanSquaredError(
@@ -183,9 +267,17 @@ Predict a target vector using a dataset containing feature vectors. The model ha
 |------|------|-------------|
 | `prediction` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A dataset containing the given feature vectors and the predicted target vector. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="30"
+    ```sds linenums="45"
     @Pure
     fun predict(
         dataset: Table
