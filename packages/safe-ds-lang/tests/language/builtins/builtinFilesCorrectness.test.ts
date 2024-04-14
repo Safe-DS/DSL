@@ -30,7 +30,7 @@ describe('source code', () => {
         await loadDocuments(services, builtinFiles, { validation: true });
     });
 
-    const testCases = builtinFiles.map((uri) => ({
+    const testCases: SourceCodeTest[] = builtinFiles.map((uri) => ({
         uri,
         shortenedResourceName: uriToShortenedResourceName(uri, 'builtins'),
     }));
@@ -55,14 +55,8 @@ describe('source code', () => {
 describe('examples', () => {
     const ignoredErrors: (number | string | undefined)[] = [CODE_MODULE_MISSING_PACKAGE];
 
-    const files = builtinFiles.map((uri) => ({
-        uri,
-        shortenedResourceName: uriToShortenedResourceName(uri, 'builtins'),
-    }));
-
-    describe.each(files)('[$shortenedResourceName]', ({ uri }) => {
+    const testCases: ExampleTest[] = builtinFiles.flatMap((uri) => {
         const document = langiumDocuments.getDocument(uri)!;
-
         const examples = AstUtils.streamAst(document.parseResult.value)
             .filter(isSdsDeclaration)
             .flatMap((node) => {
@@ -71,6 +65,18 @@ describe('examples', () => {
             })
             .toArray();
 
+        if (isEmpty(examples)) {
+            return [];
+        }
+
+        return {
+            uri,
+            shortenedResourceName: uriToShortenedResourceName(uri, 'builtins'),
+            examples,
+        };
+    });
+
+    describe.each(testCases)('[$shortenedResourceName]', ({ uri, examples }) => {
         it.each(examples)('$name', async ({ example, range }) => {
             const result = await validationHelper(services)(example);
             try {
@@ -92,6 +98,58 @@ describe('examples', () => {
         });
     });
 });
+
+/**
+ * A description of a test for the source code in a file.
+ */
+interface SourceCodeTest {
+    /**
+     * The URI of the file.
+     */
+    uri: URI;
+
+    /**
+     * The shortened name of the resource.
+     */
+    shortenedResourceName: string;
+}
+
+/**
+ * A description of a test for the examples in a file.
+ */
+interface ExampleTest {
+    /**
+     * The URI of the file.
+     */
+    uri: URI;
+
+    /**
+     * The shortened name of the resource.
+     */
+    shortenedResourceName: string;
+
+    /**
+     * The examples in the file.
+     */
+    examples: Example[];
+}
+
+interface Example {
+    /**
+     * The example source code.
+     */
+    example: string;
+
+    /**
+     * The name of the declaration that the example belongs to.
+     */
+    name: string;
+
+    /**
+     * The range of the declaration in the source code.
+     */
+    range: Range | undefined;
+}
 
 /**
  * A builtin file has errors or warnings.
