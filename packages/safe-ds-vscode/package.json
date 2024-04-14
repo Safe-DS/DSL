@@ -55,16 +55,43 @@
                 "id": "safe-ds",
                 "aliases": [
                     "Safe-DS",
-                    "safe-ds",
                     "SafeDS",
-                    "safeds",
-                    "SDS",
-                    "sds"
+                    "SDS"
                 ],
                 "extensions": [
-                    ".sdspipe",
-                    ".sdsstub",
-                    ".sdstest"
+                    ".sds"
+                ],
+                "configuration": "./language-configuration.json",
+                "icon": {
+                    "light": "img/safe-ds_file_icon_light.svg",
+                    "dark": "img/safe-ds_file_icon_dark.svg"
+                }
+            },
+            {
+                "id": "safe-ds-stub",
+                "aliases": [
+                    "Safe-DS Stub",
+                    "SafeDS Stub",
+                    "SDS Stub"
+                ],
+                "extensions": [
+                    ".sdsstub"
+                ],
+                "configuration": "./language-configuration.json",
+                "icon": {
+                    "light": "img/safe-ds_file_icon_light.svg",
+                    "dark": "img/safe-ds_file_icon_dark.svg"
+                }
+            },
+            {
+                "id": "safe-ds-dev",
+                "aliases": [
+                    "Safe-DS Dev",
+                    "SafeDS Dev",
+                    "SDS Dev"
+                ],
+                "extensions": [
+                    ".sdsdev"
                 ],
                 "configuration": "./language-configuration.json",
                 "icon": {
@@ -76,6 +103,16 @@
         "grammars": [
             {
                 "language": "safe-ds",
+                "scopeName": "source.safe-ds",
+                "path": "./syntaxes/safe-ds.tmLanguage.json"
+            },
+            {
+                "language": "safe-ds-stub",
+                "scopeName": "source.safe-ds",
+                "path": "./syntaxes/safe-ds.tmLanguage.json"
+            },
+            {
+                "language": "safe-ds-dev",
                 "scopeName": "source.safe-ds",
                 "path": "./syntaxes/safe-ds.tmLanguage.json"
             }
@@ -162,6 +199,20 @@
                 "editor.wordBasedSuggestions": "off",
                 "editor.wordSeparators": "`~!@#%^&*()-=+[]{}\\|;:'\",.<>/?»«",
                 "files.trimTrailingWhitespace": true
+            },
+            "[safe-ds-stub]": {
+                "editor.semanticHighlighting.enabled": true,
+                "editor.suggest.snippetsPreventQuickSuggestions": true,
+                "editor.wordBasedSuggestions": "off",
+                "editor.wordSeparators": "`~!@#%^&*()-=+[]{}\\|;:'\",.<>/?»«",
+                "files.trimTrailingWhitespace": true
+            },
+            "[safe-ds-dev]": {
+                "editor.semanticHighlighting.enabled": true,
+                "editor.suggest.snippetsPreventQuickSuggestions": true,
+                "editor.wordBasedSuggestions": "off",
+                "editor.wordSeparators": "`~!@#%^&*()-=+[]{}\\|;:'\",.<>/?»«",
+                "files.trimTrailingWhitespace": true
             }
         },
         "menus": {
@@ -210,6 +261,10 @@
             {
                 "language": "safe-ds",
                 "path": "./snippets/safe-ds.json"
+            },
+            {
+                "language": "safe-ds-stub",
+                "path": "./snippets/safe-ds-stub.json"
             }
         ]
     },

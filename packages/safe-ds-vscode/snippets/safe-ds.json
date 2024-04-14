@@ -4,64 +4,6 @@
         "body": ["from $1 import $0"],
         "description": "Import of declarations from a package."
     },
-    "Minimal Annotation": {
-        "prefix": ["minimal-annotation"],
-        "body": ["annotation ${0:MyAnnotation}"],
-        "description": "A minimal annotation."
-    },
-    "Annotation": {
-        "prefix": ["annotation"],
-        "body": ["annotation ${1:MyAnnotation}${2:($3)} ${4:where {$0\\}}"],
-        "description": "An annotation."
-    },
-    "Attribute": {
-        "prefix": ["attribute"],
-        "body": ["${1|static |}attr ${2:myAttribute}: $0"],
-        "description": "An attribute."
-    },
-    "Minimal Class": {
-        "prefix": ["minimal-class"],
-        "body": ["class ${0:MyClass}"],
-        "description": "A minimal class."
-    },
-    "Class": {
-        "prefix": ["class"],
-        "body": ["class ${1:MyClass}${2:<$3>}${4:($5)} ${6:sub $7} ${8:where {$9\\}} ${10:{$0\\}}"],
-        "description": "A class."
-    },
-    "Enum": {
-        "prefix": ["enumeration"],
-        "body": ["enum ${1:MyEnum} {", "    $0", "}"],
-        "description": "An enumeration."
-    },
-    "Minimal Pure Function": {
-        "prefix": ["minimal-pure-function"],
-        "body": ["@Pure", "fun ${1:myFunction}($0)"],
-        "description": "A minimal pure function."
-    },
-    "Function": {
-        "prefix": ["function"],
-        "body": ["${1|@Pure,@Impure([])|}", "fun ${2:myFunction}${3:<$4>}($5) ${6:-> ($7)} ${8:where {$0\\}}"],
-        "description": "A function."
-    },
-    "Minimal Pure Method": {
-        "prefix": ["minimal-pure-method"],
-        "body": ["@Pure", "${1|static |}fun ${2:myMethod}($0)"],
-        "description": "A minimal pure method."
-    },
-    "Method": {
-        "prefix": ["method"],
-        "body": [
-            "${1|@Pure,@Impure([])|}",
-            "${2|static |}fun ${3:myMethod}${4:<$5>}($6) ${7:-> ($8)} ${9:where {$0\\}}"
-        ],
-        "description": "A method."
-    },
-    "Schema": {
-        "prefix": ["schema"],
-        "body": ["schema ${1:MySchema} {", "    $0", "}"],
-        "description": "A schema."
-    },
     "Pipeline": {
         "prefix": ["pipeline"],
         "body": ["pipeline ${1:myPipeline} {", "    $0", "}"],
