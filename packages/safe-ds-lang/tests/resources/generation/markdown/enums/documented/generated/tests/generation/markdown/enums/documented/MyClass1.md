@@ -2,6 +2,6 @@
 
 ??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="26"
+    ```sds linenums="33"
     class MyClass1
     ```

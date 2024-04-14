@@ -1,6 +1,6 @@
 # `#!sds segment` mySegment4 {#tests.generation.markdown.segments.documented.mySegment4 data-toc-label='mySegment4'}
 
-Description of mySegment3.
+Description of mySegment4.
 
 **Parameters:**
 
