@@ -130,7 +130,7 @@ export class SafeDsTypeChecker {
                 const otherEntry = other.inputType.entries[i]!;
 
                 // Names must match
-                if (typeEntry.name !== otherEntry.name) {
+                if (!options.ignoreParameterNames && typeEntry.name !== otherEntry.name) {
                     return false;
                 }
 
@@ -438,9 +438,14 @@ export class SafeDsTypeChecker {
 /**
  * Options for {@link SafeDsTypeChecker.isSubtypeOf} and {@link SafeDsTypeChecker.isSupertypeOf}.
  */
-interface TypeCheckOptions {
+export interface TypeCheckOptions {
     /**
      * Whether to ignore type parameters when comparing class types.
      */
     ignoreTypeParameters?: boolean;
+
+    /**
+     * Whether to ignore parameter names when comparing callable types.
+     */
+    ignoreParameterNames?: boolean;
 }
