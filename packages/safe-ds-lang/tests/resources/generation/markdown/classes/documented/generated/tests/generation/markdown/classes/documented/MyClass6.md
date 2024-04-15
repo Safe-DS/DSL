@@ -2,6 +2,10 @@
 
 Description of MyClass6.
 
+**Inheritors:**
+
+- [`MyClass8`][tests.generation.markdown.classes.documented.MyClass8]
+
 ??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="38"

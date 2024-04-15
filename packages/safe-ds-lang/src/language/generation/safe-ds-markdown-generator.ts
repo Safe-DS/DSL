@@ -241,6 +241,20 @@ export class SafeDsMarkdownGenerator {
             result += `\n**Type parameters:**\n\n${typeParameters}`;
         }
 
+        // Direct subclasses
+        const directSubclasses = this.classHierarchy
+            .streamDirectSubclasses(node)
+            .toArray()
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map((it) => this.renderType(this.typeComputer.computeType(it), state.knownPaths));
+
+        if (!isEmpty(directSubclasses)) {
+            result += '\n**Inheritors:**\n\n';
+            directSubclasses.forEach((subclass) => {
+                result += `- ${subclass}\n`;
+            });
+        }
+
         // Examples
         const examples = this.renderExamples(node);
         if (examples) {
@@ -254,6 +268,14 @@ export class SafeDsMarkdownGenerator {
         }
 
         // Class members
+        result += this.renderClassMembers(node, state);
+
+        return result;
+    }
+
+    private renderClassMembers(node: SdsClass, state: DetailsState) {
+        let result = '';
+
         const staticMembers = getClassMembers(node)
             .filter((it) => isStatic(it))
             .sort((a, b) => a.name.localeCompare(b.name));
