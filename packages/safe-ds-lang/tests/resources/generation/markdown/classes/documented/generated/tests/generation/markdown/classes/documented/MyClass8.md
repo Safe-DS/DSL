@@ -1,3 +1,8 @@
+---
+search:
+  boost: 0.5
+---
+
 # `#!sds abstract class` MyClass8 {#tests.generation.markdown.classes.documented.MyClass8 data-toc-label='MyClass8'}
 
 Description of MyClass8.

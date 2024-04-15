@@ -1,3 +1,8 @@
+---
+search:
+  boost: 0.5
+---
+
 # :warning:{ title="Deprecated" } `#!sds abstract class` MyClass1 {#tests.generation.markdown.classes.deprecated.MyClass1 data-toc-label='MyClass1'}
 
 !!! warning "Deprecated"
