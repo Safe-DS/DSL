@@ -1,3 +1,8 @@
+---
+search:
+  boost: 0.5
+---
+
 # `#!sds abstract class` Int {#safeds.lang.Int data-toc-label='Int'}
 
 An integer.

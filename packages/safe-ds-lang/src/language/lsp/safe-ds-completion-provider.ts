@@ -18,7 +18,7 @@ import {
     SdsPipeline,
     SdsSchema,
 } from '../generated/ast.js';
-import { getPackageName } from '../helpers/nodeProperties.js';
+import { Class, getPackageName } from '../helpers/nodeProperties.js';
 import { isInPipelineFile, isInStubFile } from '../helpers/fileExtensions.js';
 import { classTypeParameterIsUsedInCorrectPosition } from '../validation/other/declarations/typeParameters.js';
 
@@ -63,7 +63,11 @@ export class SafeDsCompletionProvider extends DefaultCompletionProvider {
                 );
             }
         } else if (isSdsReference(refInfo.container)) {
-            return !this.illegalNodeTypesForReferences.has(description.type);
+            if (this.illegalNodeTypesForReferences.has(description.type)) {
+                return false;
+            } else if (isSdsClass(description.node) && Class.isOnlyForTyping(description.node)) {
+                return false;
+            }
         }
 
         return true;

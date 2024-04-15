@@ -41,6 +41,11 @@
     @Pure static fun myFunction2()
     ```
 
+---
+search:
+  boost: 0.5
+---
+
 ## `#!sds abstract class` MyClass7 {#tests.generation.markdown.classes.undocumented.MyClass6.MyClass7 data-toc-label='MyClass7'}
 
 ??? quote "Stub code in `main.sdsstub`"

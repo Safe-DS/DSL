@@ -27,6 +27,7 @@ import {
     SdsTypeParameter,
 } from '../generated/ast.js';
 import {
+    Class,
     getClassMembers,
     getColumns,
     getEnumVariants,
@@ -441,7 +442,9 @@ export class SafeDsMarkdownGenerator {
     }
 
     private renderPreamble(node: SdsDeclaration, state: DetailsState, kind: string, keyword: string = kind): string {
-        let result = this.renderHeading(node, state, keyword) + '\n';
+        let result = this.renderFrontMatter(node);
+
+        result += this.renderHeading(node, state, keyword) + '\n';
 
         const deprecationWarning = this.renderDeprecationWarning(node, kind);
         if (deprecationWarning) {
@@ -453,6 +456,14 @@ export class SafeDsMarkdownGenerator {
         }
 
         return result;
+    }
+
+    private renderFrontMatter(node: SdsDeclaration): string {
+        if (isSdsClass(node) && Class.isOnlyForTyping(node)) {
+            return `---\nsearch:\n  boost: 0.5\n---\n\n`;
+        }
+
+        return '';
     }
 
     private renderHeading(node: SdsDeclaration, state: DetailsState, keyword: string): string {

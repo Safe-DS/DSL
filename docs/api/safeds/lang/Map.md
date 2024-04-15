@@ -1,3 +1,8 @@
+---
+search:
+  boost: 0.5
+---
+
 # `#!sds abstract class` Map {#safeds.lang.Map data-toc-label='Map'}
 
 A map of keys to values.

@@ -253,6 +253,23 @@ describe('SafeDsCompletionProvider', async () => {
                 },
             },
             {
+                testName: 'reference (class only for typing)',
+                code: `
+                    class MyClass1
+                    class MyClass2()
+                    class MyClass3 {
+                        static attr myAttribute: Int
+                    }
+
+                    pipeline myPipeline {
+                        <|>
+                `,
+                expectedLabels: {
+                    shouldContain: ['MyClass2', 'MyClass3'],
+                    shouldNotContain: ['MyClass1'],
+                },
+            },
+            {
                 testName: 'type arguments (no prefix)',
                 code: `
                     class MyClass<T>
