@@ -1,4 +1,4 @@
-import { type AstNode, AstUtils, CstUtils, type ReferenceDescription, stream, type Stream } from 'langium';
+import { type AstNode, AstUtils, CstUtils, stream } from 'langium';
 import { type TypeHierarchyItem } from 'vscode-languageserver';
 import {
     isSdsClass,
@@ -68,14 +68,10 @@ export class SafeDsTypeHierarchyProvider extends AbstractTypeHierarchyProvider {
     }
 
     protected override getSubtypes(node: AstNode): TypeHierarchyItem[] | undefined {
-        const references = this.references.findReferences(node, {
-            includeDeclaration: false,
-        });
-
         let items: TypeHierarchyItem[];
 
         if (isSdsClass(node)) {
-            items = this.getSubtypesOfClass(references);
+            items = this.getSubtypesOfClass(node);
         } else if (isSdsEnum(node)) {
             items = this.getSubtypesOfEnum(node);
         } else {
@@ -85,7 +81,11 @@ export class SafeDsTypeHierarchyProvider extends AbstractTypeHierarchyProvider {
         return items.length === 0 ? undefined : items;
     }
 
-    private getSubtypesOfClass(references: Stream<ReferenceDescription>): TypeHierarchyItem[] {
+    private getSubtypesOfClass(node: SdsClass): TypeHierarchyItem[] {
+        const references = this.references.findReferences(node, {
+            includeDeclaration: false,
+        });
+
         return references
             .flatMap((it) => {
                 const document = this.documents.getDocument(it.sourceUri);
