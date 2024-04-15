@@ -515,6 +515,15 @@ describe('SafeDsClassHierarchy', async () => {
                 `,
                 expected: [],
             },
+            {
+                testName: 'should only consider parent type list',
+                code: `
+                    class C
+
+                    fun f(p: C)
+                `,
+                expected: [],
+            },
         ];
 
         it.each(testCases)('$testName', async ({ code, expected }) => {
