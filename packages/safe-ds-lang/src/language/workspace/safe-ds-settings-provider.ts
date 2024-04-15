@@ -98,7 +98,7 @@ export interface Settings {
     validation: ValidationSettings;
 }
 
-interface InlayHintsSettings {
+export interface InlayHintsSettings {
     assigneeTypes: {
         enabled: boolean;
     };
@@ -112,11 +112,11 @@ interface InlayHintsSettings {
     };
 }
 
-interface RunnerSettings {
+export interface RunnerSettings {
     command: string;
 }
 
-interface ValidationSettings {
+export interface ValidationSettings {
     codeStyle: {
         enabled: boolean;
     };

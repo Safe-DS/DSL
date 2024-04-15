@@ -3,10 +3,13 @@ import { parseHelper } from 'langium/test';
 import { InlayHint, Position } from 'vscode-languageserver';
 import { NodeFileSystem } from 'langium/node';
 import { findTestChecks } from '../../helpers/testChecks.js';
-import { URI } from 'langium';
-import { createSafeDsServices } from '../../../src/language/index.js';
+import { DeepPartial, URI } from 'langium';
+import { createSafeDsServices, SafeDsLanguageMetaData } from '../../../src/language/index.js';
+import { InlayHintsSettings } from '../../../src/language/workspace/safe-ds-settings-provider.js';
+import { expandToString } from 'langium/generate';
 
 const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
+const configurationProvider = services.shared.workspace.ConfigurationProvider!;
 const inlayHintProvider = services.lsp.InlayHintProvider!;
 const parse = parseHelper(services);
 
@@ -18,7 +21,7 @@ describe('SafeDsInlayHintProvider', async () => {
                 code: `
                     pipeline myPipeline {
                         () {
-                            // $TEST$ after ": literal<1>"
+                            // $TEST$ after ": literal<…>"
                             yield r»« = 1;
                         };
                     }
@@ -27,9 +30,11 @@ describe('SafeDsInlayHintProvider', async () => {
             {
                 testName: 'placeholder',
                 code: `
-                    pipeline myPipeline {
-                        // $TEST$ after ": literal<1>"
-                        val x»« = 1;
+                    class MyClass<T>
+
+                    segment mySegment(p: MyClass<Int>) {
+                        // $TEST$ after ": MyClass<…>"
+                        val x»« = p;
                     }
                 `,
             },
@@ -45,7 +50,7 @@ describe('SafeDsInlayHintProvider', async () => {
                 testName: 'yield',
                 code: `
                     segment s() -> r: Int {
-                        // $TEST$ after ": literal<1>"
+                        // $TEST$ after ": literal<…>"
                         yield r»« = 1;
                     }
                 `,
@@ -57,23 +62,45 @@ describe('SafeDsInlayHintProvider', async () => {
                         val x = 1;
                     }
                 `,
-                setting: false,
+                settings: {
+                    assigneeTypes: { enabled: false },
+                },
+            },
+            {
+                testName: 'expand class types',
+                code: `
+                    class MyClass<T>
+
+                    segment mySegment(p: MyClass<Int>) {
+                        // $TEST$ after ": MyClass<Int>"
+                        val x»« = p;
+                    }
+                `,
+                settings: {
+                    collapseClassTypes: false,
+                },
+            },
+            {
+                testName: 'expand literal types',
+                code: `
+                    pipeline myPipeline {
+                        // $TEST$ after ": literal<1>"
+                        val x»« = 1;
+                    }
+                `,
+                settings: {
+                    collapseLiteralTypes: false,
+                },
             },
         ];
-        it.each(testCases)('should assign the correct inlay hints ($testName)', async ({ code, setting }) => {
-            let oldMethod: any;
-            if (setting !== undefined) {
-                oldMethod = services.workspace.SettingsProvider.shouldShowAssigneeTypeInlayHints;
-                services.workspace.SettingsProvider.shouldShowAssigneeTypeInlayHints = () => setting;
-            }
+        it.each(testCases)('should assign the correct inlay hints ($testName)', async ({ code, settings }) => {
+            updateSettings(settings);
 
             const actualInlayHints = await getActualSimpleInlayHints(code);
             const expectedInlayHints = getExpectedSimpleInlayHints(code);
             expect(actualInlayHints).toStrictEqual(expectedInlayHints);
 
-            if (oldMethod) {
-                services.workspace.SettingsProvider.shouldShowAssigneeTypeInlayHints = oldMethod;
-            }
+            resetSettings();
         });
 
         it.each([
@@ -89,6 +116,7 @@ describe('SafeDsInlayHintProvider', async () => {
                         val a = C();
                     }
                 `,
+                expectedTooltip: 'Lorem ipsum.',
             },
             {
                 testName: 'enum',
@@ -104,6 +132,7 @@ describe('SafeDsInlayHintProvider', async () => {
                         val a = f();
                     }
                 `,
+                expectedTooltip: 'Lorem ipsum.',
             },
             {
                 testName: 'enum variant',
@@ -119,12 +148,45 @@ describe('SafeDsInlayHintProvider', async () => {
                         val a = E.V;
                     }
                 `,
+                expectedTooltip: 'Lorem ipsum.',
             },
-        ])('should set the documentation of named types as tooltip ($testName)', async ({ code }) => {
+            {
+                testName: 'collapsed class type',
+                code: `
+                    /**
+                     * Lorem ipsum.
+                     */
+                    class C<T>(p: T)
+
+                    pipeline myPipeline {
+                        val a = C(1);
+                    }
+                `,
+                expectedTooltip: expandToString`
+                    \`\`\`safe-ds-dev
+                    C<literal<1>>
+                    \`\`\`
+                    Lorem ipsum.
+                `,
+            },
+            {
+                testName: 'collapsed literal type',
+                code: `
+                    pipeline myPipeline {
+                        val a = 1;
+                    }
+                `,
+                expectedTooltip: expandToString`
+                    \`\`\`safe-ds-dev
+                    literal<1>
+                    \`\`\`
+                `,
+            },
+        ])('should set the tooltip ($testName)', async ({ code, expectedTooltip }) => {
             const actualInlayHints = await getActualInlayHints(code);
             const firstInlayHint = actualInlayHints?.[0];
 
-            expect(firstInlayHint?.tooltip).toStrictEqual({ kind: 'markdown', value: 'Lorem ipsum.' });
+            expect(firstInlayHint?.tooltip).toStrictEqual({ kind: 'markdown', value: expectedTooltip });
         });
     });
 
@@ -165,10 +227,10 @@ describe('SafeDsInlayHintProvider', async () => {
             {
                 testName: 'assigned block lambda without manifest types',
                 code: `
-                    fun f(callback: (p: Int) -> ())
+                    fun f(callback: (p: literal<1>) -> ())
 
                     pipeline myPipeline {
-                        // $TEST$ after ": Int"
+                        // $TEST$ after ": literal<…>"
                         f(callback = (p»«) {});
                     }
                 `,
@@ -186,10 +248,12 @@ describe('SafeDsInlayHintProvider', async () => {
             {
                 testName: 'assigned expression lambda without manifest types',
                 code: `
-                    fun f(callback: (p: Int) -> (r: Int))
+                    class MyClass<T>
+
+                    fun f(callback: (p: MyClass<Int>) -> (r: Int))
 
                     pipeline myPipeline {
-                        // $TEST$ after ": Int"
+                        // $TEST$ after ": MyClass<…>"
                         f(callback = (p»«) -> 1);
                     }
                 `,
@@ -213,23 +277,62 @@ describe('SafeDsInlayHintProvider', async () => {
                         f(callback = (p) {});
                     }
                 `,
-                setting: false,
+                settings: {
+                    lambdaParameterTypes: {
+                        enabled: false,
+                    },
+                },
+            },
+            {
+                testName: 'assigned block lambda without manifest types',
+                code: `
+                    fun f(callback: (p: literal<1>) -> ())
+
+                    pipeline myPipeline {
+                        // $TEST$ after ": literal<…>"
+                        f(callback = (p»«) {});
+                    }
+                `,
+            },
+            {
+                testName: 'expand class types',
+                code: `
+                    class MyClass<T>
+
+                    fun f(callback: (p: MyClass<Int>) -> (r: Int))
+
+                    pipeline myPipeline {
+                        // $TEST$ after ": MyClass<Int>"
+                        f(callback = (p»«) -> 1);
+                    }
+                `,
+                settings: {
+                    collapseClassTypes: false,
+                },
+            },
+            {
+                testName: 'expand literal types',
+                code: `
+                    fun f(callback: (p: literal<1>) -> ())
+
+                    pipeline myPipeline {
+                        // $TEST$ after ": literal<1>"
+                        f(callback = (p»«) {});
+                    }
+                `,
+                settings: {
+                    collapseLiteralTypes: false,
+                },
             },
         ];
-        it.each(testCases)('should assign the correct inlay hints ($testName)', async ({ code, setting }) => {
-            let oldMethod: any;
-            if (setting !== undefined) {
-                oldMethod = services.workspace.SettingsProvider.shouldShowLambdaParameterTypeInlayHints;
-                services.workspace.SettingsProvider.shouldShowLambdaParameterTypeInlayHints = () => setting;
-            }
+        it.each(testCases)('should assign the correct inlay hints ($testName)', async ({ code, settings }) => {
+            updateSettings(settings);
 
             const actualInlayHints = await getActualSimpleInlayHints(code);
             const expectedInlayHints = getExpectedSimpleInlayHints(code);
             expect(actualInlayHints).toStrictEqual(expectedInlayHints);
 
-            if (oldMethod) {
-                services.workspace.SettingsProvider.shouldShowLambdaParameterTypeInlayHints = oldMethod;
-            }
+            resetSettings();
         });
 
         it.each([
@@ -247,6 +350,7 @@ describe('SafeDsInlayHintProvider', async () => {
                         f(callback = (p) {});
                     }
                 `,
+                expectedTooltip: 'Lorem ipsum.',
             },
             {
                 testName: 'enum',
@@ -262,6 +366,7 @@ describe('SafeDsInlayHintProvider', async () => {
                         f(callback = (p) {});
                     }
                 `,
+                expectedTooltip: 'Lorem ipsum.',
             },
             {
                 testName: 'enum variant',
@@ -279,12 +384,49 @@ describe('SafeDsInlayHintProvider', async () => {
                         f(callback = (p) {});
                     }
                 `,
+                expectedTooltip: 'Lorem ipsum.',
             },
-        ])('should set the documentation of named types as tooltip ($testName)', async ({ code }) => {
+            {
+                testName: 'collapsed class type',
+                code: `
+                    /**
+                     * Lorem ipsum.
+                     */
+                    class C<T>
+
+                    fun f(callback: (p: C<Any>) -> ())
+
+                    pipeline myPipeline {
+                        f(callback = (p) {});
+                    }
+                `,
+                expectedTooltip: expandToString`
+                    \`\`\`safe-ds-dev
+                    C<Any>
+                    \`\`\`
+                    Lorem ipsum.
+                `,
+            },
+            {
+                testName: 'collapsed literal type',
+                code: `
+                    fun f(callback: (p: literal<1>) -> ())
+
+                    pipeline myPipeline {
+                        f(callback = (p) {});
+                    }
+                `,
+                expectedTooltip: expandToString`
+                    \`\`\`safe-ds-dev
+                    literal<1>
+                    \`\`\`
+                `,
+            },
+        ])('should set the tooltip ($testName)', async ({ code, expectedTooltip }) => {
             const actualInlayHints = await getActualInlayHints(code);
             const firstInlayHint = actualInlayHints?.[0];
 
-            expect(firstInlayHint?.tooltip).toStrictEqual({ kind: 'markdown', value: 'Lorem ipsum.' });
+            expect(firstInlayHint?.tooltip).toStrictEqual({ kind: 'markdown', value: expectedTooltip });
         });
     });
 
@@ -300,7 +442,11 @@ describe('SafeDsInlayHintProvider', async () => {
                         f(»«1);
                     }
                 `,
-                setting: 'all',
+                settings: {
+                    parameterNames: {
+                        enabled: 'all',
+                    },
+                },
             },
             {
                 testName: 'unresolved positional argument',
@@ -311,7 +457,11 @@ describe('SafeDsInlayHintProvider', async () => {
                         f(1);
                     }
                 `,
-                setting: 'all',
+                settings: {
+                    parameterNames: {
+                        enabled: 'all',
+                    },
+                },
             },
             {
                 testName: 'named argument',
@@ -322,7 +472,11 @@ describe('SafeDsInlayHintProvider', async () => {
                         f(p = 1);
                     }
                 `,
-                setting: 'all',
+                settings: {
+                    parameterNames: {
+                        enabled: 'all',
+                    },
+                },
             },
             {
                 testName: 'reference (all)',
@@ -334,7 +488,11 @@ describe('SafeDsInlayHintProvider', async () => {
                         f(»«myPipeline);
                     }
                 `,
-                setting: 'all',
+                settings: {
+                    parameterNames: {
+                        enabled: 'all',
+                    },
+                },
             },
             {
                 testName: 'reference (exceptReferences)',
@@ -345,7 +503,11 @@ describe('SafeDsInlayHintProvider', async () => {
                         f(myPipeline);
                     }
                 `,
-                setting: 'exceptReferences',
+                settings: {
+                    parameterNames: {
+                        enabled: 'exceptReferences',
+                    },
+                },
             },
             {
                 testName: 'other expression (exceptReferences)',
@@ -357,7 +519,11 @@ describe('SafeDsInlayHintProvider', async () => {
                         f(»«1 + 2);
                     }
                 `,
-                setting: 'exceptReferences',
+                settings: {
+                    parameterNames: {
+                        enabled: 'exceptReferences',
+                    },
+                },
             },
             {
                 testName: 'other expression (onlyLiterals)',
@@ -368,7 +534,11 @@ describe('SafeDsInlayHintProvider', async () => {
                         f(1 + 2);
                     }
                 `,
-                setting: 'onlyLiterals',
+                settings: {
+                    parameterNames: {
+                        enabled: 'onlyLiterals',
+                    },
+                },
             },
             {
                 testName: 'literals (onlyLiterals)',
@@ -380,7 +550,11 @@ describe('SafeDsInlayHintProvider', async () => {
                         f(»«1);
                     }
                 `,
-                setting: 'onlyLiterals',
+                settings: {
+                    parameterNames: {
+                        enabled: 'onlyLiterals',
+                    },
+                },
             },
             {
                 testName: 'literals (none)',
@@ -391,26 +565,24 @@ describe('SafeDsInlayHintProvider', async () => {
                         f(1);
                     }
                 `,
-                setting: 'none',
+                settings: {
+                    parameterNames: {
+                        enabled: 'none',
+                    },
+                },
             },
         ];
-        it.each(testCases)('should assign the correct inlay hints ($testName)', async ({ code, setting }) => {
-            let oldMethod: any;
-            if (setting !== undefined) {
-                oldMethod = services.workspace.SettingsProvider.shouldShowParameterNameInlayHints;
-                services.workspace.SettingsProvider.shouldShowParameterNameInlayHints = () => setting;
-            }
+        it.each(testCases)('should assign the correct inlay hints ($testName)', async ({ code, settings }) => {
+            updateSettings(settings);
 
             const actualInlayHints = await getActualSimpleInlayHints(code);
             const expectedInlayHints = getExpectedSimpleInlayHints(code);
             expect(actualInlayHints).toStrictEqual(expectedInlayHints);
 
-            if (oldMethod) {
-                services.workspace.SettingsProvider.shouldShowParameterNameInlayHints = oldMethod;
-            }
+            resetSettings();
         });
 
-        it('should set the documentation of parameters as tooltip', async () => {
+        it('should set the tooltip', async () => {
             const code = `
                 /**
                  * @param p Lorem ipsum.
@@ -494,6 +666,24 @@ const getExpectedSimpleInlayHints = (code: string): SimpleInlayHint[] => {
     });
 };
 
+const updateSettings = (settings: DeepPartial<InlayHintsSettings> = {}) => {
+    configurationProvider.updateConfiguration({
+        settings: {
+            [SafeDsLanguageMetaData.languageId]: {
+                inlayHints: settings,
+            },
+        },
+    });
+};
+
+const resetSettings = () => {
+    configurationProvider.updateConfiguration({
+        settings: {
+            [SafeDsLanguageMetaData.languageId]: {},
+        },
+    });
+};
+
 /**
  * A description of a test case for the inlay hint provider.
  */
@@ -511,7 +701,7 @@ interface InlayHintProviderTest {
     /**
      * The value of the corresponding setting to control which inlay hints should be shown.
      */
-    setting?: any;
+    settings?: DeepPartial<InlayHintsSettings>;
 }
 
 /**
