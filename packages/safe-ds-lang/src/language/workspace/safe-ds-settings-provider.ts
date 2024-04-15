@@ -29,6 +29,14 @@ export class SafeDsSettingsProvider {
         return this.cachedSettings.inlayHints?.lambdaParameterTypes?.enabled ?? true;
     }
 
+    shouldCollapseClassTypesInInlayHints(): boolean {
+        return this.cachedSettings.inlayHints?.collapseClassTypes ?? true;
+    }
+
+    shouldCollapseLiteralTypesInInlayHints(): boolean {
+        return this.cachedSettings.inlayHints?.collapseLiteralTypes ?? true;
+    }
+
     shouldShowParameterNameInlayHints(): InlayHintsSettings['parameterNames']['enabled'] {
         return this.cachedSettings.inlayHints?.parameterNames?.enabled ?? 'onlyLiterals';
     }
@@ -97,6 +105,8 @@ interface InlayHintsSettings {
     lambdaParameterTypes: {
         enabled: boolean;
     };
+    collapseClassTypes: boolean;
+    collapseLiteralTypes: boolean;
     parameterNames: {
         enabled: 'none' | 'onlyLiterals' | 'exceptReferences' | 'all';
     };
