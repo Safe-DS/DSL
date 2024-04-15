@@ -1,3 +1,8 @@
+---
+search:
+  boost: 0.5
+---
+
 # `#!sds abstract class` TableTransformer {#safeds.data.tabular.transformation.TableTransformer data-toc-label='TableTransformer'}
 
 Learn a transformation for a set of columns in a `Table` and transform another `Table` with the same columns.

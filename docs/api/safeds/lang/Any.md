@@ -1,3 +1,8 @@
+---
+search:
+  boost: 0.5
+---
+
 # `#!sds abstract class` Any {#safeds.lang.Any data-toc-label='Any'}
 
 The common superclass of all classes.

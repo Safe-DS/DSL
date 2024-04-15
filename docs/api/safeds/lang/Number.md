@@ -1,3 +1,8 @@
+---
+search:
+  boost: 0.5
+---
+
 # `#!sds abstract class` Number {#safeds.lang.Number data-toc-label='Number'}
 
 A number.

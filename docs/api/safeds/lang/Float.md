@@ -1,3 +1,8 @@
+---
+search:
+  boost: 0.5
+---
+
 # `#!sds abstract class` Float {#safeds.lang.Float data-toc-label='Float'}
 
 A floating-point number.

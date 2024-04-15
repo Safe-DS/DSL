@@ -1,3 +1,8 @@
+---
+search:
+  boost: 0.5
+---
+
 # `#!sds abstract class` ColumnType {#safeds.data.tabular.typing.ColumnType data-toc-label='ColumnType'}
 
 Abstract base class for column types.

@@ -1,3 +1,8 @@
+---
+search:
+  boost: 0.5
+---
+
 # `#!sds abstract class` List {#safeds.lang.List data-toc-label='List'}
 
 A list of elements.

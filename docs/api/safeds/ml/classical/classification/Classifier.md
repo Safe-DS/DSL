@@ -1,3 +1,8 @@
+---
+search:
+  boost: 0.5
+---
+
 # `#!sds abstract class` Classifier {#safeds.ml.classical.classification.Classifier data-toc-label='Classifier'}
 
 Abstract base class for all classifiers.

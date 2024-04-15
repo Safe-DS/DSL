@@ -1,3 +1,8 @@
+---
+search:
+  boost: 0.5
+---
+
 # `#!sds abstract class` Schema {#safeds.data.tabular.typing.Schema data-toc-label='Schema'}
 
 Store column names and corresponding data types for a `Table` or `Row`.

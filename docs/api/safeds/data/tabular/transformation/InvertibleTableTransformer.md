@@ -1,3 +1,8 @@
+---
+search:
+  boost: 0.5
+---
+
 # `#!sds abstract class` InvertibleTableTransformer {#safeds.data.tabular.transformation.InvertibleTableTransformer data-toc-label='InvertibleTableTransformer'}
 
 A `TableTransformer` that can also undo the learned transformation after it has been applied.

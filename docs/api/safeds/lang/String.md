@@ -1,3 +1,8 @@
+---
+search:
+  boost: 0.5
+---
+
 # `#!sds abstract class` String {#safeds.lang.String data-toc-label='String'}
 
 Some text.

@@ -1,3 +1,8 @@
+---
+search:
+  boost: 0.5
+---
+
 # `#!sds abstract class` Regressor {#safeds.ml.classical.regression.Regressor data-toc-label='Regressor'}
 
 Abstract base class for all regressors.
