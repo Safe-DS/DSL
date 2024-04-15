@@ -253,7 +253,10 @@ export class SafeDsMarkdownGenerator {
         }
 
         // Class members
-        const staticMembers = getClassMembers(node).filter((it) => isStatic(it));
+        const staticMembers = getClassMembers(node)
+            .filter((it) => isStatic(it))
+            .sort((a, b) => a.name.localeCompare(b.name));
+
         const ownInstanceMembers = getClassMembers(node).filter((it) => !isStatic(it));
         const inheritedInstanceMembers = this.classHierarchy
             .streamProperSuperclasses(node)
