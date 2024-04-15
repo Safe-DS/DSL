@@ -1,5 +1,5 @@
 import { SafeDsServices } from '../safe-ds-module.js';
-import { AstUtils, LangiumDocument, URI, UriUtils } from 'langium';
+import { AstUtils, LangiumDocument, stream, URI, UriUtils } from 'langium';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import {
     isSdsAnnotation,
@@ -50,6 +50,8 @@ import { NamedType, Type, TypeVariable } from '../typing/model.js';
 import path from 'path';
 import { addLinePrefix, removeLinePrefix } from '../../helpers/strings.js';
 import { expandToStringLF } from 'langium/generate';
+import { SafeDsClassHierarchy } from '../typing/safe-ds-class-hierarchy.js';
+import { SafeDsClasses } from '../builtins/safe-ds-classes.js';
 
 const INDENTATION = '    ';
 const LIB = path.join('packages', 'safe-ds-lang', 'lib', 'resources');
@@ -57,11 +59,15 @@ const SRC = path.join('packages', 'safe-ds-lang', 'src', 'resources');
 
 export class SafeDsMarkdownGenerator {
     private readonly builtinAnnotations: SafeDsAnnotations;
+    private readonly builtinClasses: SafeDsClasses;
+    private readonly classHierarchy: SafeDsClassHierarchy;
     private readonly documentationProvider: SafeDsDocumentationProvider;
     private readonly typeComputer: SafeDsTypeComputer;
 
     constructor(services: SafeDsServices) {
         this.builtinAnnotations = services.builtins.Annotations;
+        this.builtinClasses = services.builtins.Classes;
+        this.classHierarchy = services.typing.ClassHierarchy;
         this.documentationProvider = services.documentation.DocumentationProvider;
         this.typeComputer = services.typing.TypeComputer;
     }
@@ -246,18 +252,29 @@ export class SafeDsMarkdownGenerator {
             result += `\n${sourceCode}`;
         }
 
-        // Members
-        const members = getClassMembers(node).sort((a, b) => a.name.localeCompare(b.name));
+        // Class members
+        const staticMembers = getClassMembers(node).filter((it) => isStatic(it));
+        const ownInstanceMembers = getClassMembers(node).filter((it) => !isStatic(it));
+        const inheritedInstanceMembers = this.classHierarchy
+            .streamProperSuperclasses(node)
+            .filter((it) => it !== this.builtinClasses.Any)
+            .flatMap(getClassMembers)
+            .filter((it) => !isStatic(it));
+        const instanceMembers = stream(ownInstanceMembers, inheritedInstanceMembers)
+            .distinct((it) => it.name)
+            .toArray()
+            .sort((a, b) => a.name.localeCompare(b.name));
+
         [
             // Instance members
-            ...members.filter((it) => !isStatic(it) && isSdsAttribute(it)),
-            ...members.filter((it) => !isStatic(it) && isSdsFunction(it)),
+            ...instanceMembers.filter((it) => isSdsAttribute(it)),
+            ...instanceMembers.filter((it) => isSdsFunction(it)),
 
             // Static members
-            ...members.filter((it) => isStatic(it) && isSdsAttribute(it)),
-            ...members.filter((it) => isStatic(it) && isSdsFunction(it)),
-            ...members.filter((it) => isSdsClass(it)),
-            ...members.filter((it) => isSdsEnum(it)),
+            ...staticMembers.filter((it) => isSdsAttribute(it)),
+            ...staticMembers.filter((it) => isSdsFunction(it)),
+            ...staticMembers.filter((it) => isSdsClass(it)),
+            ...staticMembers.filter((it) => isSdsEnum(it)),
         ].forEach((member) => {
             result += `\n${this.describeClassMember(member, level + 1, knownPaths)}`;
         });
