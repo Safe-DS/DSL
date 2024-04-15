@@ -628,38 +628,8 @@ export class SafeDsTypeComputer {
             return unparameterizedType;
         }
 
-        const substitutions = this.computeTypeParameterSubstitutionsForNamedType(node, unparameterizedType.declaration);
+        const substitutions = this.computeSubstitutionsForNamedType(node, unparameterizedType.declaration);
         return this.factory.createClassType(unparameterizedType.declaration, substitutions, node.isNullable);
-    }
-
-    private computeTypeParameterSubstitutionsForNamedType(
-        node: SdsNamedType,
-        clazz: SdsClass,
-    ): TypeParameterSubstitutions {
-        const typeParameters = getTypeParameters(clazz);
-        if (isEmpty(typeParameters)) {
-            return NO_SUBSTITUTIONS;
-        }
-
-        // Map type parameters to the first type argument that sets it
-        const typeArgumentsByTypeParameters = new Map<SdsTypeParameter, SdsTypeArgument>();
-        for (const typeArgument of getTypeArguments(node)) {
-            const typeParameter = this.nodeMapper.typeArgumentToTypeParameter(typeArgument);
-            if (typeParameter && !typeArgumentsByTypeParameters.has(typeParameter)) {
-                typeArgumentsByTypeParameters.set(typeParameter, typeArgument);
-            }
-        }
-
-        // Compute substitutions (ordered by the position of the type parameters)
-        const result = new Map<SdsTypeParameter, Type>();
-
-        for (const typeParameter of typeParameters) {
-            const typeArgument = typeArgumentsByTypeParameters.get(typeParameter);
-            const type = this.computeType(typeArgument?.value ?? typeParameter.defaultValue);
-            result.set(typeParameter, type);
-        }
-
-        return result;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -799,7 +769,7 @@ export class SafeDsTypeComputer {
             return [this.computeType(parameter.type), this.computeType(argument?.value ?? parameter.defaultValue)];
         });
 
-        return this.computeTypeParameterSubstitutionsForArguments(typeParameters, parameterTypesToArgumentTypes);
+        return this.computeSubstitutionsForArguments(typeParameters, parameterTypesToArgumentTypes);
     }
 
     /**
@@ -828,7 +798,34 @@ export class SafeDsTypeComputer {
             ownTypesToOverriddenTypes.push([ownParameterTypes[i]!, overriddenParameterTypes[i]!]);
         }
 
-        return this.computeTypeParameterSubstitutionsForArguments(ownTypeParameters, ownTypesToOverriddenTypes);
+        return this.computeSubstitutionsForArguments(ownTypeParameters, ownTypesToOverriddenTypes);
+    }
+
+    private computeSubstitutionsForNamedType(node: SdsNamedType, clazz: SdsClass): TypeParameterSubstitutions {
+        const typeParameters = getTypeParameters(clazz);
+        if (isEmpty(typeParameters)) {
+            return NO_SUBSTITUTIONS;
+        }
+
+        // Map type parameters to the first type argument that sets it
+        const typeArgumentsByTypeParameters = new Map<SdsTypeParameter, SdsTypeArgument>();
+        for (const typeArgument of getTypeArguments(node)) {
+            const typeParameter = this.nodeMapper.typeArgumentToTypeParameter(typeArgument);
+            if (typeParameter && !typeArgumentsByTypeParameters.has(typeParameter)) {
+                typeArgumentsByTypeParameters.set(typeParameter, typeArgument);
+            }
+        }
+
+        // Compute substitutions (ordered by the position of the type parameters)
+        const result = new Map<SdsTypeParameter, Type>();
+
+        for (const typeParameter of typeParameters) {
+            const typeArgument = typeArgumentsByTypeParameters.get(typeParameter);
+            const type = this.computeType(typeArgument?.value ?? typeParameter.defaultValue);
+            result.set(typeParameter, type);
+        }
+
+        return result;
     }
 
     /**
@@ -839,19 +836,19 @@ export class SafeDsTypeComputer {
      * @param parameterTypesToArgumentTypes Pairs of parameter types and the corresponding argument types.
      * @returns The computed substitutions for the type parameters in the parameter types.
      */
-    private computeTypeParameterSubstitutionsForArguments(
+    private computeSubstitutionsForArguments(
         typeParameters: SdsTypeParameter[],
         parameterTypesToArgumentTypes: [Type, Type][],
     ): TypeParameterSubstitutions {
         // Build initial state
-        const state: ComputeTypeParameterSubstitutionsForParametersState = {
+        const state: ComputeSubstitutionsForParametersState = {
             substitutions: new Map(typeParameters.map((it) => [it, UnknownType])),
             remainingVariances: new Map(typeParameters.map((it) => [it, 'bivariant'])),
         };
 
         // Compute substitutions
         for (const [parameterType, argumentType] of parameterTypesToArgumentTypes) {
-            this.computeTypeParameterSubstitutionsForParameter(parameterType, argumentType, 'covariant', state);
+            this.computeSubstitutionsForParameter(parameterType, argumentType, 'covariant', state);
         }
 
         // Normalize substitutions
@@ -884,11 +881,11 @@ export class SafeDsTypeComputer {
         return state.substitutions;
     }
 
-    private computeTypeParameterSubstitutionsForParameter(
+    private computeSubstitutionsForParameter(
         parameterType: Type,
         argumentType: Type,
         currentVariance: Variance,
-        state: ComputeTypeParameterSubstitutionsForParametersState,
+        state: ComputeSubstitutionsForParametersState,
     ) {
         if (argumentType instanceof TypeParameterType && state.substitutions.has(argumentType.declaration)) {
             // Can happen for lambdas without manifest parameter types. We gain no information here.
@@ -901,7 +898,7 @@ export class SafeDsTypeComputer {
             for (let i = 0; i < minParametersLength; i++) {
                 const parameterEntry = parameterTypeParameters[i]!;
                 const argumentEntry = argumentTypeParameters[i]!;
-                this.computeTypeParameterSubstitutionsForParameter(
+                this.computeSubstitutionsForParameter(
                     parameterEntry.type,
                     argumentEntry.type,
                     this.flippedVariance(currentVariance),
@@ -916,22 +913,12 @@ export class SafeDsTypeComputer {
             for (let i = 0; i < minResultsLength; i++) {
                 const parameterEntry = parameterTypeResults[i]!;
                 const argumentEntry = argumentTypeResults[i]!;
-                this.computeTypeParameterSubstitutionsForParameter(
-                    parameterEntry.type,
-                    argumentEntry.type,
-                    currentVariance,
-                    state,
-                );
+                this.computeSubstitutionsForParameter(parameterEntry.type, argumentEntry.type, currentVariance, state);
             }
         } else if (parameterType instanceof CallableType && argumentType instanceof StaticType) {
             if (currentVariance === 'covariant') {
                 const callableArgumentType = this.computeCallableTypeForStaticType(argumentType);
-                this.computeTypeParameterSubstitutionsForParameter(
-                    parameterType,
-                    callableArgumentType,
-                    currentVariance,
-                    state,
-                );
+                this.computeSubstitutionsForParameter(parameterType, callableArgumentType, currentVariance, state);
             }
         } else if (parameterType instanceof ClassType && argumentType instanceof ClassType) {
             let matchingParameterType: ClassType | undefined = parameterType;
@@ -958,14 +945,14 @@ export class SafeDsTypeComputer {
                 }
 
                 if (TypeParameter.isCovariant(typeParameter)) {
-                    this.computeTypeParameterSubstitutionsForParameter(
+                    this.computeSubstitutionsForParameter(
                         argumentTypeSubstitutions,
                         parameterTypeSubstitutions,
                         currentVariance,
                         state,
                     );
                 } else if (TypeParameter.isContravariant(typeParameter)) {
-                    this.computeTypeParameterSubstitutionsForParameter(
+                    this.computeSubstitutionsForParameter(
                         argumentTypeSubstitutions,
                         parameterTypeSubstitutions,
                         this.flippedVariance(currentVariance),
@@ -1622,7 +1609,7 @@ interface ComputeUpperBoundOptions {
     stopAtTypeParameterType?: boolean;
 }
 
-interface ComputeTypeParameterSubstitutionsForParametersState {
+interface ComputeSubstitutionsForParametersState {
     substitutions: TypeParameterSubstitutions;
     remainingVariances: Map<SdsTypeParameter, Variance | undefined>;
 }
