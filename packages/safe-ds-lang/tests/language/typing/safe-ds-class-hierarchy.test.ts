@@ -61,14 +61,14 @@ describe('SafeDsClassHierarchy', async () => {
     });
 
     describe('streamProperSuperclasses', () => {
-        const properSuperclassesNames = (node: SdsClass | undefined) =>
+        const properSuperclassNames = (node: SdsClass | undefined) =>
             classHierarchy
                 .streamProperSuperclasses(node)
                 .map((clazz) => clazz.name)
                 .toArray();
 
         it('should return an empty stream if passed undefined', () => {
-            expect(properSuperclassesNames(undefined)).toStrictEqual([]);
+            expect(properSuperclassNames(undefined)).toStrictEqual([]);
         });
 
         const testCases = [
@@ -124,7 +124,7 @@ describe('SafeDsClassHierarchy', async () => {
 
         it.each(testCases)('$testName', async ({ code, expected }) => {
             const firstClass = await getNodeOfType(services, code, isSdsClass);
-            expect(properSuperclassesNames(firstClass)).toStrictEqual(expected);
+            expect(properSuperclassNames(firstClass)).toStrictEqual(expected);
         });
     });
 
@@ -470,6 +470,56 @@ describe('SafeDsClassHierarchy', async () => {
 
         it('should return undefined if passed undefined', () => {
             expect(classHierarchy.getOverriddenMember(undefined)).toBeUndefined();
+        });
+    });
+
+    describe('streamDirectSubclasses', () => {
+        const directSubclassNames = (node: SdsClass | undefined) =>
+            classHierarchy
+                .streamDirectSubclasses(node)
+                .map((clazz) => clazz.name)
+                .toArray();
+
+        it('should return an empty stream if passed undefined', () => {
+            expect(directSubclassNames(undefined)).toStrictEqual([]);
+        });
+
+        it('should return an empty stream for "Any"', () => {
+            expect(directSubclassNames(builtinClasses.Any)).toStrictEqual([]);
+        });
+
+        const testCases = [
+            {
+                testName: 'should return an empty stream if the class has no subclasses',
+                code: `
+                    class A
+                `,
+                expected: [],
+            },
+            {
+                testName: 'should return the direct subclasses of a class',
+                code: `
+                    class B
+                    class A sub B
+                    class C sub B
+                    class D sub C
+                `,
+                expected: ['A', 'C'],
+            },
+            {
+                testName: 'should only consider the first parent type',
+                code: `
+                    class C
+                    class B
+                    class A sub B, C
+                `,
+                expected: [],
+            },
+        ];
+
+        it.each(testCases)('$testName', async ({ code, expected }) => {
+            const firstClass = await getNodeOfType(services, code, isSdsClass);
+            expect(directSubclassNames(firstClass)).toStrictEqual(expected);
         });
     });
 });

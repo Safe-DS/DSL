@@ -1,14 +1,6 @@
-import { type AstNode, AstUtils, CstUtils, stream } from 'langium';
+import { type AstNode, AstUtils, stream } from 'langium';
 import { type TypeHierarchyItem } from 'vscode-languageserver';
-import {
-    isSdsClass,
-    isSdsEnum,
-    isSdsEnumVariant,
-    isSdsParentTypeList,
-    SdsClass,
-    SdsEnum,
-    SdsEnumVariant,
-} from '../generated/ast.js';
+import { isSdsClass, isSdsEnum, isSdsEnumVariant, SdsClass, SdsEnum, SdsEnumVariant } from '../generated/ast.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsClassHierarchy } from '../typing/safe-ds-class-hierarchy.js';
 import { SafeDsNodeInfoProvider } from './safe-ds-node-info-provider.js';
@@ -82,43 +74,16 @@ export class SafeDsTypeHierarchyProvider extends AbstractTypeHierarchyProvider {
     }
 
     private getSubtypesOfClass(node: SdsClass): TypeHierarchyItem[] {
-        const references = this.references.findReferences(node, {
-            includeDeclaration: false,
-        });
-
-        return references
+        return this.classHierarchy
+            .streamDirectSubclasses(node)
             .flatMap((it) => {
-                const document = this.documents.getDocument(it.sourceUri);
+                const document = AstUtils.getDocument(it);
                 if (!document) {
                     /* c8 ignore next 2 */
                     return [];
                 }
 
-                const rootNode = document.parseResult.value;
-                if (!rootNode.$cstNode) {
-                    /* c8 ignore next 2 */
-                    return [];
-                }
-
-                const targetCstNode = CstUtils.findLeafNodeAtOffset(rootNode.$cstNode, it.segment.offset);
-                if (!targetCstNode) {
-                    /* c8 ignore next 2 */
-                    return [];
-                }
-
-                // Only consider the first parent type
-                const targetNode = targetCstNode.astNode;
-                if (!isSdsParentTypeList(targetNode.$container) || targetNode.$containerIndex !== 0) {
-                    return [];
-                }
-
-                const containingClass = AstUtils.getContainerOfType(targetNode, isSdsClass);
-                if (!containingClass) {
-                    /* c8 ignore next 2 */
-                    return [];
-                }
-
-                return this.getTypeHierarchyItems(containingClass, document) ?? [];
+                return this.getTypeHierarchyItems(it, document) ?? [];
             })
             .toArray();
     }
