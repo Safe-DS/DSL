@@ -1,4 +1,4 @@
-package tests.typing.lowestCommonSupertype.enumVariantTypeAndTypeParameterType
+package tests.typing.lowestCommonSupertype.enumVariantTypeAndTypeVariable
 
 enum E {
     V1

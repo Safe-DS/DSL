@@ -26,7 +26,7 @@ import {
 } from '../generated/ast.js';
 import { getArguments, getTypeArguments, getTypeParameters, TypeParameter } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
-import { ClassType, NamedTupleType, TypeParameterType, UnknownType } from '../typing/model.js';
+import { ClassType, NamedTupleType, TypeVariable, UnknownType } from '../typing/model.js';
 
 export const CODE_TYPE_CALLABLE_RECEIVER = 'type/callable-receiver';
 export const CODE_TYPE_MISMATCH = 'type/mismatch';
@@ -135,7 +135,7 @@ export const indexedAccessIndexMustHaveCorrectType = (services: SafeDsServices) 
                     code: CODE_TYPE_MISMATCH,
                 });
             }
-        } else if (receiverType instanceof ClassType || receiverType instanceof TypeParameterType) {
+        } else if (receiverType instanceof ClassType || receiverType instanceof TypeVariable) {
             const mapType = typeComputer.computeMatchingSupertype(receiverType, coreClasses.Map);
             if (mapType) {
                 const keyType = mapType.getTypeParameterTypeByIndex(0);
@@ -293,7 +293,7 @@ export const namedTypeTypeArgumentsMustMatchBounds = (services: SafeDsServices) 
             }
 
             const upperBound = typeComputer
-                .computeUpperBound(typeParameter, { stopAtTypeParameterType: true })
+                .computeUpperBound(typeParameter, { stopAtTypeVariable: true })
                 .substituteTypeParameters(type.substitutions);
 
             if (!typeChecker.isSubtypeOf(typeArgumentType, upperBound)) {
@@ -400,7 +400,7 @@ export const typeParameterDefaultValueMustMatchUpperBound = (services: SafeDsSer
         }
 
         const defaultValueType = typeComputer.computeType(node.defaultValue);
-        const upperBoundType = typeComputer.computeUpperBound(node, { stopAtTypeParameterType: true });
+        const upperBoundType = typeComputer.computeUpperBound(node, { stopAtTypeVariable: true });
 
         if (!typeChecker.isSubtypeOf(defaultValueType, upperBoundType)) {
             accept('error', `Expected type '${upperBoundType}' but got '${defaultValueType}'.`, {

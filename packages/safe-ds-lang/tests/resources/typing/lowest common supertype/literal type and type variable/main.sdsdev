@@ -1,4 +1,4 @@
-package tests.typing.lowestCommonSupertype.literalTypeAndTypeParameterType
+package tests.typing.lowestCommonSupertype.literalTypeAndTypeVariable
 
 class Test<
     Unbounded,

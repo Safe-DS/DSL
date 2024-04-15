@@ -532,7 +532,7 @@ export class EnumVariantType extends NamedType<SdsEnumVariant> {
     }
 }
 
-export class TypeParameterType extends NamedType<SdsTypeParameter> {
+export class TypeVariable extends NamedType<SdsTypeParameter> {
     override readonly isFullySubstituted = false;
 
     constructor(
@@ -545,7 +545,7 @@ export class TypeParameterType extends NamedType<SdsTypeParameter> {
     override equals(other: unknown): boolean {
         if (other === this) {
             return true;
-        } else if (!(other instanceof TypeParameterType)) {
+        } else if (!(other instanceof TypeVariable)) {
             return false;
         }
 
@@ -564,12 +564,12 @@ export class TypeParameterType extends NamedType<SdsTypeParameter> {
         }
     }
 
-    override withExplicitNullability(isExplicitlyNullable: boolean): TypeParameterType {
+    override withExplicitNullability(isExplicitlyNullable: boolean): TypeVariable {
         if (this.isExplicitlyNullable === isExplicitlyNullable) {
             return this;
         }
 
-        return new TypeParameterType(this.declaration, isExplicitlyNullable);
+        return new TypeVariable(this.declaration, isExplicitlyNullable);
     }
 }
 

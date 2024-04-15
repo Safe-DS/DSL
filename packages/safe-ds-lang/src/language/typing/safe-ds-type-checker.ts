@@ -12,7 +12,7 @@ import {
     NamedTupleType,
     StaticType,
     Type,
-    TypeParameterType,
+    TypeVariable,
     UnionType,
     UnknownType,
 } from './model.js';
@@ -58,13 +58,13 @@ export class SafeDsTypeChecker {
         }
 
         // Handle type parameter types
-        if (other instanceof TypeParameterType) {
+        if (other instanceof TypeVariable) {
             if (type.isExplicitlyNullable && !other.isExplicitlyNullable) {
                 return false;
             }
 
             // `T` can always be assigned to `T` or some type parameter it is bounded by
-            if (type instanceof TypeParameterType && this.typeParameterIsBoundedByTypeParameter(type, other)) {
+            if (type instanceof TypeVariable && this.typeVariableIsBoundedByTypeVariable(type, other)) {
                 return true;
             }
 
@@ -94,22 +94,22 @@ export class SafeDsTypeChecker {
             return this.namedTupleTypeIsSubtypeOf(type, other, options);
         } else if (type instanceof StaticType) {
             return this.staticTypeIsSubtypeOf(type, other, options);
-        } else if (type instanceof TypeParameterType) {
-            return this.typeParameterTypeIsSubtypeOf(type, other, options);
+        } else if (type instanceof TypeVariable) {
+            return this.typeVariableIsSubtypeOf(type, other, options);
         } /* c8 ignore start */ else {
             throw new Error(`Unexpected type: ${type.constructor.name}`);
         } /* c8 ignore stop */
     };
 
-    private typeParameterIsBoundedByTypeParameter(type: TypeParameterType, other: TypeParameterType): boolean {
+    private typeVariableIsBoundedByTypeVariable(type: TypeVariable, other: TypeVariable): boolean {
         let current: Type = type;
 
-        while (current instanceof TypeParameterType) {
+        while (current instanceof TypeVariable) {
             if (current.declaration === other.declaration) {
                 return true;
             }
 
-            current = this.typeComputer().computeUpperBound(current, { stopAtTypeParameterType: true });
+            current = this.typeComputer().computeUpperBound(current, { stopAtTypeVariable: true });
         }
 
         return false;
@@ -313,7 +313,7 @@ export class SafeDsTypeChecker {
         }
     }
 
-    private typeParameterTypeIsSubtypeOf(type: TypeParameterType, other: Type, options: TypeCheckOptions): boolean {
+    private typeVariableIsSubtypeOf(type: TypeVariable, other: Type, options: TypeCheckOptions): boolean {
         const upperBound = this.typeComputer().computeUpperBound(type);
         return this.isSubtypeOf(upperBound, other, options);
     }
@@ -358,7 +358,7 @@ export class SafeDsTypeChecker {
     canBeNull = (type: Type): boolean => {
         if (type.isExplicitlyNullable) {
             return true;
-        } else if (type instanceof TypeParameterType) {
+        } else if (type instanceof TypeVariable) {
             const upperBound = this.typeComputer().computeUpperBound(type);
             return upperBound.isExplicitlyNullable;
         } else {
@@ -392,7 +392,7 @@ export class SafeDsTypeChecker {
     /**
      * Checks whether {@link type} is some kind of list (with any element type).
      */
-    isList(type: Type): type is ClassType | TypeParameterType {
+    isList(type: Type): type is ClassType | TypeVariable {
         const listOrNull = this.coreTypes.List(UnknownType).withExplicitNullability(true);
 
         return (
@@ -407,7 +407,7 @@ export class SafeDsTypeChecker {
     /**
      * Checks whether {@link type} is some kind of map (with any key/value types).
      */
-    isMap(type: Type): type is ClassType | TypeParameterType {
+    isMap(type: Type): type is ClassType | TypeVariable {
         const mapOrNull = this.coreTypes.Map(UnknownType, UnknownType).withExplicitNullability(true);
 
         return (

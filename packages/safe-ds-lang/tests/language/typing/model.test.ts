@@ -10,7 +10,7 @@ import {
     NamedTupleEntry,
     Type,
     TypeParameterSubstitutions,
-    TypeParameterType,
+    TypeVariable,
     UnknownType,
 } from '../../../src/language/typing/model.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
@@ -107,8 +107,8 @@ describe('type model', async () => {
             valueOfOtherType: () => UnknownType,
         },
         {
-            value: () => new TypeParameterType(typeParameter1, true),
-            unequalValueOfSameType: () => new TypeParameterType(typeParameter2, true),
+            value: () => new TypeVariable(typeParameter1, true),
+            unequalValueOfSameType: () => new TypeVariable(typeParameter2, true),
             valueOfOtherType: () => UnknownType,
         },
         {
@@ -207,11 +207,11 @@ describe('type model', async () => {
             expectedString: 'MyEnum1.MyEnumVariant1?',
         },
         {
-            value: new TypeParameterType(typeParameter1, false),
+            value: new TypeVariable(typeParameter1, false),
             expectedString: 'K',
         },
         {
-            value: new TypeParameterType(typeParameter1, true),
+            value: new TypeVariable(typeParameter1, true),
             expectedString: 'K?',
         },
         {
@@ -240,11 +240,9 @@ describe('type model', async () => {
                 callable1,
                 undefined,
                 factory.createNamedTupleType(
-                    new NamedTupleEntry(parameter1, 'p1', new TypeParameterType(typeParameter1, false)),
+                    new NamedTupleEntry(parameter1, 'p1', new TypeVariable(typeParameter1, false)),
                 ),
-                factory.createNamedTupleType(
-                    new NamedTupleEntry(result, 'r', new TypeParameterType(typeParameter1, false)),
-                ),
+                factory.createNamedTupleType(new NamedTupleEntry(result, 'r', new TypeVariable(typeParameter1, false))),
             ),
             substitutions: substitutions1,
             expectedType: factory.createCallableType(
@@ -265,7 +263,7 @@ describe('type model', async () => {
         },
         {
             type: factory.createNamedTupleType(
-                new NamedTupleEntry(parameter1, 'p1', new TypeParameterType(typeParameter1, false)),
+                new NamedTupleEntry(parameter1, 'p1', new TypeVariable(typeParameter1, false)),
             ),
             substitutions: substitutions1,
             expectedType: factory.createNamedTupleType(
@@ -273,11 +271,7 @@ describe('type model', async () => {
             ),
         },
         {
-            type: new ClassType(
-                class1,
-                new Map([[typeParameter2, new TypeParameterType(typeParameter1, false)]]),
-                false,
-            ),
+            type: new ClassType(class1, new Map([[typeParameter2, new TypeVariable(typeParameter1, false)]]), false),
             substitutions: substitutions1,
             expectedType: new ClassType(
                 class1,
@@ -296,32 +290,32 @@ describe('type model', async () => {
             expectedType: new EnumVariantType(enumVariant1, false),
         },
         {
-            type: new TypeParameterType(typeParameter1, false),
+            type: new TypeVariable(typeParameter1, false),
             substitutions: substitutions1,
             expectedType: factory.createLiteralType(new IntConstant(1n)),
         },
         {
-            type: new TypeParameterType(typeParameter1, true),
+            type: new TypeVariable(typeParameter1, true),
             substitutions: substitutions1,
             expectedType: factory.createLiteralType(new IntConstant(1n), NullConstant),
         },
         {
-            type: new TypeParameterType(typeParameter2, false),
+            type: new TypeVariable(typeParameter2, false),
             substitutions: substitutions1,
-            expectedType: new TypeParameterType(typeParameter2, false),
+            expectedType: new TypeVariable(typeParameter2, false),
         },
         {
             type: factory.createStaticType(
-                new ClassType(class1, new Map([[typeParameter1, new TypeParameterType(typeParameter2, false)]]), false),
+                new ClassType(class1, new Map([[typeParameter1, new TypeVariable(typeParameter2, false)]]), false),
             ),
             substitutions: substitutions1,
             expectedType: factory.createStaticType(
-                new ClassType(class1, new Map([[typeParameter1, new TypeParameterType(typeParameter2, false)]]), false),
+                new ClassType(class1, new Map([[typeParameter1, new TypeVariable(typeParameter2, false)]]), false),
             ),
         },
         {
             type: factory.createUnionType(
-                new ClassType(class1, new Map([[typeParameter2, new TypeParameterType(typeParameter1, false)]]), false),
+                new ClassType(class1, new Map([[typeParameter2, new TypeVariable(typeParameter1, false)]]), false),
             ),
             substitutions: substitutions1,
             expectedType: factory.createUnionType(
@@ -461,14 +455,14 @@ describe('type model', async () => {
             expectedType: factory.createStaticType(new ClassType(class1, new Map(), false)),
         },
         {
-            type: new TypeParameterType(typeParameter1, false),
+            type: new TypeVariable(typeParameter1, false),
             isNullable: true,
-            expectedType: new TypeParameterType(typeParameter1, true),
+            expectedType: new TypeVariable(typeParameter1, true),
         },
         {
-            type: new TypeParameterType(typeParameter1, true),
+            type: new TypeVariable(typeParameter1, true),
             isNullable: false,
-            expectedType: new TypeParameterType(typeParameter1, false),
+            expectedType: new TypeVariable(typeParameter1, false),
         },
         {
             type: factory.createUnionType(),

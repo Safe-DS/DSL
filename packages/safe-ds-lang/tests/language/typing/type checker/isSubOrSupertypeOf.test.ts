@@ -1028,7 +1028,7 @@ const classTypesWithTypeParameters = async (): Promise<IsSubOrSupertypeOfTest[]>
     ];
 };
 
-const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
+const typeVariables = async (): Promise<IsSubOrSupertypeOfTest[]> => {
     const code = `
         class TestClass<
             Unbounded,
@@ -1227,7 +1227,7 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
 };
 
 describe('SafeDsTypeChecker', async () => {
-    const testCases = (await Promise.all([basic(), classTypesWithTypeParameters(), typeParameterTypes()])).flat();
+    const testCases = (await Promise.all([basic(), classTypesWithTypeParameters(), typeVariables()])).flat();
 
     describe.each(testCases)('isSubtypeOf', ({ type1, type2, expected }) => {
         it(`should check whether ${type1} a subtype of ${type2}`, () => {
