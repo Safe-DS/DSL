@@ -376,11 +376,37 @@
     }
     ```
 
+## `#!sds attr` columnNames {#safeds.data.tabular.containers.TimeSeries.columnNames data-toc-label='columnNames'}
+
+Return a list of all column names in this table.
+
+Alias for self.schema.column_names -> list[str].
+
+**Type:** [`List<String>`][safeds.lang.List]
+
 ## `#!sds attr` features {#safeds.data.tabular.containers.TimeSeries.features data-toc-label='features'}
 
 Get the feature columns of the tagged table.
 
 **Type:** [`Table`][safeds.data.tabular.containers.Table]
+
+## `#!sds attr` numberOfColumns {#safeds.data.tabular.containers.TimeSeries.numberOfColumns data-toc-label='numberOfColumns'}
+
+Return the number of columns.
+
+**Type:** [`Int`][safeds.lang.Int]
+
+## `#!sds attr` numberOfRows {#safeds.data.tabular.containers.TimeSeries.numberOfRows data-toc-label='numberOfRows'}
+
+Return the number of rows.
+
+**Type:** [`Int`][safeds.lang.Int]
+
+## `#!sds attr` schema {#safeds.data.tabular.containers.TimeSeries.schema data-toc-label='schema'}
+
+Return the schema of the table.
+
+**Type:** [`Schema`][safeds.data.tabular.typing.Schema]
 
 ## `#!sds attr` target {#safeds.data.tabular.containers.TimeSeries.target data-toc-label='target'}
 
@@ -590,6 +616,176 @@ The original time series is not modified.
     ) -> result1: TimeSeries
     ```
 
+## `#!sds fun` getColumn {#safeds.data.tabular.containers.TimeSeries.getColumn data-toc-label='getColumn'}
+
+Return a column with the data of the specified column.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `columnName` | [`String`][safeds.lang.String] | The name of the column. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Column<Any?>`][safeds.data.tabular.containers.Column] | The column. |
+
+??? quote "Stub code in `table.sdsstub`"
+
+    ```sds linenums="134"
+    @Pure
+    @PythonName("get_column")
+    fun getColumn(
+        @PythonName("column_name") columnName: String
+    ) -> result1: Column
+    ```
+
+## `#!sds fun` getColumnType {#safeds.data.tabular.containers.TimeSeries.getColumnType data-toc-label='getColumnType'}
+
+Return the type of the given column.
+
+Alias for self.schema.get_type_of_column(column_name: str) -> ColumnType.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `columnName` | [`String`][safeds.lang.String] | The name of the column to be queried. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`ColumnType`][safeds.data.tabular.typing.ColumnType] | The type of the column. |
+
+??? quote "Stub code in `table.sdsstub`"
+
+    ```sds linenums="164"
+    @Pure
+    @PythonName("get_column_type")
+    fun getColumnType(
+        @PythonName("column_name") columnName: String
+    ) -> result1: ColumnType
+    ```
+
+## `#!sds fun` getRow {#safeds.data.tabular.containers.TimeSeries.getRow data-toc-label='getRow'}
+
+Return the row at a specified index.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `index` | [`Int`][safeds.lang.Int] | The index. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Row`][safeds.data.tabular.containers.Row] | The row of the table at the index. |
+
+??? quote "Stub code in `table.sdsstub`"
+
+    ```sds linenums="177"
+    @Pure
+    @PythonName("get_row")
+    fun getRow(
+        index: Int
+    ) -> result1: Row
+    ```
+
+## `#!sds fun` groupRowsBy {#safeds.data.tabular.containers.TimeSeries.groupRowsBy data-toc-label='groupRowsBy'}
+
+Return a dictionary with copies of the output tables as values and the keys from the key_selector.
+
+The original table is not modified.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `keySelector` | `#!sds (param1: Row) -> (param2: T)` | A Callable that is applied to all rows and returns the key of the group. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Map<T, Table>`][safeds.lang.Map] | A dictionary containing the new tables as values and the selected keys as keys. |
+
+**Type parameters:**
+
+| Name | Upper Bound | Description | Default |
+|------|-------------|-------------|---------|
+| `T` | [`Any?`][safeds.lang.Any] | - | - |
+
+??? quote "Stub code in `table.sdsstub`"
+
+    ```sds linenums="284"
+    @Pure
+    @PythonName("group_rows_by")
+    fun groupRowsBy<T>(
+        @PythonName("key_selector") keySelector: (param1: Row) -> param2: T
+    ) -> result1: Map<T, Table>
+    ```
+
+## `#!sds fun` hasColumn {#safeds.data.tabular.containers.TimeSeries.hasColumn data-toc-label='hasColumn'}
+
+Return whether the table contains a given column.
+
+Alias for self.schema.hasColumn(column_name: str) -> bool.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `columnName` | [`String`][safeds.lang.String] | The name of the column. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Boolean`][safeds.lang.Boolean] | True if the column exists. |
+
+??? quote "Stub code in `table.sdsstub`"
+
+    ```sds linenums="149"
+    @Pure
+    @PythonName("has_column")
+    fun hasColumn(
+        @PythonName("column_name") columnName: String
+    ) -> result1: Boolean
+    ```
+
+## `#!sds fun` inverseTransformTable {#safeds.data.tabular.containers.TimeSeries.inverseTransformTable data-toc-label='inverseTransformTable'}
+
+Return a new `Table` with the inverted transformation applied by the given transformer.
+
+The original table is not modified.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `transformer` | [`InvertibleTableTransformer`][safeds.data.tabular.transformation.InvertibleTableTransformer] | A transformer that was fitted with columns, which are all present in the table. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Table`][safeds.data.tabular.containers.Table] | The original table. |
+
+??? quote "Stub code in `table.sdsstub`"
+
+    ```sds linenums="591"
+    @Pure
+    @PythonName("inverse_transform_table")
+    fun inverseTransformTable(
+        transformer: InvertibleTableTransformer
+    ) -> result1: Table
+    ```
+
 ## `#!sds fun` keepOnlyColumns {#safeds.data.tabular.containers.TimeSeries.keepOnlyColumns data-toc-label='keepOnlyColumns'}
 
 Return a new `TimeSeries` with only the given column(s).
@@ -616,6 +812,60 @@ The original time series is not modified.
     fun keepOnlyColumns(
         @PythonName("column_names") columnNames: List<String>
     ) -> result1: TimeSeries
+    ```
+
+## `#!sds fun` plotBoxplots {#safeds.data.tabular.containers.TimeSeries.plotBoxplots data-toc-label='plotBoxplots'}
+
+Plot a boxplot for every numerical column.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
+
+??? quote "Stub code in `table.sdsstub`"
+
+    ```sds linenums="644"
+    @Pure
+    @PythonName("plot_boxplots")
+    fun plotBoxplots() -> result1: Image
+    ```
+
+## `#!sds fun` plotCorrelationHeatmap {#safeds.data.tabular.containers.TimeSeries.plotCorrelationHeatmap data-toc-label='plotCorrelationHeatmap'}
+
+Plot a correlation heatmap for all numerical columns of this `Table`.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
+
+??? quote "Stub code in `table.sdsstub`"
+
+    ```sds linenums="602"
+    @Pure
+    @PythonName("plot_correlation_heatmap")
+    fun plotCorrelationHeatmap() -> result1: Image
+    ```
+
+## `#!sds fun` plotHistograms {#safeds.data.tabular.containers.TimeSeries.plotHistograms data-toc-label='plotHistograms'}
+
+Plot a histogram for every column.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
+
+??? quote "Stub code in `table.sdsstub`"
+
+    ```sds linenums="653"
+    @Pure
+    @PythonName("plot_histograms")
+    fun plotHistograms() -> result1: Image
     ```
 
 ## `#!sds fun` plotLagplot {#safeds.data.tabular.containers.TimeSeries.plotLagplot data-toc-label='plotLagplot'}
@@ -902,6 +1152,26 @@ The order of columns is kept. The original time series is not modified.
     ) -> result1: TimeSeries
     ```
 
+## `#!sds fun` shuffleRows {#safeds.data.tabular.containers.TimeSeries.shuffleRows data-toc-label='shuffleRows'}
+
+Return a new `Table` with randomly shuffled rows of this `Table`.
+
+The original table is not modified.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Table`][safeds.data.tabular.containers.Table] | The shuffled Table. |
+
+??? quote "Stub code in `table.sdsstub`"
+
+    ```sds linenums="430"
+    @Pure
+    @PythonName("shuffle_rows")
+    fun shuffleRows() -> result1: Table
+    ```
+
 ## `#!sds fun` sliceRows {#safeds.data.tabular.containers.TimeSeries.sliceRows data-toc-label='sliceRows'}
 
 Slice a part of the table into a new `TimeSeries`.
@@ -971,6 +1241,294 @@ The original time series is not modified.
     ) -> result1: TimeSeries
     ```
 
+## `#!sds fun` sortRows {#safeds.data.tabular.containers.TimeSeries.sortRows data-toc-label='sortRows'}
+
+Sort the rows of a `Table` with the given comparator and return a new `Table`.
+
+The comparator is a function that takes two rows `row1` and `row2` and
+returns an integer:
+
+* If `row1` should be ordered before `row2`, the function should return a negative number.
+* If `row1` should be ordered after `row2`, the function should return a positive number.
+* If the original order of `row1` and `row2` should be kept, the function should return 0.
+
+The original table is not modified.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `comparator` | `#!sds (param1: Row, param2: Row) -> (param3: Int)` | The function used to compare two rows. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Table`][safeds.data.tabular.containers.Table] | A new table with sorted rows. |
+
+??? quote "Stub code in `table.sdsstub`"
+
+    ```sds linenums="493"
+    @Pure
+    @PythonName("sort_rows")
+    fun sortRows(
+        comparator: (param1: Row, param2: Row) -> param3: Int
+    ) -> result1: Table
+    ```
+
+## `#!sds fun` splitRows {#safeds.data.tabular.containers.TimeSeries.splitRows data-toc-label='splitRows'}
+
+Split the table into two new tables.
+
+The original table is not modified.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `percentageInFirst` | [`Float`][safeds.lang.Float] | The desired size of the first table in percentage to the given table; must be between 0 and 1. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Table`][safeds.data.tabular.containers.Table] | A tuple containing the two resulting tables. The first table has the specified size, the second table contains the rest of the data. |
+| `result2` | [`Table`][safeds.data.tabular.containers.Table] | A tuple containing the two resulting tables. The first table has the specified size, the second table contains the rest of the data. |
+
+??? quote "Stub code in `table.sdsstub`"
+
+    ```sds linenums="511"
+    @Pure
+    @PythonName("split_rows")
+    fun splitRows(
+        @PythonName("percentage_in_first") percentageInFirst: Float
+    ) -> (result1: Table, result2: Table)
+    ```
+
+## `#!sds fun` summarizeStatistics {#safeds.data.tabular.containers.TimeSeries.summarizeStatistics data-toc-label='summarizeStatistics'}
+
+Return a table with a number of statistical key values.
+
+The original table is not modified.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Table`][safeds.data.tabular.containers.Table] | The table with statistics. |
+
+??? quote "Stub code in `table.sdsstub`"
+
+    ```sds linenums="190"
+    @Pure
+    @PythonName("summarize_statistics")
+    fun summarizeStatistics() -> result1: Table
+    ```
+
+## `#!sds fun` tagColumns {#safeds.data.tabular.containers.TimeSeries.tagColumns data-toc-label='tagColumns'}
+
+Return a new `TaggedTable` with columns marked as a target column or feature columns.
+
+The original table is not modified.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `targetName` | [`String`][safeds.lang.String] | Name of the target column. | - |
+| `featureNames` | [`List<String>?`][safeds.lang.List] | Names of the feature columns. If None, all columns except the target column are used. | `#!sds null` |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A new tagged table with the given target and feature names. |
+
+??? quote "Stub code in `table.sdsstub`"
+
+    ```sds linenums="527"
+    @Pure
+    @PythonName("tag_columns")
+    fun tagColumns(
+        @PythonName("target_name") targetName: String,
+        @PythonName("feature_names") featureNames: List<String>? = null
+    ) -> result1: TaggedTable
+    ```
+
+## `#!sds fun` timeColumns {#safeds.data.tabular.containers.TimeSeries.timeColumns data-toc-label='timeColumns'}
+
+Return a new `TimeSeries` with columns marked as a target and time column or feature columns.
+
+The original table is not modified.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `targetName` | [`String`][safeds.lang.String] | Name of the target column. | - |
+| `timeName` | [`String`][safeds.lang.String] | Name of the time column. | - |
+| `featureNames` | [`List<String>?`][safeds.lang.List] | Names of the feature columns. If None, all columns except the target and time columns are used. | `#!sds null` |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A new time series with the given target, time and feature names. |
+
+??? quote "Stub code in `table.sdsstub`"
+
+    ```sds linenums="545"
+    @Pure
+    @PythonName("time_columns")
+    fun timeColumns(
+        @PythonName("target_name") targetName: String,
+        @PythonName("time_name") timeName: String,
+        @PythonName("feature_names") featureNames: List<String>? = null
+    ) -> result1: TimeSeries
+    ```
+
+## `#!sds fun` toColumns {#safeds.data.tabular.containers.TimeSeries.toColumns data-toc-label='toColumns'}
+
+Return a list of the columns.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`List<Column<Any?>>`][safeds.lang.List] | List of columns. |
+
+??? quote "Stub code in `table.sdsstub`"
+
+    ```sds linenums="723"
+    @Pure
+    @PythonName("to_columns")
+    fun toColumns() -> result1: List<Column>
+    ```
+
+## `#!sds fun` toCsvFile {#safeds.data.tabular.containers.TimeSeries.toCsvFile data-toc-label='toCsvFile'}
+
+Write the data from the table into a CSV file.
+
+If the file and/or the directories do not exist they will be created. If the file already exists it will be
+overwritten.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `path` | [`String`][safeds.lang.String] | The path to the output file. | - |
+
+??? quote "Stub code in `table.sdsstub`"
+
+    ```sds linenums="665"
+    @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
+    @PythonName("to_csv_file")
+    fun toCsvFile(
+        path: String
+    )
+    ```
+
+## `#!sds fun` toDict {#safeds.data.tabular.containers.TimeSeries.toDict data-toc-label='toDict'}
+
+Return a dictionary that maps column names to column values.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Map<String, List<Any>>`][safeds.lang.Map] | Dictionary representation of the table. |
+
+??? quote "Stub code in `table.sdsstub`"
+
+    ```sds linenums="705"
+    @Pure
+    @PythonName("to_dict")
+    fun toDict() -> result1: Map<String, List<Any>>
+    ```
+
+## `#!sds fun` toExcelFile {#safeds.data.tabular.containers.TimeSeries.toExcelFile data-toc-label='toExcelFile'}
+
+Write the data from the table into an Excel file.
+
+Valid file extensions are `.xls`, '.xlsx', `.xlsm`, `.xlsb`, `.odf`, `.ods` and `.odt`.
+If the file and/or the directories do not exist, they will be created. If the file already exists, it will be
+overwritten.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `path` | [`String`][safeds.lang.String] | The path to the output file. | - |
+
+??? quote "Stub code in `table.sdsstub`"
+
+    ```sds linenums="680"
+    @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
+    @PythonName("to_excel_file")
+    fun toExcelFile(
+        path: String
+    )
+    ```
+
+## `#!sds fun` toHtml {#safeds.data.tabular.containers.TimeSeries.toHtml data-toc-label='toHtml'}
+
+Return an HTML representation of the table.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`String`][safeds.lang.String] | The generated HTML. |
+
+??? quote "Stub code in `table.sdsstub`"
+
+    ```sds linenums="714"
+    @Pure
+    @PythonName("to_html")
+    fun toHtml() -> result1: String
+    ```
+
+## `#!sds fun` toJsonFile {#safeds.data.tabular.containers.TimeSeries.toJsonFile data-toc-label='toJsonFile'}
+
+Write the data from the table into a JSON file.
+
+If the file and/or the directories do not exist, they will be created. If the file already exists it will be
+overwritten.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `path` | [`String`][safeds.lang.String] | The path to the output file. | - |
+
+??? quote "Stub code in `table.sdsstub`"
+
+    ```sds linenums="694"
+    @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
+    @PythonName("to_json_file")
+    fun toJsonFile(
+        path: String
+    )
+    ```
+
+## `#!sds fun` toRows {#safeds.data.tabular.containers.TimeSeries.toRows data-toc-label='toRows'}
+
+Return a list of the rows.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`List<Row>`][safeds.lang.List] | List of rows. |
+
+??? quote "Stub code in `table.sdsstub`"
+
+    ```sds linenums="732"
+    @Pure
+    @PythonName("to_rows")
+    fun toRows() -> result1: List<Row>
+    ```
+
 ## `#!sds fun` transformColumn {#safeds.data.tabular.containers.TimeSeries.transformColumn data-toc-label='transformColumn'}
 
 Return a new `TimeSeries` with the provided column transformed by calling the provided transformer.
@@ -999,4 +1557,32 @@ The original time series is not modified.
         name: String,
         transformer: (param1: Row) -> param2: Any
     ) -> result1: TimeSeries
+    ```
+
+## `#!sds fun` transformTable {#safeds.data.tabular.containers.TimeSeries.transformTable data-toc-label='transformTable'}
+
+Return a new `Table` with a learned transformation applied to this table.
+
+The original table is not modified.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `transformer` | [`TableTransformer`][safeds.data.tabular.transformation.TableTransformer] | The transformer which transforms the given table. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Table`][safeds.data.tabular.containers.Table] | The transformed table. |
+
+??? quote "Stub code in `table.sdsstub`"
+
+    ```sds linenums="576"
+    @Pure
+    @PythonName("transform_table")
+    fun transformTable(
+        transformer: TableTransformer
+    ) -> result1: Table
     ```
