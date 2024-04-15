@@ -8,6 +8,7 @@ import {
     EnumType,
     EnumVariantType,
     NamedTupleEntry,
+    ToStringOptions,
     Type,
     TypeParameterSubstitutions,
     TypeVariable,
@@ -151,7 +152,7 @@ describe('type model', async () => {
         }
     });
 
-    const toStringTests: ToStringTest<Type>[] = [
+    const toStringTests: TypeToStringTest[] = [
         {
             value: factory.createCallableType(
                 callable1,
@@ -175,6 +176,11 @@ describe('type model', async () => {
             expectedString: 'literal<true>',
         },
         {
+            value: factory.createLiteralType(new BooleanConstant(true)),
+            options: { collapseLiteralTypes: true },
+            expectedString: 'literal<…>',
+        },
+        {
             value: factory.createNamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
             expectedString: '(p1: unknown)',
         },
@@ -189,6 +195,11 @@ describe('type model', async () => {
         {
             value: new ClassType(class2, new Map([[typeParameter1, factory.createUnionType()]]), true),
             expectedString: 'C2<union<>>?',
+        },
+        {
+            value: new ClassType(class2, new Map([[typeParameter1, factory.createUnionType()]]), true),
+            options: { collapseClassTypes: true },
+            expectedString: 'C2<…>?',
         },
         {
             value: new EnumType(enum1, false),
@@ -227,9 +238,9 @@ describe('type model', async () => {
             expectedString: 'unknown',
         },
     ];
-    describe.each(toStringTests)('toString', ({ value, expectedString }) => {
+    describe.each(toStringTests)('toString', ({ value, options, expectedString }) => {
         it(`should return the expected string representation (${value.constructor.name} -- ${value})`, () => {
-            expect(value.toString()).toStrictEqual(expectedString);
+            expect(value.toString(options)).toStrictEqual(expectedString);
         });
     });
 
@@ -586,6 +597,16 @@ describe('type model', async () => {
         });
     });
 });
+
+/**
+ * Tests for {@link Type.toString}.
+ */
+interface TypeToStringTest extends ToStringTest<Type> {
+    /**
+     * Options to pass to the `toString` method.
+     */
+    options?: ToStringOptions;
+}
 
 /**
  * Tests for {@link Type.substituteTypeParameters}.

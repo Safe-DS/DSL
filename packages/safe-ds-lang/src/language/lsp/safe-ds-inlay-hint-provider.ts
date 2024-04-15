@@ -1,5 +1,5 @@
-import { AstNode, AstUtils, CstNode, DocumentationProvider } from 'langium';
-import { InlayHintKind, MarkupContent } from 'vscode-languageserver';
+import { AstNode, AstUtils, CstNode } from 'langium';
+import { InlayHintKind } from 'vscode-languageserver';
 import { createMarkupContent } from '../documentation/safe-ds-comment-provider.js';
 import {
     isSdsArgument,
@@ -18,10 +18,12 @@ import { NamedType, UnknownType } from '../typing/model.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import { AbstractInlayHintProvider, InlayHintAcceptor } from 'langium/lsp';
 import { SafeDsSettingsProvider } from '../workspace/safe-ds-settings-provider.js';
+import { CompositeGeneratorNode, toString } from 'langium/generate';
+import { SafeDsDocumentationProvider } from '../documentation/safe-ds-documentation-provider.js';
 
 export class SafeDsInlayHintProvider extends AbstractInlayHintProvider {
     private readonly settingsProvider: SafeDsSettingsProvider;
-    private readonly documentationProvider: DocumentationProvider;
+    private readonly documentationProvider: SafeDsDocumentationProvider;
     private readonly nodeMapper: SafeDsNodeMapper;
     private readonly typeComputer: SafeDsTypeComputer;
 
@@ -103,16 +105,29 @@ export class SafeDsInlayHintProvider extends AbstractInlayHintProvider {
             return;
         }
 
-        let tooltip: MarkupContent | undefined = undefined;
+        const shortTypeString = type.toString({
+            collapseClassTypes: this.settingsProvider.shouldCollapseClassTypesInInlayHints(),
+            collapseLiteralTypes: this.settingsProvider.shouldCollapseLiteralTypesInInlayHints(),
+        });
+        const longTypeString = type.toString();
+
+        // Create a tooltip
+        let tooltip = new CompositeGeneratorNode().appendTemplateIf(shortTypeString !== longTypeString)`
+            \`\`\`safe-ds-dev
+            ${longTypeString}
+            \`\`\`
+        `;
+
         if (type instanceof NamedType) {
-            tooltip = createMarkupContent(this.documentationProvider.getDocumentation(type.declaration));
+            tooltip.appendNewLineIfNotEmpty();
+            tooltip.append(this.documentationProvider.getDescription(type.declaration));
         }
 
         acceptor({
             position: cstNode.range.end,
-            label: `: ${type}`,
+            label: `: ${shortTypeString}`,
             kind: InlayHintKind.Type,
-            tooltip,
+            tooltip: createMarkupContent(toString(tooltip)),
         });
     }
 }

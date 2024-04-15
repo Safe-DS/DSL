@@ -144,6 +144,16 @@
                     "default": true,
                     "description": "Show inferred types for lambda parameters without manifest types."
                 },
+                "safe-ds.inlayHints.collapseClassTypes": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Collapse the type arguments of class types."
+                },
+                "safe-ds.inlayHints.collapseLiteralTypes": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Collapse the literals of literal types."
+                },
                 "safe-ds.inlayHints.parameterNames.enabled": {
                     "type": "string",
                     "enum": [
