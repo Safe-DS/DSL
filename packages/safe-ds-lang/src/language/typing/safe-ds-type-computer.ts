@@ -317,6 +317,7 @@ export class SafeDsTypeComputer {
             // Compute substitutions for containing call
             const containingCall = AstUtils.getContainerOfType(containerOfLambda, isSdsCall);
             if (!containingCall) {
+                /* c8 ignore next 2 */
                 return parameterType;
             }
 
