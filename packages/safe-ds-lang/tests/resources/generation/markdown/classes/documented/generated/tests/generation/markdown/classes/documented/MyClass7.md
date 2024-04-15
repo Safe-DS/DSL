@@ -10,6 +10,6 @@ Description of MyClass7.
 
 ??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="84"
+    ```sds linenums="89"
     class MyClass7
     ```

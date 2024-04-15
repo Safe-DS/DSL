@@ -25,7 +25,12 @@ Description of MyClass6.
         /**
          * Description of MyEnum1.
          */
-        enum MyEnum1
+        enum MyEnum1 {
+            /**
+             * Description of MyVariant1.
+             */
+            MyVariant1
+        }
     
         /**
          * Description of myFunction1.
@@ -59,7 +64,7 @@ Description of myFunction1.
 
 ??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="63"
+    ```sds linenums="68"
     @Pure fun myFunction1()
     ```
 
@@ -75,7 +80,7 @@ Description of myFunction2.
 
 ??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="67"
+    ```sds linenums="72"
     @Pure static fun myFunction2()
     ```
 
@@ -125,5 +130,14 @@ Description of MyEnum1.
 ??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="58"
-    enum MyEnum1
+    enum MyEnum1 {
+        /**
+         * Description of MyVariant1.
+         */
+        MyVariant1
+    }
     ```
+
+### MyVariant1 {#tests.generation.markdown.classes.documented.MyClass6.MyEnum1.MyVariant1 data-toc-label='MyVariant1'}
+
+Description of MyVariant1.
