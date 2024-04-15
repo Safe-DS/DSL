@@ -54,7 +54,7 @@ export const callArgumentTypesMustMatchParameterTypes = (services: SafeDsService
             const argumentType = typeComputer.computeType(argument).substituteTypeParameters(substitutions);
             const parameterType = typeComputer.computeType(parameter).substituteTypeParameters(substitutions);
 
-            if (!typeChecker.isSubtypeOf(argumentType, parameterType)) {
+            if (!typeChecker.isSubtypeOf(argumentType, parameterType, { ignoreParameterNames: true })) {
                 accept('error', `Expected type '${parameterType}' but got '${argumentType}'.`, {
                     node: argument,
                     property: 'value',
