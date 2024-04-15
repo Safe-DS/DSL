@@ -64,16 +64,16 @@ export class SafeDsMarkdownGenerator {
     private readonly builtinClasses: SafeDsClasses;
     private readonly classHierarchy: SafeDsClassHierarchy;
     private readonly documentationProvider: SafeDsDocumentationProvider;
+    private readonly packageManager: SafeDsPackageManager;
     private readonly typeComputer: SafeDsTypeComputer;
-    private readonly packages: SafeDsPackageManager;
 
     constructor(services: SafeDsServices) {
         this.builtinAnnotations = services.builtins.Annotations;
         this.builtinClasses = services.builtins.Classes;
         this.classHierarchy = services.typing.ClassHierarchy;
         this.documentationProvider = services.documentation.DocumentationProvider;
+        this.packageManager = services.workspace.PackageManager;
         this.typeComputer = services.typing.TypeComputer;
-        this.packages = services.workspace.PackageManager;
     }
 
     generate(documents: LangiumDocument[], options: GenerateOptions): TextDocument[] {
@@ -279,7 +279,7 @@ export class SafeDsMarkdownGenerator {
         let context = node;
         const packageName = getPackageName(context);
         if (packageName?.startsWith('safeds')) {
-            const description = this.packages
+            const description = this.packageManager
                 .getDeclarationsInPackage(packageName, { nodeType: SdsClass })
                 .find((it) => it.name === node.name);
 
