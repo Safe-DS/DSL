@@ -55,7 +55,12 @@ class MyClass6 {
     /**
      * Description of MyEnum1.
      */
-    enum MyEnum1
+    enum MyEnum1 {
+        /**
+         * Description of MyVariant1.
+         */
+        MyVariant1
+    }
 
     /**
      * Description of myFunction1.

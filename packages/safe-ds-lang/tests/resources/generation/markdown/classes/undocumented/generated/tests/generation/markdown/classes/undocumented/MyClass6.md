@@ -11,7 +11,9 @@
         @Pure static fun myFunction2()
     
         class MyClass7
-        enum MyEnum1
+        enum MyEnum1 {
+            MyVariant1
+        }
     }
     ```
 
@@ -52,5 +54,9 @@
 ??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="21"
-    enum MyEnum1
+    enum MyEnum1 {
+        MyVariant1
+    }
     ```
+
+### MyVariant1 {#tests.generation.markdown.classes.undocumented.MyClass6.MyEnum1.MyVariant1 data-toc-label='MyVariant1'}

@@ -18,7 +18,9 @@ class MyClass6 {
     @Pure static fun myFunction2()
 
     class MyClass7
-    enum MyEnum1
+    enum MyEnum1 {
+        MyVariant1
+    }
 }
 
 /**

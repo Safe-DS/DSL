@@ -6,7 +6,7 @@ Description of MyClass7.
 
 ??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="27"
+    ```sds linenums="29"
     class MyClass7 sub MyClass6 {
         attr myAttribute1: Int
     }

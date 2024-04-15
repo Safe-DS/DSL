@@ -6,7 +6,7 @@ Description of MyClass8.
 
 ??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="89"
+    ```sds linenums="94"
     class MyClass8 sub MyClass6 {
         /**
          * Description of myAttribute1.
@@ -27,6 +27,6 @@ Description of myFunction1.
 
 ??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="63"
+    ```sds linenums="68"
     @Pure fun myFunction1()
     ```
