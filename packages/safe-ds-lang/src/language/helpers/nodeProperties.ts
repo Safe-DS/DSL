@@ -102,6 +102,15 @@ export namespace Argument {
     };
 }
 
+export namespace Class {
+    /**
+     * Checks whether the class is only for typing, i.e. whether it has no constructor and no static members.
+     */
+    export const isOnlyForTyping = (node: SdsClass | undefined): boolean => {
+        return isSdsClass(node) && !node.parameterList && !getClassMembers(node).some((it) => isStatic(it));
+    };
+}
+
 export namespace Enum {
     export const isConstant = (node: SdsEnum | undefined): boolean => {
         return Boolean(node) && getEnumVariants(node).every((it) => EnumVariant.isConstant(it));
