@@ -7,6 +7,10 @@ search:
 
 Description of MyClass1.
 
+**Inheritors:**
+
+- [`MyClass5`][tests.generation.markdown.classes.documented.MyClass5]
+
 ??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="6"

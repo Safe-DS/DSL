@@ -7,6 +7,16 @@ search:
 
 Abstract base class for all classifiers.
 
+**Inheritors:**
+
+- [`AdaBoostClassifier`][safeds.ml.classical.classification.AdaBoostClassifier]
+- [`DecisionTreeClassifier`][safeds.ml.classical.classification.DecisionTreeClassifier]
+- [`GradientBoostingClassifier`][safeds.ml.classical.classification.GradientBoostingClassifier]
+- [`KNearestNeighborsClassifier`][safeds.ml.classical.classification.KNearestNeighborsClassifier]
+- [`LogisticRegressionClassifier`][safeds.ml.classical.classification.LogisticRegressionClassifier]
+- [`RandomForestClassifier`][safeds.ml.classical.classification.RandomForestClassifier]
+- [`SupportVectorMachineClassifier`][safeds.ml.classical.classification.SupportVectorMachineClassifier]
+
 ??? quote "Stub code in `classifier.sdsstub`"
 
     ```sds linenums="8"

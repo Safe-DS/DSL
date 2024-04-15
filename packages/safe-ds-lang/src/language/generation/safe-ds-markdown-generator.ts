@@ -53,6 +53,7 @@ import { addLinePrefix, removeLinePrefix } from '../../helpers/strings.js';
 import { expandToStringLF } from 'langium/generate';
 import { SafeDsClassHierarchy } from '../typing/safe-ds-class-hierarchy.js';
 import { SafeDsClasses } from '../builtins/safe-ds-classes.js';
+import { SafeDsPackageManager } from '../workspace/safe-ds-package-manager.js';
 
 const INDENTATION = '    ';
 const LIB = path.join('packages', 'safe-ds-lang', 'lib', 'resources');
@@ -63,6 +64,7 @@ export class SafeDsMarkdownGenerator {
     private readonly builtinClasses: SafeDsClasses;
     private readonly classHierarchy: SafeDsClassHierarchy;
     private readonly documentationProvider: SafeDsDocumentationProvider;
+    private readonly packageManager: SafeDsPackageManager;
     private readonly typeComputer: SafeDsTypeComputer;
 
     constructor(services: SafeDsServices) {
@@ -70,6 +72,7 @@ export class SafeDsMarkdownGenerator {
         this.builtinClasses = services.builtins.Classes;
         this.classHierarchy = services.typing.ClassHierarchy;
         this.documentationProvider = services.documentation.DocumentationProvider;
+        this.packageManager = services.workspace.PackageManager;
         this.typeComputer = services.typing.TypeComputer;
     }
 
@@ -241,6 +244,12 @@ export class SafeDsMarkdownGenerator {
             result += `\n**Type parameters:**\n\n${typeParameters}`;
         }
 
+        // Direct subclasses
+        const subclasses = this.renderSubclasses(node, state);
+        if (!isEmpty(subclasses)) {
+            result += `\n**Inheritors:**\n\n${subclasses}`;
+        }
+
         // Examples
         const examples = this.renderExamples(node);
         if (examples) {
@@ -254,6 +263,49 @@ export class SafeDsMarkdownGenerator {
         }
 
         // Class members
+        result += this.renderClassMembers(node, state);
+
+        return result;
+    }
+
+    private renderSubclasses(node: SdsClass, state: DetailsState) {
+        let result = '';
+
+        // The actual builtins in the lib/ folder take precedence over anything else loaded in the workspace. This
+        // means, we cannot find subclasses when we generate documentation for the src/ folder. We, thus, find the
+        // corresponding builtin first and compute its subclasses. We need to de-duplicate the subclasses, as there
+        // might be copies in the lib/ and the src/ folder.
+        //
+        let context = node;
+        const packageName = getPackageName(context);
+        if (packageName?.startsWith('safeds')) {
+            const description = this.packageManager
+                .getDeclarationsInPackage(packageName, { nodeType: SdsClass })
+                .find((it) => it.name === node.name);
+
+            if (isSdsClass(description?.node)) {
+                context = description.node;
+            }
+        }
+
+        const directSubclasses = this.classHierarchy
+            .streamDirectSubclasses(context)
+            .distinct((it) => it.name)
+            .toArray()
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map((it) => this.renderType(this.typeComputer.computeType(it), state.knownPaths));
+
+        if (!isEmpty(directSubclasses)) {
+            directSubclasses.forEach((subclass) => {
+                result += `- ${subclass}\n`;
+            });
+        }
+        return result;
+    }
+
+    private renderClassMembers(node: SdsClass, state: DetailsState) {
+        let result = '';
+
         const staticMembers = getClassMembers(node)
             .filter((it) => isStatic(it))
             .sort((a, b) => a.name.localeCompare(b.name));

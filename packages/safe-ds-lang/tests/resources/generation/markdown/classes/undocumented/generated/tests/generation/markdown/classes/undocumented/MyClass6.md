@@ -1,5 +1,9 @@
 # `#!sds abstract class` MyClass6 {#tests.generation.markdown.classes.undocumented.MyClass6 data-toc-label='MyClass6'}
 
+**Inheritors:**
+
+- [`MyClass7`][tests.generation.markdown.classes.undocumented.MyClass7]
+
 ??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="13"

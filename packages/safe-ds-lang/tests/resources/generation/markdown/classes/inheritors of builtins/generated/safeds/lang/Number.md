@@ -5,15 +5,13 @@ search:
 
 # `#!sds abstract class` Number {#safeds.lang.Number data-toc-label='Number'}
 
-A number.
-
 **Inheritors:**
 
-- [`Float`][safeds.lang.Float]
-- [`Int`][safeds.lang.Int]
+- `#!sds Float`
+- `#!sds Int`
 
-??? quote "Stub code in `coreClasses.sdsstub`"
+??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="29"
+    ```sds linenums="3"
     class Number
     ```
