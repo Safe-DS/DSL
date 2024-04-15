@@ -56,12 +56,30 @@ export class SafeDsClassHierarchy {
         }
     }
 
+    /**
+     * Returns a stream of all members of the superclasses of the given class. Direct ancestors are considered first,
+     * followed by their ancestors and so on. The members of the class itself are not included in the stream.
+     */
     streamSuperclassMembers(node: SdsClass | undefined): Stream<SdsClassMember> {
         if (!node) {
             return EMPTY_STREAM;
         }
 
         return this.streamProperSuperclasses(node).flatMap(getClassMembers);
+    }
+
+    /**
+     * Returns a stream of all instance members that are inherited by the given class. Direct ancestors are considered
+     * first, followed by their ancestors and so on. The members of the class itself are not included in the stream.
+     */
+    streamInheritedMembers(node: SdsClass | undefined): Stream<SdsClassMember> {
+        if (!node) {
+            return EMPTY_STREAM;
+        }
+
+        return this.streamProperSuperclasses(node)
+            .flatMap(getClassMembers)
+            .filter((it) => !isStatic(it));
     }
 
     /**
