@@ -1,4 +1,4 @@
-package tests.typing.highestCommonSubtype.typeParameterTypeAndTypeParameterType
+package tests.typing.highestCommonSubtype.typeVariableAndTypeVariable
 
 class Contravariant<in T>
 

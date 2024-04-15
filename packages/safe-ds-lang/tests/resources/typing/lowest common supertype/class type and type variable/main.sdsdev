@@ -1,4 +1,4 @@
-package tests.typing.lowestCommonSupertype.classTypeAndTypeParameterType
+package tests.typing.lowestCommonSupertype.classTypeAndTypeVariable
 
 class C
 class D

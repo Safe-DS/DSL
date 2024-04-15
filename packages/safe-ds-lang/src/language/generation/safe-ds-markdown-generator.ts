@@ -46,7 +46,7 @@ import { SafeDsDocumentationProvider } from '../documentation/safe-ds-documentat
 import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import { isEmpty } from '../../helpers/collections.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
-import { NamedType, Type, TypeParameterType } from '../typing/model.js';
+import { NamedType, Type, TypeVariable } from '../typing/model.js';
 import path from 'path';
 import { addLinePrefix, removeLinePrefix } from '../../helpers/strings.js';
 import { expandToStringLF } from 'langium/generate';
@@ -544,7 +544,7 @@ export class SafeDsMarkdownGenerator {
     }
 
     private renderType(type: Type, knownPaths: Set<string>): string {
-        if (type instanceof NamedType && !(type instanceof TypeParameterType)) {
+        if (type instanceof NamedType && !(type instanceof TypeVariable)) {
             const realPath = AstUtils.getDocument(type.declaration).uri.fsPath;
             // When generating documentation for the standard library declarations in the `src` folder, references are
             // resolved to the `lib` folder. To still create links, we also check this augmented path.

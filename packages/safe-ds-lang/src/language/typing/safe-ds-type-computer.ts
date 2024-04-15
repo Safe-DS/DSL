@@ -103,7 +103,7 @@ import {
     StaticType,
     Type,
     TypeParameterSubstitutions,
-    TypeParameterType,
+    TypeVariable,
     UnionType,
     UnknownType,
 } from './model.js';
@@ -249,7 +249,7 @@ export class SafeDsTypeComputer {
         } else if (isSdsSegment(node)) {
             return this.computeTypeOfCallableWithManifestTypes(node, state);
         } else if (isSdsTypeParameter(node)) {
-            return this.factory.createTypeParameterType(node, false);
+            return this.factory.createTypeVariable(node, false);
         } /* c8 ignore start */ else {
             return UnknownType;
         } /* c8 ignore stop */
@@ -535,7 +535,7 @@ export class SafeDsTypeComputer {
 
     private computeTypeOfIndexedAccess(node: SdsIndexedAccess, state: ComputeTypeState): Type {
         const receiverType = this.computeTypeWithRecursionCheck(node.receiver, state);
-        if (!(receiverType instanceof ClassType) && !(receiverType instanceof TypeParameterType)) {
+        if (!(receiverType instanceof ClassType) && !(receiverType instanceof TypeVariable)) {
             return UnknownType;
         }
 
@@ -754,19 +754,19 @@ export class SafeDsTypeComputer {
      * invalid upper bounds are specified, but are invalid (e.g. because of an unresolved reference or a cycle),
      * `unknown` is returned. The result is simplified as much as possible.
      */
-    computeUpperBound(nodeOrType: SdsTypeParameter | TypeParameterType, options: ComputeUpperBoundOptions = {}): Type {
-        let type: TypeParameterType;
-        if (nodeOrType instanceof TypeParameterType) {
+    computeUpperBound(nodeOrType: SdsTypeParameter | TypeVariable, options: ComputeUpperBoundOptions = {}): Type {
+        let type: TypeVariable;
+        if (nodeOrType instanceof TypeVariable) {
             type = nodeOrType;
         } else {
-            type = this.computeType(nodeOrType) as TypeParameterType;
+            type = this.computeType(nodeOrType) as TypeVariable;
         }
 
         const result = this.doComputeUpperBound(type, options);
         return result.withExplicitNullability(result.isExplicitlyNullable || type.isExplicitlyNullable);
     }
 
-    private doComputeUpperBound(type: TypeParameterType, options: ComputeUpperBoundOptions): Type {
+    private doComputeUpperBound(type: TypeVariable, options: ComputeUpperBoundOptions): Type {
         const upperBound = type.declaration.upperBound;
         if (!upperBound) {
             return this.coreTypes.AnyOrNull;
@@ -775,7 +775,7 @@ export class SafeDsTypeComputer {
         const boundType = this.computeType(upperBound);
         if (!(boundType instanceof NamedType)) {
             return UnknownType;
-        } else if (options.stopAtTypeParameterType || !(boundType instanceof TypeParameterType)) {
+        } else if (options.stopAtTypeVariable || !(boundType instanceof TypeVariable)) {
             return boundType;
         } else {
             return this.doComputeUpperBound(boundType, options);
@@ -937,7 +937,7 @@ export class SafeDsTypeComputer {
 
             // Clamp to upper bound
             const upperBound = this.computeUpperBound(typeParameter, {
-                stopAtTypeParameterType: true,
+                stopAtTypeVariable: true,
             }).substituteTypeParameters(state.substitutions);
 
             if (!this.typeChecker.isSubtypeOf(newSubstitution, upperBound)) {
@@ -956,7 +956,7 @@ export class SafeDsTypeComputer {
         currentVariance: Variance,
         state: ComputeSubstitutionsForParametersState,
     ) {
-        if (argumentType instanceof TypeParameterType && state.substitutions.has(argumentType.declaration)) {
+        if (argumentType instanceof TypeVariable && state.substitutions.has(argumentType.declaration)) {
             // Can happen for lambdas without manifest parameter types. We gain no information here.
             return;
         } else if (parameterType instanceof CallableType && argumentType instanceof CallableType) {
@@ -1029,7 +1029,7 @@ export class SafeDsTypeComputer {
                     );
                 }
             }
-        } else if (parameterType instanceof TypeParameterType) {
+        } else if (parameterType instanceof TypeVariable) {
             const currentSubstitution = state.substitutions.get(parameterType.declaration);
             const remainingVariance = state.remainingVariances.get(parameterType.declaration);
             if (!currentSubstitution) {
@@ -1076,8 +1076,8 @@ export class SafeDsTypeComputer {
             return simplifiedTypes[0]!;
         }
 
-        // Replace type parameter types by their upper bound
-        const replacedTypes = this.replaceTypeParameterTypesWithUpperBound(simplifiedTypes);
+        // Replace type variables by their upper bound
+        const replacedTypes = this.replaceVariablesWithUpperBound(simplifiedTypes);
 
         // Partition types by their kind
         const partitionedTypes = this.partitionTypesLCS(replacedTypes);
@@ -1130,9 +1130,9 @@ export class SafeDsTypeComputer {
         }
     }
 
-    private replaceTypeParameterTypesWithUpperBound(simplifiedTypes: Type[]) {
+    private replaceVariablesWithUpperBound(simplifiedTypes: Type[]) {
         return simplifiedTypes.map((it) => {
-            if (it instanceof TypeParameterType) {
+            if (it instanceof TypeVariable) {
                 return this.computeUpperBound(it);
             } else {
                 return it;
@@ -1454,7 +1454,7 @@ export class SafeDsTypeComputer {
         const substitutions: TypeParameterSubstitutions = new Map();
 
         for (const typeParameter of typeParameters) {
-            substitutions.set(typeParameter, this.factory.createTypeParameterType(typeParameter, false));
+            substitutions.set(typeParameter, this.factory.createTypeVariable(typeParameter, false));
         }
 
         return this.factory.createClassType(declaration, substitutions, type.isExplicitlyNullable);
@@ -1474,7 +1474,7 @@ export class SafeDsTypeComputer {
         // See where the type parameters ended up in the computed super type
         const invertedTypeParameterMap = new Map<SdsTypeParameter, SdsTypeParameter>();
         for (const [key, value] of superType.substitutions) {
-            if (value instanceof TypeParameterType) {
+            if (value instanceof TypeVariable) {
                 invertedTypeParameterMap.set(value.declaration, key);
             }
         }
@@ -1557,7 +1557,7 @@ export class SafeDsTypeComputer {
      * parameters on parent types get substituted.
      */
     computeMatchingSupertype(
-        type: ClassType | TypeParameterType | undefined,
+        type: ClassType | TypeVariable | undefined,
         target: SdsClass | undefined,
     ): ClassType | undefined {
         // Handle undefined
@@ -1566,7 +1566,7 @@ export class SafeDsTypeComputer {
         }
 
         // Handle type parameter types
-        if (type instanceof TypeParameterType) {
+        if (type instanceof TypeVariable) {
             const upperBound = this.computeUpperBound(type);
             if (upperBound instanceof ClassType) {
                 return this.computeMatchingSupertype(upperBound, target);
@@ -1672,10 +1672,10 @@ export class SafeDsTypeComputer {
  */
 interface ComputeUpperBoundOptions {
     /**
-     * If `true`, the computation stops at type parameter types and returns them as is. Otherwise, it finds the bounds
-     * for the type parameter types recursively.
+     * If `true`, the computation stops at type variables and returns them as is. Otherwise, it finds the bounds for the
+     * type variable recursively.
      */
-    stopAtTypeParameterType?: boolean;
+    stopAtTypeVariable?: boolean;
 }
 
 interface ComputeTypeState {

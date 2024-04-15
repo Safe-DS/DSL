@@ -1,4 +1,4 @@
-package tests.typing.highestCommonSubtype.enumTypeAndTypeParameterType
+package tests.typing.highestCommonSubtype.enumTypeAndTypeVariable
 
 class Contravariant<in T>
 
