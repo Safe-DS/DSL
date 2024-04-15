@@ -18,7 +18,7 @@ import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import { SafeDsPythonGenerator } from '../generation/safe-ds-python-generator.js';
 import { isSdsModule } from '../generated/ast.js';
 import semver from 'semver';
-import { SafeDsMessagingProvider } from '../../communication/safe-ds-messaging-provider.js';
+import { SafeDsMessagingProvider } from '../communication/safe-ds-messaging-provider.js';
 
 // Most of the functionality cannot be tested automatically as a functioning runner setup would always be required
 
