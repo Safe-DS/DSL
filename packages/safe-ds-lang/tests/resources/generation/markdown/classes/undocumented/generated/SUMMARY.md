@@ -14,3 +14,4 @@ search:
                     - [MyClass4](tests/generation/markdown/classes/undocumented/MyClass4.md)
                     - [MyClass5](tests/generation/markdown/classes/undocumented/MyClass5.md)
                     - [MyClass6](tests/generation/markdown/classes/undocumented/MyClass6.md)
+                    - [MyClass7](tests/generation/markdown/classes/undocumented/MyClass7.md)

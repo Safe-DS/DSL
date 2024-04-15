@@ -82,3 +82,13 @@ class MyClass6 {
  * @example // Example of MyClass7.
  */
 class MyClass7
+
+/**
+ * Description of MyClass8.
+ */
+class MyClass8 sub MyClass6 {
+    /**
+     * Description of myAttribute1.
+     */
+    attr myAttribute1: MyClass1
+}

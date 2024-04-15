@@ -20,3 +20,10 @@ class MyClass6 {
     class MyClass7
     enum MyEnum1
 }
+
+/**
+ * Description of MyClass7.
+ */
+class MyClass7 sub MyClass6 {
+    attr myAttribute1: Int
+}
