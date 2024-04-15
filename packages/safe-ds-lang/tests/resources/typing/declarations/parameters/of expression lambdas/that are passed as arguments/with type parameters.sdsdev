@@ -1,0 +1,22 @@
+package tests.typing.declarations.parameters.ofExpressionLambdas.thatArePassedAsArguments.withTypeParameters
+
+class MySuperclass<T> {
+    @Pure fun myInheritedMethod(callback: (p: T) -> ())
+}
+
+class MyClass<T>(param: T) sub MySuperclass<T> {
+    @Pure fun myMethod(callback: (p: T) -> ())
+}
+
+@Pure fun myFunction<T>(p: T, callback: (p: T) -> ())
+
+segment mySegment() {
+    // $TEST$ serialization literal<1>
+    MyClass(1).myMethod((»p«) -> "");
+
+    // $TEST$ serialization literal<1>
+    MyClass(1).myInheritedMethod((»p«) -> "");
+
+    // $TEST$ serialization literal<1>
+    myFunction(1, (»p«) -> "");
+}
