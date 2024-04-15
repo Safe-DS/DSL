@@ -311,8 +311,8 @@ export class SafeDsMarkdownGenerator {
             .sort((a, b) => a.name.localeCompare(b.name))
             .forEach((variant) => {
                 const newState = {
-                    ...state,
                     level: state.level + 1,
+                    knownPaths: state.knownPaths,
                 };
 
                 result += `\n${this.describeEnumVariant(variant, newState)}`;
