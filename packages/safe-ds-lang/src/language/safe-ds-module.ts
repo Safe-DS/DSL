@@ -34,7 +34,6 @@ import { SafeDsCoreTypes } from './typing/safe-ds-core-types.js';
 import { SafeDsTypeChecker } from './typing/safe-ds-type-checker.js';
 import { SafeDsTypeComputer } from './typing/safe-ds-type-computer.js';
 import { registerValidationChecks } from './validation/safe-ds-validator.js';
-import { SafeDsDocumentBuilder } from './workspace/safe-ds-document-builder.js';
 import { SafeDsPackageManager } from './workspace/safe-ds-package-manager.js';
 import { SafeDsWorkspaceManager } from './workspace/safe-ds-workspace-manager.js';
 import { SafeDsPurityComputer } from './purity/safe-ds-purity-computer.js';
@@ -200,7 +199,6 @@ export const SafeDsSharedModule: Module<SafeDsSharedServices, DeepPartial<SafeDs
     },
     workspace: {
         ConfigurationProvider: (services) => new SafeDsConfigurationProvider(services),
-        DocumentBuilder: (services) => new SafeDsDocumentBuilder(services),
         WorkspaceManager: (services) => new SafeDsWorkspaceManager(services),
     },
 };
