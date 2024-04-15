@@ -339,7 +339,7 @@ export const getParentTypes = (node: SdsClass | undefined): SdsType[] => {
     return node?.parentTypeList?.parentTypes ?? [];
 };
 
-export const getQualifiedName = (node: SdsDeclaration | undefined): string | undefined => {
+export const getQualifiedName = (node: SdsDeclaration | undefined): string => {
     const segments = [];
 
     let current: SdsDeclaration | undefined = node;
