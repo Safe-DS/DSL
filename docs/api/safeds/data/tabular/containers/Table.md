@@ -20,6 +20,11 @@ Note: When removing the last column of the table, the `number_of_columns` proper
 |------|------|-------------|---------|
 | `data` | [`Map<String, List<Any>>?`][safeds.lang.Map] | The data. If None, an empty table is created. | `#!sds null` |
 
+**Inheritors:**
+
+- [`TaggedTable`][safeds.data.tabular.containers.TaggedTable]
+- [`TimeSeries`][safeds.data.tabular.containers.TimeSeries]
+
 ??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="25"

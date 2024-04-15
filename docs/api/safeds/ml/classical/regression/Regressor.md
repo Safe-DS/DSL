@@ -7,6 +7,19 @@ search:
 
 Abstract base class for all regressors.
 
+**Inheritors:**
+
+- [`AdaBoostRegressor`][safeds.ml.classical.regression.AdaBoostRegressor]
+- [`DecisionTreeRegressor`][safeds.ml.classical.regression.DecisionTreeRegressor]
+- [`ElasticNetRegressor`][safeds.ml.classical.regression.ElasticNetRegressor]
+- [`GradientBoostingRegressor`][safeds.ml.classical.regression.GradientBoostingRegressor]
+- [`KNearestNeighborsRegressor`][safeds.ml.classical.regression.KNearestNeighborsRegressor]
+- [`LassoRegressor`][safeds.ml.classical.regression.LassoRegressor]
+- [`LinearRegressionRegressor`][safeds.ml.classical.regression.LinearRegressionRegressor]
+- [`RandomForestRegressor`][safeds.ml.classical.regression.RandomForestRegressor]
+- [`RidgeRegressor`][safeds.ml.classical.regression.RidgeRegressor]
+- [`SupportVectorMachineRegressor`][safeds.ml.classical.regression.SupportVectorMachineRegressor]
+
 ??? quote "Stub code in `regressor.sdsstub`"
 
     ```sds linenums="8"

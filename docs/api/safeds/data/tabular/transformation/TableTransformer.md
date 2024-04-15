@@ -7,6 +7,12 @@ search:
 
 Learn a transformation for a set of columns in a `Table` and transform another `Table` with the same columns.
 
+**Inheritors:**
+
+- [`Discretizer`][safeds.data.tabular.transformation.Discretizer]
+- [`Imputer`][safeds.data.tabular.transformation.Imputer]
+- [`InvertibleTableTransformer`][safeds.data.tabular.transformation.InvertibleTableTransformer]
+
 ??? quote "Stub code in `table_transformer.sdsstub`"
 
     ```sds linenums="8"
