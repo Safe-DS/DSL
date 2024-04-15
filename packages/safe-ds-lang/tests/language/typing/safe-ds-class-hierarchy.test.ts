@@ -198,6 +198,79 @@ describe('SafeDsClassHierarchy', async () => {
         });
     });
 
+    describe('streamInheritedMembers', () => {
+        const inheritedMemberNames = (node: SdsClass | undefined) =>
+            classHierarchy
+                .streamInheritedMembers(node)
+                .map((member) => member.name)
+                .toArray();
+
+        it('should return an empty stream if passed undefined', () => {
+            expect(inheritedMemberNames(undefined)).toStrictEqual([]);
+        });
+
+        const testCases = [
+            {
+                testName: 'should return the members of the parent type',
+                code: `
+                    class A {
+                        attr a: Int
+                        fun f()
+                        static fun g()
+                    }
+
+                    class B sub A
+                `,
+                index: 1,
+                expected: ['a', 'f'],
+            },
+            {
+                testName: 'should only consider members of the first parent type',
+                code: `
+                    class A {
+                        attr a: Int
+                        fun f()
+                        static fun g()
+                    }
+
+                    class B {
+                        attr b: Int
+                        fun g()
+                    }
+
+                    class C sub A, B
+                `,
+                index: 2,
+                expected: ['a', 'f'],
+            },
+            {
+                testName: 'should return members of all superclasses',
+                code: `
+                    class A {
+                        attr a: Int
+                        fun f()
+                        static fun g()
+                    }
+
+                    class B sub A {
+                        attr b: Int
+                        fun g()
+                    }
+
+                    class C sub B
+                `,
+                index: 2,
+                expected: ['b', 'g', 'a', 'f'],
+            },
+        ];
+
+        it.each(testCases)('$testName', async ({ code, index, expected }) => {
+            const firstClass = await getNodeOfType(services, code, isSdsClass, index);
+            const anyMembers = getClassMembers(builtinClasses.Any).map((member) => member.name);
+            expect(inheritedMemberNames(firstClass)).toStrictEqual(expected.concat(anyMembers));
+        });
+    });
+
     describe('getOverriddenMember', () => {
         const isUndefined = (result: unknown) => result === undefined;
 

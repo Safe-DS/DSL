@@ -52,6 +52,7 @@ import {
     pipelineMustContainUniqueNames,
     schemaMustContainUniqueNames,
     segmentMustContainUniqueNames,
+    staticClassMemberNamesMustNotCollideWithInheritedMembers,
 } from './names.js';
 import {
     argumentListMustNotHavePositionalArgumentsAfterNamedArguments,
@@ -254,6 +255,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             classMustContainUniqueNames,
             classMustOnlyInheritASingleClass(services),
             classMustNotInheritItself(services),
+            staticClassMemberNamesMustNotCollideWithInheritedMembers(services),
         ],
         SdsClassBody: [classBodyShouldNotBeEmpty(services)],
         SdsClassMember: [classMemberMustMatchOverriddenMemberAndShouldBeNeeded(services)],

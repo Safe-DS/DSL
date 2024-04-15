@@ -39,6 +39,7 @@ import {
     getResults,
     getTypeParameters,
     isImplementedDeclaration,
+    isStatic,
     isStubDeclaration,
     streamBlockLambdaResults,
     streamPlaceholders,
@@ -225,6 +226,28 @@ export const classMustContainUniqueNames = (node: SdsClass, accept: ValidationAc
     );
 
     namesMustBeUnique(getClassMembers(node), (name) => `A class member with name '${name}' exists already.`, accept);
+};
+
+export const staticClassMemberNamesMustNotCollideWithInheritedMembers = (services: SafeDsServices) => {
+    const classHierarchy = services.typing.ClassHierarchy;
+
+    return (node: SdsClass, accept: ValidationAcceptor): void => {
+        const staticMembers = getClassMembers(node).filter(isStatic);
+        const inheritedMembers = classHierarchy
+            .streamInheritedMembers(node)
+            .map((it) => it.name)
+            .toSet();
+
+        for (const staticMember of staticMembers) {
+            if (inheritedMembers.has(staticMember.name)) {
+                accept('error', `An inherited member with name 'myInstanceAttribute1' exists already.`, {
+                    node: staticMember,
+                    property: 'name',
+                    code: CODE_NAME_DUPLICATE,
+                });
+            }
+        }
+    };
 };
 
 export const enumMustContainUniqueNames = (node: SdsEnum, accept: ValidationAcceptor): void => {
