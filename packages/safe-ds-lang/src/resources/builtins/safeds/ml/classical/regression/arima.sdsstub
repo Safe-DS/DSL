@@ -3,7 +3,8 @@ package safeds.ml.classical.regression
 /**
  * Auto Regressive Integrated Moving Average Model.
  */
-class ArimaModelRegressor() {
+ @PythonName("ArimaModelRegressor")
+class ArimaRegressor() {
     /**
      * Create a copy of this ARIMA Model and fit it with the given training data.
      *
@@ -16,7 +17,7 @@ class ArimaModelRegressor() {
     @Pure
     fun fit(
         @PythonName("time_series") timeSeries: TimeSeries
-    ) -> result1: ArimaModelRegressor
+    ) -> fittedArima: ArimaRegressor
 
     /**
      * Predict a target vector using a time series target column. The model has to be trained first.
@@ -28,7 +29,7 @@ class ArimaModelRegressor() {
     @Pure
     fun predict(
         @PythonName("time_series") timeSeries: TimeSeries
-    ) -> result1: TimeSeries
+    ) -> timeSeries: TimeSeries
 
     /**
      * Plot the predictions of the trained model to the given target of the time series. So you can see the predictions and the actual values in one plot.
@@ -41,7 +42,7 @@ class ArimaModelRegressor() {
     @PythonName("plot_predictions")
     fun plotPredictions(
         @PythonName("test_series") testSeries: TimeSeries
-    ) -> result1: Image
+    ) -> image: Image
 
     /**
      * Check if the classifier is fitted.
