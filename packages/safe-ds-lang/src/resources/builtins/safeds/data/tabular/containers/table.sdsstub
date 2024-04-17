@@ -11,7 +11,7 @@ from safeds.data.tabular.typing import ColumnType, Schema
  * To create a `Table` call the constructor or use one of the following static methods:
  *
  * | Method                     | Description                            |
- * | ---------------------------| -------------------------------------- |
+ * | -------------------------- | -------------------------------------- |
  * | {@link Table.fromCsvFile}  | Create a table from a CSV file.        |
  * | {@link Table.fromJsonFile} | Create a table from a JSON file.       |
  * | {@link Table.fromDict}     | Create a table from a dictionary.      |
