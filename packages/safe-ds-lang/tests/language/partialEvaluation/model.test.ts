@@ -8,8 +8,7 @@ import {
     isSdsSegment,
     type SdsBlockLambdaResult,
 } from '../../../src/language/generated/ast.js';
-import { getAbstractResults, getParameters } from '../../../src/language/helpers/nodeProperties.js';
-import { createSafeDsServices } from '../../../src/language/index.js';
+import { createSafeDsServices, getAbstractResults, getParameters } from '../../../src/language/index.js';
 import {
     BlockLambdaClosure,
     BooleanConstant,
@@ -31,7 +30,7 @@ import {
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
 import type { EqualsTest, ToStringTest } from '../../helpers/testDescription.js';
 
-const services = createSafeDsServices(EmptyFileSystem).SafeDs;
+const services = (await createSafeDsServices(EmptyFileSystem, { omitBuiltins: true })).SafeDs;
 const code = `
 enum MyEnum {
     MyEnumVariant1
@@ -143,12 +142,6 @@ describe('partial evaluation model', async () => {
             expect(nodeInstance.equals(nodeInstance)).toBeTruthy();
         });
 
-        it(`should return false if the other node is an instance of another class (${
-            value().constructor.name
-        })`, () => {
-            expect(value().equals(valueOfOtherType())).toBeFalsy();
-        });
-
         it(`should return true if both nodes have the same values (${value().constructor.name})`, () => {
             expect(value().equals(value())).toBeTruthy();
         });
@@ -156,6 +149,14 @@ describe('partial evaluation model', async () => {
         if (unequalValueOfSameType) {
             it(`should return false if both nodes have different values (${value().constructor.name})`, () => {
                 expect(value().equals(unequalValueOfSameType())).toBeFalsy();
+            });
+        }
+
+        if (valueOfOtherType) {
+            it(`should return false if the other node is an instance of another class (${
+                value().constructor.name
+            })`, () => {
+                expect(value().equals(valueOfOtherType())).toBeFalsy();
             });
         }
     });

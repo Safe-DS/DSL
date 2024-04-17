@@ -2,9 +2,9 @@ import { NodeFileSystem } from 'langium/node';
 import { parseDocument, textDocumentParams } from 'langium/test';
 import { describe, expect, it } from 'vitest';
 import { DocumentSymbol, SymbolKind, SymbolTag } from 'vscode-languageserver';
-import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
+import { createSafeDsServices } from '../../../src/language/index.js';
 
-const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const symbolProvider = services.lsp.DocumentSymbolProvider!;
 
 describe('SafeDsSemanticTokenProvider', async () => {
@@ -35,10 +35,12 @@ describe('SafeDsSemanticTokenProvider', async () => {
                         {
                             name: 'a',
                             kind: SymbolKind.Property,
+                            detail: ': Int',
                         },
                         {
                             name: 'b',
                             kind: SymbolKind.Property,
+                            detail: ': (p: Int) -> (r: Int)',
                         },
                     ],
                 },

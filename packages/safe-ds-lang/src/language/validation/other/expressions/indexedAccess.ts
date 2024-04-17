@@ -6,9 +6,9 @@ import { EvaluatedList, EvaluatedMap, IntConstant } from '../../../partialEvalua
 export const CODE_INDEXED_ACCESS_INVALID_INDEX = 'indexed-access/invalid-index';
 
 export const indexedAccessIndexMustBeValid = (services: SafeDsServices) => {
-    const coreTypes = services.types.CoreTypes;
     const partialEvaluator = services.evaluation.PartialEvaluator;
-    const typeComputer = services.types.TypeComputer;
+    const typeChecker = services.typing.TypeChecker;
+    const typeComputer = services.typing.TypeComputer;
 
     return (node: SdsIndexedAccess, accept: ValidationAcceptor): void => {
         const indexValue = partialEvaluator.evaluate(node.index);
@@ -46,7 +46,7 @@ export const indexedAccessIndexMustBeValid = (services: SafeDsServices) => {
         }
 
         const receiverType = typeComputer.computeType(node.receiver);
-        if (receiverType.equals(coreTypes.List)) {
+        if (typeChecker.isList(receiverType)) {
             if (indexValue.value < 0) {
                 accept('error', `List index '${indexValue}' is out of bounds.`, {
                     node,

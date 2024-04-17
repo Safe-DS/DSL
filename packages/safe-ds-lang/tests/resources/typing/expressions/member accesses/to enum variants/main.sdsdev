@@ -1,0 +1,28 @@
+package tests.typing.expressions.references.toEnumVariants
+
+enum MyEnum {
+    MyEnumVariantWithoutParameterList
+    MyEnumVariantWithoutParameters()
+    MyEnumVariantWithParameters(p: Int)
+}
+
+pipeline myPipeline {
+    // $TEST$ serialization MyEnum.MyEnumVariantWithoutParameterList
+    »MyEnum.MyEnumVariantWithoutParameterList«;
+
+    // $TEST$ serialization MyEnum.MyEnumVariantWithoutParameters
+    »MyEnum.MyEnumVariantWithoutParameters«;
+
+    // $TEST$ serialization $type<MyEnum.MyEnumVariantWithParameters>
+    »MyEnum.MyEnumVariantWithParameters«;
+
+
+    // $TEST$ serialization MyEnum.MyEnumVariantWithoutParameterList
+    »MyEnum?.MyEnumVariantWithoutParameterList«;
+
+    // $TEST$ serialization MyEnum.MyEnumVariantWithoutParameters
+    »MyEnum?.MyEnumVariantWithoutParameters«;
+
+    // $TEST$ serialization $type<MyEnum.MyEnumVariantWithParameters>
+    »MyEnum?.MyEnumVariantWithParameters«;
+}

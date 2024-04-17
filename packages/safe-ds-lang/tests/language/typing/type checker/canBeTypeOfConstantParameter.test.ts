@@ -1,22 +1,15 @@
 import { NodeFileSystem } from 'langium/node';
 import { describe, expect, it } from 'vitest';
 import { isSdsClass, isSdsEnum, isSdsModule } from '../../../../src/language/generated/ast.js';
-import { getEnumVariants, getModuleMembers } from '../../../../src/language/helpers/nodeProperties.js';
-import { createSafeDsServicesWithBuiltins } from '../../../../src/language/index.js';
-import {
-    ClassType,
-    EnumType,
-    EnumVariantType,
-    LiteralType,
-    Type,
-    UnknownType,
-} from '../../../../src/language/typing/model.js';
+import { createSafeDsServices, getEnumVariants, getModuleMembers } from '../../../../src/language/index.js';
+import { ClassType, EnumType, EnumVariantType, Type, UnknownType } from '../../../../src/language/typing/model.js';
 import { getNodeOfType } from '../../../helpers/nodeFinder.js';
 
-const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
-const coreTypes = services.types.CoreTypes;
-const typeChecker = services.types.TypeChecker;
-const typeComputer = services.types.TypeComputer;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
+const coreTypes = services.typing.CoreTypes;
+const factory = services.typing.TypeFactory;
+const typeChecker = services.typing.TypeChecker;
+const typeComputer = services.typing.TypeComputer;
 
 const code = `
     class MyClass
@@ -63,11 +56,11 @@ describe('SafeDsTypeChecker', async () => {
             expected: true,
         },
         {
-            type: coreTypes.List,
+            type: coreTypes.List(coreTypes.Int),
             expected: true,
         },
         {
-            type: coreTypes.Map,
+            type: coreTypes.Map(coreTypes.String, coreTypes.Int),
             expected: true,
         },
         {
@@ -99,7 +92,7 @@ describe('SafeDsTypeChecker', async () => {
             expected: false,
         },
         {
-            type: new LiteralType(),
+            type: factory.createLiteralType(),
             expected: true,
         },
         {
@@ -113,8 +106,8 @@ describe('SafeDsTypeChecker', async () => {
             expect(typeChecker.canBeTypeOfConstantParameter(type)).toBe(expected);
         });
 
-        it(type.updateNullability(true).toString, () => {
-            expect(typeChecker.canBeTypeOfConstantParameter(type.updateNullability(true))).toBe(expected);
+        it(type.withExplicitNullability(true).toString, () => {
+            expect(typeChecker.canBeTypeOfConstantParameter(type.withExplicitNullability(true))).toBe(expected);
         });
     });
 });

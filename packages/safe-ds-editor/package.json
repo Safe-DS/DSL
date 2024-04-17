@@ -39,7 +39,7 @@
         "vite": "^5.0.12"
     },
     "dependencies": {
-        "bits-ui": "^0.18.6",
+        "bits-ui": "^0.21.3",
         "svelte-radix": "^1.0.1"
     }
 }

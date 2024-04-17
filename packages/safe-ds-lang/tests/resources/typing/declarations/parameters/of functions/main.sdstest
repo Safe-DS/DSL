@@ -1,8 +1,0 @@
-package tests.typing.declarations.parameters.ofFunctions
-
-// $TEST$ equivalence_class parameterType
-// $TEST$ equivalence_class parameterType
-fun myFunction1(»p«: »Int«)
-
-// $TEST$ serialization ?
-fun myFunction2(»p«)

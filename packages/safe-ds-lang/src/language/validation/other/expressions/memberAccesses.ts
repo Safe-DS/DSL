@@ -1,12 +1,9 @@
-import { SafeDsServices } from '../../../safe-ds-module.js';
 import { isSdsCall, isSdsEnumVariant, SdsMemberAccess } from '../../../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
-import { UnknownType } from '../../../typing/model.js';
 import { getParameters } from '../../../helpers/nodeProperties.js';
 import { isEmpty } from '../../../../helpers/collections.js';
 
 export const CODE_MEMBER_ACCESS_MISSING_ENUM_VARIANT_INSTANTIATION = 'member-access/missing-enum-variant-instantiation';
-export const CODE_MEMBER_ACCESS_MISSING_NULL_SAFETY = 'member-access/missing-null-safety';
 
 export const memberAccessOfEnumVariantMustNotLackInstantiation = (
     node: SdsMemberAccess,
@@ -25,23 +22,3 @@ export const memberAccessOfEnumVariantMustNotLackInstantiation = (
         });
     }
 };
-
-export const memberAccessMustBeNullSafeIfReceiverIsNullable =
-    (services: SafeDsServices) =>
-    (node: SdsMemberAccess, accept: ValidationAcceptor): void => {
-        if (node.isNullSafe) {
-            return;
-        }
-
-        const receiverType = services.types.TypeComputer.computeType(node.receiver);
-        if (receiverType === UnknownType) {
-            return;
-        }
-
-        if (receiverType.isNullable) {
-            accept('error', 'The receiver can be null so a safe access must be used.', {
-                node,
-                code: CODE_MEMBER_ACCESS_MISSING_NULL_SAFETY,
-            });
-        }
-    };

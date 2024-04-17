@@ -5,15 +5,17 @@ description = "Documentation for the Safe-DS DSL"
 authors = ["Lars Reimann <mail@larsreimann.com>"]
 classifiers = ["Private :: Do not Upload"]
 packages = [
-    { include = "safe_ds_lexer", from = "lexer"},
+    { include = "safe_ds_lexer", from = "src/lexer"},
 ]
 
 [tool.poetry.dependencies]
 python = "^3.11"
 mkdocs = "^1.5.3"
-mkdocs-glightbox = "^0.3.6"
-mkdocs-material = "^9.5.3"
-mkdocs-same-dir = "^0.1.2"
+mkdocs-autorefs = "^1.0.1"
+mkdocs-glightbox = "^0.3.7"
+mkdocs-literate-nav = "^0.6.1"
+mkdocs-material = "^9.5.16"
+mkdocs-same-dir = "^0.1.3"
 pygments = "^2.17.2"
 
 [tool.poetry.plugins."pygments.lexers"]

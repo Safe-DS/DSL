@@ -1,0 +1,8 @@
+package tests.typing.declarations.parameters.ofCallableTypes
+
+// $TEST$ equivalence_class parameterType
+// $TEST$ equivalence_class parameterType
+annotation MyAnnotation1(f: (»p«: »Int«) -> ())
+
+// $TEST$ serialization unknown
+annotation MyAnnotation2(f: (»p«) -> ())

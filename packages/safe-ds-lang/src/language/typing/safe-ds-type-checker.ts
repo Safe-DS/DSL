@@ -1,8 +1,7 @@
-import { getContainerOfType } from 'langium';
 import type { SafeDsClasses } from '../builtins/safe-ds-classes.js';
-import { isSdsEnum, type SdsAbstractResult, SdsDeclaration } from '../generated/ast.js';
-import { Enum, EnumVariant, getParameters, Parameter } from '../helpers/nodeProperties.js';
-import { Constant } from '../partialEvaluation/model.js';
+import { isSdsCallable, isSdsClass, isSdsEnum, SdsDeclaration } from '../generated/ast.js';
+import { Enum, EnumVariant, getTypeParameters, Parameter, TypeParameter } from '../helpers/nodeProperties.js';
+import { Constant, NullConstant } from '../partialEvaluation/model.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import {
     CallableType,
@@ -10,16 +9,18 @@ import {
     EnumType,
     EnumVariantType,
     LiteralType,
-    NamedTupleEntry,
     NamedTupleType,
     StaticType,
     Type,
+    TypeVariable,
     UnionType,
     UnknownType,
 } from './model.js';
 import { SafeDsClassHierarchy } from './safe-ds-class-hierarchy.js';
 import { SafeDsCoreTypes } from './safe-ds-core-types.js';
 import type { SafeDsTypeComputer } from './safe-ds-type-computer.js';
+import { isEmpty } from '../../helpers/collections.js';
+import { AstUtils } from 'langium';
 
 export class SafeDsTypeChecker {
     private readonly builtinClasses: SafeDsClasses;
@@ -29,47 +30,92 @@ export class SafeDsTypeChecker {
 
     constructor(services: SafeDsServices) {
         this.builtinClasses = services.builtins.Classes;
-        this.classHierarchy = services.types.ClassHierarchy;
-        this.coreTypes = services.types.CoreTypes;
-        this.typeComputer = () => services.types.TypeComputer;
+        this.classHierarchy = services.typing.ClassHierarchy;
+        this.coreTypes = services.typing.CoreTypes;
+        this.typeComputer = () => services.typing.TypeComputer;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    // isAssignableTo
+    // General cases
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * Checks whether {@link type} is assignable {@link other}.
+     * Checks whether {@link type} is a supertype of {@link other}.
      */
-    isAssignableTo = (type: Type, other: Type): boolean => {
-        if (type === UnknownType || other === UnknownType) {
+    isSupertypeOf = (type: Type, other: Type, options: TypeCheckOptions = {}): boolean => {
+        return this.isSubtypeOf(other, type, options);
+    };
+
+    /**
+     * Checks whether {@link type} is a subtype of {@link other}.
+     */
+    isSubtypeOf = (type: Type, other: Type, options: TypeCheckOptions = {}): boolean => {
+        // Handle base cases
+        if (type.equals(this.coreTypes.Nothing) || other.equals(this.coreTypes.AnyOrNull)) {
+            return true;
+        } else if (type === UnknownType || other === UnknownType) {
             return false;
-        } else if (other instanceof UnionType) {
-            return other.possibleTypes.some((it) => this.isAssignableTo(type, it));
         }
 
+        // Handle type parameter types
+        if (other instanceof TypeVariable) {
+            if (type.isExplicitlyNullable && !other.isExplicitlyNullable) {
+                return false;
+            }
+
+            // `T` can always be assigned to `T` or some type parameter it is bounded by
+            if (type instanceof TypeVariable && this.typeVariableIsBoundedByTypeVariable(type, other)) {
+                return true;
+            }
+
+            const otherLowerBound = this.coreTypes.Nothing.withExplicitNullability(other.isExplicitlyNullable);
+            return this.isSubtypeOf(type, otherLowerBound, options);
+        }
+
+        // Handle union types
+        if (type instanceof UnionType) {
+            return type.types.every((it) => this.isSubtypeOf(it, other, options));
+        } else if (other instanceof UnionType) {
+            return other.types.some((it) => this.isSubtypeOf(type, it, options));
+        }
+
+        // Handle other cases
         if (type instanceof CallableType) {
-            return this.callableTypeIsAssignableTo(type, other);
+            return this.callableTypeIsSubtypeOf(type, other, options);
         } else if (type instanceof ClassType) {
-            return this.classTypeIsAssignableTo(type, other);
+            return this.classTypeIsSubtypeOf(type, other, options);
         } else if (type instanceof EnumType) {
-            return this.enumTypeIsAssignableTo(type, other);
+            return this.enumTypeIsSubtypeOf(type, other);
         } else if (type instanceof EnumVariantType) {
-            return this.enumVariantTypeIsAssignableTo(type, other);
+            return this.enumVariantTypeIsSubtypeOf(type, other);
         } else if (type instanceof LiteralType) {
-            return this.literalTypeIsAssignableTo(type, other);
+            return this.literalTypeIsSubtypeOf(type, other, options);
         } else if (type instanceof NamedTupleType) {
-            return this.namedTupleTypeIsAssignableTo(type, other);
+            return this.namedTupleTypeIsSubtypeOf(type, other, options);
         } else if (type instanceof StaticType) {
-            return this.staticTypeIsAssignableTo(type, other);
-        } else if (type instanceof UnionType) {
-            return this.unionTypeIsAssignableTo(type, other);
+            return this.staticTypeIsSubtypeOf(type, other, options);
+        } else if (type instanceof TypeVariable) {
+            return this.typeVariableIsSubtypeOf(type, other, options);
         } /* c8 ignore start */ else {
             throw new Error(`Unexpected type: ${type.constructor.name}`);
         } /* c8 ignore stop */
     };
 
-    private callableTypeIsAssignableTo(type: CallableType, other: Type): boolean {
+    private typeVariableIsBoundedByTypeVariable(type: TypeVariable, other: TypeVariable): boolean {
+        let current: Type = type;
+
+        while (current instanceof TypeVariable) {
+            if (current.declaration === other.declaration) {
+                return true;
+            }
+
+            current = this.typeComputer().computeUpperBound(current, { stopAtTypeVariable: true });
+        }
+
+        return false;
+    }
+
+    private callableTypeIsSubtypeOf(type: CallableType, other: Type, options: TypeCheckOptions): boolean {
         if (other instanceof ClassType) {
             return other.declaration === this.builtinClasses.Any;
         } else if (other instanceof CallableType) {
@@ -84,7 +130,7 @@ export class SafeDsTypeChecker {
                 const otherEntry = other.inputType.entries[i]!;
 
                 // Names must match
-                if (typeEntry.name !== otherEntry.name) {
+                if (!options.ignoreParameterNames && typeEntry.name !== otherEntry.name) {
                     return false;
                 }
 
@@ -94,7 +140,7 @@ export class SafeDsTypeChecker {
                 }
 
                 // Types must be contravariant
-                if (!this.isAssignableTo(otherEntry.type, typeEntry.type)) {
+                if (!this.isSubtypeOf(otherEntry.type, typeEntry.type, options)) {
                     return false;
                 }
             }
@@ -115,7 +161,7 @@ export class SafeDsTypeChecker {
                 // Names must not match since we always fetch results by index
 
                 // Types must be covariant
-                if (!this.isAssignableTo(typeEntry.type, otherEntry.type)) {
+                if (!this.isSubtypeOf(typeEntry.type, otherEntry.type, options)) {
                     return false;
                 }
             }
@@ -128,20 +174,51 @@ export class SafeDsTypeChecker {
         }
     }
 
-    private classTypeIsAssignableTo(type: ClassType, other: Type): boolean {
-        if (type.isNullable && !other.isNullable) {
+    private classTypeIsSubtypeOf(type: ClassType, other: Type, options: TypeCheckOptions): boolean {
+        if (type.isExplicitlyNullable && !other.isExplicitlyNullable) {
             return false;
+        } else if (type.declaration === this.builtinClasses.Nothing) {
+            return true;
         }
 
         if (other instanceof ClassType) {
-            return this.classHierarchy.isEqualToOrSubclassOf(type.declaration, other.declaration);
+            if (!this.classHierarchy.isEqualToOrSubclassOf(type.declaration, other.declaration)) {
+                return false;
+            }
+
+            // We are done already if we ignore type parameters or if the other type has no type parameters
+            const typeParameters = getTypeParameters(other.declaration);
+            if (options.ignoreTypeParameters || isEmpty(typeParameters)) {
+                return true;
+            }
+
+            // Get the parent type that refers to the same class as `other`
+            const candidate = this.typeComputer().computeMatchingSupertype(type, other.declaration);
+            if (!candidate) {
+                /* c8 ignore next 2 */
+                return false;
+            }
+
+            // Check type parameters
+            return typeParameters.every((it) => {
+                const candidateType = candidate.substitutions.get(it) ?? UnknownType;
+                const otherType = other.substitutions.get(it) ?? UnknownType;
+
+                if (TypeParameter.isInvariant(it)) {
+                    return candidateType !== UnknownType && candidateType.equals(otherType);
+                } else if (TypeParameter.isCovariant(it)) {
+                    return this.isSubtypeOf(candidateType, otherType, options);
+                } else {
+                    return this.isSubtypeOf(otherType, candidateType, options);
+                }
+            });
         } else {
             return false;
         }
     }
 
-    private enumTypeIsAssignableTo(type: EnumType, other: Type): boolean {
-        if (type.isNullable && !other.isNullable) {
+    private enumTypeIsSubtypeOf(type: EnumType, other: Type): boolean {
+        if (type.isExplicitlyNullable && !other.isExplicitlyNullable) {
             return false;
         }
 
@@ -154,15 +231,15 @@ export class SafeDsTypeChecker {
         }
     }
 
-    private enumVariantTypeIsAssignableTo(type: EnumVariantType, other: Type): boolean {
-        if (type.isNullable && !other.isNullable) {
+    private enumVariantTypeIsSubtypeOf(type: EnumVariantType, other: Type): boolean {
+        if (type.isExplicitlyNullable && !other.isExplicitlyNullable) {
             return false;
         }
 
         if (other instanceof ClassType) {
             return other.declaration === this.builtinClasses.Any;
         } else if (other instanceof EnumType) {
-            const containingEnum = getContainerOfType(type.declaration, isSdsEnum);
+            const containingEnum = AstUtils.getContainerOfType(type.declaration, isSdsEnum);
             return containingEnum === other.declaration;
         } else if (other instanceof EnumVariantType) {
             return type.declaration === other.declaration;
@@ -171,17 +248,23 @@ export class SafeDsTypeChecker {
         }
     }
 
-    private literalTypeIsAssignableTo(type: LiteralType, other: Type): boolean {
-        if (type.isNullable && !other.isNullable) {
+    private literalTypeIsSubtypeOf(type: LiteralType, other: Type, options: TypeCheckOptions): boolean {
+        if (type.isExplicitlyNullable && !other.isExplicitlyNullable) {
             return false;
+        } else if (type.constants.length === 0) {
+            // Empty literal types are equivalent to `Nothing` and assignable to any type
+            return true;
+        } else if (type.constants.every((it) => it === NullConstant)) {
+            // Literal types containing only `null` are equivalent to `Nothing?` and assignable to any nullable type
+            return other.isExplicitlyNullable;
         }
 
         if (other instanceof ClassType) {
-            if (other.equals(this.coreTypes.AnyOrNull)) {
+            if (other.equals(this.coreTypes.Any.withExplicitNullability(type.isExplicitlyNullable))) {
                 return true;
             }
 
-            return type.constants.every((constant) => this.constantIsAssignableToClassType(constant, other));
+            return type.constants.every((constant) => this.constantIsSubtypeOfClassType(constant, other, options));
         } else if (other instanceof LiteralType) {
             return type.constants.every((constant) =>
                 other.constants.some((otherConstant) => constant.equals(otherConstant)),
@@ -191,19 +274,27 @@ export class SafeDsTypeChecker {
         }
     }
 
-    private constantIsAssignableToClassType(constant: Constant, other: ClassType): boolean {
+    private constantIsSubtypeOfClassType(constant: Constant, other: ClassType, options: TypeCheckOptions): boolean {
         const classType = this.typeComputer().computeClassTypeForConstant(constant);
-        return this.isAssignableTo(classType, other);
+        return this.isSubtypeOf(classType, other, options);
     }
 
-    private namedTupleTypeIsAssignableTo(type: NamedTupleType<SdsDeclaration>, other: Type): boolean {
-        if (other instanceof NamedTupleType) {
+    private namedTupleTypeIsSubtypeOf(
+        type: NamedTupleType<SdsDeclaration>,
+        other: Type,
+        options: TypeCheckOptions,
+    ): boolean {
+        if (other instanceof ClassType) {
+            return other.declaration === this.builtinClasses.Any;
+        } else if (other instanceof NamedTupleType) {
             return (
                 type.length === other.length &&
                 type.entries.every((typeEntry, i) => {
                     const otherEntry = other.entries[i]!;
                     // We deliberately ignore the declarations here
-                    return typeEntry.name === otherEntry.name && this.isAssignableTo(typeEntry.type, otherEntry.type);
+                    return (
+                        typeEntry.name === otherEntry.name && this.isSubtypeOf(typeEntry.type, otherEntry.type, options)
+                    );
                 })
             );
         } else {
@@ -211,57 +302,69 @@ export class SafeDsTypeChecker {
         }
     }
 
-    private staticTypeIsAssignableTo(type: StaticType, other: Type): boolean {
+    private staticTypeIsSubtypeOf(type: StaticType, other: Type, options: TypeCheckOptions): boolean {
         if (other instanceof CallableType) {
-            return this.isAssignableTo(this.associatedCallableTypeForStaticType(type), other);
+            const callableType = this.typeComputer().computeCallableTypeForStaticType(type);
+            return this.isSubtypeOf(callableType, other, options);
+        } else if (other instanceof ClassType) {
+            return other.declaration === this.builtinClasses.Any;
         } else {
             return type.equals(other);
         }
     }
 
-    private associatedCallableTypeForStaticType(type: StaticType): Type {
-        const instanceType = type.instanceType;
-        if (instanceType instanceof ClassType) {
-            const declaration = instanceType.declaration;
-            if (!declaration.parameterList) {
-                return UnknownType;
+    private typeVariableIsSubtypeOf(type: TypeVariable, other: Type, options: TypeCheckOptions): boolean {
+        const upperBound = this.typeComputer().computeUpperBound(type);
+        return this.isSubtypeOf(upperBound, other, options);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Special cases
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Checks whether {@link type} is allowed as the type of the receiver of an indexed access.
+     */
+    canBeAccessedByIndex = (type: Type): boolean => {
+        return this.isList(type) || this.isMap(type);
+    };
+
+    /**
+     * Checks whether {@link type} is allowed as the type of the receiver of a call.
+     */
+    canBeCalled = (type: Type): boolean => {
+        // We must create the non-nullable version since calls can be null-safe
+        const nonNullableReceiverType = this.typeComputer().computeNonNullableType(type);
+
+        if (nonNullableReceiverType instanceof CallableType) {
+            return true;
+        } else if (nonNullableReceiverType instanceof StaticType) {
+            const declaration = nonNullableReceiverType.instanceType.declaration;
+            if (isSdsClass(declaration)) {
+                // Must have a constructor
+                return declaration.parameterList !== undefined;
+            } else {
+                return isSdsCallable(declaration);
             }
-
-            const parameterEntries = new NamedTupleType(
-                ...getParameters(declaration).map(
-                    (it) => new NamedTupleEntry(it, it.name, this.typeComputer().computeType(it)),
-                ),
-            );
-            const resultEntries = new NamedTupleType(
-                new NamedTupleEntry<SdsAbstractResult>(undefined, 'instance', instanceType),
-            );
-
-            return new CallableType(declaration, undefined, parameterEntries, resultEntries);
-        } else if (instanceType instanceof EnumVariantType) {
-            const declaration = instanceType.declaration;
-
-            const parameterEntries = new NamedTupleType(
-                ...getParameters(declaration).map(
-                    (it) => new NamedTupleEntry(it, it.name, this.typeComputer().computeType(it)),
-                ),
-            );
-            const resultEntries = new NamedTupleType(
-                new NamedTupleEntry<SdsAbstractResult>(undefined, 'instance', instanceType),
-            );
-
-            return new CallableType(declaration, undefined, parameterEntries, resultEntries);
         } else {
-            return UnknownType;
+            return false;
         }
-    }
+    };
 
-    private unionTypeIsAssignableTo(type: UnionType, other: Type): boolean {
-        return type.possibleTypes.every((it) => this.isAssignableTo(it, other));
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    // canBeTypeOfConstantParameter
-    // -----------------------------------------------------------------------------------------------------------------
+    /**
+     * Returns whether {@link type} can be `null`. Compared to {@link Type.isExplicitlyNullable}, this method also considers the
+     * upper bound of type parameter types.
+     */
+    canBeNull = (type: Type): boolean => {
+        if (type.isExplicitlyNullable) {
+            return true;
+        } else if (type instanceof TypeVariable) {
+            const upperBound = this.typeComputer().computeUpperBound(type);
+            return upperBound.isExplicitlyNullable;
+        } else {
+            return false;
+        }
+    };
 
     /**
      * Checks whether {@link type} is allowed as the type of a constant parameter.
@@ -285,4 +388,64 @@ export class SafeDsTypeChecker {
             return type instanceof LiteralType || type === UnknownType;
         }
     };
+
+    /**
+     * Checks whether {@link type} is some kind of list (with any element type).
+     */
+    isList(type: Type): type is ClassType | TypeVariable {
+        const listOrNull = this.coreTypes.List(UnknownType).withExplicitNullability(true);
+
+        return (
+            !type.equals(this.coreTypes.Nothing) &&
+            !type.equals(this.coreTypes.NothingOrNull) &&
+            this.isSubtypeOf(type, listOrNull, {
+                ignoreTypeParameters: true,
+            })
+        );
+    }
+
+    /**
+     * Checks whether {@link type} is some kind of map (with any key/value types).
+     */
+    isMap(type: Type): type is ClassType | TypeVariable {
+        const mapOrNull = this.coreTypes.Map(UnknownType, UnknownType).withExplicitNullability(true);
+
+        return (
+            !type.equals(this.coreTypes.Nothing) &&
+            !type.equals(this.coreTypes.NothingOrNull) &&
+            this.isSubtypeOf(type, mapOrNull, {
+                ignoreTypeParameters: true,
+            })
+        );
+    }
+
+    /**
+     * Checks whether {@link type} represents a tabular data structure (i.e., a table).
+     */
+    isTabular(type: Type): boolean {
+        const tableOrNull = this.coreTypes.Table.withExplicitNullability(true);
+
+        return (
+            !type.equals(this.coreTypes.Nothing) &&
+            !type.equals(this.coreTypes.NothingOrNull) &&
+            this.isSubtypeOf(type, tableOrNull, {
+                ignoreTypeParameters: true,
+            })
+        );
+    }
+}
+
+/**
+ * Options for {@link SafeDsTypeChecker.isSubtypeOf} and {@link SafeDsTypeChecker.isSupertypeOf}.
+ */
+export interface TypeCheckOptions {
+    /**
+     * Whether to ignore type parameters when comparing class types.
+     */
+    ignoreTypeParameters?: boolean;
+
+    /**
+     * Whether to ignore parameter names when comparing callable types.
+     */
+    ignoreParameterNames?: boolean;
 }

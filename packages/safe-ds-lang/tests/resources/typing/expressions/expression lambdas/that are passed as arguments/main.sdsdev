@@ -1,0 +1,29 @@
+package tests.typing.expressions.expressionLambdas.thatArePassedAsArguments
+
+@Pure fun higherOrderFunction1(param: (p: String) -> (r: Int))
+@Pure fun higherOrderFunction2(param: () -> ())
+@Pure fun normalFunction(param: Int)
+@Pure fun parameterlessFunction()
+
+segment mySegment() {
+    // $TEST$ serialization (p: String) -> (result: literal<1>)
+    higherOrderFunction1(»(p) -> 1«);
+
+    // $TEST$ serialization (p: String) -> (result: literal<1>)
+    higherOrderFunction1(param = »(p) -> 1«);
+
+    // $TEST$ serialization (p: unknown) -> (result: literal<1>)
+    higherOrderFunction2(»(p) -> 1«);
+
+    // $TEST$ serialization (p: unknown) -> (result: literal<1>)
+    higherOrderFunction2(param = »(p) -> 1«);
+
+    // $TEST$ serialization (p: unknown) -> (result: literal<1>)
+    normalFunction(»(p) -> 1«);
+
+    // $TEST$ serialization (p: unknown) -> (result: literal<1>)
+    normalFunction(param = »(p) -> 1«);
+
+    // $TEST$ serialization (p: unknown) -> (result: literal<1>)
+    parameterlessFunction(»(p) -> 1«);
+}

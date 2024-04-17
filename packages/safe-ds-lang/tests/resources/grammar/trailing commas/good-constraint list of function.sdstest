@@ -1,6 +1,0 @@
-// $TEST$ no_syntax_error
-
-fun f<T>() where {
-    T sub Any,
-    T super Int,
-}

@@ -1,0 +1,126 @@
+package tests.typing.simplification.removeUnneededEntriesFromUnionTypes
+
+class C(
+    // $TEST$ serialization Int
+    p1: »union<Int, Int>«,
+
+    // $TEST$ serialization union<Int, String>
+    p2: »union<Int, String, Int>«,
+
+
+    // $TEST$ serialization Number
+    p3: »union<Int, Number>«,
+
+    // $TEST$ serialization Number
+    p4: »union<Number, Int>«,
+
+    // $TEST$ serialization Number?
+    p5: »union<Number, Int?>«,
+
+    // $TEST$ serialization Any
+    p6: »union<Int, Number, Any>«,
+
+    // $TEST$ serialization Any
+    p7: »union<Any, Number, Int>«,
+
+    // $TEST$ serialization Any?
+    p8: »union<Int, Number?, Any>«,
+
+
+    // $TEST$ serialization union<Int, String>
+    p9: »union<Int, String>«,
+
+    // $TEST$ serialization union<Int, String?>
+    p10: »union<Int, String?>«,
+
+    // $TEST$ serialization union<Number, String>
+    p11: »union<Int, Number, String>«,
+
+    // $TEST$ serialization union<Number, String>
+    p12: »union<Number, Int, String>«,
+
+    // $TEST$ serialization Any
+    p13: »union<Int, String, Any>«,
+
+    // $TEST$ serialization Any?
+    p14: »union<Int, String?, Any>«,
+
+    // $TEST$ serialization Any
+    p15: »union<Any, String, Int>«,
+
+    // $TEST$ serialization Any?
+    p16: »union<Any, String?, Int>«,
+)
+
+class TestsInvolvingNothing(
+    // $TEST$ serialization Any
+    p1: »union<Any, Nothing>«,
+
+    // $TEST$ serialization Any?
+    p2: »union<Any, Nothing?>«,
+
+    // $TEST$ serialization literal<1>
+    p3: »union<literal<1>, Nothing>«,
+
+    // $TEST$ serialization literal<1, null>
+    p4: »union<literal<1>, Nothing?>«,
+
+    // $TEST$ serialization () -> ()
+    p5: »union<() -> (), Nothing>«,
+
+    // $TEST$ serialization union<() -> (), Nothing?>
+    p6: »union<() -> (), Nothing?>«,
+)
+
+class TestsInvolvingTypeParameters<Unbounded, UpperBound sub Number>(
+    // $TEST$ serialization Unbounded
+    a1: »union<Unbounded, Nothing>«,
+    // $TEST$ serialization Unbounded
+    a2: »union<Nothing, Unbounded>«,
+
+    // $TEST$ serialization Unbounded?
+    a3: »union<Unbounded, Nothing?>«,
+    // $TEST$ serialization Unbounded?
+    a4: »union<Nothing?, Unbounded>«,
+
+    // $TEST$ serialization union<Unbounded, Any>
+    a5: »union<Unbounded, Any>«,
+    // $TEST$ serialization union<Any, Unbounded>
+    a6: »union<Any, Unbounded>«,
+
+    // $TEST$ serialization Any?
+    a7: »union<Unbounded, Any?>«,
+    // $TEST$ serialization Any?
+    a8: »union<Any?, Unbounded>«,
+
+
+    // $TEST$ serialization UpperBound
+    b1: »union<UpperBound, Nothing>«,
+    // $TEST$ serialization UpperBound
+    b2: »union<Nothing, UpperBound>«,
+
+    // $TEST$ serialization UpperBound?
+    b3: »union<UpperBound, Nothing?>«,
+    // $TEST$ serialization UpperBound?
+    b4: »union<Nothing?, UpperBound>«,
+
+    // $TEST$ serialization union<UpperBound, Int>
+    b5: »union<UpperBound, Int>«,
+    // $TEST$ serialization union<Int, UpperBound>
+    b6: »union<Int, UpperBound>«,
+
+    // $TEST$ serialization Number
+    b7: »union<UpperBound, Number>«,
+    // $TEST$ serialization Number
+    b8: »union<Number, UpperBound>«,
+
+    // $TEST$ serialization Number?
+    b9: »union<UpperBound, Number?>«,
+    // $TEST$ serialization Number?
+    b10: »union<Number?, UpperBound>«,
+
+    // $TEST$ serialization Any?
+    b11: »union<UpperBound, Any?>«,
+    // $TEST$ serialization Any?
+    b12: »union<Any?, UpperBound>«,
+)

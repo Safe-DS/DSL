@@ -1,0 +1,90 @@
+package tests.scoping.namedTypes.inSameFile.toContainingNamedTypeDeclarations
+
+// $TEST$ target outerClass
+class »MyClass«<
+    // $TEST$ references outerClass
+    T sub »MyClass«
+>(
+    // $TEST$ references outerClass
+    p: »MyClass«
+// $TEST$ references outerClass
+) sub »MyClass« {
+    // $TEST$ references outerClass
+    attr a1: »MyClass«
+
+    // $TEST$ unresolved
+    attr a2: »MyEnum«
+
+    fun f<
+        // $TEST$ references outerClass
+        T1 sub »MyClass«,
+
+        // $TEST$ unresolved
+        T2 sub »MyEnum«,
+    >(
+        // $TEST$ references outerClass
+        p1: »MyClass«,
+
+        // $TEST$ unresolved
+        p2: »MyEnum«
+    ) -> (
+        // $TEST$ references outerClass
+        r1: »MyClass«,
+
+        // $TEST$ unresolved
+        r2: »MyEnum«
+    )
+
+    // $TEST$ target enum
+    enum »MyEnum« {
+        // $TEST$ target variant
+        »MyEnumVariant«(
+            // $TEST$ references outerClass
+            p1: »MyClass«,
+
+            // $TEST$ references enum
+            p2: »MyEnum«,
+
+            // $TEST$ references variant
+            p3: »MyEnumVariant«,
+        )
+    }
+
+    // $TEST$ target innerClass
+    class »MyClass«(
+        // $TEST$ references innerClass
+        p1: »MyClass«,
+
+        // $TEST$ unresolved
+        p2: »MyEnum«,
+
+    // $TEST$ references innerClass
+    // $TEST$ unresolved
+    ) sub »MyClass«, »MyEnum« {
+        // $TEST$ references innerClass
+        attr a1: »MyClass«
+
+        // $TEST$ unresolved
+        attr a2: »MyEnum«
+
+        fun f<
+            // $TEST$ references innerClass
+            T1 sub »MyClass«,
+
+            // $TEST$ unresolved
+            T2 sub »MyEnum«,
+        >(
+            // $TEST$ references innerClass
+            p1: »MyClass«,
+
+            // $TEST$ unresolved
+            p2: »MyEnum«,
+        ) -> (
+            // $TEST$ references innerClass
+            r1: »MyClass«,
+
+            // $TEST$ unresolved
+            r2: »MyEnum«,
+        )
+    }
+}

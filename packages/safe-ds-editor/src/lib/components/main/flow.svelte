@@ -10,12 +10,12 @@
     } from '@xyflow/svelte';
     import { customColors as colors } from '../../../../tailwind.config';
     import type { NodeCustom } from './node-types';
-    import { categorys } from 'src/assets/categories/categories';
     import NodePlaceholder from '../nodes/node-placeholder.svelte';
     import NodeStatement from '../nodes/node-statement.svelte';
     import NodeExpression from '../nodes/node-expression.svelte';
     import NodeExtension from '../nodes/node-extension.svelte';
     import { getIconFromDatatype } from 'src/assets/dataTypes/dataTypes';
+    import { categorys } from 'src/assets/categories/categories';
 
     const parameters: Parameter<DataType>[] = [
         {

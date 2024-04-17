@@ -1,8 +1,0 @@
-package tests.typing.declarations.parameters.ofAnnotations
-
-// $TEST$ equivalence_class parameterType
-// $TEST$ equivalence_class parameterType
-annotation MyAnnotation1(»p«: »Int«)
-
-// $TEST$ serialization ?
-annotation MyAnnotation2(»p«)

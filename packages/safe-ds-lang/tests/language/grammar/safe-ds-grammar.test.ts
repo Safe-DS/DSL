@@ -5,7 +5,7 @@ import { NodeFileSystem } from 'langium/node';
 import { createGrammarTests } from './creator.js';
 import { getSyntaxErrors } from '../../helpers/diagnostics.js';
 
-const services = createSafeDsServices(NodeFileSystem).SafeDs;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 
 describe('grammar', () => {
     it.each(createGrammarTests())('$testName', async (test) => {

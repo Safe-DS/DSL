@@ -1,6 +1,0 @@
-package tests.typing.expressions.calls.ofExpressionLambdas
-
-pipeline myPipeline {
-    // $TEST$ serialization literal<1>
-    »(() -> 1)()«;
-}

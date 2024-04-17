@@ -1,0 +1,25 @@
+package tests.generation.markdown.schemas.documented
+
+/**
+ * Description of MySchema1.
+ *
+ * @since 1.0.0
+ */
+schema MySchema1 {}
+
+/**
+ * Description of MySchema2.
+ */
+schema MySchema2 {
+    "column1": MyClass,
+    "column2": Int,
+}
+
+/**
+ * Description of MySchema3.
+ *
+ * @example // Example of MySchema3.
+ */
+schema MySchema3 {}
+
+class MyClass

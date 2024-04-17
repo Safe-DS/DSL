@@ -1,0 +1,75 @@
+package tests.validation.types.checking.arguments.withTypeParameters
+
+class Contravariant<in T>
+
+class C1<T>(
+    p1: T,
+    p2: T,
+)
+
+class C2<T sub Number>(
+    p1: T,
+    p2: T,
+)
+
+class C3<T>(
+    p1: T,
+    p2: Contravariant<T>,
+)
+
+@Pure fun f<T>(
+    c: (p: T) -> r: T
+)
+
+segment mySegment(
+    int: Int,
+    number: Number,
+    contravariantInt: Contravariant<Int>,
+) {
+    // $TEST$ no error r"Expected type .* but got .*\."
+    // $TEST$ no error r"Expected type .* but got .*\."
+    C1(»1«, »2«);
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    // $TEST$ no error r"Expected type .* but got .*\."
+    C1(»1«, »int«);
+
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    // $TEST$ no error r"Expected type .* but got .*\."
+    C2(»1«, »2«);
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    // $TEST$ error "Expected type 'Number' but got 'literal<"">'."
+    C2(»1«, »""«);
+
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    // $TEST$ no error r"Expected type .* but got .*\."
+    C3(»1«, »contravariantInt«);
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    // $TEST$ no error r"Expected type .* but got .*\."
+    C3(»int«, »contravariantInt«);
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    // $TEST$ error "Expected type 'Contravariant<Number>' but got 'Contravariant<Int>'."
+    C3(»number«, »contravariantInt«);
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    // $TEST$ error "Expected type 'Contravariant<literal<"">>' but got 'Contravariant<Int>'."
+    C3(»""«, »contravariantInt«);
+
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    f(»(p) -> p«);
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    f(»(p) -> 1«);
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    f(»(p: Int) -> p«);
+
+    // $TEST$ error "Expected type '(p: Int) -> (r: Int)' but got '(p: Int) -> (result: literal<"">)'."
+    f(»(p: Int) -> ""«);
+}

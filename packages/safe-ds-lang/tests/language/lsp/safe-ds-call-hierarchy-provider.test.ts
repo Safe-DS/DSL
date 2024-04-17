@@ -2,10 +2,10 @@ import { NodeFileSystem } from 'langium/node';
 import { parseHelper } from 'langium/test';
 import { describe, expect, it } from 'vitest';
 import { type CallHierarchyItem } from 'vscode-languageserver';
-import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
 import { findTestRanges } from '../../helpers/testRanges.js';
+import { createSafeDsServices } from '../../../src/language/index.js';
 
-const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const callHierarchyProvider = services.lsp.CallHierarchyProvider!;
 const parse = parseHelper(services);
 
@@ -81,6 +81,24 @@ describe('SafeDsCallHierarchyProvider', async () => {
                     {
                         fromName: 'mySegment',
                         fromRangesLength: 3,
+                    },
+                ],
+            },
+            {
+                testName: 'null-safe',
+                code: `
+                    class C {
+                        fun »«f()
+                    }
+
+                    segment s(cOrNull: C?) {
+                        cOrNull?.f?();
+                    }
+                `,
+                expectedIncomingCalls: [
+                    {
+                        fromName: 's',
+                        fromRangesLength: 1,
                     },
                 ],
             },
@@ -168,7 +186,25 @@ describe('SafeDsCallHierarchyProvider', async () => {
                 ],
             },
             {
-                testName: 'only references',
+                testName: 'null-safe',
+                code: `
+                    class C {
+                        fun f()
+                    }
+
+                    segment »«s(cOrNull: C?) {
+                        cOrNull?.f?();
+                    }
+                `,
+                expectedOutgoingCalls: [
+                    {
+                        fromRangesLength: 1,
+                        toName: 'f',
+                    },
+                ],
+            },
+            {
+                testName: 'only referenced',
                 code: `
                     fun f()
 
@@ -188,25 +224,25 @@ describe('SafeDsCallHierarchyProvider', async () => {
 });
 
 const getActualSimpleIncomingCalls = async (code: string): Promise<SimpleIncomingCall[] | undefined> => {
-    return callHierarchyProvider
-        .incomingCalls({
-            item: await getUniqueCallHierarchyItem(code),
-        })
-        ?.map((call) => ({
-            fromName: call.from.name,
-            fromRangesLength: call.fromRanges.length,
-        }));
+    const result = await callHierarchyProvider.incomingCalls({
+        item: await getUniqueCallHierarchyItem(code),
+    });
+
+    return result?.map((call) => ({
+        fromName: call.from.name,
+        fromRangesLength: call.fromRanges.length,
+    }));
 };
 
 const getActualSimpleOutgoingCalls = async (code: string): Promise<SimpleOutgoingCall[] | undefined> => {
-    return callHierarchyProvider
-        .outgoingCalls({
-            item: await getUniqueCallHierarchyItem(code),
-        })
-        ?.map((call) => ({
-            toName: call.to.name,
-            fromRangesLength: call.fromRanges.length,
-        }));
+    const result = await callHierarchyProvider.outgoingCalls({
+        item: await getUniqueCallHierarchyItem(code),
+    });
+
+    return result?.map((call) => ({
+        toName: call.to.name,
+        fromRangesLength: call.fromRanges.length,
+    }));
 };
 
 const getUniqueCallHierarchyItem = async (code: string): Promise<CallHierarchyItem> => {
@@ -221,7 +257,7 @@ const getUniqueCallHierarchyItem = async (code: string): Promise<CallHierarchyIt
     const testRangeStart = testRangesResult.value[0]!.start;
 
     const items =
-        callHierarchyProvider.prepareCallHierarchy(document, {
+        (await callHierarchyProvider.prepareCallHierarchy(document, {
             textDocument: {
                 uri: document.textDocument.uri,
             },
@@ -231,7 +267,7 @@ const getUniqueCallHierarchyItem = async (code: string): Promise<CallHierarchyIt
                 // Then we need to move the cursor one character to the right to be inside the identifier.
                 character: testRangeStart.character + 1,
             },
-        }) ?? [];
+        })) ?? [];
 
     if (items.length !== 1) {
         throw new Error(`Expected exactly one call hierarchy item, but got ${items.length}.`);

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { normalizeLineBreaks, pluralize } from '../../src/helpers/strings.js';
+import { addLinePrefix, normalizeLineBreaks, pluralize, removeLinePrefix } from '../../src/helpers/strings.js';
 
 describe('normalizeLineBreaks', () => {
     it.each([
@@ -65,5 +65,44 @@ describe('pluralize', () => {
         },
     ])('should return the singular or plural form based on the count (%#)', ({ count, singular, plural, expected }) => {
         expect(pluralize(count, singular, plural)).toBe(expected);
+    });
+});
+
+describe('addLinePrefix', () => {
+    it.each([
+        {
+            text: '',
+            prefix: 'baz',
+            expected: 'baz',
+        },
+        {
+            text: 'foo\nbar',
+            prefix: 'baz',
+            expected: 'bazfoo\nbazbar',
+        },
+    ])(`should prepend each line with the given prefix (%#)`, ({ text, prefix, expected }) => {
+        expect(addLinePrefix(text, prefix)).toBe(expected);
+    });
+});
+
+describe('removeLinePrefix', () => {
+    it.each([
+        {
+            text: '',
+            prefix: 'baz',
+            expected: '',
+        },
+        {
+            text: 'bazfoo\nbar',
+            prefix: 'baz',
+            expected: 'foo\nbar',
+        },
+        {
+            text: 'bazfoo\nbazbar',
+            prefix: 'baz',
+            expected: 'foo\nbar',
+        },
+    ])(`should remove the given prefix from each line (%#)`, ({ text, prefix, expected }) => {
+        expect(removeLinePrefix(text, prefix)).toBe(expected);
     });
 });

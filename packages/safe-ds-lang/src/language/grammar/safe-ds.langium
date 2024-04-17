@@ -320,6 +320,7 @@ fragment SdsPipelineFragment:
 interface SdsSegment extends SdsCallable, SdsModuleMember {
     visibility?: string
     resultList?: SdsResultList
+    constraintList?: SdsConstraintList
     body: SdsBlock
 }
 
@@ -329,6 +330,7 @@ fragment SdsSegmentFragment:
     name=ID
     parameterList=SdsParameterList
     resultList=SdsResultList?
+    constraintList=SdsConstraintList?
     body=SdsBlock
 ;
 
@@ -378,23 +380,19 @@ SdsConstraintList returns SdsConstraintList:
 interface SdsConstraint extends SdsObject {}
 
 SdsConstraint returns SdsConstraint:
-    SdsTypeParameterConstraint
+    SdsParameterBound
 ;
 
-interface SdsTypeParameterConstraint extends SdsConstraint {
-    leftOperand?: @SdsTypeParameter
+interface SdsParameterBound extends SdsConstraint {
+    leftOperand?: @SdsParameter
     operator: string
-    rightOperand: SdsType
+    rightOperand: SdsExpression
 }
 
-SdsTypeParameterConstraint returns SdsTypeParameterConstraint:
-    leftOperand=[SdsTypeParameter:ID]
-    operator=SdsTypeParameterConstraintOperator
-    rightOperand=SdsType
-;
-
-SdsTypeParameterConstraintOperator returns string:
-    'sub' | 'super'
+SdsParameterBound returns SdsParameterBound:
+    leftOperand=[SdsParameter:ID]
+    operator=SdsComparisonOperator
+    rightOperand=SdsExpression
 ;
 
 
@@ -657,11 +655,25 @@ SdsMultiplicativeOperator returns string:
 ;
 
 SdsElvisExpression returns SdsExpression:
-    SdsUnaryOperation
+    SdsTypeCast
     (
         {SdsInfixOperation.leftOperand=current}
         operator='?:'
-        rightOperand=SdsUnaryOperation
+        rightOperand=SdsTypeCast
+    )*
+;
+
+interface SdsTypeCast extends SdsExpression {
+    expression: SdsExpression
+    ^type: SdsType
+}
+
+SdsTypeCast returns SdsExpression:
+    SdsUnaryOperation
+    (
+        {SdsTypeCast.expression=current}
+        'as'
+        ^type=SdsType
     )*
 ;
 
@@ -672,6 +684,7 @@ SdsUnaryOperation returns SdsExpression:
 
 interface SdsChainedExpression extends SdsExpression {
     receiver: SdsExpression
+    isNullSafe: boolean
 }
 
 interface SdsCall extends SdsAbstractCall, SdsChainedExpression {}
@@ -681,7 +694,6 @@ interface SdsIndexedAccess extends SdsChainedExpression {
 }
 
 interface SdsMemberAccess extends SdsChainedExpression {
-    isNullSafe: boolean
     member?: SdsReference
 }
 
@@ -689,9 +701,11 @@ SdsChainedExpression returns SdsExpression:
     SdsPrimaryExpression
     (
         {SdsCall.receiver=current}
+        (isNullSafe?='?')?
         argumentList=SdsCallArgumentList
 
     |   {SdsIndexedAccess.receiver=current}
+        (isNullSafe?='?')?
         '[' index=SdsExpression ']'
 
     |   {SdsMemberAccess.receiver=current}
@@ -742,6 +756,7 @@ SdsLiteral returns SdsLiteral:
   | SdsMap
   | SdsNull
   | SdsString
+  | SdsUnknown
 ;
 
 interface SdsBoolean extends SdsLiteral {
@@ -808,6 +823,12 @@ interface SdsString extends SdsLiteral {
 
 SdsString returns SdsString:
     value=STRING
+;
+
+interface SdsUnknown extends SdsLiteral {}
+
+SdsUnknown returns SdsUnknown:
+    {SdsUnknown} 'unknown'
 ;
 
 interface SdsParenthesizedExpression extends SdsExpression {
@@ -885,6 +906,7 @@ SdsPrimaryType returns SdsType:
   | SdsLiteralType
   | SdsNamedType
   | SdsUnionType
+  | SdsUnknownType
 ;
 
 interface SdsCallableType extends SdsCallable, SdsType {
@@ -951,11 +973,13 @@ SdsUnionTypeArgumentList returns SdsTypeArgumentList:
 ;
 
 SdsUnionTypeArgument returns SdsTypeArgument:
-    value=SdsUnionTypeArgumentValue
+    value=SdsType
 ;
 
-SdsUnionTypeArgumentValue returns SdsTypeArgumentValue:
-    {SdsTypeProjection} ^type=SdsType
+interface SdsUnknownType extends SdsType {}
+
+SdsUnknownType returns SdsType:
+    {SdsUnknownType} 'unknown'
 ;
 
 SdsParentType returns SdsType:
@@ -979,6 +1003,7 @@ SdsTypeParameterList returns SdsTypeParameterList:
 
 interface SdsTypeParameter extends SdsNamedTypeDeclaration {
     variance?: string
+    upperBound?: SdsType
     defaultValue?: SdsType
 }
 
@@ -986,6 +1011,7 @@ SdsTypeParameter returns SdsTypeParameter:
     annotationCalls+=SdsAnnotationCall*
     variance=SdsTypeParameterVariance?
     name=ID
+    ('sub' upperBound=SdsType)?
     ('=' defaultValue=SdsType)?
 ;
 
@@ -1006,22 +1032,12 @@ SdsTypeArgumentList returns SdsTypeArgumentList:
 
 interface SdsTypeArgument extends SdsObject {
     typeParameter?: @SdsTypeParameter
-    value: SdsTypeArgumentValue
+    value: SdsType
 }
 
 SdsTypeArgument returns SdsTypeArgument:
     (typeParameter=[SdsTypeParameter:ID] '=' )?
-    value=SdsTypeArgumentValue
-;
-
-interface SdsTypeArgumentValue extends SdsObject {}
-
-interface SdsTypeProjection extends SdsTypeArgumentValue {
-    ^type: SdsType
-}
-
-SdsTypeArgumentValue returns SdsTypeArgumentValue:
-    {SdsTypeProjection} ^type=SdsType
+    value=SdsType
 ;
 
 

@@ -1,0 +1,13 @@
+package tests.typing.expressions.memberAccesses.toNestedEnums
+
+class MyClass {
+    enum MyNestedEnum
+}
+
+pipeline myPipeline {
+    // $TEST$ serialization $type<MyNestedEnum>
+    »MyClass.MyNestedEnum«;
+
+    // $TEST$ serialization $type<MyNestedEnum>
+    »MyClass?.MyNestedEnum«;
+}

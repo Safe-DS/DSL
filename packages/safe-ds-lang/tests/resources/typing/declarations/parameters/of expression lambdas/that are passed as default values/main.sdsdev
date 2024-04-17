@@ -1,0 +1,17 @@
+package tests.typing.declarations.parameters.ofExpressionLambdas.thatArePassedAsArguments
+
+fun higherOrderFunction1(
+    // $TEST$ equivalence_class parameterType1
+    // $TEST$ equivalence_class parameterType1
+    param: (p: »String«) -> r: String = (»p«) -> ""
+)
+
+fun higherOrderFunction2(
+    // $TEST$ serialization unknown
+    param: () -> r: String = (»p«) -> ""
+)
+
+fun normalFunction(
+    // $TEST$ serialization unknown
+    param: Int = (»p«) -> ""
+)

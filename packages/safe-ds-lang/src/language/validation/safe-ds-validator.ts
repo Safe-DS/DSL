@@ -27,11 +27,7 @@ import { singleUseAnnotationsMustNotBeRepeated } from './builtins/repeatable.js'
 import { annotationCallMustHaveCorrectTarget, targetShouldNotHaveDuplicateEntries } from './builtins/target.js';
 import {
     constraintListsShouldBeUsedWithCaution,
-    indexedAccessesShouldBeUsedWithCaution,
     literalTypesShouldBeUsedWithCaution,
-    mapsShouldBeUsedWithCaution,
-    typeArgumentListsShouldBeUsedWithCaution,
-    typeParameterListsShouldBeUsedWithCaution,
     unionTypesShouldBeUsedWithCaution,
 } from './experimentalLanguageFeatures.js';
 import {
@@ -56,6 +52,7 @@ import {
     pipelineMustContainUniqueNames,
     schemaMustContainUniqueNames,
     segmentMustContainUniqueNames,
+    staticClassMemberNamesMustNotCollideWithInheritedMembers,
 } from './names.js';
 import {
     argumentListMustNotHavePositionalArgumentsAfterNamedArguments,
@@ -81,10 +78,11 @@ import {
     segmentResultMustBeAssignedExactlyOnce,
     segmentShouldBeUsed,
 } from './other/declarations/segments.js';
-import { typeParameterConstraintLeftOperandMustBeOwnTypeParameter } from './other/declarations/typeParameterConstraints.js';
 import {
-    typeParameterMustBeUsedInCorrectContext,
+    typeParameterMustBeUsedInCorrectPosition,
     typeParameterMustHaveSufficientContext,
+    typeParameterMustOnlyBeVariantOnClass,
+    typeParameterUpperBoundMustBeNamedType,
 } from './other/declarations/typeParameters.js';
 import { callArgumentMustBeConstantIfParameterIsConstant, callMustNotBeRecursive } from './other/expressions/calls.js';
 import { divisionDivisorMustNotBeZero } from './other/expressions/infixOperations.js';
@@ -92,10 +90,7 @@ import {
     lambdaMustBeAssignedToTypedParameter,
     lambdaParameterMustNotHaveConstModifier,
 } from './other/expressions/lambdas.js';
-import {
-    memberAccessMustBeNullSafeIfReceiverIsNullable,
-    memberAccessOfEnumVariantMustNotLackInstantiation,
-} from './other/expressions/memberAccesses.js';
+import { memberAccessOfEnumVariantMustNotLackInstantiation } from './other/expressions/memberAccesses.js';
 import {
     referenceMustNotBeFunctionPointer,
     referenceMustNotBeStaticClassOrEnumReference,
@@ -148,6 +143,7 @@ import {
     annotationParameterShouldNotHaveConstModifier,
     assignmentShouldHaveMoreThanWildcardsAsAssignees,
     callArgumentListShouldBeNeeded,
+    chainedExpressionNullSafetyShouldBeNeeded,
     classBodyShouldNotBeEmpty,
     constraintListShouldNotBeEmpty,
     elvisOperatorShouldBeNeeded,
@@ -155,15 +151,14 @@ import {
     enumVariantParameterListShouldNotBeEmpty,
     functionResultListShouldNotBeEmpty,
     importedDeclarationAliasShouldDifferFromDeclarationName,
-    memberAccessNullSafetyShouldBeNeeded,
     namedTypeTypeArgumentListShouldBeNeeded,
     segmentResultListShouldNotBeEmpty,
     typeParameterListShouldNotBeEmpty,
     unionTypeShouldNotHaveASingularTypeArgument,
 } from './style.js';
 import {
-    argumentTypeMustMatchParameterType,
     attributeMustHaveTypeHint,
+    callArgumentTypesMustMatchParameterTypes,
     callReceiverMustBeCallable,
     indexedAccessIndexMustHaveCorrectType,
     indexedAccessReceiverMustBeListOrMap,
@@ -171,15 +166,26 @@ import {
     listMustNotContainNamedTuples,
     mapMustNotContainNamedTuples,
     namedTypeMustSetAllTypeParameters,
+    namedTypeTypeArgumentsMustMatchBounds,
     parameterDefaultValueTypeMustMatchParameterType,
     parameterMustHaveTypeHint,
     prefixOperationOperandMustHaveCorrectType,
     resultMustHaveTypeHint,
+    typeCastMustNotAlwaysFail,
+    typeParameterDefaultValueMustMatchUpperBound,
     yieldTypeMustMatchResultType,
 } from './types.js';
 import { statementMustDoSomething } from './other/statements/statements.js';
 import { indexedAccessIndexMustBeValid } from './other/expressions/indexedAccess.js';
 import { typeParameterListMustNotHaveRequiredTypeParametersAfterOptionalTypeParameters } from './other/declarations/typeParameterLists.js';
+import { chainedExpressionsMustBeNullSafeIfReceiverIsNullable } from './other/expressions/chainedExpressions.js';
+import {
+    callArgumentMustRespectParameterBounds,
+    parameterBoundParameterMustBeConstFloatOrInt,
+    parameterBoundRightOperandMustEvaluateToFloatConstantOrIntConstant,
+    parameterDefaultValueMustRespectParameterBounds,
+} from './other/declarations/parameterBounds.js';
+import { unknownMustOnlyBeUsedAsDefaultValueOfStub } from './other/expressions/literals.js';
 
 /**
  * Register custom validation checks.
@@ -217,7 +223,6 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsArgument: [
             argumentCorrespondingParameterShouldNotBeDeprecated(services),
             argumentCorrespondingParameterShouldNotBeExperimental(services),
-            argumentTypeMustMatchParameterType(services),
         ],
         SdsArgumentList: [
             argumentListMustNotHavePositionalArgumentsAfterNamedArguments,
@@ -229,6 +234,8 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             callArgumentListShouldBeNeeded(services),
             callArgumentAssignedToPureParameterMustBePure(services),
             callArgumentMustBeConstantIfParameterIsConstant(services),
+            callArgumentMustRespectParameterBounds(services),
+            callArgumentTypesMustMatchParameterTypes(services),
             callMustNotBeRecursive(services),
             callReceiverMustBeCallable(services),
         ],
@@ -240,10 +247,15 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             callableTypeParameterMustNotHaveConstModifier,
             callableTypeResultsMustNotBeAnnotated,
         ],
+        SdsChainedExpression: [
+            chainedExpressionsMustBeNullSafeIfReceiverIsNullable(services),
+            chainedExpressionNullSafetyShouldBeNeeded(services),
+        ],
         SdsClass: [
             classMustContainUniqueNames,
             classMustOnlyInheritASingleClass(services),
             classMustNotInheritItself(services),
+            staticClassMemberNamesMustNotCollideWithInheritedMembers(services),
         ],
         SdsClassBody: [classBodyShouldNotBeEmpty(services)],
         SdsClassMember: [classMemberMustMatchOverriddenMemberAndShouldBeNeeded(services)],
@@ -275,7 +287,6 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             indexedAccessIndexMustBeValid(services),
             indexedAccessIndexMustHaveCorrectType(services),
             indexedAccessReceiverMustBeListOrMap(services),
-            indexedAccessesShouldBeUsedWithCaution(services),
         ],
         SdsInfixOperation: [
             divisionDivisorMustNotBeZero(services),
@@ -295,12 +306,8 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             literalTypesShouldBeUsedWithCaution(services),
             literalTypeShouldNotHaveDuplicateLiteral(services),
         ],
-        SdsMap: [mapMustNotContainNamedTuples(services), mapsShouldBeUsedWithCaution(services)],
-        SdsMemberAccess: [
-            memberAccessMustBeNullSafeIfReceiverIsNullable(services),
-            memberAccessNullSafetyShouldBeNeeded(services),
-            memberAccessOfEnumVariantMustNotLackInstantiation,
-        ],
+        SdsMap: [mapMustNotContainNamedTuples(services)],
+        SdsMemberAccess: [memberAccessOfEnumVariantMustNotLackInstantiation],
         SdsModule: [
             moduleDeclarationsMustMatchFileKind,
             moduleMemberMustHaveNameThatIsUniqueInPackage(services),
@@ -317,15 +324,21 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             namedTypeMustSetAllTypeParameters(services),
             namedTypeTypeArgumentListShouldBeNeeded(services),
             namedTypeTypeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments,
+            namedTypeTypeArgumentsMustMatchBounds(services),
         ],
         SdsParameter: [
             constantParameterMustHaveConstantDefaultValue(services),
             constantParameterMustHaveTypeThatCanBeEvaluatedToConstant(services),
             parameterMustHaveTypeHint,
+            parameterDefaultValueMustRespectParameterBounds(services),
             parameterDefaultValueTypeMustMatchParameterType(services),
             pureParameterDefaultValueMustBePure(services),
             requiredParameterMustNotBeDeprecated(services),
             requiredParameterMustNotBeExpert(services),
+        ],
+        SdsParameterBound: [
+            parameterBoundParameterMustBeConstFloatOrInt(services),
+            parameterBoundRightOperandMustEvaluateToFloatConstantOrIntConstant(services),
         ],
         SdsParameterList: [parameterListMustNotHaveRequiredParametersAfterOptionalParameters],
         SdsPipeline: [pipelineMustContainUniqueNames],
@@ -349,12 +362,16 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         ],
         SdsStatement: [statementMustDoSomething(services)],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
-        SdsTypeArgumentList: [typeArgumentListsShouldBeUsedWithCaution(services)],
-        SdsTypeParameter: [typeParameterMustHaveSufficientContext, typeParameterMustBeUsedInCorrectContext],
-        SdsTypeParameterConstraint: [typeParameterConstraintLeftOperandMustBeOwnTypeParameter],
+        SdsTypeCast: [typeCastMustNotAlwaysFail(services)],
+        SdsTypeParameter: [
+            typeParameterDefaultValueMustMatchUpperBound(services),
+            typeParameterMustBeUsedInCorrectPosition(services),
+            typeParameterMustHaveSufficientContext,
+            typeParameterMustOnlyBeVariantOnClass,
+            typeParameterUpperBoundMustBeNamedType(services),
+        ],
         SdsTypeParameterList: [
             typeParameterListMustNotHaveRequiredTypeParametersAfterOptionalTypeParameters,
-            typeParameterListsShouldBeUsedWithCaution(services),
             typeParameterListShouldNotBeEmpty(services),
         ],
         SdsUnionType: [
@@ -364,6 +381,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             unionTypeShouldNotHaveDuplicateTypes(services),
             unionTypeShouldNotHaveASingularTypeArgument(services),
         ],
+        SdsUnknown: [unknownMustOnlyBeUsedAsDefaultValueOfStub],
         SdsYield: [yieldMustNotBeUsedInPipeline, yieldTypeMustMatchResultType(services)],
     };
     registry.register(checks);

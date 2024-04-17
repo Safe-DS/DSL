@@ -7,10 +7,10 @@ import {
     SdsAssignee,
 } from '../../../../src/language/generated/ast.js';
 import { getAssignees } from '../../../../src/language/helpers/nodeProperties.js';
-import { createSafeDsServicesWithBuiltins } from '../../../../src/language/index.js';
 import { getNodeOfType } from '../../../helpers/nodeFinder.js';
+import { createSafeDsServices } from '../../../../src/language/index.js';
 
-const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const nodeMapper = services.helpers.NodeMapper;
 
 describe('SafeDsNodeMapper', () => {

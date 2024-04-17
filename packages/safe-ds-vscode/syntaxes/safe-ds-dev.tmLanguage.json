@@ -1,0 +1,22 @@
+{
+    "name": "safe-ds-dev",
+    "scopeName": "source.safe-ds-dev",
+    "fileTypes": [".sdsdev"],
+    "patterns": [
+        {
+            "include": "source.safe-ds#shared"
+        },
+        {
+            "name": "storage.type.safe-ds-dev",
+            "match": "\\b(annotation|attr|class|enum|fun|package|pipeline|schema|segment|val)\\b"
+        },
+        {
+            "name": "storage.modifier.safe-ds-dev",
+            "match": "\\b(const|in|internal|out|private|static)\\b"
+        },
+        {
+            "name": "keyword.operator.expression.safe-ds-dev",
+            "match": "\\b(and|not|or|sub)\\b"
+        }
+    ]
+}

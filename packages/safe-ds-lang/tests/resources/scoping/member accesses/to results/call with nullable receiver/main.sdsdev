@@ -1,0 +1,33 @@
+package tests.scoping.memberAccesses.toResults.callWithNullableReceiver
+
+class MyClass {
+    // $TEST$ target functionWithOneResult_singleResult
+    fun functionWithOneResult() -> »singleResult«: Int
+
+    // $TEST$ target functionWithTwoResults_result1
+    fun functionWithTwoResults() -> (»result1«: Int, result2: Int)
+}
+
+segment mySegment(
+    myClassOrNull: MyClass?
+) {
+    // $TEST$ references functionWithOneResult_singleResult
+    myClassOrNull?.functionWithOneResult().»singleResult«;
+
+    // $TEST$ references functionWithTwoResults_result1
+    myClassOrNull?.functionWithTwoResults().»result1«;
+
+
+    // $TEST$ references functionWithOneResult_singleResult
+    myClassOrNull?.functionWithOneResult?().»singleResult«;
+
+    // $TEST$ references functionWithTwoResults_result1
+    myClassOrNull?.functionWithTwoResults?().»result1«;
+
+
+    // $TEST$ references functionWithOneResult_singleResult
+    myClassOrNull?.functionWithOneResult?()?.»singleResult«;
+
+    // $TEST$ references functionWithTwoResults_result1
+    myClassOrNull?.functionWithTwoResults?()?.»result1«;
+}

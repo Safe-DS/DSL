@@ -1,0 +1,15 @@
+package tests.typing.highestCommonSubtype.unknownType
+
+class Contravariant<in T>
+
+segment mySegment(
+    one: Contravariant<literal<1>>,
+    nullable: Contravariant<literal<null>>,
+    unresolved: Contravariant<Unresolved>,
+) {
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[one, unresolved]«;
+
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[nullable, unresolved]«;
+}

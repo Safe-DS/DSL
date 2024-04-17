@@ -15,7 +15,7 @@ import {
 import { createSafeDsServices } from '../../../src/language/index.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
 
-const services = createSafeDsServices(EmptyFileSystem).SafeDs;
+const services = (await createSafeDsServices(EmptyFileSystem, { omitBuiltins: true })).SafeDs;
 const commentProvider = services.documentation.CommentProvider;
 const testComment = '/* test */';
 

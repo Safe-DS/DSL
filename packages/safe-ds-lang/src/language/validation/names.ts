@@ -1,4 +1,4 @@
-import { AstNodeDescription, getDocument, ValidationAcceptor } from 'langium';
+import { AstNodeDescription, AstUtils, ValidationAcceptor } from 'langium';
 import { duplicatesBy } from '../../helpers/collections.js';
 import { listBuiltinFiles } from '../builtins/fileFinder.js';
 import { BUILTINS_LANG_PACKAGE, BUILTINS_ROOT_PACKAGE } from '../builtins/packageNames.js';
@@ -26,7 +26,7 @@ import {
     SdsTypeParameter,
 } from '../generated/ast.js';
 import { CODEGEN_PREFIX } from '../generation/safe-ds-python-generator.js';
-import { isInPipelineFile, isInStubFile, isInTestFile } from '../helpers/fileExtensions.js';
+import { isInDevFile, isInPipelineFile, isInStubFile } from '../helpers/fileExtensions.js';
 import {
     getClassMembers,
     getColumns,
@@ -38,12 +38,13 @@ import {
     getParameters,
     getResults,
     getTypeParameters,
+    isImplementedDeclaration,
     isStatic,
+    isStubDeclaration,
     streamBlockLambdaResults,
     streamPlaceholders,
 } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
-import { declarationIsAllowedInPipelineFile, declarationIsAllowedInStubFile } from './other/modules.js';
 
 export const CODE_NAME_CODEGEN_PREFIX = 'name/codegen-prefix';
 export const CODE_NAME_CORE_DECLARATION = 'name/core-declaration';
@@ -106,8 +107,8 @@ export const nameMustNotOccurOnCoreDeclaration = (services: SafeDsServices) => {
 export const nameShouldHaveCorrectCasing = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
 
-    return async (node: SdsDeclaration, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateNameConvention())) {
+    return (node: SdsDeclaration, accept: ValidationAcceptor) => {
+        if (!settingsProvider.shouldValidateNameConvention()) {
             /* c8 ignore next 2 */
             return;
         }
@@ -224,11 +225,29 @@ export const classMustContainUniqueNames = (node: SdsClass, accept: ValidationAc
         accept,
     );
 
-    const instanceMembers = getClassMembers(node).filter((it) => !isStatic(it));
-    namesMustBeUnique(instanceMembers, (name) => `An instance member with name '${name}' exists already.`, accept);
+    namesMustBeUnique(getClassMembers(node), (name) => `A class member with name '${name}' exists already.`, accept);
+};
 
-    const staticMembers = getClassMembers(node).filter(isStatic);
-    namesMustBeUnique(staticMembers, (name) => `A static member with name '${name}' exists already.`, accept);
+export const staticClassMemberNamesMustNotCollideWithInheritedMembers = (services: SafeDsServices) => {
+    const classHierarchy = services.typing.ClassHierarchy;
+
+    return (node: SdsClass, accept: ValidationAcceptor): void => {
+        const staticMembers = getClassMembers(node).filter(isStatic);
+        const inheritedMembers = classHierarchy
+            .streamInheritedMembers(node)
+            .map((it) => it.name)
+            .toSet();
+
+        for (const staticMember of staticMembers) {
+            if (inheritedMembers.has(staticMember.name)) {
+                accept('error', `An inherited member with name 'myInstanceAttribute1' exists already.`, {
+                    node: staticMember,
+                    property: 'name',
+                    code: CODE_NAME_DUPLICATE,
+                });
+            }
+        }
+    };
 };
 
 export const enumMustContainUniqueNames = (node: SdsEnum, accept: ValidationAcceptor): void => {
@@ -260,7 +279,7 @@ export const moduleMemberMustHaveNameThatIsUniqueInPackage = (services: SafeDsSe
     const builtinUris = new Set(listBuiltinFiles().map((it) => it.toString()));
 
     return (node: SdsModule, accept: ValidationAcceptor): void => {
-        const moduleUri = getDocument(node).uri?.toString();
+        const moduleUri = AstUtils.getDocument(node).uri?.toString();
         if (builtinUris.has(moduleUri)) {
             return;
         }
@@ -322,16 +341,16 @@ export const moduleMustContainUniqueNames = (node: SdsModule, accept: Validation
             getModuleMembers(node),
             (name) => `A declaration with name '${name}' exists already in this file.`,
             accept,
-            declarationIsAllowedInPipelineFile,
+            isImplementedDeclaration,
         );
     } else if (isInStubFile(node)) {
         namesMustBeUnique(
             getModuleMembers(node),
             (name) => `A declaration with name '${name}' exists already in this file.`,
             accept,
-            declarationIsAllowedInStubFile,
+            isStubDeclaration,
         );
-    } else if (isInTestFile(node)) {
+    } else if (isInDevFile(node)) {
         namesMustBeUnique(
             getModuleMembers(node),
             (name) => `A declaration with name '${name}' exists already in this file.`,

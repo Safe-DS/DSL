@@ -1,0 +1,41 @@
+package tests.validation.other.declarations.typeParameters.insufficientContext
+
+// $TEST$ no error "Insufficient context to infer this type parameter."
+class MyClass1<»T«>
+// $TEST$ error "Insufficient context to infer this type parameter."
+class MyClass2<»T« sub Int>()
+// $TEST$ error "Insufficient context to infer this type parameter."
+class MyClass3<»T«>() {
+    attr myAttr: T
+}
+// $TEST$ no error "Insufficient context to infer this type parameter."
+class MyClass4<»T« sub Int>(param: T)
+// $TEST$ no error "Insufficient context to infer this type parameter."
+class MyClass5<»T«>(param: MyClass4<T>?)
+// $TEST$ no error "Insufficient context to infer this type parameter."
+class MyClass6<»T«>(param: () -> (r: T))
+// $TEST$ error "Insufficient context to infer this type parameter."
+class MyClass7<»T«>(param: (p: T) -> ())
+// $TEST$ error "Insufficient context to infer this type parameter."
+class MyClass8<»T«>(param: () -> (r: (p: T) -> ()))
+// $TEST$ error "Insufficient context to infer this type parameter."
+class MyClass9<»T«>(param: union<T>)
+// $TEST$ error "Insufficient context to infer this type parameter."
+class MyClass10<»T«>(param: union<T, Int>)
+
+// $TEST$ error "Insufficient context to infer this type parameter."
+fun myFunction1<»T« sub Int>()
+// $TEST$ no error "Insufficient context to infer this type parameter."
+fun myFunction2<»T«>(param: T)
+// $TEST$ no error "Insufficient context to infer this type parameter."
+fun myFunction3<»T«>(param: MyClass4<T>?)
+// $TEST$ no error "Insufficient context to infer this type parameter."
+fun myFunction4<»T«>(param: () -> (r: T))
+// $TEST$ error "Insufficient context to infer this type parameter."
+fun myFunction5<»T«>(param: (p: T) -> ())
+// $TEST$ error "Insufficient context to infer this type parameter."
+fun myFunction6<»T«>(param: () -> (r: (p: T) -> ()))
+// $TEST$ error "Insufficient context to infer this type parameter."
+fun myFunction7<»T«>(param: union<T>)
+// $TEST$ error "Insufficient context to infer this type parameter."
+fun myFunction8<»T«>(param: union<T, Int>)

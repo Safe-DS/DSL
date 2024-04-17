@@ -1,0 +1,37 @@
+package tests.typing.lowestCommonSupertype.typeVariableAndTypeVariable
+
+class C
+class D sub C
+class E sub C
+class F
+
+class Test<NothingToAnyOrNull, NothingToD sub D, NothingToE sub E, NothingToF sub F>(
+    nothingToAnyOrNull: NothingToAnyOrNull,
+    nothingToD: NothingToD,
+    nothingToE: NothingToE,
+    nothingToF: NothingToF,
+
+    // $TEST$ serialization List<NothingToAnyOrNull>
+    a1: Any = »[nothingToAnyOrNull, nothingToAnyOrNull]«,
+    // $TEST$ serialization List<Any?>
+    a2: Any = »[nothingToAnyOrNull, nothingToD]«,
+    // $TEST$ serialization List<Any?>
+    a3: Any = »[nothingToAnyOrNull, nothingToE]«,
+    // $TEST$ serialization List<Any?>
+    a4: Any = »[nothingToAnyOrNull, nothingToF]«,
+
+    // $TEST$ serialization List<NothingToD>
+    b1: Any = »[nothingToD, nothingToD]«,
+    // $TEST$ serialization List<C>
+    b2: Any = »[nothingToD, nothingToE]«,
+    // $TEST$ serialization List<Any>
+    b3: Any = »[nothingToD, nothingToF]«,
+
+    // $TEST$ serialization List<NothingToE>
+    c1: Any = »[nothingToE, nothingToE]«,
+    // $TEST$ serialization List<Any>
+    c2: Any = »[nothingToE, nothingToF]«,
+
+    // $TEST$ serialization List<NothingToF>
+    d1: Any = »[nothingToF, nothingToF]«
+)

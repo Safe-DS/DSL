@@ -1,0 +1,26 @@
+package tests.typing.declarations.parameters.ofBlockLambdas.thatArePassedAsArguments
+
+// $TEST$ equivalence_class parameterType1
+fun higherOrderFunction1(param: (a: »String«) -> ())
+fun higherOrderFunction2(param: () -> ())
+fun normalFunction(param: Int)
+
+segment mySegment() {
+    // $TEST$ equivalence_class parameterType1
+    higherOrderFunction1((»p«) {});
+
+    // $TEST$ equivalence_class parameterType1
+    higherOrderFunction1(param = (»p«) {});
+
+    // $TEST$ serialization unknown
+    higherOrderFunction2((»p«) {});
+
+    // $TEST$ serialization unknown
+    higherOrderFunction2(param = (»p«) {});
+
+    // $TEST$ serialization unknown
+    normalFunction((»p«) {});
+
+    // $TEST$ serialization unknown
+    normalFunction(param = (»p«) {});
+}

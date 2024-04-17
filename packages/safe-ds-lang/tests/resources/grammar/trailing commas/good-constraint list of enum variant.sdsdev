@@ -1,0 +1,8 @@
+// $TEST$ no_syntax_error
+
+enum E {
+    A where {
+        p < 0,
+        q > 0,
+    }
+}

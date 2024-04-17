@@ -1,13 +1,13 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { getNodeOfType, getNodeByLocation } from './nodeFinder.js';
-import { createSafeDsServices } from '../../src/language/safe-ds-module.js';
+import { getNodeByLocation, getNodeOfType } from './nodeFinder.js';
+import { createSafeDsServices } from '../../src/language/index.js';
 import { EmptyFileSystem } from 'langium';
 import { AssertionError } from 'assert';
 import { clearDocuments, parseHelper } from 'langium/test';
 import { isSdsClass, isSdsDeclaration, isSdsEnum } from '../../src/language/generated/ast.js';
 
-describe('getNodeByLocation', () => {
-    const services = createSafeDsServices(EmptyFileSystem).SafeDs;
+describe('getNodeByLocation', async () => {
+    const services = (await createSafeDsServices(EmptyFileSystem, { omitBuiltins: true })).SafeDs;
 
     afterEach(async () => {
         await clearDocuments(services);
@@ -16,7 +16,7 @@ describe('getNodeByLocation', () => {
     it('should throw if no document is found', () => {
         expect(() => {
             getNodeByLocation(services, {
-                uri: 'file:///test.sdstest',
+                uri: 'file:///test.sdsdev',
                 range: { start: { line: 0, character: 0 }, end: { line: 0, character: 0 } },
             });
         }).toThrowErrorMatchingSnapshot();
@@ -56,8 +56,8 @@ describe('getNodeByLocation', () => {
     });
 });
 
-describe('getNodeOfType', () => {
-    const services = createSafeDsServices(EmptyFileSystem).SafeDs;
+describe('getNodeOfType', async () => {
+    const services = (await createSafeDsServices(EmptyFileSystem, { omitBuiltins: true })).SafeDs;
 
     afterEach(async () => {
         await clearDocuments(services);

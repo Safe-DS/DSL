@@ -1,4 +1,4 @@
-import { createSafeDsServicesWithBuiltins } from '@safe-ds/lang';
+import { createSafeDsServices } from '@safe-ds/lang';
 import chalk from 'chalk';
 import { URI } from 'langium';
 import { NodeFileSystem } from 'langium/node';
@@ -9,7 +9,7 @@ import { makeParentDirectoriesSync } from '../helpers/files.js';
 import { exitIfDocumentHasErrors } from '../helpers/diagnostics.js';
 
 export const generate = async (fsPaths: string[], options: GenerateOptions): Promise<void> => {
-    const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+    const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
     const documents = await extractDocuments(services, fsPaths);
 
     // Exit if any document has errors before generating code
@@ -23,6 +23,7 @@ export const generate = async (fsPaths: string[], options: GenerateOptions): Pro
             destination: URI.file(path.resolve(options.out)),
             createSourceMaps: options.sourcemaps,
             targetPlaceholder: undefined,
+            disableRunnerIntegration: false,
         });
 
         for (const file of generatedFiles) {

@@ -1,0 +1,5 @@
+segment mySegment(x: unknown) {}
+
+// -----------------------------------------------------------------------------
+
+segment mySegment(x: unknown) {}

@@ -1,0 +1,14 @@
+package tests.typing.expressions.typeCasts
+
+@Pure fun f() -> r: Int
+
+pipeline myPipeline {
+    // $TEST$ serialization Boolean
+    »1 as Boolean«; // Partial evaluator can handle expression
+
+    // $TEST$ serialization Boolean
+    »r as Boolean«; // Partial evaluator cannot handle expression
+
+    // $TEST$ serialization Boolean
+    »unresolved as Boolean«; // Expression has unknown type
+}

@@ -1,0 +1,9 @@
+package tests.validation.style.unnecessaryConstraintListInAnnotation
+
+// $TEST$ info "This constraint list can be removed."
+annotation MyAnnotation1 »where {}«
+
+// $TEST$ no info "This constraint list can be removed."
+annotation MyAnnotation2(p: Int) »where {
+    p < 0
+}«

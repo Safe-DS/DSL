@@ -1,0 +1,26 @@
+package tests.validation.inheritance.overridingMethodShouldDifferFromOverriddenMethod
+
+class MySuperClass2 {
+    @Impure([ImpurityReason.Other])
+    fun myInstanceMethod(a: Number = 0) -> r: Number
+    @Impure([ImpurityReason.Other])
+    static fun myStaticMethod(a: Number = 0) -> r: Number
+}
+
+class MyClass3 sub MySuperClass2 {
+    // $TEST$ no info "Overriding member is identical to overridden member and can be removed."
+    @Pure
+    fun »myInstanceMethod«(a: Number = 0) -> r: Number
+    // $TEST$ no info "Overriding member is identical to overridden member and can be removed."
+    @Pure
+    static fun »myStaticMethod«(a: Number = 0) -> r: Number
+}
+
+class MyClass4 sub MySuperClass2 {
+    // $TEST$ no info "Overriding member is identical to overridden member and can be removed."
+    @Impure([])
+    fun »myInstanceMethod«(a: Number = 0) -> r: Number
+    // $TEST$ no info "Overriding member is identical to overridden member and can be removed."
+    @Impure([])
+    static fun »myStaticMethod«(a: Number = 0) -> r: Number
+}

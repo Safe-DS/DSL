@@ -7,13 +7,12 @@ import {
     SdsClass,
     type SdsClassMember,
 } from '../../../src/language/generated/ast.js';
-import { getClassMembers } from '../../../src/language/helpers/nodeProperties.js';
-import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
+import { createSafeDsServices, getClassMembers } from '../../../src/language/index.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
 
-const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const builtinClasses = services.builtins.Classes;
-const classHierarchy = services.types.ClassHierarchy;
+const classHierarchy = services.typing.ClassHierarchy;
 
 describe('SafeDsClassHierarchy', async () => {
     describe('isEqualToOrSubclassOf', () => {
@@ -61,15 +60,15 @@ describe('SafeDsClassHierarchy', async () => {
         });
     });
 
-    describe('streamSuperclasses', () => {
-        const superclassNames = (node: SdsClass | undefined) =>
+    describe('streamProperSuperclasses', () => {
+        const properSuperclassNames = (node: SdsClass | undefined) =>
             classHierarchy
-                .streamSuperclasses(node)
+                .streamProperSuperclasses(node)
                 .map((clazz) => clazz.name)
                 .toArray();
 
         it('should return an empty stream if passed undefined', () => {
-            expect(superclassNames(undefined)).toStrictEqual([]);
+            expect(properSuperclassNames(undefined)).toStrictEqual([]);
         });
 
         const testCases = [
@@ -125,7 +124,7 @@ describe('SafeDsClassHierarchy', async () => {
 
         it.each(testCases)('$testName', async ({ code, expected }) => {
             const firstClass = await getNodeOfType(services, code, isSdsClass);
-            expect(superclassNames(firstClass)).toStrictEqual(expected);
+            expect(properSuperclassNames(firstClass)).toStrictEqual(expected);
         });
     });
 
@@ -196,6 +195,79 @@ describe('SafeDsClassHierarchy', async () => {
             const firstClass = await getNodeOfType(services, code, isSdsClass, index);
             const anyMembers = getClassMembers(builtinClasses.Any).map((member) => member.name);
             expect(superclassMemberNames(firstClass)).toStrictEqual(expected.concat(anyMembers));
+        });
+    });
+
+    describe('streamInheritedMembers', () => {
+        const inheritedMemberNames = (node: SdsClass | undefined) =>
+            classHierarchy
+                .streamInheritedMembers(node)
+                .map((member) => member.name)
+                .toArray();
+
+        it('should return an empty stream if passed undefined', () => {
+            expect(inheritedMemberNames(undefined)).toStrictEqual([]);
+        });
+
+        const testCases = [
+            {
+                testName: 'should return the members of the parent type',
+                code: `
+                    class A {
+                        attr a: Int
+                        fun f()
+                        static fun g()
+                    }
+
+                    class B sub A
+                `,
+                index: 1,
+                expected: ['a', 'f'],
+            },
+            {
+                testName: 'should only consider members of the first parent type',
+                code: `
+                    class A {
+                        attr a: Int
+                        fun f()
+                        static fun g()
+                    }
+
+                    class B {
+                        attr b: Int
+                        fun g()
+                    }
+
+                    class C sub A, B
+                `,
+                index: 2,
+                expected: ['a', 'f'],
+            },
+            {
+                testName: 'should return members of all superclasses',
+                code: `
+                    class A {
+                        attr a: Int
+                        fun f()
+                        static fun g()
+                    }
+
+                    class B sub A {
+                        attr b: Int
+                        fun g()
+                    }
+
+                    class C sub B
+                `,
+                index: 2,
+                expected: ['b', 'g', 'a', 'f'],
+            },
+        ];
+
+        it.each(testCases)('$testName', async ({ code, index, expected }) => {
+            const firstClass = await getNodeOfType(services, code, isSdsClass, index);
+            const anyMembers = getClassMembers(builtinClasses.Any).map((member) => member.name);
+            expect(inheritedMemberNames(firstClass)).toStrictEqual(expected.concat(anyMembers));
         });
     });
 
@@ -398,6 +470,65 @@ describe('SafeDsClassHierarchy', async () => {
 
         it('should return undefined if passed undefined', () => {
             expect(classHierarchy.getOverriddenMember(undefined)).toBeUndefined();
+        });
+    });
+
+    describe('streamDirectSubclasses', () => {
+        const directSubclassNames = (node: SdsClass | undefined) =>
+            classHierarchy
+                .streamDirectSubclasses(node)
+                .map((clazz) => clazz.name)
+                .toArray();
+
+        it('should return an empty stream if passed undefined', () => {
+            expect(directSubclassNames(undefined)).toStrictEqual([]);
+        });
+
+        it('should return an empty stream for "Any"', () => {
+            expect(directSubclassNames(builtinClasses.Any)).toStrictEqual([]);
+        });
+
+        const testCases = [
+            {
+                testName: 'should return an empty stream if the class has no subclasses',
+                code: `
+                    class A
+                `,
+                expected: [],
+            },
+            {
+                testName: 'should return the direct subclasses of a class',
+                code: `
+                    class B
+                    class A sub B
+                    class C sub B
+                    class D sub C
+                `,
+                expected: ['A', 'C'],
+            },
+            {
+                testName: 'should only consider the first parent type',
+                code: `
+                    class C
+                    class B
+                    class A sub B, C
+                `,
+                expected: [],
+            },
+            {
+                testName: 'should only consider parent type list',
+                code: `
+                    class C
+
+                    fun f(p: C)
+                `,
+                expected: [],
+            },
+        ];
+
+        it.each(testCases)('$testName', async ({ code, expected }) => {
+            const firstClass = await getNodeOfType(services, code, isSdsClass);
+            expect(directSubclassNames(firstClass)).toStrictEqual(expected);
         });
     });
 });

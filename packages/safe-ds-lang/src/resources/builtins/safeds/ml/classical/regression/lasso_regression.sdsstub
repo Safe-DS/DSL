@@ -1,0 +1,34 @@
+package safeds.ml.classical.regression
+
+from safeds.data.tabular.containers import Table, TaggedTable
+from safeds.ml.classical.regression import Regressor
+
+/**
+ * Lasso regression.
+ *
+ * @param alpha Controls the regularization of the model. The higher the value, the more regularized it becomes.
+ */
+class LassoRegressor(
+    const alpha: Float = 1.0
+) sub Regressor where {
+    alpha >= 0.0
+} {
+    /**
+     * Get the regularization of the model.
+     */
+    attr alpha: Float
+
+    /**
+     * Create a copy of this regressor and fit it with the given training data.
+     *
+     * This regressor is not modified.
+     *
+     * @param trainingSet The training data containing the feature and target vectors.
+     *
+     * @result fittedRegressor The fitted regressor.
+     */
+    @Pure
+    fun fit(
+        @PythonName("training_set") trainingSet: TaggedTable
+    ) -> fittedRegressor: LassoRegressor
+}

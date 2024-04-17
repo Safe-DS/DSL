@@ -10,7 +10,7 @@ import {
     uriToShortenedTestResourceName,
 } from '../../helpers/testResources.js';
 
-const services = createSafeDsServices(EmptyFileSystem).SafeDs;
+const services = (await createSafeDsServices(EmptyFileSystem, { omitBuiltins: true })).SafeDs;
 const rootResourceName = 'partial evaluation';
 
 export const createPartialEvaluationTests = (): Promise<PartialEvaluationTest[]> => {

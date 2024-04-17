@@ -1,0 +1,56 @@
+package validation.style.unnecessaryElvisOperator
+
+@Pure fun f() -> result: Any?
+
+pipeline test {
+
+    // $TEST$ info "The left operand is never null, so the elvis operator is unnecessary (keep the left operand)."
+    »1 ?: 2«;
+    // $TEST$ info "The left operand is never null, so the elvis operator is unnecessary (keep the left operand)."
+    »1 ?: null«;
+    // $TEST$ no info "The left operand is never null, so the elvis operator is unnecessary (keep the left operand)."
+    »null ?: 2«;
+    // $TEST$ no info "The left operand is never null, so the elvis operator is unnecessary (keep the left operand)."
+    »null ?: null«;
+
+    // $TEST$ no info "The right operand is always null, so the elvis operator is unnecessary (keep the left operand)."
+    »1 ?: 2«;
+    // $TEST$ info "The right operand is always null, so the elvis operator is unnecessary (keep the left operand)."
+    »f() ?: null«;
+    // $TEST$ no info "The right operand is always null, so the elvis operator is unnecessary (keep the left operand)."
+    »null ?: 2«;
+    // $TEST$ no info "The right operand is always null, so the elvis operator is unnecessary (keep the left operand)."
+    »null ?: null«;
+
+    // $TEST$ no info "The left operand is always null, so the elvis operator is unnecessary (keep the right operand)."
+    »1 ?: 2«;
+    // $TEST$ no info "The left operand is always null, so the elvis operator is unnecessary (keep the right operand)."
+    »1 ?: null«;
+    // $TEST$ info "The left operand is always null, so the elvis operator is unnecessary (keep the right operand)."
+    »null ?: 2«;
+    // $TEST$ no info "The left operand is always null, so the elvis operator is unnecessary (keep the right operand)."
+    »null ?: null«;
+
+    // $TEST$ no info "Both operands are always null, so the elvis operator is unnecessary (replace it with null)."
+    »1 ?: 2«;
+    // $TEST$ no info "Both operands are always null, so the elvis operator is unnecessary (replace it with null)."
+    »1 ?: null«;
+    // $TEST$ no info "Both operands are always null, so the elvis operator is unnecessary (replace it with null)."
+    »null ?: 2«;
+    // $TEST$ info "Both operands are always null, so the elvis operator is unnecessary (replace it with null)."
+    »null ?: null«;
+}
+
+class TestsForTypeParameters<Nullable, NonNullable sub Any>(
+    nullable: Nullable,
+    nonNullable: NonNullable,
+
+    // $TEST$ no info "The left operand is never null, so the elvis operator is unnecessary (keep the left operand)."
+    p1: Any? = »nullable ?: 2«,
+    // $TEST$ no info "The left operand is never null, so the elvis operator is unnecessary (keep the left operand)."
+    p2: Any? = »nullable ?: null«,
+    // $TEST$ info "The left operand is never null, so the elvis operator is unnecessary (keep the left operand)."
+    p3: Any? = »nonNullable ?: 2«,
+    // $TEST$ info "The left operand is never null, so the elvis operator is unnecessary (keep the left operand)."
+    p4: Any? = »nonNullable ?: null«,
+)

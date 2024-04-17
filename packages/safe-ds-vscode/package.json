@@ -1,6 +1,6 @@
 {
     "name": "safe-ds",
-    "version": "0.6.0",
+    "version": "0.11.0",
     "private": true,
     "description": "Statically checked Data Science programs.",
     "author": {
@@ -55,16 +55,43 @@
                 "id": "safe-ds",
                 "aliases": [
                     "Safe-DS",
-                    "safe-ds",
                     "SafeDS",
-                    "safeds",
-                    "SDS",
-                    "sds"
+                    "SDS"
                 ],
                 "extensions": [
-                    ".sdspipe",
-                    ".sdsstub",
-                    ".sdstest"
+                    ".sds"
+                ],
+                "configuration": "./language-configuration.json",
+                "icon": {
+                    "light": "img/safe-ds_file_icon_light.svg",
+                    "dark": "img/safe-ds_file_icon_dark.svg"
+                }
+            },
+            {
+                "id": "safe-ds-stub",
+                "aliases": [
+                    "Safe-DS Stub",
+                    "SafeDS Stub",
+                    "SDS Stub"
+                ],
+                "extensions": [
+                    ".sdsstub"
+                ],
+                "configuration": "./language-configuration.json",
+                "icon": {
+                    "light": "img/safe-ds_file_icon_light.svg",
+                    "dark": "img/safe-ds_file_icon_dark.svg"
+                }
+            },
+            {
+                "id": "safe-ds-dev",
+                "aliases": [
+                    "Safe-DS Dev",
+                    "SafeDS Dev",
+                    "SDS Dev"
+                ],
+                "extensions": [
+                    ".sdsdev"
                 ],
                 "configuration": "./language-configuration.json",
                 "icon": {
@@ -78,32 +105,111 @@
                 "language": "safe-ds",
                 "scopeName": "source.safe-ds",
                 "path": "./syntaxes/safe-ds.tmLanguage.json"
+            },
+            {
+                "language": "safe-ds-stub",
+                "scopeName": "source.safe-ds-stub",
+                "path": "./syntaxes/safe-ds-stub.tmLanguage.json"
+            },
+            {
+                "language": "safe-ds-dev",
+                "scopeName": "source.safe-ds-dev",
+                "path": "./syntaxes/safe-ds-dev.tmLanguage.json"
+            }
+        ],
+        "snippets": [
+            {
+                "language": "safe-ds",
+                "path": "./snippets/safe-ds.json"
+            },
+            {
+                "language": "safe-ds-stub",
+                "path": "./snippets/safe-ds-stub.json"
+            },
+            {
+                "language": "safe-ds-dev",
+                "path": "./snippets/safe-ds-dev.json"
             }
         ],
         "configuration": {
             "title": "Safe-DS",
             "properties": {
-                "safe-ds.runner.command": {
-                    "description": "Command to start the Safe-DS runner",
-                    "type": "string",
-                    "default": "safe-ds-runner"
+                "safe-ds.inlayHints.assigneeTypes.enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show inferred types for named assignees."
                 },
-                "safe-ds.validation.codeStyle": {
+                "safe-ds.inlayHints.lambdaParameterTypes.enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show inferred types for lambda parameters without manifest types."
+                },
+                "safe-ds.inlayHints.collapseClassTypes": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Collapse the type arguments of class types."
+                },
+                "safe-ds.inlayHints.collapseLiteralTypes": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Collapse the literals of literal types."
+                },
+                "safe-ds.inlayHints.parameterNames.enabled": {
+                    "type": "string",
+                    "enum": [
+                        "none",
+                        "onlyLiterals",
+                        "exceptReferences",
+                        "all"
+                    ],
+                    "enumItemLabels": [
+                        "None",
+                        "Only literals",
+                        "Except references",
+                        "All"
+                    ],
+                    "enumDescriptions": [
+                        "Do not show any inlay hints.",
+                        "Show inlay hints only for literals.",
+                        "Show inlay hints for everything except references.",
+                        "Show all inlay hints."
+                    ],
+                    "default": "onlyLiterals",
+                    "description": "Show parameter names for positional arguments."
+                },
+                "safe-ds.runner.command": {
+                    "type": "string",
+                    "default": "safe-ds-runner",
+                    "description": "Command to start the Safe-DS runner",
+                    "ignoreSync": true
+                },
+                "safe-ds.trace.server": {
+                    "scope": "window",
+                    "type": "string",
+                    "enum": [
+                        "off",
+                        "messages",
+                        "verbose"
+                    ],
+                    "default": "off",
+                    "description": "Traces the communication between VS Code and the language server."
+                },
+                "safe-ds.validation.codeStyle.enabled": {
                     "type": "boolean",
                     "default": true,
                     "description": "Show an info if code style can be improved."
                 },
-                "safe-ds.validation.experimentalLanguageFeature": {
+                "safe-ds.validation.experimentalLanguageFeatures.enabled": {
                     "type": "boolean",
                     "default": true,
                     "description": "Warn if an experimental language feature is used."
                 },
-                "safe-ds.validation.experimentalLibraryElement": {
+                "safe-ds.validation.experimentalLibraryElements.enabled": {
                     "type": "boolean",
                     "default": true,
                     "description": "Warn if an experimental library element is used."
                 },
-                "safe-ds.validation.nameConvention": {
+                "safe-ds.validation.nameConvention.enabled": {
                     "type": "boolean",
                     "default": true,
                     "description": "Warn if a name does not match the Safe-DS name convention."
@@ -113,6 +219,22 @@
         "configurationDefaults": {
             "[safe-ds]": {
                 "editor.semanticHighlighting.enabled": true,
+                "editor.suggest.snippetsPreventQuickSuggestions": true,
+                "editor.wordBasedSuggestions": "off",
+                "editor.wordSeparators": "`~!@#%^&*()-=+[]{}\\|;:'\",.<>/?»«",
+                "files.trimTrailingWhitespace": true
+            },
+            "[safe-ds-stub]": {
+                "editor.semanticHighlighting.enabled": true,
+                "editor.suggest.snippetsPreventQuickSuggestions": true,
+                "editor.wordBasedSuggestions": "off",
+                "editor.wordSeparators": "`~!@#%^&*()-=+[]{}\\|;:'\",.<>/?»«",
+                "files.trimTrailingWhitespace": true
+            },
+            "[safe-ds-dev]": {
+                "editor.semanticHighlighting.enabled": true,
+                "editor.suggest.snippetsPreventQuickSuggestions": true,
+                "editor.wordBasedSuggestions": "off",
                 "editor.wordSeparators": "`~!@#%^&*()-=+[]{}\\|;:'\",.<>/?»«",
                 "files.trimTrailingWhitespace": true
             }
@@ -132,7 +254,7 @@
         "menus": {
             "editor/title/run": [
                 {
-                    "command": "extension.safe-ds.runPipelineFile",
+                    "command": "safe-ds.runPipelineFile",
                     "when": "resourceLangId == safe-ds",
                     "group": "navigation@1"
                 }
@@ -147,22 +269,41 @@
         },
         "commands": [
             {
-                "command": "extension.safe-ds.runPipelineFile",
+                "command": "safe-ds.dumpDiagnostics",
+                "title": "Dump Diagnostics to JSON",
+                "category": "Safe-DS"
+            },
+            {
+                "command": "safe-ds.installRunner",
+                "title": "Install the Safe-DS Runner",
+                "category": "Safe-DS"
+            },
+            {
+                "command": "safe-ds.openDiagnosticsDumps",
+                "title": "Open Diagnostics Dumps in New VS Code Window",
+                "category": "Safe-DS"
+            },
+            {
+                "command": "safe-ds.refreshWebview",
+                "title": "Refresh Webview",
+                "category": "Safe-DS"
+            },
+            {
+                "command": "safe-ds.runPipelineFile",
                 "title": "Run Pipeline",
                 "category": "Safe-DS",
                 "icon": "$(play)"
+            },
+            {
+                "command": "safe-ds.updateRunner",
+                "title": "Update the Safe-DS Runner",
+                "category": "Safe-DS"
             },
             {
                 "command": "safe-ds.custom-editor.open",
                 "title": "Open in Custom Editor",
                 "category": "Safe-DS",
                 "icon": "$(symbol-structure)"
-            }
-        ],
-        "snippets": [
-            {
-                "language": "safe-ds",
-                "path": "./snippets/safe-ds.json"
             }
         ]
     },
@@ -178,20 +319,17 @@
         "deploy": "vsce publish"
     },
     "dependencies": {
-        "source-map": "^0.7.4",
-        "tree-kill": "^1.2.2",
-        "vscode-languageclient": "^9.0.1",
-        "ws": "^8.16.0"
+        "semver": "^7.6.0",
+        "vscode-languageclient": "^9.0.1"
     },
     "devDependencies": {
         "@types/node": "^18.18.12",
-        "@types/vscode": "^1.84.2",
-        "@types/ws": "^8.5.10",
-        "@vscode/vsce": "^2.22.0",
-        "esbuild": "^0.19.11",
+        "@types/vscode": "^1.87.0",
+        "@vscode/vsce": "^2.24.0",
+        "esbuild": "^0.20.2",
         "esbuild-plugin-copy": "^2.1.1"
     },
     "engines": {
-        "vscode": "^1.84.0"
+        "vscode": "^1.87.0"
     }
 }

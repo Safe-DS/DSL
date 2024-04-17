@@ -1,0 +1,17 @@
+package tests.typing.expressions.calls.ofClasses
+
+class C()
+
+pipeline myPipeline {
+    // $TEST$ serialization C
+    »C()«;
+
+    // $TEST$ serialization unknown
+    »C()()«;
+
+    // $TEST$ serialization C
+    »C?()«;
+
+    // $TEST$ serialization unknown
+    »C?()?()«;
+}

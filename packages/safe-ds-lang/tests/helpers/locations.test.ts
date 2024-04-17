@@ -35,17 +35,17 @@ describe('locationToString', () => {
     it.each([
         {
             location: {
-                uri: 'file:///test.sdstest',
+                uri: 'file:///test.sdsdev',
                 range: { start: { line: 0, character: 0 }, end: { line: 0, character: 0 } },
             },
-            expected: 'file:///test.sdstest:1:1 -> 1:1',
+            expected: 'file:///test.sdsdev:1:1 -> 1:1',
         },
         {
             location: {
-                uri: 'file:///test.sdstest',
+                uri: 'file:///test.sdsdev',
                 range: { start: { line: 0, character: 0 }, end: { line: 1, character: 0 } },
             },
-            expected: 'file:///test.sdstest:1:1 -> 2:1',
+            expected: 'file:///test.sdsdev:1:1 -> 2:1',
         },
     ])(`should convert location to string ($expected)`, ({ location, expected }) => {
         expect(locationToString(location)).toBe(expected);
@@ -56,11 +56,11 @@ describe('isLocationEqual', () => {
     it.each([
         {
             location1: {
-                uri: 'file:///test.sdstest',
+                uri: 'file:///test.sdsdev',
                 range: { start: { line: 0, character: 0 }, end: { line: 0, character: 0 } },
             },
             location2: {
-                uri: 'file:///test.sdstest',
+                uri: 'file:///test.sdsdev',
                 range: { start: { line: 0, character: 0 }, end: { line: 0, character: 0 } },
             },
             expected: true,
@@ -68,11 +68,11 @@ describe('isLocationEqual', () => {
         },
         {
             location1: {
-                uri: 'file:///test.sdstest',
+                uri: 'file:///test.sdsdev',
                 range: { start: { line: 0, character: 0 }, end: { line: 0, character: 0 } },
             },
             location2: {
-                uri: 'file:///test2.sdstest',
+                uri: 'file:///test2.sdsdev',
                 range: { start: { line: 0, character: 0 }, end: { line: 0, character: 0 } },
             },
             expected: false,
@@ -80,11 +80,11 @@ describe('isLocationEqual', () => {
         },
         {
             location1: {
-                uri: 'file:///test.sdstest',
+                uri: 'file:///test.sdsdev',
                 range: { start: { line: 0, character: 0 }, end: { line: 0, character: 0 } },
             },
             location2: {
-                uri: 'file:///test.sdstest',
+                uri: 'file:///test.sdsdev',
                 range: { start: { line: 0, character: 0 }, end: { line: 1, character: 0 } },
             },
             expected: false,

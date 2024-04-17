@@ -1,0 +1,31 @@
+package tests.validation.types.checking.prefixOperations
+
+segment mySegment() {
+
+    // $TEST$ no error r"Expected type 'Boolean' but got .*\."
+    not »true«;
+    // $TEST$ error "Expected type 'Boolean' but got 'literal<0>'."
+    not »0«;
+    // $TEST$ error "Expected type 'Boolean' but got 'unknown'."
+    not »unresolved«;
+
+    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
+    -»0.0«;
+    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
+    -»0«;
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
+    -»""«;
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
+    -»unresolved«;
+}
+
+// Strict checking of type parameter types
+class MyClass<T sub Any>(
+    p1: T,
+
+    // $TEST$ error "Expected type 'Boolean' but got 'T'."
+    a: Any? = not »p1«,
+
+    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
+    b: Any? = -»p1«,
+)

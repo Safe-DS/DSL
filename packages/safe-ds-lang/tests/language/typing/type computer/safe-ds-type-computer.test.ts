@@ -1,14 +1,14 @@
 import { describe, it } from 'vitest';
-import { createSafeDsServicesWithBuiltins } from '../../../../src/language/index.js';
 import { NodeFileSystem } from 'langium/node';
 import { AssertionError } from 'assert';
 import { locationToString } from '../../../../src/helpers/locations.js';
 import { createTypingTests } from './creator.js';
 import { getNodeByLocation } from '../../../helpers/nodeFinder.js';
 import { loadDocuments } from '../../../helpers/testResources.js';
+import { createSafeDsServices } from '../../../../src/language/index.js';
 
-const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
-const typeComputer = services.types.TypeComputer;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
+const typeComputer = services.typing.TypeComputer;
 
 describe('typing', async () => {
     it.each(await createTypingTests())('$testName', async (test) => {

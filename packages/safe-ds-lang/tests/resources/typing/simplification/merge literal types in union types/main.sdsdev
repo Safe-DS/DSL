@@ -1,0 +1,18 @@
+package tests.typing.simplification.mergeLiteralTypesInUnionTypes
+
+class C(
+    // $TEST$ serialization literal<1>
+    p1: »union<literal<1, 1>, literal<1, 1>>«,
+
+    // $TEST$ serialization literal<1, 2>
+    p2: »union<literal<1, 1>, literal<1, 2>>«,
+
+    // $TEST$ serialization literal<1, 2, 3>
+    p3: »union<literal<1, 2>, literal<2, 3>>«,
+
+    // $TEST$ serialization literal<1, 2, 3>
+    p4: »union<literal<1>, literal<2>, literal<3>>«,
+
+    // $TEST$ serialization union<literal<1, 2, 3>, String>
+    p5: »union<literal<1, 1>, String, literal<2, 3>>«,
+)

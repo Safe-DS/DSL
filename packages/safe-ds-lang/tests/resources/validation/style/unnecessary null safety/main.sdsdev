@@ -1,0 +1,160 @@
+package tests.validation.style.unnecessaryNullSafety
+
+class MyClass() {
+    attr a: Int
+    attr l: List<Int>
+    @Pure fun f()
+}
+
+segment call(
+    myClass: MyClass,
+    myClassOrNull: MyClass?,
+) {
+    val myFunction = myClass.f;
+    val myFunctionOrNull = myClassOrNull?.f;
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    »(() {})()«;
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    »1()«;
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    »null()«;
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    »myFunction()«;
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    »myFunctionOrNull()«;
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    »unresolved()«;
+
+
+    // $TEST$ info "The receiver is never null, so null-safety is unnecessary."
+    »(() {})?()«;
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    »1?()«;
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    »null?()«;
+
+    // $TEST$ info "The receiver is never null, so null-safety is unnecessary."
+    »myFunction?()«;
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    »myFunctionOrNull?()«;
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    »unresolved?()«;
+}
+
+segment indexedAccess(
+    myClass: MyClass,
+    myClassOrNull: MyClass?,
+) {
+    val myList = myClass.l;
+    val myListOrNull = myClassOrNull?.l;
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    »[1][0]«;
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    »1[0]«;
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    »null[0]«;
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    »myList[0]«;
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    »myListOrNull[0]«;
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    »unresolved[0]«;
+
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    »1?[0]«;
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    »null?[0]«;
+
+    // $TEST$ info "The receiver is never null, so null-safety is unnecessary."
+    »myList?[0]«;
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    »myListOrNull?[0]«;
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    »unresolved?[0]«;
+}
+
+class IndexedAccess<Nullable sub List<Int>?, NonNullable sub List<Int>>(
+    nullable: Nullable,
+    nonNullable: NonNullable,
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    p1: Any? = »nullable[0]«,
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    p2: Any? = »nonNullable[0]«,
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    p3: Any? = »nullable?[0]«,
+    // $TEST$ info "The receiver is never null, so null-safety is unnecessary."
+    p4: Any? = »nonNullable?[0]«,
+)
+
+segment memberAccess(
+    myClass: MyClass,
+    myClassOrNull: MyClass?,
+) {
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    »1.a«;
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    »null.a«;
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    »myClass.a«;
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    »myClassOrNull.a«;
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    »unresolved.a«;
+
+
+    // $TEST$ info "The receiver is never null, so null-safety is unnecessary."
+    »1?.a«;
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    »null?.a«;
+
+    // $TEST$ info "The receiver is never null, so null-safety is unnecessary."
+    »myClass?.a«;
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    »myClassOrNull?.a«;
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    »unresolved?.a«;
+}
+
+class MemberAccess<Nullable sub MyClass?, NonNullable sub MyClass>(
+    nullable: Nullable,
+    nonNullable: NonNullable,
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    p1: Any? = »nullable.a«,
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    p2: Any? = »nonNullable.a«,
+
+    // $TEST$ no info "The receiver is never null, so null-safety is unnecessary."
+    p3: Any? = »nullable?.a«,
+    // $TEST$ info "The receiver is never null, so null-safety is unnecessary."
+    p4: Any? = »nonNullable?.a«,
+)

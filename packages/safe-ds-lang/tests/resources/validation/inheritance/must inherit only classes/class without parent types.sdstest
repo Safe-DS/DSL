@@ -1,4 +1,0 @@
-package tests.validation.inheritance.mustInheritOnlyClasses
-
-// $TEST$ no error "A class must only inherit classes."
-class TestClass

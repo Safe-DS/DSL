@@ -1,0 +1,34 @@
+package tests.scoping.parameterBounds.inEnumVariantInNestedEnum
+
+class MyClass(container: Int) {
+    fun myFunction1(beforeEnum: Int)
+
+    enum MyEnum {
+        MyEnumVariant(
+            // $TEST$ target own
+            »own«: Int
+        ) where {
+            // $TEST$ references own
+            »own« < 0,
+
+            // $TEST$ unresolved
+            »container« < 0,
+
+            // $TEST$ unresolved
+            »beforeEnum« < 0,
+
+            // $TEST$ unresolved
+            »afterEnum« < 0,
+
+            // $TEST$ unresolved
+            »notAParameter« < 0,
+
+            // $TEST$ unresolved
+            »unresolved« < 0
+        }
+    }
+
+    fun myFunction2(afterEnum: Int)
+}
+
+class notAParameter

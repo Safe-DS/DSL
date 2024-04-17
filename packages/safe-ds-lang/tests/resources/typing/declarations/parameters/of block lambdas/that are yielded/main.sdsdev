@@ -1,0 +1,17 @@
+package tests.typing.declarations.parameters.ofBlockLambdas.thatAreYielded
+
+segment mySegment() -> (
+    // $TEST$ equivalence_class parameterType2
+    r: (p: »String«) -> (),
+    s: () -> (),
+    t: Int,
+) {
+    // $TEST$ equivalence_class parameterType2
+    yield r = (»p«) {};
+
+    // $TEST$ serialization unknown
+    yield s = (»p«) {};
+
+    // $TEST$ serialization unknown
+    yield t = (»p«) {};
+}

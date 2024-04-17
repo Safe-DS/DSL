@@ -1,7 +1,0 @@
-package tests.generator.indexedAccess
-
-@Impure([ImpurityReason.Other]) fun f(param: Any?)
-
-segment test(params: List<Int>) {
-    f(params[0]);
-}

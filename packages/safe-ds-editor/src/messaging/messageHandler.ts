@@ -1,7 +1,7 @@
 import type {
     ExtensionToWebview,
     WebviewToExtension,
-} from '../../../safe-ds-vscode/src/custom-editor/messaging/message-types';
+} from '../../../safe-ds-vscode/src/extension/custom-editor/messaging/message-types';
 
 export default class MessageHandler {
     public static listenToMessages() {

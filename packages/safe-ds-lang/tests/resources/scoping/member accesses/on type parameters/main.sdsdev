@@ -1,0 +1,27 @@
+package tests.scoping.memberAccesses.onTypeParameters
+
+class C {
+    // $TEST$ target attribute
+    attr »a«: Int
+}
+
+class MyClass<Unbounded, UpperBound sub C>(
+    unbounded: Unbounded,
+    upperBound: UpperBound,
+
+    // $TEST$ unresolved
+    p1: Any = unbounded.»a«,
+    // $TEST$ references attribute
+    p2: Any = upperBound.»a«,
+) {
+    attr unbounded: Unbounded
+    attr upperBound: UpperBound
+}
+
+segment mySegment(instance: MyClass<C, C>) {
+    // $TEST$ references attribute
+    instance.unbounded.»a«;
+
+    // $TEST$ references attribute
+    instance.upperBound.»a«;
+}

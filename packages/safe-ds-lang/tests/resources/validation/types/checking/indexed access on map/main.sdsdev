@@ -1,0 +1,50 @@
+package tests.validation.types.checking.indexedAccessOnMap
+
+@Pure fun map() -> map: Map<String, Int>
+@Pure fun key() -> key: String
+
+pipeline myPipeline {
+    // $TEST$ no error r"Expected type .* but got .*\."
+    {"": ""}[»""«];
+
+    // $TEST$ error "Expected type 'String' but got 'literal<1>'."
+    {"": ""}[»1«];
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    {"": ""}[»key()«];
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    map()[»""«];
+
+    // $TEST$ error "Expected type 'String' but got 'literal<1>'."
+    map()[»1«];
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    map()[»key()«];
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    unresolved[»""«];
+}
+
+class MyMap sub Map<String, Int>
+
+segment mySegment(
+    myMap: MyMap,
+) {
+    // $TEST$ no error r"Expected type .* but got .*\."
+    myMap[»""«];
+
+    // $TEST$ error "Expected type 'String' but got 'literal<1>'."
+    myMap[»1«];
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    myMap[»key()«];
+}
+
+// Strict checking of type parameter types
+class MyClass<T sub Any>(
+    p1: T,
+
+    // $TEST$ error "Expected type 'String' but got 'T'."
+    a: Any? = {"": ""}[»p1«],
+)

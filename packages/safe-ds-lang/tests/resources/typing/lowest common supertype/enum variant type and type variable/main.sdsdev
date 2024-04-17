@@ -1,0 +1,32 @@
+package tests.typing.lowestCommonSupertype.enumVariantTypeAndTypeVariable
+
+enum E {
+    V1
+    V2
+}
+
+class D<
+    Unbounded,
+    BoundedByEnumVariant sub E.V1,
+    BoundedByOtherEnumVariant sub E.V2,
+    BoundedByOtherEnumVariantOrNull sub E.V2?
+>(
+    v: E.V1,
+
+    unbounded: Unbounded,
+    unboundedOrNull: Unbounded?,
+    boundedByEnumVariant: BoundedByEnumVariant,
+    boundedByOtherEnumVariant: BoundedByOtherEnumVariant,
+    boundedByOtherEnumVariantOrNull: BoundedByOtherEnumVariantOrNull,
+
+    // $TEST$ serialization List<Any?>
+    p1: Any = »[v, unbounded]«,
+    // $TEST$ serialization List<Any?>
+    p2: Any = »[v, unboundedOrNull]«,
+    // $TEST$ serialization List<E.V1>
+    p3: Any = »[v, boundedByEnumVariant]«,
+    // $TEST$ serialization List<E>
+    p4: Any = »[v, boundedByOtherEnumVariant]«,
+    // $TEST$ serialization List<E?>
+    p5: Any = »[v, boundedByOtherEnumVariantOrNull]«,
+)

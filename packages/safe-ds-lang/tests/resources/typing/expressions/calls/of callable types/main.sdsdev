@@ -1,0 +1,18 @@
+package tests.typing.expressions.calls.ofCallableTypes
+
+segment mySegment(
+    p1: () -> r: String,
+    p2: () -> (r: String, s: Int)
+) {
+    // $TEST$ serialization String
+    »p1()«;
+
+    // $TEST$ serialization (r: String, s: Int)
+    »p2()«;
+
+    // $TEST$ serialization String
+    »p1?()«;
+
+    // $TEST$ serialization (r: String, s: Int)
+    »p2?()«;
+}

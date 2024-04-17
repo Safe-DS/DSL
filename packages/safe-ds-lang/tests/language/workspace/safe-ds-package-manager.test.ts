@@ -3,7 +3,7 @@ import { clearDocuments, parseHelper } from 'langium/test';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createSafeDsServices } from '../../../src/language/index.js';
 
-const services = createSafeDsServices(EmptyFileSystem).SafeDs;
+const services = (await createSafeDsServices(EmptyFileSystem, { omitBuiltins: true })).SafeDs;
 const packageManager = services.workspace.PackageManager;
 
 const document1 = `

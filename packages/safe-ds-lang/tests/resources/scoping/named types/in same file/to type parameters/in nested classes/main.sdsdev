@@ -1,0 +1,102 @@
+package tests.scoping.namedTypes.inSameFile.toTypeParameter.inNestedClasses
+
+fun myFunction1<BeforeGlobal>()
+
+// $TEST$ target container
+class MyClass1<»Container«, Overridden> {
+    fun myFunction2<BeforeMember>()
+
+    class MyClass2<
+        // $TEST$ target own
+        »Own«,
+
+        // $TEST$ target overridden
+        »Overridden«,
+
+        // $TEST$ references own
+        T1 sub »Own«,
+
+        // $TEST$ references overridden
+        T2 sub »Overridden«,
+
+        // $TEST$ references container
+        T3 sub »Container«,
+
+        // $TEST$ unresolved
+        T4 sub »BeforeMember«,
+
+        // $TEST$ unresolved
+        T5 sub »AfterMember«,
+
+        // $TEST$ unresolved
+        T6 sub »BeforeGlobal«,
+
+        // $TEST$ unresolved
+        T7 sub »AfterGlobal«,
+
+        // $TEST$ unresolved
+        T8 sub »Unresolved«,
+
+        // $TEST$ unresolved
+        T9 sub »Forward«,
+
+        Forward,
+    >(
+        // $TEST$ references own
+        a: »Own«,
+
+        // $TEST$ references overridden
+        b: »Overridden«,
+
+        // $TEST$ references container
+        c: »Container«,
+
+        // $TEST$ unresolved
+        d: »BeforeMember«,
+
+        // $TEST$ unresolved
+        e: »AfterMember«,
+
+        // $TEST$ unresolved
+        f: »BeforeGlobal«,
+
+        // $TEST$ unresolved
+        g: »AfterGlobal«,
+
+        // $TEST$ unresolved
+        h: »Unresolved«,
+    )
+    // $TEST$ references own
+    // $TEST$ references overridden
+    // $TEST$ references container
+    sub »Own«, »Overridden«, »Container«
+    {
+        // $TEST$ references own
+        attr z: »Own«
+
+        // $TEST$ references overridden
+        attr y: »Overridden«
+
+        // $TEST$ references container
+        attr x: »Container«
+
+        // $TEST$ unresolved
+        attr w: »BeforeMember«
+
+        // $TEST$ unresolved
+        attr v: »AfterMember«
+
+        // $TEST$ unresolved
+        attr u: »BeforeGlobal«
+
+        // $TEST$ unresolved
+        attr t: »AfterGlobal«
+
+        // $TEST$ unresolved
+        attr s: »Unresolved«
+    }
+
+    fun myFunction3<AfterMember>()
+}
+
+fun myFunction4<AfterGlobal>()

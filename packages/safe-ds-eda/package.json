@@ -1,0 +1,24 @@
+{
+    "name": "@safe-ds/eda",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "clean": "shx rm -rf dist lib *.tsbuildinfo",
+        "dev": "vite",
+        "watch": "vite build --watch",
+        "build": "vite build",
+        "preview": "vite preview",
+        "check": "svelte-check --tsconfig ./tsconfig.json"
+    },
+    "dependencies": {
+        "lodash": "^4.17.21",
+        "svelte-svg": "^0.0.7"
+    },
+    "devDependencies": {
+        "@sveltejs/vite-plugin-svelte": "^3.0.2",
+        "@types/lodash": "^4.17.0",
+        "svelte-check": "^3.6.8",
+        "vite": "^5.2.7"
+    }
+}

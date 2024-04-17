@@ -1,0 +1,42 @@
+package tests.validation.types.checking.indexedAccessReceiver
+
+class MyList sub List<Int>
+class MyMap sub Map<String, Int>
+
+segment mySegment(
+    listOrNull: List<Int>?,
+    mapOrNull: Map<String, Int>?,
+    intOrNull: Int?,
+
+    myList: MyList,
+    myMap: MyMap,
+) {
+    // $TEST$ no error r"Expected type 'List<T>' or 'Map<K, V>' but got .*\."
+    »[1]«[0];
+    // $TEST$ no error r"Expected type 'List<T>' or 'Map<K, V>' but got .*\."
+    »{0: 1}«[0];
+    // $TEST$ error "Expected type 'List<T>' or 'Map<K, V>' but got 'literal<1>'."
+    »1«[0];
+
+    // $TEST$ no error r"Expected type 'List<T>' or 'Map<K, V>' but got .*\."
+    »listOrNull«[0];
+    // $TEST$ no error r"Expected type 'List<T>' or 'Map<K, V>' but got .*\."
+    »mapOrNull«[""];
+    // $TEST$ error "Expected type 'List<T>' or 'Map<K, V>' but got 'Int?'."
+    »intOrNull«[0];
+
+    // $TEST$ no error r"Expected type 'List<T>' or 'Map<K, V>' but got .*\."
+    »myList«[0];
+    // $TEST$ no error r"Expected type 'List<T>' or 'Map<K, V>' but got .*\."
+    »myMap«[""];
+    // $TEST$ error "Expected type 'List<T>' or 'Map<K, V>' but got 'unknown'."
+    »unresolved«[0];
+}
+
+// Strict checking of type parameter types
+class MyClass<T sub Any>(
+    p1: T,
+
+    // $TEST$ error "Expected type 'List<T>' or 'Map<K, V>' but got 'T'."
+    p2: Any? = »p1«[0],
+)

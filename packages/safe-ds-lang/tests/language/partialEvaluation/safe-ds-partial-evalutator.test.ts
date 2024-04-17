@@ -1,13 +1,13 @@
 import { AssertionError } from 'assert';
 import { NodeFileSystem } from 'langium/node';
 import { describe, it } from 'vitest';
-import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
 import { locationToString } from '../../../src/helpers/locations.js';
 import { getNodeByLocation } from '../../helpers/nodeFinder.js';
 import { loadDocuments } from '../../helpers/testResources.js';
 import { createPartialEvaluationTests } from './creator.js';
+import { createSafeDsServices } from '../../../src/language/index.js';
 
-const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const partialEvaluator = services.evaluation.PartialEvaluator;
 
 describe('partial evaluation', async () => {

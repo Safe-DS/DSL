@@ -1,0 +1,13 @@
+package tests.validation.types.checking.arguments.parameterNamesOfCallableTypes
+
+@Pure fun f(callback: (p: Int) -> (r: Int))
+
+segment mySegment() {
+    // $TEST$ no error r"Expected type .* but got .*\."
+    f(»(q) {
+        yield s = 1;
+    }«);
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    f(»(q) -> 1«);
+}

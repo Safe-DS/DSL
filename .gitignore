@@ -14,6 +14,7 @@ coverage/
 dist/
 dist-ssr/
 generated/
+!**/tests/resources/generation/**/generated/
 lib/
 !packages/safe-ds-editor/src/lib/
 out/

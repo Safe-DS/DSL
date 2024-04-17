@@ -2,10 +2,10 @@ import { NodeFileSystem } from 'langium/node';
 import { parseHelper } from 'langium/test';
 import { describe, expect, it } from 'vitest';
 import { type TypeHierarchyItem } from 'vscode-languageserver';
-import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
 import { findTestRanges } from '../../helpers/testRanges.js';
+import { createSafeDsServices } from '../../../src/language/index.js';
 
-const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const typeHierarchyProvider = services.lsp.TypeHierarchyProvider!;
 const parse = parseHelper(services);
 
@@ -128,23 +128,23 @@ describe('SafeDsTypeHierarchyProvider', async () => {
 });
 
 const getActualSimpleSupertypes = async (code: string): Promise<SimpleTypeHierarchyItem[] | undefined> => {
-    return typeHierarchyProvider
-        .supertypes({
-            item: await getUniqueTypeHierarchyItem(code),
-        })
-        ?.map((type) => ({
-            name: type.name,
-        }));
+    const result = await typeHierarchyProvider.supertypes({
+        item: await getUniqueTypeHierarchyItem(code),
+    });
+
+    return result?.map((type) => ({
+        name: type.name,
+    }));
 };
 
 const getActualSimpleSubtypes = async (code: string): Promise<SimpleTypeHierarchyItem[] | undefined> => {
-    return typeHierarchyProvider
-        .subtypes({
-            item: await getUniqueTypeHierarchyItem(code),
-        })
-        ?.map((type) => ({
-            name: type.name,
-        }));
+    const result = await typeHierarchyProvider.subtypes({
+        item: await getUniqueTypeHierarchyItem(code),
+    });
+
+    return result?.map((type) => ({
+        name: type.name,
+    }));
 };
 
 const getUniqueTypeHierarchyItem = async (code: string): Promise<TypeHierarchyItem> => {
@@ -159,7 +159,7 @@ const getUniqueTypeHierarchyItem = async (code: string): Promise<TypeHierarchyIt
     const testRangeStart = testRangesResult.value[0]!.start;
 
     const items =
-        typeHierarchyProvider.prepareTypeHierarchy(document, {
+        (await typeHierarchyProvider.prepareTypeHierarchy(document, {
             textDocument: {
                 uri: document.textDocument.uri,
             },
@@ -169,7 +169,7 @@ const getUniqueTypeHierarchyItem = async (code: string): Promise<TypeHierarchyIt
                 // Then we need to move the cursor one character to the right to be inside the identifier.
                 character: testRangeStart.character + 1,
             },
-        }) ?? [];
+        })) ?? [];
 
     if (items.length !== 1) {
         throw new Error(`Expected exactly one type hierarchy item, but got ${items.length}.`);

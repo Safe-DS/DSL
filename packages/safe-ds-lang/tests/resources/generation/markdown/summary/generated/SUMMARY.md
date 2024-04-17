@@ -1,0 +1,17 @@
+---
+search:
+  exclude: true
+---
+
+- tests
+    - generation
+        - markdown
+            - summary
+                - package1
+                    - subpackage
+                        - [MyClass5](tests/generation/markdown/summary/package1/subpackage/MyClass5.md)
+                    - [MyClass1](tests/generation/markdown/summary/package1/MyClass1.md)
+                    - [MyClass2](tests/generation/markdown/summary/package1/MyClass2.md)
+                    - [MyClass3](tests/generation/markdown/summary/package1/MyClass3.md)
+                - package2
+                    - [MyClass4](tests/generation/markdown/summary/package2/MyClass4.md)

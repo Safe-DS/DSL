@@ -1,0 +1,24 @@
+package tests.scoping.namedTypes.inSameFile.toTypeParameter.inEnumVariantsInNestedEnums
+
+// $TEST$ target container
+class MyClass<»Container«> {
+    fun myFunction1<BeforeEnum>()
+
+    enum MyEnum {
+        MyEnumVariant(
+            // $TEST$ references container
+            a: »Container«,
+
+            // $TEST$ unresolved
+            b: »BeforeEnum«,
+
+            // $TEST$ unresolved
+            c: »AfterEnum«,
+
+            // $TEST$ unresolved
+            d: »Unresolved«,
+        )
+    }
+
+    fun myFunction2<AfterEnum>()
+}

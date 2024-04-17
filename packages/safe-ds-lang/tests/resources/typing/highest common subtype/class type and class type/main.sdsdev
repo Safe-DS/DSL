@@ -1,0 +1,42 @@
+package tests.typing.highestCommonSubtype.classTypeAndClassType
+
+class Contravariant<in T>
+
+class C
+class D sub C
+class E
+
+segment mySegment1(
+    c: Contravariant<C>,
+    cOrNull: Contravariant<C?>,
+
+    d: Contravariant<D>,
+    dOrNull: Contravariant<D?>,
+
+    e: Contravariant<E>,
+    eOrNull: Contravariant<E?>,
+) {
+    // $TEST$ serialization List<Contravariant<C>>
+    »[c, c]«;
+    // $TEST$ serialization List<Contravariant<C>>
+    »[c, cOrNull]«;
+    // $TEST$ serialization List<Contravariant<D>>
+    »[c, d]«;
+    // $TEST$ serialization List<Contravariant<D>>
+    »[c, dOrNull]«;
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[c, e]«;
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[c, eOrNull]«;
+
+    // $TEST$ serialization List<Contravariant<C?>>
+    »[cOrNull, cOrNull]«;
+    // $TEST$ serialization List<Contravariant<D>>
+    »[cOrNull, d]«;
+    // $TEST$ serialization List<Contravariant<D?>>
+    »[cOrNull, dOrNull]«;
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[cOrNull, e]«;
+    // $TEST$ serialization List<Contravariant<Nothing?>>
+    »[cOrNull, eOrNull]«;
+}

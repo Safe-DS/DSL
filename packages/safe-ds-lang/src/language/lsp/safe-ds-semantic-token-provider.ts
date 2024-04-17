@@ -1,4 +1,5 @@
-import { AbstractSemanticTokenProvider, AstNode, hasContainerOfType, SemanticTokenAcceptor } from 'langium';
+import { AbstractSemanticTokenProvider, SemanticTokenAcceptor } from 'langium/lsp';
+import { AstNode, AstUtils } from 'langium';
 import { SemanticTokenModifiers, SemanticTokenTypes } from 'vscode-languageserver';
 import { SafeDsClasses } from '../builtins/safe-ds-classes.js';
 import {
@@ -6,6 +7,7 @@ import {
     isSdsAnnotationCall,
     isSdsArgument,
     isSdsAttribute,
+    isSdsBlockLambdaResult,
     isSdsClass,
     isSdsDeclaration,
     isSdsEnum,
@@ -16,6 +18,7 @@ import {
     isSdsModule,
     isSdsNamedType,
     isSdsParameter,
+    isSdsParameterBound,
     isSdsPipeline,
     isSdsPlaceholder,
     isSdsReference,
@@ -24,7 +27,6 @@ import {
     isSdsSegment,
     isSdsTypeArgument,
     isSdsTypeParameter,
-    isSdsTypeParameterConstraint,
     isSdsYield,
 } from '../generated/ast.js';
 import { SafeDsServices } from '../safe-ds-module.js';
@@ -91,6 +93,12 @@ export class SafeDsSemanticTokenProvider extends AbstractSemanticTokenProvider {
                     ...info,
                 });
             }
+        } else if (isSdsParameterBound(node)) {
+            acceptor({
+                node,
+                property: 'leftOperand',
+                type: SemanticTokenTypes.parameter,
+            });
         } else if (isSdsReference(node)) {
             const info = this.computeSemanticTokenInfoForDeclaration(node.target.ref);
             if (info) {
@@ -108,12 +116,6 @@ export class SafeDsSemanticTokenProvider extends AbstractSemanticTokenProvider {
                     type: SemanticTokenTypes.typeParameter,
                 });
             }
-        } else if (isSdsTypeParameterConstraint(node)) {
-            acceptor({
-                node,
-                property: 'leftOperand',
-                type: SemanticTokenTypes.typeParameter,
-            });
         } else if (isSdsYield(node)) {
             // For lack of a better option, we use the token type for parameters here
             acceptor({
@@ -149,6 +151,12 @@ export class SafeDsSemanticTokenProvider extends AbstractSemanticTokenProvider {
                 type: SemanticTokenTypes.property,
                 modifier,
             };
+        } else if (isSdsBlockLambdaResult(node)) {
+            return {
+                // For lack of a better option, we use the token type for parameters here
+                type: SemanticTokenTypes.parameter,
+                modifier: additionalModifiers,
+            };
         } else if (isSdsClass(node)) {
             const isBuiltinClass = this.builtinClasses.isBuiltinClass(node);
             return {
@@ -168,7 +176,7 @@ export class SafeDsSemanticTokenProvider extends AbstractSemanticTokenProvider {
                 modifier: additionalModifiers,
             };
         } else if (isSdsFunction(node)) {
-            if (hasContainerOfType(node, isSdsClass)) {
+            if (AstUtils.hasContainerOfType(node, isSdsClass)) {
                 return {
                     type: SemanticTokenTypes.method,
                     modifier: node.isStatic

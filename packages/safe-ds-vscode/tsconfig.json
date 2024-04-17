@@ -3,7 +3,8 @@
     "references": [{ "path": "../safe-ds-lang/tsconfig.src.json" }],
     "compilerOptions": {
         "rootDir": ".",
-        "noEmit": true
+        "noEmit": true,
+        "allowImportingTsExtensions": true
     },
     "include": ["src/**/*", "test/**/*"]
 }

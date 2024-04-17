@@ -1,0 +1,14 @@
+package tests.typing.expressions.calls.typeParameterInference.singleCovariant
+
+class C1<T>(p1: T)
+@Pure fun f1<T>(p1: T) -> r1: T
+
+segment mySegment(
+    p1: Int,
+) {
+    // $TEST$ serialization C1<Int>
+    »C1(p1)«;
+
+    // $TEST$ serialization Int
+    »f1(p1)«;
+}

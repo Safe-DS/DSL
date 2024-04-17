@@ -9,11 +9,11 @@
         "sourceMap": true,
         "strict": true,
         "composite": true,
-        "noImplicitReturns": true,
+        "forceConsistentCasingInFileNames": true,
         "noImplicitOverride": true,
+        "noImplicitReturns": true,
         "noUncheckedIndexedAccess": true,
         "noUnusedLocals": false,
-        "strictNullChecks": true,
-        "forceConsistentCasingInFileNames": true
+        "strictNullChecks": true
     }
 }

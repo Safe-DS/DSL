@@ -1,32 +1,33 @@
 import { NodeFileSystem } from 'langium/node';
 import { describe, expect, it } from 'vitest';
 import { isSdsClass, isSdsEnum, isSdsEnumVariant, isSdsFunction } from '../../../src/language/generated/ast.js';
-import { getParameters, getResults } from '../../../src/language/helpers/nodeProperties.js';
-import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
+import { createSafeDsServices, getParameters, getResults, getTypeParameters } from '../../../src/language/index.js';
 import { BooleanConstant, IntConstant, NullConstant } from '../../../src/language/partialEvaluation/model.js';
 import {
-    CallableType,
     ClassType,
     EnumType,
     EnumVariantType,
-    LiteralType,
     NamedTupleEntry,
-    NamedTupleType,
-    StaticType,
+    ToStringOptions,
     Type,
-    UnionType,
+    TypeParameterSubstitutions,
+    TypeVariable,
     UnknownType,
 } from '../../../src/language/typing/model.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
 import type { EqualsTest, ToStringTest } from '../../helpers/testDescription.js';
+import { expectEqualTypes } from '../../helpers/testAssertions.js';
 
-const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
+const coreTypes = services.typing.CoreTypes;
+const factory = services.typing.TypeFactory;
+
 const code = `
     fun f1(p1, p2: Int = 0) -> r
     fun f2(),
 
     class C1
-    class C2
+    class C2<K, V>
 
     enum MyEnum1 {
         MyEnumVariant1
@@ -41,6 +42,8 @@ const result = getResults(callable1.resultList)[0]!;
 const callable2 = await getNodeOfType(services, code, isSdsFunction, 1);
 const class1 = await getNodeOfType(services, code, isSdsClass, 0);
 const class2 = await getNodeOfType(services, code, isSdsClass, 1);
+const typeParameter1 = getTypeParameters(class2)[0]!;
+const typeParameter2 = getTypeParameters(class2)[1]!;
 const enum1 = await getNodeOfType(services, code, isSdsEnum, 0);
 const enum2 = await getNodeOfType(services, code, isSdsEnum, 1);
 const enumVariant1 = await getNodeOfType(services, code, isSdsEnumVariant, 0);
@@ -50,30 +53,49 @@ describe('type model', async () => {
     const equalsTests: EqualsTest<Type>[] = [
         {
             value: () =>
-                new CallableType(
+                factory.createCallableType(
                     callable1,
                     undefined,
-                    new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
-                    new NamedTupleType(),
+                    factory.createNamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
+                    factory.createNamedTupleType(),
                 ),
             unequalValueOfSameType: () =>
-                new CallableType(callable2, undefined, new NamedTupleType(), new NamedTupleType()),
+                factory.createCallableType(
+                    callable2,
+                    undefined,
+                    factory.createNamedTupleType(),
+                    factory.createNamedTupleType(),
+                ),
             valueOfOtherType: () => UnknownType,
         },
         {
-            value: () => new LiteralType(new BooleanConstant(true)),
-            unequalValueOfSameType: () => new LiteralType(new IntConstant(1n)),
+            value: () => factory.createLiteralType(new BooleanConstant(true)),
+            unequalValueOfSameType: () => factory.createLiteralType(new IntConstant(1n)),
             valueOfOtherType: () => UnknownType,
         },
         {
-            value: () => new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
-            unequalValueOfSameType: () => new NamedTupleType(),
+            value: () => factory.createNamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
+            unequalValueOfSameType: () => factory.createNamedTupleType(),
             valueOfOtherType: () => UnknownType,
         },
         {
-            value: () => new ClassType(class1, true),
-            unequalValueOfSameType: () => new ClassType(class2, true),
+            value: () => new ClassType(class1, new Map(), true),
+            unequalValueOfSameType: () => new ClassType(class2, new Map(), true),
             valueOfOtherType: () => UnknownType,
+        },
+        {
+            value: () => new ClassType(class1, new Map(), false),
+            unequalValueOfSameType: () => new ClassType(class1, new Map(), true),
+        },
+        {
+            value: () => new ClassType(class2, new Map([[typeParameter1, UnknownType]]), true),
+            unequalValueOfSameType: () =>
+                new ClassType(class2, new Map([[typeParameter1, factory.createUnionType()]]), true),
+        },
+        {
+            value: () => new ClassType(class2, new Map(), true),
+            unequalValueOfSameType: () =>
+                new ClassType(class2, new Map([[typeParameter1, factory.createUnionType()]]), true),
         },
         {
             value: () => new EnumType(enum1, true),
@@ -86,30 +108,29 @@ describe('type model', async () => {
             valueOfOtherType: () => UnknownType,
         },
         {
-            value: () => new StaticType(new ClassType(class1, false)),
-            unequalValueOfSameType: () => new StaticType(new ClassType(class2, false)),
+            value: () => new TypeVariable(typeParameter1, true),
+            unequalValueOfSameType: () => new TypeVariable(typeParameter2, true),
             valueOfOtherType: () => UnknownType,
         },
         {
-            value: () => new UnionType(UnknownType),
-            unequalValueOfSameType: () => new UnionType(),
+            value: () => factory.createStaticType(new ClassType(class1, new Map(), false)),
+            unequalValueOfSameType: () => factory.createStaticType(new ClassType(class2, new Map(), false)),
+            valueOfOtherType: () => UnknownType,
+        },
+        {
+            value: () => factory.createUnionType(UnknownType),
+            unequalValueOfSameType: () => factory.createUnionType(),
             valueOfOtherType: () => UnknownType,
         },
         {
             value: () => UnknownType,
-            valueOfOtherType: () => new UnionType(),
+            valueOfOtherType: () => factory.createUnionType(),
         },
     ];
     describe.each(equalsTests)('equals', ({ value, unequalValueOfSameType, valueOfOtherType }) => {
         it(`should return true if both types are the same instance (${value().constructor.name})`, () => {
             const typeInstance = value();
             expect(typeInstance.equals(typeInstance)).toBeTruthy();
-        });
-
-        it(`should return false if the other type is an instance of another class (${
-            value().constructor.name
-        })`, () => {
-            expect(value().equals(valueOfOtherType())).toBeFalsy();
         });
 
         it(`should return true if both types have the same values (${value().constructor.name})`, () => {
@@ -121,195 +142,295 @@ describe('type model', async () => {
                 expect(value().equals(unequalValueOfSameType())).toBeFalsy();
             });
         }
+
+        if (valueOfOtherType) {
+            it(`should return false if the other type is an instance of another class (${
+                value().constructor.name
+            })`, () => {
+                expect(value().equals(valueOfOtherType())).toBeFalsy();
+            });
+        }
     });
 
-    const toStringTests: ToStringTest<Type>[] = [
+    const toStringTests: TypeToStringTest[] = [
         {
-            value: new CallableType(
+            value: factory.createCallableType(
                 callable1,
                 undefined,
-                new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
-                new NamedTupleType(),
+                factory.createNamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
+                factory.createNamedTupleType(),
             ),
-            expectedString: '(p1: ?) -> ()',
+            expectedString: '(p1: unknown) -> ()',
         },
         {
-            value: new CallableType(
+            value: factory.createCallableType(
                 callable1,
                 undefined,
-                new NamedTupleType(new NamedTupleEntry(parameter2, 'p2', UnknownType)),
-                new NamedTupleType(),
+                factory.createNamedTupleType(new NamedTupleEntry(parameter2, 'p2', UnknownType)),
+                factory.createNamedTupleType(),
             ),
-            expectedString: '(p2?: ?) -> ()',
+            expectedString: '(p2?: unknown) -> ()',
         },
         {
-            value: new LiteralType(new BooleanConstant(true)),
+            value: factory.createLiteralType(new BooleanConstant(true)),
             expectedString: 'literal<true>',
         },
         {
-            value: new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
-            expectedString: '(p1: ?)',
+            value: factory.createLiteralType(new BooleanConstant(true)),
+            options: { collapseLiteralTypes: true },
+            expectedString: 'literal<…>',
         },
         {
-            value: new ClassType(class1, true),
+            value: factory.createNamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
+            expectedString: '(p1: unknown)',
+        },
+        {
+            value: new ClassType(class1, new Map(), false),
+            expectedString: 'C1',
+        },
+        {
+            value: new ClassType(class1, new Map(), true),
             expectedString: 'C1?',
+        },
+        {
+            value: new ClassType(class2, new Map([[typeParameter1, factory.createUnionType()]]), true),
+            expectedString: 'C2<union<>>?',
+        },
+        {
+            value: new ClassType(class2, new Map([[typeParameter1, factory.createUnionType()]]), true),
+            options: { collapseClassTypes: true },
+            expectedString: 'C2<…>?',
+        },
+        {
+            value: new EnumType(enum1, false),
+            expectedString: 'MyEnum1',
         },
         {
             value: new EnumType(enum1, true),
             expectedString: 'MyEnum1?',
         },
         {
-            value: new EnumVariantType(enumVariant1, true),
-            expectedString: 'MyEnumVariant1?',
+            value: new EnumVariantType(enumVariant1, false),
+            expectedString: 'MyEnum1.MyEnumVariant1',
         },
         {
-            value: new StaticType(new ClassType(class1, false)),
+            value: new EnumVariantType(enumVariant1, true),
+            expectedString: 'MyEnum1.MyEnumVariant1?',
+        },
+        {
+            value: new TypeVariable(typeParameter1, false),
+            expectedString: 'K',
+        },
+        {
+            value: new TypeVariable(typeParameter1, true),
+            expectedString: 'K?',
+        },
+        {
+            value: factory.createStaticType(new ClassType(class1, new Map(), false)),
             expectedString: '$type<C1>',
         },
         {
-            value: new UnionType(UnknownType),
-            expectedString: 'union<?>',
+            value: factory.createUnionType(UnknownType),
+            expectedString: 'union<unknown>',
         },
         {
             value: UnknownType,
-            expectedString: '?',
+            expectedString: 'unknown',
         },
     ];
-    describe.each(toStringTests)('toString', ({ value, expectedString }) => {
+    describe.each(toStringTests)('toString', ({ value, options, expectedString }) => {
         it(`should return the expected string representation (${value.constructor.name} -- ${value})`, () => {
-            expect(value.toString()).toStrictEqual(expectedString);
+            expect(value.toString(options)).toStrictEqual(expectedString);
         });
     });
 
-    const unwrapTests: UnwrapTest[] = [
+    const substitutions1 = new Map([[typeParameter1, factory.createLiteralType(new IntConstant(1n))]]);
+    const substituteTypeParametersTest: SubstituteTypeParametersTest[] = [
         {
-            type: new CallableType(callable1, undefined, new NamedTupleType(), new NamedTupleType()),
-            expectedType: new CallableType(callable1, undefined, new NamedTupleType(), new NamedTupleType()),
-        },
-        {
-            type: new CallableType(
+            type: factory.createCallableType(
                 callable1,
                 undefined,
-                new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', new UnionType(UnknownType))),
-                new NamedTupleType(new NamedTupleEntry(result, 'r', new UnionType(UnknownType))),
+                factory.createNamedTupleType(
+                    new NamedTupleEntry(parameter1, 'p1', new TypeVariable(typeParameter1, false)),
+                ),
+                factory.createNamedTupleType(new NamedTupleEntry(result, 'r', new TypeVariable(typeParameter1, false))),
             ),
-            expectedType: new CallableType(
+            substitutions: substitutions1,
+            expectedType: factory.createCallableType(
                 callable1,
                 undefined,
-                new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', UnknownType)),
-                new NamedTupleType(new NamedTupleEntry(result, 'r', UnknownType)),
+                factory.createNamedTupleType(
+                    new NamedTupleEntry(parameter1, 'p1', factory.createLiteralType(new IntConstant(1n))),
+                ),
+                factory.createNamedTupleType(
+                    new NamedTupleEntry(result, 'r', factory.createLiteralType(new IntConstant(1n))),
+                ),
             ),
         },
         {
-            type: new LiteralType(new BooleanConstant(true)),
-            expectedType: new LiteralType(new BooleanConstant(true)),
+            type: factory.createLiteralType(new BooleanConstant(true)),
+            substitutions: substitutions1,
+            expectedType: factory.createLiteralType(new BooleanConstant(true)),
         },
         {
-            type: new NamedTupleType(),
-            expectedType: new NamedTupleType(),
-        },
-        {
-            type: new NamedTupleType(
-                new NamedTupleEntry(parameter1, 'p1', new UnionType(UnknownType)),
-                new NamedTupleEntry(parameter1, 'p1', new UnionType(UnknownType)),
+            type: factory.createNamedTupleType(
+                new NamedTupleEntry(parameter1, 'p1', new TypeVariable(typeParameter1, false)),
             ),
-            expectedType: new NamedTupleType(
-                new NamedTupleEntry(parameter1, 'p1', UnknownType),
-                new NamedTupleEntry(parameter1, 'p1', UnknownType),
+            substitutions: substitutions1,
+            expectedType: factory.createNamedTupleType(
+                new NamedTupleEntry(parameter1, 'p1', factory.createLiteralType(new IntConstant(1n))),
             ),
         },
         {
-            type: new ClassType(class1, false),
-            expectedType: new ClassType(class1, false),
+            type: new ClassType(class1, new Map([[typeParameter2, new TypeVariable(typeParameter1, false)]]), false),
+            substitutions: substitutions1,
+            expectedType: new ClassType(
+                class1,
+                new Map([[typeParameter2, factory.createLiteralType(new IntConstant(1n))]]),
+                false,
+            ),
         },
         {
             type: new EnumType(enum1, false),
+            substitutions: substitutions1,
             expectedType: new EnumType(enum1, false),
         },
         {
             type: new EnumVariantType(enumVariant1, false),
+            substitutions: substitutions1,
             expectedType: new EnumVariantType(enumVariant1, false),
         },
         {
-            type: new StaticType(new ClassType(class1, false)),
-            expectedType: new StaticType(new ClassType(class1, false)),
+            type: new TypeVariable(typeParameter1, false),
+            substitutions: substitutions1,
+            expectedType: factory.createLiteralType(new IntConstant(1n)),
         },
         {
-            type: new UnionType(),
-            expectedType: new UnionType(),
+            type: new TypeVariable(typeParameter1, true),
+            substitutions: substitutions1,
+            expectedType: factory.createLiteralType(new IntConstant(1n), NullConstant),
         },
         {
-            type: new UnionType(new ClassType(class1, false)),
-            expectedType: new ClassType(class1, false),
+            type: new TypeVariable(typeParameter2, false),
+            substitutions: substitutions1,
+            expectedType: new TypeVariable(typeParameter2, false),
         },
         {
-            type: new UnionType(new UnionType(new ClassType(class1, false))),
-            expectedType: new ClassType(class1, false),
-        },
-        {
-            type: UnknownType,
-            expectedType: UnknownType,
-        },
-    ];
-    describe.each(unwrapTests)('unwrap', ({ type, expectedType }) => {
-        it(`should remove any unnecessary containers (${type.constructor.name} -- ${type})`, () => {
-            expect(type.unwrap()).toSatisfy((actualType: Type) => actualType.equals(expectedType));
-        });
-    });
-
-    const updateNullabilityTest: UpdateNullabilityTest[] = [
-        {
-            type: new CallableType(callable1, undefined, new NamedTupleType(), new NamedTupleType()),
-            isNullable: true,
-            expectedType: new UnionType(
-                new CallableType(callable1, undefined, new NamedTupleType(), new NamedTupleType()),
-                new LiteralType(NullConstant),
+            type: factory.createStaticType(
+                new ClassType(class1, new Map([[typeParameter1, new TypeVariable(typeParameter2, false)]]), false),
+            ),
+            substitutions: substitutions1,
+            expectedType: factory.createStaticType(
+                new ClassType(class1, new Map([[typeParameter1, new TypeVariable(typeParameter2, false)]]), false),
             ),
         },
         {
-            type: new CallableType(callable1, undefined, new NamedTupleType(), new NamedTupleType()),
-            isNullable: false,
-            expectedType: new CallableType(callable1, undefined, new NamedTupleType(), new NamedTupleType()),
+            type: factory.createUnionType(
+                new ClassType(class1, new Map([[typeParameter2, new TypeVariable(typeParameter1, false)]]), false),
+            ),
+            substitutions: substitutions1,
+            expectedType: factory.createUnionType(
+                new ClassType(
+                    class1,
+                    new Map([[typeParameter2, factory.createLiteralType(new IntConstant(1n))]]),
+                    false,
+                ),
+            ),
         },
         {
-            type: new LiteralType(new BooleanConstant(true)),
+            type: UnknownType,
+            substitutions: substitutions1,
+            expectedType: UnknownType,
+        },
+    ];
+    describe.each(substituteTypeParametersTest)('substituteTypeParameters', ({ type, substitutions, expectedType }) => {
+        it(`should return the expected value (${type.constructor.name} -- ${type})`, () => {
+            const actual = type.substituteTypeParameters(substitutions);
+            expectEqualTypes(actual, expectedType);
+        });
+
+        it(`should not change if no substitutions are passed (${type.constructor.name} -- ${type})`, () => {
+            const actual = type.substituteTypeParameters(new Map());
+            expectEqualTypes(actual, type);
+        });
+    });
+
+    const withExplicitNullabilityTests: WithExplicitNullabilityTest[] = [
+        {
+            type: factory.createCallableType(
+                callable1,
+                undefined,
+                factory.createNamedTupleType(),
+                factory.createNamedTupleType(),
+            ),
             isNullable: true,
-            expectedType: new LiteralType(new BooleanConstant(true), NullConstant),
+            expectedType: factory.createUnionType(
+                factory.createCallableType(
+                    callable1,
+                    undefined,
+                    factory.createNamedTupleType(),
+                    factory.createNamedTupleType(),
+                ),
+                factory.createLiteralType(NullConstant),
+            ),
         },
         {
-            type: new LiteralType(new BooleanConstant(true), NullConstant),
+            type: factory.createCallableType(
+                callable1,
+                undefined,
+                factory.createNamedTupleType(),
+                factory.createNamedTupleType(),
+            ),
             isNullable: false,
-            expectedType: new LiteralType(new BooleanConstant(true)),
+            expectedType: factory.createCallableType(
+                callable1,
+                undefined,
+                factory.createNamedTupleType(),
+                factory.createNamedTupleType(),
+            ),
         },
         {
-            type: new LiteralType(new BooleanConstant(true), NullConstant),
+            type: factory.createLiteralType(new BooleanConstant(true)),
             isNullable: true,
-            expectedType: new LiteralType(new BooleanConstant(true), NullConstant),
+            expectedType: factory.createLiteralType(new BooleanConstant(true), NullConstant),
         },
         {
-            type: new LiteralType(new BooleanConstant(true)),
+            type: factory.createLiteralType(new BooleanConstant(true), NullConstant),
             isNullable: false,
-            expectedType: new LiteralType(new BooleanConstant(true)),
+            expectedType: factory.createLiteralType(new BooleanConstant(true)),
         },
         {
-            type: new NamedTupleType(),
+            type: factory.createLiteralType(new BooleanConstant(true), NullConstant),
             isNullable: true,
-            expectedType: new UnionType(new NamedTupleType(), new LiteralType(NullConstant)),
+            expectedType: factory.createLiteralType(new BooleanConstant(true), NullConstant),
         },
         {
-            type: new NamedTupleType(),
+            type: factory.createLiteralType(new BooleanConstant(true)),
             isNullable: false,
-            expectedType: new NamedTupleType(),
+            expectedType: factory.createLiteralType(new BooleanConstant(true)),
         },
         {
-            type: new ClassType(class1, false),
+            type: factory.createNamedTupleType(),
             isNullable: true,
-            expectedType: new ClassType(class1, true),
+            expectedType: factory.createUnionType(
+                factory.createNamedTupleType(),
+                factory.createLiteralType(NullConstant),
+            ),
         },
         {
-            type: new ClassType(class1, true),
+            type: factory.createNamedTupleType(),
             isNullable: false,
-            expectedType: new ClassType(class1, false),
+            expectedType: factory.createNamedTupleType(),
+        },
+        {
+            type: new ClassType(class1, new Map(), false),
+            isNullable: true,
+            expectedType: new ClassType(class1, new Map(), true),
+        },
+        {
+            type: new ClassType(class1, new Map(), true),
+            isNullable: false,
+            expectedType: new ClassType(class1, new Map(), false),
         },
         {
             type: new EnumType(enum1, false),
@@ -332,44 +453,57 @@ describe('type model', async () => {
             expectedType: new EnumVariantType(enumVariant1, false),
         },
         {
-            type: new StaticType(new ClassType(class1, false)),
+            type: factory.createStaticType(new ClassType(class1, new Map(), false)),
             isNullable: true,
-            expectedType: new UnionType(new StaticType(new ClassType(class1, false)), new LiteralType(NullConstant)),
+            expectedType: factory.createUnionType(
+                factory.createStaticType(new ClassType(class1, new Map(), false)),
+                factory.createLiteralType(NullConstant),
+            ),
         },
         {
-            type: new StaticType(new ClassType(class1, false)),
+            type: factory.createStaticType(new ClassType(class1, new Map(), false)),
             isNullable: false,
-            expectedType: new StaticType(new ClassType(class1, false)),
+            expectedType: factory.createStaticType(new ClassType(class1, new Map(), false)),
         },
         {
-            type: new UnionType(),
+            type: new TypeVariable(typeParameter1, false),
             isNullable: true,
-            expectedType: new LiteralType(NullConstant),
+            expectedType: new TypeVariable(typeParameter1, true),
         },
         {
-            type: new UnionType(),
+            type: new TypeVariable(typeParameter1, true),
             isNullable: false,
-            expectedType: new UnionType(),
+            expectedType: new TypeVariable(typeParameter1, false),
         },
         {
-            type: new UnionType(new ClassType(class1, false)),
+            type: factory.createUnionType(),
             isNullable: true,
-            expectedType: new UnionType(new ClassType(class1, true)),
+            expectedType: coreTypes.NothingOrNull,
         },
         {
-            type: new UnionType(new ClassType(class1, false)),
+            type: factory.createUnionType(),
             isNullable: false,
-            expectedType: new UnionType(new ClassType(class1, false)),
+            expectedType: coreTypes.Nothing,
         },
         {
-            type: new UnionType(new ClassType(class1, true)),
+            type: factory.createUnionType(new ClassType(class1, new Map(), false)),
             isNullable: true,
-            expectedType: new UnionType(new ClassType(class1, true)),
+            expectedType: factory.createUnionType(new ClassType(class1, new Map(), true)),
         },
         {
-            type: new UnionType(new ClassType(class1, true)),
+            type: factory.createUnionType(new ClassType(class1, new Map(), false)),
             isNullable: false,
-            expectedType: new UnionType(new ClassType(class1, false)),
+            expectedType: factory.createUnionType(new ClassType(class1, new Map(), false)),
+        },
+        {
+            type: factory.createUnionType(new ClassType(class1, new Map(), true)),
+            isNullable: true,
+            expectedType: factory.createUnionType(new ClassType(class1, new Map(), true)),
+        },
+        {
+            type: factory.createUnionType(new ClassType(class1, new Map(), true)),
+            isNullable: false,
+            expectedType: factory.createUnionType(new ClassType(class1, new Map(), false)),
         },
         {
             type: UnknownType,
@@ -382,9 +516,10 @@ describe('type model', async () => {
             expectedType: UnknownType,
         },
     ];
-    describe.each(updateNullabilityTest)('updateNullability', ({ type, isNullable, expectedType }) => {
+    describe.each(withExplicitNullabilityTests)('withExplicitNullability', ({ type, isNullable, expectedType }) => {
         it(`should return the expected value (${type.constructor.name} -- ${type})`, () => {
-            expect(type.updateNullability(isNullable).equals(expectedType)).toBeTruthy();
+            const actual = type.withExplicitNullability(isNullable);
+            expectEqualTypes(actual, expectedType);
         });
     });
 
@@ -392,22 +527,50 @@ describe('type model', async () => {
         describe('getParameterTypeByIndex', () => {
             it.each([
                 {
-                    type: new CallableType(callable1, undefined, new NamedTupleType(), new NamedTupleType()),
+                    type: factory.createCallableType(
+                        callable1,
+                        undefined,
+                        factory.createNamedTupleType(),
+                        factory.createNamedTupleType(),
+                    ),
                     index: 0,
                     expectedType: UnknownType,
                 },
                 {
-                    type: new CallableType(
+                    type: factory.createCallableType(
                         callable1,
                         undefined,
-                        new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', new ClassType(class1, false))),
-                        new NamedTupleType(),
+                        factory.createNamedTupleType(
+                            new NamedTupleEntry(parameter1, 'p1', new ClassType(class1, new Map(), false)),
+                        ),
+                        factory.createNamedTupleType(),
                     ),
                     index: 0,
-                    expectedType: new ClassType(class1, false),
+                    expectedType: new ClassType(class1, new Map(), false),
                 },
             ])('should return the type of the parameter at the given index (%#)', ({ type, index, expectedType }) => {
-                expect(type.getParameterTypeByIndex(index).equals(expectedType)).toBeTruthy();
+                const actual = type.getParameterTypeByIndex(index);
+                expectEqualTypes(actual, expectedType);
+            });
+        });
+    });
+
+    describe('ClassType', () => {
+        describe('getTypeParameterTypeByIndex', () => {
+            it.each([
+                {
+                    type: new ClassType(class1, new Map(), false),
+                    index: 0,
+                    expectedType: UnknownType,
+                },
+                {
+                    type: new ClassType(class2, new Map([[typeParameter1, factory.createUnionType()]]), false),
+                    index: 0,
+                    expectedType: factory.createUnionType(),
+                },
+            ])('should return the type of the parameter at the given index (%#)', ({ type, index, expectedType }) => {
+                const actual = type.getTypeParameterTypeByIndex(index);
+                expectEqualTypes(actual, expectedType);
             });
         });
     });
@@ -416,30 +579,48 @@ describe('type model', async () => {
         describe('getTypeOfEntryByIndex', () => {
             it.each([
                 {
-                    type: new NamedTupleType(),
+                    type: factory.createNamedTupleType(),
                     index: 0,
                     expectedType: UnknownType,
                 },
                 {
-                    type: new NamedTupleType(new NamedTupleEntry(parameter1, 'p1', new ClassType(class1, false))),
+                    type: factory.createNamedTupleType(
+                        new NamedTupleEntry(parameter1, 'p1', new ClassType(class1, new Map(), false)),
+                    ),
                     index: 0,
-                    expectedType: new ClassType(class1, false),
+                    expectedType: new ClassType(class1, new Map(), false),
                 },
             ])('should return the entry at the given index (%#)', ({ type, index, expectedType }) => {
-                expect(type.getTypeOfEntryByIndex(index).equals(expectedType)).toBeTruthy();
+                const actual = type.getTypeOfEntryByIndex(index);
+                expectEqualTypes(actual, expectedType);
             });
         });
     });
 });
 
 /**
- * Tests for {@link Type.unwrap}.
+ * Tests for {@link Type.toString}.
  */
-interface UnwrapTest {
+interface TypeToStringTest extends ToStringTest<Type> {
+    /**
+     * Options to pass to the `toString` method.
+     */
+    options?: ToStringOptions;
+}
+
+/**
+ * Tests for {@link Type.substituteTypeParameters}.
+ */
+interface SubstituteTypeParametersTest {
     /**
      * The type to test.
      */
     type: Type;
+
+    /**
+     * The type parameter substitutions to apply.
+     */
+    substitutions: TypeParameterSubstitutions;
 
     /**
      * The expected result.
@@ -448,9 +629,9 @@ interface UnwrapTest {
 }
 
 /**
- * Tests for {@link Type.updateNullability}.
+ * Tests for {@link Type.withExplicitNullability}.
  */
-interface UpdateNullabilityTest {
+interface WithExplicitNullabilityTest {
     /**
      * The type to test.
      */

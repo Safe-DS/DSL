@@ -1,0 +1,49 @@
+package tests.typing.highestCommonSubtype.enumVariantTypeAndEnumVariantType
+
+class Contravariant<in T>
+
+enum E1 {
+    V1
+    V2
+}
+enum E3 {
+    V3
+}
+
+segment mySegment(
+    v1: Contravariant<E1.V1>,
+    v1OrNull: Contravariant<E1.V1?>,
+    v2: Contravariant<E1.V2>,
+    v2OrNull: Contravariant<E1.V2?>,
+    v3: Contravariant<E3.V3>,
+    v3OrNull: Contravariant<E3.V3?>
+) {
+    // $TEST$ serialization List<Contravariant<E1.V1>>
+    »[v1, v1]«;
+
+    // $TEST$ serialization List<Contravariant<E1.V1>>
+    »[v1, v1OrNull]«;
+
+    // $TEST$ serialization List<Contravariant<E1.V1?>>
+    »[v1OrNull, v1OrNull]«;
+
+
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[v1, v2]«;
+
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[v1, v2OrNull]«;
+
+    // $TEST$ serialization List<Contravariant<Nothing?>>
+    »[v1OrNull, v2OrNull]«;
+
+
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[v1, v3]«;
+
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[v1, v3OrNull]«;
+
+    // $TEST$ serialization List<Contravariant<Nothing?>>
+    »[v1OrNull, v3OrNull]«;
+}

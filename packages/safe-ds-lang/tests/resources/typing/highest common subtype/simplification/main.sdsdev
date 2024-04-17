@@ -1,0 +1,21 @@
+package tests.typing.highestCommonSubtype.simplification
+
+class Contravariant<in T>
+
+segment mySegment(
+    p1: Contravariant<literal<>>,
+    p2: Contravariant<union<>>,
+    p3: Contravariant<union<literal<null>, literal<null>>>,
+) {
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[p1, p2]«;
+
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[p1, p3]«;
+
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[p2, p3]«;
+
+    // $TEST$ serialization List<Contravariant<Nothing?>>
+    »[p3, p3]«;
+}

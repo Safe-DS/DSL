@@ -1,0 +1,30 @@
+package tests.validation.other.expressions.literals.unknownMustOnlyBeUsedAsDefaultValueOfStub
+
+// $TEST$ error "unknown is only allowed as the default value of a parameter of a class, enum variant, or function."
+annotation MyAnnotation(p: Int = »unknown«)
+
+// $TEST$ no error "unknown is only allowed as the default value of a parameter of a class, enum variant, or function."
+class MyClass(p: Int = »unknown«)
+
+enum MyEnum {
+    // $TEST$ no error "unknown is only allowed as the default value of a parameter of a class, enum variant, or function."
+    MyVariant(p: Int = »unknown«)
+}
+
+// $TEST$ no error "unknown is only allowed as the default value of a parameter of a class, enum variant, or function."
+fun myFunction(p: Int = »unknown«)
+
+segment mySegment(
+    // $TEST$ no error "unknown is only allowed as the default value of a parameter of a class, enum variant, or function."
+    f: (p: Int = »unknown«) -> (),
+    // $TEST$ error "unknown is only allowed as the default value of a parameter of a class, enum variant, or function."
+    p: Int = »unknown«,
+) {
+    // $TEST$ error "unknown is only allowed as the default value of a parameter of a class, enum variant, or function."
+    (p: Int = »unknown«) {};
+    // $TEST$ error "unknown is only allowed as the default value of a parameter of a class, enum variant, or function."
+    (p: Int = »unknown«) -> 1;
+
+    // $TEST$ error "unknown is only allowed as the default value of a parameter of a class, enum variant, or function."
+    »unknown«;
+}

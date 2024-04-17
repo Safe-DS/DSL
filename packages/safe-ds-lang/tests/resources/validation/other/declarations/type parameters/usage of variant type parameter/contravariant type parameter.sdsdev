@@ -1,0 +1,78 @@
+package tests.validation.other.declarations.typeParameters.usageOfVariantTypeParameters
+
+// $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+class MyClass1<in Contravariant>(p1: »Contravariant«)
+// $TEST$ error "A contravariant type parameter cannot be used in covariant position."
+// $TEST$ error "A contravariant type parameter cannot be used in invariant position."
+// $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+sub Producer<»Contravariant«>, Middleware<»Contravariant«>, Consumer<»Contravariant«> {
+    // $TEST$ error "A contravariant type parameter cannot be used in covariant position."
+    attr a1: »Contravariant«
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    // $TEST$ error "A contravariant type parameter cannot be used in covariant position."
+    attr a2: (a1: »Contravariant«) -> (r1: »Contravariant«)
+    // $TEST$ error "A contravariant type parameter cannot be used in covariant position."
+    attr a3: Producer<»Contravariant«>
+    // $TEST$ error "A contravariant type parameter cannot be used in invariant position."
+    attr a4: Middleware<»Contravariant«>
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    attr a5: Consumer<»Contravariant«>
+    // $TEST$ error "A contravariant type parameter cannot be used in covariant position."
+    attr a6: Producer<Producer<»Contravariant«>>
+    // $TEST$ error "A contravariant type parameter cannot be used in invariant position."
+    attr a7: Middleware<Producer<»Contravariant«>>
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    attr a8: Consumer<Producer<»Contravariant«>>
+
+    fun f(
+        // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+        p1: »Contravariant«,
+        // $TEST$ error "A contravariant type parameter cannot be used in covariant position."
+        // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+        p2: (a1: »Contravariant«) -> (r1: »Contravariant«),
+        // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+        p3: Producer<»Contravariant«>,
+        // $TEST$ error "A contravariant type parameter cannot be used in invariant position."
+        p4: Middleware<»Contravariant«>,
+        // $TEST$ error "A contravariant type parameter cannot be used in covariant position."
+        p5: Consumer<»Contravariant«>,
+    ) -> (
+        // $TEST$ error "A contravariant type parameter cannot be used in covariant position."
+        r1: »Contravariant«,
+        // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+        // $TEST$ error "A contravariant type parameter cannot be used in covariant position."
+        r2: (a1: »Contravariant«) -> (r1: »Contravariant«),
+        // $TEST$ error "A contravariant type parameter cannot be used in covariant position."
+        r3: Producer<»Contravariant«>,
+        // $TEST$ error "A contravariant type parameter cannot be used in invariant position."
+        r4: Middleware<»Contravariant«>,
+        // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+        r5: Consumer<»Contravariant«>,
+    )
+}
+
+fun f1<in Contravariant>(
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    p1: »Contravariant«,
+    // $TEST$ error "A contravariant type parameter cannot be used in covariant position."
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    p2: (a1: »Contravariant«) -> (r1: »Contravariant«),
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    p3: Producer<»Contravariant«>,
+    // $TEST$ error "A contravariant type parameter cannot be used in invariant position."
+    p4: Middleware<»Contravariant«>,
+    // $TEST$ error "A contravariant type parameter cannot be used in covariant position."
+    p5: Consumer<»Contravariant«>,
+) -> (
+    // $TEST$ error "A contravariant type parameter cannot be used in covariant position."
+    r1: »Contravariant«,
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    // $TEST$ error "A contravariant type parameter cannot be used in covariant position."
+    r2: (a1: »Contravariant«) -> (r1: »Contravariant«),
+    // $TEST$ error "A contravariant type parameter cannot be used in covariant position."
+    r3: Producer<»Contravariant«>,
+    // $TEST$ error "A contravariant type parameter cannot be used in invariant position."
+    r4: Middleware<»Contravariant«>,
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    r5: Consumer<»Contravariant«>,
+)

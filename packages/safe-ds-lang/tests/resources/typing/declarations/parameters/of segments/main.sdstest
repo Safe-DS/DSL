@@ -1,8 +1,0 @@
-package tests.typing.declarations.parameters.ofSegments
-
-// $TEST$ equivalence_class parameterType
-// $TEST$ equivalence_class parameterType
-segment mySegment1(»p«: »Int«) {}
-
-// $TEST$ serialization ?
-segment mySegment2(»p«) {}

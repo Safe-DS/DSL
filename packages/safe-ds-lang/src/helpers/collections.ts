@@ -56,6 +56,25 @@ export const groupBy = <T, K>(iterable: Iterable<T>, labeler: (element: T) => K 
 };
 
 /**
+ * Partitions the iterable into two arrays based on the predicate. The first array contains the values for which the
+ * predicate returned `true`, the second array the values for which it returned `false`.
+ */
+export const partitionBy = <T>(iterable: Iterable<T>, predicate: (element: T) => boolean): [T[], T[]] => {
+    const truthy: T[] = [];
+    const falsy: T[] = [];
+
+    for (const value of iterable) {
+        if (predicate(value)) {
+            truthy.push(value);
+        } else {
+            falsy.push(value);
+        }
+    }
+
+    return [truthy, falsy];
+};
+
+/**
  * Returns whether the iterable has no values.
  */
 export const isEmpty = (iterable: Iterable<unknown>): boolean => {

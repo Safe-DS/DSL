@@ -1,0 +1,25 @@
+package tests.generator.importsWithRunnerIntegration
+
+from tests.generator.differentPackageWithRunnerIntegration import function1InDifferentPackage
+from tests.generator.differentPackageWithRunnerIntegration import function2InDifferentPackage as g
+from tests.generator.withPythonModuleWithRunnerIntegration import function1InCompilationUnitWithPythonModule
+from tests.generator.withPythonModuleWithRunnerIntegration import function2InCompilationUnitWithPythonModule as h
+
+@Impure([ImpurityReason.Other]) fun f(param: Any?)
+
+pipeline test {
+    f(segment1InSamePackage());
+    f(segment1InSamePackage());
+    f(segment2InSamePackage());
+    f(segment2InSamePackage());
+
+    f(function1InDifferentPackage());
+    f(function1InDifferentPackage());
+    f(g());
+    f(g());
+
+    f(function1InCompilationUnitWithPythonModule());
+    f(function1InCompilationUnitWithPythonModule());
+    f(h());
+    f(h());
+}

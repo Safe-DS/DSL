@@ -1,0 +1,4 @@
+package tests.generator.differentPackageWithRunnerIntegration
+
+@Pure fun function1InDifferentPackage() -> result: Int
+@Pure fun function2InDifferentPackage() -> result: Int

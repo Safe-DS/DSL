@@ -1,0 +1,9 @@
+package tests.typing.lowestCommonSupertype.unknownType
+
+segment mySegment() {
+    // $TEST$ serialization List<Any?>
+    »[1, unresolved]«;
+
+    // $TEST$ serialization List<Any?>
+    »[null, unresolved]«;
+}

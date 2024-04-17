@@ -63,25 +63,25 @@ describe('safe-ds', () => {
         });
 
         it('should show not show errors in correct files', () => {
-            const process = spawnCheckProcess([], ['correct.sdstest']);
+            const process = spawnCheckProcess([], ['correct.sdsdev']);
             expect(process.stdout.toString()).toContain('No errors found.');
             expect(process.status).toBe(ExitCode.Success);
         });
 
         it('should handle references to builtins', () => {
-            const process = spawnCheckProcess([], ['references builtins.sdstest']);
+            const process = spawnCheckProcess([], ['references builtins.sdsdev']);
             expect(process.stdout.toString()).toContain('No errors found.');
             expect(process.status).toBe(ExitCode.Success);
         });
 
         it('should treat warnings as errors in strict mode', () => {
-            const process = spawnCheckProcess(['-s'], ['contains warnings.sdstest']);
+            const process = spawnCheckProcess(['-s'], ['contains warnings.sdsdev']);
             expect(process.stderr.toString()).toMatch(/Found \d+ errors?\./u);
             expect(process.status).toBe(ExitCode.FileHasErrors);
         });
 
         it('should show an error if the file does not exist', () => {
-            const process = spawnCheckProcess([], ['missing.sdstest']);
+            const process = spawnCheckProcess([], ['missing.sdsdev']);
             expect(process.stderr.toString()).toMatch(/Path .* does not exist\./u);
             expect(process.status).toBe(ExitCode.MissingPath);
         });
@@ -90,6 +90,69 @@ describe('safe-ds', () => {
             const process = spawnCheckProcess([], ['not safe-ds.txt']);
             expect(process.stderr.toString()).toContain('does not have a Safe-DS extension');
             expect(process.status).toBe(ExitCode.FileWithoutSafeDsExtension);
+        });
+    });
+
+    describe('document', () => {
+        const testResourcesRoot = new URL('../resources/document/', import.meta.url);
+        const out = new URL('generated', testResourcesRoot);
+        const spawnDocumentProcess = (additionalArguments: string[], paths: string[]) => {
+            const fsPaths = paths.map((p) => fileURLToPath(new URL(p, testResourcesRoot)));
+            return spawnSync(
+                'node',
+                ['./bin/cli', 'document', '-o', fileURLToPath(out), ...additionalArguments, ...fsPaths],
+                {
+                    cwd: projectRoot,
+                },
+            );
+        };
+
+        afterAll(() => {
+            fs.rmSync(out, { recursive: true, force: true });
+        });
+
+        it('should show an error if no paths are passed', () => {
+            const process = spawnDocumentProcess([], []);
+            expect(process.stderr.toString()).toContain("error: missing required argument 'paths'");
+            expect(process.status).not.toBe(ExitCode.Success);
+        });
+
+        it('should show usage on stdout if -h flag is passed', () => {
+            const process = spawnDocumentProcess(['-h'], []);
+            expect(process.stdout.toString()).toContain('Usage: cli document');
+            expect(process.status).toBe(ExitCode.Success);
+        });
+
+        it('should generate Markdown documentation', () => {
+            const process = spawnDocumentProcess([], ['correct.sdsdev']);
+            expect(process.stdout.toString()).toContain('Markdown documentation generated successfully.');
+            expect(process.status).toBe(ExitCode.Success);
+        });
+
+        it('should generate Markdown documentation (Safe-DS code references builtins)', () => {
+            const process = spawnDocumentProcess([], ['references builtins.sdsdev']);
+            expect(process.stdout.toString()).toContain('Markdown documentation generated successfully.');
+            expect(process.status).toBe(ExitCode.Success);
+        });
+
+        it('should show an error if the file does not exist', () => {
+            const process = spawnDocumentProcess([], ['missing.sdsdev']);
+            expect(process.stderr.toString()).toMatch(/Path .* does not exist./u);
+            expect(process.status).toBe(ExitCode.MissingPath);
+        });
+
+        it('should show an error if the file has the wrong extension', () => {
+            const process = spawnDocumentProcess([], ['not safe-ds.txt']);
+            expect(process.stderr.toString()).toContain('does not have a Safe-DS extension');
+            expect(process.status).toBe(ExitCode.FileWithoutSafeDsExtension);
+        });
+
+        it('should show an error if a Safe-DS file has errors', () => {
+            const process = spawnDocumentProcess([], ['.']);
+            expect(process.stderr.toString()).toContain(
+                "Could not resolve reference to SdsNamedTypeDeclaration named 'Unresolved'",
+            );
+            expect(process.status).toBe(ExitCode.FileHasErrors);
         });
     });
 
@@ -121,13 +184,13 @@ describe('safe-ds', () => {
         });
 
         it('should show not show errors in correct files', () => {
-            const process = spawnFormatProcess([], ['correct.sdstest']);
+            const process = spawnFormatProcess([], ['correct.sdsdev']);
             expect(process.stdout.toString()).toContain('Safe-DS code formatted successfully.');
             expect(process.status).toBe(ExitCode.Success);
         });
 
         it('should show an error if the file does not exist', () => {
-            const process = spawnFormatProcess([], ['missing.sdstest']);
+            const process = spawnFormatProcess([], ['missing.sdsdev']);
             expect(process.stderr.toString()).toMatch(/Path .* does not exist\./u);
             expect(process.status).toBe(ExitCode.MissingPath);
         });
@@ -141,15 +204,20 @@ describe('safe-ds', () => {
 
     describe('generate', () => {
         const testResourcesRoot = new URL('../resources/generate/', import.meta.url);
+        const out = new URL('generated', testResourcesRoot);
         const spawnGenerateProcess = (additionalArguments: string[], paths: string[]) => {
             const fsPaths = paths.map((p) => fileURLToPath(new URL(p, testResourcesRoot)));
-            return spawnSync('node', ['./bin/cli', 'generate', ...additionalArguments, ...fsPaths], {
-                cwd: projectRoot,
-            });
+            return spawnSync(
+                'node',
+                ['./bin/cli', 'generate', '-o', fileURLToPath(out), ...additionalArguments, ...fsPaths],
+                {
+                    cwd: projectRoot,
+                },
+            );
         };
 
         afterAll(() => {
-            fs.rmSync(new URL('generated', testResourcesRoot), { recursive: true, force: true });
+            fs.rmSync(out, { recursive: true, force: true });
         });
 
         it('should show an error if no paths are passed', () => {
@@ -165,19 +233,19 @@ describe('safe-ds', () => {
         });
 
         it('should generate Python code', () => {
-            const process = spawnGenerateProcess([], ['correct.sdstest']);
+            const process = spawnGenerateProcess([], ['correct.sdsdev']);
             expect(process.stdout.toString()).toContain('Python code generated successfully.');
             expect(process.status).toBe(ExitCode.Success);
         });
 
         it('should generate Python code (Safe-DS code references builtins)', () => {
-            const process = spawnGenerateProcess([], ['references builtins.sdstest']);
+            const process = spawnGenerateProcess([], ['references builtins.sdsdev']);
             expect(process.stdout.toString()).toContain('Python code generated successfully.');
             expect(process.status).toBe(ExitCode.Success);
         });
 
         it('should show an error if the file does not exist', () => {
-            const process = spawnGenerateProcess([], ['missing.sdstest']);
+            const process = spawnGenerateProcess([], ['missing.sdsdev']);
             expect(process.stderr.toString()).toMatch(/Path .* does not exist./u);
             expect(process.status).toBe(ExitCode.MissingPath);
         });

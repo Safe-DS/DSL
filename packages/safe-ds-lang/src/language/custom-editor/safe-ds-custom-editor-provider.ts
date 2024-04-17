@@ -1,8 +1,9 @@
 import { Connection } from 'vscode-languageserver';
-import { LangiumSharedServices } from 'langium';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { GetAst } from './getAst.js';
+import { LangiumSharedServices } from 'langium/lsp';
 
+// to be used like this: addDiagramHandler(connection, sharedServices, safeDsServices);
 export const addDiagramHandler = function (
     connection: Connection,
     sharedServices: LangiumSharedServices,

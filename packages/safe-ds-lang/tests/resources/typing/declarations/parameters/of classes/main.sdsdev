@@ -1,0 +1,8 @@
+package tests.typing.declarations.parameters.ofClasses
+
+// $TEST$ equivalence_class parameterType
+// $TEST$ equivalence_class parameterType
+class MyClass1(»p«: »Int«)
+
+// $TEST$ serialization unknown
+class MyClass2(»p«)

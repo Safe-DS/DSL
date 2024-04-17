@@ -1,0 +1,9 @@
+package tests.validation.style.unnecessaryConstraintListInFunction
+
+// $TEST$ info "This constraint list can be removed."
+fun myFunction1() »where {}«
+
+// $TEST$ no info "This constraint list can be removed."
+fun myFunction2(p: Int) »where {
+    p < 0
+}«

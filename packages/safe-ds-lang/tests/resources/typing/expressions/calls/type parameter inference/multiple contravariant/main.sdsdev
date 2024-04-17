@@ -1,0 +1,44 @@
+package tests.typing.expressions.calls.typeParameterInference.multipleContravariant
+
+class Contravariant<in T>
+class ContravariantNumber sub Contravariant<Number>
+class SomeContravariant<in T> sub Contravariant<T>
+
+class C1<T>(p1: Contravariant<T>, p2: (p1: T) -> ())
+@Pure fun f1<T>(p1: Contravariant<T>, p2: (p1: T) -> ()) -> r1: T
+
+segment mySegment(
+    a1: Contravariant<Int>,
+    a2: Contravariant<Number>,
+    a3: Contravariant<Any?>,
+    a4: ContravariantNumber,
+    a5: SomeContravariant<String?>,
+
+    c: (p1: Number) -> ()
+) {
+    // $TEST$ serialization C1<Int>
+    »C1(a1, c)«;
+    // $TEST$ serialization C1<Number>
+    »C1(a2, c)«;
+    // $TEST$ serialization C1<Number>
+    »C1(a3, c)«;
+    // $TEST$ serialization C1<Number>
+    »C1(a4, c)«;
+    // $TEST$ serialization C1<Nothing>
+    »C1(a5, c)«;
+    // $TEST$ serialization C1<Int>
+    »C1(a1, (p1) {})«;
+
+    // $TEST$ serialization Int
+    »f1(a1, c)«;
+    // $TEST$ serialization Number
+    »f1(a2, c)«;
+    // $TEST$ serialization Number
+    »f1(a3, c)«;
+    // $TEST$ serialization Number
+    »f1(a4, c)«;
+    // $TEST$ serialization Nothing
+    »f1(a5, c)«;
+    // $TEST$ serialization Int
+    »f1(a1, (p1) {})«;
+}

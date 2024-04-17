@@ -1,0 +1,1 @@
+{"version":3,"sources":["context same package.sdsdev"],"names":["segment1insamepackage","result","impurefunction","segment2insamepackage"],"mappings":"AAAA;;;;;;;AAIA,IAAQA,qBAAqB;IACzB,YAAMC,MAAM,GAAG,kGAAAC,cAAc;IADD,OAAG;;AAInC,IAAQC,qBAAqB;IACzB,YAAMF,MAAM,GAAG,kGAAAC,cAAc;IADD,OAAG","file":"gen_context_same_package.py"}

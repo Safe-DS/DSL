@@ -1,0 +1,97 @@
+package tests.scoping.namedTypes.inSameFile.toTypeParameter.inMethods
+
+fun myFunction1<BeforeGlobal>()
+
+// $TEST$ target container
+class MyClass1<»Container«, Overridden> {
+    fun myFunction2<BeforeMember>()
+
+    fun myFunction3<
+        // $TEST$ target own
+        »Own«,
+
+        // $TEST$ target overridden
+        »Overridden«,
+
+        // $TEST$ references own
+        T1 sub »Own«,
+
+        // $TEST$ references overridden
+        T2 sub »Overridden«,
+
+        // $TEST$ references container
+        T3 sub »Container«,
+
+        // $TEST$ unresolved
+        T4 sub »BeforeMember«,
+
+        // $TEST$ unresolved
+        T5 sub »AfterMember«,
+
+        // $TEST$ unresolved
+        T6 sub »BeforeGlobal«,
+
+        // $TEST$ unresolved
+        T7 sub »AfterGlobal«,
+
+        // $TEST$ unresolved
+        T8 sub »Unresolved«,
+
+        // $TEST$ unresolved
+        T9 sub »Forward«,
+
+        Forward,
+    >(
+        // $TEST$ references own
+        a: »Own«,
+
+        // $TEST$ references overridden
+        b: »Overridden«,
+
+        // $TEST$ references container
+        c: »Container«,
+
+        // $TEST$ unresolved
+        d: »BeforeMember«,
+
+        // $TEST$ unresolved
+        e: »AfterMember«,
+
+        // $TEST$ unresolved
+        g: »BeforeGlobal«,
+
+        // $TEST$ unresolved
+        h: »AfterGlobal«,
+
+        // $TEST$ unresolved
+        i: »Unresolved«,
+    ) -> (
+        // $TEST$ references own
+        z: »Own«,
+
+        // $TEST$ references overridden
+        y: »Overridden«,
+
+        // $TEST$ references container
+        x: »Container«,
+
+        // $TEST$ unresolved
+        w: »BeforeMember«,
+
+        // $TEST$ unresolved
+        v: »AfterMember«,
+
+        // $TEST$ unresolved
+        u: »BeforeGlobal«,
+
+        // $TEST$ unresolved
+        t: »AfterGlobal«,
+
+        // $TEST$ unresolved
+        s: »Unresolved«,
+    )
+
+    fun myFunction5<AfterMember>()
+}
+
+fun myFunction5<AfterGlobal>()

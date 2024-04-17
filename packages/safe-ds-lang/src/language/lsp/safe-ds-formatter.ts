@@ -1,16 +1,8 @@
-import {
-    AbstractFormatter,
-    AstNode,
-    CstNode,
-    findCommentNode,
-    Formatting,
-    FormattingAction,
-    FormattingActionOptions,
-    isAstNode,
-} from 'langium';
+import { AstNode, CstNode, CstUtils, isAstNode } from 'langium';
 import { last } from '../../helpers/collections.js';
 import * as ast from '../generated/ast.js';
 import { getAnnotationCalls, getLiterals, getTypeArguments } from '../helpers/nodeProperties.js';
+import { AbstractFormatter, Formatting, FormattingAction, FormattingActionOptions } from 'langium/lsp';
 import indent = Formatting.indent;
 import newLine = Formatting.newLine;
 import newLines = Formatting.newLines;
@@ -87,8 +79,8 @@ export class SafeDsFormatter extends AbstractFormatter {
         // -----------------------------------------------------------------------------
         else if (ast.isSdsConstraintList(node)) {
             this.formatSdsConstraintList(node);
-        } else if (ast.isSdsTypeParameterConstraint(node)) {
-            this.formatSdsTypeParameterConstraint(node);
+        } else if (ast.isSdsParameterBound(node)) {
+            this.formatSdsParameterBound(node);
         }
 
         // -----------------------------------------------------------------------------
@@ -158,6 +150,8 @@ export class SafeDsFormatter extends AbstractFormatter {
             this.formatSdsTemplateStringInner(node);
         } else if (ast.isSdsTemplateStringEnd(node)) {
             this.formatSdsTemplateStringEnd(node);
+        } else if (ast.isSdsTypeCast(node)) {
+            this.formatSdsTypeCast(node);
         }
 
         // -----------------------------------------------------------------------------
@@ -482,6 +476,7 @@ export class SafeDsFormatter extends AbstractFormatter {
         formatter.property('name').prepend(oneSpace());
         formatter.property('parameterList').prepend(noSpace());
         formatter.property('resultList').prepend(oneSpace());
+        formatter.property('constraintList').prepend(oneSpace());
         formatter.property('body').prepend(oneSpace());
     }
 
@@ -527,7 +522,7 @@ export class SafeDsFormatter extends AbstractFormatter {
         }
     }
 
-    private formatSdsTypeParameterConstraint(node: ast.SdsTypeParameterConstraint) {
+    private formatSdsParameterBound(node: ast.SdsParameterBound) {
         const formatter = this.getNodeFormatter(node);
 
         formatter.property('operator').surround(oneSpace());
@@ -697,6 +692,7 @@ export class SafeDsFormatter extends AbstractFormatter {
     private formatSdsCall(node: ast.SdsCall) {
         const formatter = this.getNodeFormatter(node);
 
+        formatter.keyword('?').surround(noSpace());
         formatter.property('argumentList').prepend(noSpace());
     }
 
@@ -729,6 +725,7 @@ export class SafeDsFormatter extends AbstractFormatter {
     private formatSdsIndexedAccess(node: ast.SdsIndexedAccess) {
         const formatter = this.getNodeFormatter(node);
 
+        formatter.keyword('?').surround(noSpace());
         formatter.keyword('[').surround(noSpace());
         formatter.keyword(']').prepend(noSpace());
     }
@@ -812,6 +809,12 @@ export class SafeDsFormatter extends AbstractFormatter {
         const formatter = this.getNodeFormatter(node);
 
         formatter.node(node).prepend(oneSpace());
+    }
+
+    private formatSdsTypeCast(node: ast.SdsTypeCast) {
+        const formatter = this.getNodeFormatter(node);
+
+        formatter.keyword('as').surround(oneSpace());
     }
 
     /**
@@ -905,6 +908,7 @@ export class SafeDsFormatter extends AbstractFormatter {
         }
 
         formatter.property('variance').append(oneSpace());
+        formatter.keyword('sub').surround(oneSpace());
         formatter.keyword('=').surround(oneSpace());
     }
 
@@ -1009,9 +1013,9 @@ export class SafeDsFormatter extends AbstractFormatter {
         const commentNames = ['ML_COMMENT', 'SL_COMMENT'];
 
         if (isAstNode(node)) {
-            return findCommentNode(node.$cstNode, commentNames);
+            return CstUtils.findCommentNode(node.$cstNode, commentNames);
         } else {
-            return findCommentNode(node, commentNames);
+            return CstUtils.findCommentNode(node, commentNames);
         }
     }
 }

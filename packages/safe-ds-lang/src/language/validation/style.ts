@@ -1,12 +1,16 @@
 import { ValidationAcceptor } from 'langium';
 import { isEmpty } from '../../helpers/collections.js';
 import {
+    isSdsCall,
     isSdsEnumVariant,
+    isSdsIndexedAccess,
+    isSdsMemberAccess,
     isSdsWildcard,
     SdsAnnotation,
     SdsAnnotationCall,
     SdsAssignment,
     SdsCall,
+    SdsChainedExpression,
     SdsClassBody,
     SdsConstraintList,
     SdsEnumBody,
@@ -14,7 +18,6 @@ import {
     SdsFunction,
     SdsImportedDeclaration,
     SdsInfixOperation,
-    SdsMemberAccess,
     SdsNamedType,
     SdsSegment,
     SdsTypeParameterList,
@@ -32,9 +35,9 @@ export const CODE_STYLE_UNNECESSARY_CONST_MODIFIER = 'style/unnecessary-const-mo
 export const CODE_STYLE_UNNECESSARY_CONSTRAINT_LIST = 'style/unnecessary-constraint-list';
 export const CODE_STYLE_UNNECESSARY_ELVIS_OPERATOR = 'style/unnecessary-elvis-operator';
 export const CODE_STYLE_UNNECESSARY_IMPORT_ALIAS = 'style/unnecessary-import-alias';
+export const CODE_STYLE_UNNECESSARY_NULL_SAFETY = 'style/unnecessary-null-safety';
 export const CODE_STYLE_UNNECESSARY_PARAMETER_LIST = 'style/unnecessary-parameter-list';
 export const CODE_STYLE_UNNECESSARY_RESULT_LIST = 'style/unnecessary-result-list';
-export const CODE_STYLE_UNNECESSARY_SAFE_ACCESS = 'style/unnecessary-safe-access';
 export const CODE_STYLE_UNNECESSARY_TYPE_ARGUMENT_LIST = 'style/unnecessary-type-argument-list';
 export const CODE_STYLE_UNNECESSARY_TYPE_PARAMETER_LIST = 'style/unnecessary-type-parameter-list';
 export const CODE_STYLE_UNNECESSARY_UNION_TYPE = 'style/unnecessary-union-type';
@@ -46,8 +49,8 @@ export const CODE_STYLE_UNNECESSARY_UNION_TYPE = 'style/unnecessary-union-type';
 export const annotationCallArgumentListShouldBeNeeded = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
 
-    return async (node: SdsAnnotationCall, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateCodeStyle())) {
+    return (node: SdsAnnotationCall, accept: ValidationAcceptor) => {
+        if (!settingsProvider.shouldValidateCodeStyle()) {
             /* c8 ignore next 2 */
             return;
         }
@@ -76,8 +79,8 @@ export const annotationCallArgumentListShouldBeNeeded = (services: SafeDsService
 export const callArgumentListShouldBeNeeded = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
 
-    return async (node: SdsCall, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateCodeStyle())) {
+    return (node: SdsCall, accept: ValidationAcceptor) => {
+        if (!settingsProvider.shouldValidateCodeStyle()) {
             /* c8 ignore next 2 */
             return;
         }
@@ -109,8 +112,8 @@ export const callArgumentListShouldBeNeeded = (services: SafeDsServices) => {
 export const assignmentShouldHaveMoreThanWildcardsAsAssignees = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
 
-    return async (node: SdsAssignment, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateCodeStyle())) {
+    return (node: SdsAssignment, accept: ValidationAcceptor) => {
+        if (!settingsProvider.shouldValidateCodeStyle()) {
             /* c8 ignore next 2 */
             return;
         }
@@ -132,8 +135,8 @@ export const assignmentShouldHaveMoreThanWildcardsAsAssignees = (services: SafeD
 export const classBodyShouldNotBeEmpty = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
 
-    return async (node: SdsClassBody, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateCodeStyle())) {
+    return (node: SdsClassBody, accept: ValidationAcceptor) => {
+        if (!settingsProvider.shouldValidateCodeStyle()) {
             /* c8 ignore next 2 */
             return;
         }
@@ -150,8 +153,8 @@ export const classBodyShouldNotBeEmpty = (services: SafeDsServices) => {
 export const enumBodyShouldNotBeEmpty = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
 
-    return async (node: SdsEnumBody, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateCodeStyle())) {
+    return (node: SdsEnumBody, accept: ValidationAcceptor) => {
+        if (!settingsProvider.shouldValidateCodeStyle()) {
             /* c8 ignore next 2 */
             return;
         }
@@ -172,8 +175,8 @@ export const enumBodyShouldNotBeEmpty = (services: SafeDsServices) => {
 export const annotationParameterShouldNotHaveConstModifier = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
 
-    return async (node: SdsAnnotation, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateCodeStyle())) {
+    return (node: SdsAnnotation, accept: ValidationAcceptor) => {
+        if (!settingsProvider.shouldValidateCodeStyle()) {
             /* c8 ignore next 2 */
             return;
         }
@@ -197,8 +200,8 @@ export const annotationParameterShouldNotHaveConstModifier = (services: SafeDsSe
 export const constraintListShouldNotBeEmpty = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
 
-    return async (node: SdsConstraintList, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateCodeStyle())) {
+    return (node: SdsConstraintList, accept: ValidationAcceptor) => {
+        if (!settingsProvider.shouldValidateCodeStyle()) {
             /* c8 ignore next 2 */
             return;
         }
@@ -219,10 +222,11 @@ export const constraintListShouldNotBeEmpty = (services: SafeDsServices) => {
 export const elvisOperatorShouldBeNeeded = (services: SafeDsServices) => {
     const partialEvaluator = services.evaluation.PartialEvaluator;
     const settingsProvider = services.workspace.SettingsProvider;
-    const typeComputer = services.types.TypeComputer;
+    const typeChecker = services.typing.TypeChecker;
+    const typeComputer = services.typing.TypeComputer;
 
-    return async (node: SdsInfixOperation, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateCodeStyle())) {
+    return (node: SdsInfixOperation, accept: ValidationAcceptor) => {
+        if (!settingsProvider.shouldValidateCodeStyle()) {
             /* c8 ignore next 2 */
             return;
         }
@@ -232,7 +236,7 @@ export const elvisOperatorShouldBeNeeded = (services: SafeDsServices) => {
         }
 
         const leftType = typeComputer.computeType(node.leftOperand);
-        if (!leftType.isNullable) {
+        if (!typeChecker.canBeNull(leftType)) {
             accept(
                 'info',
                 'The left operand is never null, so the elvis operator is unnecessary (keep the left operand).',
@@ -283,8 +287,8 @@ export const elvisOperatorShouldBeNeeded = (services: SafeDsServices) => {
 export const importedDeclarationAliasShouldDifferFromDeclarationName = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
 
-    return async (node: SdsImportedDeclaration, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateCodeStyle())) {
+    return (node: SdsImportedDeclaration, accept: ValidationAcceptor) => {
+        if (!settingsProvider.shouldValidateCodeStyle()) {
             /* c8 ignore next 2 */
             return;
         }
@@ -300,14 +304,51 @@ export const importedDeclarationAliasShouldDifferFromDeclarationName = (services
 };
 
 // -----------------------------------------------------------------------------
+// Unnecessary null safety
+// -----------------------------------------------------------------------------
+
+export const chainedExpressionNullSafetyShouldBeNeeded = (services: SafeDsServices) => {
+    const settingsProvider = services.workspace.SettingsProvider;
+    const typeChecker = services.typing.TypeChecker;
+    const typeComputer = services.typing.TypeComputer;
+
+    return (node: SdsChainedExpression, accept: ValidationAcceptor) => {
+        if (!settingsProvider.shouldValidateCodeStyle()) {
+            /* c8 ignore next 2 */
+            return;
+        }
+
+        if (!node.isNullSafe) {
+            return;
+        }
+
+        const receiverType = typeComputer.computeType(node.receiver);
+        if (receiverType === UnknownType || typeChecker.canBeNull(receiverType)) {
+            return;
+        }
+
+        if (
+            (isSdsCall(node) && typeChecker.canBeCalled(receiverType)) ||
+            (isSdsIndexedAccess(node) && typeChecker.canBeAccessedByIndex(receiverType)) ||
+            isSdsMemberAccess(node)
+        ) {
+            accept('info', 'The receiver is never null, so null-safety is unnecessary.', {
+                node,
+                code: CODE_STYLE_UNNECESSARY_NULL_SAFETY,
+            });
+        }
+    };
+};
+
+// -----------------------------------------------------------------------------
 // Unnecessary parameter lists
 // -----------------------------------------------------------------------------
 
 export const annotationParameterListShouldNotBeEmpty = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
 
-    return async (node: SdsAnnotation, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateCodeStyle())) {
+    return (node: SdsAnnotation, accept: ValidationAcceptor) => {
+        if (!settingsProvider.shouldValidateCodeStyle()) {
             /* c8 ignore next 2 */
             return;
         }
@@ -325,8 +366,8 @@ export const annotationParameterListShouldNotBeEmpty = (services: SafeDsServices
 export const enumVariantParameterListShouldNotBeEmpty = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
 
-    return async (node: SdsEnumVariant, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateCodeStyle())) {
+    return (node: SdsEnumVariant, accept: ValidationAcceptor) => {
+        if (!settingsProvider.shouldValidateCodeStyle()) {
             /* c8 ignore next 2 */
             return;
         }
@@ -348,8 +389,8 @@ export const enumVariantParameterListShouldNotBeEmpty = (services: SafeDsService
 export const functionResultListShouldNotBeEmpty = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
 
-    return async (node: SdsFunction, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateCodeStyle())) {
+    return (node: SdsFunction, accept: ValidationAcceptor) => {
+        if (!settingsProvider.shouldValidateCodeStyle()) {
             /* c8 ignore next 2 */
             return;
         }
@@ -367,8 +408,8 @@ export const functionResultListShouldNotBeEmpty = (services: SafeDsServices) => 
 export const segmentResultListShouldNotBeEmpty = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
 
-    return async (node: SdsSegment, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateCodeStyle())) {
+    return (node: SdsSegment, accept: ValidationAcceptor) => {
+        if (!settingsProvider.shouldValidateCodeStyle()) {
             /* c8 ignore next 2 */
             return;
         }
@@ -384,45 +425,14 @@ export const segmentResultListShouldNotBeEmpty = (services: SafeDsServices) => {
 };
 
 // -----------------------------------------------------------------------------
-// Unnecessary safe access
-// -----------------------------------------------------------------------------
-
-export const memberAccessNullSafetyShouldBeNeeded = (services: SafeDsServices) => {
-    const settingsProvider = services.workspace.SettingsProvider;
-
-    return async (node: SdsMemberAccess, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateCodeStyle())) {
-            /* c8 ignore next 2 */
-            return;
-        }
-
-        if (!node.isNullSafe) {
-            return;
-        }
-
-        const receiverType = services.types.TypeComputer.computeType(node.receiver);
-        if (receiverType === UnknownType) {
-            return;
-        }
-
-        if (!receiverType.isNullable) {
-            accept('info', 'The receiver is never null, so the safe access is unnecessary.', {
-                node,
-                code: CODE_STYLE_UNNECESSARY_SAFE_ACCESS,
-            });
-        }
-    };
-};
-
-// -----------------------------------------------------------------------------
 // Unnecessary type argument lists
 // -----------------------------------------------------------------------------
 
 export const namedTypeTypeArgumentListShouldBeNeeded = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
 
-    return async (node: SdsNamedType, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateCodeStyle())) {
+    return (node: SdsNamedType, accept: ValidationAcceptor) => {
+        if (!settingsProvider.shouldValidateCodeStyle()) {
             /* c8 ignore next 2 */
             return;
         }
@@ -454,8 +464,8 @@ export const namedTypeTypeArgumentListShouldBeNeeded = (services: SafeDsServices
 export const typeParameterListShouldNotBeEmpty = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
 
-    return async (node: SdsTypeParameterList, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateCodeStyle())) {
+    return (node: SdsTypeParameterList, accept: ValidationAcceptor) => {
+        if (!settingsProvider.shouldValidateCodeStyle()) {
             /* c8 ignore next 2 */
             return;
         }
@@ -476,8 +486,8 @@ export const typeParameterListShouldNotBeEmpty = (services: SafeDsServices) => {
 export const unionTypeShouldNotHaveASingularTypeArgument = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
 
-    return async (node: SdsUnionType, accept: ValidationAcceptor) => {
-        if (!(await settingsProvider.shouldValidateCodeStyle())) {
+    return (node: SdsUnionType, accept: ValidationAcceptor) => {
+        if (!settingsProvider.shouldValidateCodeStyle()) {
             /* c8 ignore next 2 */
             return;
         }

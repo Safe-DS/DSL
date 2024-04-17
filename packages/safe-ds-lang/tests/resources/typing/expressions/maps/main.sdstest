@@ -1,8 +1,0 @@
-package tests.typing.expressions.maps
-
-// TODO: Improve once type parameters are supported
-pipeline myPipeline {
-
-    // $TEST$ serialization Map
-    »{}«;
-}

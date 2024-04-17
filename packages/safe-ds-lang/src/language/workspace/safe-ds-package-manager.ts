@@ -9,7 +9,7 @@ import {
     LangiumDocuments,
 } from 'langium';
 import { isSdsSegment } from '../generated/ast.js';
-import { isInternal, getPackageName } from '../helpers/nodeProperties.js';
+import { getPackageName, isInternal } from '../helpers/nodeProperties.js';
 
 export class SafeDsPackageManager {
     private readonly astNodeLocator: AstNodeLocator;
@@ -142,16 +142,16 @@ export class SafeDsPackageManager {
 
     private loadAstNode(nodeDescription: AstNodeDescription): AstNode | undefined {
         if (nodeDescription.node) {
-            /* c8 ignore next 2 */
             return nodeDescription.node;
         }
-
-        if (this.langiumDocuments.hasDocument(nodeDescription.documentUri)) {
-            const document = this.langiumDocuments.getOrCreateDocument(nodeDescription.documentUri);
-            return this.astNodeLocator.getAstNode(document.parseResult.value, nodeDescription.path);
-        } /* c8 ignore start */ else {
+        /* c8 ignore start */
+        const document = this.langiumDocuments.getDocument(nodeDescription.documentUri);
+        if (!document) {
             return undefined;
-        } /* c8 ignore stop */
+        }
+
+        return this.astNodeLocator.getAstNode(document.parseResult.value, nodeDescription.path);
+        /* c8 ignore stop */
     }
 
     /**

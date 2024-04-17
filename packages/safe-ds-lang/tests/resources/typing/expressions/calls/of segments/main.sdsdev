@@ -1,0 +1,21 @@
+package tests.typing.expressions.calls.ofSegments
+
+segment s1() -> r: String {}
+segment s2() -> (r: String, s: Int) {
+    yield r = "";
+    yield s = 1;
+}
+
+pipeline myPipeline {
+    // $TEST$ serialization String
+    »s1()«;
+
+    // $TEST$ serialization (r: String, s: Int)
+    »s2()«;
+
+    // $TEST$ serialization String
+    »s1?()«;
+
+    // $TEST$ serialization (r: String, s: Int)
+    »s2?()«;
+}

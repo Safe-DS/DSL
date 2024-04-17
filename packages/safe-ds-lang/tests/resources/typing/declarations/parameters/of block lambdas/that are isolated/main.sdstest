@@ -1,6 +1,0 @@
-package tests.typing.declarations.parameters.ofBlockLambdas.thatAreIsolated
-
-segment mySegment() {
-    // $TEST$ serialization ?
-    (»p«) {};
-}

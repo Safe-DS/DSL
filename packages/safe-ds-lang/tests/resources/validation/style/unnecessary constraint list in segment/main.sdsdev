@@ -1,0 +1,9 @@
+package tests.validation.style.unnecessaryConstraintListInSegment
+
+// $TEST$ info "This constraint list can be removed."
+segment mySegment1() »where {}« {}
+
+// $TEST$ no info "This constraint list can be removed."
+segment mySegment2(p: Int) »where {
+    p < 0
+}« {}

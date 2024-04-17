@@ -10,7 +10,7 @@ import { createSafeDsServices } from '../../../src/language/index.js';
 import { Range } from 'vscode-languageserver';
 import { TestDescription, TestDescriptionError } from '../../helpers/testDescription.js';
 
-const services = createSafeDsServices(EmptyFileSystem).SafeDs;
+const services = (await createSafeDsServices(EmptyFileSystem, { omitBuiltins: true })).SafeDs;
 const rootResourceName = 'validation';
 
 export const createValidationTests = (): Promise<ValidationTest[]> => {

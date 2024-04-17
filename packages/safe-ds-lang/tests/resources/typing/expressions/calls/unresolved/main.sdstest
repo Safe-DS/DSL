@@ -1,6 +1,0 @@
-package tests.typing.expressions.calls.ofUnresolved
-
-pipeline myPipeline {
-    // $TEST$ serialization ?
-    »unresolved()«;
-}

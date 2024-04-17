@@ -1,0 +1,17 @@
+---
+search:
+  exclude: true
+---
+
+- tests
+    - generation
+        - markdown
+            - classes
+                - undocumented
+                    - [MyClass1](tests/generation/markdown/classes/undocumented/MyClass1.md)
+                    - [MyClass2](tests/generation/markdown/classes/undocumented/MyClass2.md)
+                    - [MyClass3](tests/generation/markdown/classes/undocumented/MyClass3.md)
+                    - [MyClass4](tests/generation/markdown/classes/undocumented/MyClass4.md)
+                    - [MyClass5](tests/generation/markdown/classes/undocumented/MyClass5.md)
+                    - [MyClass6](tests/generation/markdown/classes/undocumented/MyClass6.md)
+                    - [MyClass7](tests/generation/markdown/classes/undocumented/MyClass7.md)

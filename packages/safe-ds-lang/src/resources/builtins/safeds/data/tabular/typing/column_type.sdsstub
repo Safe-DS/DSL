@@ -1,0 +1,26 @@
+package safeds.data.tabular.typing
+
+/**
+ * Abstract base class for column types.
+ *
+ * @param isNullable Whether the columntype is nullable.
+ */
+class ColumnType {
+    /**
+     * Return whether the given column type is nullable.
+     *
+     * @result result1 True if the column is nullable.
+     */
+    @Pure
+    @PythonName("is_nullable")
+    fun isNullable() -> result1: Boolean
+
+    /**
+     * Return whether the given column type is numeric.
+     *
+     * @result result1 True if the column is numeric.
+     */
+    @Pure
+    @PythonName("is_numeric")
+    fun isNumeric() -> result1: Boolean
+}

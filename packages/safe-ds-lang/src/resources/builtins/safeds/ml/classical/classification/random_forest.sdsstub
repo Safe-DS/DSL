@@ -1,0 +1,34 @@
+package safeds.ml.classical.classification
+
+from safeds.data.tabular.containers import Table, TaggedTable
+from safeds.ml.classical.classification import Classifier
+
+/**
+ * Random forest classification.
+ *
+ * @param numberOfTrees The number of trees to be used in the random forest. Has to be greater than 0.
+ */
+class RandomForestClassifier(
+    @PythonName("number_of_trees") const numberOfTrees: Int = 100
+) sub Classifier where {
+    numberOfTrees >= 1
+} {
+    /**
+     * Get the number of trees used in the random forest.
+     */
+    @PythonName("number_of_trees") attr numberOfTrees: Int
+
+    /**
+     * Create a copy of this classifier and fit it with the given training data.
+     *
+     * This classifier is not modified.
+     *
+     * @param trainingSet The training data containing the feature and target vectors.
+     *
+     * @result fittedClassifier The fitted classifier.
+     */
+    @Pure
+    fun fit(
+        @PythonName("training_set") trainingSet: TaggedTable
+    ) -> fittedClassifier: RandomForestClassifier
+}

@@ -1,0 +1,9 @@
+.md-typeset__table,
+.md-typeset__table table {
+    display: table !important;
+    width: 100%;
+}
+
+.md-typeset__table td code {
+    word-break: normal !important;
+}

@@ -1,5 +1,5 @@
 import { isSdsCall, isSdsPipeline, SdsAssignment, SdsYield } from '../../../generated/ast.js';
-import { getContainerOfType, ValidationAcceptor } from 'langium';
+import { AstUtils, ValidationAcceptor } from 'langium';
 import { SafeDsServices } from '../../../safe-ds-module.js';
 import { getAbstractResults, getAssignees } from '../../../helpers/nodeProperties.js';
 import { pluralize } from '../../../../helpers/strings.js';
@@ -50,7 +50,7 @@ export const assignmentShouldNotImplicitlyIgnoreResult = (services: SafeDsServic
 };
 
 export const yieldMustNotBeUsedInPipeline = (node: SdsYield, accept: ValidationAcceptor): void => {
-    const containingPipeline = getContainerOfType(node, isSdsPipeline);
+    const containingPipeline = AstUtils.getContainerOfType(node, isSdsPipeline);
 
     if (containingPipeline) {
         accept('error', 'Yield must not be used in a pipeline.', {

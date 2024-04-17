@@ -1,0 +1,34 @@
+package tests.validation.inheritance.mustInheritOnlyClasses
+
+class MyClass {
+    class MyNestedClass
+}
+enum MyEnum {
+    MyEnumVariant
+}
+
+// $TEST$ no error "A class must only inherit classes."
+// $TEST$ no error "A class must only inherit classes."
+// $TEST$ no error "A class must only inherit classes."
+// $TEST$ no error "A class must only inherit classes."
+// $TEST$ no error "A class must only inherit classes."
+class TestClass1 sub »MyClass«,
+                    »MyClass.MyNestedClass«,
+                    »MyEnum«,
+                    »MyEnum.MyEnumVariant«,
+                    »Unresolved«
+
+// $TEST$ no error "A class must only inherit classes."
+class TestClass2 sub »MyClass«
+
+// $TEST$ no error "A class must only inherit classes."
+class TestClass3 sub »MyClass.MyNestedClass«
+
+// $TEST$ error "A class must only inherit classes."
+class TestClass4 sub »MyEnum«
+
+// $TEST$ error "A class must only inherit classes."
+class TestClass5 sub »MyEnum.MyEnumVariant«
+
+// $TEST$ no error "A class must only inherit classes."
+class TestClass6 sub »Unresolved«

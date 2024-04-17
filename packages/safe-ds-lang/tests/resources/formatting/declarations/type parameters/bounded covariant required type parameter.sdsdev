@@ -1,0 +1,5 @@
+fun myFunction< out  T  sub  Int >()
+
+// -----------------------------------------------------------------------------
+
+fun myFunction<out T sub Int>()

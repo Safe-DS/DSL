@@ -1,32 +1,38 @@
-import { expandToStringWithNL, getContainerOfType, ValidationAcceptor } from 'langium';
+import { AstUtils, ValidationAcceptor } from 'langium';
 import { isEmpty, isEqualSet } from '../../helpers/collections.js';
 import { isSdsClass, isSdsFunction, SdsClass, type SdsClassMember } from '../generated/ast.js';
 import { getParentTypes, getQualifiedName } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
-import { ClassType, UnknownType } from '../typing/model.js';
+import { ClassType, Type, UnknownType } from '../typing/model.js';
+import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
+import { expandToStringWithNL } from 'langium/generate';
 
 export const CODE_INHERITANCE_CYCLE = 'inheritance/cycle';
 export const CODE_INHERITANCE_MULTIPLE_INHERITANCE = 'inheritance/multiple-inheritance';
 export const CODE_INHERITANCE_IDENTICAL_TO_OVERRIDDEN_MEMBER = 'inheritance/identical-to-overridden-member';
 export const CODE_INHERITANCE_INCOMPATIBLE_TO_OVERRIDDEN_MEMBER = 'inheritance/incompatible-to-overridden-member';
 export const CODE_INHERITANCE_NOT_A_CLASS = 'inheritance/not-a-class';
+export const CODE_INHERITANCE_NULLABLE = 'inheritance/nullable';
 
 export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: SafeDsServices) => {
     const builtinAnnotations = services.builtins.Annotations;
-    const classHierarchy = services.types.ClassHierarchy;
-    const typeChecker = services.types.TypeChecker;
-    const typeComputer = services.types.TypeComputer;
+    const classHierarchy = services.typing.ClassHierarchy;
+    const typeChecker = services.typing.TypeChecker;
+    const typeComputer = services.typing.TypeComputer;
 
     return (node: SdsClassMember, accept: ValidationAcceptor): void => {
+        // Check whether the member overrides something
         const overriddenMember = classHierarchy.getOverriddenMember(node);
         if (!overriddenMember) {
             return;
         }
 
-        const ownMemberType = typeComputer.computeType(node);
-        const overriddenMemberType = typeComputer.computeType(overriddenMember);
+        // Compute types
+        const { ownMemberType, overriddenMemberType, substitutedOwnMemberType, substitutedOverriddenMemberType } =
+            computeMemberTypes(node, overriddenMember, typeComputer);
 
-        if (!typeChecker.isAssignableTo(ownMemberType, overriddenMemberType)) {
+        // Check whether the overriding is legal and needed
+        if (!typeChecker.isSubtypeOf(substitutedOwnMemberType, overriddenMemberType)) {
             accept(
                 'error',
                 expandToStringWithNL`
@@ -40,7 +46,7 @@ export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: 
                     code: CODE_INHERITANCE_INCOMPATIBLE_TO_OVERRIDDEN_MEMBER,
                 },
             );
-        } else if (typeChecker.isAssignableTo(overriddenMemberType, ownMemberType)) {
+        } else if (typeChecker.isSubtypeOf(substitutedOverriddenMemberType, ownMemberType)) {
             // Prevents the info from showing when editing the builtin files
             if (isInSafedsLangAnyClass(services, node)) {
                 return;
@@ -73,8 +79,71 @@ export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: 
     };
 };
 
+const computeMemberTypes = (
+    ownMember: SdsClassMember,
+    overriddenMember: SdsClassMember,
+    typeComputer: SafeDsTypeComputer,
+): ComputeMemberTypesResult => {
+    // Compute basic types (might contain type parameters)
+    const ownMemberType = typeComputer.computeType(ownMember);
+    let overriddenMemberType = typeComputer.computeType(overriddenMember);
+
+    // Substitute type parameters of class containing the overridden member
+    const classContainingOwnMember = AstUtils.getContainerOfType(ownMember, isSdsClass);
+    const typeContainingOwnMember = typeComputer.computeType(classContainingOwnMember);
+
+    if (typeContainingOwnMember instanceof ClassType) {
+        const classContainingOverriddenMember = AstUtils.getContainerOfType(overriddenMember, isSdsClass);
+        const typeContainingOverriddenMember = typeComputer.computeMatchingSupertype(
+            typeContainingOwnMember,
+            classContainingOverriddenMember,
+        );
+
+        if (typeContainingOverriddenMember) {
+            overriddenMemberType = overriddenMemberType.substituteTypeParameters(
+                typeContainingOverriddenMember.substitutions,
+            );
+        }
+    }
+
+    // Substitute type parameters of methods
+    const substitutedOwnMemberType = ownMemberType.substituteTypeParameters(
+        typeComputer.computeSubstitutionsForOverriding(ownMemberType, overriddenMemberType),
+    );
+    const substitutedOverriddenMemberType = overriddenMemberType.substituteTypeParameters(
+        typeComputer.computeSubstitutionsForOverriding(overriddenMemberType, ownMemberType),
+    );
+
+    return { ownMemberType, overriddenMemberType, substitutedOwnMemberType, substitutedOverriddenMemberType };
+};
+
+interface ComputeMemberTypesResult {
+    /**
+     * The type of the own member. Type parameters of the containing class or own member are not yet substituted.
+     */
+    ownMemberType: Type;
+
+    /**
+     * The type of the overridden member. Type parameters of the containing class are substituted, but not the type
+     * parameters of the overridden member.
+     */
+    overriddenMemberType: Type;
+
+    /**
+     * The type of the own member with all type parameters of the own member substituted. Substitutions are based on the
+     * types of the corresponding parameters of the overridden member.
+     */
+    substitutedOwnMemberType: Type;
+
+    /**
+     * The type of the overridden member with all type parameters of the overridden member substituted. Substitutions
+     * are based on the types of the corresponding parameters of the own member.
+     */
+    substitutedOverriddenMemberType: Type;
+}
+
 const isInSafedsLangAnyClass = (services: SafeDsServices, node: SdsClassMember): boolean => {
-    const containingClass = getContainerOfType(node, isSdsClass);
+    const containingClass = AstUtils.getContainerOfType(node, isSdsClass);
     return (
         isSdsClass(containingClass) &&
         getQualifiedName(containingClass) === getQualifiedName(services.builtins.Classes.Any)
@@ -82,7 +151,7 @@ const isInSafedsLangAnyClass = (services: SafeDsServices, node: SdsClassMember):
 };
 
 export const classMustOnlyInheritASingleClass = (services: SafeDsServices) => {
-    const typeComputer = services.types.TypeComputer;
+    const typeComputer = services.typing.TypeComputer;
     const computeType = typeComputer.computeType.bind(typeComputer);
 
     return (node: SdsClass, accept: ValidationAcceptor): void => {
@@ -95,11 +164,18 @@ export const classMustOnlyInheritASingleClass = (services: SafeDsServices) => {
 
         // First parent type must be a class
         const computedType = computeType(firstParentType);
-        if (computedType !== UnknownType && !(computedType instanceof ClassType)) {
-            accept('error', 'A class must only inherit classes.', {
-                node: firstParentType!,
-                code: CODE_INHERITANCE_NOT_A_CLASS,
-            });
+        if (computedType !== UnknownType) {
+            if (!(computedType instanceof ClassType)) {
+                accept('error', 'A class must only inherit classes.', {
+                    node: firstParentType!,
+                    code: CODE_INHERITANCE_NOT_A_CLASS,
+                });
+            } else if (computedType.isExplicitlyNullable) {
+                accept('error', 'The parent type must not be nullable.', {
+                    node: firstParentType!,
+                    code: CODE_INHERITANCE_NULLABLE,
+                });
+            }
         }
 
         // Must have only one parent type
@@ -113,10 +189,10 @@ export const classMustOnlyInheritASingleClass = (services: SafeDsServices) => {
 };
 
 export const classMustNotInheritItself = (services: SafeDsServices) => {
-    const classHierarchy = services.types.ClassHierarchy;
+    const classHierarchy = services.typing.ClassHierarchy;
 
     return (node: SdsClass, accept: ValidationAcceptor): void => {
-        const superClasses = classHierarchy.streamSuperclasses(node);
+        const superClasses = classHierarchy.streamProperSuperclasses(node);
         if (superClasses.includes(node)) {
             accept('error', 'A class must not directly or indirectly be a subtype of itself.', {
                 node: getParentTypes(node)[0]!,

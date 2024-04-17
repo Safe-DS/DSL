@@ -1,0 +1,14 @@
+package tests.validation.names.duplicates.inClass.staticAndInherited
+
+class MyClass1 {
+    attr myInstanceAttribute1: Int
+    attr myInstanceAttribute2: Int
+}
+
+class MyClass2 sub MyClass1 {
+    // $TEST$ error "An inherited member with name 'myInstanceAttribute1' exists already."
+    static attr »myInstanceAttribute1«: Int
+
+    // $TEST$ no error r"An inherited member with name '.*' exists already\."
+    attr »myInstanceAttribute2«: Int
+}

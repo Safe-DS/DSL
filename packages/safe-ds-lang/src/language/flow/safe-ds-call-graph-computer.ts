@@ -1,12 +1,4 @@
-import {
-    AstNode,
-    type AstNodeLocator,
-    getContainerOfType,
-    getDocument,
-    stream,
-    streamAst,
-    WorkspaceCache,
-} from 'langium';
+import { AstNode, type AstNodeLocator, AstUtils, stream, WorkspaceCache } from 'langium';
 import {
     isSdsBlockLambda,
     isSdsCall,
@@ -66,7 +58,7 @@ export class SafeDsCallGraphComputer {
         this.astNodeLocator = services.workspace.AstNodeLocator;
         this.nodeMapper = services.helpers.NodeMapper;
         this.partialEvaluator = services.evaluation.PartialEvaluator;
-        this.typeComputer = services.types.TypeComputer;
+        this.typeComputer = services.typing.TypeComputer;
 
         this.callCache = new WorkspaceCache(services.shared);
         this.callGraphCache = new WorkspaceCache(services.shared);
@@ -160,7 +152,10 @@ export class SafeDsCallGraphComputer {
         return this.getExecutedCallsInCallable(syntheticCall.callable.callable, syntheticCall.substitutions);
     }
 
-    private getExecutedCallsInCallable(callable: SdsCallable | SdsParameter, substitutions: ParameterSubstitutions) {
+    private getExecutedCallsInCallable(
+        callable: SdsCallable | SdsParameter,
+        substitutions: ParameterSubstitutions,
+    ): SyntheticCall[] {
         if (isSdsBlockLambda(callable) || isSdsExpressionLambda(callable) || isSdsSegment(callable)) {
             return this.getExecutedCallsInPipelineCallable(callable, substitutions);
         } else if (isSdsClass(callable) || isSdsEnumVariant(callable) || isSdsFunction(callable)) {
@@ -194,7 +189,7 @@ export class SafeDsCallGraphComputer {
         }
 
         return [...callsInDefaultValues, ...callsInBody]
-            .filter((it) => getContainerOfType(it, isSdsCallable) === callable)
+            .filter((it) => AstUtils.getContainerOfType(it, isSdsCallable) === callable)
             .map((it) => this.createSyntheticCallForCall(it, substitutions));
     }
 
@@ -269,11 +264,12 @@ export class SafeDsCallGraphComputer {
 
         // Fall back to getting the called parameter via the type computer
         const type = this.typeComputer.computeType(expression);
-        if (!(type instanceof CallableType)) {
+        const nonNullType = this.typeComputer.computeNonNullableType(type);
+        if (!(nonNullType instanceof CallableType)) {
             return undefined;
         }
 
-        const parameterOrCallable = type.parameter ?? type.callable;
+        const parameterOrCallable = nonNullType.parameter ?? nonNullType.callable;
         if (isSdsParameter(parameterOrCallable)) {
             return new NamedCallable(parameterOrCallable);
         } else if (isSdsFunction(parameterOrCallable)) {
@@ -330,11 +326,11 @@ export class SafeDsCallGraphComputer {
         }
 
         const key = this.getNodeId(node);
-        return this.callCache.get(key, () => streamAst(node).filter(isSdsCall).toArray());
+        return this.callCache.get(key, () => AstUtils.streamAst(node).filter(isSdsCall).toArray());
     }
 
     private getNodeId(node: AstNode) {
-        const documentUri = getDocument(node).uri.toString();
+        const documentUri = AstUtils.getDocument(node).uri.toString();
         const nodePath = this.astNodeLocator.getAstNodePath(node);
         return `${documentUri}~${nodePath}`;
     }

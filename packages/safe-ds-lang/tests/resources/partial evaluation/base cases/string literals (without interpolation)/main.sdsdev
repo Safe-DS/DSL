@@ -1,0 +1,9 @@
+package tests.partialValidation.baseCases.stringLiteralsWithoutInterpolation
+
+pipeline test {
+    // $TEST$ serialization "test"
+    »"test"«;
+
+    // $TEST$ serialization "test\t"
+    »"test\t"«;
+}

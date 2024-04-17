@@ -1,0 +1,10 @@
+package tests.typing.declarations.parameters.ofEnumVariants
+
+enum MyEnum {
+    // $TEST$ equivalence_class parameterType
+    // $TEST$ equivalence_class parameterType
+    MyEnumVariant1(»p«: »Int«)
+
+    // $TEST$ serialization unknown
+    MyEnumVariant2(»p«)
+}

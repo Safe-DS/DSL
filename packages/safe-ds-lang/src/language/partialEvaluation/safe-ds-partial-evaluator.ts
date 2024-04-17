@@ -1,4 +1,4 @@
-import { AstNode, AstNodeLocator, getContainerOfType, getDocument, WorkspaceCache } from 'langium';
+import { AstNode, AstNodeLocator, AstUtils, WorkspaceCache } from 'langium';
 import { isEmpty } from '../../helpers/collections.js';
 import {
     isSdsArgument,
@@ -33,6 +33,8 @@ import {
     isSdsTemplateStringEnd,
     isSdsTemplateStringInner,
     isSdsTemplateStringStart,
+    isSdsTypeCast,
+    isSdsUnknown,
     type SdsArgument,
     type SdsAssignee,
     type SdsCall,
@@ -121,7 +123,7 @@ export class SafeDsPartialEvaluator {
     }
 
     private getNodeId(node: AstNode) {
-        const documentUri = getDocument(node).uri.toString();
+        const documentUri = AstUtils.getDocument(node).uri.toString();
         const nodePath = this.astNodeLocator.getAstNodePath(node);
         return `${documentUri}~${nodePath}`;
     }
@@ -147,7 +149,7 @@ export class SafeDsPartialEvaluator {
         substitutions: ParameterSubstitutions,
         visited: VisitedState[],
     ): EvaluatedNode {
-        const containingAssignment = getContainerOfType(node, isSdsAssignment);
+        const containingAssignment = AstUtils.getContainerOfType(node, isSdsAssignment);
         if (!containingAssignment) {
             /* c8 ignore next 2 */
             return UnknownEvaluatedNode;
@@ -211,6 +213,8 @@ export class SafeDsPartialEvaluator {
             return new StringConstant(node.value);
         } else if (isSdsTemplateStringEnd(node)) {
             return new StringConstant(node.value);
+        } else if (isSdsUnknown(node)) {
+            return UnknownEvaluatedNode;
         } else if (isSdsBlockLambda(node)) {
             return new BlockLambdaClosure(node, substitutions);
         } else if (isSdsExpressionLambda(node)) {
@@ -240,6 +244,8 @@ export class SafeDsPartialEvaluator {
             return this.evaluateWithRecursionCheck(node.target.ref, substitutions, visited);
         } else if (isSdsTemplateString(node)) {
             return this.evaluateTemplateString(node, substitutions, visited);
+        } else if (isSdsTypeCast(node)) {
+            return this.evaluateWithRecursionCheck(node.expression, substitutions, visited);
         } /* c8 ignore start */ else {
             throw new Error(`Unexpected expression type: ${node.$type}`);
         } /* c8 ignore stop */
@@ -499,6 +505,8 @@ export class SafeDsPartialEvaluator {
                 substitutions,
                 visited,
             );
+        } else if (receiver.equals(NullConstant) && node.isNullSafe) {
+            return NullConstant;
         }
 
         return UnknownEvaluatedNode;
@@ -618,6 +626,8 @@ export class SafeDsPartialEvaluator {
         } else if (receiver instanceof EvaluatedMap) {
             const key = this.evaluateWithRecursionCheck(node.index, substitutions, visited).unwrap();
             return receiver.getLastValueForKey(key);
+        } else if (receiver.equals(NullConstant) && node.isNullSafe) {
+            return NullConstant;
         }
 
         return UnknownEvaluatedNode;
@@ -640,20 +650,45 @@ export class SafeDsPartialEvaluator {
             return receiver.getParameterValueByName(member.name);
         } else if (receiver instanceof EvaluatedNamedTuple) {
             return receiver.getResultValueByName(member.name);
+        } else if (receiver.equals(NullConstant) && node.isNullSafe) {
+            return NullConstant;
         }
 
         return UnknownEvaluatedNode;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    // canBeValueOfConstantParameter
+    // Parameter substitutions
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Returns the parameter substitutions for the given call.
+     */
+    computeParameterSubstitutionsForCall(
+        call: SdsCall | undefined,
+        substitutions: ParameterSubstitutions = NO_SUBSTITUTIONS,
+    ): ParameterSubstitutions {
+        const callable = this.nodeMapper.callToCallable(call);
+        const args = getArguments(call);
+        return this.getParameterSubstitutionsAfterCall(callable, args, NO_SUBSTITUTIONS, substitutions, []);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Checks
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * Returns whether the given expression can be the value of a constant parameter.
      */
     canBeValueOfConstantParameter = (node: SdsExpression): boolean => {
-        if (isSdsBoolean(node) || isSdsFloat(node) || isSdsInt(node) || isSdsNull(node) || isSdsString(node)) {
+        if (
+            isSdsBoolean(node) ||
+            isSdsFloat(node) ||
+            isSdsInt(node) ||
+            isSdsNull(node) ||
+            isSdsString(node) ||
+            isSdsUnknown(node)
+        ) {
             return true;
         } else if (isSdsCall(node)) {
             // If some arguments are not provided, we already show an error.

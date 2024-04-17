@@ -1,0 +1,29 @@
+package tests.generation.markdown.annotations.documented
+
+/**
+ * Description of MyAnnotation1.
+ */
+annotation MyAnnotation1
+
+/**
+ * Description of MyAnnotation2.
+ *
+ * @param param1 Description of param1.
+ * @param param2 Description of param2.
+ */
+annotation MyAnnotation2(param1: MyEnum1, param2: Float = 1.0)
+
+/**
+ * Description of MyAnnotation3.
+ */
+@Target(AnnotationTarget.Annotation)
+annotation MyAnnotation3
+
+enum MyEnum1
+
+/**
+ * Description of MyAnnotation4.
+ *
+ * @example // Example of MyAnnotation4.
+ */
+annotation MyAnnotation4

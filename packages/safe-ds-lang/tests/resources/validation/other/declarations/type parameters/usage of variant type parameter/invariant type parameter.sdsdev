@@ -1,0 +1,78 @@
+package tests.validation.other.declarations.typeParameters.usageOfVariantTypeParameters
+
+// $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+class MyClass3<Invariant>(p1: »Invariant«)
+// $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+// $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+// $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+sub Producer<»Invariant«>, Middleware<»Invariant«>, Consumer<»Invariant«> {
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    attr a1: »Invariant«
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    attr a2: (a1: »Invariant«) -> (r1: »Invariant«)
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    attr a3: Producer<»Invariant«>
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    attr a4: Middleware<»Invariant«>
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    attr a5: Consumer<»Invariant«>
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    attr a6: Producer<Producer<»Invariant«>>
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    attr a7: Middleware<Producer<»Invariant«>>
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    attr a8: Consumer<Producer<»Invariant«>>
+
+    fun f(
+        // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+        p1: »Invariant«,
+        // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+        // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+        p2: (a1: »Invariant«) -> (r1: »Invariant«),
+        // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+        p3: Producer<»Invariant«>,
+        // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+        p4: Middleware<»Invariant«>,
+        // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+        p5: Consumer<»Invariant«>,
+    ) -> (
+        // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+        r1: »Invariant«,
+        // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+        // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+        r2: (a1: »Invariant«) -> (r1: »Invariant«),
+        // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+        r3: Producer<»Invariant«>,
+        // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+        r4: Middleware<»Invariant«>,
+        // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+        r5: Consumer<»Invariant«>,
+    )
+}
+
+fun f3<Invariant>(
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    p1: »Invariant«,
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    p2: (a1: »Invariant«) -> (r1: »Invariant«),
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    p3: Producer<»Invariant«>,
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    p4: Middleware<»Invariant«>,
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    p5: Consumer<»Invariant«>,
+) -> (
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    r1: »Invariant«,
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    r2: (a1: »Invariant«) -> (r1: »Invariant«),
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    r3: Producer<»Invariant«>,
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    r4: Middleware<»Invariant«>,
+    // $TEST$ no error r"A .*variant type parameter cannot be used in .*variant position."
+    r5: Consumer<»Invariant«>,
+)

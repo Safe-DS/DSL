@@ -1,7 +1,0 @@
-package tests.typing.types.unionTypes
-
-// $TEST$ serialization union<>
-fun myFunction(a: »union<>«)
-
-// $TEST$ serialization union<Int, String>
-fun myFunction(a: »union<Int, String>«)

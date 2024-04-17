@@ -1,0 +1,31 @@
+package tests.validation.other.declarations.typeParameters.upperBoundMustBeNamedType
+
+class C
+enum E {
+    V
+}
+
+// $TEST$ error "The upper bound of a type parameter must be a named type."
+class MyClass1<T sub »() -> ()«>
+
+// $TEST$ error "The upper bound of a type parameter must be a named type."
+class MyClass2<T sub »literal<1>«>
+
+// $TEST$ no error "The upper bound of a type parameter must be a named type."
+class MyClass3<T sub »C«>
+
+// $TEST$ no error "The upper bound of a type parameter must be a named type."
+class MyClass4<T sub »E«>
+
+// $TEST$ no error "The upper bound of a type parameter must be a named type."
+class MyClass5<T sub »E.V«>
+
+// $TEST$ no error "The upper bound of a type parameter must be a named type."
+// $TEST$ no error "The upper bound of a type parameter must be a named type."
+class MyClass6<T1 sub »T2«, T2 sub »T1«>
+
+// $TEST$ error "The upper bound of a type parameter must be a named type."
+class MyClass7<T sub »union<C, E>«>
+
+// $TEST$ no error "The upper bound of a type parameter must be a named type."
+class MyClass8<T sub »Unresolved«>

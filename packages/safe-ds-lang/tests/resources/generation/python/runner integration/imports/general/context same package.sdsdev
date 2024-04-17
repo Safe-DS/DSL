@@ -1,0 +1,11 @@
+package tests.generator.importsWithRunnerIntegration
+
+@Pure fun impureFunction() -> result: Int
+
+segment segment1InSamePackage() -> result: Int {
+    yield result = impureFunction();
+}
+
+segment segment2InSamePackage() -> result: Int {
+    yield result = impureFunction();
+}

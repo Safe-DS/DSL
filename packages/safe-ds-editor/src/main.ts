@@ -10,6 +10,6 @@ const app = new App({
 });
 
 MessageHandler.listenToMessages();
-MessageHandler.sendMessageTest('Lattensepp und Hänno, sagt main.ts');
+MessageHandler.sendMessageTest('This is a Test Message from main.ts');
 
 export default app;

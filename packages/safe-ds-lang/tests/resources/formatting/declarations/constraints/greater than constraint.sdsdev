@@ -1,0 +1,7 @@
+annotation MyAnnotation where  {  p  >  0  }
+
+// -----------------------------------------------------------------------------
+
+annotation MyAnnotation where {
+    p > 0
+}

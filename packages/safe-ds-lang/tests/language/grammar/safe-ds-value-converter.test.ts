@@ -11,8 +11,9 @@ import {
     isSdsTemplateStringInner,
     isSdsTemplateStringStart,
 } from '../../../src/language/generated/ast.js';
+import { escapeString } from '../../../src/language/grammar/safe-ds-value-converter.js';
 
-const services = createSafeDsServices(EmptyFileSystem).SafeDs;
+const services = (await createSafeDsServices(EmptyFileSystem, { omitBuiltins: true })).SafeDs;
 
 describe('runConverter', () => {
     describe('ID', () => {
@@ -213,5 +214,24 @@ describe('runConverter', () => {
             const firstTemplateStringEnd = await getNodeOfType(services, code, isSdsTemplateStringEnd);
             expect(firstTemplateStringEnd.value).toBe(unescaped);
         });
+    });
+});
+
+describe('escapeString', () => {
+    const tests = [
+        { unescaped: '\b', escaped: '\\b' },
+        { unescaped: '\f', escaped: '\\f' },
+        { unescaped: '\n', escaped: '\\n' },
+        { unescaped: '\r', escaped: '\\r' },
+        { unescaped: '\t', escaped: '\\t' },
+        { unescaped: '\v', escaped: '\\v' },
+        { unescaped: '\0', escaped: '\\0' },
+        { unescaped: '"', escaped: '\\"' },
+        { unescaped: '{', escaped: '\\{' },
+        { unescaped: '\\', escaped: '\\\\' },
+    ];
+
+    it.each(tests)('should escape $unescaped', ({ escaped, unescaped }) => {
+        expect(escapeString(unescaped)).toBe(escaped);
     });
 });

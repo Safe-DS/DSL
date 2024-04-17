@@ -1,0 +1,61 @@
+package tests.validation.types.checking.typeParameterBoundsForDefaultValues
+
+class C1<
+    T1 sub Any,
+    // $TEST$ error "Expected type 'Number' but got 'T1'."
+    T2 sub Number = »T1«,
+    // $TEST$ error "Expected type 'Number' but got 'Any'."
+    T3 sub Number = »Any«,
+    // $TEST$ error "Expected type 'T1' but got 'Any'."
+    T4 sub T1 = »Any«,
+>
+class C2<
+    T1 sub Number,
+    // $TEST$ no error r"Expected type '.*' but got '.*'\."
+    T2 sub Number = »T1«,
+    // $TEST$ no error r"Expected type '.*' but got '.*'\."
+    T3 sub Number = »Number«,
+    // $TEST$ no error r"Expected type '.*' but got '.*'\."
+    T4 sub T1 = »T1«,
+    // $TEST$ error "Expected type 'T1' but got 'T2'."
+    T5 sub T1 = »T2«,
+>
+class C3<
+    T1 sub Int,
+    // $TEST$ no error r"Expected type '.*' but got '.*'\."
+    T2 sub Number = »T1«,
+    // $TEST$ no error r"Expected type '.*' but got '.*'\."
+    T3 sub Number = »Int«,
+    // $TEST$ no error r"Expected type '.*' but got '.*'\."
+    T4 sub T1 = »Nothing«,
+>
+
+@Pure fun f1<
+    T1 sub Any,
+    // $TEST$ error "Expected type 'Number' but got 'T1'."
+    T2 sub Number = »T1«,
+    // $TEST$ error "Expected type 'Number' but got 'Any'."
+    T3 sub Number = »Any«,
+    // $TEST$ error "Expected type 'T1' but got 'Any'."
+    T4 sub T1 = »Any«,
+>()
+@Pure fun f2<
+    T1 sub Number,
+    // $TEST$ no error r"Expected type '.*' but got '.*'\."
+    T2 sub Number = »T1«,
+    // $TEST$ no error r"Expected type '.*' but got '.*'\."
+    T3 sub Number = »Number«,
+    // $TEST$ no error r"Expected type '.*' but got '.*'\."
+    T4 sub T1 = »T1«,
+    // $TEST$ error "Expected type 'T1' but got 'T2'."
+    T5 sub T1 = »T2«,
+>()
+@Pure fun f3<
+    T1 sub Int,
+    // $TEST$ no error r"Expected type '.*' but got '.*'\."
+    T2 sub Number = »T1«,
+    // $TEST$ no error r"Expected type '.*' but got '.*'\."
+    T3 sub Number = »Int«,
+    // $TEST$ no error r"Expected type '.*' but got '.*'\."
+    T4 sub T1 = »Nothing«,
+>()

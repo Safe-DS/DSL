@@ -1,5 +1,6 @@
 import { isEmpty } from '../../helpers/collections.js';
 import {
+    isSdsEnum,
     SdsAbstractResult,
     SdsCallable,
     SdsClass,
@@ -7,18 +8,33 @@ import {
     SdsEnum,
     SdsEnumVariant,
     SdsParameter,
+    SdsTypeParameter,
 } from '../generated/ast.js';
-import { Parameter } from '../helpers/nodeProperties.js';
+import { getTypeParameters, Parameter } from '../helpers/nodeProperties.js';
 import { Constant, NullConstant } from '../partialEvaluation/model.js';
+import { AstUtils, stream } from 'langium';
+import { SafeDsCoreTypes } from './safe-ds-core-types.js';
+import { SafeDsServices } from '../safe-ds-module.js';
+import { SafeDsTypeFactory } from './safe-ds-type-factory.js';
+import { SafeDsTypeChecker } from './safe-ds-type-checker.js';
+
+export type TypeParameterSubstitutions = Map<SdsTypeParameter, Type>;
 
 /**
  * The type of an AST node.
  */
 export abstract class Type {
     /**
-     * Whether this type allows `null` as a value.
+     * Whether this type is explicitly marked as nullable (e.g. using a `?` for named types). A type parameter type can
+     * also become nullable if its upper bound is nullable, which is not checked here. Use {@link TypeChecker.canBeNull}
+     * if this is relevant for your situation.
      */
-    abstract isNullable: boolean;
+    abstract isExplicitlyNullable: boolean;
+
+    /**
+     * Whether the type does not contain type parameter types anymore.
+     */
+    abstract isFullySubstituted: boolean;
 
     /**
      * Returns whether the type is equal to another type.
@@ -28,29 +44,45 @@ export abstract class Type {
     /**
      * Returns a string representation of this type.
      */
-    abstract toString(): string;
+    abstract toString(options?: ToStringOptions): string;
 
     /**
-     * Removes any unnecessary containers from the type.
+     * Returns an equivalent type that is simplified as much as possible. Types computed by
+     * {@link TypeComputer.computeType} are already simplified, so this method is mainly useful for types that are
+     * constructed or modified manually.
      */
-    abstract unwrap(): Type;
+    abstract simplify(): Type;
+
+    /**
+     * Returns a copy of this type with the given type parameters substituted.
+     */
+    abstract substituteTypeParameters(substitutions: TypeParameterSubstitutions): Type;
 
     /**
      * Returns a copy of this type with the given nullability.
      */
-    abstract updateNullability(isNullable: boolean): Type;
+    abstract withExplicitNullability(isExplicitlyNullable: boolean): Type;
 }
 
 export class CallableType extends Type {
-    override isNullable: boolean = false;
+    private readonly factory: SafeDsTypeFactory;
+
+    override isExplicitlyNullable: boolean = false;
 
     constructor(
+        services: SafeDsServices,
         readonly callable: SdsCallable,
         readonly parameter: SdsParameter | undefined,
         readonly inputType: NamedTupleType<SdsParameter>,
         readonly outputType: NamedTupleType<SdsAbstractResult>,
     ) {
         super();
+
+        this.factory = services.typing.TypeFactory;
+    }
+
+    override get isFullySubstituted(): boolean {
+        return this.inputType.isFullySubstituted && this.outputType.isFullySubstituted;
     }
 
     /**
@@ -83,33 +115,60 @@ export class CallableType extends Type {
         return `(${inputTypeString}) -> ${this.outputType}`;
     }
 
-    override unwrap(): CallableType {
-        return new CallableType(
+    override simplify(): CallableType {
+        return this.factory.createCallableType(
             this.callable,
             this.parameter,
-            new NamedTupleType(...this.inputType.entries.map((it) => it.unwrap())),
-            new NamedTupleType(...this.outputType.entries.map((it) => it.unwrap())),
+            this.factory.createNamedTupleType(...this.inputType.entries.map((it) => it.simplify())),
+            this.factory.createNamedTupleType(...this.outputType.entries.map((it) => it.simplify())),
         );
     }
 
-    override updateNullability(isNullable: boolean): Type {
-        if (!isNullable) {
+    override substituteTypeParameters(substitutions: TypeParameterSubstitutions): CallableType {
+        if (isEmpty(substitutions) || this.isFullySubstituted) {
             return this;
         }
 
-        return new UnionType(this, new LiteralType(NullConstant));
+        return this.factory.createCallableType(
+            this.callable,
+            this.parameter,
+            this.inputType.substituteTypeParameters(substitutions),
+            this.outputType.substituteTypeParameters(substitutions),
+        );
+    }
+
+    override withExplicitNullability(isExplicitlyNullable: boolean): Type {
+        if (!isExplicitlyNullable) {
+            return this;
+        }
+
+        return this.factory.createUnionType(this, this.factory.createLiteralType(NullConstant));
     }
 }
 
 export class LiteralType extends Type {
-    readonly constants: Constant[];
-    override readonly isNullable: boolean;
+    private readonly coreTypes: SafeDsCoreTypes;
+    private readonly factory: SafeDsTypeFactory;
 
-    constructor(...constants: Constant[]) {
+    private _isExplicitlyNullable: boolean | undefined;
+    override readonly isFullySubstituted = true;
+
+    constructor(
+        services: SafeDsServices,
+        readonly constants: Constant[],
+    ) {
         super();
 
-        this.constants = constants;
-        this.isNullable = constants.some((it) => it === NullConstant);
+        this.coreTypes = services.typing.CoreTypes;
+        this.factory = services.typing.TypeFactory;
+    }
+
+    override get isExplicitlyNullable(): boolean {
+        if (this._isExplicitlyNullable === undefined) {
+            this._isExplicitlyNullable = this.constants.some((it) => it === NullConstant);
+        }
+
+        return this._isExplicitlyNullable;
     }
 
     override equals(other: unknown): boolean {
@@ -125,19 +184,52 @@ export class LiteralType extends Type {
         );
     }
 
-    override toString(): string {
-        return `literal<${this.constants.join(', ')}>`;
+    override toString(options?: ToStringOptions): string {
+        if (options?.collapseLiteralTypes) {
+            return `literal<…>`;
+        } else {
+            return `literal<${this.constants.join(', ')}>`;
+        }
     }
 
-    override unwrap(): LiteralType {
+    override simplify(): Type {
+        // Handle empty literal types
+        if (isEmpty(this.constants)) {
+            return this.coreTypes.Nothing;
+        }
+
+        // Remove duplicate constants
+        const uniqueConstants: Constant[] = [];
+        const knownConstants = new Set<String>();
+
+        for (const constant of this.constants) {
+            let key = constant.toString();
+
+            if (!knownConstants.has(key)) {
+                uniqueConstants.push(constant);
+                knownConstants.add(key);
+            }
+        }
+
+        // Apply other simplifications
+        if (uniqueConstants.length === 1 && uniqueConstants[0] === NullConstant) {
+            return this.coreTypes.NothingOrNull;
+        } else if (uniqueConstants.length < this.constants.length) {
+            return this.factory.createLiteralType(...uniqueConstants);
+        } else {
+            return this;
+        }
+    }
+
+    override substituteTypeParameters(_substitutions: TypeParameterSubstitutions): Type {
         return this;
     }
 
-    override updateNullability(isNullable: boolean): LiteralType {
-        if (this.isNullable && !isNullable) {
-            return new LiteralType(...this.constants.filter((it) => it !== NullConstant));
-        } else if (!this.isNullable && isNullable) {
-            return new LiteralType(...this.constants, NullConstant);
+    override withExplicitNullability(isExplicitlyNullable: boolean): LiteralType {
+        if (this.isExplicitlyNullable && !isExplicitlyNullable) {
+            return this.factory.createLiteralType(...this.constants.filter((it) => it !== NullConstant));
+        } else if (!this.isExplicitlyNullable && isExplicitlyNullable) {
+            return this.factory.createLiteralType(...this.constants, NullConstant);
         } else {
             return this;
         }
@@ -145,13 +237,25 @@ export class LiteralType extends Type {
 }
 
 export class NamedTupleType<T extends SdsDeclaration> extends Type {
-    readonly entries: NamedTupleEntry<T>[];
-    override readonly isNullable = false;
+    private readonly factory: SafeDsTypeFactory;
 
-    constructor(...entries: NamedTupleEntry<T>[]) {
+    readonly entries: NamedTupleEntry<T>[];
+    override readonly isExplicitlyNullable = false;
+    private _isFullySubstituted: boolean | undefined;
+
+    constructor(services: SafeDsServices, entries: NamedTupleEntry<T>[]) {
         super();
 
+        this.factory = services.typing.TypeFactory;
         this.entries = entries;
+    }
+
+    override get isFullySubstituted(): boolean {
+        if (this._isFullySubstituted === undefined) {
+            this._isFullySubstituted = this.entries.every((it) => it.type.isFullySubstituted);
+        }
+
+        return this._isFullySubstituted;
     }
 
     /**
@@ -188,20 +292,30 @@ export class NamedTupleType<T extends SdsDeclaration> extends Type {
     /**
      * If this only has one entry, returns its type. Otherwise, returns this.
      */
-    override unwrap(): Type {
+    override simplify(): Type {
         if (this.entries.length === 1) {
-            return this.entries[0]!.type.unwrap();
+            return this.entries[0]!.type.simplify();
         }
 
-        return new NamedTupleType(...this.entries.map((it) => it.unwrap()));
+        return this.factory.createNamedTupleType(...this.entries.map((it) => it.simplify()));
     }
 
-    override updateNullability(isNullable: boolean): Type {
-        if (!isNullable) {
+    override substituteTypeParameters(substitutions: TypeParameterSubstitutions): NamedTupleType<T> {
+        if (isEmpty(substitutions) || this.isFullySubstituted) {
             return this;
         }
 
-        return new UnionType(this, new LiteralType(NullConstant));
+        return this.factory.createNamedTupleType(
+            ...this.entries.map((it) => it.substituteTypeParameters(substitutions)),
+        );
+    }
+
+    override withExplicitNullability(isExplicitlyNullable: boolean): Type {
+        if (!isExplicitlyNullable) {
+            return this;
+        }
+
+        return this.factory.createUnionType(this, this.factory.createLiteralType(NullConstant));
     }
 }
 
@@ -228,8 +342,17 @@ export class NamedTupleEntry<T extends SdsDeclaration> {
         return `${this.name}: ${this.type}`;
     }
 
-    unwrap(): NamedTupleEntry<T> {
-        return new NamedTupleEntry(this.declaration, this.name, this.type.unwrap());
+    substituteTypeParameters(substitutions: TypeParameterSubstitutions): NamedTupleEntry<T> {
+        if (isEmpty(substitutions) || this.type.isFullySubstituted) {
+            /* c8 ignore next 2 */
+            return this;
+        }
+
+        return new NamedTupleEntry(this.declaration, this.name, this.type.substituteTypeParameters(substitutions));
+    }
+
+    simplify(): NamedTupleEntry<T> {
+        return new NamedTupleEntry(this.declaration, this.name, this.type.simplify());
     }
 }
 
@@ -239,26 +362,46 @@ export abstract class NamedType<T extends SdsDeclaration> extends Type {
     }
 
     override toString(): string {
-        if (this.isNullable) {
+        if (this.isExplicitlyNullable) {
             return `${this.declaration.name}?`;
         } else {
             return this.declaration.name;
         }
     }
 
-    abstract override updateNullability(isNullable: boolean): NamedType<T>;
-
-    unwrap(): NamedType<T> {
+    simplify(): NamedType<T> {
         return this;
     }
+
+    abstract override withExplicitNullability(isExplicitlyNullable: boolean): NamedType<T>;
 }
 
 export class ClassType extends NamedType<SdsClass> {
+    private _isFullySubstituted: boolean | undefined;
+
     constructor(
         declaration: SdsClass,
-        override readonly isNullable: boolean,
+        readonly substitutions: TypeParameterSubstitutions,
+        override readonly isExplicitlyNullable: boolean,
     ) {
         super(declaration);
+    }
+
+    override get isFullySubstituted(): boolean {
+        if (this._isFullySubstituted === undefined) {
+            this._isFullySubstituted = stream(this.substitutions.values()).every((it) => it.isFullySubstituted);
+        }
+
+        return this._isFullySubstituted;
+    }
+
+    getTypeParameterTypeByIndex(index: number): Type {
+        const typeParameter = getTypeParameters(this.declaration)[index];
+        if (!typeParameter) {
+            return UnknownType;
+        }
+
+        return this.substitutions.get(typeParameter) ?? UnknownType;
     }
 
     override equals(other: unknown): boolean {
@@ -268,18 +411,65 @@ export class ClassType extends NamedType<SdsClass> {
             return false;
         }
 
-        return other.declaration === this.declaration && other.isNullable === this.isNullable;
+        return (
+            other.declaration === this.declaration &&
+            other.isExplicitlyNullable === this.isExplicitlyNullable &&
+            substitutionsAreEqual(other.substitutions, this.substitutions)
+        );
     }
 
-    override updateNullability(isNullable: boolean): ClassType {
-        return new ClassType(this.declaration, isNullable);
+    override toString(options?: ToStringOptions): string {
+        let result = this.declaration.name;
+
+        if (this.substitutions.size > 0) {
+            if (options?.collapseClassTypes) {
+                result += `<…>`;
+            } else {
+                result += `<${Array.from(this.substitutions.values())
+                    .map((value) => value.toString())
+                    .join(', ')}>`;
+            }
+        }
+
+        if (this.isExplicitlyNullable) {
+            result += '?';
+        }
+
+        return result;
+    }
+
+    override simplify(): ClassType {
+        const newSubstitutions = new Map(stream(this.substitutions).map(([key, value]) => [key, value.simplify()]));
+        return new ClassType(this.declaration, newSubstitutions, this.isExplicitlyNullable);
+    }
+
+    override substituteTypeParameters(substitutions: TypeParameterSubstitutions): ClassType {
+        if (isEmpty(substitutions) || this.isFullySubstituted) {
+            return this;
+        }
+
+        const newSubstitutions = new Map(
+            stream(this.substitutions).map(([key, value]) => [key, value.substituteTypeParameters(substitutions)]),
+        );
+
+        return new ClassType(this.declaration, newSubstitutions, this.isExplicitlyNullable);
+    }
+
+    override withExplicitNullability(isExplicitlyNullable: boolean): ClassType {
+        if (this.isExplicitlyNullable === isExplicitlyNullable) {
+            return this;
+        }
+
+        return new ClassType(this.declaration, this.substitutions, isExplicitlyNullable);
     }
 }
 
 export class EnumType extends NamedType<SdsEnum> {
+    override readonly isFullySubstituted = true;
+
     constructor(
         declaration: SdsEnum,
-        override readonly isNullable: boolean,
+        override readonly isExplicitlyNullable: boolean,
     ) {
         super(declaration);
     }
@@ -291,18 +481,28 @@ export class EnumType extends NamedType<SdsEnum> {
             return false;
         }
 
-        return other.declaration === this.declaration && other.isNullable === this.isNullable;
+        return other.declaration === this.declaration && other.isExplicitlyNullable === this.isExplicitlyNullable;
     }
 
-    override updateNullability(isNullable: boolean): EnumType {
-        return new EnumType(this.declaration, isNullable);
+    override substituteTypeParameters(_substitutions: TypeParameterSubstitutions): Type {
+        return this;
+    }
+
+    override withExplicitNullability(isExplicitlyNullable: boolean): EnumType {
+        if (this.isExplicitlyNullable === isExplicitlyNullable) {
+            return this;
+        }
+
+        return new EnumType(this.declaration, isExplicitlyNullable);
     }
 }
 
 export class EnumVariantType extends NamedType<SdsEnumVariant> {
+    override readonly isFullySubstituted = true;
+
     constructor(
         declaration: SdsEnumVariant,
-        override readonly isNullable: boolean,
+        override readonly isExplicitlyNullable: boolean,
     ) {
         super(declaration);
     }
@@ -314,22 +514,89 @@ export class EnumVariantType extends NamedType<SdsEnumVariant> {
             return false;
         }
 
-        return other.declaration === this.declaration && other.isNullable === this.isNullable;
+        return other.declaration === this.declaration && other.isExplicitlyNullable === this.isExplicitlyNullable;
     }
 
-    override updateNullability(isNullable: boolean): EnumVariantType {
-        return new EnumVariantType(this.declaration, isNullable);
+    override substituteTypeParameters(_substitutions: TypeParameterSubstitutions): Type {
+        return this;
+    }
+
+    override toString(): string {
+        const containingEnum = AstUtils.getContainerOfType(this.declaration, isSdsEnum);
+        if (containingEnum) {
+            return `${containingEnum.name}.${super.toString()}`;
+        } else {
+            /* c8 ignore next 2 */
+            return super.toString();
+        }
+    }
+
+    override withExplicitNullability(isExplicitlyNullable: boolean): EnumVariantType {
+        if (this.isExplicitlyNullable === isExplicitlyNullable) {
+            return this;
+        }
+
+        return new EnumVariantType(this.declaration, isExplicitlyNullable);
+    }
+}
+
+export class TypeVariable extends NamedType<SdsTypeParameter> {
+    override readonly isFullySubstituted = false;
+
+    constructor(
+        declaration: SdsTypeParameter,
+        override readonly isExplicitlyNullable: boolean,
+    ) {
+        super(declaration);
+    }
+
+    override equals(other: unknown): boolean {
+        if (other === this) {
+            return true;
+        } else if (!(other instanceof TypeVariable)) {
+            return false;
+        }
+
+        return other.declaration === this.declaration && other.isExplicitlyNullable === this.isExplicitlyNullable;
+    }
+
+    override substituteTypeParameters(substitutions: TypeParameterSubstitutions): Type {
+        const substitution = substitutions.get(this.declaration);
+
+        if (!substitution) {
+            return this;
+        } else if (this.isExplicitlyNullable) {
+            return substitution.withExplicitNullability(true);
+        } else {
+            return substitution;
+        }
+    }
+
+    override withExplicitNullability(isExplicitlyNullable: boolean): TypeVariable {
+        if (this.isExplicitlyNullable === isExplicitlyNullable) {
+            return this;
+        }
+
+        return new TypeVariable(this.declaration, isExplicitlyNullable);
     }
 }
 
 /**
- * A type that represents an actual class, enum, or enum variant instead of an instance of it.
+ * A type that represents an actual named type declaration instead of an instance of it.
  */
 export class StaticType extends Type {
-    override readonly isNullable = false;
+    private readonly factory: SafeDsTypeFactory;
 
-    constructor(readonly instanceType: NamedType<SdsDeclaration>) {
+    override readonly isExplicitlyNullable = false;
+    override readonly isFullySubstituted = true;
+
+    constructor(
+        services: SafeDsServices,
+        readonly instanceType: NamedType<SdsDeclaration>,
+    ) {
         super();
+
+        this.factory = services.typing.TypeFactory;
     }
 
     override equals(other: unknown): boolean {
@@ -346,28 +613,58 @@ export class StaticType extends Type {
         return `$type<${this.instanceType}>`;
     }
 
-    override unwrap(): Type {
+    override simplify(): Type {
         return this;
     }
 
-    override updateNullability(isNullable: boolean): Type {
-        if (!isNullable) {
+    override substituteTypeParameters(_substitutions: TypeParameterSubstitutions): StaticType {
+        // The substitutions are only meaningful for instances of a declaration, not for the declaration itself. Hence,
+        // we don't substitute anything here.
+        return this;
+    }
+
+    override withExplicitNullability(isExplicitlyNullable: boolean): Type {
+        if (!isExplicitlyNullable) {
             return this;
         }
 
-        return new UnionType(this, new LiteralType(NullConstant));
+        return this.factory.createUnionType(this, this.factory.createLiteralType(NullConstant));
     }
 }
 
 export class UnionType extends Type {
-    readonly possibleTypes: Type[];
-    override readonly isNullable: boolean;
+    private readonly coreTypes: SafeDsCoreTypes;
+    private readonly factory: SafeDsTypeFactory;
+    private readonly typeChecker: SafeDsTypeChecker;
 
-    constructor(...possibleTypes: Type[]) {
+    readonly types: Type[];
+    private _isExplicitlyNullable: boolean | undefined;
+    private _isFullySubstituted: boolean | undefined;
+
+    constructor(services: SafeDsServices, types: Type[]) {
         super();
 
-        this.possibleTypes = possibleTypes;
-        this.isNullable = possibleTypes.some((it) => it.isNullable);
+        this.coreTypes = services.typing.CoreTypes;
+        this.factory = services.typing.TypeFactory;
+        this.typeChecker = services.typing.TypeChecker;
+
+        this.types = types;
+    }
+
+    override get isExplicitlyNullable(): boolean {
+        if (this._isExplicitlyNullable === undefined) {
+            this._isExplicitlyNullable = this.types.some((it) => it.isExplicitlyNullable);
+        }
+
+        return this._isExplicitlyNullable;
+    }
+
+    override get isFullySubstituted(): boolean {
+        if (this._isFullySubstituted === undefined) {
+            this._isFullySubstituted = this.types.every((it) => it.isFullySubstituted);
+        }
+
+        return this._isFullySubstituted;
     }
 
     override equals(other: unknown): boolean {
@@ -377,33 +674,111 @@ export class UnionType extends Type {
             return false;
         }
 
-        return (
-            this.possibleTypes.length === other.possibleTypes.length &&
-            this.possibleTypes.every((type, i) => type.equals(other.possibleTypes[i]))
-        );
+        return this.types.length === other.types.length && this.types.every((type, i) => type.equals(other.types[i]));
     }
 
     override toString(): string {
-        return `union<${this.possibleTypes.join(', ')}>`;
+        return `union<${this.types.join(', ')}>`;
     }
 
-    override unwrap(): Type {
-        if (this.possibleTypes.length === 1) {
-            return this.possibleTypes[0]!.unwrap();
+    override simplify(): Type {
+        // Handle empty union types
+        if (isEmpty(this.types)) {
+            return this.coreTypes.Nothing;
         }
 
-        return new UnionType(...this.possibleTypes.map((it) => it.unwrap()));
+        // Flatten nested unions
+        const newTypes = this.types.flatMap((type) => {
+            const unwrappedType = type.simplify();
+            if (unwrappedType instanceof UnionType) {
+                return unwrappedType.types;
+            } else {
+                return unwrappedType;
+            }
+        });
+
+        // Merge literal types and remove types that are subtypes of others. We do this back-to-front to keep the first
+        // occurrence of duplicate types. It's also makes splicing easier.
+        for (let i = newTypes.length - 1; i >= 0; i--) {
+            const currentType = newTypes[i]!;
+            const currentTypeIsNothingOrNull = currentType.equals(this.coreTypes.NothingOrNull);
+
+            for (let j = newTypes.length - 1; j >= 0; j--) {
+                if (i === j) {
+                    continue;
+                }
+
+                const otherType = newTypes[j]!;
+
+                // Remove identical types
+                if (currentType.equals(otherType)) {
+                    // Remove the current type
+                    newTypes.splice(i, 1);
+                    break;
+                }
+
+                // Don't merge `Nothing?` into callable types, named tuple types or static types, since that would
+                // create another union type.
+                if (
+                    currentTypeIsNothingOrNull &&
+                    (otherType instanceof CallableType ||
+                        otherType instanceof NamedTupleType ||
+                        otherType instanceof StaticType)
+                ) {
+                    continue;
+                }
+
+                // Merge literal types
+                if (currentType instanceof LiteralType && otherType instanceof LiteralType) {
+                    // Other type always occurs before current type
+                    const newConstants = [...otherType.constants, ...currentType.constants];
+                    const newLiteralType = this.factory.createLiteralType(...newConstants).simplify();
+
+                    // Replace the other type with the new literal type
+                    newTypes.splice(j, 1, newLiteralType);
+                    // Remove the current type
+                    newTypes.splice(i, 1);
+                    break;
+                }
+
+                // Remove subtypes of other types
+                const candidateType = otherType.withExplicitNullability(
+                    currentType.isExplicitlyNullable || otherType.isExplicitlyNullable,
+                );
+                if (this.typeChecker.isSupertypeOf(candidateType, currentType)) {
+                    // Replace the other type with the candidate type (updated nullability)
+                    newTypes.splice(j, 1, candidateType);
+                    // Remove the current type
+                    newTypes.splice(i, 1);
+                    break;
+                }
+            }
+        }
+
+        if (newTypes.length === 1) {
+            return newTypes[0]!;
+        } else {
+            return this.factory.createUnionType(...newTypes);
+        }
     }
 
-    override updateNullability(isNullable: boolean): Type {
-        if (this.isNullable && !isNullable) {
-            return new UnionType(...this.possibleTypes.map((it) => it.updateNullability(false)));
-        } else if (!this.isNullable && isNullable) {
-            if (isEmpty(this.possibleTypes)) {
-                return new LiteralType(NullConstant);
-            } else {
-                return new UnionType(...this.possibleTypes.map((it) => it.updateNullability(true)));
-            }
+    override substituteTypeParameters(substitutions: TypeParameterSubstitutions): UnionType {
+        if (isEmpty(substitutions) || this.isFullySubstituted) {
+            return this;
+        }
+
+        return this.factory.createUnionType(...this.types.map((it) => it.substituteTypeParameters(substitutions)));
+    }
+
+    override withExplicitNullability(isExplicitlyNullable: boolean): Type {
+        if (isEmpty(this.types)) {
+            return this.coreTypes.Nothing.withExplicitNullability(isExplicitlyNullable);
+        }
+
+        if (this.isExplicitlyNullable && !isExplicitlyNullable) {
+            return this.factory.createUnionType(...this.types.map((it) => it.withExplicitNullability(false)));
+        } else if (!this.isExplicitlyNullable && isExplicitlyNullable) {
+            return this.factory.createUnionType(...this.types.map((it) => it.withExplicitNullability(true)));
         } else {
             return this;
         }
@@ -411,23 +786,64 @@ export class UnionType extends Type {
 }
 
 class UnknownTypeClass extends Type {
-    readonly isNullable = false;
+    override readonly isExplicitlyNullable = false;
+    override readonly isFullySubstituted = true;
 
     override equals(other: unknown): boolean {
         return other instanceof UnknownTypeClass;
     }
 
     override toString(): string {
-        return '?';
+        return 'unknown';
     }
 
-    override unwrap(): Type {
+    override simplify(): Type {
         return this;
     }
 
-    override updateNullability(_isNullable: boolean): Type {
+    override substituteTypeParameters(_substitutions: TypeParameterSubstitutions): Type {
+        return this;
+    }
+
+    override withExplicitNullability(_isExplicitlyNullable: boolean): Type {
         return this;
     }
 }
 
 export const UnknownType = new UnknownTypeClass();
+
+/**
+ * Options for {@link Type.toString}.
+ */
+export interface ToStringOptions {
+    /**
+     * Collapse the type arguments of class types.
+     */
+    collapseClassTypes?: boolean;
+
+    /**
+     * Collapse the literals of literal types.
+     */
+    collapseLiteralTypes?: boolean;
+}
+
+// -------------------------------------------------------------------------------------------------
+// Helpers
+// -------------------------------------------------------------------------------------------------
+
+const substitutionsAreEqual = (
+    a: Map<SdsDeclaration, Type> | undefined,
+    b: Map<SdsDeclaration, Type> | undefined,
+): boolean => {
+    if (a?.size !== b?.size) {
+        return false;
+    }
+
+    const aEntries = Array.from(a?.entries() ?? []);
+    const bEntries = Array.from(b?.entries() ?? []);
+
+    return aEntries.every(([aEntry, aValue], i) => {
+        const [bEntry, bValue] = bEntries[i]!;
+        return aEntry === bEntry && aValue.equals(bValue);
+    });
+};

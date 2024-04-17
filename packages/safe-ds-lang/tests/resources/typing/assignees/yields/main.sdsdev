@@ -1,0 +1,21 @@
+package tests.typing.assignees.yields
+
+fun f() -> (r1: Int, r2: Float, r3: String)
+
+segment mySegment1() -> (r: Int) {
+    // $TEST$ equivalence_class assignedValue
+    // $TEST$ equivalence_class assignedValue
+    »yield r«, _ = »1«; // the wildcards prevents the marker from matching the entire assignee list
+}
+
+segment mySegment2() -> (r: Int, s: String) {
+    // $TEST$ serialization literal<1>
+    // $TEST$ serialization unknown
+    »yield r«, »yield s« = 1;
+}
+
+segment mySegment3() -> (r: Int, s: String) {
+    // $TEST$ serialization Int
+    // $TEST$ serialization String
+    »yield r«, _, »yield s« = f();
+}

@@ -1,0 +1,34 @@
+package tests.validation.inheritance.mustNotBeNullable
+
+class MyClass {
+    class MyNestedClass
+}
+enum MyEnum {
+    MyEnumVariant
+}
+
+// $TEST$ no error "The parent type must not be nullable."
+// $TEST$ no error "The parent type must not be nullable."
+// $TEST$ no error "The parent type must not be nullable."
+// $TEST$ no error "The parent type must not be nullable."
+// $TEST$ no error "The parent type must not be nullable."
+class TestClass1 sub »MyClass«,
+                    »MyClass.MyNestedClass?«,
+                    »MyEnum?«,
+                    »MyEnum.MyEnumVariant?«,
+                    »Unresolved?«
+
+// $TEST$ error "The parent type must not be nullable."
+class TestClass2 sub »MyClass?«
+
+// $TEST$ error "The parent type must not be nullable."
+class TestClass3 sub »MyClass.MyNestedClass?«
+
+// $TEST$ no error "The parent type must not be nullable."
+class TestClass4 sub »MyEnum?«
+
+// $TEST$ no error "The parent type must not be nullable."
+class TestClass5 sub »MyEnum.MyEnumVariant?«
+
+// $TEST$ no error "The parent type must not be nullable."
+class TestClass6 sub »Unresolved?«

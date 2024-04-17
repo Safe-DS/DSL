@@ -1,0 +1,10 @@
+package tests.typing.declarations.annotations
+
+// $TEST$ serialization () -> ()
+annotation »myAnnotation1«
+
+// $TEST$ serialization (p1: Int, p2: String) -> ()
+annotation »myAnnotation3«(p1: Int, p2: String)
+
+// $TEST$ serialization (p1: unknown) -> ()
+annotation »myAnnotation5«(p1)

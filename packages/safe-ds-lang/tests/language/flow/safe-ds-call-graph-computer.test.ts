@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isNamed, streamAst } from 'langium';
+import { AstUtils, isNamed } from 'langium';
 import {
     isSdsBlockLambda,
     isSdsCall,
@@ -9,7 +9,7 @@ import {
     SdsCall,
     SdsCallable,
 } from '../../../src/language/generated/ast.js';
-import { createSafeDsServicesWithBuiltins } from '../../../src/language/index.js';
+import { createSafeDsServices } from '../../../src/language/index.js';
 import { createCallGraphTests } from './creator.js';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
 import { isRangeEqual } from 'langium/test';
@@ -17,7 +17,7 @@ import { locationToString } from '../../../src/helpers/locations.js';
 import { AssertionError } from 'assert';
 import { NodeFileSystem } from 'langium/node';
 
-const services = (await createSafeDsServicesWithBuiltins(NodeFileSystem)).SafeDs;
+const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const callGraphComputer = services.flow.CallGraphComputer;
 
 describe('SafeDsCallGraphComputer', () => {
@@ -31,7 +31,9 @@ describe('SafeDsCallGraphComputer', () => {
             const module = await getNodeOfType(services, test.code, isSdsModule);
 
             for (const { location, expectedCallables } of test.expectedCallGraphs) {
-                const node = streamAst(module).find((call) => isRangeEqual(call.$cstNode!.range, location.range));
+                const node = AstUtils.streamAst(module).find((call) =>
+                    isRangeEqual(call.$cstNode!.range, location.range),
+                );
                 if (!node || (!isSdsCall(node) && !isSdsCallable(node))) {
                     throw new Error(`Could not find call/callable at ${locationToString(location)}`);
                 }

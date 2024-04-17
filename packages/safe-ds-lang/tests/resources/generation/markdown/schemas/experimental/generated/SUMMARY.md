@@ -1,0 +1,11 @@
+---
+search:
+  exclude: true
+---
+
+- tests
+    - generation
+        - markdown
+            - schemas
+                - experimental
+                    - [MySchema1](tests/generation/markdown/schemas/experimental/MySchema1.md)

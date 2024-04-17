@@ -1,0 +1,96 @@
+package tests.typing.lowestCommonSupertype.classTypeAndClassType
+
+class Covariant<out T>
+class FloatCovariant sub Covariant<Float>
+
+segment covariant(
+    coNumber: Covariant<Number>,
+    coInt: Covariant<Int>,
+    coString: Covariant<String>,
+    coFloat: FloatCovariant,
+) {
+    // $TEST$ serialization List<Covariant<Number>>
+    »[coNumber, coNumber]«;
+    // $TEST$ serialization List<Covariant<Number>>
+    »[coNumber, coInt]«;
+    // $TEST$ serialization List<Covariant<Any>>
+    »[coNumber, coString]«;
+    // $TEST$ serialization List<Covariant<Number>>
+    »[coNumber, coFloat]«;
+
+    // $TEST$ serialization List<Covariant<Int>>
+    »[coInt, coInt]«;
+    // $TEST$ serialization List<Covariant<Any>>
+    »[coInt, coString]«;
+    // $TEST$ serialization List<Covariant<Number>>
+    »[coInt, coFloat]«;
+
+    // $TEST$ serialization List<Covariant<String>>
+    »[coString, coString]«;
+    // $TEST$ serialization List<Covariant<Any>>
+    »[coString, coFloat]«;
+
+    // $TEST$ serialization List<FloatCovariant>
+    »[coFloat, coFloat]«;
+}
+
+class Contravariant<in T>
+
+segment contravariant(
+    contraFloat: Contravariant<String>,
+    contraInt: Contravariant<Number>,
+) {
+    // Most tests are in the "highest common subtype" folder. Here we only test that we call the right method.
+
+    // $TEST$ serialization List<Contravariant<Nothing>>
+    »[contraFloat, contraInt]«;
+}
+
+class Invariant<T>
+class FloatInvariant sub Invariant<Float>
+
+segment invariant(
+    invNumber: Invariant<Number>,
+    invInt: Invariant<Int>,
+    invString: Invariant<String>,
+    invFloat: FloatInvariant
+) {
+    // $TEST$ serialization List<Invariant<Number>>
+    »[invNumber, invNumber]«;
+    // $TEST$ serialization List<Any>
+    »[invNumber, invInt]«;
+    // $TEST$ serialization List<Any>
+    »[invNumber, invString]«;
+    // $TEST$ serialization List<Any>
+    »[invNumber, invFloat]«;
+
+    // $TEST$ serialization List<Invariant<Int>>
+    »[invInt, invInt]«;
+    // $TEST$ serialization List<Any>
+    »[invInt, invString]«;
+    // $TEST$ serialization List<Any>
+    »[invInt, invFloat]«;
+
+    // $TEST$ serialization List<Invariant<String>>
+    »[invString, invString]«;
+    // $TEST$ serialization List<Any>
+    »[invString, invFloat]«;
+
+    // $TEST$ serialization List<FloatInvariant>
+    »[invFloat, invFloat]«;
+}
+
+class Multiple<T1, out T2>
+
+segment multiple(
+    multipleNumberInt: Multiple<Number, Int>,
+    multipleNumberFloat: Multiple<Number, Float>,
+) {
+    // $TEST$ serialization List<Multiple<Number, Int>>
+    »[multipleNumberInt, multipleNumberInt]«;
+    // $TEST$ serialization List<Multiple<Number, Number>>
+    »[multipleNumberInt, multipleNumberFloat]«;
+
+    // $TEST$ serialization List<Multiple<Number, Float>>
+    »[multipleNumberFloat, multipleNumberFloat]«;
+}

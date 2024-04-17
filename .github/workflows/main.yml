@@ -34,11 +34,14 @@ jobs:
       - name: Compile TypeScript
         run: npm run build
 
+      - name: Check Svelte components
+        run: npm run check -w @safe-ds/eda
+
       - name: Test with Vitest
         run: npm run test-with-coverage
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: coverage

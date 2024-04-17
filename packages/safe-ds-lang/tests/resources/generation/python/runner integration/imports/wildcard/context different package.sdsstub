@@ -1,0 +1,4 @@
+package tests.generator.differentPackageWildcardWithRunnerIntegration
+
+@Pure fun function1InDifferentPackage() -> result: Int
+@Pure fun function2InDifferentPackage() -> result: Int

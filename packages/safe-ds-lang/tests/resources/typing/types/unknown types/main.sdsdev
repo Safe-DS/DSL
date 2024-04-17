@@ -1,0 +1,4 @@
+package tests.typing.types.unknownTypes
+
+// $TEST$ serialization unknown
+fun myFunction(a: »unknown«)

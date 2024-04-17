@@ -1,6 +1,7 @@
-import { AstNode, getContainerOfType, Stream, stream } from 'langium';
+import { AstNode, AstUtils, Stream, stream } from 'langium';
 import {
     isSdsAnnotation,
+    isSdsArgument,
     isSdsArgumentList,
     isSdsAssignment,
     isSdsAttribute,
@@ -11,12 +12,15 @@ import {
     isSdsClass,
     isSdsDeclaration,
     isSdsEnum,
+    isSdsEnumVariant,
     isSdsFunction,
     isSdsLambda,
     isSdsModule,
     isSdsModuleMember,
     isSdsNamedType,
     isSdsParameter,
+    isSdsParameterBound,
+    isSdsPipeline,
     isSdsPlaceholder,
     isSdsQualifiedImport,
     isSdsSegment,
@@ -39,6 +43,7 @@ import {
     SdsClass,
     SdsClassMember,
     SdsColumn,
+    SdsConstraint,
     SdsDeclaration,
     SdsEnum,
     SdsEnumVariant,
@@ -51,6 +56,7 @@ import {
     SdsNamedType,
     SdsNamedTypeDeclaration,
     SdsParameter,
+    SdsParameterBound,
     SdsPlaceholder,
     SdsQualifiedImport,
     SdsResult,
@@ -78,29 +84,42 @@ export const hasAnnotationCallOf = (
     });
 };
 
-export const isInternal = (node: SdsDeclaration): boolean => {
+export const isInternal = (node: SdsDeclaration | undefined): boolean => {
     return isSdsSegment(node) && node.visibility === 'internal';
 };
 
+export const isPrivate = (node: SdsDeclaration | undefined): boolean => {
+    return isSdsSegment(node) && node.visibility === 'private';
+};
+
 export namespace Argument {
-    export const isNamed = (node: SdsArgument): boolean => {
-        return Boolean(node.parameter);
+    export const isNamed = (node: SdsArgument | undefined): boolean => {
+        return Boolean(node?.parameter);
     };
 
-    export const isPositional = (node: SdsArgument): boolean => {
-        return !node.parameter;
+    export const isPositional = (node: SdsArgument | undefined): boolean => {
+        return isSdsArgument(node) && !node.parameter;
+    };
+}
+
+export namespace Class {
+    /**
+     * Checks whether the class is only for typing, i.e. whether it has no constructor and no static members.
+     */
+    export const isOnlyForTyping = (node: SdsClass | undefined): boolean => {
+        return isSdsClass(node) && !node.parameterList && !getClassMembers(node).some((it) => isStatic(it));
     };
 }
 
 export namespace Enum {
-    export const isConstant = (node: SdsEnum): boolean => {
-        return getEnumVariants(node).every((it) => EnumVariant.isConstant(it));
+    export const isConstant = (node: SdsEnum | undefined): boolean => {
+        return Boolean(node) && getEnumVariants(node).every((it) => EnumVariant.isConstant(it));
     };
 }
 
 export namespace EnumVariant {
-    export const isConstant = (node: SdsEnumVariant): boolean => {
-        return getParameters(node).every((it) => Parameter.isConstant(it));
+    export const isConstant = (node: SdsEnumVariant | undefined): boolean => {
+        return Boolean(node) && getParameters(node).every((it) => Parameter.isConstant(it));
     };
 }
 
@@ -110,7 +129,7 @@ export namespace Parameter {
             return false;
         }
 
-        const containingCallable = getContainerOfType(node, isSdsCallable);
+        const containingCallable = AstUtils.getContainerOfType(node, isSdsCallable);
 
         // In those cases, the const modifier is not applicable
         if (isSdsCallableType(containingCallable) || isSdsLambda(containingCallable)) {
@@ -127,9 +146,15 @@ export namespace Parameter {
     export const isRequired = (node: SdsParameter | undefined): boolean => {
         return isSdsParameter(node) && !node.defaultValue;
     };
+
+    export const getBounds = (node: SdsParameter | undefined): SdsParameterBound[] => {
+        const callable = AstUtils.getContainerOfType(node, isSdsCallable);
+        const result = getConstraints(callable).filter((it) => isSdsParameterBound(it) && it.leftOperand?.ref === node);
+        return result as SdsParameterBound[];
+    };
 }
 
-export const isStatic = (node: SdsClassMember): boolean => {
+export const isStatic = (node: SdsClassMember | undefined): boolean => {
     if (isSdsClass(node) || isSdsEnum(node)) {
         return true;
     } else if (isSdsAttribute(node)) {
@@ -143,8 +168,8 @@ export const isStatic = (node: SdsClassMember): boolean => {
 };
 
 export namespace TypeArgument {
-    export const isNamed = (node: SdsTypeArgument): boolean => {
-        return Boolean(node.typeParameter);
+    export const isNamed = (node: SdsTypeArgument | undefined): boolean => {
+        return Boolean(node?.typeParameter);
     };
 }
 
@@ -156,7 +181,33 @@ export namespace TypeParameter {
     export const isRequired = (node: SdsTypeParameter | undefined): boolean => {
         return isSdsTypeParameter(node) && !node.defaultValue;
     };
+
+    export const isContravariant = (node: SdsTypeParameter | undefined): boolean => {
+        return isSdsTypeParameter(node) && node.variance === 'in';
+    };
+
+    export const isCovariant = (node: SdsTypeParameter | undefined): boolean => {
+        return isSdsTypeParameter(node) && node.variance === 'out';
+    };
+
+    export const isInvariant = (node: SdsTypeParameter | undefined): boolean => {
+        return isSdsTypeParameter(node) && !node.variance;
+    };
 }
+
+/**
+ * Checks whether the declaration has an implementation.
+ */
+export const isImplementedDeclaration = (declaration: SdsDeclaration): boolean => {
+    return isSdsPipeline(declaration) || isSdsSegment(declaration);
+};
+
+/**
+ * Checks whether the declaration is just a stub.
+ */
+export const isStubDeclaration = (declaration: SdsDeclaration): boolean => {
+    return !isSdsPipeline(declaration) && !isSdsSegment(declaration);
+};
 
 // -------------------------------------------------------------------------------------------------
 // Accessors for list elements
@@ -195,7 +246,7 @@ export const getAnnotationCalls = (node: SdsAnnotatedObject | undefined): SdsAnn
 };
 
 export const getAnnotationCallTarget = (node: SdsAnnotationCall | undefined): SdsDeclaration | undefined => {
-    return getContainerOfType(node, isSdsDeclaration);
+    return AstUtils.getContainerOfType(node, isSdsDeclaration);
 };
 
 export const findFirstAnnotationCallOf = (
@@ -235,6 +286,22 @@ export const getClassMembers = (node: SdsClass | undefined): SdsClassMember[] =>
     return node?.body?.members ?? [];
 };
 
+export const getConstraints = (node: SdsCallable | undefined): SdsConstraint[] => {
+    if (isSdsAnnotation(node)) {
+        return node.constraintList?.constraints ?? [];
+    } else if (isSdsClass(node)) {
+        return node.constraintList?.constraints ?? [];
+    } else if (isSdsEnumVariant(node)) {
+        return node.constraintList?.constraints ?? [];
+    } else if (isSdsFunction(node)) {
+        return node.constraintList?.constraints ?? [];
+    } else if (isSdsSegment(node)) {
+        return node.constraintList?.constraints ?? [];
+    } else {
+        return [];
+    }
+};
+
 export const getColumns = (node: SdsSchema | undefined): SdsColumn[] => {
     return node?.columnList?.columns ?? [];
 };
@@ -270,7 +337,7 @@ export const getModuleMembers = (node: SdsModule | undefined): SdsModuleMember[]
 };
 
 export const getPackageName = (node: AstNode | undefined): string | undefined => {
-    return getContainerOfType(node, isSdsModule)?.name;
+    return AstUtils.getContainerOfType(node, isSdsModule)?.name;
 };
 
 export const getParameters = (node: SdsCallable | undefined): SdsParameter[] => {
@@ -281,7 +348,7 @@ export const getParentTypes = (node: SdsClass | undefined): SdsType[] => {
     return node?.parentTypeList?.parentTypes ?? [];
 };
 
-export const getQualifiedName = (node: SdsDeclaration | undefined): string | undefined => {
+export const getQualifiedName = (node: SdsDeclaration | undefined): string => {
     const segments = [];
 
     let current: SdsDeclaration | undefined = node;
@@ -289,7 +356,7 @@ export const getQualifiedName = (node: SdsDeclaration | undefined): string | und
         if (current.name) {
             segments.unshift(current.name);
         }
-        current = getContainerOfType(current.$container, isSdsDeclaration);
+        current = AstUtils.getContainerOfType(current.$container, isSdsDeclaration);
     }
 
     return segments.join('.');
@@ -326,7 +393,7 @@ export const getTypeArguments = (node: SdsTypeArgumentList | SdsNamedType | unde
 };
 
 export const getTypeParameters = (
-    node: SdsTypeParameterList | SdsNamedTypeDeclaration | undefined,
+    node: SdsTypeParameterList | SdsCallable | SdsNamedTypeDeclaration | undefined,
 ): SdsTypeParameter[] => {
     if (!node) {
         return [];
@@ -335,6 +402,8 @@ export const getTypeParameters = (
     if (isSdsTypeParameterList(node)) {
         return node.typeParameters;
     } else if (isSdsClass(node)) {
+        return getTypeParameters(node.typeParameterList);
+    } else if (isSdsFunction(node)) {
         return getTypeParameters(node.typeParameterList);
     } /* c8 ignore start */ else {
         return [];
