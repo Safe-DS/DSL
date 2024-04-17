@@ -320,7 +320,7 @@ export const parameterDefaultValueTypeMustMatchParameterType = (services: SafeDs
         const defaultValueType = typeComputer.computeType(defaultValue);
         const parameterType = typeComputer.computeType(node);
 
-        if (!typeChecker.isSubtypeOf(defaultValueType, parameterType)) {
+        if (!typeChecker.isSubtypeOf(defaultValueType, parameterType, { ignoreParameterNames: true })) {
             accept('error', `Expected type '${parameterType}' but got '${defaultValueType}'.`, {
                 node,
                 property: 'defaultValue',
@@ -425,7 +425,7 @@ export const yieldTypeMustMatchResultType = (services: SafeDsServices) => {
         const yieldType = typeComputer.computeType(node);
         const resultType = typeComputer.computeType(result);
 
-        if (!typeChecker.isSubtypeOf(yieldType, resultType)) {
+        if (!typeChecker.isSubtypeOf(yieldType, resultType, { ignoreParameterNames: true })) {
             accept('error', `Expected type '${resultType}' but got '${yieldType}'.`, {
                 node,
                 property: 'result',
