@@ -1,0 +1,54 @@
+package safeds.ml.classical.regression
+
+/**
+ * Auto Regressive Integrated Moving Average Model.
+ */
+class ArimaModelRegressor() {
+    /**
+     * Create a copy of this ARIMA Model and fit it with the given training data.
+     *
+     * This ARIMA Model is not modified.
+     *
+     * @param timeSeries The time series containing the target column, which will be used.
+     *
+     * @result fittedArima The fitted ARIMA Model.
+     */
+    @Pure
+    fun fit(
+        @PythonName("time_series") timeSeries: TimeSeries
+    ) -> result1: ArimaModelRegressor
+
+    /**
+     * Predict a target vector using a time series target column. The model has to be trained first.
+     *
+     * @param timeSeries The test dataset of the time series.
+     *
+     * @result timeSeries A timeseries containing the predicted target vector and a time dummy as time column.
+     */
+    @Pure
+    fun predict(
+        @PythonName("time_series") timeSeries: TimeSeries
+    ) -> result1: TimeSeries
+
+    /**
+     * Plot the predictions of the trained model to the given target of the time series. So you can see the predictions and the actual values in one plot.
+     *
+     * @param testSeries The time series containing the target vector.
+     *
+     * @result image Plots predictions of the given time series to the given target Column
+     */
+    @Pure
+    @PythonName("plot_predictions")
+    fun plotPredictions(
+        @PythonName("test_series") testSeries: TimeSeries
+    ) -> result1: Image
+
+    /**
+     * Check if the classifier is fitted.
+     *
+     * @result isFitted Whether the regressor is fitted.
+     */
+    @Pure
+    @PythonName("is_fitted")
+    fun isFitted() -> isFitted: Boolean
+}
