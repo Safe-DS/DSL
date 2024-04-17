@@ -121,6 +121,8 @@ const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.commands.registerCommand('safe-ds.runPipelineFile', commandRunPipelineFile));
     context.subscriptions.push(
         vscode.commands.registerCommand('safe-ds.runEda', async (documentUri: string, nodePath: string) => {
+            await vscode.workspace.saveAll();
+
             const editor = vscode.window.activeTextEditor;
             if (!editor) {
                 vscode.window.showErrorMessage('No active text editor.');
