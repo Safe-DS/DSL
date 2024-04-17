@@ -1,4 +1,4 @@
-# `#!sds class` ImageList {#safeds.data.image.containers.ImageList data-toc-label='ImageList'}
+# `#!sds abstract class` ImageList {#safeds.data.image.containers.ImageList data-toc-label='ImageList'}
 
 An ImageList is a list of different images. It can hold different sizes of Images. The channel of all images is the same.
 
@@ -12,7 +12,7 @@ To create an `ImageList` call one of the following static methods:
 ??? quote "Stub code in `image_list.sdsstub`"
 
     ```sds linenums="15"
-    class ImageList() {
+    class ImageList {
         /**
          * Return the number of images in this image list.
          */

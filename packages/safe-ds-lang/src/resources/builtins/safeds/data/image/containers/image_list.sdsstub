@@ -12,7 +12,7 @@ from safeds.data.image.containers import Image
  * | {@link ImageList.fromImages} | Create an ImageList from a list of Images.               |
  * | {@link ImageList.fromFiles}  | Create an ImageList from a directory or a list of files. |
  */
-class ImageList() {
+class ImageList {
     /**
      * Return the number of images in this image list.
      */
