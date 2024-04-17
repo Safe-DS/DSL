@@ -50,12 +50,10 @@ export class MessageHandler {
         return {
             async getAst(documentUri: vscode.Uri) {
                 // await client.onReady(); // Ensure the client is ready before sending requests // This is suggested in every tutorial, but the method doesn't exist?
-                logOutput('I GOT SEND');
                 const response = await client.sendRequest(
                     new RequestType<GetAstTypes.Message, GetAstTypes.Response, void>(GetAst.method),
                     { uri: documentUri },
                 );
-                logOutput('I GOT RECEIVED');
                 logAny(response);
             },
         };

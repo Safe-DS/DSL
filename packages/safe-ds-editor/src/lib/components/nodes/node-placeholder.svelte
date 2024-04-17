@@ -19,7 +19,7 @@
     use:tooltip={{ content: placeholder.name, delay: 150 }}
     class="w-14 cursor-default"
 >
-    <span class="relative -left-3 block w-20 truncate text-center text-sm"
+    <span class="text-node_main_text relative -left-3 block w-20 truncate text-center text-sm"
         >{placeholder.name}</span
     >
     <div

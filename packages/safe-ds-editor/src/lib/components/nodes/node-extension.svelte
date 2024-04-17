@@ -40,7 +40,7 @@
             }}
         >
             <Button
-                class="mr-1 h-6 w-6 px-4"
+                class="text-node_main_text mr-1 h-6 w-6 px-4"
                 variant="ghost"
                 size="icon"
                 on:click={(event) => {
@@ -49,7 +49,7 @@
             >
                 <svelte:component
                     this={menu.open}
-                    className="h-6 w-6 flex-shrink-0 stroke-node_main_text"
+                    className="h-6 w-6 flex-shrink-0"
                 />
             </Button>
             <!-- <ChevonRight

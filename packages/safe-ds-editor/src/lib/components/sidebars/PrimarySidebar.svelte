@@ -17,7 +17,7 @@
         <div
             class=" bg-vscode_sidebar_background flex h-full w-full flex-col gap-2 overflow-hidden"
         >
-            <h2 class=" p-2 text-2xl font-bold">Functions</h2>
+            <h2 class="text-node_main_text p-2 text-2xl font-bold">Functions</h2>
             <Accordion.Root multiple={true}>
                 {#each categories as category, index}
                     <Accordion.Item value={index.toString()}>

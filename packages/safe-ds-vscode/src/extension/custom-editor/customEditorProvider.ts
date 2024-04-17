@@ -84,11 +84,7 @@ export class SafeDSCustomTextEditorProvider implements vscode.CustomTextEditorPr
         webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview, document.fileName);
 
         messageHandler.webview.sendMessageTest('Hi from Extension');
-        logOutput('I GOT OPENED');
-        logOutput(document.uri.toString());
-        logOutput('I GOT OPENED KURZ DAVOR');
         await messageHandler.languageServer.getAst(document.uri);
-        logOutput('I GOT OPENED');
     }
 
     /**

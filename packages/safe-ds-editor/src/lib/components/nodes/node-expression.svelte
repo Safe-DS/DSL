@@ -48,7 +48,7 @@
         {#if expanded}
             <div class=" bg-vscode_main_background grid p-1 pr-3">
                 {#each expression.text.split('\n') as line}
-                    <span class=" whitespace-pre text-sm">{line}</span>
+                    <span class="text-node_main_text whitespace-pre text-sm">{line}</span>
                 {/each}
             </div>
         {/if}
