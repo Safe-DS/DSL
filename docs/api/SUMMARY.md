@@ -8,6 +8,7 @@ search:
         - image
             - containers
                 - [Image](safeds/data/image/containers/Image.md)
+                - [ImageList](safeds/data/image/containers/ImageList.md)
         - tabular
             - containers
                 - [Column](safeds/data/tabular/containers/Column.md)
@@ -62,6 +63,7 @@ search:
                 - [SupportVectorMachineClassifier](safeds/ml/classical/classification/SupportVectorMachineClassifier.md)
             - regression
                 - [AdaBoostRegressor](safeds/ml/classical/regression/AdaBoostRegressor.md)
+                - [ArimaRegressor](safeds/ml/classical/regression/ArimaRegressor.md)
                 - [DecisionTreeRegressor](safeds/ml/classical/regression/DecisionTreeRegressor.md)
                 - [ElasticNetRegressor](safeds/ml/classical/regression/ElasticNetRegressor.md)
                 - [GradientBoostingRegressor](safeds/ml/classical/regression/GradientBoostingRegressor.md)
@@ -73,6 +75,7 @@ search:
                 - [RidgeRegressor](safeds/ml/classical/regression/RidgeRegressor.md)
                 - [SupportVectorMachineRegressor](safeds/ml/classical/regression/SupportVectorMachineRegressor.md)
         - nn
-            - [FNNLayer](safeds/ml/nn/FNNLayer.md)
+            - [ForwardLayer](safeds/ml/nn/ForwardLayer.md)
+            - [Layer](safeds/ml/nn/Layer.md)
             - [NeuralNetworkClassifier](safeds/ml/nn/NeuralNetworkClassifier.md)
             - [NeuralNetworkRegressor](safeds/ml/nn/NeuralNetworkRegressor.md)

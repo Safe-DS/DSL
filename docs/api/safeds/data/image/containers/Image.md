@@ -56,6 +56,21 @@ A container for image data.
         )
     
         /**
+         * Return a new `Image` that has the given number of channels.
+         *
+         * The original image is not modified.
+         *
+         * @param channel The new number of channels. 1 will result in a grayscale image.
+         *
+         * @result result1 The image with the given number of channels.
+         */
+        @Pure
+        @PythonName("change_channel")
+        fun changeChannel(
+            channel: Int
+        ) -> result1: Image
+    
+        /**
          * Return a new `Image` that has been resized to a given size.
          *
          * The original image is not modified.
@@ -330,7 +345,7 @@ The original image is not modified.
 
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="163"
+    ```sds linenums="178"
     @Pure
     @PythonName("add_noise")
     fun addNoise(
@@ -360,7 +375,7 @@ The original image is not modified.
 
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="146"
+    ```sds linenums="161"
     @Pure
     @PythonName("adjust_brightness")
     fun adjustBrightness(
@@ -390,7 +405,7 @@ The original image is not modified.
 
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="203"
+    ```sds linenums="218"
     @Pure
     @PythonName("adjust_color_balance")
     fun adjustColorBalance(
@@ -420,7 +435,7 @@ The original image is not modified.
 
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="183"
+    ```sds linenums="198"
     @Pure
     @PythonName("adjust_contrast")
     fun adjustContrast(
@@ -450,13 +465,41 @@ The original image is not modified.
 
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="221"
+    ```sds linenums="236"
     @Pure
     fun blur(
         const radius: Int
     ) -> result1: Image where {
         radius >= 0
     }
+    ```
+
+## `#!sds fun` changeChannel {#safeds.data.image.containers.Image.changeChannel data-toc-label='changeChannel'}
+
+Return a new `Image` that has the given number of channels.
+
+The original image is not modified.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `channel` | [`Int`][safeds.lang.Int] | The new number of channels. 1 will result in a grayscale image. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Image`][safeds.data.image.containers.Image] | The image with the given number of channels. |
+
+??? quote "Stub code in `image.sdsstub`"
+
+    ```sds linenums="65"
+    @Pure
+    @PythonName("change_channel")
+    fun changeChannel(
+        channel: Int
+    ) -> result1: Image
     ```
 
 ## `#!sds fun` convertToGrayscale {#safeds.data.image.containers.Image.convertToGrayscale data-toc-label='convertToGrayscale'}
@@ -473,7 +516,7 @@ The original image is not modified.
 
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="82"
+    ```sds linenums="97"
     @Pure
     @PythonName("convert_to_grayscale")
     fun convertToGrayscale() -> result1: Image
@@ -502,7 +545,7 @@ The original image is not modified.
 
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="98"
+    ```sds linenums="113"
     @Pure
     fun crop(
         const x: Int,
@@ -531,7 +574,7 @@ The original image is not modified.
 
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="287"
+    ```sds linenums="302"
     @Pure
     @PythonName("find_edges")
     fun findEdges() -> result1: Image
@@ -551,7 +594,7 @@ The original image is not modified.
 
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="129"
+    ```sds linenums="144"
     @Pure
     @PythonName("flip_horizontally")
     fun flipHorizontally() -> result1: Image
@@ -571,7 +614,7 @@ The original image is not modified.
 
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="118"
+    ```sds linenums="133"
     @Pure
     @PythonName("flip_vertically")
     fun flipVertically() -> result1: Image
@@ -591,7 +634,7 @@ The original image is not modified.
 
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="254"
+    ```sds linenums="269"
     @Pure
     @PythonName("invert_colors")
     fun invertColors() -> result1: Image
@@ -618,7 +661,7 @@ The original image is not modified.
 
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="66"
+    ```sds linenums="81"
     @Pure
     fun resize(
         @PythonName("new_width") const newWidth: Int,
@@ -643,7 +686,7 @@ The original image is not modified.
 
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="276"
+    ```sds linenums="291"
     @Pure
     @PythonName("rotate_left")
     fun rotateLeft() -> result1: Image
@@ -663,7 +706,7 @@ The original image is not modified.
 
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="265"
+    ```sds linenums="280"
     @Pure
     @PythonName("rotate_right")
     fun rotateRight() -> result1: Image
@@ -689,7 +732,7 @@ The original image is not modified.
 
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="240"
+    ```sds linenums="255"
     @Pure
     fun sharpen(
         const factor: Float
