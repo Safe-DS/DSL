@@ -5,7 +5,7 @@ A table is a two-dimensional collection of data. It can either be seen as a list
 To create a `Table` call the constructor or use one of the following static methods:
 
 | Method                     | Description                            |
-| ---------------------------| -------------------------------------- |
+| -------------------------- | -------------------------------------- |
 | [Table.fromCsvFile][safeds.data.tabular.containers.Table.fromCsvFile]  | Create a table from a CSV file.        |
 | [Table.fromJsonFile][safeds.data.tabular.containers.Table.fromJsonFile] | Create a table from a JSON file.       |
 | [Table.fromDict][safeds.data.tabular.containers.Table.fromDict]     | Create a table from a dictionary.      |

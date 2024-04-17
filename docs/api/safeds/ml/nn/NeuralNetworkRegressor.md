@@ -4,13 +4,13 @@
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `layers` | [`List<FNNLayer>`][safeds.lang.List] | - | - |
+| `layers` | [`List<Layer>`][safeds.lang.List] | - | - |
 
 ??? quote "Stub code in `regressor.sdsstub`"
 
     ```sds linenums="6"
     class NeuralNetworkRegressor(
-        layers: List<FNNLayer>
+        layers: List<Layer>
     ) {
         /**
          * Check if the model is fitted.
@@ -25,6 +25,7 @@
          * @param trainData The data the network should be trained on.
          * @param epochSize The number of times the training cycle should be done.
          * @param batchSize The size of data batches that should be loaded at one time.
+         * @param learningRate The learning rate of the neural network.
          * @param callbackOnBatchCompletion Function used to view metrics while training. Gets called after a batch is completed with the index of the last batch and the overall loss average.
          * @param callbackOnEpochCompletion Function used to view metrics while training. Gets called after an epoch is completed with the index of the last epoch and the overall loss average.
          *
@@ -35,6 +36,7 @@
             @PythonName("train_data") trainData: TaggedTable,
             @PythonName("epoch_size") const epochSize: Int = 25,
             @PythonName("batch_size") const batchSize: Int = 1,
+            @PythonName("learning_rate") learningRate: Float = 0.001,
             @PythonName("callback_on_batch_completion") callbackOnBatchCompletion: (param1: Int, param2: Float) -> () = (param1, param2) {},
             @PythonName("callback_on_epoch_completion") callbackOnEpochCompletion: (param1: Int, param2: Float) -> () = (param1, param2) {}
         ) -> trainedRegressor: NeuralNetworkRegressor where {
@@ -77,6 +79,7 @@ The original model is not modified.
 | `trainData` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The data the network should be trained on. | - |
 | `epochSize` | [`Int`][safeds.lang.Int] | The number of times the training cycle should be done. | `#!sds 25` |
 | `batchSize` | [`Int`][safeds.lang.Int] | The size of data batches that should be loaded at one time. | `#!sds 1` |
+| `learningRate` | [`Float`][safeds.lang.Float] | The learning rate of the neural network. | `#!sds 0.001` |
 | `callbackOnBatchCompletion` | `#!sds (param1: Int, param2: Float) -> ()` | Function used to view metrics while training. Gets called after a batch is completed with the index of the last batch and the overall loss average. | `#!sds (param1, param2) {}` |
 | `callbackOnEpochCompletion` | `#!sds (param1: Int, param2: Float) -> ()` | Function used to view metrics while training. Gets called after an epoch is completed with the index of the last epoch and the overall loss average. | `#!sds (param1, param2) {}` |
 
@@ -88,12 +91,13 @@ The original model is not modified.
 
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="27"
+    ```sds linenums="28"
     @Pure
     fun fit(
         @PythonName("train_data") trainData: TaggedTable,
         @PythonName("epoch_size") const epochSize: Int = 25,
         @PythonName("batch_size") const batchSize: Int = 1,
+        @PythonName("learning_rate") learningRate: Float = 0.001,
         @PythonName("callback_on_batch_completion") callbackOnBatchCompletion: (param1: Int, param2: Float) -> () = (param1, param2) {},
         @PythonName("callback_on_epoch_completion") callbackOnEpochCompletion: (param1: Int, param2: Float) -> () = (param1, param2) {}
     ) -> trainedRegressor: NeuralNetworkRegressor where {
@@ -122,7 +126,7 @@ The original Model is not modified.
 
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="48"
+    ```sds linenums="50"
     @Pure
     fun predict(
         @PythonName("test_data") testData: Table

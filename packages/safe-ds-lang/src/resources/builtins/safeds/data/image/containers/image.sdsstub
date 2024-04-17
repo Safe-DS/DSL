@@ -54,6 +54,21 @@ class Image {
     )
 
     /**
+     * Return a new `Image` that has the given number of channels.
+     *
+     * The original image is not modified.
+     *
+     * @param channel The new number of channels. 1 will result in a grayscale image.
+     *
+     * @result result1 The image with the given number of channels.
+     */
+    @Pure
+    @PythonName("change_channel")
+    fun changeChannel(
+        channel: Int
+    ) -> result1: Image
+
+    /**
      * Return a new `Image` that has been resized to a given size.
      *
      * The original image is not modified.

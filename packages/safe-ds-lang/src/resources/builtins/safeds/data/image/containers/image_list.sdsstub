@@ -1,0 +1,509 @@
+package safeds.data.image.containers
+
+from safeds.data.image.containers import Image
+
+/**
+ * An ImageList is a list of different images. It can hold different sizes of Images. The channel of all images is the same.
+ *
+ * To create an `ImageList` call one of the following static methods:
+ *
+ * | Method                       | Description                                              |
+ * | ---------------------------- | -------------------------------------------------------- |
+ * | {@link ImageList.fromImages} | Create an ImageList from a list of Images.               |
+ * | {@link ImageList.fromFiles}  | Create an ImageList from a directory or a list of files. |
+ */
+class ImageList {
+    /**
+     * Return the number of images in this image list.
+     */
+    @PythonName("number_of_images") attr numberOfImages: Int
+    /**
+     * Return a list of all widths in this image list.
+     */
+    attr widths: List<Int>
+    /**
+     * Return a list of all heights in this image list.
+     */
+    attr heights: List<Int>
+    /**
+     * Return the channel of all images.
+     */
+    attr channel: Int
+    /**
+     * Return the number of different sizes of images in this image list.
+     */
+    @PythonName("number_of_sizes") attr numberOfSizes: Int
+
+    /**
+     * Create an ImageList from a list of images.
+     *
+     * @param images the list of images
+     *
+     * @result imageList the image list
+     */
+    @Pure
+    @PythonName("from_images")
+    static fun fromImages(
+        images: List<Image>
+    ) -> imageList: ImageList
+
+    /**
+     * Create an ImageList from a directory or a list of files.
+     *
+     * If you provide a path to a directory the images will be sorted alphabetically while inner directories will be sorted after image files.
+     *
+     * @param path the path to the directory or a list of files
+     *
+     * @result imageList the image list
+     */
+    @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
+    @PythonName("from_files")
+    static fun fromFiles(
+        path: union<List<String>, String>
+    ) -> imageList: ImageList
+
+    /**
+     * Return the image at the given index.
+     *
+     * @param index the index for the image to return
+     *
+     * @result image the image at the given index
+     */
+    @Pure
+    @PythonName("get_image")
+    fun getImage(
+        index: Int
+    ) -> image: Image
+
+    /**
+     * Return a list of indexes of the given image.
+     *
+     * If the image has multiple occurrences, all indices will be returned
+     *
+     * @param image the image to search for occurrences
+     *
+     * @result indices all occurrences of the image
+     */
+    @Pure
+    fun index(
+        image: Image
+    ) -> indices: List<Int>
+
+    /**
+     * Return whether the given image is in this image list.
+     *
+     * @param image the image to check
+     *
+     * @result hasImage Weather the given image is in this image list
+     */
+    @Pure
+    @PythonName("has_image")
+    fun hasImage(
+        image: Image
+    ) -> hasImage: Boolean
+
+    /**
+     * Save all images as jpeg files.
+     *
+     * @param path Either the path to a directory or a list of directories which has directories for either all different sizes or all different images. Any non-existant path will be created
+     */
+    @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
+    @PythonName("to_jpeg_files")
+    fun toJpegFiles(
+        path: union<List<String>, String>
+    )
+
+    /**
+     * Save all images as png files.
+     *
+     * @param path Either the path to a directory or a list of directories which has directories for either all different sizes or all different images. Any non-existant path will be created
+     */
+    @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
+    @PythonName("to_png_files")
+    fun toPngFiles(
+        path: union<List<String>, String>
+    )
+
+    /**
+     * Return a list of all images in this image list.
+     *
+     * @param indices a list of all indices to include in the output. If None, all indices will be included
+     *
+     * @result images the list of all images
+     */
+    @Pure
+    @PythonName("to_images")
+    fun toImages(
+        indices: List<Int>? = null
+    ) -> images: List<Image>
+
+    /**
+     * Return a new `ImageList` that has the given number of channels.
+     *
+     * The original image list is not modified.
+     *
+     * @param channel The new number of channels. 1 will result in grayscale images
+     *
+     * @result imageList the image list with the given number of channels
+     */
+    @Pure
+    @PythonName("change_channel")
+    fun changeChannel(
+        channel: Int
+    ) -> imageList: ImageList
+
+    /**
+     * Return a new `ImageList` with the given image added to the image list.
+     *
+     * The original image list is not modified.
+     *
+     * @param image The image to be added to the image list
+     *
+     * @result imageList the image list with the new image added
+     */
+    @Pure
+    @PythonName("add_image")
+    fun addImage(
+        image: Image
+    ) -> imageList: ImageList
+
+    /**
+     * Return a new `ImageList` with the given images added to the image list.
+     *
+     * The original image list is not modified.
+     *
+     * @param images The images to be added to the image list
+     *
+     * @result imageList the image list with the new images added
+     */
+    @Pure
+    @PythonName("add_images")
+    fun addImages(
+        images: union<ImageList, List<Image>>
+    ) -> imageList: ImageList
+
+    /**
+     * Return a new `ImageList` with the given image removed from the image list.
+     *
+     * If the image has multiple occurrences, all occurrences will be removed.
+     *
+     * The original image list is not modified.
+     *
+     * @param image The image to be removed from the image list
+     *
+     * @result imageList the image list with the given image removed
+     */
+    @Pure
+    @PythonName("remove_image")
+    fun removeImage(
+        image: Image
+    ) -> imageList: ImageList
+
+    /**
+     * Return a new `ImageList` with the given images removed from the image list.
+     *
+     * If one image has multiple occurrences, all occurrences will be removed.
+     *
+     * The original image list is not modified.
+     *
+     * @param images The images to be removed from the image list
+     *
+     * @result imageList the image list with the given images removed
+     */
+    @Pure
+    @PythonName("remove_images")
+    fun removeImages(
+        images: List<Image>
+    ) -> imageList: ImageList
+
+    /**
+     * Return a new `ImageList` with the given indices removed from the image list.
+     *
+     * The original image list is not modified.
+     *
+     * @param index The index of the image to be removed from the image list
+     *
+     * @result imageList the image list with the without the removed image
+     */
+    @Pure
+    @PythonName("remove_image_by_index")
+    fun removeImageByIndex(
+        index: union<Int, List<Int>>
+    ) -> imageList: ImageList
+
+    /**
+     * Return a new `ImageList` with the all images of the given size removed.
+     *
+     * The original image list is not modified.
+     *
+     * @param width The width of the images to be removed from the image list
+     * @param height The height of the images to be removed from the image list
+     *
+     * @result imageList the image list with the given images removed
+     */
+    @Pure
+    @PythonName("remove_images_with_size")
+    fun removeImagesWithSize(
+        width: Int,
+        height: Int
+    ) -> imageList: ImageList
+
+    /**
+     * Return a new `ImageList` with all duplicate images removed.
+     *
+     * One occurrence of each image will stay in the image list.
+     *
+     * The original image list is not modified.
+     *
+     * @result imageList the image list with only unique images
+     */
+    @Pure
+    @PythonName("remove_duplicate_images")
+    fun removeDuplicateImages() -> imageList: ImageList
+
+    /**
+     * Return a new `ImageList` with all images shuffled.
+     *
+     * The original image list is not modified.
+     *
+     * @result imageList the image list with shuffled images
+     */
+    @Pure
+    @PythonName("shuffle_images")
+    fun shuffleImages() -> imageList: ImageList
+
+    /**
+     * Return a new `ImageList` with all images resized to a given size.
+     *
+     * The original image list is not modified.
+     *
+     * @param newWidth the new width of the images
+     * @param newHeight the new height of the images
+     *
+     * @result imageList The image list with all images resized to the given width and height.
+     */
+    @Pure
+    fun resize(
+        @PythonName("new_width") const newWidth: Int,
+        @PythonName("new_height") const newHeight: Int
+    ) -> imageList: ImageList where {
+        newWidth >= 0,
+        newHeight >= 0
+    }
+
+    /**
+     * Return a new `ImageList` with all images converted to grayscale.
+     *
+     * The original image list is not modified.
+     *
+     * @result imageList The image list with all images converted to grayscale.
+     */
+    @Pure
+    @PythonName("convert_to_grayscale")
+    fun convertToGrayscale() -> imageList: ImageList
+
+    /**
+     * Return a new `ImageList` with all images cropped to a given bounding rectangle.
+     *
+     * The original image list is not modified.
+     *
+     * @param x the x coordinate of the top-left corner of the bounding rectangle
+     * @param y the y coordinate of the top-left corner of the bounding rectangle
+     * @param width the width of the bounding rectangle
+     * @param height the height of the bounding rectangle
+     *
+     * @result imageList The image list with all images cropped
+     */
+    @Pure
+    fun crop(
+        const x: Int,
+        const y: Int,
+        const width: Int,
+        const height: Int
+    ) -> imageList: ImageList where {
+        x >= 0,
+        y >= 0,
+        width >= 0,
+        height >= 0
+    }
+
+    /**
+     * Return a new `ImageList` with all images flipped vertically (horizontal axis, flips up-down and vice versa).
+     *
+     * The original image list is not modified.
+     *
+     * @result imageList The image list with all images flipped vertically
+     */
+    @Pure
+    @PythonName("flip_vertically")
+    fun flipVertically() -> imageList: ImageList
+
+    /**
+     * Return a new `ImageList` with all images flipped horizontally (vertical axis, flips left-right and vice versa).
+     *
+     * The original image list is not modified.
+     *
+     * @result imageList The image list with all images flipped horizontally
+     */
+    @Pure
+    @PythonName("flip_horizontally")
+    fun flipHorizontally() -> imageList: ImageList
+
+    /**
+     * Return a new `ImageList` where all images have the adjusted brightness.
+     *
+     * The original image list is not modified.
+     *
+     * @param factor The brightness factor.
+     * 1.0 will not change the brightness.
+     * Below 1.0 will result in a darker images.
+     * Above 1.0 will resolut in a brighter images.
+     * Has to be bigger than or equal to 0 (black).
+     *
+     * @result imageList The image list with adjusted brightness
+     */
+    @Pure
+    @PythonName("adjust_brightness")
+    fun adjustBrightness(
+        const factor: Float
+    ) -> imageList: ImageList where {
+        factor >= 0.0
+    }
+
+    /**
+     * Return a new `ImageList` with noise added to all images.
+     *
+     * The original image list is not modified.
+     *
+     * @param standardDeviation The standard deviation of the normal distribution. Has to be bigger than or equal to 0.
+     *
+     * @result imageList The image list with added noise
+     */
+    @Pure
+    @PythonName("add_noise")
+    fun addNoise(
+        @PythonName("standard_deviation") const standardDeviation: Float
+    ) -> imageList: ImageList where {
+        standardDeviation >= 0.0
+    }
+
+    /**
+     * Return a new `ImageList` where all images have the adjusted contrast.
+     *
+     * The original image list is not modified.
+     *
+     * @param factor If factor > 1, increase contrast of images.
+     * If factor = 1, no changes will be made.
+     * If factor < 1, make images greyer.
+     * Has to be bigger than or equal to 0 (gray).
+     *
+     * @result imageList The image list with adjusted contrast
+     */
+    @Pure
+    @PythonName("adjust_contrast")
+    fun adjustContrast(
+        const factor: Float
+    ) -> imageList: ImageList where {
+        factor >= 0.0
+    }
+
+    /**
+     * Return a new `ImageList` where all images have the adjusted color balance.
+     *
+     * The original image list is not modified.
+     *
+     * @param factor Has to be bigger than or equal to 0.
+     * If 0 <= factor < 1, make images greyer.
+     * If factor = 1, no changes will be made.
+     * If factor > 1, increase color balance of images.
+     *
+     * @result imageList The image list with adjusted color balance
+     */
+    @Pure
+    @PythonName("adjust_color_balance")
+    fun adjustColorBalance(
+        const factor: Float
+    ) -> imageList: ImageList where {
+        factor >= 0.0
+    }
+
+    /**
+     * Return a new `ImageList` where all images have been blurred.
+     *
+     * The original image list is not modified.
+     *
+     * @param radius  Radius is directly proportional to the blur value. The radius is equal to the amount of pixels united in
+     *  each direction. A radius of 1 will result in a united box of 9 pixels.
+     *
+     * @result imageList The image list with blurred images
+     */
+    @Pure
+    fun blur(
+        const radius: Int
+    ) -> imageList: ImageList where {
+        radius >= 0
+    }
+
+    /**
+     * Return a new `ImageList` where all images have been sharpened.
+     *
+     * The original image list is not modified.
+     *
+     * @param factor If factor > 1, increase the sharpness of the images.
+     * If factor = 1, no changes will be made.
+     * If factor < 1, blur the images.
+     * Has to be bigger than or equal to 0 (blurred).
+     *
+     * @result imageList The image list with sharpened images
+     */
+    @Pure
+    fun sharpen(
+        const factor: Float
+    ) -> imageList: ImageList where {
+        factor >= 0.0
+    }
+
+    /**
+     * Return a new `ImageList` where all images have their colors inverted.
+     *
+     * The original image list is not modified.
+     *
+     * @result imageList The image list with inverted colors
+     */
+    @Pure
+    @PythonName("invert_colors")
+    fun invertColors() -> imageList: ImageList
+
+    /**
+     * Return a new `ImageList` where all images have been rotated 90 degrees clockwise.
+     *
+     * The original image list is not modified.
+     *
+     * @result imageList The image list with all images rotated
+     */
+    @Pure
+    @PythonName("rotate_right")
+    fun rotateRight() -> imageList: ImageList
+
+    /**
+     * Return a new `ImageList` where all images have been rotated 90 degrees counter-clockwise.
+     *
+     * The original image list is not modified.
+     *
+     * @result imageList The image list with all images rotated
+     */
+    @Pure
+    @PythonName("rotate_left")
+    fun rotateLeft() -> imageList: ImageList
+
+    /**
+     * Return a new `ImageList` with grayscale versions of the images with the edges highlighted.
+     *
+     * The original image list is not modified.
+     *
+     * @result imageList The image list with highlighted edges
+     */
+    @Pure
+    @PythonName("find_edges")
+    fun findEdges() -> imageList: ImageList
+}
