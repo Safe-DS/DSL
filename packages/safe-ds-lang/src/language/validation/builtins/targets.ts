@@ -11,6 +11,7 @@ import {
     isSdsParameter,
     isSdsPipeline,
     isSdsResult,
+    isSdsSchema,
     isSdsSegment,
     isSdsTypeParameter,
     SdsAnnotation,
@@ -20,10 +21,10 @@ import {
 import { findFirstAnnotationCallOf, getAnnotationCallTarget } from '../../helpers/nodeProperties.js';
 import { SafeDsServices } from '../../safe-ds-module.js';
 
-export const CODE_TARGET_DUPLICATE_TARGET = 'target/duplicate-target';
-export const CODE_TARGET_WRONG_TARGET = 'target/wrong-target';
+export const CODE_TARGETS_DUPLICATE_TARGET = 'targets/duplicate-target';
+export const CODE_TARGETS_WRONG_TARGET = 'targets/wrong-target';
 
-export const targetShouldNotHaveDuplicateEntries = (services: SafeDsServices) => {
+export const targetsShouldNotHaveDuplicateEntries = (services: SafeDsServices) => {
     const builtinAnnotations = services.builtins.Annotations;
     const builtinEnums = services.builtins.Enums;
     const partialEvaluator = services.evaluation.PartialEvaluator;
@@ -50,7 +51,7 @@ export const targetShouldNotHaveDuplicateEntries = (services: SafeDsServices) =>
             if (knownTargets.has(evaluatedTarget.variant)) {
                 accept('warning', `The target '${evaluatedTarget.variant.name}' was set already.`, {
                     node: target,
-                    code: CODE_TARGET_DUPLICATE_TARGET,
+                    code: CODE_TARGETS_DUPLICATE_TARGET,
                 });
             } else {
                 knownTargets.add(evaluatedTarget.variant);
@@ -84,7 +85,7 @@ export const annotationCallMustHaveCorrectTarget = (services: SafeDsServices) =>
             accept('error', `The annotation '${annotation.name}' cannot be applied to ${actualTarget.prettyName}.`, {
                 node,
                 property: 'annotation',
-                code: CODE_TARGET_WRONG_TARGET,
+                code: CODE_TARGETS_WRONG_TARGET,
             });
         }
     };
@@ -142,6 +143,11 @@ const getActualTarget = (node: SdsAnnotationCall): GetActualTargetResult | void 
         return {
             enumVariantName: 'Result',
             prettyName: 'a result',
+        };
+    } else if (isSdsSchema(annotatedObject)) {
+        return {
+            enumVariantName: 'Schema',
+            prettyName: 'a schema',
         };
     } else if (isSdsSegment(annotatedObject)) {
         return {

@@ -24,7 +24,7 @@ import {
     pythonNameShouldDifferFromSafeDsName,
 } from './builtins/pythonName.js';
 import { singleUseAnnotationsMustNotBeRepeated } from './builtins/repeatable.js';
-import { annotationCallMustHaveCorrectTarget, targetShouldNotHaveDuplicateEntries } from './builtins/target.js';
+import { annotationCallMustHaveCorrectTarget, targetsShouldNotHaveDuplicateEntries } from './builtins/targets.js';
 import {
     constraintListsShouldBeUsedWithCaution,
     literalTypesShouldBeUsedWithCaution,
@@ -211,7 +211,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             annotationMustContainUniqueNames,
             annotationParameterListShouldNotBeEmpty(services),
             annotationParameterShouldNotHaveConstModifier(services),
-            targetShouldNotHaveDuplicateEntries(services),
+            targetsShouldNotHaveDuplicateEntries(services),
         ],
         SdsAnnotationCall: [
             annotationCallAnnotationShouldNotBeDeprecated(services),
