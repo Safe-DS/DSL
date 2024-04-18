@@ -2,7 +2,7 @@ package safeds.lang
 
 /**
  * The specification of a corresponding function call in Python. By default, the function is called as specified in the
- * stub.
+ * stubs.
  *
  * The specification can contain template expressions, which are replaced by the corresponding arguments of the function
  * call. `$this` is replaced by the receiver of the call. `$param` is replaced by the value of the parameter called
@@ -15,7 +15,8 @@ annotation PythonCall(
 )
 
 /**
- * The qualified name of the corresponding Python module. By default, this is the qualified name of the package.
+ * The qualified name of the corresponding Python module. By default, this is the qualified name of the package in the
+ * stubs.
  */
 @Targets([AnnotationTarget.Module])
 annotation PythonModule(
