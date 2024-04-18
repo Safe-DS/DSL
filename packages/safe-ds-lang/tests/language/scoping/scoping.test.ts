@@ -94,7 +94,7 @@ describe('scoping', async () => {
         const code = `
             enum AnnotationTarget
 
-            @Target([AnnotationTarget.Annotation])
+            @Targets([AnnotationTarget.Annotation])
             annotation MyAnnotation
         `;
         const reference = await getNodeOfType(services, code, isSdsReference);

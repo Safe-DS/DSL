@@ -10,7 +10,18 @@ The qualified name of the corresponding Python module. By default, this is the q
 
 **Targets:**
 
+- `Annotation`
+- `Attribute`
+- `Class`
+- `Enum`
+- `EnumVariant`
+- `Function`
 - `Module`
+- `Parameter`
+- `Pipeline`
+- `Result`
+- `Segment`
+- `TypeParameter`
 
 ??? quote "Stub code in `codeGeneration.sdsstub`"
 

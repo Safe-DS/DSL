@@ -49,7 +49,7 @@ search:
         - [PythonName](safeds/lang/PythonName.md)
         - [Repeatable](safeds/lang/Repeatable.md)
         - [String](safeds/lang/String.md)
-        - [Target](safeds/lang/Target.md)
+        - [Targets](safeds/lang/Targets.md)
     - ml
         - classical
             - classification

@@ -9,7 +9,7 @@ package safeds.lang
  * `param`. Otherwise, the string is used as-is.
  */
 @Experimental
-@Target([AnnotationTarget.Function])
+@Targets([AnnotationTarget.Function])
 annotation PythonCall(
     callSpecification: String
 )
@@ -17,7 +17,7 @@ annotation PythonCall(
 /**
  * The qualified name of the corresponding Python module. By default, this is the qualified name of the package.
  */
-@Target([AnnotationTarget.Module])
+@Targets([AnnotationTarget.Module])
 annotation PythonModule(
     qualifiedName: String
 )
@@ -25,7 +25,7 @@ annotation PythonModule(
 /**
  * The name of the corresponding API element in Python. By default, this is the name of the declaration in the stubs.
  */
-@Target([
+@Targets([
     AnnotationTarget.Attribute,
     AnnotationTarget.Class,
     AnnotationTarget.Enum,

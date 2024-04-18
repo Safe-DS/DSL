@@ -10,9 +10,12 @@ The declaration might change without a major version bump.
 - `Enum`
 - `EnumVariant`
 - `Function`
+- `Module`
 - `Parameter`
+- `Pipeline`
 - `Result`
 - `Segment`
+- `TypeParameter`
 
 ??? quote "Stub code in `maturity.sdsstub`"
 

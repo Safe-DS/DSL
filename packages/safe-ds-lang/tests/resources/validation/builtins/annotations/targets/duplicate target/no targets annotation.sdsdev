@@ -1,4 +1,4 @@
-package tests.validation.builtins.annotations.target.duplicateTarget
+package tests.validation.builtins.annotations.targets.duplicateTarget
 
 // $TEST$ no warning r"The target '.*' was already set\."
 

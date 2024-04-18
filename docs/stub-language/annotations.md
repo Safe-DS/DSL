@@ -53,7 +53,7 @@ To attach metainformation to a declaration, the annotation must be called on tha
 - [Type parameters][type-parameters]
 - [Pipelines][pipelines]
 
-The valid targets of an annotation can be restricted with the [`Target`][safeds.lang.Target] annotation. By default all targets are allowed. Likewise, an annotation can only be called once on the same declaration by default, unless the annotation is marked as[Repeatable][safeds.lang.Repeatable].
+The valid targets of an annotation can be restricted with the [`Targets`][safeds.lang.Targets] annotation. By default all targets are allowed. Likewise, an annotation can only be called once on the same declaration by default, unless the annotation is marked as[Repeatable][safeds.lang.Repeatable].
 
 Annotation calls are always located right in front of their target. Exception: In the case of compilations units they are located at the very top of the file. Here is an example that demonstrates how to call the annotation `#!sds OnlyForExperts` that we defined above on a [class][classes]:
 
@@ -89,7 +89,7 @@ The same [restrictions to arguments][argument-restrictions] as for [calls][calls
 
 The package `#!sds safeds.lang` contains several annotations that are processed by Safe-DS. Particularly important are the annotations
 
-- [`Target`][safeds.lang.Target], which can restrict the possible targets of an annotation, and
+- [`Targets`][safeds.lang.Targets], which can restrict the possible targets of an annotation, and
 - [`Repeatable`][safeds.lang.Repeatable], which allows an annotation to be called multiple times on the same declaration.
 
 [parameters]: parameters.md

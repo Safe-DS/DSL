@@ -8,7 +8,18 @@ reordering of calls or parallelization.
 
 **Targets:**
 
+- `Annotation`
+- `Attribute`
+- `Class`
+- `Enum`
+- `EnumVariant`
 - `Function`
+- `Module`
+- `Parameter`
+- `Pipeline`
+- `Result`
+- `Segment`
+- `TypeParameter`
 
 ??? quote "Stub code in `purity.sdsstub`"
 

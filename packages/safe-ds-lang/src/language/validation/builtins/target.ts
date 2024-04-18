@@ -30,7 +30,7 @@ export const targetShouldNotHaveDuplicateEntries = (services: SafeDsServices) =>
     const nodeMapper = services.helpers.NodeMapper;
 
     return (node: SdsAnnotation, accept: ValidationAcceptor) => {
-        const annotationCall = findFirstAnnotationCallOf(node, builtinAnnotations.Target);
+        const annotationCall = findFirstAnnotationCallOf(node, builtinAnnotations.Targets);
         if (!annotationCall) {
             return;
         }

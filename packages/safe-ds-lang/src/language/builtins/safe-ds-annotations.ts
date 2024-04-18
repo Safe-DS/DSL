@@ -160,12 +160,12 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
 
     streamValidTargets(node: SdsAnnotation | undefined): Stream<SdsEnumVariant> {
         // If no targets are specified, every target is valid
-        if (!hasAnnotationCallOf(node, this.Target)) {
+        if (!hasAnnotationCallOf(node, this.Targets)) {
             return stream(getEnumVariants(this.builtinEnums.AnnotationTarget));
         }
 
         // If targets are specified, but we could not evaluate them to a list, no target is valid
-        const value = this.getParameterValue(node, this.Target, 'targets');
+        const value = this.getParameterValue(node, this.Targets, 'targets');
         if (!(value instanceof EvaluatedList)) {
             return EMPTY_STREAM;
         }
@@ -176,8 +176,8 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
             .map((it) => it.variant);
     }
 
-    get Target(): SdsAnnotation | undefined {
-        return this.getAnnotation(ANNOTATION_USAGE_URI, 'Target');
+    get Targets(): SdsAnnotation | undefined {
+        return this.getAnnotation(ANNOTATION_USAGE_URI, 'Targets');
     }
 
     private getAnnotation(uri: URI, name: string): SdsAnnotation | undefined {

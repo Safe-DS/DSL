@@ -5,6 +5,17 @@ The annotation can be called multiple times for the same declaration.
 **Targets:**
 
 - `Annotation`
+- `Attribute`
+- `Class`
+- `Enum`
+- `EnumVariant`
+- `Function`
+- `Module`
+- `Parameter`
+- `Pipeline`
+- `Result`
+- `Segment`
+- `TypeParameter`
 
 ??? quote "Stub code in `annotationUsage.sdsstub`"
 

@@ -15,7 +15,18 @@ call. `$this` is replaced by the receiver of the call. `$param` is replaced by t
 
 **Targets:**
 
+- `Annotation`
+- `Attribute`
+- `Class`
+- `Enum`
+- `EnumVariant`
 - `Function`
+- `Module`
+- `Parameter`
+- `Pipeline`
+- `Result`
+- `Segment`
+- `TypeParameter`
 
 ??? quote "Stub code in `codeGeneration.sdsstub`"
 

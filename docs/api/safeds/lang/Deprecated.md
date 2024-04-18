@@ -19,9 +19,12 @@ The declaration should no longer be used.
 - `Enum`
 - `EnumVariant`
 - `Function`
+- `Module`
 - `Parameter`
+- `Pipeline`
 - `Result`
 - `Segment`
+- `TypeParameter`
 
 ??? quote "Stub code in `maturity.sdsstub`"
 

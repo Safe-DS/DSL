@@ -10,14 +10,18 @@ The name of the corresponding API element in Python. By default, this is the nam
 
 **Targets:**
 
+- `Annotation`
 - `Attribute`
 - `Class`
 - `Enum`
 - `EnumVariant`
 - `Function`
+- `Module`
 - `Parameter`
 - `Pipeline`
+- `Result`
 - `Segment`
+- `TypeParameter`
 
 ??? quote "Stub code in `codeGeneration.sdsstub`"
 

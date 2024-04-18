@@ -4,7 +4,18 @@ This parameter should only be used by expert users.
 
 **Targets:**
 
+- `Annotation`
+- `Attribute`
+- `Class`
+- `Enum`
+- `EnumVariant`
+- `Function`
+- `Module`
 - `Parameter`
+- `Pipeline`
+- `Result`
+- `Segment`
+- `TypeParameter`
 
 ??? quote "Stub code in `ideIntegration.sdsstub`"
 

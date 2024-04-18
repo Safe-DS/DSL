@@ -4,5 +4,5 @@ annotation MyAnnotation1
 
 annotation MyAnnotation2(param1: Int, param2: Float = 1.0)
 
-@Target([AnnotationTarget.Annotation])
+@Targets([AnnotationTarget.Annotation])
 annotation MyAnnotation3
