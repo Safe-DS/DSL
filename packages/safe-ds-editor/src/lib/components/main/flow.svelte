@@ -59,7 +59,7 @@
 
     const testPlaceholder2: Placeholder = {
         name: 'LongNameThatGetsCutOff',
-        type: { type: 'table', icon: getIconFromDatatype('table') },
+        type: { type: 'undefined', icon: undefined },
         status: 'done',
     };
 
@@ -135,7 +135,7 @@
     >
         <Controls position="bottom-right" />
         <Background
-            class="bg-vscode_main_background"
+            class="bg-background_dark"
             patternColor="rgba(255, 255, 255, 0)"
             variant={BackgroundVariant.Cross}
         />

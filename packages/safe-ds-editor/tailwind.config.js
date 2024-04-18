@@ -1,18 +1,18 @@
 import { fontFamily } from 'tailwindcss/defaultTheme';
 
 export const customColors = {
-    vscode_foreground: 'var(--vscode-foreground)',
-    vscode_main_background: 'rgba(30, 30, 30, 1)',
-    vscode_sidebar_background: 'rgba(37, 37, 38, 1)',
-    vscode_sidebar_hover: 'rgba(42, 45, 46, 1)',
+    background_dark: 'rgba(30, 30, 30, 1)',
+    background_mid: 'rgba(37, 37, 38, 1)',
+    background_light: 'rgba(42, 45, 46, 1)',
 
     grid_background: 'rgba(30, 30, 30, 1)',
     grid_minimap_mask: 'rgba(42, 45, 46, 0.5)',
 
     node_main: 'rgba(64, 64, 64, 1)',
     node_secondary: 'rgba(30, 30, 30, 1)',
-    node_main_text: 'rgba(204, 204, 204, 1)',
-    node_secondary_text: 'rgba(170, 170, 170, 1)',
+
+    text_main: 'rgba(204, 204, 204, 1)',
+    text_secondary: 'rgba(170, 170, 170, 1)',
 };
 
 /** @type {import('tailwindcss').Config} */

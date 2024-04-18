@@ -17,11 +17,11 @@
     export let data: { expression: Expression };
     const { expression } = data;
 
-    let expanded: boolean = true;
+    let expanded: boolean = false;
 </script>
 
 <div
-    class=" bg-node_main shadow-node flex cursor-default flex-row gap-1 rounded-sm"
+    class=" flex cursor-default flex-row gap-1 rounded-sm bg-node_main shadow-node"
 >
     <Port nameNode="expressions-dummy" type="both"></Port>
     <div
@@ -42,13 +42,15 @@
         >
             <svelte:component
                 this={node.expressionIcon}
-                className="h-11 w-11 stroke-node_main_text"
+                className="h-11 w-11 stroke-text_main"
             />
         </div>
         {#if expanded}
-            <div class=" bg-vscode_main_background grid p-1 pr-3">
+            <div class=" bg-background_dark grid p-1 pr-3">
                 {#each expression.text.split('\n') as line}
-                    <span class="text-node_main_text whitespace-pre text-sm">{line}</span>
+                    <span class="text-text_secondary whitespace-pre text-sm"
+                        >{line}</span
+                    >
                 {/each}
             </div>
         {/if}

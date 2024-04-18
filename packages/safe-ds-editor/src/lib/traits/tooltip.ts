@@ -1,6 +1,6 @@
 function getStyle(): string {
     const className =
-        'absolute bg-neutral-700 p-1 -top-12 left-1/2 transform -translate-x-1/2';
+        'absolute bg-neutral-700 text-text_main p-1 -top-12 left-1/2 transform -translate-x-1/2';
     return className;
 }
 

@@ -10,7 +10,7 @@
 
 <div
     class={`${
-        type === 'both' ? 'text-transparent' : 'text-node_secondary_text'
+        type === 'both' ? 'text-transparent' : 'text-text_secondary'
     } relative w-full justify-center px-1 text-sm ${
         type === 'target' ? 'text-left' : 'text-right'
     }`}
@@ -30,11 +30,11 @@
         />Placeholder
     {:else}
         <Handle
-            class={` border-node_main_text h-2.5 w-2.5 rounded-full border-[1px] ${
+            class={` border-text_main h-2.5 w-2.5 rounded-full border-[1px] ${
                 type === 'target' ? '-left-2' : '-right-2'
             } ${
                 optional
-                    ? 'ring-node_main bg-node_main_text ring-[2px] ring-inset'
+                    ? 'bg-text_main ring-[2px] ring-inset ring-node_main'
                     : ''
             }`}
             id={`${nameFunction}|${nameParameter}`}

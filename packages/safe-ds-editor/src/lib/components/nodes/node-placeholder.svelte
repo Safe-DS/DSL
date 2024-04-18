@@ -19,18 +19,23 @@
     use:tooltip={{ content: placeholder.name, delay: 150 }}
     class="w-14 cursor-default"
 >
-    <span class="text-node_main_text relative -left-3 block w-20 truncate text-center text-sm"
+    <span
+        class="text-text_main relative -left-3 block w-20 truncate text-center text-sm"
         >{placeholder.name}</span
     >
     <div
         use:statusIndicator={{ status: placeholder.status }}
-        class=" shadow-node rounded-placeholderFrame justify-center py-1"
+        class=" justify-center rounded-placeholderFrame py-1 shadow-node"
     >
-        <div class="bg-node_main rounded-placeholderCore relative">
-            <svelte:component
-                this={placeholder.type.icon}
-                className="h-14 w-14 stroke-node_main_text p-1"
-            />
+        <div class="relative rounded-placeholderCore bg-node_main">
+            {#if placeholder.type.icon}
+                <svelte:component
+                    this={placeholder.type.icon}
+                    className="h-14 w-14 stroke-text_main p-1"
+                />
+            {:else}
+                <div class="h-14 w-14"></div>
+            {/if}
             <Port nameNode={placeholder.name} type="both"></Port>
         </div>
     </div>

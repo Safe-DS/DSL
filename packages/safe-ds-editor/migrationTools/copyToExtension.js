@@ -15,7 +15,7 @@ fs.ensureDirSync(distDir);
 fs.emptyDirSync(targetDir);
 
 /* Adding a delay ensures, that the build process is finished before we start copying
- * Currently 300 ms seems to be enough (build takes abouit 150 ms)
+ * Currently 2500 ms seems to be enough (build takes abouit 2000 ms)
  */
 console.log(`Copying webview from <safe-ds-editor> to <safe-ds-vscode>...`);
 setTimeout(() => {
@@ -25,4 +25,4 @@ setTimeout(() => {
             console.error('Error during copying:', err);
             process.exit(1);
         });
-}, 1000);
+}, 2500);
