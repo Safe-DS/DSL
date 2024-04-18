@@ -39,20 +39,30 @@ def test():
     __gen_null_safe_call(j, lambda: 'abc'.j(123))
     __gen_null_safe_call(k, lambda: k(456, 1.23))
     f(safeds_runner.memoized_static_call("tests.generator.runnerIntegration.expressions.calls.main.readFile", readFile, [], [safeds_runner.file_mtime('a.txt')]))
-    f(l(lambda a: segment_a(a)))
-    f(l(lambda a: (3) * (segment_a(a))))
-    f(l(lambda a: safeds_runner.memoized_static_call("tests.generator.runnerIntegration.expressions.calls.main.m", m, [(3) * (segment_a(a))], [])))
-    f(l(lambda a: (3) * (safeds_runner.memoized_static_call("tests.generator.runnerIntegration.expressions.calls.main.m", m, [safeds_runner.memoized_static_call("tests.generator.runnerIntegration.expressions.calls.main.m", m, [(3) * (segment_a(a))], [])], []))))
-    def __gen_block_lambda_0(a):
+    def __gen_lambda_0(a):
+        return segment_a(a)
+    f(l(__gen_lambda_0))
+    def __gen_lambda_1(a):
+        return (3) * (segment_a(a))
+    f(l(__gen_lambda_1))
+    def __gen_lambda_2(a):
+        return safeds_runner.memoized_static_call("tests.generator.runnerIntegration.expressions.calls.main.m", m, [(3) * (segment_a(a))], [])
+    f(l(__gen_lambda_2))
+    def __gen_lambda_3(a):
+        return (3) * (safeds_runner.memoized_static_call("tests.generator.runnerIntegration.expressions.calls.main.m", m, [safeds_runner.memoized_static_call("tests.generator.runnerIntegration.expressions.calls.main.m", m, [(3) * (segment_a(a))], [])], []))
+    f(l(__gen_lambda_3))
+    def __gen_lambda_4(a):
         __gen_block_lambda_result_result = segment_a(a)
         return __gen_block_lambda_result_result
-    f(l(__gen_block_lambda_0))
-    def __gen_block_lambda_1(a):
+    f(l(__gen_lambda_4))
+    def __gen_lambda_5(a):
         __gen_block_lambda_result_result = safeds_runner.memoized_static_call("tests.generator.runnerIntegration.expressions.calls.main.m", m, [segment_a(a)], [])
         return __gen_block_lambda_result_result
-    f(l(__gen_block_lambda_1))
-    f(safeds_runner.memoized_static_call("tests.generator.runnerIntegration.expressions.calls.main.l", l, [lambda a: (3) * (a)], []))
-    def __gen_block_lambda_2(a):
+    f(l(__gen_lambda_5))
+    def __gen_lambda_6(a):
+        return (3) * (a)
+    f(safeds_runner.memoized_static_call("tests.generator.runnerIntegration.expressions.calls.main.l", l, [__gen_lambda_6], []))
+    def __gen_lambda_7(a):
         __gen_block_lambda_result_result = (3) * (safeds_runner.memoized_static_call("tests.generator.runnerIntegration.expressions.calls.main.m", m, [a], []))
         return __gen_block_lambda_result_result
-    f(safeds_runner.memoized_static_call("tests.generator.runnerIntegration.expressions.calls.main.l", l, [__gen_block_lambda_2], []))
+    f(safeds_runner.memoized_static_call("tests.generator.runnerIntegration.expressions.calls.main.l", l, [__gen_lambda_7], []))
