@@ -157,8 +157,8 @@ import {
     unionTypeShouldNotHaveASingularTypeArgument,
 } from './style.js';
 import {
+    argumentTypesMustMatchParameterTypes,
     attributeMustHaveTypeHint,
-    callArgumentTypesMustMatchParameterTypes,
     callReceiverMustBeCallable,
     indexedAccessIndexMustHaveCorrectType,
     indexedAccessReceiverMustBeListOrMap,
@@ -205,6 +205,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsAbstractCall: [
             argumentListMustNotHaveTooManyArguments(services),
             argumentListMustSetAllRequiredParameters(services),
+            argumentTypesMustMatchParameterTypes(services),
         ],
         SdsAnnotation: [
             annotationMustContainUniqueNames,
@@ -235,7 +236,6 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             callArgumentAssignedToPureParameterMustBePure(services),
             callArgumentMustBeConstantIfParameterIsConstant(services),
             callArgumentMustRespectParameterBounds(services),
-            callArgumentTypesMustMatchParameterTypes(services),
             callMustNotBeRecursive(services),
             callReceiverMustBeCallable(services),
         ],

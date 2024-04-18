@@ -1,6 +1,6 @@
-package tests.validation.types.checking.arguments
+package tests.validation.types.checking.arguments.ofCalls
 
-fun f(p: Int)
+@Pure fun f(p: Int)
 
 segment mySegment() {
     // $TEST$ no error r"Expected type .* but got .*\."

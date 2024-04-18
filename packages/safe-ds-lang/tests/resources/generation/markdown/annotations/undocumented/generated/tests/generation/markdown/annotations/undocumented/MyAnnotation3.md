@@ -1,5 +1,9 @@
 # `#!sds annotation` MyAnnotation3 {#tests.generation.markdown.annotations.undocumented.MyAnnotation3 data-toc-label='MyAnnotation3'}
 
+**Targets:**
+
+- `Annotation`
+
 ??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="8"
