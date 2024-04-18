@@ -15,7 +15,7 @@ annotation Expert
     AnnotationTarget.Class,
     AnnotationTarget.Enum,
     AnnotationTarget.Function,
-    AnnotationTarget.Segment
+    AnnotationTarget.Segment,
 ])
 annotation Category(category: DataScienceCategory)
 
@@ -59,9 +59,12 @@ enum DataScienceCategory {
  */
 @Experimental
 @Targets([
+    AnnotationTarget.Annotation,
     AnnotationTarget.Class,
     AnnotationTarget.Enum,
     AnnotationTarget.Function,
-    AnnotationTarget.Segment
+    AnnotationTarget.Pipeline,
+    AnnotationTarget.Schema,
+    AnnotationTarget.Segment,
 ])
 annotation Tags(tags: List<String>)
