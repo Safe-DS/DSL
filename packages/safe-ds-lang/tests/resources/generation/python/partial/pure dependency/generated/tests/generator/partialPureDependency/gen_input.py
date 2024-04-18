@@ -19,7 +19,9 @@ def testPipeline():
         j2 = 4
         __gen_block_lambda_result_z = 7
         return __gen_block_lambda_result_z
-    o = (f(__gen_lambda_0)) + (f(lambda : 2))
+    def __gen_lambda_1():
+        return 2
+    o = (f(__gen_lambda_0)) + (f(__gen_lambda_1))
     mapKey = 'key'
     mapValue = 'value'
     mapResult = g2({'key': 'value'})

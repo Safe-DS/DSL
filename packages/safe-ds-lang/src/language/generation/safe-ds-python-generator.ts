@@ -60,6 +60,8 @@ import {
     SdsClassMember,
     SdsDeclaration,
     SdsExpression,
+    SdsExpressionLambda,
+    SdsLambda,
     SdsModule,
     SdsParameter,
     SdsParameterList,
@@ -593,23 +595,31 @@ export class SafeDsPythonGenerator {
         frame: GenerationInfoFrame,
         generateLambda: boolean,
     ): CompositeGeneratorNode {
-        const blockLambdaCode: CompositeGeneratorNode[] = [];
+        const result: CompositeGeneratorNode[] = [];
         if (isSdsAssignment(statement)) {
             if (statement.expression) {
-                for (const lambda of AstUtils.streamAllContents(statement.expression).filter(isSdsBlockLambda)) {
-                    blockLambdaCode.push(this.generateBlockLambda(lambda, frame));
+                for (const node of AstUtils.streamAllContents(statement.expression)) {
+                    if (isSdsBlockLambda(node)) {
+                        result.push(this.generateBlockLambda(node, frame));
+                    } else if (isSdsExpressionLambda(node)) {
+                        result.push(this.generateExpressionLambda(node, frame));
+                    }
                 }
             }
-            blockLambdaCode.push(this.generateAssignment(statement, frame, generateLambda));
-            return joinTracedToNode(statement)(blockLambdaCode, (stmt) => stmt, {
+            result.push(this.generateAssignment(statement, frame, generateLambda));
+            return joinTracedToNode(statement)(result, (stmt) => stmt, {
                 separator: NL,
             })!;
         } else if (isSdsExpressionStatement(statement)) {
-            for (const lambda of AstUtils.streamAllContents(statement.expression).filter(isSdsBlockLambda)) {
-                blockLambdaCode.push(this.generateBlockLambda(lambda, frame));
+            for (const node of AstUtils.streamAllContents(statement.expression)) {
+                if (isSdsBlockLambda(node)) {
+                    result.push(this.generateBlockLambda(node, frame));
+                } else if (isSdsExpressionLambda(node)) {
+                    result.push(this.generateExpressionLambda(node, frame));
+                }
             }
-            blockLambdaCode.push(this.generateExpression(statement.expression, frame));
-            return joinTracedToNode(statement)(blockLambdaCode, (stmt) => stmt, {
+            result.push(this.generateExpression(statement.expression, frame));
+            return joinTracedToNode(statement)(result, (stmt) => stmt, {
                 separator: NL,
             })!;
         }
@@ -701,7 +711,7 @@ export class SafeDsPythonGenerator {
                 )}`,
             );
         }
-        return expandTracedToNode(blockLambda)`def ${frame.getUniqueLambdaBlockName(
+        return expandTracedToNode(blockLambda)`def ${frame.getUniqueLambdaName(
             blockLambda,
         )}(${this.generateParameters(blockLambda.parameterList, frame)}):`
             .appendNewLine()
@@ -709,6 +719,17 @@ export class SafeDsPythonGenerator {
                 indentedChildren: [lambdaBlock],
                 indentation: PYTHON_INDENT,
             });
+    }
+
+    private generateExpressionLambda(node: SdsExpressionLambda, frame: GenerationInfoFrame): CompositeGeneratorNode {
+        const name = frame.getUniqueLambdaName(node);
+        const parameters = this.generateParameters(node.parameterList, frame);
+        const result = this.generateExpression(node.result, frame);
+
+        return expandTracedToNode(node)`
+            def ${name}(${parameters}):
+                return ${result}
+        `;
     }
 
     private generateExpression(expression: SdsExpression, frame: GenerationInfoFrame): CompositeGeneratorNode {
@@ -765,7 +786,7 @@ export class SafeDsPythonGenerator {
                 { separator: ', ' },
             )}]`;
         } else if (isSdsBlockLambda(expression)) {
-            return traceToNode(expression)(frame.getUniqueLambdaBlockName(expression));
+            return traceToNode(expression)(frame.getUniqueLambdaName(expression));
         } else if (isSdsCall(expression)) {
             const callable = this.nodeMapper.callToCallable(expression);
             const receiver = this.generateExpression(expression.receiver, frame);
@@ -807,10 +828,7 @@ export class SafeDsPythonGenerator {
                 return call;
             }
         } else if (isSdsExpressionLambda(expression)) {
-            return expandTracedToNode(expression)`lambda ${this.generateParameters(
-                expression.parameterList,
-                frame,
-            )}: ${this.generateExpression(expression.result, frame)}`;
+            return traceToNode(expression)(frame.getUniqueLambdaName(expression));
         } else if (isSdsInfixOperation(expression)) {
             const leftOperand = this.generateExpression(expression.leftOperand, frame);
             const rightOperand = this.generateExpression(expression.rightOperand, frame);
@@ -1260,7 +1278,7 @@ interface ImportData {
 }
 
 class GenerationInfoFrame {
-    private readonly blockLambdaManager: IdManager<SdsBlockLambda>;
+    private readonly lambdaManager: IdManager<SdsLambda>;
     private readonly importSet: Map<String, ImportData>;
     private readonly utilitySet: Set<UtilityFunction>;
     private readonly typeVariableSet: Set<string>;
@@ -1276,7 +1294,7 @@ class GenerationInfoFrame {
         targetPlaceholder: string | undefined = undefined,
         disableRunnerIntegration: boolean = false,
     ) {
-        this.blockLambdaManager = new IdManager<SdsBlockLambda>();
+        this.lambdaManager = new IdManager();
         this.importSet = importSet;
         this.utilitySet = utilitySet;
         this.typeVariableSet = typeVariableSet;
@@ -1312,8 +1330,8 @@ class GenerationInfoFrame {
         }
     }
 
-    getUniqueLambdaBlockName(lambda: SdsBlockLambda): string {
-        return `${LAMBDA_PREFIX}${this.blockLambdaManager.assignId(lambda)}`;
+    getUniqueLambdaName(lambda: SdsLambda): string {
+        return `${LAMBDA_PREFIX}${this.lambdaManager.assignId(lambda)}`;
     }
 }
 
