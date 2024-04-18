@@ -46,7 +46,7 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
 
     getCategory(node: SdsAnnotatedObject | undefined): SdsEnumVariant | undefined {
         const value = this.getParameterValue(node, this.Category, 'category');
-        if (value instanceof EvaluatedEnumVariant) {
+        if (this.builtinEnums.isEvaluatedDataScienceCategory(value)) {
             return value.variant;
         } else {
             return undefined;
