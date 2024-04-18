@@ -19,6 +19,7 @@
 - `Parameter`
 - `Pipeline`
 - `Result`
+- `Schema`
 - `Segment`
 - `TypeParameter`
 

@@ -14,6 +14,7 @@ Description of MyAnnotation1.
 - `Parameter`
 - `Pipeline`
 - `Result`
+- `Schema`
 - `Segment`
 - `TypeParameter`
 

@@ -17,6 +17,7 @@ package safeds.lang
     AnnotationTarget.Function,
     AnnotationTarget.Parameter,
     AnnotationTarget.Result,
+    AnnotationTarget.Schema,
     AnnotationTarget.Segment,
 ])
 annotation Deprecated(
@@ -38,6 +39,7 @@ annotation Deprecated(
     AnnotationTarget.Function,
     AnnotationTarget.Parameter,
     AnnotationTarget.Result,
+    AnnotationTarget.Schema,
     AnnotationTarget.Segment,
 ])
 annotation Experimental
