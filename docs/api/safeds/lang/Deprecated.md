@@ -21,11 +21,12 @@ The declaration should no longer be used.
 - `Function`
 - `Parameter`
 - `Result`
+- `Schema`
 - `Segment`
 
 ??? quote "Stub code in `maturity.sdsstub`"
 
-    ```sds linenums="22"
+    ```sds linenums="23"
     annotation Deprecated(
         alternative: String? = null,
         reason: String? = null,

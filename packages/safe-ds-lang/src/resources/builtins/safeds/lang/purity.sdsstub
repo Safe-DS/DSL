@@ -8,7 +8,7 @@ package safeds.lang
  * reordering of calls or parallelization.
  */
 @Experimental
-@Target([AnnotationTarget.Function])
+@Targets([AnnotationTarget.Function])
 annotation Pure
 
 /**
@@ -18,7 +18,7 @@ annotation Pure
  *     A list of **all** reasons why the function is impure. If no specific {@link ImpurityReason} applies, include `ImpurityReason.Other`.
  */
 @Experimental
-@Target([AnnotationTarget.Function])
+@Targets([AnnotationTarget.Function])
 annotation Impure(allReasons: List<ImpurityReason>)
 
 /**

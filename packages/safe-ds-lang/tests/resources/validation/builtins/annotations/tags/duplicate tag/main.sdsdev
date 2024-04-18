@@ -1,0 +1,92 @@
+package tests.validation.builtins.annotations.tags.duplicateTag
+
+@Tags([
+    // $TEST$ no warning "The tag 'test' was set already."
+    »"test"«
+])
+
+/*
+ * We already show another error if the `@Tags` annotation is called multiple times.
+ */
+
+@Tags([
+    // $TEST$ no warning "The tag 'test' was set already."
+    »"test"«,
+    // $TEST$ no warning "The tag 'test' was set already."
+    »"test"«,
+])
+class TestClass1
+
+@Tags([
+    // $TEST$ no warning "The tag 'test' was set already."
+    »"test"«,
+    // $TEST$ warning "The tag 'test' was set already."
+    »"test"«,
+])
+enum TestEnum1
+
+@Tags([
+    // $TEST$ no warning "The tag 'hello' was set already."
+    »"hello"«,
+    // $TEST$ warning "The tag 'hello' was set already."
+    »"hello"«,
+    // $TEST$ warning "The tag 'hello' was set already."
+    »"hello"«,
+    // $TEST$ no warning "The tag 'test' was set already."
+    »"test"«,
+    // $TEST$ warning "The tag 'test' was set already."
+    »"test"«,
+    // $TEST$ warning "The tag 'test' was set already."
+    »"test"«,
+])
+@Pure fun testFunction()
+
+@Tags([
+    // $TEST$ no warning "The tag 'hello' was set already."
+    »"hello"«,
+    // $TEST$ warning "The tag 'hello' was set already."
+    »"hello"«,
+])
+pipeline testPipeline {}
+
+@Tags([
+    // $TEST$ no warning "The tag 'hello' was set already."
+    »"hello"«,
+    // $TEST$ warning "The tag 'hello' was set already."
+    »"hello"«,
+])
+segment testSegment() {}
+
+/*
+ * We already show another error if the annotation is called on the wrong tag.
+ */
+
+enum TestEnum2 {
+    @Tags([
+        // $TEST$ no warning "The tag 'hello' was set already."
+        »"hello"«,
+        // $TEST$ no warning "The tag 'hello' was set already."
+        »"hello"«,
+    ])
+    TestVariant
+}
+
+/*
+ * We already show another error if an annotation is called with arguments of invalid type.
+ */
+
+@Tags(
+    // $TEST$ no warning "The tag 'hello' was set already."
+    »"hello"«,
+    // $TEST$ no warning "The tag 'hello' was set already."
+    »"hello"«
+)
+class TestClass2
+
+@Tags([
+    // $TEST$ no warning r"The tag '.*' was set already\."
+    »1«,
+    // $TEST$ no warning r"The tag '.*' was set already\."
+    »1«,
+])
+class TestClass3

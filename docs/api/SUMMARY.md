@@ -32,6 +32,8 @@ search:
         - [AnnotationTarget](safeds/lang/AnnotationTarget.md)
         - [Any](safeds/lang/Any.md)
         - [Boolean](safeds/lang/Boolean.md)
+        - [Category](safeds/lang/Category.md)
+        - [DataScienceCategory](safeds/lang/DataScienceCategory.md)
         - [Deprecated](safeds/lang/Deprecated.md)
         - [Experimental](safeds/lang/Experimental.md)
         - [Expert](safeds/lang/Expert.md)
@@ -49,7 +51,8 @@ search:
         - [PythonName](safeds/lang/PythonName.md)
         - [Repeatable](safeds/lang/Repeatable.md)
         - [String](safeds/lang/String.md)
-        - [Target](safeds/lang/Target.md)
+        - [Tags](safeds/lang/Tags.md)
+        - [Targets](safeds/lang/Targets.md)
     - ml
         - classical
             - classification

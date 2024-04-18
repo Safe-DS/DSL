@@ -4,5 +4,67 @@ package safeds.lang
  * This parameter should only be used by expert users.
  */
 @Experimental
-@Target([AnnotationTarget.Parameter])
+@Targets([AnnotationTarget.Parameter])
 annotation Expert
+
+/**
+ * The category of a declaration. It can be used for grouping.
+ */
+@Experimental
+@Targets([
+    AnnotationTarget.Class,
+    AnnotationTarget.Enum,
+    AnnotationTarget.Function,
+    AnnotationTarget.Segment,
+])
+annotation Category(category: DataScienceCategory)
+
+/**
+ * A step in the data science process.
+ */
+enum DataScienceCategory {
+    /**
+     * Load your data into the program.
+     */
+    DataImport
+
+    /**
+     * Prepare your data for analysis.
+     */
+    DataPreparation
+
+    /**
+     * Explore your data.
+     */
+    DataExploration
+
+    /**
+     * Save your data for later use.
+     */
+    DataExport
+
+    /**
+     * Configure a model and train it on your data.
+     */
+    Modeling
+
+    /**
+     * Evaluate the performance of your model.
+     */
+    ModelEvaluation
+}
+
+/**
+ * Tags to associate with a declaration. They can be used for filtering.
+ */
+@Experimental
+@Targets([
+    AnnotationTarget.Annotation,
+    AnnotationTarget.Class,
+    AnnotationTarget.Enum,
+    AnnotationTarget.Function,
+    AnnotationTarget.Pipeline,
+    AnnotationTarget.Schema,
+    AnnotationTarget.Segment,
+])
+annotation Tags(tags: List<String>)

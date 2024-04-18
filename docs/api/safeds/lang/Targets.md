@@ -1,4 +1,4 @@
-# `#!sds annotation` Target {#safeds.lang.Target data-toc-label='Target'}
+# `#!sds annotation` Targets {#safeds.lang.Targets data-toc-label='Targets'}
 
 The annotation must target only the specified declaration types. By default, any declaration type can be targeted.
 
@@ -15,7 +15,7 @@ The annotation must target only the specified declaration types. By default, any
 ??? quote "Stub code in `annotationUsage.sdsstub`"
 
     ```sds linenums="9"
-    annotation Target(
+    annotation Targets(
         targets: List<AnnotationTarget>
     )
     ```
