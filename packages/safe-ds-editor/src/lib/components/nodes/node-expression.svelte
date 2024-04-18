@@ -32,7 +32,7 @@
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <div
             data-state={expanded ? 'open' : 'closed'}
-            class=" flex cursor-pointer flex-row items-center p-1"
+            class=" flex cursor-pointer flex-row"
             on:click={() => {
                 expanded = !expanded;
             }}
@@ -42,7 +42,7 @@
         >
             <svelte:component
                 this={node.expressionIcon}
-                className="h-11 w-11 stroke-text_main"
+                className="h-12 w-12 stroke-text_main p-1"
             />
         </div>
         {#if expanded}
