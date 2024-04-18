@@ -1,3 +1,30 @@
+## [0.12.0](https://github.com/Safe-DS/DSL/compare/v0.11.0...v0.12.0) (2024-04-18)
+
+
+### Features
+
+* better error if `+` is used for string concatenation ([#1044](https://github.com/Safe-DS/DSL/issues/1044)) ([8be49c5](https://github.com/Safe-DS/DSL/commit/8be49c5852ee5b5bc9c4e935262225cfe7dc2aa4))
+* collapse class/literal types in inlay hints ([#1053](https://github.com/Safe-DS/DSL/issues/1053)) ([7db2820](https://github.com/Safe-DS/DSL/commit/7db2820ce8f6d4f69d4bcfdbea93df943ea370d0)), closes [#1048](https://github.com/Safe-DS/DSL/issues/1048)
+* **deps:** require latest runner (`v0.11.0`) ([#1058](https://github.com/Safe-DS/DSL/issues/1058)) ([7ae1f6b](https://github.com/Safe-DS/DSL/commit/7ae1f6b6c1c6894d683fa24dcdfe196582fba3c6))
+* don't stop validation at syntax errors ([#1049](https://github.com/Safe-DS/DSL/issues/1049)) ([db0c5d7](https://github.com/Safe-DS/DSL/commit/db0c5d71aea5dfc58a8dd938a17d8afc091aca40))
+* error if name of static member equals name of inherited member ([#1054](https://github.com/Safe-DS/DSL/issues/1054)) ([b8e17af](https://github.com/Safe-DS/DSL/commit/b8e17af56994291f4e7d59286fcabe4c70f43b64))
+* hide classes that are only for typing from auto-completion ([#1056](https://github.com/Safe-DS/DSL/issues/1056)) ([50851d7](https://github.com/Safe-DS/DSL/commit/50851d7ec2f859c5a4efde32b2303012bf5455ef)), closes [#1026](https://github.com/Safe-DS/DSL/issues/1026)
+* ignore parameter names for default values and yields ([#1059](https://github.com/Safe-DS/DSL/issues/1059)) ([dde4de0](https://github.com/Safe-DS/DSL/commit/dde4de055b39b9b1609cfa4031e3d1458a4c5918))
+* ignore parameter names when type checking arguments ([#1052](https://github.com/Safe-DS/DSL/issues/1052)) ([a1e6717](https://github.com/Safe-DS/DSL/commit/a1e6717a0f6163560e4ddedcb0da162af836276d)), closes [#1046](https://github.com/Safe-DS/DSL/issues/1046)
+* installer for the runner ([#1038](https://github.com/Safe-DS/DSL/issues/1038)) ([2bde594](https://github.com/Safe-DS/DSL/commit/2bde594a9ff4204f25a991463d52807f764d14e5))
+* map literals are no longer experimental ([#1039](https://github.com/Safe-DS/DSL/issues/1039)) ([1d9af4b](https://github.com/Safe-DS/DSL/commit/1d9af4be0aca26c0ccb3c3321871197d4c59fd10))
+* separate VS Code languages for pipeline/stub/tests ([#1043](https://github.com/Safe-DS/DSL/issues/1043)) ([8147480](https://github.com/Safe-DS/DSL/commit/8147480dab78c28619a75b22670be4afba4d04cb))
+* support for examples in documentation comments ([#1045](https://github.com/Safe-DS/DSL/issues/1045)) ([3da6d6f](https://github.com/Safe-DS/DSL/commit/3da6d6fc54b9661a1b9e686297bc67bd659d9944)), closes [#1027](https://github.com/Safe-DS/DSL/issues/1027)
+* updater for the runner ([#1042](https://github.com/Safe-DS/DSL/issues/1042)) ([610d45b](https://github.com/Safe-DS/DSL/commit/610d45b663026226c63c512a517b5d13a4663b2c))
+
+
+### Bug Fixes
+
+* don't sync `safe-ds.runner.command` setting ([bb57481](https://github.com/Safe-DS/DSL/commit/bb574819ed26b4a6c779687e89f9c6058dbec765))
+* save all files before opening the EDA tool ([d6d0c22](https://github.com/Safe-DS/DSL/commit/d6d0c2283abc6fa0e94eac02597d3a098d74074b))
+* start runner if configuration did not change after installation ([#1040](https://github.com/Safe-DS/DSL/issues/1040)) ([b4f015a](https://github.com/Safe-DS/DSL/commit/b4f015a290c528b3d47c47775bd5883ff501beed))
+* substitute type parameters for lambda parameters ([#1050](https://github.com/Safe-DS/DSL/issues/1050)) ([46145dd](https://github.com/Safe-DS/DSL/commit/46145dda35030bc506331726f8515a41d23298d5)), closes [#1047](https://github.com/Safe-DS/DSL/issues/1047)
+
 ## [0.11.0](https://github.com/Safe-DS/DSL/compare/v0.10.0...v0.11.0) (2024-04-10)
 
 
