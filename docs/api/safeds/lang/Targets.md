@@ -11,17 +11,6 @@ The annotation must target only the specified declaration types. By default, any
 **Targets:**
 
 - `Annotation`
-- `Attribute`
-- `Class`
-- `Enum`
-- `EnumVariant`
-- `Function`
-- `Module`
-- `Parameter`
-- `Pipeline`
-- `Result`
-- `Segment`
-- `TypeParameter`
 
 ??? quote "Stub code in `annotationUsage.sdsstub`"
 

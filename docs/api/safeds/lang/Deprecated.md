@@ -19,16 +19,14 @@ The declaration should no longer be used.
 - `Enum`
 - `EnumVariant`
 - `Function`
-- `Module`
 - `Parameter`
-- `Pipeline`
 - `Result`
+- `Schema`
 - `Segment`
-- `TypeParameter`
 
 ??? quote "Stub code in `maturity.sdsstub`"
 
-    ```sds linenums="22"
+    ```sds linenums="23"
     annotation Deprecated(
         alternative: String? = null,
         reason: String? = null,

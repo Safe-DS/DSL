@@ -10,18 +10,7 @@ Indicates that the function has side effects and/or does not always return the s
 
 **Targets:**
 
-- `Annotation`
-- `Attribute`
-- `Class`
-- `Enum`
-- `EnumVariant`
 - `Function`
-- `Module`
-- `Parameter`
-- `Pipeline`
-- `Result`
-- `Segment`
-- `TypeParameter`
 
 ??? quote "Stub code in `purity.sdsstub`"
 

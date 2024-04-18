@@ -58,6 +58,11 @@ The declaration types that can be targeted by annotations.
         Result
     
         /**
+         * The annotation can be called on schemas.
+         */
+        Schema
+    
+        /**
          * The annotation can be called on segments.
          */
         Segment
@@ -108,6 +113,10 @@ The annotation can be called on pipelines.
 ## Result {#safeds.lang.AnnotationTarget.Result data-toc-label='Result'}
 
 The annotation can be called on results.
+
+## Schema {#safeds.lang.AnnotationTarget.Schema data-toc-label='Schema'}
+
+The annotation can be called on schemas.
 
 ## Segment {#safeds.lang.AnnotationTarget.Segment data-toc-label='Segment'}
 

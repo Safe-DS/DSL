@@ -10,15 +10,13 @@ The declaration might change without a major version bump.
 - `Enum`
 - `EnumVariant`
 - `Function`
-- `Module`
 - `Parameter`
-- `Pipeline`
 - `Result`
+- `Schema`
 - `Segment`
-- `TypeParameter`
 
 ??? quote "Stub code in `maturity.sdsstub`"
 
-    ```sds linenums="43"
+    ```sds linenums="45"
     annotation Experimental
     ```
