@@ -44,6 +44,7 @@ import {
     isSdsUnknown,
     isSdsUnknownType,
     isSdsYield,
+    SdsAbstractCall,
     SdsAbstractResult,
     SdsAssignee,
     type SdsBlockLambda,
@@ -789,24 +790,25 @@ export class SafeDsTypeComputer {
     /**
      * Computes substitutions for the type parameters of a callable in the context of a call.
      *
-     * @param call The call to compute substitutions for.
+     * @param node The call to compute substitutions for.
      * @returns The computed substitutions for the type parameters of the callable.
      */
-    computeSubstitutionsForCall(call: SdsCall): TypeParameterSubstitutions {
+    computeSubstitutionsForCall(node: SdsAbstractCall): TypeParameterSubstitutions {
         // Compute substitutions for member access
-        const substitutionsFromReceiver = isSdsMemberAccess(call.receiver)
-            ? this.computeSubstitutionsForMemberAccess(call.receiver)
-            : NO_SUBSTITUTIONS;
+        const substitutionsFromReceiver =
+            isSdsCall(node) && isSdsMemberAccess(node.receiver)
+                ? this.computeSubstitutionsForMemberAccess(node.receiver)
+                : NO_SUBSTITUTIONS;
 
         // Compute substitutions for arguments
-        const callable = this.nodeMapper.callToCallable(call);
+        const callable = this.nodeMapper.callToCallable(node);
         const typeParameters = getTypeParameters(callable);
         if (isEmpty(typeParameters)) {
             return substitutionsFromReceiver;
         }
 
         const parameters = getParameters(callable);
-        const args = getArguments(call);
+        const args = getArguments(node);
 
         const parametersToArguments = this.nodeMapper.parametersToArguments(parameters, args);
         const parameterTypesToArgumentTypes: [Type, Type][] = parameters.map((parameter) => {

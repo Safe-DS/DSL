@@ -1,0 +1,16 @@
+package tests.validation.types.checking.arguments.annotationCalls
+
+@Repeatable
+annotation MyAnnotation(p: Int)
+
+// $TEST$ no error r"Expected type .* but got .*\."
+@MyAnnotation(»1«)
+// $TEST$ no error r"Expected type .* but got .*\."
+@MyAnnotation(p = »1«)
+// $TEST$ error "Expected type 'Int' but got 'literal<"">'."
+@MyAnnotation(»""«)
+// $TEST$ error "Expected type 'Int' but got 'literal<"">'."
+@MyAnnotation(p = »""«)
+// $TEST$ no error r"Expected type .* but got .*\."
+@MyAnnotation(unresolved = »1«)
+pipeline myPipeline {}
