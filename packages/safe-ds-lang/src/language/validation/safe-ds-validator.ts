@@ -186,6 +186,7 @@ import {
     parameterDefaultValueMustRespectParameterBounds,
 } from './other/declarations/parameterBounds.js';
 import { unknownMustOnlyBeUsedAsDefaultValueOfStub } from './other/expressions/literals.js';
+import { tagsShouldNotHaveDuplicateEntries } from './builtins/tags.js';
 
 /**
  * Register custom validation checks.
@@ -266,6 +267,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             nameShouldHaveCorrectCasing(services),
             pythonNameShouldDifferFromSafeDsName(services),
             singleUseAnnotationsMustNotBeRepeated(services),
+            tagsShouldNotHaveDuplicateEntries(services),
         ],
         SdsEnum: [enumMustContainUniqueNames],
         SdsEnumBody: [enumBodyShouldNotBeEmpty(services)],
