@@ -9,45 +9,45 @@
 // $TEST$ no error r"This annotation '.*' cannot be applied to .*"
 @»Unresolved«
 
-package tests.validation.builtins.annotations.target.wrongTarget
+package tests.validation.builtins.annotations.targets.wrongTarget
 
-@Target([AnnotationTarget.Annotation])
+@Targets([AnnotationTarget.Annotation])
 annotation AnnotationForAnnotations
 
-@Target([AnnotationTarget.Attribute])
+@Targets([AnnotationTarget.Attribute])
 annotation AnnotationForAttributes
 
-@Target([AnnotationTarget.Class])
+@Targets([AnnotationTarget.Class])
 annotation AnnotationForClasses
 
-@Target([AnnotationTarget.Enum])
+@Targets([AnnotationTarget.Enum])
 annotation AnnotationForEnums
 
-@Target([AnnotationTarget.EnumVariant])
+@Targets([AnnotationTarget.EnumVariant])
 annotation AnnotationForEnumVariants
 
-@Target([AnnotationTarget.Function])
+@Targets([AnnotationTarget.Function])
 annotation AnnotationForFunctions
 
-@Target([AnnotationTarget.Module])
+@Targets([AnnotationTarget.Module])
 annotation AnnotationForModules
 
-@Target([AnnotationTarget.Parameter])
+@Targets([AnnotationTarget.Parameter])
 annotation AnnotationForParameters
 
-@Target([AnnotationTarget.Result])
+@Targets([AnnotationTarget.Result])
 annotation AnnotationForResults
 
-@Target([AnnotationTarget.TypeParameter])
+@Targets([AnnotationTarget.TypeParameter])
 annotation AnnotationForTypeParameters
 
-@Target([AnnotationTarget.Pipeline])
+@Targets([AnnotationTarget.Pipeline])
 annotation AnnotationForPipelines
 
-@Target([AnnotationTarget.Segment])
+@Targets([AnnotationTarget.Segment])
 annotation AnnotationForSegments
 
-@Target([AnnotationTarget.Module, AnnotationTarget.Class])
+@Targets([AnnotationTarget.Module, AnnotationTarget.Class])
 annotation AnnotationForMultipleTargets
 
 annotation AnnotationForAnything

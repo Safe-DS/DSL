@@ -24,7 +24,7 @@ import {
     pythonNameShouldDifferFromSafeDsName,
 } from './builtins/pythonName.js';
 import { singleUseAnnotationsMustNotBeRepeated } from './builtins/repeatable.js';
-import { annotationCallMustHaveCorrectTarget, targetShouldNotHaveDuplicateEntries } from './builtins/target.js';
+import { annotationCallMustHaveCorrectTarget, targetsShouldNotHaveDuplicateEntries } from './builtins/targets.js';
 import {
     constraintListsShouldBeUsedWithCaution,
     literalTypesShouldBeUsedWithCaution,
@@ -186,6 +186,7 @@ import {
     parameterDefaultValueMustRespectParameterBounds,
 } from './other/declarations/parameterBounds.js';
 import { unknownMustOnlyBeUsedAsDefaultValueOfStub } from './other/expressions/literals.js';
+import { tagsShouldNotHaveDuplicateEntries } from './builtins/tags.js';
 
 /**
  * Register custom validation checks.
@@ -211,7 +212,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             annotationMustContainUniqueNames,
             annotationParameterListShouldNotBeEmpty(services),
             annotationParameterShouldNotHaveConstModifier(services),
-            targetShouldNotHaveDuplicateEntries(services),
+            targetsShouldNotHaveDuplicateEntries(services),
         ],
         SdsAnnotationCall: [
             annotationCallAnnotationShouldNotBeDeprecated(services),
@@ -266,6 +267,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             nameShouldHaveCorrectCasing(services),
             pythonNameShouldDifferFromSafeDsName(services),
             singleUseAnnotationsMustNotBeRepeated(services),
+            tagsShouldNotHaveDuplicateEntries(services),
         ],
         SdsEnum: [enumMustContainUniqueNames],
         SdsEnumBody: [enumBodyShouldNotBeEmpty(services)],

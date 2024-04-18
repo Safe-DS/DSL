@@ -8,6 +8,6 @@ The annotation can be called multiple times for the same declaration.
 
 ??? quote "Stub code in `annotationUsage.sdsstub`"
 
-    ```sds linenums="83"
+    ```sds linenums="88"
     annotation Repeatable
     ```

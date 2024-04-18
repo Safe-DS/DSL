@@ -16,7 +16,7 @@ annotation MyAnnotation2(param1: MyEnum1, param2: Float = 1.0)
 /**
  * Description of MyAnnotation3.
  */
-@Target([AnnotationTarget.Annotation])
+@Targets([AnnotationTarget.Annotation])
 annotation MyAnnotation3
 
 enum MyEnum1

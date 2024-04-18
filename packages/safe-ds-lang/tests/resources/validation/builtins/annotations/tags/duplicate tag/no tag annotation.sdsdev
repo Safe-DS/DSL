@@ -1,0 +1,5 @@
+package tests.validation.builtins.annotations.tags.duplicateTag
+
+// $TEST$ no warning r"The tag '.*' was already set\."
+
+class TestClass4

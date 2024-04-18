@@ -12,10 +12,11 @@ The declaration might change without a major version bump.
 - `Function`
 - `Parameter`
 - `Result`
+- `Schema`
 - `Segment`
 
 ??? quote "Stub code in `maturity.sdsstub`"
 
-    ```sds linenums="43"
+    ```sds linenums="45"
     annotation Experimental
     ```
