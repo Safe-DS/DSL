@@ -14,12 +14,12 @@ def f2(l):
 # Pipelines --------------------------------------------------------------------
 
 def test():
-    def __gen_block_lambda_0(a, b):
+    def __gen_lambda_0(a, b):
         __gen_block_lambda_result_d = g()
         return __gen_block_lambda_result_d
-    f1(__gen_block_lambda_0)
-    def __gen_block_lambda_1(a, b):
+    f1(__gen_lambda_0)
+    def __gen_lambda_1(a, b):
         __gen_block_lambda_result_d = g()
         __gen_block_lambda_result_e = g()
         return __gen_block_lambda_result_d, __gen_block_lambda_result_e
-    f2(__gen_block_lambda_1)
+    f2(__gen_lambda_1)

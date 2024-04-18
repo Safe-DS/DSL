@@ -11,6 +11,6 @@ def testSegment():
 
 def testPipeline():
     g()
-    def __gen_block_lambda_0():
+    def __gen_lambda_0():
         g()
-    f(__gen_block_lambda_0)
+    f(__gen_lambda_0)

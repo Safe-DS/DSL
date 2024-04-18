@@ -100,7 +100,7 @@ import { NamedTupleType } from '../typing/model.js';
 import { getOutermostContainerOfType } from '../helpers/astUtils.js';
 
 export const CODEGEN_PREFIX = '__gen_';
-const BLOCK_LAMBDA_PREFIX = `${CODEGEN_PREFIX}block_lambda_`;
+const LAMBDA_PREFIX = `${CODEGEN_PREFIX}lambda_`;
 const BLOCK_LAMBDA_RESULT_PREFIX = `${CODEGEN_PREFIX}block_lambda_result_`;
 const YIELD_PREFIX = `${CODEGEN_PREFIX}yield_`;
 
@@ -1313,7 +1313,7 @@ class GenerationInfoFrame {
     }
 
     getUniqueLambdaBlockName(lambda: SdsBlockLambda): string {
-        return `${BLOCK_LAMBDA_PREFIX}${this.blockLambdaManager.assignId(lambda)}`;
+        return `${LAMBDA_PREFIX}${this.blockLambdaManager.assignId(lambda)}`;
     }
 }
 
