@@ -8,6 +8,11 @@ from safeds.data.tabular.containers import Column, Row, Table
  * @param data The data.
  * @param targetName Name of the target column.
  * @param featureNames Names of the feature columns. If None, all columns except the target column are used.
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 class TaggedTable(
     data: Map<String, List<Any>>,
@@ -16,10 +21,20 @@ class TaggedTable(
 ) sub Table {
     /**
      * Get the feature columns of the tagged table.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     attr features: Table
     /**
      * Get the target column of the tagged table.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     attr target: Column
 
@@ -31,6 +46,11 @@ class TaggedTable(
      * @param column The column to be added.
      *
      * @result result1 The table with the attached feature column.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("add_column_as_feature")
@@ -46,6 +66,11 @@ class TaggedTable(
      * @param columns The columns to be added as features.
      *
      * @result result1 The table with the attached feature columns.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("add_columns_as_features")
@@ -61,6 +86,11 @@ class TaggedTable(
      * @param column The column to be added.
      *
      * @result result1 The table with the column attached as neither target nor feature column.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("add_column")
@@ -76,6 +106,11 @@ class TaggedTable(
      * @param columns The columns to be added.
      *
      * @result result1 A new table combining the original table and the given columns as neither target nor feature columns.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("add_columns")
@@ -91,6 +126,11 @@ class TaggedTable(
      * @param row The row to be added.
      *
      * @result result1 A new tagged table with the added row at the end.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("add_row")
@@ -106,6 +146,11 @@ class TaggedTable(
      * @param rows The rows to be added.
      *
      * @result result1 A new tagged table which combines the original table and the given rows.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("add_rows")
@@ -121,6 +166,11 @@ class TaggedTable(
      * @param query A Callable that is applied to all rows.
      *
      * @result result1 A new tagged table containing only the rows to match the query.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("filter_rows")
@@ -136,6 +186,11 @@ class TaggedTable(
      * @param columnNames A list containing only the columns to be kept.
      *
      * @result result1 A table containing only the given column(s).
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("keep_only_columns")
@@ -151,6 +206,11 @@ class TaggedTable(
      * @param columnNames The names of all columns to be dropped.
      *
      * @result result1 A table without the given columns.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("remove_columns")
@@ -164,6 +224,11 @@ class TaggedTable(
      * The original table is not modified.
      *
      * @result result1 A table without the columns that contain missing values.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("remove_columns_with_missing_values")
@@ -175,6 +240,11 @@ class TaggedTable(
      * The original table is not modified.
      *
      * @result result1 A table without the columns that contain non-numerical values.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("remove_columns_with_non_numerical_values")
@@ -186,6 +256,11 @@ class TaggedTable(
      * The original table is not modified.
      *
      * @result result1 The table with the duplicate rows removed.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("remove_duplicate_rows")
@@ -197,6 +272,11 @@ class TaggedTable(
      * The original table is not modified.
      *
      * @result result1 A table without the rows that contain missing values.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("remove_rows_with_missing_values")
@@ -212,6 +292,11 @@ class TaggedTable(
      * The original table is not modified.
      *
      * @result result1 A new table without rows containing outliers.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("remove_rows_with_outliers")
@@ -226,6 +311,11 @@ class TaggedTable(
      * @param newName The new name of the target column.
      *
      * @result result1 The Table with the renamed column.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("rename_column")
@@ -247,6 +337,11 @@ class TaggedTable(
      * @param newColumns The new columns replacing the old column.
      *
      * @result result1 A table with the old column replaced by the new column.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("replace_column")
@@ -261,6 +356,11 @@ class TaggedTable(
      * The original table is not modified.
      *
      * @result result1 The shuffled Table.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("shuffle_rows")
@@ -276,6 +376,11 @@ class TaggedTable(
      * @param step The step size used to iterate through the table, 1 by default.
      *
      * @result result1 The resulting table.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("slice_rows")
@@ -302,6 +407,11 @@ class TaggedTable(
      * @param comparator The function used to compare two columns.
      *
      * @result result1 A new table with sorted columns.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("sort_columns")
@@ -324,6 +434,11 @@ class TaggedTable(
      * @param comparator The function used to compare two rows.
      *
      * @result result1 A new table with sorted rows.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("sort_rows")
@@ -337,6 +452,11 @@ class TaggedTable(
      * The original table is not modified.
      *
      * @result result1 The table with the transformed column.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("transform_column")

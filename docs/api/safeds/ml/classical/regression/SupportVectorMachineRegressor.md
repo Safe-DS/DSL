@@ -11,9 +11,17 @@ Support vector machine.
 | `c` | [`Float`][safeds.lang.Float] | The strength of regularization. Must be strictly positive. | `#!sds 1.0` |
 | `kernel` | [`Kernel`][safeds.ml.classical.regression.SupportVectorMachineRegressor.Kernel] | The type of kernel to be used. Defaults to None. | `#!sds SupportVectorMachineRegressor.Kernel.RadialBasisFunction` |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `support_vector_machine.sdsstub`"
 
-    ```sds linenums="12"
+    ```sds linenums="17"
     class SupportVectorMachineRegressor(
         const c: Float = 1.0,
         kernel: SupportVectorMachineRegressor.Kernel = SupportVectorMachineRegressor.Kernel.RadialBasisFunction
@@ -22,40 +30,75 @@ Support vector machine.
     } {
         /**
          * The kernel functions that can be used in the support vector machine.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         enum Kernel {
             /**
              * A linear kernel.
+             *
+             * @example
+             * pipeline example {
+             *     // TODO
+             * }
              */
             Linear
-    
+
             /**
              * A polynomial kernel.
              *
              * @param degree The degree of the polynomial.
+             *
+             * @example
+             * pipeline example {
+             *     // TODO
+             * }
              */
             Polynomial(degree: Int)
-    
+
             /**
              * A sigmoid kernel.
+             *
+             * @example
+             * pipeline example {
+             *     // TODO
+             * }
              */
             Sigmoid
-    
+
             /**
              * A radial basis function kernel.
+             *
+             * @example
+             * pipeline example {
+             *     // TODO
+             * }
              */
             RadialBasisFunction
         }
-    
+
         /**
          * Get the regularization strength.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         attr c: Float
         /**
          * Get the type of kernel used.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         attr kernel: SupportVectorMachineRegressor.Kernel
-    
+
         /**
          * Create a copy of this regressor and fit it with the given training data.
          *
@@ -64,6 +107,11 @@ Support vector machine.
          * @param trainingSet The training data containing the feature and target vectors.
          *
          * @result fittedRegressor The fitted regressor.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         fun fit(
@@ -78,11 +126,27 @@ Get the regularization strength.
 
 **Type:** [`Float`][safeds.lang.Float]
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ## `#!sds attr` kernel {#safeds.ml.classical.regression.SupportVectorMachineRegressor.kernel data-toc-label='kernel'}
 
 Get the type of kernel used.
 
 **Type:** [`Kernel`][safeds.ml.classical.regression.SupportVectorMachineRegressor.Kernel]
+
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
 
 ## `#!sds fun` fit {#safeds.ml.classical.regression.SupportVectorMachineRegressor.fit data-toc-label='fit'}
 
@@ -102,9 +166,17 @@ This regressor is not modified.
 |------|------|-------------|
 | `fittedRegressor` | [`SupportVectorMachineRegressor`][safeds.ml.classical.regression.SupportVectorMachineRegressor] | The fitted regressor. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `support_vector_machine.sdsstub`"
 
-    ```sds linenums="63"
+    ```sds linenums="108"
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TaggedTable
@@ -121,9 +193,17 @@ Check if the classifier is fitted.
 |------|------|-------------|
 | `isFitted` | [`Boolean`][safeds.lang.Boolean] | Whether the regressor is fitted. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="40"
+    ```sds linenums="60"
     @Pure
     @PythonName("is_fitted")
     fun isFitted() -> isFitted: Boolean
@@ -145,9 +225,17 @@ Compute the mean absolute error (MAE) of the regressor on the given data.
 |------|------|-------------|
 | `meanAbsoluteError` | [`Float`][safeds.lang.Float] | The calculated mean absolute error (the average of the distance of each individual row). |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="64"
+    ```sds linenums="94"
     @Pure
     @PythonName("mean_absolute_error")
     fun meanAbsoluteError(
@@ -171,9 +259,17 @@ Compute the mean squared error (MSE) on the given data.
 |------|------|-------------|
 | `meanSquaredError` | [`Float`][safeds.lang.Float] | The calculated mean squared error (the average of the distance of each individual row squared). |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="51"
+    ```sds linenums="76"
     @Pure
     @PythonName("mean_squared_error")
     fun meanSquaredError(
@@ -197,9 +293,17 @@ Predict a target vector using a dataset containing feature vectors. The model ha
 |------|------|-------------|
 | `prediction` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A dataset containing the given feature vectors and the predicted target vector. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="30"
+    ```sds linenums="45"
     @Pure
     fun predict(
         dataset: Table
@@ -210,29 +314,57 @@ Predict a target vector using a dataset containing feature vectors. The model ha
 
 The kernel functions that can be used in the support vector machine.
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `support_vector_machine.sdsstub`"
 
-    ```sds linenums="21"
+    ```sds linenums="31"
     enum Kernel {
         /**
          * A linear kernel.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         Linear
-    
+
         /**
          * A polynomial kernel.
          *
          * @param degree The degree of the polynomial.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         Polynomial(degree: Int)
-    
+
         /**
          * A sigmoid kernel.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         Sigmoid
-    
+
         /**
          * A radial basis function kernel.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         RadialBasisFunction
     }
@@ -241,6 +373,14 @@ The kernel functions that can be used in the support vector machine.
 ### Linear {#safeds.ml.classical.regression.SupportVectorMachineRegressor.Kernel.Linear data-toc-label='Linear'}
 
 A linear kernel.
+
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
 
 ### Polynomial {#safeds.ml.classical.regression.SupportVectorMachineRegressor.Kernel.Polynomial data-toc-label='Polynomial'}
 
@@ -252,10 +392,34 @@ A polynomial kernel.
 |------|------|-------------|---------|
 | `degree` | [`Int`][safeds.lang.Int] | The degree of the polynomial. | - |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ### RadialBasisFunction {#safeds.ml.classical.regression.SupportVectorMachineRegressor.Kernel.RadialBasisFunction data-toc-label='RadialBasisFunction'}
 
 A radial basis function kernel.
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ### Sigmoid {#safeds.ml.classical.regression.SupportVectorMachineRegressor.Kernel.Sigmoid data-toc-label='Sigmoid'}
 
 A sigmoid kernel.
+
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```

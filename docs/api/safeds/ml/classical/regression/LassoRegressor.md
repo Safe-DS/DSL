@@ -10,9 +10,17 @@ Lasso regression.
 |------|------|-------------|---------|
 | `alpha` | [`Float`][safeds.lang.Float] | Controls the regularization of the model. The higher the value, the more regularized it becomes. | `#!sds 1.0` |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `lasso_regression.sdsstub`"
 
-    ```sds linenums="11"
+    ```sds linenums="16"
     class LassoRegressor(
         const alpha: Float = 1.0
     ) sub Regressor where {
@@ -20,9 +28,14 @@ Lasso regression.
     } {
         /**
          * Get the regularization of the model.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         attr alpha: Float
-    
+
         /**
          * Create a copy of this regressor and fit it with the given training data.
          *
@@ -31,6 +44,11 @@ Lasso regression.
          * @param trainingSet The training data containing the feature and target vectors.
          *
          * @result fittedRegressor The fitted regressor.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         fun fit(
@@ -44,6 +62,14 @@ Lasso regression.
 Get the regularization of the model.
 
 **Type:** [`Float`][safeds.lang.Float]
+
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
 
 ## `#!sds fun` fit {#safeds.ml.classical.regression.LassoRegressor.fit data-toc-label='fit'}
 
@@ -63,9 +89,17 @@ This regressor is not modified.
 |------|------|-------------|
 | `fittedRegressor` | [`LassoRegressor`][safeds.ml.classical.regression.LassoRegressor] | The fitted regressor. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `lasso_regression.sdsstub`"
 
-    ```sds linenums="30"
+    ```sds linenums="45"
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TaggedTable
@@ -82,9 +116,17 @@ Check if the classifier is fitted.
 |------|------|-------------|
 | `isFitted` | [`Boolean`][safeds.lang.Boolean] | Whether the regressor is fitted. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="40"
+    ```sds linenums="60"
     @Pure
     @PythonName("is_fitted")
     fun isFitted() -> isFitted: Boolean
@@ -106,9 +148,17 @@ Compute the mean absolute error (MAE) of the regressor on the given data.
 |------|------|-------------|
 | `meanAbsoluteError` | [`Float`][safeds.lang.Float] | The calculated mean absolute error (the average of the distance of each individual row). |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="64"
+    ```sds linenums="94"
     @Pure
     @PythonName("mean_absolute_error")
     fun meanAbsoluteError(
@@ -132,9 +182,17 @@ Compute the mean squared error (MSE) on the given data.
 |------|------|-------------|
 | `meanSquaredError` | [`Float`][safeds.lang.Float] | The calculated mean squared error (the average of the distance of each individual row squared). |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="51"
+    ```sds linenums="76"
     @Pure
     @PythonName("mean_squared_error")
     fun meanSquaredError(
@@ -158,9 +216,17 @@ Predict a target vector using a dataset containing feature vectors. The model ha
 |------|------|-------------|
 | `prediction` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A dataset containing the given feature vectors and the predicted target vector. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="30"
+    ```sds linenums="45"
     @Pure
     fun predict(
         dataset: Table

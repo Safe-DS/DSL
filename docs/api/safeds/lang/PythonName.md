@@ -19,9 +19,17 @@ The name of the corresponding API element in Python. By default, this is the nam
 - `Pipeline`
 - `Segment`
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `codeGeneration.sdsstub`"
 
-    ```sds linenums="39"
+    ```sds linenums="54"
     annotation PythonName(
         name: String
     )

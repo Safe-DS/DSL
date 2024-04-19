@@ -8,6 +8,11 @@ from safeds.ml.classical.classification import Classifier
  *
  * @param numberOfNeighbors The number of neighbors to use for interpolation. Has to be greater than 0 (validated in the constructor) and
  * less than or equal to the sample size (validated when calling `fit`).
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 class KNearestNeighborsClassifier(
     @PythonName("number_of_neighbors") const numberOfNeighbors: Int
@@ -16,6 +21,11 @@ class KNearestNeighborsClassifier(
 } {
     /**
      * Get the number of neighbors used for interpolation.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @PythonName("number_of_neighbors") attr numberOfNeighbors: Int
 
@@ -27,6 +37,11 @@ class KNearestNeighborsClassifier(
      * @param trainingSet The training data containing the feature and target vectors.
      *
      * @result fittedClassifier The fitted classifier.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun fit(

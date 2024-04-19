@@ -6,10 +6,20 @@ from safeds.data.tabular.typing import ColumnType
  * Store column names and corresponding data types for a `Table` or `Row`.
  *
  * @param schema Map from column names to data types.
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 class Schema {
     /**
      * Return a list of all column names saved in this schema.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @PythonName("column_names") attr columnNames: List<String>
 
@@ -19,6 +29,11 @@ class Schema {
      * @param columnName The name of the column.
      *
      * @result result1 True if the schema contains the column.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("has_column")
@@ -32,6 +47,11 @@ class Schema {
      * @param columnName The name of the column.
      *
      * @result result1 The type of the column.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("get_column_type")
@@ -43,6 +63,11 @@ class Schema {
      * Return a dictionary that maps column names to column types.
      *
      * @result result1 Dictionary representation of the schema.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("to_dict")

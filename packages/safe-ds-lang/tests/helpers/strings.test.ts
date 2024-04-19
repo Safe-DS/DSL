@@ -73,14 +73,24 @@ describe('addLinePrefix', () => {
         {
             text: '',
             prefix: 'baz',
-            expected: 'baz',
+            expected: '',
+        },
+        {
+            text: '    ',
+            prefix: 'baz',
+            expected: '',
+        },
+        {
+            text: 'bar',
+            prefix: 'foo',
+            expected: 'foobar',
         },
         {
             text: 'foo\nbar',
             prefix: 'baz',
             expected: 'bazfoo\nbazbar',
         },
-    ])(`should prepend each line with the given prefix (%#)`, ({ text, prefix, expected }) => {
+    ])(`should prepend each non-blank line with the given prefix (%#)`, ({ text, prefix, expected }) => {
         expect(addLinePrefix(text, prefix)).toBe(expected);
     });
 });

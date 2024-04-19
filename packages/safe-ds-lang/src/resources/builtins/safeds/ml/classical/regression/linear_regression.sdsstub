@@ -5,6 +5,11 @@ from safeds.ml.classical.regression import Regressor
 
 /**
  * Linear regression.
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 class LinearRegressionRegressor() sub Regressor {
     /**
@@ -15,6 +20,11 @@ class LinearRegressionRegressor() sub Regressor {
      * @param trainingSet The training data containing the feature and target vectors.
      *
      * @result fittedRegressor The fitted regressor.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun fit(

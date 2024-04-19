@@ -4,6 +4,11 @@ package safeds.lang
  * The annotation must target only the specified declaration types. By default, any declaration type can be targeted.
  *
  * @param targets An exhaustive list of the valid targets.
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 @Targets([AnnotationTarget.Annotation])
 annotation Targets(
@@ -12,6 +17,11 @@ annotation Targets(
 
 /**
  * The declaration types that can be targeted by annotations.
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 enum AnnotationTarget {
 
@@ -83,6 +93,11 @@ enum AnnotationTarget {
 
 /**
  * The annotation can be called multiple times for the same declaration.
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 @Targets([AnnotationTarget.Annotation])
 annotation Repeatable

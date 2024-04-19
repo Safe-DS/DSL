@@ -7,13 +7,26 @@ search:
 
 The common superclass of all classes.
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="6"
+    ```sds linenums="11"
     class Any {
-    
+
         /**
          * Returns a string representation of the object.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonCall("str($this)")
@@ -31,9 +44,17 @@ Returns a string representation of the object.
 |------|------|-------------|
 | `s` | [`String`][safeds.lang.String] | - |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="11"
+    ```sds linenums="21"
     @Pure
     @PythonCall("str($this)")
     fun toString() -> s: String

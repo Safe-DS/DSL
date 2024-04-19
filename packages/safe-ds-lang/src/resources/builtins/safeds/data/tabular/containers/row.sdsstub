@@ -6,20 +6,40 @@ from safeds.data.tabular.typing import ColumnType, Schema
  * A row is a collection of named values.
  *
  * @param data The data. If None, an empty row is created.
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 class Row(
     data: Map<String, List<Any>>? = null // TODO: update default value to empty map
 ) {
     /**
      * Return a list of all column names in the row.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @PythonName("column_names") attr columnNames: List<String>
     /**
      * Return the number of columns in this row.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @PythonName("number_of_column") attr numberOfColumn: Int
     /**
      * Return the schema of the row.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     attr `schema`: Schema
 
@@ -29,6 +49,11 @@ class Row(
      * @param data The data.
      *
      * @result result1 The created row.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("from_dict")
@@ -42,6 +67,11 @@ class Row(
      * @param columnName The column name.
      *
      * @result result1 The column value.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("get_value")
@@ -55,6 +85,11 @@ class Row(
      * @param columnName The column name.
      *
      * @result result1 True, if the row contains the column, False otherwise.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("has_column")
@@ -68,6 +103,11 @@ class Row(
      * @param columnName The column name.
      *
      * @result result1 The type of the column.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("get_column_type")
@@ -102,6 +142,11 @@ class Row(
      * Return a dictionary that maps column names to column values.
      *
      * @result result1 Dictionary representation of the row.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("to_dict")
@@ -111,6 +156,11 @@ class Row(
      * Return an HTML representation of the row.
      *
      * @result result1 The generated HTML.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("to_html")

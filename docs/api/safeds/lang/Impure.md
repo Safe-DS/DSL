@@ -12,8 +12,16 @@ Indicates that the function has side effects and/or does not always return the s
 
 - `Function`
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `purity.sdsstub`"
 
-    ```sds linenums="22"
+    ```sds linenums="32"
     annotation Impure(allReasons: List<ImpurityReason>)
     ```

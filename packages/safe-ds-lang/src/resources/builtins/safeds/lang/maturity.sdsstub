@@ -7,6 +7,11 @@ package safeds.lang
  * @param reason Why the declaration was deprecated.
  * @param sinceVersion When the declaration was deprecated.
  * @param removalVersion When the declaration will be removed.
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 @Targets([
     AnnotationTarget.Annotation,
@@ -29,6 +34,11 @@ annotation Deprecated(
 
 /**
  * The declaration might change without a major version bump.
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 @Targets([
     AnnotationTarget.Annotation,

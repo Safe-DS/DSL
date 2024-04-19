@@ -12,8 +12,16 @@ A number.
 - [`Float`][safeds.lang.Float]
 - [`Int`][safeds.lang.Int]
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="29"
+    ```sds linenums="54"
     class Number
     ```

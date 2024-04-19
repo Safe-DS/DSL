@@ -25,9 +25,17 @@ Note: When removing the last column of the table, the `number_of_columns` proper
 - [`TaggedTable`][safeds.data.tabular.containers.TaggedTable]
 - [`TimeSeries`][safeds.data.tabular.containers.TimeSeries]
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="25"
+    ```sds linenums="30"
     class Table(
         data: Map<String, List<Any>>? = null // TODO: update default value to empty map
     ) {
@@ -35,34 +43,59 @@ Note: When removing the last column of the table, the `number_of_columns` proper
          * Return a list of all column names in this table.
          *
          * Alias for self.schema.column_names -> list[str].
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @PythonName("column_names") attr columnNames: List<String>
         /**
          * Return the number of columns.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @PythonName("number_of_columns") attr numberOfColumns: Int
         /**
          * Return the number of rows.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @PythonName("number_of_rows") attr numberOfRows: Int
         /**
          * Return the schema of the table.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         attr `schema`: Schema
-    
+
         /**
          * Read data from a CSV file into a table.
          *
          * @param path The path to the CSV file.
          *
          * @result result1 The table created from the CSV file.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
         @PythonName("from_csv_file")
         static fun fromCsvFile(
             path: String
         ) -> result1: Table
-    
+
         /**
          * Read data from an Excel file into a table.
          *
@@ -71,78 +104,108 @@ Note: When removing the last column of the table, the `number_of_columns` proper
          * @param path The path to the Excel file.
          *
          * @result result1 The table created from the Excel file.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
         @PythonName("from_excel_file")
         static fun fromExcelFile(
             path: String
         ) -> result1: Table
-    
+
         /**
          * Read data from a JSON file into a table.
          *
          * @param path The path to the JSON file.
          *
          * @result result1 The table created from the JSON file.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
         @PythonName("from_json_file")
         static fun fromJsonFile(
             path: String
         ) -> result1: Table
-    
+
         /**
          * Create a table from a dictionary that maps column names to column values.
          *
          * @param data The data.
          *
          * @result result1 The generated table.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("from_dict")
         static fun fromDict(
             data: Map<String, List<Any>>
         ) -> result1: Table
-    
+
         /**
          * Return a table created from a list of columns.
          *
          * @param columns The columns to be combined. They need to have the same size.
          *
          * @result result1 The generated table.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("from_columns")
         static fun fromColumns(
             columns: List<Column>
         ) -> result1: Table
-    
+
         /**
          * Return a table created from a list of rows.
          *
          * @param rows The rows to be combined. They need to have a matching schema.
          *
          * @result result1 The generated table.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("from_rows")
         static fun fromRows(
             rows: List<Row>
         ) -> result1: Table
-    
+
         /**
          * Return a column with the data of the specified column.
          *
          * @param columnName The name of the column.
          *
          * @result result1 The column.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("get_column")
         fun getColumn(
             @PythonName("column_name") columnName: String
         ) -> result1: Column
-    
+
         /**
          * Return whether the table contains a given column.
          *
@@ -151,13 +214,18 @@ Note: When removing the last column of the table, the `number_of_columns` proper
          * @param columnName The name of the column.
          *
          * @result result1 True if the column exists.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("has_column")
         fun hasColumn(
             @PythonName("column_name") columnName: String
         ) -> result1: Boolean
-    
+
         /**
          * Return the type of the given column.
          *
@@ -166,50 +234,70 @@ Note: When removing the last column of the table, the `number_of_columns` proper
          * @param columnName The name of the column to be queried.
          *
          * @result result1 The type of the column.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("get_column_type")
         fun getColumnType(
             @PythonName("column_name") columnName: String
         ) -> result1: ColumnType
-    
+
         /**
          * Return the row at a specified index.
          *
          * @param index The index.
          *
          * @result result1 The row of the table at the index.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("get_row")
         fun getRow(
             index: Int
         ) -> result1: Row
-    
+
         /**
          * Return a table with a number of statistical key values.
          *
          * The original table is not modified.
          *
          * @result result1 The table with statistics.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("summarize_statistics")
         fun summarizeStatistics() -> result1: Table
-    
+
         /**
          * Return a new table with the provided column attached at the end.
          *
          * The original table is not modified.
          *
          * @result result1 The table with the column attached.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("add_column")
         fun addColumn(
             column: Column
         ) -> result1: Table
-    
+
         /**
          * Return a new `Table` with multiple added columns.
          *
@@ -218,13 +306,18 @@ Note: When removing the last column of the table, the `number_of_columns` proper
          * @param columns The columns to be added.
          *
          * @result result1 A new table combining the original table and the given columns.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("add_columns")
         fun addColumns(
             columns: union<List<Column>, Table>
         ) -> result1: Table
-    
+
         /**
          * Return a new `Table` with an added Row attached.
          *
@@ -238,13 +331,18 @@ Note: When removing the last column of the table, the `number_of_columns` proper
          * @param row The row to be added.
          *
          * @result result1 A new table with the added row at the end.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("add_row")
         fun addRow(
             row: Row
         ) -> result1: Table
-    
+
         /**
          * Return a new `Table` with multiple added Rows attached.
          *
@@ -256,13 +354,18 @@ Note: When removing the last column of the table, the `number_of_columns` proper
          * @param rows The rows to be added.
          *
          * @result result1 A new table which combines the original table and the given rows.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("add_rows")
         fun addRows(
             rows: union<List<Row>, Table>
         ) -> result1: Table
-    
+
         /**
          * Return a new table with rows filtered by Callable (e.g. lambda function).
          *
@@ -271,13 +374,18 @@ Note: When removing the last column of the table, the `number_of_columns` proper
          * @param query A Callable that is applied to all rows.
          *
          * @result result1 A table containing only the rows filtered by the query.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("filter_rows")
         fun filterRows(
             query: (param1: Row) -> param2: Boolean
         ) -> result1: Table
-    
+
         /**
          * Return a dictionary with copies of the output tables as values and the keys from the key_selector.
          *
@@ -286,13 +394,18 @@ Note: When removing the last column of the table, the `number_of_columns` proper
          * @param keySelector A Callable that is applied to all rows and returns the key of the group.
          *
          * @result result1 A dictionary containing the new tables as values and the selected keys as keys.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("group_rows_by")
         fun groupRowsBy<T>(
             @PythonName("key_selector") keySelector: (param1: Row) -> param2: T
         ) -> result1: Map<T, Table>
-    
+
         /**
          * Return a new table with only the given column(s).
          *
@@ -303,13 +416,18 @@ Note: When removing the last column of the table, the `number_of_columns` proper
          * @param columnNames A list containing only the columns to be kept.
          *
          * @result result1 A table containing only the given column(s).
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("keep_only_columns")
         fun keepOnlyColumns(
             @PythonName("column_names") columnNames: List<String>
         ) -> result1: Table
-    
+
         /**
          * Return a new table without the given column(s).
          *
@@ -320,13 +438,18 @@ Note: When removing the last column of the table, the `number_of_columns` proper
          * @param columnNames A list containing all columns to be dropped.
          *
          * @result result1 A table without the given columns.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("remove_columns")
         fun removeColumns(
             @PythonName("column_names") columnNames: List<String>
         ) -> result1: Table
-    
+
         /**
          * Return a new table without the columns that contain missing values.
          *
@@ -335,11 +458,16 @@ Note: When removing the last column of the table, the `number_of_columns` proper
          * Note: When removing the last column of the table, the `number_of_columns` property will be set to 0.
          *
          * @result result1 A table without the columns that contain missing values.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("remove_columns_with_missing_values")
         fun removeColumnsWithMissingValues() -> result1: Table
-    
+
         /**
          * Return a new table without the columns that contain non-numerical values.
          *
@@ -348,33 +476,48 @@ Note: When removing the last column of the table, the `number_of_columns` proper
          * Note: When removing the last column of the table, the `number_of_columns` property will be set to 0.
          *
          * @result result1 A table without the columns that contain non-numerical values.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("remove_columns_with_non_numerical_values")
         fun removeColumnsWithNonNumericalValues() -> result1: Table
-    
+
         /**
          * Return a new table with every duplicate row removed.
          *
          * The original table is not modified.
          *
          * @result result1 The table with the duplicate rows removed.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("remove_duplicate_rows")
         fun removeDuplicateRows() -> result1: Table
-    
+
         /**
          * Return a new table without the rows that contain missing values.
          *
          * The original table is not modified.
          *
          * @result result1 A table without the rows that contain missing values.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("remove_rows_with_missing_values")
         fun removeRowsWithMissingValues() -> result1: Table
-    
+
         /**
          * Return a new table without those rows that contain at least one outlier.
          *
@@ -385,11 +528,16 @@ Note: When removing the last column of the table, the `number_of_columns` proper
          * The original table is not modified.
          *
          * @result result1 A new table without rows containing outliers.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("remove_rows_with_outliers")
         fun removeRowsWithOutliers() -> result1: Table
-    
+
         /**
          * Return a new `Table` with a single column renamed.
          *
@@ -399,6 +547,11 @@ Note: When removing the last column of the table, the `number_of_columns` proper
          * @param newName The new name of the target column.
          *
          * @result result1 The Table with the renamed column.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("rename_column")
@@ -406,7 +559,7 @@ Note: When removing the last column of the table, the `number_of_columns` proper
             @PythonName("old_name") oldName: String,
             @PythonName("new_name") newName: String
         ) -> result1: Table
-    
+
         /**
          * Return a new table with the specified old column replaced by a list of new columns.
          *
@@ -418,6 +571,11 @@ Note: When removing the last column of the table, the `number_of_columns` proper
          * @param newColumns The list of new columns replacing the old column.
          *
          * @result result1 A table with the old column replaced by the new columns.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("replace_column")
@@ -425,18 +583,23 @@ Note: When removing the last column of the table, the `number_of_columns` proper
             @PythonName("old_column_name") oldColumnName: String,
             @PythonName("new_columns") newColumns: List<Column>
         ) -> result1: Table
-    
+
         /**
          * Return a new `Table` with randomly shuffled rows of this `Table`.
          *
          * The original table is not modified.
          *
          * @result result1 The shuffled Table.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("shuffle_rows")
         fun shuffleRows() -> result1: Table
-    
+
         /**
          * Slice a part of the table into a new table.
          *
@@ -447,6 +610,11 @@ Note: When removing the last column of the table, the `number_of_columns` proper
          * @param step The step size used to iterate through the table, 1 by default.
          *
          * @result result1 The resulting table.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("slice_rows")
@@ -455,7 +623,7 @@ Note: When removing the last column of the table, the `number_of_columns` proper
             end: Int? = null,
             step: Int = 1
         ) -> result1: Table
-    
+
         /**
          * Sort the columns of a `Table` with the given comparator and return a new `Table`.
          *
@@ -473,13 +641,18 @@ Note: When removing the last column of the table, the `number_of_columns` proper
          * @param comparator The function used to compare two columns.
          *
          * @result result1 A new table with sorted columns.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("sort_columns")
         fun sortColumns(
             comparator: (param1: Column, param2: Column) -> param3: Int
         ) -> result1: Table
-    
+
         /**
          * Sort the rows of a `Table` with the given comparator and return a new `Table`.
          *
@@ -495,13 +668,18 @@ Note: When removing the last column of the table, the `number_of_columns` proper
          * @param comparator The function used to compare two rows.
          *
          * @result result1 A new table with sorted rows.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("sort_rows")
         fun sortRows(
             comparator: (param1: Row, param2: Row) -> param3: Int
         ) -> result1: Table
-    
+
         /**
          * Split the table into two new tables.
          *
@@ -513,13 +691,18 @@ Note: When removing the last column of the table, the `number_of_columns` proper
          * contains the rest of the data.
          * @result result2 A tuple containing the two resulting tables. The first table has the specified size, the second table
          * contains the rest of the data.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("split_rows")
         fun splitRows(
             @PythonName("percentage_in_first") percentageInFirst: Float
         ) -> (result1: Table, result2: Table)
-    
+
         /**
          * Return a new `TaggedTable` with columns marked as a target column or feature columns.
          *
@@ -529,6 +712,11 @@ Note: When removing the last column of the table, the `number_of_columns` proper
          * @param featureNames Names of the feature columns. If None, all columns except the target column are used.
          *
          * @result result1 A new tagged table with the given target and feature names.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("tag_columns")
@@ -536,7 +724,7 @@ Note: When removing the last column of the table, the `number_of_columns` proper
             @PythonName("target_name") targetName: String,
             @PythonName("feature_names") featureNames: List<String>? = null
         ) -> result1: TaggedTable
-    
+
         /**
          * Return a new `TimeSeries` with columns marked as a target and time column or feature columns.
          *
@@ -547,6 +735,11 @@ Note: When removing the last column of the table, the `number_of_columns` proper
          * @param featureNames Names of the feature columns. If None, all columns except the target and time columns are used.
          *
          * @result result1 A new time series with the given target, time and feature names.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("time_columns")
@@ -555,13 +748,18 @@ Note: When removing the last column of the table, the `number_of_columns` proper
             @PythonName("time_name") timeName: String,
             @PythonName("feature_names") featureNames: List<String>? = null
         ) -> result1: TimeSeries
-    
+
         /**
          * Return a new `Table` with the provided column transformed by calling the provided transformer.
          *
          * The original table is not modified.
          *
          * @result result1 The table with the transformed column.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("transform_column")
@@ -569,7 +767,7 @@ Note: When removing the last column of the table, the `number_of_columns` proper
             name: String,
             transformer: (param1: Row) -> param2: Any
         ) -> result1: Table
-    
+
         /**
          * Return a new `Table` with a learned transformation applied to this table.
          *
@@ -578,13 +776,18 @@ Note: When removing the last column of the table, the `number_of_columns` proper
          * @param transformer The transformer which transforms the given table.
          *
          * @result result1 The transformed table.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("transform_table")
         fun transformTable(
             transformer: TableTransformer
         ) -> result1: Table
-    
+
         /**
          * Return a new `Table` with the inverted transformation applied by the given transformer.
          *
@@ -593,22 +796,32 @@ Note: When removing the last column of the table, the `number_of_columns` proper
          * @param transformer A transformer that was fitted with columns, which are all present in the table.
          *
          * @result result1 The original table.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("inverse_transform_table")
         fun inverseTransformTable(
             transformer: InvertibleTableTransformer
         ) -> result1: Table
-    
+
         /**
          * Plot a correlation heatmap for all numerical columns of this `Table`.
          *
          * @result result1 The plot as an image.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("plot_correlation_heatmap")
         fun plotCorrelationHeatmap() -> result1: Image
-    
+
         /**
          * Plot two columns against each other in a lineplot.
          *
@@ -619,6 +832,11 @@ Note: When removing the last column of the table, the `number_of_columns` proper
          * @param yColumnName The column name of the column to be plotted on the y-Axis.
          *
          * @result result1 The plot as an image.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("plot_lineplot")
@@ -626,7 +844,7 @@ Note: When removing the last column of the table, the `number_of_columns` proper
             @PythonName("x_column_name") xColumnName: String,
             @PythonName("y_column_name") yColumnName: String
         ) -> result1: Image
-    
+
         /**
          * Plot two columns against each other in a scatterplot.
          *
@@ -634,6 +852,11 @@ Note: When removing the last column of the table, the `number_of_columns` proper
          * @param yColumnName The column name of the column to be plotted on the y-Axis.
          *
          * @result result1 The plot as an image.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("plot_scatterplot")
@@ -641,25 +864,35 @@ Note: When removing the last column of the table, the `number_of_columns` proper
             @PythonName("x_column_name") xColumnName: String,
             @PythonName("y_column_name") yColumnName: String
         ) -> result1: Image
-    
+
         /**
          * Plot a boxplot for every numerical column.
          *
          * @result result1 The plot as an image.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("plot_boxplots")
         fun plotBoxplots() -> result1: Image
-    
+
         /**
          * Plot a histogram for every column.
          *
          * @result result1 The plot as an image.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("plot_histograms")
         fun plotHistograms() -> result1: Image
-    
+
         /**
          * Write the data from the table into a CSV file.
          *
@@ -667,13 +900,18 @@ Note: When removing the last column of the table, the `number_of_columns` proper
          * overwritten.
          *
          * @param path The path to the output file.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
         @PythonName("to_csv_file")
         fun toCsvFile(
             path: String
         )
-    
+
         /**
          * Write the data from the table into an Excel file.
          *
@@ -682,13 +920,18 @@ Note: When removing the last column of the table, the `number_of_columns` proper
          * overwritten.
          *
          * @param path The path to the output file.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
         @PythonName("to_excel_file")
         fun toExcelFile(
             path: String
         )
-    
+
         /**
          * Write the data from the table into a JSON file.
          *
@@ -696,44 +939,69 @@ Note: When removing the last column of the table, the `number_of_columns` proper
          * overwritten.
          *
          * @param path The path to the output file.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
         @PythonName("to_json_file")
         fun toJsonFile(
             path: String
         )
-    
+
         /**
          * Return a dictionary that maps column names to column values.
          *
          * @result result1 Dictionary representation of the table.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("to_dict")
         fun toDict() -> result1: Map<String, List<Any>>
-    
+
         /**
          * Return an HTML representation of the table.
          *
          * @result result1 The generated HTML.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("to_html")
         fun toHtml() -> result1: String
-    
+
         /**
          * Return a list of the columns.
          *
          * @result result1 List of columns.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("to_columns")
         fun toColumns() -> result1: List<Column>
-    
+
         /**
          * Return a list of the rows.
          *
          * @result result1 List of rows.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("to_rows")
@@ -749,11 +1017,27 @@ Alias for self.schema.column_names -> list[str].
 
 **Type:** [`List<String>`][safeds.lang.List]
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ## `#!sds attr` numberOfColumns {#safeds.data.tabular.containers.Table.numberOfColumns data-toc-label='numberOfColumns'}
 
 Return the number of columns.
 
 **Type:** [`Int`][safeds.lang.Int]
+
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
 
 ## `#!sds attr` numberOfRows {#safeds.data.tabular.containers.Table.numberOfRows data-toc-label='numberOfRows'}
 
@@ -761,11 +1045,27 @@ Return the number of rows.
 
 **Type:** [`Int`][safeds.lang.Int]
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ## `#!sds attr` schema {#safeds.data.tabular.containers.Table.schema data-toc-label='schema'}
 
 Return the schema of the table.
 
 **Type:** [`Schema`][safeds.data.tabular.typing.Schema]
+
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
 
 ## `#!sds fun` addColumn {#safeds.data.tabular.containers.Table.addColumn data-toc-label='addColumn'}
 
@@ -785,9 +1085,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The table with the column attached. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="201"
+    ```sds linenums="286"
     @Pure
     @PythonName("add_column")
     fun addColumn(
@@ -813,9 +1121,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A new table combining the original table and the given columns. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="216"
+    ```sds linenums="306"
     @Pure
     @PythonName("add_columns")
     fun addColumns(
@@ -846,9 +1162,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A new table with the added row at the end. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="236"
+    ```sds linenums="331"
     @Pure
     @PythonName("add_row")
     fun addRow(
@@ -877,9 +1201,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A new table which combines the original table and the given rows. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="254"
+    ```sds linenums="354"
     @Pure
     @PythonName("add_rows")
     fun addRows(
@@ -905,9 +1237,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A table containing only the rows filtered by the query. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="269"
+    ```sds linenums="374"
     @Pure
     @PythonName("filter_rows")
     fun filterRows(
@@ -931,9 +1271,17 @@ Return a column with the data of the specified column.
 |------|------|-------------|
 | `result1` | [`Column<Any?>`][safeds.data.tabular.containers.Column] | The column. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="134"
+    ```sds linenums="194"
     @Pure
     @PythonName("get_column")
     fun getColumn(
@@ -959,9 +1307,17 @@ Alias for self.schema.get_type_of_column(column_name: str) -> ColumnType.
 |------|------|-------------|
 | `result1` | [`ColumnType`][safeds.data.tabular.typing.ColumnType] | The type of the column. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="164"
+    ```sds linenums="234"
     @Pure
     @PythonName("get_column_type")
     fun getColumnType(
@@ -985,9 +1341,17 @@ Return the row at a specified index.
 |------|------|-------------|
 | `result1` | [`Row`][safeds.data.tabular.containers.Row] | The row of the table at the index. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="177"
+    ```sds linenums="252"
     @Pure
     @PythonName("get_row")
     fun getRow(
@@ -1019,9 +1383,17 @@ The original table is not modified.
 |------|-------------|-------------|---------|
 | `T` | [`Any?`][safeds.lang.Any] | - | - |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="284"
+    ```sds linenums="394"
     @Pure
     @PythonName("group_rows_by")
     fun groupRowsBy<T>(
@@ -1047,9 +1419,17 @@ Alias for self.schema.hasColumn(column_name: str) -> bool.
 |------|------|-------------|
 | `result1` | [`Boolean`][safeds.lang.Boolean] | True if the column exists. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="149"
+    ```sds linenums="214"
     @Pure
     @PythonName("has_column")
     fun hasColumn(
@@ -1075,9 +1455,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The original table. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="591"
+    ```sds linenums="796"
     @Pure
     @PythonName("inverse_transform_table")
     fun inverseTransformTable(
@@ -1105,9 +1493,17 @@ Note: When removing the last column of the table, the `number_of_columns` proper
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A table containing only the given column(s). |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="301"
+    ```sds linenums="416"
     @Pure
     @PythonName("keep_only_columns")
     fun keepOnlyColumns(
@@ -1125,9 +1521,17 @@ Plot a boxplot for every numerical column.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="644"
+    ```sds linenums="869"
     @Pure
     @PythonName("plot_boxplots")
     fun plotBoxplots() -> result1: Image
@@ -1143,9 +1547,17 @@ Plot a correlation heatmap for all numerical columns of this `Table`.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="602"
+    ```sds linenums="812"
     @Pure
     @PythonName("plot_correlation_heatmap")
     fun plotCorrelationHeatmap() -> result1: Image
@@ -1161,9 +1573,17 @@ Plot a histogram for every column.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="653"
+    ```sds linenums="883"
     @Pure
     @PythonName("plot_histograms")
     fun plotHistograms() -> result1: Image
@@ -1189,9 +1609,17 @@ and the lower-transparency area around the line representing the 95% confidence 
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="617"
+    ```sds linenums="832"
     @Pure
     @PythonName("plot_lineplot")
     fun plotLineplot(
@@ -1217,9 +1645,17 @@ Plot two columns against each other in a scatterplot.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="632"
+    ```sds linenums="852"
     @Pure
     @PythonName("plot_scatterplot")
     fun plotScatterplot(
@@ -1248,9 +1684,17 @@ Note: When removing the last column of the table, the `number_of_columns` proper
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A table without the given columns. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="318"
+    ```sds linenums="438"
     @Pure
     @PythonName("remove_columns")
     fun removeColumns(
@@ -1272,9 +1716,17 @@ Note: When removing the last column of the table, the `number_of_columns` proper
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A table without the columns that contain missing values. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="333"
+    ```sds linenums="458"
     @Pure
     @PythonName("remove_columns_with_missing_values")
     fun removeColumnsWithMissingValues() -> result1: Table
@@ -1294,9 +1746,17 @@ Note: When removing the last column of the table, the `number_of_columns` proper
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A table without the columns that contain non-numerical values. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="346"
+    ```sds linenums="476"
     @Pure
     @PythonName("remove_columns_with_non_numerical_values")
     fun removeColumnsWithNonNumericalValues() -> result1: Table
@@ -1314,9 +1774,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The table with the duplicate rows removed. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="357"
+    ```sds linenums="492"
     @Pure
     @PythonName("remove_duplicate_rows")
     fun removeDuplicateRows() -> result1: Table
@@ -1334,9 +1802,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A table without the rows that contain missing values. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="368"
+    ```sds linenums="508"
     @Pure
     @PythonName("remove_rows_with_missing_values")
     fun removeRowsWithMissingValues() -> result1: Table
@@ -1358,9 +1834,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A new table without rows containing outliers. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="383"
+    ```sds linenums="528"
     @Pure
     @PythonName("remove_rows_with_outliers")
     fun removeRowsWithOutliers() -> result1: Table
@@ -1385,9 +1869,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The Table with the renamed column. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="397"
+    ```sds linenums="547"
     @Pure
     @PythonName("rename_column")
     fun renameColumn(
@@ -1417,9 +1909,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A table with the old column replaced by the new columns. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="416"
+    ```sds linenums="571"
     @Pure
     @PythonName("replace_column")
     fun replaceColumn(
@@ -1440,9 +1940,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The shuffled Table. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="430"
+    ```sds linenums="590"
     @Pure
     @PythonName("shuffle_rows")
     fun shuffleRows() -> result1: Table
@@ -1468,9 +1976,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The resulting table. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="445"
+    ```sds linenums="610"
     @Pure
     @PythonName("slice_rows")
     fun sliceRows(
@@ -1507,9 +2023,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A new table with sorted columns. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="471"
+    ```sds linenums="641"
     @Pure
     @PythonName("sort_columns")
     fun sortColumns(
@@ -1542,9 +2066,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A new table with sorted rows. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="493"
+    ```sds linenums="668"
     @Pure
     @PythonName("sort_rows")
     fun sortRows(
@@ -1571,9 +2103,17 @@ The original table is not modified.
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A tuple containing the two resulting tables. The first table has the specified size, the second table contains the rest of the data. |
 | `result2` | [`Table`][safeds.data.tabular.containers.Table] | A tuple containing the two resulting tables. The first table has the specified size, the second table contains the rest of the data. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="511"
+    ```sds linenums="691"
     @Pure
     @PythonName("split_rows")
     fun splitRows(
@@ -1593,9 +2133,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The table with statistics. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="190"
+    ```sds linenums="270"
     @Pure
     @PythonName("summarize_statistics")
     fun summarizeStatistics() -> result1: Table
@@ -1620,9 +2168,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A new tagged table with the given target and feature names. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="527"
+    ```sds linenums="712"
     @Pure
     @PythonName("tag_columns")
     fun tagColumns(
@@ -1651,9 +2207,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A new time series with the given target, time and feature names. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="545"
+    ```sds linenums="735"
     @Pure
     @PythonName("time_columns")
     fun timeColumns(
@@ -1673,9 +2237,17 @@ Return a list of the columns.
 |------|------|-------------|
 | `result1` | [`List<Column<Any?>>`][safeds.lang.List] | List of columns. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="723"
+    ```sds linenums="983"
     @Pure
     @PythonName("to_columns")
     fun toColumns() -> result1: List<Column>
@@ -1694,9 +2266,17 @@ overwritten.
 |------|------|-------------|---------|
 | `path` | [`String`][safeds.lang.String] | The path to the output file. | - |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="665"
+    ```sds linenums="900"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_csv_file")
     fun toCsvFile(
@@ -1714,9 +2294,17 @@ Return a dictionary that maps column names to column values.
 |------|------|-------------|
 | `result1` | [`Map<String, List<Any>>`][safeds.lang.Map] | Dictionary representation of the table. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="705"
+    ```sds linenums="955"
     @Pure
     @PythonName("to_dict")
     fun toDict() -> result1: Map<String, List<Any>>
@@ -1736,9 +2324,17 @@ overwritten.
 |------|------|-------------|---------|
 | `path` | [`String`][safeds.lang.String] | The path to the output file. | - |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="680"
+    ```sds linenums="920"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_excel_file")
     fun toExcelFile(
@@ -1756,9 +2352,17 @@ Return an HTML representation of the table.
 |------|------|-------------|
 | `result1` | [`String`][safeds.lang.String] | The generated HTML. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="714"
+    ```sds linenums="969"
     @Pure
     @PythonName("to_html")
     fun toHtml() -> result1: String
@@ -1777,9 +2381,17 @@ overwritten.
 |------|------|-------------|---------|
 | `path` | [`String`][safeds.lang.String] | The path to the output file. | - |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="694"
+    ```sds linenums="939"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_json_file")
     fun toJsonFile(
@@ -1797,9 +2409,17 @@ Return a list of the rows.
 |------|------|-------------|
 | `result1` | [`List<Row>`][safeds.lang.List] | List of rows. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="732"
+    ```sds linenums="997"
     @Pure
     @PythonName("to_rows")
     fun toRows() -> result1: List<Row>
@@ -1824,9 +2444,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The table with the transformed column. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="560"
+    ```sds linenums="755"
     @Pure
     @PythonName("transform_column")
     fun transformColumn(
@@ -1853,9 +2481,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The transformed table. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="576"
+    ```sds linenums="776"
     @Pure
     @PythonName("transform_table")
     fun transformTable(
@@ -1879,9 +2515,17 @@ Return a table created from a list of columns.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The generated table. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="108"
+    ```sds linenums="158"
     @Pure
     @PythonName("from_columns")
     static fun fromColumns(
@@ -1905,9 +2549,17 @@ Read data from a CSV file into a table.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The table created from the CSV file. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="54"
+    ```sds linenums="84"
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
     @PythonName("from_csv_file")
     static fun fromCsvFile(
@@ -1931,9 +2583,17 @@ Create a table from a dictionary that maps column names to column values.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The generated table. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="95"
+    ```sds linenums="140"
     @Pure
     @PythonName("from_dict")
     static fun fromDict(
@@ -1959,9 +2619,17 @@ Valid file extensions are `.xls`, `.xlsx`, `.xlsm`, `.xlsb`, `.odf`, `.ods` and 
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The table created from the Excel file. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="69"
+    ```sds linenums="104"
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
     @PythonName("from_excel_file")
     static fun fromExcelFile(
@@ -1985,9 +2653,17 @@ Read data from a JSON file into a table.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The table created from the JSON file. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="82"
+    ```sds linenums="122"
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
     @PythonName("from_json_file")
     static fun fromJsonFile(
@@ -2011,9 +2687,17 @@ Return a table created from a list of rows.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The generated table. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="121"
+    ```sds linenums="176"
     @Pure
     @PythonName("from_rows")
     static fun fromRows(

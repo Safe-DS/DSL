@@ -2,71 +2,79 @@
 
 The declaration types that can be targeted by annotations.
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `annotationUsage.sdsstub`"
 
-    ```sds linenums="16"
+    ```sds linenums="26"
     enum AnnotationTarget {
-    
+
         /**
          * The annotation can be called on annotations.
          */
         Annotation
-    
+
         /**
          * The annotation can be called on attributes.
          */
         Attribute
-    
+
         /**
          * The annotation can be called on classes.
          */
         Class
-    
+
         /**
          * The annotation can be called on enums.
          */
         Enum
-    
+
         /**
          * The annotation can be called on enum variants.
          */
         EnumVariant
-    
+
         /**
          * The annotation can be called on functions.
          */
         Function
-    
+
         /**
          * The annotation can be called on modules (i.e. files).
          */
         Module
-    
+
         /**
          * The annotation can be called on parameters.
          */
         Parameter
-    
+
         /**
          * The annotation can be called on pipelines.
          */
         Pipeline
-    
+
         /**
          * The annotation can be called on results.
          */
         Result
-    
+
         /**
          * The annotation can be called on schemas.
          */
         Schema
-    
+
         /**
          * The annotation can be called on segments.
          */
         Segment
-    
+
         /**
          * The annotation can be called on type parameters.
          */

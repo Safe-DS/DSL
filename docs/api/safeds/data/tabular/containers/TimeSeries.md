@@ -11,9 +11,17 @@
 | `timeName` | [`String`][safeds.lang.String] | Name of the time column | - |
 | `featureNames` | [`List<String>?`][safeds.lang.List] | Names of the feature columns. If None, all columns except the target and time columns are used. | `#!sds null` |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="12"
+    ```sds linenums="17"
     class TimeSeries(
         data: Map<String, List<Any>>,
         @PythonName("target_name") targetName: String,
@@ -22,17 +30,32 @@
     ) sub Table {
         /**
          * Get the target column of the tagged table.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         attr target: Column
         /**
          * Get the feature columns of the tagged table.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         attr features: Table
         /**
          * Get the time column of the time series.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         attr time: Column
-    
+
         /**
          * Return a new `TimeSeries` with the provided column attached at the end, as neither target nor feature column.
          *
@@ -41,13 +64,18 @@
          * @param column The column to be added.
          *
          * @result result1 The time series with the column attached as neither target nor feature column.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("add_column")
         fun addColumn(
             column: Column
         ) -> result1: TimeSeries
-    
+
         /**
          * Return a new `TimeSeries` with the provided column attached at the end, as a feature column.
          *
@@ -56,13 +84,18 @@
          * @param column The column to be added.
          *
          * @result result1 The time series with the attached feature column.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("add_column_as_feature")
         fun addColumnAsFeature(
             column: Column
         ) -> result1: TimeSeries
-    
+
         /**
          * Return a new `TimeSeries` with the provided columns attached at the end, as feature columns.
          *
@@ -71,13 +104,18 @@
          * @param columns The columns to be added as features.
          *
          * @result result1 The time series with the attached feature columns.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("add_columns_as_features")
         fun addColumnsAsFeatures(
             columns: union<List<Column>, Table>
         ) -> result1: TimeSeries
-    
+
         /**
          * Return a new `TimeSeries` with multiple added columns, as neither target nor feature columns.
          *
@@ -86,13 +124,18 @@
          * @param columns The columns to be added.
          *
          * @result result1 A new time series combining the original table and the given columns as neither target nor feature columns.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("add_columns")
         fun addColumns(
             columns: union<List<Column>, Table>
         ) -> result1: TimeSeries
-    
+
         /**
          * Return a new `TimeSeries` with an extra Row attached.
          *
@@ -101,13 +144,18 @@
          * @param row The row to be added.
          *
          * @result result1 A new time series with the added row at the end.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("add_row")
         fun addRow(
             row: Row
         ) -> result1: TimeSeries
-    
+
         /**
          * Return a new `TimeSeries` with multiple extra Rows attached.
          *
@@ -116,13 +164,18 @@
          * @param rows The rows to be added.
          *
          * @result result1 A new time series which combines the original time series and the given rows.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("add_rows")
         fun addRows(
             rows: union<List<Row>, Table>
         ) -> result1: TimeSeries
-    
+
         /**
          * Return a new `TimeSeries` containing only rows that match the given Callable (e.g. lambda function).
          *
@@ -131,13 +184,18 @@
          * @param query A Callable that is applied to all rows.
          *
          * @result result1 A time series containing only the rows to match the query.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("filter_rows")
         fun filterRows(
             query: (param1: Row) -> param2: Boolean
         ) -> result1: TimeSeries
-    
+
         /**
          * Return a new `TimeSeries` with only the given column(s).
          *
@@ -146,13 +204,18 @@
          * @param columnNames A list containing the columns to be kept.
          *
          * @result result1 A time series containing only the given column(s).
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("keep_only_columns")
         fun keepOnlyColumns(
             @PythonName("column_names") columnNames: List<String>
         ) -> result1: TimeSeries
-    
+
         /**
          * Return a new `TimeSeries` with the given column(s) removed from the time series.
          *
@@ -161,57 +224,82 @@
          * @param columnNames The names of all columns to be dropped.
          *
          * @result result1 A time series without the given columns.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("remove_columns")
         fun removeColumns(
             @PythonName("column_names") columnNames: List<String>
         ) -> result1: TimeSeries
-    
+
         /**
          * Return a new `TimeSeries` with every column that misses values removed.
          *
          * The original time series is not modified.
          *
          * @result result1 A time series without the columns that contain missing values.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("remove_columns_with_missing_values")
         fun removeColumnsWithMissingValues() -> result1: TimeSeries
-    
+
         /**
          * Return a new `TimeSeries` with every column that contains non-numerical values removed.
          *
          * The original time series is not modified.
          *
          * @result result1 A time series without the columns that contain non-numerical values.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("remove_columns_with_non_numerical_values")
         fun removeColumnsWithNonNumericalValues() -> result1: TimeSeries
-    
+
         /**
          * Return a new `TimeSeries` with all row duplicates removed.
          *
          * The original time series is not modified.
          *
          * @result result1 The time series with the duplicate rows removed.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("remove_duplicate_rows")
         fun removeDuplicateRows() -> result1: TimeSeries
-    
+
         /**
          * Return a new `TimeSeries` without the rows that contain missing values.
          *
          * The original time series is not modified.
          *
          * @result result1 A time series without the rows that contain missing values.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("remove_rows_with_missing_values")
         fun removeRowsWithMissingValues() -> result1: TimeSeries
-    
+
         /**
          * Return a new `TimeSeries` with all rows that contain at least one outlier removed.
          *
@@ -222,11 +310,16 @@
          * The original time series is not modified.
          *
          * @result result1 A new time series without rows containing outliers.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("remove_rows_with_outliers")
         fun removeRowsWithOutliers() -> result1: TimeSeries
-    
+
         /**
          * Return a new `TimeSeries` with a single column renamed.
          *
@@ -236,6 +329,11 @@
          * @param newName The new name of the column.
          *
          * @result result1 The time series with the renamed column.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("rename_column")
@@ -243,7 +341,7 @@
             @PythonName("old_name") oldName: String,
             @PythonName("new_name") newName: String
         ) -> result1: TimeSeries
-    
+
         /**
          * Return a new `TimeSeries` with the specified old column replaced by a list of new columns.
          *
@@ -257,6 +355,11 @@
          * @param newColumns The new columns replacing the old column.
          *
          * @result result1 A time series with the old column replaced by the new columns.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("replace_column")
@@ -264,7 +367,7 @@
             @PythonName("old_column_name") oldColumnName: String,
             @PythonName("new_columns") newColumns: List<Column>
         ) -> result1: TimeSeries
-    
+
         /**
          * Slice a part of the table into a new `TimeSeries`.
          *
@@ -275,6 +378,11 @@
          * @param step The step size used to iterate through the time series, 1 by default.
          *
          * @result result1 The resulting time series.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("slice_rows")
@@ -283,7 +391,7 @@
             end: Int? = null,
             step: Int = 1
         ) -> result1: TimeSeries
-    
+
         /**
          * Sort the columns of a `TimeSeries` with the given comparator and return a new `TimeSeries`.
          *
@@ -301,13 +409,18 @@
          * @param comparator The function used to compare two columns.
          *
          * @result result1 A new time series with sorted columns.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("sort_columns")
         fun sortColumns(
             comparator: (param1: Column, param2: Column) -> param3: Int
         ) -> result1: TimeSeries
-    
+
         /**
          * Return a new `TimeSeries` with the provided column transformed by calling the provided transformer.
          *
@@ -317,6 +430,11 @@
          * @param transformer The transformer to the given column
          *
          * @result result1 The time series with the transformed column.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("transform_column")
@@ -324,20 +442,25 @@
             name: String,
             transformer: (param1: Row) -> param2: Any
         ) -> result1: TimeSeries
-    
+
         /**
          * Plot a lagplot for the target column.
          *
          * @param lag The amount of lag used to plot
          *
          * @result result1 The plot as an image.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("plot_lagplot")
         fun plotLagplot(
             lag: Int
         ) -> result1: Image
-    
+
         /**
          * Plot the time series target or the given column(s) as line plot.
          *
@@ -348,6 +471,11 @@
          * @param yColumnName The column name of the column to be plotted on the y-Axis, default is the target column.
          *
          * @result result1 The plot as an image.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("plot_lineplot")
@@ -355,7 +483,7 @@
             @PythonName("x_column_name") xColumnName: String? = null,
             @PythonName("y_column_name") yColumnName: String? = null
         ) -> result1: Image
-    
+
         /**
          * Plot the time series target or the given column(s) as scatter plot.
          *
@@ -366,6 +494,11 @@
          * @param yColumnName The column name of the column to be plotted on the y-Axis.
          *
          * @result result1 The plot as an image.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("plot_scatterplot")
@@ -384,11 +517,27 @@ Alias for self.schema.column_names -> list[str].
 
 **Type:** [`List<String>`][safeds.lang.List]
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ## `#!sds attr` features {#safeds.data.tabular.containers.TimeSeries.features data-toc-label='features'}
 
 Get the feature columns of the tagged table.
 
 **Type:** [`Table`][safeds.data.tabular.containers.Table]
+
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
 
 ## `#!sds attr` numberOfColumns {#safeds.data.tabular.containers.TimeSeries.numberOfColumns data-toc-label='numberOfColumns'}
 
@@ -396,11 +545,27 @@ Return the number of columns.
 
 **Type:** [`Int`][safeds.lang.Int]
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ## `#!sds attr` numberOfRows {#safeds.data.tabular.containers.TimeSeries.numberOfRows data-toc-label='numberOfRows'}
 
 Return the number of rows.
 
 **Type:** [`Int`][safeds.lang.Int]
+
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
 
 ## `#!sds attr` schema {#safeds.data.tabular.containers.TimeSeries.schema data-toc-label='schema'}
 
@@ -408,17 +573,41 @@ Return the schema of the table.
 
 **Type:** [`Schema`][safeds.data.tabular.typing.Schema]
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ## `#!sds attr` target {#safeds.data.tabular.containers.TimeSeries.target data-toc-label='target'}
 
 Get the target column of the tagged table.
 
 **Type:** [`Column<Any?>`][safeds.data.tabular.containers.Column]
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ## `#!sds attr` time {#safeds.data.tabular.containers.TimeSeries.time data-toc-label='time'}
 
 Get the time column of the time series.
 
 **Type:** [`Column<Any?>`][safeds.data.tabular.containers.Column]
+
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
 
 ## `#!sds fun` addColumn {#safeds.data.tabular.containers.TimeSeries.addColumn data-toc-label='addColumn'}
 
@@ -438,9 +627,17 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | The time series with the column attached as neither target nor feature column. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="40"
+    ```sds linenums="65"
     @Pure
     @PythonName("add_column")
     fun addColumn(
@@ -466,9 +663,17 @@ the original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | The time series with the attached feature column. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="55"
+    ```sds linenums="85"
     @Pure
     @PythonName("add_column_as_feature")
     fun addColumnAsFeature(
@@ -494,9 +699,17 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A new time series combining the original table and the given columns as neither target nor feature columns. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="85"
+    ```sds linenums="125"
     @Pure
     @PythonName("add_columns")
     fun addColumns(
@@ -522,9 +735,17 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | The time series with the attached feature columns. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="70"
+    ```sds linenums="105"
     @Pure
     @PythonName("add_columns_as_features")
     fun addColumnsAsFeatures(
@@ -550,9 +771,17 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A new time series with the added row at the end. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="100"
+    ```sds linenums="145"
     @Pure
     @PythonName("add_row")
     fun addRow(
@@ -578,9 +807,17 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A new time series which combines the original time series and the given rows. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="115"
+    ```sds linenums="165"
     @Pure
     @PythonName("add_rows")
     fun addRows(
@@ -606,9 +843,17 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A time series containing only the rows to match the query. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="130"
+    ```sds linenums="185"
     @Pure
     @PythonName("filter_rows")
     fun filterRows(
@@ -632,9 +877,17 @@ Return a column with the data of the specified column.
 |------|------|-------------|
 | `result1` | [`Column<Any?>`][safeds.data.tabular.containers.Column] | The column. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="134"
+    ```sds linenums="194"
     @Pure
     @PythonName("get_column")
     fun getColumn(
@@ -660,9 +913,17 @@ Alias for self.schema.get_type_of_column(column_name: str) -> ColumnType.
 |------|------|-------------|
 | `result1` | [`ColumnType`][safeds.data.tabular.typing.ColumnType] | The type of the column. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="164"
+    ```sds linenums="234"
     @Pure
     @PythonName("get_column_type")
     fun getColumnType(
@@ -686,9 +947,17 @@ Return the row at a specified index.
 |------|------|-------------|
 | `result1` | [`Row`][safeds.data.tabular.containers.Row] | The row of the table at the index. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="177"
+    ```sds linenums="252"
     @Pure
     @PythonName("get_row")
     fun getRow(
@@ -720,9 +989,17 @@ The original table is not modified.
 |------|-------------|-------------|---------|
 | `T` | [`Any?`][safeds.lang.Any] | - | - |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="284"
+    ```sds linenums="394"
     @Pure
     @PythonName("group_rows_by")
     fun groupRowsBy<T>(
@@ -748,9 +1025,17 @@ Alias for self.schema.hasColumn(column_name: str) -> bool.
 |------|------|-------------|
 | `result1` | [`Boolean`][safeds.lang.Boolean] | True if the column exists. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="149"
+    ```sds linenums="214"
     @Pure
     @PythonName("has_column")
     fun hasColumn(
@@ -776,9 +1061,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The original table. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="591"
+    ```sds linenums="796"
     @Pure
     @PythonName("inverse_transform_table")
     fun inverseTransformTable(
@@ -804,9 +1097,17 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A time series containing only the given column(s). |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="145"
+    ```sds linenums="205"
     @Pure
     @PythonName("keep_only_columns")
     fun keepOnlyColumns(
@@ -824,9 +1125,17 @@ Plot a boxplot for every numerical column.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="644"
+    ```sds linenums="869"
     @Pure
     @PythonName("plot_boxplots")
     fun plotBoxplots() -> result1: Image
@@ -842,9 +1151,17 @@ Plot a correlation heatmap for all numerical columns of this `Table`.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="602"
+    ```sds linenums="812"
     @Pure
     @PythonName("plot_correlation_heatmap")
     fun plotCorrelationHeatmap() -> result1: Image
@@ -860,9 +1177,17 @@ Plot a histogram for every column.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="653"
+    ```sds linenums="883"
     @Pure
     @PythonName("plot_histograms")
     fun plotHistograms() -> result1: Image
@@ -884,9 +1209,17 @@ Plot a lagplot for the target column.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="330"
+    ```sds linenums="450"
     @Pure
     @PythonName("plot_lagplot")
     fun plotLagplot(
@@ -914,9 +1247,17 @@ default value for x_column_name.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="347"
+    ```sds linenums="472"
     @Pure
     @PythonName("plot_lineplot")
     fun plotLineplot(
@@ -945,9 +1286,17 @@ default value for y_column_name.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="365"
+    ```sds linenums="495"
     @Pure
     @PythonName("plot_scatterplot")
     fun plotScatterplot(
@@ -974,9 +1323,17 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A time series without the given columns. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="160"
+    ```sds linenums="225"
     @Pure
     @PythonName("remove_columns")
     fun removeColumns(
@@ -996,9 +1353,17 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A time series without the columns that contain missing values. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="173"
+    ```sds linenums="243"
     @Pure
     @PythonName("remove_columns_with_missing_values")
     fun removeColumnsWithMissingValues() -> result1: TimeSeries
@@ -1016,9 +1381,17 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A time series without the columns that contain non-numerical values. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="184"
+    ```sds linenums="259"
     @Pure
     @PythonName("remove_columns_with_non_numerical_values")
     fun removeColumnsWithNonNumericalValues() -> result1: TimeSeries
@@ -1036,9 +1409,17 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | The time series with the duplicate rows removed. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="195"
+    ```sds linenums="275"
     @Pure
     @PythonName("remove_duplicate_rows")
     fun removeDuplicateRows() -> result1: TimeSeries
@@ -1056,9 +1437,17 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A time series without the rows that contain missing values. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="206"
+    ```sds linenums="291"
     @Pure
     @PythonName("remove_rows_with_missing_values")
     fun removeRowsWithMissingValues() -> result1: TimeSeries
@@ -1080,9 +1469,17 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A new time series without rows containing outliers. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="221"
+    ```sds linenums="311"
     @Pure
     @PythonName("remove_rows_with_outliers")
     fun removeRowsWithOutliers() -> result1: TimeSeries
@@ -1107,9 +1504,17 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | The time series with the renamed column. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="235"
+    ```sds linenums="330"
     @Pure
     @PythonName("rename_column")
     fun renameColumn(
@@ -1141,9 +1546,17 @@ The order of columns is kept. The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A time series with the old column replaced by the new columns. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="256"
+    ```sds linenums="356"
     @Pure
     @PythonName("replace_column")
     fun replaceColumn(
@@ -1164,9 +1577,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The shuffled Table. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="430"
+    ```sds linenums="590"
     @Pure
     @PythonName("shuffle_rows")
     fun shuffleRows() -> result1: Table
@@ -1192,9 +1613,17 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | The resulting time series. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="274"
+    ```sds linenums="379"
     @Pure
     @PythonName("slice_rows")
     fun sliceRows(
@@ -1231,9 +1660,17 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A new time series with sorted columns. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="300"
+    ```sds linenums="410"
     @Pure
     @PythonName("sort_columns")
     fun sortColumns(
@@ -1266,9 +1703,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A new table with sorted rows. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="493"
+    ```sds linenums="668"
     @Pure
     @PythonName("sort_rows")
     fun sortRows(
@@ -1295,9 +1740,17 @@ The original table is not modified.
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | A tuple containing the two resulting tables. The first table has the specified size, the second table contains the rest of the data. |
 | `result2` | [`Table`][safeds.data.tabular.containers.Table] | A tuple containing the two resulting tables. The first table has the specified size, the second table contains the rest of the data. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="511"
+    ```sds linenums="691"
     @Pure
     @PythonName("split_rows")
     fun splitRows(
@@ -1317,9 +1770,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The table with statistics. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="190"
+    ```sds linenums="270"
     @Pure
     @PythonName("summarize_statistics")
     fun summarizeStatistics() -> result1: Table
@@ -1344,9 +1805,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A new tagged table with the given target and feature names. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="527"
+    ```sds linenums="712"
     @Pure
     @PythonName("tag_columns")
     fun tagColumns(
@@ -1375,9 +1844,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A new time series with the given target, time and feature names. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="545"
+    ```sds linenums="735"
     @Pure
     @PythonName("time_columns")
     fun timeColumns(
@@ -1397,9 +1874,17 @@ Return a list of the columns.
 |------|------|-------------|
 | `result1` | [`List<Column<Any?>>`][safeds.lang.List] | List of columns. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="723"
+    ```sds linenums="983"
     @Pure
     @PythonName("to_columns")
     fun toColumns() -> result1: List<Column>
@@ -1418,9 +1903,17 @@ overwritten.
 |------|------|-------------|---------|
 | `path` | [`String`][safeds.lang.String] | The path to the output file. | - |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="665"
+    ```sds linenums="900"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_csv_file")
     fun toCsvFile(
@@ -1438,9 +1931,17 @@ Return a dictionary that maps column names to column values.
 |------|------|-------------|
 | `result1` | [`Map<String, List<Any>>`][safeds.lang.Map] | Dictionary representation of the table. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="705"
+    ```sds linenums="955"
     @Pure
     @PythonName("to_dict")
     fun toDict() -> result1: Map<String, List<Any>>
@@ -1460,9 +1961,17 @@ overwritten.
 |------|------|-------------|---------|
 | `path` | [`String`][safeds.lang.String] | The path to the output file. | - |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="680"
+    ```sds linenums="920"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_excel_file")
     fun toExcelFile(
@@ -1480,9 +1989,17 @@ Return an HTML representation of the table.
 |------|------|-------------|
 | `result1` | [`String`][safeds.lang.String] | The generated HTML. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="714"
+    ```sds linenums="969"
     @Pure
     @PythonName("to_html")
     fun toHtml() -> result1: String
@@ -1501,9 +2018,17 @@ overwritten.
 |------|------|-------------|---------|
 | `path` | [`String`][safeds.lang.String] | The path to the output file. | - |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="694"
+    ```sds linenums="939"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_json_file")
     fun toJsonFile(
@@ -1521,9 +2046,17 @@ Return a list of the rows.
 |------|------|-------------|
 | `result1` | [`List<Row>`][safeds.lang.List] | List of rows. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="732"
+    ```sds linenums="997"
     @Pure
     @PythonName("to_rows")
     fun toRows() -> result1: List<Row>
@@ -1548,9 +2081,17 @@ The original time series is not modified.
 |------|------|-------------|
 | `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | The time series with the transformed column. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="316"
+    ```sds linenums="431"
     @Pure
     @PythonName("transform_column")
     fun transformColumn(
@@ -1577,9 +2118,17 @@ The original table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The transformed table. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="576"
+    ```sds linenums="776"
     @Pure
     @PythonName("transform_table")
     fun transformTable(

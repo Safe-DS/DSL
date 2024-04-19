@@ -7,6 +7,11 @@ from safeds.ml.classical.classification import Classifier
  * Random forest classification.
  *
  * @param numberOfTrees The number of trees to be used in the random forest. Has to be greater than 0.
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 class RandomForestClassifier(
     @PythonName("number_of_trees") const numberOfTrees: Int = 100
@@ -15,6 +20,11 @@ class RandomForestClassifier(
 } {
     /**
      * Get the number of trees used in the random forest.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @PythonName("number_of_trees") attr numberOfTrees: Int
 
@@ -26,6 +36,11 @@ class RandomForestClassifier(
      * @param trainingSet The training data containing the feature and target vectors.
      *
      * @result fittedClassifier The fitted classifier.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun fit(

@@ -13,9 +13,17 @@ Learn a transformation for a set of columns in a `Table` and transform another `
 - [`Imputer`][safeds.data.tabular.transformation.Imputer]
 - [`InvertibleTableTransformer`][safeds.data.tabular.transformation.InvertibleTableTransformer]
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table_transformer.sdsstub`"
 
-    ```sds linenums="8"
+    ```sds linenums="13"
     class TableTransformer {
         /**
          * Learn a transformation for a set of columns in a table.
@@ -26,13 +34,18 @@ Learn a transformation for a set of columns in a `Table` and transform another `
          * @param columnNames The list of columns from the table used to fit the transformer. If `None`, all columns are used.
          *
          * @result result1 The fitted transformer.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         fun fit(
             table: Table,
             @PythonName("column_names") columnNames: List<String>?
         ) -> result1: TableTransformer
-    
+
         /**
          * Apply the learned transformation to a table.
          *
@@ -41,48 +54,73 @@ Learn a transformation for a set of columns in a `Table` and transform another `
          * @param table The table to which the learned transformation is applied.
          *
          * @result result1 The transformed table.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         fun transform(
             table: Table
         ) -> result1: Table
-    
+
         /**
          * Get the names of all new columns that have been added by the transformer.
          *
          * @result result1 A list of names of the added columns, ordered as they will appear in the table.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("get_names_of_added_columns")
         fun getNamesOfAddedColumns() -> result1: List<String>
-    
+
         /**
          * Get the names of all columns that have been changed by the transformer.
          *
          * @result result1 A list of names of changed columns, ordered as they appear in the table.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("get_names_of_changed_columns")
         fun getNamesOfChangedColumns() -> result1: List<String>
-    
+
         /**
          * Get the names of all columns that have been removed by the transformer.
          *
          * @result result1 A list of names of the removed columns, ordered as they appear in the table the transformer was fitted on.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("get_names_of_removed_columns")
         fun getNamesOfRemovedColumns() -> result1: List<String>
-    
+
         /**
          * Check if the transformer is fitted.
          *
          * @result result1 Whether the transformer is fitted.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("is_fitted")
         fun isFitted() -> result1: Boolean
-    
+
         /**
          * Learn a transformation for a set of columns in a table and apply the learned transformation to the same table.
          *
@@ -92,6 +130,11 @@ Learn a transformation for a set of columns in a `Table` and transform another `
          * @param columnNames The list of columns from the table used to fit the transformer. If `None`, all columns are used.
          *
          * @result result1 The transformed table.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("fit_and_transform")
@@ -121,9 +164,17 @@ This transformer is not modified.
 |------|------|-------------|
 | `result1` | [`TableTransformer`][safeds.data.tabular.transformation.TableTransformer] | The fitted transformer. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table_transformer.sdsstub`"
 
-    ```sds linenums="19"
+    ```sds linenums="29"
     @Pure
     fun fit(
         table: Table,
@@ -150,9 +201,17 @@ The table is not modified. If you also need the fitted transformer, use `fit` an
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The transformed table. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table_transformer.sdsstub`"
 
-    ```sds linenums="85"
+    ```sds linenums="125"
     @Pure
     @PythonName("fit_and_transform")
     fun fitAndTransform(
@@ -171,9 +230,17 @@ Get the names of all new columns that have been added by the transformer.
 |------|------|-------------|
 | `result1` | [`List<String>`][safeds.lang.List] | A list of names of the added columns, ordered as they will appear in the table. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table_transformer.sdsstub`"
 
-    ```sds linenums="44"
+    ```sds linenums="64"
     @Pure
     @PythonName("get_names_of_added_columns")
     fun getNamesOfAddedColumns() -> result1: List<String>
@@ -189,9 +256,17 @@ Get the names of all columns that have been changed by the transformer.
 |------|------|-------------|
 | `result1` | [`List<String>`][safeds.lang.List] | A list of names of changed columns, ordered as they appear in the table. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table_transformer.sdsstub`"
 
-    ```sds linenums="53"
+    ```sds linenums="78"
     @Pure
     @PythonName("get_names_of_changed_columns")
     fun getNamesOfChangedColumns() -> result1: List<String>
@@ -207,9 +282,17 @@ Get the names of all columns that have been removed by the transformer.
 |------|------|-------------|
 | `result1` | [`List<String>`][safeds.lang.List] | A list of names of the removed columns, ordered as they appear in the table the transformer was fitted on. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table_transformer.sdsstub`"
 
-    ```sds linenums="62"
+    ```sds linenums="92"
     @Pure
     @PythonName("get_names_of_removed_columns")
     fun getNamesOfRemovedColumns() -> result1: List<String>
@@ -225,9 +308,17 @@ Check if the transformer is fitted.
 |------|------|-------------|
 | `result1` | [`Boolean`][safeds.lang.Boolean] | Whether the transformer is fitted. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table_transformer.sdsstub`"
 
-    ```sds linenums="71"
+    ```sds linenums="106"
     @Pure
     @PythonName("is_fitted")
     fun isFitted() -> result1: Boolean
@@ -251,9 +342,17 @@ The table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The transformed table. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table_transformer.sdsstub`"
 
-    ```sds linenums="34"
+    ```sds linenums="49"
     @Pure
     fun transform(
         table: Table

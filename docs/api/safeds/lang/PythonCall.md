@@ -17,9 +17,17 @@ call. `$this` is replaced by the receiver of the call. `$param` is replaced by t
 
 - `Function`
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `codeGeneration.sdsstub`"
 
-    ```sds linenums="13"
+    ```sds linenums="18"
     annotation PythonCall(
         callSpecification: String
     )

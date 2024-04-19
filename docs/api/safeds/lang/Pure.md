@@ -10,8 +10,16 @@ reordering of calls or parallelization.
 
 - `Function`
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `purity.sdsstub`"
 
-    ```sds linenums="12"
+    ```sds linenums="17"
     annotation Pure
     ```

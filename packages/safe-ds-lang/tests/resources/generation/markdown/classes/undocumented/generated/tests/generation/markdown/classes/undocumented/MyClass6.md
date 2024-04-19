@@ -10,10 +10,10 @@
     class MyClass6 {
         attr myAttribute1: Int
         static attr myAttribute2: Float
-    
+
         @Pure fun myFunction1()
         @Pure static fun myFunction2()
-    
+
         class MyClass7
         enum MyEnum1 {
             MyVariant1

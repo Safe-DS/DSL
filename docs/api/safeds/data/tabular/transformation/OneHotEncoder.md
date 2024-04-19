@@ -27,9 +27,17 @@ One-hot encoding is closely related to dummy variable / indicator variables, whi
 
 **Parent type:** [`InvertibleTableTransformer`][safeds.data.tabular.transformation.InvertibleTableTransformer]
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `one_hot_encoder.sdsstub`"
 
-    ```sds linenums="32"
+    ```sds linenums="37"
     class OneHotEncoder() sub InvertibleTableTransformer {
         /**
          * Learn a transformation for a set of columns in a table.
@@ -40,6 +48,11 @@ One-hot encoding is closely related to dummy variable / indicator variables, whi
          * @param columnNames The list of columns from the table used to fit the transformer. If `None`, all columns are used.
          *
          * @result result1 The fitted transformer.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         fun fit(
@@ -68,9 +81,17 @@ This transformer is not modified.
 |------|------|-------------|
 | `result1` | [`OneHotEncoder`][safeds.data.tabular.transformation.OneHotEncoder] | The fitted transformer. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `one_hot_encoder.sdsstub`"
 
-    ```sds linenums="43"
+    ```sds linenums="53"
     @Pure
     fun fit(
         table: Table,
@@ -97,9 +118,17 @@ The table is not modified. If you also need the fitted transformer, use `fit` an
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The transformed table. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table_transformer.sdsstub`"
 
-    ```sds linenums="85"
+    ```sds linenums="125"
     @Pure
     @PythonName("fit_and_transform")
     fun fitAndTransform(
@@ -118,9 +147,17 @@ Get the names of all new columns that have been added by the transformer.
 |------|------|-------------|
 | `result1` | [`List<String>`][safeds.lang.List] | A list of names of the added columns, ordered as they will appear in the table. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table_transformer.sdsstub`"
 
-    ```sds linenums="44"
+    ```sds linenums="64"
     @Pure
     @PythonName("get_names_of_added_columns")
     fun getNamesOfAddedColumns() -> result1: List<String>
@@ -136,9 +173,17 @@ Get the names of all columns that have been changed by the transformer.
 |------|------|-------------|
 | `result1` | [`List<String>`][safeds.lang.List] | A list of names of changed columns, ordered as they appear in the table. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table_transformer.sdsstub`"
 
-    ```sds linenums="53"
+    ```sds linenums="78"
     @Pure
     @PythonName("get_names_of_changed_columns")
     fun getNamesOfChangedColumns() -> result1: List<String>
@@ -154,9 +199,17 @@ Get the names of all columns that have been removed by the transformer.
 |------|------|-------------|
 | `result1` | [`List<String>`][safeds.lang.List] | A list of names of the removed columns, ordered as they appear in the table the transformer was fitted on. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table_transformer.sdsstub`"
 
-    ```sds linenums="62"
+    ```sds linenums="92"
     @Pure
     @PythonName("get_names_of_removed_columns")
     fun getNamesOfRemovedColumns() -> result1: List<String>
@@ -180,9 +233,17 @@ The table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The original table. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table_transformer.sdsstub`"
 
-    ```sds linenums="120"
+    ```sds linenums="175"
     @Pure
     @PythonName("inverse_transform")
     fun inverseTransform(
@@ -200,9 +261,17 @@ Check if the transformer is fitted.
 |------|------|-------------|
 | `result1` | [`Boolean`][safeds.lang.Boolean] | Whether the transformer is fitted. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table_transformer.sdsstub`"
 
-    ```sds linenums="71"
+    ```sds linenums="106"
     @Pure
     @PythonName("is_fitted")
     fun isFitted() -> result1: Boolean
@@ -226,9 +295,17 @@ The table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The transformed table. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `table_transformer.sdsstub`"
 
-    ```sds linenums="34"
+    ```sds linenums="49"
     @Pure
     fun transform(
         table: Table

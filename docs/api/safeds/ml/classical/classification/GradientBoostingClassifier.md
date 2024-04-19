@@ -11,9 +11,17 @@ Gradient boosting classification.
 | `numberOfTrees` | [`Int`][safeds.lang.Int] | The number of boosting stages to perform. Gradient boosting is fairly robust to over-fitting so a large number usually results in better performance. | `#!sds 100` |
 | `learningRate` | [`Float`][safeds.lang.Float] | The larger the value, the more the model is influenced by each additional tree. If the learning rate is too low, the model might underfit. If the learning rate is too high, the model might overfit. | `#!sds 0.1` |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `gradient_boosting.sdsstub`"
 
-    ```sds linenums="14"
+    ```sds linenums="19"
     class GradientBoostingClassifier(
         @PythonName("number_of_trees") const numberOfTrees: Int = 100,
         @PythonName("learning_rate") const learningRate: Float = 0.1
@@ -23,13 +31,23 @@ Gradient boosting classification.
     } {
         /**
          * Get the number of trees (estimators) in the ensemble.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @PythonName("number_of_trees") attr numberOfTrees: Int
         /**
          * Get the learning rate.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @PythonName("learning_rate") attr learningRate: Float
-    
+
         /**
          * Create a copy of this classifier and fit it with the given training data.
          *
@@ -38,6 +56,11 @@ Gradient boosting classification.
          * @param trainingSet The training data containing the feature and target vectors.
          *
          * @result fittedClassifier The fitted classifier.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         fun fit(
@@ -52,11 +75,27 @@ Get the learning rate.
 
 **Type:** [`Float`][safeds.lang.Float]
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ## `#!sds attr` numberOfTrees {#safeds.ml.classical.classification.GradientBoostingClassifier.numberOfTrees data-toc-label='numberOfTrees'}
 
 Get the number of trees (estimators) in the ensemble.
 
 **Type:** [`Int`][safeds.lang.Int]
+
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
 
 ## `#!sds fun` accuracy {#safeds.ml.classical.classification.GradientBoostingClassifier.accuracy data-toc-label='accuracy'}
 
@@ -74,9 +113,17 @@ Compute the accuracy of the classifier on the given data.
 |------|------|-------------|
 | `accuracy` | [`Float`][safeds.lang.Float] | The calculated accuracy score, i.e. the percentage of equal data. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="51"
+    ```sds linenums="76"
     @Pure
     fun accuracy(
         @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable
@@ -100,9 +147,17 @@ Compute the classifier's $F_1$-score on the given data.
 |------|------|-------------|
 | `f1Score` | [`Float`][safeds.lang.Float] | The calculated $F_1$-score, i.e. the harmonic mean between precision and recall. Return 1 if there are no positive expectations and predictions. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="95"
+    ```sds linenums="135"
     @Pure
     @PythonName("f1_score")
     fun f1Score(
@@ -129,9 +184,17 @@ This classifier is not modified.
 |------|------|-------------|
 | `fittedClassifier` | [`GradientBoostingClassifier`][safeds.ml.classical.classification.GradientBoostingClassifier] | The fitted classifier. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `gradient_boosting.sdsstub`"
 
-    ```sds linenums="39"
+    ```sds linenums="59"
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TaggedTable
@@ -148,9 +211,17 @@ Check if the classifier is fitted.
 |------|------|-------------|
 | `isFitted` | [`Boolean`][safeds.lang.Boolean] | Whether the classifier is fitted. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="40"
+    ```sds linenums="60"
     @Pure
     @PythonName("is_fitted")
     fun isFitted() -> isFitted: Boolean
@@ -173,9 +244,17 @@ Compute the classifier's precision on the given data.
 |------|------|-------------|
 | `precision` | [`Float`][safeds.lang.Float] | The calculated precision score, i.e. the ratio of correctly predicted positives to all predicted positives. Return 1 if no positive predictions are made. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="65"
+    ```sds linenums="95"
     @Pure
     fun precision(
         @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable,
@@ -199,9 +278,17 @@ Predict a target vector using a dataset containing feature vectors. The model ha
 |------|------|-------------|
 | `prediction` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A dataset containing the given feature vectors and the predicted target vector. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="30"
+    ```sds linenums="45"
     @Pure
     fun predict(
         dataset: Table
@@ -225,9 +312,17 @@ Compute the classifier's recall on the given data.
 |------|------|-------------|
 | `recall` | [`Float`][safeds.lang.Float] | The calculated recall score, i.e. the ratio of correctly predicted positives to all expected positives. Return 1 if there are no positive expectations. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="80"
+    ```sds linenums="115"
     @Pure
     fun recall(
         @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable,

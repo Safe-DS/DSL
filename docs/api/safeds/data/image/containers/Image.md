@@ -2,23 +2,46 @@
 
 A container for image data.
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="6"
+    ```sds linenums="11"
     class Image {
         /**
          * Get the width of the image in pixels.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         attr width: Int
         /**
          * Get the height of the image in pixels.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         attr height: Int
         /**
          * Get the number of channels of the image.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         attr channel: Int
-    
+
         /**
          * Create an image from a file.
          *
@@ -26,35 +49,50 @@ A container for image data.
          * @param device The device where the tensor will be saved on. Defaults to the default device
          *
          * @result result1 The image.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
         @PythonName("from_file")
         static fun fromFile(
             path: String
         ) -> result1: Image
-    
+
         /**
          * Save the image as a JPEG file.
          *
          * @param path The path to the JPEG file.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
         @PythonName("to_jpeg_file")
         fun toJpegFile(
             path: String
         )
-    
+
         /**
          * Save the image as a PNG file.
          *
          * @param path The path to the PNG file.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
         @PythonName("to_png_file")
         fun toPngFile(
             path: String
         )
-    
+
         /**
          * Return a new `Image` that has the given number of channels.
          *
@@ -69,7 +107,7 @@ A container for image data.
         fun changeChannel(
             channel: Int
         ) -> result1: Image
-    
+
         /**
          * Return a new `Image` that has been resized to a given size.
          *
@@ -79,6 +117,11 @@ A container for image data.
          * @param newHeight The new height of the image.
          *
          * @result result1 The image with the given width and height.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         fun resize(
@@ -88,18 +131,23 @@ A container for image data.
             newWidth >= 0,
             newHeight >= 0
         }
-    
+
         /**
          * Return a new `Image` that is converted to grayscale.
          *
          * The original image is not modified.
          *
          * @result result1 The grayscale image.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("convert_to_grayscale")
         fun convertToGrayscale() -> result1: Image
-    
+
         /**
          * Return a new `Image` that has been cropped to a given bounding rectangle.
          *
@@ -111,6 +159,11 @@ A container for image data.
          * @param height The height of the bounding rectangle.
          *
          * @result result1 The cropped image.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         fun crop(
@@ -124,29 +177,39 @@ A container for image data.
             width >= 0,
             height >= 0
         }
-    
+
         /**
          * Return a new `Image` that is flipped vertically (horizontal axis, flips up-down and vice versa).
          *
          * The original image is not modified.
          *
          * @result result1 The flipped image.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("flip_vertically")
         fun flipVertically() -> result1: Image
-    
+
         /**
          * Return a new `Image` that is flipped horizontally (vertical axis, flips left-right and vice versa).
          *
          * The original image is not modified.
          *
          * @result result1 The flipped image.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("flip_horizontally")
         fun flipHorizontally() -> result1: Image
-    
+
         /**
          * Return a new `Image` with an adjusted brightness.
          *
@@ -159,6 +222,11 @@ A container for image data.
          * Has to be bigger than or equal to 0 (black).
          *
          * @result result1 The Image with adjusted brightness.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("adjust_brightness")
@@ -167,7 +235,7 @@ A container for image data.
         ) -> result1: Image where {
             factor >= 0.0
         }
-    
+
         /**
          * Return a new `Image` with noise added to the image.
          *
@@ -176,6 +244,11 @@ A container for image data.
          * @param standardDeviation The standard deviation of the normal distribution. Has to be bigger than or equal to 0.
          *
          * @result result1 The image with added noise.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("add_noise")
@@ -184,7 +257,7 @@ A container for image data.
         ) -> result1: Image where {
             standardDeviation >= 0.0
         }
-    
+
         /**
          * Return a new `Image` with adjusted contrast.
          *
@@ -196,6 +269,11 @@ A container for image data.
          * Has to be bigger than or equal to 0 (gray).
          *
          * @result result1 New image with adjusted contrast.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("adjust_contrast")
@@ -204,7 +282,7 @@ A container for image data.
         ) -> result1: Image where {
             factor >= 0.0
         }
-    
+
         /**
          * Return a new `Image` with adjusted color balance.
          *
@@ -216,6 +294,11 @@ A container for image data.
          * If factor > 1, increase color balance of image.
          *
          * @result result1 The new, adjusted image.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("adjust_color_balance")
@@ -224,7 +307,7 @@ A container for image data.
         ) -> result1: Image where {
             factor >= 0.0
         }
-    
+
         /**
          * Return a blurred version of the image.
          *
@@ -234,6 +317,11 @@ A container for image data.
          * each direction. A radius of 1 will result in a united box of 9 pixels.
          *
          * @result result1 The blurred image.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         fun blur(
@@ -241,7 +329,7 @@ A container for image data.
         ) -> result1: Image where {
             radius >= 0
         }
-    
+
         /**
          * Return a sharpened version of the image.
          *
@@ -253,6 +341,11 @@ A container for image data.
          * Has to be bigger than or equal to 0 (blurred).
          *
          * @result result1 The image sharpened by the given factor.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         fun sharpen(
@@ -260,46 +353,66 @@ A container for image data.
         ) -> result1: Image where {
             factor >= 0.0
         }
-    
+
         /**
          * Return a new `Image` with colors inverted.
          *
          * The original image is not modified.
          *
          * @result result1 The image with inverted colors.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("invert_colors")
         fun invertColors() -> result1: Image
-    
+
         /**
          * Return a new `Image` that is rotated 90 degrees clockwise.
          *
          * The original image is not modified.
          *
          * @result result1 The image rotated 90 degrees clockwise.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("rotate_right")
         fun rotateRight() -> result1: Image
-    
+
         /**
          * Return a new `Image` that is rotated 90 degrees counter-clockwise.
          *
          * The original image is not modified.
          *
          * @result result1 The image rotated 90 degrees counter-clockwise.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("rotate_left")
         fun rotateLeft() -> result1: Image
-    
+
         /**
          * Return a grayscale version of the image with the edges highlighted.
          *
          * The original image is not modified.
          *
          * @result result1 The image with edges found.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("find_edges")
@@ -313,17 +426,41 @@ Get the number of channels of the image.
 
 **Type:** [`Int`][safeds.lang.Int]
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ## `#!sds attr` height {#safeds.data.image.containers.Image.height data-toc-label='height'}
 
 Get the height of the image in pixels.
 
 **Type:** [`Int`][safeds.lang.Int]
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ## `#!sds attr` width {#safeds.data.image.containers.Image.width data-toc-label='width'}
 
 Get the width of the image in pixels.
 
 **Type:** [`Int`][safeds.lang.Int]
+
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
 
 ## `#!sds fun` addNoise {#safeds.data.image.containers.Image.addNoise data-toc-label='addNoise'}
 
@@ -343,9 +480,17 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The image with added noise. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="178"
+    ```sds linenums="248"
     @Pure
     @PythonName("add_noise")
     fun addNoise(
@@ -373,9 +518,17 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The Image with adjusted brightness. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="161"
+    ```sds linenums="226"
     @Pure
     @PythonName("adjust_brightness")
     fun adjustBrightness(
@@ -403,9 +556,17 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The new, adjusted image. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="218"
+    ```sds linenums="298"
     @Pure
     @PythonName("adjust_color_balance")
     fun adjustColorBalance(
@@ -433,9 +594,17 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | New image with adjusted contrast. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="198"
+    ```sds linenums="273"
     @Pure
     @PythonName("adjust_contrast")
     fun adjustContrast(
@@ -463,9 +632,17 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The blurred image. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="236"
+    ```sds linenums="321"
     @Pure
     fun blur(
         const radius: Int
@@ -494,7 +671,7 @@ The original image is not modified.
 
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="65"
+    ```sds linenums="100"
     @Pure
     @PythonName("change_channel")
     fun changeChannel(
@@ -514,9 +691,17 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The grayscale image. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="97"
+    ```sds linenums="142"
     @Pure
     @PythonName("convert_to_grayscale")
     fun convertToGrayscale() -> result1: Image
@@ -543,9 +728,17 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The cropped image. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="113"
+    ```sds linenums="163"
     @Pure
     fun crop(
         const x: Int,
@@ -572,9 +765,17 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The image with edges found. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="302"
+    ```sds linenums="412"
     @Pure
     @PythonName("find_edges")
     fun findEdges() -> result1: Image
@@ -592,9 +793,17 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The flipped image. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="144"
+    ```sds linenums="204"
     @Pure
     @PythonName("flip_horizontally")
     fun flipHorizontally() -> result1: Image
@@ -612,9 +821,17 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The flipped image. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="133"
+    ```sds linenums="188"
     @Pure
     @PythonName("flip_vertically")
     fun flipVertically() -> result1: Image
@@ -632,9 +849,17 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The image with inverted colors. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="269"
+    ```sds linenums="364"
     @Pure
     @PythonName("invert_colors")
     fun invertColors() -> result1: Image
@@ -659,9 +884,17 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The image with the given width and height. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="81"
+    ```sds linenums="121"
     @Pure
     fun resize(
         @PythonName("new_width") const newWidth: Int,
@@ -684,9 +917,17 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The image rotated 90 degrees counter-clockwise. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="291"
+    ```sds linenums="396"
     @Pure
     @PythonName("rotate_left")
     fun rotateLeft() -> result1: Image
@@ -704,9 +945,17 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The image rotated 90 degrees clockwise. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="280"
+    ```sds linenums="380"
     @Pure
     @PythonName("rotate_right")
     fun rotateRight() -> result1: Image
@@ -730,9 +979,17 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The image sharpened by the given factor. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="255"
+    ```sds linenums="345"
     @Pure
     fun sharpen(
         const factor: Float
@@ -751,9 +1008,17 @@ Save the image as a JPEG file.
 |------|------|-------------|---------|
 | `path` | [`String`][safeds.lang.String] | The path to the JPEG file. | - |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="39"
+    ```sds linenums="69"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_jpeg_file")
     fun toJpegFile(
@@ -771,9 +1036,17 @@ Save the image as a PNG file.
 |------|------|-------------|---------|
 | `path` | [`String`][safeds.lang.String] | The path to the PNG file. | - |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="50"
+    ```sds linenums="85"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_png_file")
     fun toPngFile(
@@ -797,9 +1070,17 @@ Create an image from a file.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The image. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `image.sdsstub`"
 
-    ```sds linenums="28"
+    ```sds linenums="53"
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
     @PythonName("from_file")
     static fun fromFile(

@@ -7,22 +7,40 @@ search:
 
 Some text.
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="98"
+    ```sds linenums="178"
     class String {
-    
+
         /**
          * Parses the string to a floating-point number.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonCall("float($this)")
         fun toFloat() -> f: Float
-    
+
         /**
          * Parses the string to an integer.
          *
          * @param base The base of the integer.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonCall("int($this, $base)")
@@ -40,9 +58,17 @@ Parses the string to a floating-point number.
 |------|------|-------------|
 | `f` | [`Float`][safeds.lang.Float] | - |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="103"
+    ```sds linenums="188"
     @Pure
     @PythonCall("float($this)")
     fun toFloat() -> f: Float
@@ -64,9 +90,17 @@ Parses the string to an integer.
 |------|------|-------------|
 | `i` | [`Int`][safeds.lang.Int] | - |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="112"
+    ```sds linenums="202"
     @Pure
     @PythonCall("int($this, $base)")
     fun toInt(base: Int = 10) -> i: Int

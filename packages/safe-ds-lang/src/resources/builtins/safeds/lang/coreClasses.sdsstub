@@ -2,11 +2,21 @@ package safeds.lang
 
 /**
  * The common superclass of all classes.
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 class Any {
 
     /**
      * Returns a string representation of the object.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonCall("str($this)")
@@ -15,25 +25,50 @@ class Any {
 
 /**
  * The common subclass of all classes.
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 class Nothing
 
 /**
  * A truth value.
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 class Boolean
 
 /**
  * A number.
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 class Number
 
 /**
  * An integer.
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 class Int sub Number {
     /**
      * Converts this integer to a floating-point number.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonCall("float($this)")
@@ -42,10 +77,20 @@ class Int sub Number {
 
 /**
  * A floating-point number.
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 class Float sub Number {
     /**
      * Converts this floating-point number to an integer by truncating the fractional part.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonCall("int($this)")
@@ -54,11 +99,21 @@ class Float sub Number {
 
 /**
  * A list of elements.
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 class List<out E> {
 
     /**
      * Returns the number of elements in the list.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonCall("len($this)")
@@ -67,11 +122,21 @@ class List<out E> {
 
 /**
  * A map of keys to values.
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 class Map<K, out V> {
 
     /**
      * Returns the number of entries in the map.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonCall("len($this)")
@@ -79,6 +144,11 @@ class Map<K, out V> {
 
     /**
      * Returns the keys of the map.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonCall("list($this.keys())")
@@ -86,6 +156,11 @@ class Map<K, out V> {
 
     /**
      * Returns the values of the map.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonCall("list($this.values())")
@@ -94,11 +169,21 @@ class Map<K, out V> {
 
 /**
  * Some text.
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 class String {
 
     /**
      * Parses the string to a floating-point number.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonCall("float($this)")
@@ -108,6 +193,11 @@ class String {
      * Parses the string to an integer.
      *
      * @param base The base of the integer.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonCall("int($this, $base)")

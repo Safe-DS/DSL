@@ -8,77 +8,120 @@ A row is a collection of named values.
 |------|------|-------------|---------|
 | `data` | [`Map<String, List<Any>>?`][safeds.lang.Map] | The data. If None, an empty row is created. | `#!sds null` |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `row.sdsstub`"
 
-    ```sds linenums="10"
+    ```sds linenums="15"
     class Row(
         data: Map<String, List<Any>>? = null // TODO: update default value to empty map
     ) {
         /**
          * Return a list of all column names in the row.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @PythonName("column_names") attr columnNames: List<String>
         /**
          * Return the number of columns in this row.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @PythonName("number_of_column") attr numberOfColumn: Int
         /**
          * Return the schema of the row.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         attr `schema`: Schema
-    
+
         /**
          * Create a row from a dictionary that maps column names to column values.
          *
          * @param data The data.
          *
          * @result result1 The created row.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("from_dict")
         static fun fromDict(
             data: Map<String, Any>
         ) -> result1: Row
-    
+
         /**
          * Return the value of a specified column.
          *
          * @param columnName The column name.
          *
          * @result result1 The column value.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("get_value")
         fun getValue(
             @PythonName("column_name") columnName: String
         ) -> result1: Any
-    
+
         /**
          * Check whether the row contains a given column.
          *
          * @param columnName The column name.
          *
          * @result result1 True, if the row contains the column, False otherwise.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("has_column")
         fun hasColumn(
             @PythonName("column_name") columnName: String
         ) -> result1: Boolean
-    
+
         /**
          * Return the type of the specified column.
          *
          * @param columnName The column name.
          *
          * @result result1 The type of the column.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("get_column_type")
         fun getColumnType(
             @PythonName("column_name") columnName: String
         ) -> result1: ColumnType
-    
+
         // // TODO Safe-DS does not support tuple types.
         // /**
         //  * Sort the columns of a `Row` with the given comparator and return a new `Row`.
@@ -101,20 +144,30 @@ A row is a collection of named values.
         // fun sortColumns(
         //     comparator: (param1: Tuple<Any>, param2: Tuple<Any>) -> param3: Int
         // ) -> result1: Row
-    
+
         /**
          * Return a dictionary that maps column names to column values.
          *
          * @result result1 Dictionary representation of the row.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("to_dict")
         fun toDict() -> result1: Map<String, Any>
-    
+
         /**
          * Return an HTML representation of the row.
          *
          * @result result1 The generated HTML.
+         *
+         * @example
+         * pipeline example {
+         *     // TODO
+         * }
          */
         @Pure
         @PythonName("to_html")
@@ -128,17 +181,41 @@ Return a list of all column names in the row.
 
 **Type:** [`List<String>`][safeds.lang.List]
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ## `#!sds attr` numberOfColumn {#safeds.data.tabular.containers.Row.numberOfColumn data-toc-label='numberOfColumn'}
 
 Return the number of columns in this row.
 
 **Type:** [`Int`][safeds.lang.Int]
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ## `#!sds attr` schema {#safeds.data.tabular.containers.Row.schema data-toc-label='schema'}
 
 Return the schema of the row.
 
 **Type:** [`Schema`][safeds.data.tabular.typing.Schema]
+
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
 
 ## `#!sds fun` getColumnType {#safeds.data.tabular.containers.Row.getColumnType data-toc-label='getColumnType'}
 
@@ -156,9 +233,17 @@ Return the type of the specified column.
 |------|------|-------------|
 | `result1` | [`ColumnType`][safeds.data.tabular.typing.ColumnType] | The type of the column. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `row.sdsstub`"
 
-    ```sds linenums="72"
+    ```sds linenums="112"
     @Pure
     @PythonName("get_column_type")
     fun getColumnType(
@@ -182,9 +267,17 @@ Return the value of a specified column.
 |------|------|-------------|
 | `result1` | [`Any`][safeds.lang.Any] | The column value. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `row.sdsstub`"
 
-    ```sds linenums="46"
+    ```sds linenums="76"
     @Pure
     @PythonName("get_value")
     fun getValue(
@@ -208,9 +301,17 @@ Check whether the row contains a given column.
 |------|------|-------------|
 | `result1` | [`Boolean`][safeds.lang.Boolean] | True, if the row contains the column, False otherwise. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `row.sdsstub`"
 
-    ```sds linenums="59"
+    ```sds linenums="94"
     @Pure
     @PythonName("has_column")
     fun hasColumn(
@@ -228,9 +329,17 @@ Return a dictionary that maps column names to column values.
 |------|------|-------------|
 | `result1` | [`Map<String, Any>`][safeds.lang.Map] | Dictionary representation of the row. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `row.sdsstub`"
 
-    ```sds linenums="106"
+    ```sds linenums="151"
     @Pure
     @PythonName("to_dict")
     fun toDict() -> result1: Map<String, Any>
@@ -246,9 +355,17 @@ Return an HTML representation of the row.
 |------|------|-------------|
 | `result1` | [`String`][safeds.lang.String] | The generated HTML. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `row.sdsstub`"
 
-    ```sds linenums="115"
+    ```sds linenums="165"
     @Pure
     @PythonName("to_html")
     fun toHtml() -> result1: String
@@ -270,9 +387,17 @@ Create a row from a dictionary that maps column names to column values.
 |------|------|-------------|
 | `result1` | [`Row`][safeds.data.tabular.containers.Row] | The created row. |
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `row.sdsstub`"
 
-    ```sds linenums="33"
+    ```sds linenums="58"
     @Pure
     @PythonName("from_dict")
     static fun fromDict(
