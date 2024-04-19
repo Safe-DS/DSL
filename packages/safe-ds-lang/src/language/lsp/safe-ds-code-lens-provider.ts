@@ -87,7 +87,19 @@ export class SafeDsCodeLensProvider implements CodeLensProvider {
             return;
         }
 
-        if (this.typeChecker.isTabular(this.typeComputer.computeType(node))) {
+        if (this.typeChecker.isImage(this.typeComputer.computeType(node))) {
+            const documentUri = AstUtils.getDocument(node).uri.toString();
+            const nodePath = this.astNodeLocator.getAstNodePath(node);
+
+            accept({
+                range: cstNode.range,
+                command: {
+                    title: `Show ${node.name}`,
+                    command: 'safe-ds.showImage',
+                    arguments: [documentUri, nodePath],
+                },
+            });
+        } else if (this.typeChecker.isTabular(this.typeComputer.computeType(node))) {
             accept({
                 range: cstNode.range,
                 command: {
