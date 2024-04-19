@@ -189,11 +189,7 @@ const runEda = (context: vscode.ExtensionContext) => {
     return async (documentUri: string, nodePath: string) => {
         await vscode.workspace.saveAll();
 
-        const editor = vscode.window.activeTextEditor;
-        if (!editor) {
-            vscode.window.showErrorMessage('No active text editor.');
-            return;
-        }
+        const uri = Uri.parse(documentUri);
 
         const document = await getPipelineDocument(Uri.parse(documentUri));
         if (!document) {
@@ -248,16 +244,9 @@ const runEda = (context: vscode.ExtensionContext) => {
             printOutputMessage(
                 `Placeholder was calculated (${message.id}): ${message.data.name} of type ${message.data.type}`,
             );
-            if (
-                message.id === pipelineExecutionId &&
-                // Can be removed altogether if the EDA tool is only triggered via code lenses
-                (message.data.type === 'Table' ||
-                    message.data.type === 'TaggedTable' ||
-                    message.data.type === 'TimeSeries') &&
-                message.data.name === requestedPlaceholderName
-            ) {
+            if (message.id === pipelineExecutionId && message.data.name === requestedPlaceholderName) {
                 lastFinishedPipelineExecutionId = pipelineExecutionId;
-                lastSuccessfulPipelinePath = editor.document.uri;
+                lastSuccessfulPipelinePath = uri;
                 lastSuccessfulTableName = requestedPlaceholderName;
                 lastSuccessfulPipelineName = pipelineName;
                 lastSuccessfulPipelineNode = pipelineNode;
@@ -266,18 +255,11 @@ const runEda = (context: vscode.ExtensionContext) => {
                     context,
                     pipelineExecutionId,
                     services,
-                    editor.document.uri,
+                    uri,
                     pipelineName,
                     pipelineNode,
                     message.data.name,
                 );
-                services.runtime.Runner.removeMessageCallback(placeholderTypeCallback, 'placeholder_type');
-                cleanupLoadingIndication();
-            } else if (message.id === pipelineExecutionId && message.data.name !== requestedPlaceholderName) {
-                return;
-            } else if (message.id === pipelineExecutionId) {
-                lastFinishedPipelineExecutionId = pipelineExecutionId;
-                vscode.window.showErrorMessage(`Selected placeholder is not of type 'Table'.`);
                 services.runtime.Runner.removeMessageCallback(placeholderTypeCallback, 'placeholder_type');
                 cleanupLoadingIndication();
             }
@@ -309,7 +291,7 @@ const runEda = (context: vscode.ExtensionContext) => {
         };
         services.runtime.Runner.addMessageCallback(runtimeErrorCallback, 'runtime_error');
 
-        doRunPipelineFile(editor.document.uri, pipelineExecutionId, pipelineName, requestedPlaceholderName);
+        doRunPipelineFile(uri, pipelineExecutionId, pipelineName, requestedPlaceholderName);
     };
 };
 
