@@ -174,7 +174,7 @@ const doRunPipelineFile = async function (
                 vscode.window.showErrorMessage('The current file cannot be executed, as no pipeline could be found.');
                 return;
             }
-            pipelineName = services.builtins.Annotations.getPythonName(firstPipeline) || firstPipeline.name;
+            pipelineName = services.builtins.Annotations.getPythonName(firstPipeline) ?? firstPipeline.name;
         } else {
             pipelineName = knownPipelineName;
         }
