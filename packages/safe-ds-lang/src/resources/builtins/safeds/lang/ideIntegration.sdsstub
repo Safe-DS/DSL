@@ -2,11 +2,6 @@ package safeds.lang
 
 /**
  * This parameter should only be used by expert users.
- *
- * @example
- * pipeline example {
- *     // TODO
- * }
  */
 @Experimental
 @Targets([AnnotationTarget.Parameter])
@@ -14,11 +9,6 @@ annotation Expert
 
 /**
  * The category of a declaration. It can be used for grouping.
- *
- * @example
- * pipeline example {
- *     // TODO
- * }
  */
 @Experimental
 @Targets([
@@ -31,11 +21,6 @@ annotation Category(category: DataScienceCategory)
 
 /**
  * A step in the data science process.
- *
- * @example
- * pipeline example {
- *     // TODO
- * }
  */
 enum DataScienceCategory {
     /**

@@ -7,17 +7,9 @@ search:
 
 The common superclass of all classes.
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="11"
+    ```sds linenums="6"
     class Any {
 
         /**
@@ -25,7 +17,7 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val string = 1.toString(); // "1"
          * }
          */
         @Pure
@@ -48,13 +40,13 @@ Returns a string representation of the object.
 
 ```sds
 pipeline example {
-    // TODO
+    val string = 1.toString(); // "1"
 }
 ```
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="21"
+    ```sds linenums="16"
     @Pure
     @PythonCall("str($this)")
     fun toString() -> s: String

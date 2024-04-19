@@ -15,16 +15,8 @@ The category of a declaration. It can be used for grouping.
 - `Function`
 - `Segment`
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `ideIntegration.sdsstub`"
 
-    ```sds linenums="30"
+    ```sds linenums="20"
     annotation Category(category: DataScienceCategory)
     ```

@@ -6,16 +6,8 @@ This parameter should only be used by expert users.
 
 - `Parameter`
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `ideIntegration.sdsstub`"
 
-    ```sds linenums="13"
+    ```sds linenums="8"
     annotation Expert
     ```

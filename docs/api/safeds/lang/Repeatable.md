@@ -6,16 +6,8 @@ The annotation can be called multiple times for the same declaration.
 
 - `Annotation`
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `annotationUsage.sdsstub`"
 
-    ```sds linenums="103"
+    ```sds linenums="88"
     annotation Repeatable
     ```

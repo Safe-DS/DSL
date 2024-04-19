@@ -13,20 +13,20 @@ A floating-point number.
 
 ```sds
 pipeline example {
-    // TODO
+    val float = 1.0;
 }
 ```
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="86"
+    ```sds linenums="76"
     class Float sub Number {
         /**
          * Converts this floating-point number to an integer by truncating the fractional part.
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val int = 1.0.toInt(); // 1
          * }
          */
         @Pure
@@ -49,13 +49,13 @@ Converts this floating-point number to an integer by truncating the fractional p
 
 ```sds
 pipeline example {
-    // TODO
+    val int = 1.0.toInt(); // 1
 }
 ```
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="95"
+    ```sds linenums="85"
     @Pure
     @PythonCall("int($this)")
     fun toInt() -> i: Int
