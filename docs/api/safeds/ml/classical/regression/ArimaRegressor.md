@@ -19,7 +19,7 @@ Auto Regressive Integrated Moving Average Model.
         fun fit(
             @PythonName("time_series") timeSeries: TimeSeries
         ) -> fittedArima: ArimaRegressor
-    
+
         /**
          * Predict a target vector using a time series target column. The model has to be trained first.
          *
@@ -31,7 +31,7 @@ Auto Regressive Integrated Moving Average Model.
         fun predict(
             @PythonName("time_series") timeSeries: TimeSeries
         ) -> timeSeries: TimeSeries
-    
+
         /**
          * Plot the predictions of the trained model to the given target of the time series. So you can see the predictions and the actual values in one plot.
          *
@@ -44,7 +44,7 @@ Auto Regressive Integrated Moving Average Model.
         fun plotPredictions(
             @PythonName("test_series") testSeries: TimeSeries
         ) -> image: Image
-    
+
         /**
          * Check if the classifier is fitted.
          *

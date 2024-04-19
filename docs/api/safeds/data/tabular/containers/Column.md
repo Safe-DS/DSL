@@ -66,7 +66,7 @@ pipeline example {
          * }
          */
         attr type: ColumnType
-    
+
         /**
          * Return a list of all unique values in the column.
          *
@@ -75,13 +75,13 @@ pipeline example {
          * @example
          * pipeline example {
          *     val column = Column("test", [1, 2, 3, 2, 4, 3]);
-         *     val uniqueValues = column.getUniqueValues();
+         *     val uniqueValues = column.getUniqueValues(); // [1, 2, 3, 4]
          * }
          */
         @Pure
         @PythonName("get_unique_values")
         fun getUniqueValues() -> result1: List<T>
-    
+
         /**
          * Return column value at specified index, starting at 0.
          *
@@ -91,7 +91,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val column = Column("test", [1, 2, 3]);
+         *     val value = column.getValue(1); // 2
          * }
          */
         @Pure
@@ -99,7 +100,7 @@ pipeline example {
         fun getValue(
             index: Int
         ) -> result1: T
-    
+
         /**
          * Check if all values have a given property.
          *
@@ -109,14 +110,21 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val column = Column("test", [1, 2, 3]);
+         *     val allMatch = column.all((value) -> value < 4); // true
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("test", [1, 2, 3]);
+         *     val allMatch = column.all((value) -> value < 2); // false
          * }
          */
         @Pure
         fun all(
             predicate: (param1: T) -> param2: Boolean
         ) -> result1: Boolean
-    
+
         /**
          * Check if any value has a given property.
          *
@@ -133,7 +141,7 @@ pipeline example {
         fun any(
             predicate: (param1: T) -> param2: Boolean
         ) -> result1: Boolean
-    
+
         /**
          * Check if no values has a given property.
          *
@@ -150,7 +158,7 @@ pipeline example {
         fun none(
             predicate: (param1: T) -> param2: Boolean
         ) -> result1: Boolean
-    
+
         /**
          * Return whether the column has missing values.
          *
@@ -164,7 +172,7 @@ pipeline example {
         @Pure
         @PythonName("has_missing_values")
         fun hasMissingValues() -> result1: Boolean
-    
+
         /**
          * Return a new column with a new name.
          *
@@ -183,7 +191,7 @@ pipeline example {
         fun rename(
             @PythonName("new_name") newName: String
         ) -> result1: Column
-    
+
         /**
          * Apply a transform method to every data point.
          *
@@ -202,7 +210,7 @@ pipeline example {
         fun transform<R>(
             transformer: (param1: T) -> param2: R
         ) -> result1: Column<R>
-    
+
         /**
          * Calculate Pearson correlation between this and another column. Both columns have to be numerical.
          *
@@ -218,7 +226,7 @@ pipeline example {
         fun correlationWith(
             @PythonName("other_column") otherColumn: Column
         ) -> result1: Float
-    
+
         /**
          * Calculate the idness of this column.
          *
@@ -237,7 +245,7 @@ pipeline example {
          */
         @Pure
         fun idness() -> result1: Float
-    
+
         /**
          * Return the maximum value of the column. The column has to be numerical.
          *
@@ -250,7 +258,7 @@ pipeline example {
          */
         @Pure
         fun maximum() -> result1: Float
-    
+
         /**
          * Return the mean value of the column. The column has to be numerical.
          *
@@ -263,7 +271,7 @@ pipeline example {
          */
         @Pure
         fun mean() -> result1: Float
-    
+
         /**
          * Return the median value of the column. The column has to be numerical.
          *
@@ -276,7 +284,7 @@ pipeline example {
          */
         @Pure
         fun median() -> result1: Float
-    
+
         /**
          * Return the minimum value of the column. The column has to be numerical.
          *
@@ -289,7 +297,7 @@ pipeline example {
          */
         @Pure
         fun minimum() -> result1: Float
-    
+
         /**
          * Return the ratio of missing values to the total number of elements in the column.
          *
@@ -303,7 +311,7 @@ pipeline example {
         @Pure
         @PythonName("missing_value_ratio")
         fun missingValueRatio() -> result1: Float
-    
+
         /**
          * Return the mode of the column.
          *
@@ -316,7 +324,7 @@ pipeline example {
          */
         @Pure
         fun mode() -> result1: List<T>
-    
+
         /**
          * Calculate the stability of this column.
          *
@@ -337,7 +345,7 @@ pipeline example {
          */
         @Pure
         fun stability() -> result1: Float
-    
+
         /**
          * Return the standard deviation of the column. The column has to be numerical.
          *
@@ -351,7 +359,7 @@ pipeline example {
         @Pure
         @PythonName("standard_deviation")
         fun standardDeviation() -> result1: Float
-    
+
         /**
          * Return the sum of the column. The column has to be numerical.
          *
@@ -364,7 +372,7 @@ pipeline example {
          */
         @Pure
         fun sum() -> result1: Float
-    
+
         /**
          * Return the variance of the column. The column has to be numerical.
          *
@@ -377,7 +385,7 @@ pipeline example {
          */
         @Pure
         fun variance() -> result1: Float
-    
+
         /**
          * Plot this column in a boxplot. This function can only plot real numerical data.
          *
@@ -391,7 +399,7 @@ pipeline example {
         @Pure
         @PythonName("plot_boxplot")
         fun plotBoxplot() -> result1: Image
-    
+
         /**
          * Plot a column in a histogram.
          *
@@ -405,7 +413,7 @@ pipeline example {
         @Pure
         @PythonName("plot_histogram")
         fun plotHistogram() -> result1: Image
-    
+
         /**
          * Return an HTML representation of the column.
          *
@@ -493,13 +501,20 @@ Check if all values have a given property.
 
 ```sds
 pipeline example {
-    // TODO
+    val column = Column("test", [1, 2, 3]);
+    val allMatch = column.all((value) -> value < 4); // true
+}
+```
+```sds
+pipeline example {
+    val column = Column("test", [1, 2, 3]);
+    val allMatch = column.all((value) -> value < 2); // false
 }
 ```
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="103"
+    ```sds linenums="111"
     @Pure
     fun all(
         predicate: (param1: T) -> param2: Boolean
@@ -532,7 +547,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="120"
+    ```sds linenums="128"
     @Pure
     fun any(
         predicate: (param1: T) -> param2: Boolean
@@ -565,7 +580,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="204"
+    ```sds linenums="212"
     @Pure
     @PythonName("correlation_with")
     fun correlationWith(
@@ -588,7 +603,7 @@ Return a list of all unique values in the column.
 ```sds
 pipeline example {
     val column = Column("test", [1, 2, 3, 2, 4, 3]);
-    val uniqueValues = column.getUniqueValues();
+    val uniqueValues = column.getUniqueValues(); // [1, 2, 3, 4]
 }
 ```
 
@@ -620,13 +635,14 @@ Return column value at specified index, starting at 0.
 
 ```sds
 pipeline example {
-    // TODO
+    val column = Column("test", [1, 2, 3]);
+    val value = column.getValue(1); // 2
 }
 ```
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="85"
+    ```sds linenums="86"
     @Pure
     @PythonName("get_value")
     fun getValue(
@@ -654,7 +670,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="152"
+    ```sds linenums="160"
     @Pure
     @PythonName("has_missing_values")
     fun hasMissingValues() -> result1: Boolean
@@ -686,7 +702,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="226"
+    ```sds linenums="234"
     @Pure
     fun idness() -> result1: Float
     ```
@@ -711,7 +727,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="239"
+    ```sds linenums="247"
     @Pure
     fun maximum() -> result1: Float
     ```
@@ -736,7 +752,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="252"
+    ```sds linenums="260"
     @Pure
     fun mean() -> result1: Float
     ```
@@ -761,7 +777,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="265"
+    ```sds linenums="273"
     @Pure
     fun median() -> result1: Float
     ```
@@ -786,7 +802,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="278"
+    ```sds linenums="286"
     @Pure
     fun minimum() -> result1: Float
     ```
@@ -811,7 +827,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="291"
+    ```sds linenums="299"
     @Pure
     @PythonName("missing_value_ratio")
     fun missingValueRatio() -> result1: Float
@@ -837,7 +853,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="305"
+    ```sds linenums="313"
     @Pure
     fun mode() -> result1: List<T>
     ```
@@ -868,7 +884,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="137"
+    ```sds linenums="145"
     @Pure
     fun none(
         predicate: (param1: T) -> param2: Boolean
@@ -895,7 +911,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="379"
+    ```sds linenums="387"
     @Pure
     @PythonName("plot_boxplot")
     fun plotBoxplot() -> result1: Image
@@ -921,7 +937,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="393"
+    ```sds linenums="401"
     @Pure
     @PythonName("plot_histogram")
     fun plotHistogram() -> result1: Image
@@ -955,7 +971,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="170"
+    ```sds linenums="178"
     @Pure
     fun rename(
         @PythonName("new_name") newName: String
@@ -990,7 +1006,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="326"
+    ```sds linenums="334"
     @Pure
     fun stability() -> result1: Float
     ```
@@ -1015,7 +1031,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="339"
+    ```sds linenums="347"
     @Pure
     @PythonName("standard_deviation")
     fun standardDeviation() -> result1: Float
@@ -1041,7 +1057,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="353"
+    ```sds linenums="361"
     @Pure
     fun sum() -> result1: Float
     ```
@@ -1066,7 +1082,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="407"
+    ```sds linenums="415"
     @Pure
     @PythonName("to_html")
     fun toHtml() -> result1: String
@@ -1106,7 +1122,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="189"
+    ```sds linenums="197"
     @Pure
     fun transform<R>(
         transformer: (param1: T) -> param2: R
@@ -1133,7 +1149,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="366"
+    ```sds linenums="374"
     @Pure
     fun variance() -> result1: Float
     ```

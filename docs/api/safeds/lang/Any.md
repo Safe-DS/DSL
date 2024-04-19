@@ -19,7 +19,7 @@ pipeline example {
 
     ```sds linenums="11"
     class Any {
-    
+
         /**
          * Returns a string representation of the object.
          *

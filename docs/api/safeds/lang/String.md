@@ -19,7 +19,7 @@ pipeline example {
 
     ```sds linenums="178"
     class String {
-    
+
         /**
          * Parses the string to a floating-point number.
          *
@@ -31,7 +31,7 @@ pipeline example {
         @Pure
         @PythonCall("float($this)")
         fun toFloat() -> f: Float
-    
+
         /**
          * Parses the string to an integer.
          *

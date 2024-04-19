@@ -28,7 +28,7 @@ pipeline example {
          * }
          */
         @PythonName("column_names") attr columnNames: List<String>
-    
+
         /**
          * Return whether the schema contains a given column.
          *
@@ -46,7 +46,7 @@ pipeline example {
         fun hasColumn(
             @PythonName("column_name") columnName: String
         ) -> result1: Boolean
-    
+
         /**
          * Return the type of the given column.
          *
@@ -64,7 +64,7 @@ pipeline example {
         fun getColumnType(
             @PythonName("column_name") columnName: String
         ) -> result1: ColumnType
-    
+
         /**
          * Return a dictionary that maps column names to column types.
          *

@@ -33,7 +33,7 @@ To create an `ImageList` call one of the following static methods:
          * Return the number of different sizes of images in this image list.
          */
         @PythonName("number_of_sizes") attr numberOfSizes: Int
-    
+
         /**
          * Create an ImageList from a list of images.
          *
@@ -46,7 +46,7 @@ To create an `ImageList` call one of the following static methods:
         static fun fromImages(
             images: List<Image>
         ) -> imageList: ImageList
-    
+
         /**
          * Create an ImageList from a directory or a list of files.
          *
@@ -61,7 +61,7 @@ To create an `ImageList` call one of the following static methods:
         static fun fromFiles(
             path: union<List<String>, String>
         ) -> imageList: ImageList
-    
+
         /**
          * Return the image at the given index.
          *
@@ -74,7 +74,7 @@ To create an `ImageList` call one of the following static methods:
         fun getImage(
             index: Int
         ) -> image: Image
-    
+
         /**
          * Return a list of indexes of the given image.
          *
@@ -88,7 +88,7 @@ To create an `ImageList` call one of the following static methods:
         fun index(
             image: Image
         ) -> indices: List<Int>
-    
+
         /**
          * Return whether the given image is in this image list.
          *
@@ -101,7 +101,7 @@ To create an `ImageList` call one of the following static methods:
         fun hasImage(
             image: Image
         ) -> hasImage: Boolean
-    
+
         /**
          * Save all images as jpeg files.
          *
@@ -112,7 +112,7 @@ To create an `ImageList` call one of the following static methods:
         fun toJpegFiles(
             path: union<List<String>, String>
         )
-    
+
         /**
          * Save all images as png files.
          *
@@ -123,7 +123,7 @@ To create an `ImageList` call one of the following static methods:
         fun toPngFiles(
             path: union<List<String>, String>
         )
-    
+
         /**
          * Return a list of all images in this image list.
          *
@@ -136,7 +136,7 @@ To create an `ImageList` call one of the following static methods:
         fun toImages(
             indices: List<Int>? = null
         ) -> images: List<Image>
-    
+
         /**
          * Return a new `ImageList` that has the given number of channels.
          *
@@ -151,7 +151,7 @@ To create an `ImageList` call one of the following static methods:
         fun changeChannel(
             channel: Int
         ) -> imageList: ImageList
-    
+
         /**
          * Return a new `ImageList` with the given image added to the image list.
          *
@@ -166,7 +166,7 @@ To create an `ImageList` call one of the following static methods:
         fun addImage(
             image: Image
         ) -> imageList: ImageList
-    
+
         /**
          * Return a new `ImageList` with the given images added to the image list.
          *
@@ -181,7 +181,7 @@ To create an `ImageList` call one of the following static methods:
         fun addImages(
             images: union<ImageList, List<Image>>
         ) -> imageList: ImageList
-    
+
         /**
          * Return a new `ImageList` with the given image removed from the image list.
          *
@@ -198,7 +198,7 @@ To create an `ImageList` call one of the following static methods:
         fun removeImage(
             image: Image
         ) -> imageList: ImageList
-    
+
         /**
          * Return a new `ImageList` with the given images removed from the image list.
          *
@@ -215,7 +215,7 @@ To create an `ImageList` call one of the following static methods:
         fun removeImages(
             images: List<Image>
         ) -> imageList: ImageList
-    
+
         /**
          * Return a new `ImageList` with the given indices removed from the image list.
          *
@@ -230,7 +230,7 @@ To create an `ImageList` call one of the following static methods:
         fun removeImageByIndex(
             index: union<Int, List<Int>>
         ) -> imageList: ImageList
-    
+
         /**
          * Return a new `ImageList` with the all images of the given size removed.
          *
@@ -247,7 +247,7 @@ To create an `ImageList` call one of the following static methods:
             width: Int,
             height: Int
         ) -> imageList: ImageList
-    
+
         /**
          * Return a new `ImageList` with all duplicate images removed.
          *
@@ -260,7 +260,7 @@ To create an `ImageList` call one of the following static methods:
         @Pure
         @PythonName("remove_duplicate_images")
         fun removeDuplicateImages() -> imageList: ImageList
-    
+
         /**
          * Return a new `ImageList` with all images shuffled.
          *
@@ -271,7 +271,7 @@ To create an `ImageList` call one of the following static methods:
         @Pure
         @PythonName("shuffle_images")
         fun shuffleImages() -> imageList: ImageList
-    
+
         /**
          * Return a new `ImageList` with all images resized to a given size.
          *
@@ -290,7 +290,7 @@ To create an `ImageList` call one of the following static methods:
             newWidth >= 0,
             newHeight >= 0
         }
-    
+
         /**
          * Return a new `ImageList` with all images converted to grayscale.
          *
@@ -301,7 +301,7 @@ To create an `ImageList` call one of the following static methods:
         @Pure
         @PythonName("convert_to_grayscale")
         fun convertToGrayscale() -> imageList: ImageList
-    
+
         /**
          * Return a new `ImageList` with all images cropped to a given bounding rectangle.
          *
@@ -326,7 +326,7 @@ To create an `ImageList` call one of the following static methods:
             width >= 0,
             height >= 0
         }
-    
+
         /**
          * Return a new `ImageList` with all images flipped vertically (horizontal axis, flips up-down and vice versa).
          *
@@ -337,7 +337,7 @@ To create an `ImageList` call one of the following static methods:
         @Pure
         @PythonName("flip_vertically")
         fun flipVertically() -> imageList: ImageList
-    
+
         /**
          * Return a new `ImageList` with all images flipped horizontally (vertical axis, flips left-right and vice versa).
          *
@@ -348,7 +348,7 @@ To create an `ImageList` call one of the following static methods:
         @Pure
         @PythonName("flip_horizontally")
         fun flipHorizontally() -> imageList: ImageList
-    
+
         /**
          * Return a new `ImageList` where all images have the adjusted brightness.
          *
@@ -369,7 +369,7 @@ To create an `ImageList` call one of the following static methods:
         ) -> imageList: ImageList where {
             factor >= 0.0
         }
-    
+
         /**
          * Return a new `ImageList` with noise added to all images.
          *
@@ -386,7 +386,7 @@ To create an `ImageList` call one of the following static methods:
         ) -> imageList: ImageList where {
             standardDeviation >= 0.0
         }
-    
+
         /**
          * Return a new `ImageList` where all images have the adjusted contrast.
          *
@@ -406,7 +406,7 @@ To create an `ImageList` call one of the following static methods:
         ) -> imageList: ImageList where {
             factor >= 0.0
         }
-    
+
         /**
          * Return a new `ImageList` where all images have the adjusted color balance.
          *
@@ -426,7 +426,7 @@ To create an `ImageList` call one of the following static methods:
         ) -> imageList: ImageList where {
             factor >= 0.0
         }
-    
+
         /**
          * Return a new `ImageList` where all images have been blurred.
          *
@@ -443,7 +443,7 @@ To create an `ImageList` call one of the following static methods:
         ) -> imageList: ImageList where {
             radius >= 0
         }
-    
+
         /**
          * Return a new `ImageList` where all images have been sharpened.
          *
@@ -462,7 +462,7 @@ To create an `ImageList` call one of the following static methods:
         ) -> imageList: ImageList where {
             factor >= 0.0
         }
-    
+
         /**
          * Return a new `ImageList` where all images have their colors inverted.
          *
@@ -473,7 +473,7 @@ To create an `ImageList` call one of the following static methods:
         @Pure
         @PythonName("invert_colors")
         fun invertColors() -> imageList: ImageList
-    
+
         /**
          * Return a new `ImageList` where all images have been rotated 90 degrees clockwise.
          *
@@ -484,7 +484,7 @@ To create an `ImageList` call one of the following static methods:
         @Pure
         @PythonName("rotate_right")
         fun rotateRight() -> imageList: ImageList
-    
+
         /**
          * Return a new `ImageList` where all images have been rotated 90 degrees counter-clockwise.
          *
@@ -495,7 +495,7 @@ To create an `ImageList` call one of the following static methods:
         @Pure
         @PythonName("rotate_left")
         fun rotateLeft() -> imageList: ImageList
-    
+
         /**
          * Return a new `ImageList` with grayscale versions of the images with the edges highlighted.
          *

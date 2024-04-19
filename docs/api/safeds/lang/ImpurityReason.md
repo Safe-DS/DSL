@@ -14,7 +14,7 @@ pipeline example {
 
     ```sds linenums="42"
     enum ImpurityReason {
-    
+
         /**
          * The function reads from a file and the file path is a constant.
          *
@@ -26,7 +26,7 @@ pipeline example {
          * }
          */
         FileReadFromConstantPath(path: String)
-    
+
         /**
          * The function reads from a file and the file path is given by a parameter.
          *
@@ -38,7 +38,7 @@ pipeline example {
          * }
          */
         FileReadFromParameterizedPath(parameterName: String)
-    
+
         /**
          * The function writes to a file and the file path is a constant.
          *
@@ -50,7 +50,7 @@ pipeline example {
          * }
          */
         FileWriteToConstantPath(path: String)
-    
+
         /**
          * The function writes to a file and the file path is given by a parameter.
          *
@@ -62,7 +62,7 @@ pipeline example {
          * }
          */
         FileWriteToParameterizedPath(parameterName: String)
-    
+
         /**
          * The function calls another, potentially impure function that gets passed as a parameter.
          *
@@ -74,7 +74,7 @@ pipeline example {
          * }
          */
         PotentiallyImpureParameterCall(parameterName: String)
-    
+
         /**
          * The function is impure for some other reason. If possible, use a more specific reason.
          *

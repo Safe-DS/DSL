@@ -26,7 +26,7 @@ pipeline example {
 
     ```sds linenums="131"
     class Map<K, out V> {
-    
+
         /**
          * Returns the number of entries in the map.
          *
@@ -38,7 +38,7 @@ pipeline example {
         @Pure
         @PythonCall("len($this)")
         fun size() -> size: Int
-    
+
         /**
          * Returns the keys of the map.
          *
@@ -50,7 +50,7 @@ pipeline example {
         @Pure
         @PythonCall("list($this.keys())")
         fun keys() -> keys: List<K>
-    
+
         /**
          * Returns the values of the map.
          *

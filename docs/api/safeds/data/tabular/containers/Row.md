@@ -49,7 +49,7 @@ pipeline example {
          * }
          */
         attr `schema`: Schema
-    
+
         /**
          * Create a row from a dictionary that maps column names to column values.
          *
@@ -67,7 +67,7 @@ pipeline example {
         static fun fromDict(
             data: Map<String, Any>
         ) -> result1: Row
-    
+
         /**
          * Return the value of a specified column.
          *
@@ -85,7 +85,7 @@ pipeline example {
         fun getValue(
             @PythonName("column_name") columnName: String
         ) -> result1: Any
-    
+
         /**
          * Check whether the row contains a given column.
          *
@@ -103,7 +103,7 @@ pipeline example {
         fun hasColumn(
             @PythonName("column_name") columnName: String
         ) -> result1: Boolean
-    
+
         /**
          * Return the type of the specified column.
          *
@@ -121,7 +121,7 @@ pipeline example {
         fun getColumnType(
             @PythonName("column_name") columnName: String
         ) -> result1: ColumnType
-    
+
         // // TODO Safe-DS does not support tuple types.
         // /**
         //  * Sort the columns of a `Row` with the given comparator and return a new `Row`.
@@ -144,7 +144,7 @@ pipeline example {
         // fun sortColumns(
         //     comparator: (param1: Tuple<Any>, param2: Tuple<Any>) -> param3: Int
         // ) -> result1: Row
-    
+
         /**
          * Return a dictionary that maps column names to column values.
          *
@@ -158,7 +158,7 @@ pipeline example {
         @Pure
         @PythonName("to_dict")
         fun toDict() -> result1: Map<String, Any>
-    
+
         /**
          * Return an HTML representation of the row.
          *

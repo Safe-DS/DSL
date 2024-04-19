@@ -25,7 +25,7 @@ pipeline example {
 
     ```sds linenums="108"
     class List<out E> {
-    
+
         /**
          * Returns the number of elements in the list.
          *

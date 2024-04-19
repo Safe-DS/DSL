@@ -32,7 +32,7 @@ pipeline example {
         @Pure
         @PythonName("is_nullable")
         fun isNullable() -> result1: Boolean
-    
+
         /**
          * Return whether the given column type is numeric.
          *
