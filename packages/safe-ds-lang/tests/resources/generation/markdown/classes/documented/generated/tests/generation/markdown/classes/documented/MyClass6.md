@@ -25,7 +25,7 @@ Description of MyClass6.
              */
             attr myAttribute3: Int
         }
-    
+
         /**
          * Description of MyEnum1.
          */
@@ -35,7 +35,7 @@ Description of MyClass6.
              */
             MyVariant1
         }
-    
+
         /**
          * Description of myFunction1.
          */
@@ -44,7 +44,7 @@ Description of MyClass6.
          * Description of myFunction2.
          */
         @Pure static fun myFunction2()
-    
+
         /**
          * Description of myAttribute1.
          */

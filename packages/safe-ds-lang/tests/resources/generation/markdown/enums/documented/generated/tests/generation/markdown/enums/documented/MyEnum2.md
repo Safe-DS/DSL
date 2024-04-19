@@ -13,12 +13,12 @@ Description of MyEnum2.
          * @param param2 Description of param2.
          */
         MyVariant2(param1: MyClass1, param2: Float = 1.0)
-    
+
         /**
          * Description of MyVariant1.
          */
         MyVariant1
-    
+
         /**
          * Description of MyVariant3.
          *
