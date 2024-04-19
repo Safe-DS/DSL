@@ -134,7 +134,14 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val column = Column("test", [1, 2, 3]);
+         *     val anyMatch = column.any((value) -> value < 2); // true
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("test", [1, 2, 3]);
+         *     val anyMatch = column.any((value) -> value < 1); // false
          * }
          */
         @Pure
@@ -151,7 +158,14 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val column = Column("test", [1, 2, 3]);
+         *     val noneMatch = column.none((value) -> value < 1); // true
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("test", [1, 2, 3]);
+         *     val noneMatch = column.none((value) -> value > 1); // false
          * }
          */
         @Pure
@@ -166,7 +180,14 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val column = Column("test", [1, 2, 3, null]);
+         *     val hasMissingValues = column.hasMissingValues(); // true
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("test", [1, 2, 3]);
+         *     val hasMissingValues = column.hasMissingValues(); // false
          * }
          */
         @Pure
@@ -184,7 +205,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val column = Column("test", [1, 2, 3]);
+         *     val renamedColumn = column.rename("new_name");
          * }
          */
         @Pure
@@ -203,7 +225,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val price = Column("price", [4.99, 5.99, 2.49]);
+         *     val discountedPrice = price.transform((value) -> value * 0.75);
          * }
          */
         @Pure
@@ -218,8 +241,16 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val column1 = Column("test1", [1, 2, 3]);
+         *     val column2 = Column("test2", [2, 4, 6]);
+         *     val correlation = column1.correlationWith(column2); // 1.0
          * }
+         *
+         * @example
+         * pipeline example {
+         *     val column1 = Column("test1", [1, 2, 3]);
+         *     val column2 = Column("test2", [3, 2, 1]);
+         *     val correlation = column1.correlationWith(column2); // -1.0
          */
         @Pure
         @PythonName("correlation_with")
@@ -240,7 +271,14 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val column = Column("test", [1, 2, 3]);
+         *     val idness = column.idness(); // 1.0
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("test", [1, 2, 2, 3]);
+         *     val idness = column.idness(); // 0.75
          * }
          */
         @Pure
@@ -253,7 +291,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val column = Column("test", [1, 2, 3]);
+         *     val maximum = column.maximum(); // 3
          * }
          */
         @Pure
@@ -266,7 +305,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val column = Column("test", [1, 2, 3]);
+         *     val mean = column.mean(); // 2.0
          * }
          */
         @Pure
@@ -279,7 +319,14 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val column = Column("test", [1, 2, 3]);
+         *     val median = column.median(); // 2.0
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("test", [1, 2, 3, 4]);
+         *     val median = column.median(); // 2.5
          * }
          */
         @Pure
@@ -292,7 +339,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val column = Column("test", [1, 2, 3]);
+         *     val minimum = column.minimum(); // 1
          * }
          */
         @Pure
@@ -305,7 +353,14 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val column = Column("test", [1, 2, 3, 4]);
+         *     val missingValueRatio = column.missingValueRatio(); // 0.0
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("test", [1, 2, 3, null]);
+         *     val missingValueRatio = column.missingValueRatio(); // 0.25
          * }
          */
         @Pure
@@ -319,7 +374,14 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val column = Column("test", [1, 2, 2, 3]);
+         *     val mode = column.mode(); // [2]
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("test", [1, 2, 2, 3, 3]);
+         *     val mode = column.mode(); // [2, 3]
          * }
          */
         @Pure
@@ -340,7 +402,14 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val column = Column("test", [1, 2, 2, 3]);
+         *     val stability = column.stability(); // 0.5
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("test", [1, 2, 2, 3, null]);
+         *     val stability = column.stability(); // 0.5
          * }
          */
         @Pure
@@ -353,7 +422,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val column = Column("test", [1, 2, 3]);
+         *     val standardDeviation = column.standardDeviation(); // 1.0
          * }
          */
         @Pure
@@ -367,7 +437,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val column = Column("test", [1, 2, 3]);
+         *     val sum = column.sum(); // 6
          * }
          */
         @Pure
@@ -380,7 +451,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val column = Column("test", [1, 2, 3]);
+         *     val variance = column.variance(); // 1.0
          * }
          */
         @Pure
@@ -393,7 +465,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val column = Column("test", [1, 2, 3]);
+         *     val plot = column.plotBoxplot();
          * }
          */
         @Pure
@@ -407,7 +480,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val column = Column("test", [1, 2, 3]);
+         *     val plot = column.plotHistogram();
          * }
          */
         @Pure
@@ -421,7 +495,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val column = Column("test", [1, 2, 3]);
+         *     val html = column.toHtml();
          * }
          */
         @Pure
@@ -541,13 +616,20 @@ Check if any value has a given property.
 
 ```sds
 pipeline example {
-    // TODO
+    val column = Column("test", [1, 2, 3]);
+    val anyMatch = column.any((value) -> value < 2); // true
+}
+```
+```sds
+pipeline example {
+    val column = Column("test", [1, 2, 3]);
+    val anyMatch = column.any((value) -> value < 1); // false
 }
 ```
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="128"
+    ```sds linenums="135"
     @Pure
     fun any(
         predicate: (param1: T) -> param2: Boolean
@@ -574,13 +656,21 @@ Calculate Pearson correlation between this and another column. Both columns have
 
 ```sds
 pipeline example {
-    // TODO
+    val column1 = Column("test1", [1, 2, 3]);
+    val column2 = Column("test2", [2, 4, 6]);
+    val correlation = column1.correlationWith(column2); // 1.0
 }
+```
+```sds
+pipeline example {
+    val column1 = Column("test1", [1, 2, 3]);
+    val column2 = Column("test2", [3, 2, 1]);
+    val correlation = column1.correlationWith(column2); // -1.0
 ```
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="212"
+    ```sds linenums="243"
     @Pure
     @PythonName("correlation_with")
     fun correlationWith(
@@ -664,13 +754,20 @@ Return whether the column has missing values.
 
 ```sds
 pipeline example {
-    // TODO
+    val column = Column("test", [1, 2, 3, null]);
+    val hasMissingValues = column.hasMissingValues(); // true
+}
+```
+```sds
+pipeline example {
+    val column = Column("test", [1, 2, 3]);
+    val hasMissingValues = column.hasMissingValues(); // false
 }
 ```
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="160"
+    ```sds linenums="181"
     @Pure
     @PythonName("has_missing_values")
     fun hasMissingValues() -> result1: Boolean
@@ -696,13 +793,20 @@ $$
 
 ```sds
 pipeline example {
-    // TODO
+    val column = Column("test", [1, 2, 3]);
+    val idness = column.idness(); // 1.0
+}
+```
+```sds
+pipeline example {
+    val column = Column("test", [1, 2, 2, 3]);
+    val idness = column.idness(); // 0.75
 }
 ```
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="234"
+    ```sds linenums="272"
     @Pure
     fun idness() -> result1: Float
     ```
@@ -721,13 +825,14 @@ Return the maximum value of the column. The column has to be numerical.
 
 ```sds
 pipeline example {
-    // TODO
+    val column = Column("test", [1, 2, 3]);
+    val maximum = column.maximum(); // 3
 }
 ```
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="247"
+    ```sds linenums="286"
     @Pure
     fun maximum() -> result1: Float
     ```
@@ -746,13 +851,14 @@ Return the mean value of the column. The column has to be numerical.
 
 ```sds
 pipeline example {
-    // TODO
+    val column = Column("test", [1, 2, 3]);
+    val mean = column.mean(); // 2.0
 }
 ```
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="260"
+    ```sds linenums="300"
     @Pure
     fun mean() -> result1: Float
     ```
@@ -771,13 +877,20 @@ Return the median value of the column. The column has to be numerical.
 
 ```sds
 pipeline example {
-    // TODO
+    val column = Column("test", [1, 2, 3]);
+    val median = column.median(); // 2.0
+}
+```
+```sds
+pipeline example {
+    val column = Column("test", [1, 2, 3, 4]);
+    val median = column.median(); // 2.5
 }
 ```
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="273"
+    ```sds linenums="320"
     @Pure
     fun median() -> result1: Float
     ```
@@ -796,13 +909,14 @@ Return the minimum value of the column. The column has to be numerical.
 
 ```sds
 pipeline example {
-    // TODO
+    val column = Column("test", [1, 2, 3]);
+    val minimum = column.minimum(); // 1
 }
 ```
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="286"
+    ```sds linenums="334"
     @Pure
     fun minimum() -> result1: Float
     ```
@@ -821,13 +935,20 @@ Return the ratio of missing values to the total number of elements in the column
 
 ```sds
 pipeline example {
-    // TODO
+    val column = Column("test", [1, 2, 3, 4]);
+    val missingValueRatio = column.missingValueRatio(); // 0.0
+}
+```
+```sds
+pipeline example {
+    val column = Column("test", [1, 2, 3, null]);
+    val missingValueRatio = column.missingValueRatio(); // 0.25
 }
 ```
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="299"
+    ```sds linenums="354"
     @Pure
     @PythonName("missing_value_ratio")
     fun missingValueRatio() -> result1: Float
@@ -847,13 +968,20 @@ Return the mode of the column.
 
 ```sds
 pipeline example {
-    // TODO
+    val column = Column("test", [1, 2, 2, 3]);
+    val mode = column.mode(); // [2]
+}
+```
+```sds
+pipeline example {
+    val column = Column("test", [1, 2, 2, 3, 3]);
+    val mode = column.mode(); // [2, 3]
 }
 ```
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="313"
+    ```sds linenums="375"
     @Pure
     fun mode() -> result1: List<T>
     ```
@@ -878,13 +1006,20 @@ Check if no values has a given property.
 
 ```sds
 pipeline example {
-    // TODO
+    val column = Column("test", [1, 2, 3]);
+    val noneMatch = column.none((value) -> value < 1); // true
+}
+```
+```sds
+pipeline example {
+    val column = Column("test", [1, 2, 3]);
+    val noneMatch = column.none((value) -> value > 1); // false
 }
 ```
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="145"
+    ```sds linenums="159"
     @Pure
     fun none(
         predicate: (param1: T) -> param2: Boolean
@@ -905,13 +1040,14 @@ Plot this column in a boxplot. This function can only plot real numerical data.
 
 ```sds
 pipeline example {
-    // TODO
+    val column = Column("test", [1, 2, 3]);
+    val plot = column.plotBoxplot();
 }
 ```
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="387"
+    ```sds linenums="460"
     @Pure
     @PythonName("plot_boxplot")
     fun plotBoxplot() -> result1: Image
@@ -931,13 +1067,14 @@ Plot a column in a histogram.
 
 ```sds
 pipeline example {
-    // TODO
+    val column = Column("test", [1, 2, 3]);
+    val plot = column.plotHistogram();
 }
 ```
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="401"
+    ```sds linenums="475"
     @Pure
     @PythonName("plot_histogram")
     fun plotHistogram() -> result1: Image
@@ -965,13 +1102,14 @@ The original column is not modified.
 
 ```sds
 pipeline example {
-    // TODO
+    val column = Column("test", [1, 2, 3]);
+    val renamedColumn = column.rename("new_name");
 }
 ```
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="178"
+    ```sds linenums="200"
     @Pure
     fun rename(
         @PythonName("new_name") newName: String
@@ -1000,13 +1138,20 @@ The stability is not defined for a column with only null values.
 
 ```sds
 pipeline example {
-    // TODO
+    val column = Column("test", [1, 2, 2, 3]);
+    val stability = column.stability(); // 0.5
+}
+```
+```sds
+pipeline example {
+    val column = Column("test", [1, 2, 2, 3, null]);
+    val stability = column.stability(); // 0.5
 }
 ```
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="334"
+    ```sds linenums="403"
     @Pure
     fun stability() -> result1: Float
     ```
@@ -1025,13 +1170,14 @@ Return the standard deviation of the column. The column has to be numerical.
 
 ```sds
 pipeline example {
-    // TODO
+    val column = Column("test", [1, 2, 3]);
+    val standardDeviation = column.standardDeviation(); // 1.0
 }
 ```
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="347"
+    ```sds linenums="417"
     @Pure
     @PythonName("standard_deviation")
     fun standardDeviation() -> result1: Float
@@ -1051,13 +1197,14 @@ Return the sum of the column. The column has to be numerical.
 
 ```sds
 pipeline example {
-    // TODO
+    val column = Column("test", [1, 2, 3]);
+    val sum = column.sum(); // 6
 }
 ```
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="361"
+    ```sds linenums="432"
     @Pure
     fun sum() -> result1: Float
     ```
@@ -1076,13 +1223,14 @@ Return an HTML representation of the column.
 
 ```sds
 pipeline example {
-    // TODO
+    val column = Column("test", [1, 2, 3]);
+    val html = column.toHtml();
 }
 ```
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="415"
+    ```sds linenums="490"
     @Pure
     @PythonName("to_html")
     fun toHtml() -> result1: String
@@ -1116,13 +1264,14 @@ The original column is not modified.
 
 ```sds
 pipeline example {
-    // TODO
+    val price = Column("price", [4.99, 5.99, 2.49]);
+    val discountedPrice = price.transform((value) -> value * 0.75);
 }
 ```
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="197"
+    ```sds linenums="220"
     @Pure
     fun transform<R>(
         transformer: (param1: T) -> param2: R
@@ -1143,13 +1292,14 @@ Return the variance of the column. The column has to be numerical.
 
 ```sds
 pipeline example {
-    // TODO
+    val column = Column("test", [1, 2, 3]);
+    val variance = column.variance(); // 1.0
 }
 ```
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="374"
+    ```sds linenums="446"
     @Pure
     fun variance() -> result1: Float
     ```

@@ -122,7 +122,14 @@ class Column<out T = Any?>(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val column = Column("test", [1, 2, 3]);
+     *     val anyMatch = column.any((value) -> value < 2); // true
+     * }
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("test", [1, 2, 3]);
+     *     val anyMatch = column.any((value) -> value < 1); // false
      * }
      */
     @Pure
@@ -139,7 +146,14 @@ class Column<out T = Any?>(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val column = Column("test", [1, 2, 3]);
+     *     val noneMatch = column.none((value) -> value < 1); // true
+     * }
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("test", [1, 2, 3]);
+     *     val noneMatch = column.none((value) -> value > 1); // false
      * }
      */
     @Pure
@@ -154,7 +168,14 @@ class Column<out T = Any?>(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val column = Column("test", [1, 2, 3, null]);
+     *     val hasMissingValues = column.hasMissingValues(); // true
+     * }
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("test", [1, 2, 3]);
+     *     val hasMissingValues = column.hasMissingValues(); // false
      * }
      */
     @Pure
@@ -172,7 +193,8 @@ class Column<out T = Any?>(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val column = Column("test", [1, 2, 3]);
+     *     val renamedColumn = column.rename("new_name");
      * }
      */
     @Pure
@@ -191,7 +213,8 @@ class Column<out T = Any?>(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val price = Column("price", [4.99, 5.99, 2.49]);
+     *     val discountedPrice = price.transform((value) -> value * 0.75);
      * }
      */
     @Pure
@@ -206,7 +229,16 @@ class Column<out T = Any?>(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val column1 = Column("test1", [1, 2, 3]);
+     *     val column2 = Column("test2", [2, 4, 6]);
+     *     val correlation = column1.correlationWith(column2); // 1.0
+     * }
+     *
+     * @example
+     * pipeline example {
+     *     val column1 = Column("test1", [1, 2, 3]);
+     *     val column2 = Column("test2", [3, 2, 1]);
+     *     val correlation = column1.correlationWith(column2); // -1.0
      * }
      */
     @Pure
@@ -228,7 +260,14 @@ class Column<out T = Any?>(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val column = Column("test", [1, 2, 3]);
+     *     val idness = column.idness(); // 1.0
+     * }
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("test", [1, 2, 2, 3]);
+     *     val idness = column.idness(); // 0.75
      * }
      */
     @Pure
@@ -241,7 +280,8 @@ class Column<out T = Any?>(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val column = Column("test", [1, 2, 3]);
+     *     val maximum = column.maximum(); // 3
      * }
      */
     @Pure
@@ -254,7 +294,8 @@ class Column<out T = Any?>(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val column = Column("test", [1, 2, 3]);
+     *     val mean = column.mean(); // 2.0
      * }
      */
     @Pure
@@ -267,7 +308,14 @@ class Column<out T = Any?>(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val column = Column("test", [1, 2, 3]);
+     *     val median = column.median(); // 2.0
+     * }
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("test", [1, 2, 3, 4]);
+     *     val median = column.median(); // 2.5
      * }
      */
     @Pure
@@ -280,7 +328,8 @@ class Column<out T = Any?>(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val column = Column("test", [1, 2, 3]);
+     *     val minimum = column.minimum(); // 1
      * }
      */
     @Pure
@@ -293,7 +342,14 @@ class Column<out T = Any?>(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val column = Column("test", [1, 2, 3, 4]);
+     *     val missingValueRatio = column.missingValueRatio(); // 0.0
+     * }
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("test", [1, 2, 3, null]);
+     *     val missingValueRatio = column.missingValueRatio(); // 0.25
      * }
      */
     @Pure
@@ -307,7 +363,14 @@ class Column<out T = Any?>(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val column = Column("test", [1, 2, 2, 3]);
+     *     val mode = column.mode(); // [2]
+     * }
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("test", [1, 2, 2, 3, 3]);
+     *     val mode = column.mode(); // [2, 3]
      * }
      */
     @Pure
@@ -328,7 +391,14 @@ class Column<out T = Any?>(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val column = Column("test", [1, 2, 2, 3]);
+     *     val stability = column.stability(); // 0.5
+     * }
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("test", [1, 2, 2, 3, null]);
+     *     val stability = column.stability(); // 0.5
      * }
      */
     @Pure
@@ -341,7 +411,8 @@ class Column<out T = Any?>(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val column = Column("test", [1, 2, 3]);
+     *     val standardDeviation = column.standardDeviation(); // 1.0
      * }
      */
     @Pure
@@ -355,7 +426,8 @@ class Column<out T = Any?>(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val column = Column("test", [1, 2, 3]);
+     *     val sum = column.sum(); // 6
      * }
      */
     @Pure
@@ -368,7 +440,8 @@ class Column<out T = Any?>(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val column = Column("test", [1, 2, 3]);
+     *     val variance = column.variance(); // 1.0
      * }
      */
     @Pure
@@ -381,7 +454,8 @@ class Column<out T = Any?>(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val column = Column("test", [1, 2, 3]);
+     *     val plot = column.plotBoxplot();
      * }
      */
     @Pure
@@ -395,7 +469,8 @@ class Column<out T = Any?>(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val column = Column("test", [1, 2, 3]);
+     *     val plot = column.plotHistogram();
      * }
      */
     @Pure
@@ -409,7 +484,8 @@ class Column<out T = Any?>(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val column = Column("test", [1, 2, 3]);
+     *     val html = column.toHtml();
      * }
      */
     @Pure
