@@ -41,10 +41,22 @@ export const activate = async function (context: vscode.ExtensionContext) {
     ).SafeDs;
 
     client = createLanguageClient(context);
-    registerNotificationListeners(context);
-    await client.start();
 
-    registerVSCodeCommands(context);
+    registerNotificationListeners(context);
+    registerCommands(context);
+
+    await client.start();
+};
+
+/**
+ * This function is called when the extension is deactivated.
+ */
+export const deactivate = async function (): Promise<void> {
+    await services.runtime.Runner.stopPythonServer();
+    if (client) {
+        await client.stop();
+    }
+    return;
 };
 
 const createLanguageClient = function (context: vscode.ExtensionContext): LanguageClient {
@@ -101,31 +113,13 @@ const registerNotificationListeners = function (context: vscode.ExtensionContext
     );
 };
 
-/**
- * This function is called when the extension is deactivated.
- */
-export const deactivate = async function (): Promise<void> {
-    await services.runtime.Runner.stopPythonServer();
-    if (client) {
-        await client.stop();
-    }
-    return;
-};
-
-const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
-    context.subscriptions.push(vscode.commands.registerCommand('safe-ds.dumpDiagnostics', dumpDiagnostics(context)));
+const registerCommands = function (context: vscode.ExtensionContext) {
     context.subscriptions.push(
+        vscode.commands.registerCommand('safe-ds.dumpDiagnostics', dumpDiagnostics(context)),
         vscode.commands.registerCommand('safe-ds.installRunner', installRunner(context, client, services)),
-    );
-    context.subscriptions.push(
         vscode.commands.registerCommand('safe-ds.openDiagnosticsDumps', openDiagnosticsDumps(context)),
-    );
-    context.subscriptions.push(
         vscode.commands.registerCommand('safe-ds.updateRunner', updateRunner(context, client, services)),
-    );
-
-    context.subscriptions.push(vscode.commands.registerCommand('safe-ds.runPipelineFile', commandRunPipelineFile));
-    context.subscriptions.push(
+        vscode.commands.registerCommand('safe-ds.runPipelineFile', commandRunPipelineFile),
         vscode.commands.registerCommand('safe-ds.runEda', async (documentUri: string, nodePath: string) => {
             await vscode.workspace.saveAll();
 
@@ -233,8 +227,8 @@ const runEda = function (
     // Show progress indicator
     vscode.window.withProgress(
         {
-            location: vscode.ProgressLocation.Notification,
-            title: 'Loading Table ...',
+            location: vscode.ProgressLocation.Window,
+            title: 'Loading Table...',
         },
         (progress, _) => {
             progress.report({ increment: 0 });
