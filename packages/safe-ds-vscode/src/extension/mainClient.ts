@@ -23,7 +23,9 @@ let lastSuccessfulTableName: string | undefined;
 let lastSuccessfulPipelinePath: vscode.Uri | undefined;
 let lastSuccessfulPipelineNode: ast.SdsPipeline | undefined;
 
-// This function is called when the extension is activated.
+/**
+ * This function is called when the extension is activated.
+ */
 export const activate = async function (context: vscode.ExtensionContext) {
     initializeLog();
     services = (
@@ -43,27 +45,6 @@ export const activate = async function (context: vscode.ExtensionContext) {
     await client.start();
 
     registerVSCodeCommands(context);
-};
-
-const registerNotificationListeners = function (context: vscode.ExtensionContext) {
-    client.onNotification(rpc.runnerInstall, async () => {
-        await installRunner(context, client, services)();
-    });
-    client.onNotification(rpc.runnerStarted, async (port: number) => {
-        await services.runtime.Runner.connectToPort(port);
-    });
-    client.onNotification(rpc.runnerUpdate, async () => {
-        await updateRunner(context, client, services)();
-    });
-};
-
-// This function is called when the extension is deactivated.
-export const deactivate = async function (): Promise<void> {
-    await services.runtime.Runner.stopPythonServer();
-    if (client) {
-        await client.stop();
-    }
-    return;
 };
 
 const createLanguageClient = function (context: vscode.ExtensionContext): LanguageClient {
@@ -104,6 +85,31 @@ const createLanguageClient = function (context: vscode.ExtensionContext): Langua
 
     // Create the language client
     return new LanguageClient('safe-ds', 'Safe-DS', serverOptions, clientOptions);
+};
+
+const registerNotificationListeners = function (context: vscode.ExtensionContext) {
+    context.subscriptions.push(
+        client.onNotification(rpc.runnerInstall, async () => {
+            await installRunner(context, client, services)();
+        }),
+        client.onNotification(rpc.runnerStarted, async (port: number) => {
+            await services.runtime.Runner.connectToPort(port);
+        }),
+        client.onNotification(rpc.runnerUpdate, async () => {
+            await updateRunner(context, client, services)();
+        }),
+    );
+};
+
+/**
+ * This function is called when the extension is deactivated.
+ */
+export const deactivate = async function (): Promise<void> {
+    await services.runtime.Runner.stopPythonServer();
+    if (client) {
+        await client.stop();
+    }
+    return;
 };
 
 const registerVSCodeCommands = function (context: vscode.ExtensionContext) {
