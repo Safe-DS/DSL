@@ -116,10 +116,10 @@ const registerNotificationListeners = function (context: vscode.ExtensionContext
 const registerCommands = function (context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand('safe-ds.dumpDiagnostics', dumpDiagnostics(context)),
+        vscode.commands.registerCommand('safe-ds.exploreTable', exploreTable(context)),
         vscode.commands.registerCommand('safe-ds.installRunner', installRunner(context, client, services)),
         vscode.commands.registerCommand('safe-ds.openDiagnosticsDumps', openDiagnosticsDumps(context)),
         vscode.commands.registerCommand('safe-ds.refreshWebview', refreshWebview(context)),
-        vscode.commands.registerCommand('safe-ds.runEda', runEda(context)),
         vscode.commands.registerCommand('safe-ds.runPipelineFile', runPipelineFile),
         vscode.commands.registerCommand('safe-ds.updateRunner', updateRunner(context, client, services)),
     );
@@ -185,7 +185,7 @@ const doRunPipelineFile = async function (
     }
 };
 
-const runEda = (context: vscode.ExtensionContext) => {
+const exploreTable = (context: vscode.ExtensionContext) => {
     return async (documentUri: string, nodePath: string) => {
         await vscode.workspace.saveAll();
 

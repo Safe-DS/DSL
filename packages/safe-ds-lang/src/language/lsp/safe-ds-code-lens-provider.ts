@@ -91,7 +91,7 @@ export class SafeDsCodeLensProvider implements CodeLensProvider {
                 range: cstNode.range,
                 command: {
                     title: `Explore ${node.name}`,
-                    command: 'safe-ds.runEda',
+                    command: 'safe-ds.exploreTable',
                     arguments: this.computeNodeId(node),
                 },
             });
