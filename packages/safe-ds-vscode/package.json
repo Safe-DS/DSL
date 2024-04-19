@@ -239,15 +239,6 @@
                 "files.trimTrailingWhitespace": true
             }
         },
-        "menus": {
-            "editor/title/run": [
-                {
-                    "command": "safe-ds.runPipelineFile",
-                    "when": "resourceLangId == safe-ds",
-                    "group": "navigation@1"
-                }
-            ]
-        },
         "commands": [
             {
                 "command": "safe-ds.dumpDiagnostics",
@@ -268,12 +259,6 @@
                 "command": "safe-ds.refreshWebview",
                 "title": "Refresh Webview",
                 "category": "Safe-DS"
-            },
-            {
-                "command": "safe-ds.runPipelineFile",
-                "title": "Run Pipeline",
-                "category": "Safe-DS",
-                "icon": "$(play)"
             },
             {
                 "command": "safe-ds.updateRunner",
