@@ -745,7 +745,7 @@ class Table(
      *
      * The original table is not modified.
      *
-     * @result result1 The table with the transformed column.
+     * @result transformedTable The table with the transformed column.
      *
      * @example
      * pipeline example {
@@ -756,8 +756,8 @@ class Table(
     @PythonName("transform_column")
     fun transformColumn(
         name: String,
-        transformer: (param1: Row) -> param2: Any
-    ) -> result1: Table
+        transformer: (row: Row) -> newColumnValue: Any?
+    ) -> transformedTable: Table
 
     /**
      * Return a new `Table` with a learned transformation applied to this table.
