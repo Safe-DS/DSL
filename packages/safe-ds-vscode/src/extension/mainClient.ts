@@ -198,20 +198,20 @@ const runEda = (context: vscode.ExtensionContext) => {
         }
 
         const root = document.parseResult.value;
-        const node = services.workspace.AstNodeLocator.getAstNode(root, nodePath);
-        if (!isSdsPlaceholder(node)) {
+        const placeholderNode = services.workspace.AstNodeLocator.getAstNode(root, nodePath);
+        if (!isSdsPlaceholder(placeholderNode)) {
             vscode.window.showErrorMessage('Selected node is not a placeholder.');
             return;
         }
 
-        const pipelineNode = AstUtils.getContainerOfType(node, ast.isSdsPipeline);
+        const pipelineNode = AstUtils.getContainerOfType(placeholderNode, ast.isSdsPipeline);
         if (!pipelineNode) {
             vscode.window.showErrorMessage('Selected placeholder is not in a pipeline.');
             return;
         }
 
         const pipelineName = pipelineNode.name;
-        const requestedPlaceholderName = node.name;
+        const requestedPlaceholderName = placeholderNode.name;
 
         // gen custom id for pipeline
         const pipelineExecutionId = crypto.randomUUID();
@@ -291,7 +291,7 @@ const runEda = (context: vscode.ExtensionContext) => {
         };
         services.runtime.Runner.addMessageCallback(runtimeErrorCallback, 'runtime_error');
 
-        doRunPipelineFile(uri, pipelineExecutionId, pipelineName, requestedPlaceholderName);
+        await doRunPipelineFile(uri, pipelineExecutionId, pipelineName, requestedPlaceholderName);
     };
 };
 
