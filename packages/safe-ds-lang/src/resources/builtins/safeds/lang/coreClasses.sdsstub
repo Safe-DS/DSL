@@ -52,6 +52,7 @@ class Number
  * }
  */
 class Int sub Number {
+
     /**
      * Converts this integer to a floating-point number.
      *
