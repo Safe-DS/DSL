@@ -2,8 +2,8 @@ import { CodeLensProvider } from 'langium/lsp';
 import { CancellationToken, CodeLens, type CodeLensParams } from 'vscode-languageserver';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
-import { AstNodeLocator, AstUtils, interruptAndCheck, LangiumDocument } from 'langium';
-import { isSdsModule, isSdsPipeline, SdsModuleMember, SdsPlaceholder } from '../generated/ast.js';
+import { AstNode, AstNodeLocator, AstUtils, interruptAndCheck, LangiumDocument } from 'langium';
+import { isSdsModule, isSdsPipeline, SdsModuleMember, SdsPipeline, SdsPlaceholder } from '../generated/ast.js';
 import { SafeDsRunner } from '../runner/safe-ds-runner.js';
 import { getModuleMembers, streamPlaceholders } from '../helpers/nodeProperties.js';
 import { SafeDsTypeChecker } from '../typing/safe-ds-type-checker.js';
@@ -53,11 +53,30 @@ export class SafeDsCodeLensProvider implements CodeLensProvider {
         cancelToken: CancellationToken = CancellationToken.None,
     ): Promise<void> {
         if (isSdsPipeline(node)) {
+            await this.computeCodeLensForPipeline(node, accept);
+
             for (const placeholder of streamPlaceholders(node.body)) {
                 await interruptAndCheck(cancelToken);
                 await this.computeCodeLensForPlaceholder(placeholder, accept);
             }
         }
+    }
+
+    private async computeCodeLensForPipeline(node: SdsPipeline, accept: CodeLensAcceptor): Promise<void> {
+        const cstNode = node.$cstNode;
+        if (!cstNode) {
+            /* c8 ignore next 2 */
+            return;
+        }
+
+        accept({
+            range: cstNode.range,
+            command: {
+                title: `Run ${node.name}`,
+                command: 'safe-ds.runPipeline',
+                arguments: this.computeNodeId(node),
+            },
+        });
     }
 
     private async computeCodeLensForPlaceholder(node: SdsPlaceholder, accept: CodeLensAcceptor): Promise<void> {
@@ -68,18 +87,21 @@ export class SafeDsCodeLensProvider implements CodeLensProvider {
         }
 
         if (this.typeChecker.isTabular(this.typeComputer.computeType(node))) {
-            const documentUri = AstUtils.getDocument(node).uri.toString();
-            const nodePath = this.astNodeLocator.getAstNodePath(node);
-
             accept({
                 range: cstNode.range,
                 command: {
                     title: `Explore ${node.name}`,
                     command: 'safe-ds.runEda',
-                    arguments: [documentUri, nodePath],
+                    arguments: this.computeNodeId(node),
                 },
             });
         }
+    }
+
+    private computeNodeId(node: AstNode): [string, string] {
+        const documentUri = AstUtils.getDocument(node).uri;
+        const nodePath = this.astNodeLocator.getAstNodePath(node);
+        return [documentUri.toString(), nodePath];
     }
 }
 
