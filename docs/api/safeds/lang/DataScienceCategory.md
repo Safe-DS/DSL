@@ -2,17 +2,9 @@
 
 A step in the data science process.
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `ideIntegration.sdsstub`"
 
-    ```sds linenums="40"
+    ```sds linenums="25"
     enum DataScienceCategory {
         /**
          * Load your data into the program.

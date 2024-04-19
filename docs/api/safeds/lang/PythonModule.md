@@ -13,17 +13,9 @@ stubs.
 
 - `Module`
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `codeGeneration.sdsstub`"
 
-    ```sds linenums="32"
+    ```sds linenums="22"
     annotation PythonModule(
         qualifiedName: String
     )

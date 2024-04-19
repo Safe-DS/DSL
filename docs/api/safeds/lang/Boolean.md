@@ -11,12 +11,17 @@ A truth value.
 
 ```sds
 pipeline example {
-    // TODO
+    val boolean = true;
+}
+```
+```sds
+pipeline example {
+    val boolean = false;
 }
 ```
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="44"
+    ```sds linenums="39"
     class Boolean
     ```

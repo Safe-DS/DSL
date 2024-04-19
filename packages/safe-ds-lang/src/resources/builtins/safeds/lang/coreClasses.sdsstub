@@ -2,11 +2,6 @@ package safeds.lang
 
 /**
  * The common superclass of all classes.
- *
- * @example
- * pipeline example {
- *     // TODO
- * }
  */
 class Any {
 
@@ -15,7 +10,7 @@ class Any {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val string = 1.toString(); // "1"
      * }
      */
     @Pure
@@ -25,11 +20,6 @@ class Any {
 
 /**
  * The common subclass of all classes.
- *
- * @example
- * pipeline example {
- *     // TODO
- * }
  */
 class Nothing
 
@@ -38,18 +28,18 @@ class Nothing
  *
  * @example
  * pipeline example {
- *     // TODO
+ *     val boolean = true;
+ * }
+ *
+ * @example
+ * pipeline example {
+ *     val boolean = false;
  * }
  */
 class Boolean
 
 /**
  * A number.
- *
- * @example
- * pipeline example {
- *     // TODO
- * }
  */
 class Number
 
@@ -58,7 +48,7 @@ class Number
  *
  * @example
  * pipeline example {
- *     // TODO
+ *     val int = 1;
  * }
  */
 class Int sub Number {
@@ -67,7 +57,7 @@ class Int sub Number {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val float = 1.toFloat(); // 1.0
      * }
      */
     @Pure
@@ -80,7 +70,7 @@ class Int sub Number {
  *
  * @example
  * pipeline example {
- *     // TODO
+ *     val float = 1.0;
  * }
  */
 class Float sub Number {
@@ -89,7 +79,7 @@ class Float sub Number {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val int = 1.0.toInt(); // 1
      * }
      */
     @Pure
@@ -102,7 +92,7 @@ class Float sub Number {
  *
  * @example
  * pipeline example {
- *     // TODO
+ *     val list = [1, 2, 3];
  * }
  */
 class List<out E> {
@@ -112,7 +102,7 @@ class List<out E> {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val size = [1, 2, 3].size(); // 3
      * }
      */
     @Pure
@@ -125,7 +115,11 @@ class List<out E> {
  *
  * @example
  * pipeline example {
- *     // TODO
+ *     val map = {
+ *         "a": 1,
+ *         "b": 2,
+ *         "c": 3
+ *     };
  * }
  */
 class Map<K, out V> {
@@ -135,7 +129,12 @@ class Map<K, out V> {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val map = {
+     *         "a": 1,
+     *         "b": 2,
+     *         "c": 3
+     *     };
+     *     val size = map.size(); // 3
      * }
      */
     @Pure
@@ -147,7 +146,12 @@ class Map<K, out V> {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val map = {
+     *         "a": 1,
+     *         "b": 2,
+     *         "c": 3
+     *     };
+     *     val keys = map.keys(); // ["a", "b", "c"]
      * }
      */
     @Pure
@@ -159,7 +163,12 @@ class Map<K, out V> {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val map = {
+     *         "a": 1,
+     *         "b": 2,
+     *         "c": 3
+     *     };
+     *     val values = map.values(); // [1, 2, 3]
      * }
      */
     @Pure
@@ -172,7 +181,7 @@ class Map<K, out V> {
  *
  * @example
  * pipeline example {
- *     // TODO
+ *     val string = "Hello, world!";
  * }
  */
 class String {
@@ -182,7 +191,7 @@ class String {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val float = "1.0".toFloat(); // 1.0
      * }
      */
     @Pure
@@ -196,7 +205,12 @@ class String {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val int = "10".toInt(); // 10
+     * }
+     *
+     * @example
+     * pipeline example {
+     *     val int = "10".toInt(base = 2); // 2
      * }
      */
     @Pure

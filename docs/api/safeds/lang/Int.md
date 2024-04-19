@@ -13,20 +13,20 @@ An integer.
 
 ```sds
 pipeline example {
-    // TODO
+    val int = 1;
 }
 ```
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="64"
+    ```sds linenums="54"
     class Int sub Number {
         /**
          * Converts this integer to a floating-point number.
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val float = 1.toFloat(); // 1.0
          * }
          */
         @Pure
@@ -49,13 +49,13 @@ Converts this integer to a floating-point number.
 
 ```sds
 pipeline example {
-    // TODO
+    val float = 1.toFloat(); // 1.0
 }
 ```
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="73"
+    ```sds linenums="63"
     @Pure
     @PythonCall("float($this)")
     fun toFloat() -> f: Float

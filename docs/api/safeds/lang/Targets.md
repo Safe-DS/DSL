@@ -12,17 +12,9 @@ The annotation must target only the specified declaration types. By default, any
 
 - `Annotation`
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `annotationUsage.sdsstub`"
 
-    ```sds linenums="14"
+    ```sds linenums="9"
     annotation Targets(
         targets: List<AnnotationTarget>
     )

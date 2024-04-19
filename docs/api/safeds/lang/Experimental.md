@@ -15,16 +15,8 @@ The declaration might change without a major version bump.
 - `Schema`
 - `Segment`
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `maturity.sdsstub`"
 
-    ```sds linenums="55"
+    ```sds linenums="45"
     annotation Experimental
     ```

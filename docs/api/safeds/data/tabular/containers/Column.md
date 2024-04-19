@@ -251,6 +251,7 @@ pipeline example {
          *     val column1 = Column("test1", [1, 2, 3]);
          *     val column2 = Column("test2", [3, 2, 1]);
          *     val correlation = column1.correlationWith(column2); // -1.0
+         * }
          */
         @Pure
         @PythonName("correlation_with")
@@ -666,11 +667,12 @@ pipeline example {
     val column1 = Column("test1", [1, 2, 3]);
     val column2 = Column("test2", [3, 2, 1]);
     val correlation = column1.correlationWith(column2); // -1.0
+}
 ```
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="243"
+    ```sds linenums="244"
     @Pure
     @PythonName("correlation_with")
     fun correlationWith(
@@ -806,7 +808,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="272"
+    ```sds linenums="273"
     @Pure
     fun idness() -> result1: Float
     ```
@@ -832,7 +834,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="286"
+    ```sds linenums="287"
     @Pure
     fun maximum() -> result1: Float
     ```
@@ -858,7 +860,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="300"
+    ```sds linenums="301"
     @Pure
     fun mean() -> result1: Float
     ```
@@ -890,7 +892,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="320"
+    ```sds linenums="321"
     @Pure
     fun median() -> result1: Float
     ```
@@ -916,7 +918,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="334"
+    ```sds linenums="335"
     @Pure
     fun minimum() -> result1: Float
     ```
@@ -948,7 +950,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="354"
+    ```sds linenums="355"
     @Pure
     @PythonName("missing_value_ratio")
     fun missingValueRatio() -> result1: Float
@@ -981,7 +983,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="375"
+    ```sds linenums="376"
     @Pure
     fun mode() -> result1: List<T>
     ```
@@ -1047,7 +1049,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="460"
+    ```sds linenums="461"
     @Pure
     @PythonName("plot_boxplot")
     fun plotBoxplot() -> result1: Image
@@ -1074,7 +1076,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="475"
+    ```sds linenums="476"
     @Pure
     @PythonName("plot_histogram")
     fun plotHistogram() -> result1: Image
@@ -1151,7 +1153,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="403"
+    ```sds linenums="404"
     @Pure
     fun stability() -> result1: Float
     ```
@@ -1177,7 +1179,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="417"
+    ```sds linenums="418"
     @Pure
     @PythonName("standard_deviation")
     fun standardDeviation() -> result1: Float
@@ -1204,7 +1206,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="432"
+    ```sds linenums="433"
     @Pure
     fun sum() -> result1: Float
     ```
@@ -1230,7 +1232,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="490"
+    ```sds linenums="491"
     @Pure
     @PythonName("to_html")
     fun toHtml() -> result1: String
@@ -1299,7 +1301,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="446"
+    ```sds linenums="447"
     @Pure
     fun variance() -> result1: Float
     ```

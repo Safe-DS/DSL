@@ -17,13 +17,13 @@ A list of elements.
 
 ```sds
 pipeline example {
-    // TODO
+    val list = [1, 2, 3];
 }
 ```
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="108"
+    ```sds linenums="98"
     class List<out E> {
 
         /**
@@ -31,7 +31,7 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val size = [1, 2, 3].size(); // 3
          * }
          */
         @Pure
@@ -54,13 +54,13 @@ Returns the number of elements in the list.
 
 ```sds
 pipeline example {
-    // TODO
+    val size = [1, 2, 3].size(); // 3
 }
 ```
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="118"
+    ```sds linenums="108"
     @Pure
     @PythonCall("len($this)")
     fun size() -> size: Int

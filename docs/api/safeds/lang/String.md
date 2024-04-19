@@ -11,13 +11,13 @@ Some text.
 
 ```sds
 pipeline example {
-    // TODO
+    val string = "Hello, world!";
 }
 ```
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="178"
+    ```sds linenums="187"
     class String {
 
         /**
@@ -25,7 +25,7 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val float = "1.0".toFloat(); // 1.0
          * }
          */
         @Pure
@@ -39,7 +39,12 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val int = "10".toInt(); // 10
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val int = "10".toInt(base = 2); // 2
          * }
          */
         @Pure
@@ -62,13 +67,13 @@ Parses the string to a floating-point number.
 
 ```sds
 pipeline example {
-    // TODO
+    val float = "1.0".toFloat(); // 1.0
 }
 ```
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="188"
+    ```sds linenums="197"
     @Pure
     @PythonCall("float($this)")
     fun toFloat() -> f: Float
@@ -94,13 +99,18 @@ Parses the string to an integer.
 
 ```sds
 pipeline example {
-    // TODO
+    val int = "10".toInt(); // 10
+}
+```
+```sds
+pipeline example {
+    val int = "10".toInt(base = 2); // 2
 }
 ```
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="202"
+    ```sds linenums="216"
     @Pure
     @PythonCall("int($this, $base)")
     fun toInt(base: Int = 10) -> i: Int

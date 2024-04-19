@@ -2,17 +2,9 @@
 
 The declaration types that can be targeted by annotations.
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `annotationUsage.sdsstub`"
 
-    ```sds linenums="26"
+    ```sds linenums="16"
     enum AnnotationTarget {
 
         /**

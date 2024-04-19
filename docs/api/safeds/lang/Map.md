@@ -18,13 +18,17 @@ A map of keys to values.
 
 ```sds
 pipeline example {
-    // TODO
+    val map = {
+        "a": 1,
+        "b": 2,
+        "c": 3
+    };
 }
 ```
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="131"
+    ```sds linenums="125"
     class Map<K, out V> {
 
         /**
@@ -32,7 +36,12 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val map = {
+         *         "a": 1,
+         *         "b": 2,
+         *         "c": 3
+         *     };
+         *     val size = map.size(); // 3
          * }
          */
         @Pure
@@ -44,7 +53,12 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val map = {
+         *         "a": 1,
+         *         "b": 2,
+         *         "c": 3
+         *     };
+         *     val keys = map.keys(); // ["a", "b", "c"]
          * }
          */
         @Pure
@@ -56,7 +70,12 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val map = {
+         *         "a": 1,
+         *         "b": 2,
+         *         "c": 3
+         *     };
+         *     val values = map.values(); // [1, 2, 3]
          * }
          */
         @Pure
@@ -79,13 +98,18 @@ Returns the keys of the map.
 
 ```sds
 pipeline example {
-    // TODO
+    val map = {
+        "a": 1,
+        "b": 2,
+        "c": 3
+    };
+    val keys = map.keys(); // ["a", "b", "c"]
 }
 ```
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="153"
+    ```sds linenums="157"
     @Pure
     @PythonCall("list($this.keys())")
     fun keys() -> keys: List<K>
@@ -105,13 +129,18 @@ Returns the number of entries in the map.
 
 ```sds
 pipeline example {
-    // TODO
+    val map = {
+        "a": 1,
+        "b": 2,
+        "c": 3
+    };
+    val size = map.size(); // 3
 }
 ```
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="141"
+    ```sds linenums="140"
     @Pure
     @PythonCall("len($this)")
     fun size() -> size: Int
@@ -131,13 +160,18 @@ Returns the values of the map.
 
 ```sds
 pipeline example {
-    // TODO
+    val map = {
+        "a": 1,
+        "b": 2,
+        "c": 3
+    };
+    val values = map.values(); // [1, 2, 3]
 }
 ```
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="165"
+    ```sds linenums="174"
     @Pure
     @PythonCall("list($this.values())")
     fun values() -> values: List<V>
