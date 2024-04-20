@@ -11,9 +11,10 @@ import { AstUtils, LangiumDocument } from 'langium';
 import { EDAPanel } from './eda/edaPanel.ts';
 import { dumpDiagnostics } from './commands/dumpDiagnostics.js';
 import { openDiagnosticsDumps } from './commands/openDiagnosticsDumps.js';
-import { isSdsPipeline, isSdsPlaceholder } from '../../../safe-ds-lang/src/language/generated/ast.js';
+import { isSdsPlaceholder } from '../../../safe-ds-lang/src/language/generated/ast.js';
 import { installRunner } from './commands/installRunner.js';
 import { updateRunner } from './commands/updateRunner.js';
+import { SafeDsLogOutputChannel } from './logging.js';
 
 let client: LanguageClient;
 let services: SafeDsServices;
@@ -92,7 +93,7 @@ const createLanguageClient = function (context: vscode.ExtensionContext): Langua
             // Notify the server about file changes to files contained in the workspace
             fileEvents: fileSystemWatcher,
         },
-        outputChannel: vscode.window.createOutputChannel('Safe-DS Language Client', 'log'),
+        outputChannel: new SafeDsLogOutputChannel('Safe-DS Language Client'),
     };
 
     // Create the language client
@@ -120,7 +121,6 @@ const registerCommands = function (context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('safe-ds.installRunner', installRunner(context, client, services)),
         vscode.commands.registerCommand('safe-ds.openDiagnosticsDumps', openDiagnosticsDumps(context)),
         vscode.commands.registerCommand('safe-ds.refreshWebview', refreshWebview(context)),
-        vscode.commands.registerCommand('safe-ds.runPipeline', runPipeline),
         vscode.commands.registerCommand('safe-ds.updateRunner', updateRunner(context, client, services)),
     );
 };
@@ -260,11 +260,11 @@ const exploreTable = (context: vscode.ExtensionContext) => {
                     pipelineNode,
                     message.data.name,
                 );
-                services.runtime.Runner.removeMessageCallback(placeholderTypeCallback, 'placeholder_type');
+                services.runtime.Runner.removeMessageCallback('placeholder_type', placeholderTypeCallback);
                 cleanupLoadingIndication();
             }
         };
-        services.runtime.Runner.addMessageCallback(placeholderTypeCallback, 'placeholder_type');
+        services.runtime.Runner.addMessageCallback('placeholder_type', placeholderTypeCallback);
 
         const runtimeProgressCallback = function (message: messages.RuntimeProgressMessage) {
             printOutputMessage(`Runner-Progress (${message.id}): ${message.data}`);
@@ -275,21 +275,21 @@ const exploreTable = (context: vscode.ExtensionContext) => {
             ) {
                 lastFinishedPipelineExecutionId = pipelineExecutionId;
                 vscode.window.showErrorMessage(`Selected text is not a placeholder!`);
-                services.runtime.Runner.removeMessageCallback(runtimeProgressCallback, 'runtime_progress');
+                services.runtime.Runner.removeMessageCallback('runtime_progress', runtimeProgressCallback);
                 cleanupLoadingIndication();
             }
         };
-        services.runtime.Runner.addMessageCallback(runtimeProgressCallback, 'runtime_progress');
+        services.runtime.Runner.addMessageCallback('runtime_progress', runtimeProgressCallback);
 
         const runtimeErrorCallback = function (message: messages.RuntimeErrorMessage) {
             if (message.id === pipelineExecutionId && lastFinishedPipelineExecutionId !== pipelineExecutionId) {
                 lastFinishedPipelineExecutionId = pipelineExecutionId;
                 vscode.window.showErrorMessage(`Pipeline ran into an Error!`);
-                services.runtime.Runner.removeMessageCallback(runtimeErrorCallback, 'runtime_error');
+                services.runtime.Runner.removeMessageCallback('runtime_error', runtimeErrorCallback);
                 cleanupLoadingIndication();
             }
         };
-        services.runtime.Runner.addMessageCallback(runtimeErrorCallback, 'runtime_error');
+        services.runtime.Runner.addMessageCallback('runtime_error', runtimeErrorCallback);
 
         await doRunPipelineFile(uri, pipelineExecutionId, pipelineName, requestedPlaceholderName);
     };
@@ -356,28 +356,6 @@ export const getPipelineDocument = async function (
     }
 
     return mainDocument;
-};
-
-const runPipeline = async (documentUri: string, nodePath: string) => {
-    const uri = Uri.parse(documentUri);
-    const document = await getPipelineDocument(uri);
-    if (!document) {
-        vscode.window.showErrorMessage('Could not find document.');
-        return;
-    }
-
-    const root = document.parseResult.value;
-    const pipeline = services.workspace.AstNodeLocator.getAstNode(root, nodePath);
-    if (!isSdsPipeline(pipeline)) {
-        vscode.window.showErrorMessage('Selected node is not a pipeline.');
-        return;
-    }
-
-    const pipelineExecutionId = crypto.randomUUID();
-
-    printOutputMessage(`Launching Pipeline (${pipelineExecutionId}): ${documentUri} - ${pipeline.name}`);
-
-    await services.runtime.Runner.executePipeline(pipelineExecutionId, document, pipeline.name);
 };
 
 const validateDocuments = async function (

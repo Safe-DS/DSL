@@ -7,6 +7,7 @@ import { isSdsModule, isSdsPipeline, SdsModuleMember, SdsPipeline, SdsPlaceholde
 import { SafeDsRunner } from '../runner/safe-ds-runner.js';
 import { getModuleMembers, streamPlaceholders } from '../helpers/nodeProperties.js';
 import { SafeDsTypeChecker } from '../typing/safe-ds-type-checker.js';
+import { COMMAND_RUN_PIPELINE } from './safe-ds-execute-command-handler.js';
 
 export class SafeDsCodeLensProvider implements CodeLensProvider {
     private readonly astNodeLocator: AstNodeLocator;
@@ -73,7 +74,7 @@ export class SafeDsCodeLensProvider implements CodeLensProvider {
             range: cstNode.range,
             command: {
                 title: `Run ${node.name}`,
-                command: 'safe-ds.runPipeline',
+                command: COMMAND_RUN_PIPELINE,
                 arguments: this.computeNodeId(node),
             },
         });

@@ -1,6 +1,6 @@
 import { Base64Image, Column, Profiling, ProfilingDetailStatistical, Table } from '@safe-ds/eda/types/state.js';
-import { SafeDsServices, ast, messages } from '@safe-ds/lang';
-import { LangiumDocument, AstNode } from 'langium';
+import { ast, messages, SafeDsServices } from '@safe-ds/lang';
+import { AstNode, LangiumDocument } from 'langium';
 import { printOutputMessage } from '../../output.ts';
 import * as vscode from 'vscode';
 import crypto from 'crypto';
@@ -63,8 +63,8 @@ export class RunnerApi {
                     return;
                 }
                 if (message.data === 'done') {
-                    this.services.runtime.Runner.removeMessageCallback(runtimeCallback, 'runtime_progress');
-                    this.services.runtime.Runner.removeMessageCallback(errorCallback, 'runtime_error');
+                    this.services.runtime.Runner.removeMessageCallback('runtime_progress', runtimeCallback);
+                    this.services.runtime.Runner.removeMessageCallback('runtime_error', errorCallback);
                     resolve();
                 }
             };
@@ -72,12 +72,12 @@ export class RunnerApi {
                 if (message.id !== pipelineExecutionId) {
                     return;
                 }
-                this.services.runtime.Runner.removeMessageCallback(runtimeCallback, 'runtime_progress');
-                this.services.runtime.Runner.removeMessageCallback(errorCallback, 'runtime_error');
+                this.services.runtime.Runner.removeMessageCallback('runtime_progress', runtimeCallback);
+                this.services.runtime.Runner.removeMessageCallback('runtime_error', errorCallback);
                 reject(message.data);
             };
-            this.services.runtime.Runner.addMessageCallback(runtimeCallback, 'runtime_progress');
-            this.services.runtime.Runner.addMessageCallback(errorCallback, 'runtime_error');
+            this.services.runtime.Runner.addMessageCallback('runtime_progress', runtimeCallback);
+            this.services.runtime.Runner.addMessageCallback('runtime_error', errorCallback);
 
             setTimeout(() => {
                 reject('Pipeline execution timed out');
@@ -139,11 +139,11 @@ export class RunnerApi {
                 if (message.id !== pipelineExecutionId || message.data.name !== placeholder) {
                     return;
                 }
-                this.services.runtime.Runner.removeMessageCallback(placeholderValueCallback, 'placeholder_value');
+                this.services.runtime.Runner.removeMessageCallback('placeholder_value', placeholderValueCallback);
                 resolve(message.data.value);
             };
 
-            this.services.runtime.Runner.addMessageCallback(placeholderValueCallback, 'placeholder_value');
+            this.services.runtime.Runner.addMessageCallback('placeholder_value', placeholderValueCallback);
             printOutputMessage('Getting placeholder from Runner ...');
             this.services.runtime.Runner.sendMessageToPythonServer(
                 messages.createPlaceholderQueryMessage(pipelineExecutionId, placeholder),
