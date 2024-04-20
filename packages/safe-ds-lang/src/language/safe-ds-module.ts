@@ -39,7 +39,7 @@ import { SafeDsWorkspaceManager } from './workspace/safe-ds-workspace-manager.js
 import { SafeDsPurityComputer } from './purity/safe-ds-purity-computer.js';
 import { SafeDsSettingsProvider } from './workspace/safe-ds-settings-provider.js';
 import { SafeDsRenameProvider } from './lsp/safe-ds-rename-provider.js';
-import { SafeDsRunner } from './runner/safe-ds-runner.js';
+import { SafeDsRunner } from './runtime/safe-ds-runner.js';
 import { SafeDsTypeFactory } from './typing/safe-ds-type-factory.js';
 import { SafeDsMarkdownGenerator } from './generation/safe-ds-markdown-generator.js';
 import { SafeDsCompletionProvider } from './lsp/safe-ds-completion-provider.js';
@@ -54,7 +54,7 @@ import { SafeDsConfigurationProvider } from './workspace/safe-ds-configuration-p
 import { SafeDsCodeLensProvider } from './lsp/safe-ds-code-lens-provider.js';
 import { SafeDsExecuteCommandHandler } from './lsp/safe-ds-execute-command-handler.js';
 import { SafeDsServiceRegistry } from './safe-ds-service-registry.js';
-import { SafeDsPythonServer } from './runner/safe-ds-python-server.js';
+import { SafeDsPythonServer } from './runtime/safe-ds-python-server.js';
 
 /**
  * Declaration of custom services - add your own service classes here.

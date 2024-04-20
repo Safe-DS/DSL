@@ -1,6 +1,6 @@
 import { AbstractExecuteCommandHandler, ExecuteCommandAcceptor } from 'langium/lsp';
 import { SafeDsSharedServices } from '../safe-ds-module.js';
-import { SafeDsRunner } from '../runner/safe-ds-runner.js';
+import { SafeDsRunner } from '../runtime/safe-ds-runner.js';
 
 export const COMMAND_RUN_PIPELINE = 'safe-ds.runPipeline';
 
