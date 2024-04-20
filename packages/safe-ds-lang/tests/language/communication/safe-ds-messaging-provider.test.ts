@@ -4,20 +4,6 @@ import { NodeFileSystem } from 'langium/node';
 import { ModuleOptions } from '../../../src/language/safe-ds-module.js';
 import { EventEmitter } from 'node:events';
 
-// ReadableStream();
-// describe('with connection', async () => {
-//     const connection = createConnection(ProposedFeatures.all);
-//     createConnection(Readable.from([]), Writable, ProposedFeatures.all);
-//     const { SafeDs: services, shared } = await createSafeDsServices({ connection, ...NodeFileSystem });
-//     doStartLanguageServer(shared);
-//
-//     describe('logging', () => {
-//         it('should not be undefined', () => {
-//             // expect(services.logging).not.toBeUndefined();
-//         });
-//     });
-// });
-
 describe('without connection', async () => {
     const eventEmitter = new EventEmitter();
     const options: ModuleOptions = {

@@ -95,8 +95,9 @@ export class SafeDsRunner {
 
         const pipelineExecutionId = crypto.randomUUID();
 
+        const start = Date.now();
         const progress = await this.messaging.showProgress('Safe-DS Runner', 'Starting...');
-        this.info(`[${pipelineExecutionId}] Launching pipeline "${pipeline.name}" in ${documentUri}`);
+        this.info(`[${pipelineExecutionId}] Running pipeline "${pipeline.name}" in ${documentUri}.`);
 
         const disposables = [
             this.addMessageCallback('placeholder_type', (message) => {
@@ -122,6 +123,10 @@ export class SafeDsRunner {
             this.addMessageCallback('runtime_progress', (message) => {
                 if (message.id === pipelineExecutionId) {
                     progress.done();
+                    const timeElapsed = Date.now() - start;
+                    this.info(
+                        `[${pipelineExecutionId}] Finished running pipeline "${pipeline.name}" in ${timeElapsed}ms.`,
+                    );
                     disposables.forEach((it) => {
                         it.dispose();
                     });
@@ -149,12 +154,12 @@ export class SafeDsRunner {
 
     private registerMessageLoggingCallbacks() {
         this.addMessageCallback('placeholder_value', (message) => {
-            this.info(
+            this.trace(
                 `Placeholder value is (${message.id}): ${message.data.name} of type ${message.data.type} = ${message.data.value}`,
             );
         });
         this.addMessageCallback('placeholder_type', (message) => {
-            this.info(`Placeholder was calculated (${message.id}): ${message.data.name} of type ${message.data.type}`);
+            this.trace(`Placeholder was calculated (${message.id}): ${message.data.name} of type ${message.data.type}`);
             const execInfo = this.getExecutionContext(message.id);
             execInfo?.calculatedPlaceholders.set(message.data.name, message.data.type);
             // this.sendMessageToPythonServer(
@@ -162,7 +167,7 @@ export class SafeDsRunner {
             //);
         });
         this.addMessageCallback('runtime_progress', (message) => {
-            this.info(`Runner-Progress (${message.id}): ${message.data}`);
+            this.trace(`Runner-Progress (${message.id}): ${message.data}`);
         });
         this.addMessageCallback('runtime_error', async (message) => {
             let readableStacktraceSafeDs: string[] = [];
@@ -250,7 +255,7 @@ export class SafeDsRunner {
                 }
                 return;
             } else {
-                this.info(`Using safe-ds-runner version: ${versionString}`);
+                this.debug(`Using safe-ds-runner version: ${versionString}`);
             }
         } catch (error) {
             this.error(`Could not start runner: ${error instanceof Error ? error.message : error}`);
@@ -265,11 +270,11 @@ export class SafeDsRunner {
         }
         // Start the runner at the specified port
         this.port = await this.findFirstFreePort(5000);
-        this.info(`Trying to use port ${this.port} to start python server...`);
-        this.info(`Using command '${this.runnerCommand}' to start python server...`);
+        this.debug(`Trying to use port ${this.port} to start python server...`);
+        this.debug(`Using command '${this.runnerCommand}' to start python server...`);
 
         const runnerArgs = [...runnerCommandParts, 'start', '--port', String(this.port)];
-        this.info(`Running ${runnerCommand}; Args: ${runnerArgs.join(' ')}`);
+        this.debug(`Running ${runnerCommand}; Args: ${runnerArgs.join(' ')}`);
         this.runnerProcess = child_process.spawn(runnerCommand, runnerArgs);
         this.manageRunnerSubprocessOutputIO();
         try {
@@ -289,7 +294,7 @@ export class SafeDsRunner {
         this.info('Stopping python server...');
         if (this.runnerProcess !== undefined) {
             if ((this.acceptsConnections && !(await this.requestGracefulShutdown(2500))) || !this.acceptsConnections) {
-                this.info(`Tree-killing python server process ${this.runnerProcess.pid}...`);
+                this.debug(`Tree-killing python server process ${this.runnerProcess.pid}...`);
                 const pid = this.runnerProcess.pid!;
                 // Wait for tree-kill to finish killing the tree
                 await new Promise<void>((resolve, _reject) => {
@@ -308,7 +313,7 @@ export class SafeDsRunner {
     }
 
     private async requestGracefulShutdown(maxTimeoutMs: number): Promise<boolean> {
-        this.info('Trying graceful shutdown...');
+        this.debug('Trying graceful shutdown...');
         this.sendMessageToPythonServer(createShutdownMessage());
         return new Promise((resolve, _reject) => {
             this.runnerProcess?.on('close', () => resolve(true));
@@ -559,13 +564,13 @@ export class SafeDsRunner {
     /* c8 ignore start */
     public sendMessageToPythonServer(message: PythonServerMessage): void {
         const messageString = JSON.stringify(message);
-        this.info(`Sending message to python server: ${messageString}`);
+        this.debug(`Sending message to python server: ${messageString}`);
         this.serverConnection!.send(messageString);
     }
 
     private async getPythonServerVersion(process: child_process.ChildProcessWithoutNullStreams) {
         process.stderr.on('data', (data: Buffer) => {
-            this.info(`[Runner-Err] ${data.toString().trim()}`);
+            this.debug(`[Runner-Err] ${data.toString().trim()}`);
         });
         return new Promise<string>((resolve, reject) => {
             process.stdout.on('data', (data: Buffer) => {
@@ -588,10 +593,10 @@ export class SafeDsRunner {
             return;
         }
         this.runnerProcess.stdout.on('data', (data: Buffer) => {
-            this.info(`[Runner-Out] ${data.toString().trim()}`);
+            this.debug(data.toString().trim());
         });
         this.runnerProcess.stderr.on('data', (data: Buffer) => {
-            this.info(`[Runner-Err] ${data.toString().trim()}`);
+            this.debug(data.toString().trim());
         });
         this.runnerProcess.on('close', (code) => {
             this.info(`Exited: ${code}`);
@@ -613,14 +618,14 @@ export class SafeDsRunner {
                 });
                 this.serverConnection.onopen = (event) => {
                     this.acceptsConnections = true;
-                    this.info(`Now accepting connections: ${event.type}`);
+                    this.debug(`Now accepting connections: ${event.type}`);
                     resolve();
                 };
                 this.serverConnection.onerror = (event) => {
                     currentTry += 1;
                     if (event.message.includes('ECONNREFUSED')) {
                         if (currentTry > maxConnectionTries) {
-                            this.info('Max retries reached. No further attempt at connecting is made.');
+                            this.error('Max retries reached. No further attempt at connecting is made.');
                         } else {
                             this.info(`Server is not yet up. Retrying...`);
                             setTimeout(tryConnect, timeoutMs * (2 ** currentTry - 1)); // use exponential backoff
@@ -635,17 +640,17 @@ export class SafeDsRunner {
                 };
                 this.serverConnection.onmessage = (event) => {
                     if (typeof event.data !== 'string') {
-                        this.info(`Message received: (${event.type}, ${typeof event.data}) ${event.data}`);
+                        this.trace(`Message received: (${event.type}, ${typeof event.data}) ${event.data}`);
                         return;
                     }
-                    this.info(
+                    this.trace(
                         `Message received: '${
                             event.data.length > 128 ? event.data.substring(0, 128) + '<truncated>' : event.data
                         }'`,
                     );
                     const pythonServerMessage: PythonServerMessage = JSON.parse(<string>event.data);
                     if (!this.messageCallbacks.has(pythonServerMessage.type)) {
-                        this.info(`Message type '${pythonServerMessage.type}' is not handled`);
+                        this.trace(`Message type '${pythonServerMessage.type}' is not handled`);
                         return;
                     }
                     for (const callback of this.messageCallbacks.get(pythonServerMessage.type)!) {
@@ -692,6 +697,14 @@ export class SafeDsRunner {
     }
 
     /* c8 ignore start */
+    private trace(message: string, verbose?: string) {
+        this.messaging.trace(RUNNER_TAG, message, verbose);
+    }
+
+    private debug(message: string) {
+        this.messaging.debug(RUNNER_TAG, message);
+    }
+
     private info(message: string) {
         this.messaging.info(RUNNER_TAG, message);
     }
