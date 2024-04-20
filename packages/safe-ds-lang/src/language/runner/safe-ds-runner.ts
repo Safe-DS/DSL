@@ -134,13 +134,6 @@ export class SafeDsRunner {
                     });
                 }
             }),
-
-            this.addMessageCallback('shutdown', () => {
-                progress.done();
-                disposables.forEach((it) => {
-                    it.dispose();
-                });
-            }),
         ];
 
         await this.executePipeline(pipelineExecutionId, document, pipeline.name);
@@ -574,13 +567,13 @@ export class SafeDsRunner {
     /* c8 ignore start */
     public sendMessageToPythonServer(message: PythonServerMessage): void {
         const messageString = JSON.stringify(message);
-        this.logger.debug(`Sending message to python server: ${messageString}`);
+        this.logger.trace(`Sending message to python server: ${messageString}`);
         this.serverConnection!.send(messageString);
     }
 
     private async getPythonServerVersion(process: child_process.ChildProcessWithoutNullStreams) {
         process.stderr.on('data', (data: Buffer) => {
-            this.logger.debug(`[Runner-Err] ${data.toString().trim()}`);
+            this.logger.debug(data.toString().trim());
         });
         return new Promise<string>((resolve, reject) => {
             process.stdout.on('data', (data: Buffer) => {
