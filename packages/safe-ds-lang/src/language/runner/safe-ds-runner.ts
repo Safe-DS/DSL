@@ -2,7 +2,7 @@ import child_process from 'child_process';
 import net from 'net';
 import WebSocket from 'ws';
 import { SafeDsServices } from '../safe-ds-module.js';
-import { AstNodeLocator, LangiumDocument, LangiumDocuments, URI } from 'langium';
+import { AstNodeLocator, Disposable, LangiumDocument, LangiumDocuments, URI } from 'langium';
 import path from 'path';
 import {
     createProgramMessage,
@@ -20,6 +20,7 @@ import { isSdsModule, isSdsPipeline } from '../generated/ast.js';
 import semver from 'semver';
 import { SafeDsMessagingProvider } from '../communication/safe-ds-messaging-provider.js';
 import crypto from 'crypto';
+import { Connection } from 'vscode-languageserver';
 
 // Most of the functionality cannot be tested automatically as a functioning runner setup would always be required
 
@@ -52,6 +53,8 @@ export class SafeDsRunner {
         ((message: PythonServerMessage) => void)[]
     >();
 
+    private connection: Connection | undefined;
+
     /* c8 ignore start */
     constructor(services: SafeDsServices) {
         this.annotations = services.builtins.Annotations;
@@ -59,6 +62,7 @@ export class SafeDsRunner {
         this.generator = services.generation.PythonGenerator;
         this.langiumDocuments = services.shared.workspace.LangiumDocuments;
         this.messaging = services.communication.MessagingProvider;
+        this.connection = services.shared.lsp.Connection;
 
         // Register listeners
         this.registerMessageLoggingCallbacks();
@@ -95,7 +99,47 @@ export class SafeDsRunner {
 
         const pipelineExecutionId = crypto.randomUUID();
 
-        this.info(`Launching Pipeline (${pipelineExecutionId}): ${documentUri} - ${pipeline.name}`);
+        const progress = await this.connection?.window.createWorkDoneProgress();
+        progress?.begin('Safe-DS Runner', 0, 'Starting...');
+        this.info(`[${pipelineExecutionId}] Launching pipeline "${pipeline.name}" in ${documentUri}`);
+
+        const disposables = [
+            this.addMessageCallback((message) => {
+                if (message.id === pipelineExecutionId) {
+                    progress?.report(`Computed ${message.data.name}`);
+                }
+            }, 'placeholder_type'),
+
+            this.addMessageCallback((message) => {
+                if (message.id === pipelineExecutionId) {
+                    progress?.done();
+                    disposables.forEach((it) => {
+                        it.dispose();
+                    });
+                    this.messaging.showErrorMessage('An error occurred during pipeline execution.');
+                }
+                progress?.done();
+                disposables.forEach((it) => {
+                    it.dispose();
+                });
+            }, 'runtime_error'),
+
+            this.addMessageCallback((message) => {
+                if (message.id === pipelineExecutionId) {
+                    progress?.done();
+                    disposables.forEach((it) => {
+                        it.dispose();
+                    });
+                }
+            }, 'runtime_progress'),
+
+            this.addMessageCallback(() => {
+                progress?.done();
+                disposables.forEach((it) => {
+                    it.dispose();
+                });
+            }, 'shutdown'),
+        ];
 
         await this.executePipeline(pipelineExecutionId, document, pipeline.name);
     }
