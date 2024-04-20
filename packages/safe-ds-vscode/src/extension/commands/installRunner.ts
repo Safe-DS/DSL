@@ -14,7 +14,7 @@ const npmVersionRange = `>=${LOWEST_SUPPORTED_PYTHON_VERSION} <${LOWEST_UNSUPPOR
 export const installRunner = (context: ExtensionContext, client: LanguageClient, services: SafeDsServices) => {
     return async () => {
         // If the runner is already started, do nothing
-        if (services.runtime.Runner.isPythonServerAvailable()) {
+        if (services.runtime.Runner.isReady()) {
             vscode.window.showInformationMessage('The runner is already installed and running.');
             return;
         }

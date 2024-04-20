@@ -261,7 +261,7 @@ export const createSafeDsServices = async function (
     }
     if (options?.runnerCommand) {
         /* c8 ignore next 2 */
-        await SafeDs.runtime.Runner.updateRunnerCommand(options.runnerCommand);
+        await SafeDs.runtime.PythonServer.updateRunnerCommand(options.runnerCommand);
     }
     if (options?.userMessageProvider) {
         SafeDs.communication.MessagingProvider.setUserMessageProvider(options.userMessageProvider);

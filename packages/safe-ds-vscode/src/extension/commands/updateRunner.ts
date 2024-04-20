@@ -10,7 +10,7 @@ import { logError } from '../output.js';
 export const updateRunner = (context: ExtensionContext, client: LanguageClient, services: SafeDsServices) => {
     return async () => {
         // If the runner is already started, do nothing
-        if (services.runtime.Runner.isPythonServerAvailable()) {
+        if (services.runtime.Runner.isReady()) {
             vscode.window.showInformationMessage('The runner is already installed and running.');
             return;
         }

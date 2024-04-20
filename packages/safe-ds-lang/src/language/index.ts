@@ -1,10 +1,10 @@
 import {
-    pipVersionRange,
     RPC_RUNNER_INSTALL,
     RPC_RUNNER_START,
     RPC_RUNNER_STARTED,
     RPC_RUNNER_UPDATE,
 } from './runtime/safe-ds-runner.js';
+import { pipVersionRange } from './runtime/safe-ds-python-server.js';
 
 // Services
 export type { SafeDsServices } from './safe-ds-module.js';

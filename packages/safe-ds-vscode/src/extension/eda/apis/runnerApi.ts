@@ -63,8 +63,8 @@ export class RunnerApi {
                     return;
                 }
                 if (message.data === 'done') {
-                    this.services.runtime.Runner.removeMessageCallback('runtime_progress', runtimeCallback);
-                    this.services.runtime.Runner.removeMessageCallback('runtime_error', errorCallback);
+                    this.services.runtime.PythonServer.removeMessageCallback('runtime_progress', runtimeCallback);
+                    this.services.runtime.PythonServer.removeMessageCallback('runtime_error', errorCallback);
                     resolve();
                 }
             };
@@ -72,12 +72,12 @@ export class RunnerApi {
                 if (message.id !== pipelineExecutionId) {
                     return;
                 }
-                this.services.runtime.Runner.removeMessageCallback('runtime_progress', runtimeCallback);
-                this.services.runtime.Runner.removeMessageCallback('runtime_error', errorCallback);
+                this.services.runtime.PythonServer.removeMessageCallback('runtime_progress', runtimeCallback);
+                this.services.runtime.PythonServer.removeMessageCallback('runtime_error', errorCallback);
                 reject(message.data);
             };
-            this.services.runtime.Runner.addMessageCallback('runtime_progress', runtimeCallback);
-            this.services.runtime.Runner.addMessageCallback('runtime_error', errorCallback);
+            this.services.runtime.PythonServer.addMessageCallback('runtime_progress', runtimeCallback);
+            this.services.runtime.PythonServer.addMessageCallback('runtime_error', errorCallback);
 
             setTimeout(() => {
                 reject('Pipeline execution timed out');
@@ -139,13 +139,13 @@ export class RunnerApi {
                 if (message.id !== pipelineExecutionId || message.data.name !== placeholder) {
                     return;
                 }
-                this.services.runtime.Runner.removeMessageCallback('placeholder_value', placeholderValueCallback);
+                this.services.runtime.PythonServer.removeMessageCallback('placeholder_value', placeholderValueCallback);
                 resolve(message.data.value);
             };
 
-            this.services.runtime.Runner.addMessageCallback('placeholder_value', placeholderValueCallback);
+            this.services.runtime.PythonServer.addMessageCallback('placeholder_value', placeholderValueCallback);
             printOutputMessage('Getting placeholder from Runner ...');
-            this.services.runtime.Runner.sendMessageToPythonServer(
+            this.services.runtime.PythonServer.sendMessageToPythonServer(
                 messages.createPlaceholderQueryMessage(pipelineExecutionId, placeholder),
             );
 

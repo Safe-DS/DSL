@@ -53,7 +53,7 @@ export const activate = async function (context: vscode.ExtensionContext) {
  * This function is called when the extension is deactivated.
  */
 export const deactivate = async function (): Promise<void> {
-    await services.runtime.Runner.stopPythonServer();
+    await services.runtime.PythonServer.stopPythonServer();
     if (client) {
         await client.stop();
     }
@@ -106,7 +106,7 @@ const registerNotificationListeners = function (context: vscode.ExtensionContext
             await installRunner(context, client, services)();
         }),
         client.onNotification(rpc.runnerStarted, async (port: number) => {
-            await services.runtime.Runner.connectToPort(port);
+            await services.runtime.PythonServer.connectToPort(port);
         }),
         client.onNotification(rpc.runnerUpdate, async () => {
             await updateRunner(context, client, services)();
@@ -260,11 +260,11 @@ const exploreTable = (context: vscode.ExtensionContext) => {
                     pipelineNode,
                     message.data.name,
                 );
-                services.runtime.Runner.removeMessageCallback('placeholder_type', placeholderTypeCallback);
+                services.runtime.PythonServer.removeMessageCallback('placeholder_type', placeholderTypeCallback);
                 cleanupLoadingIndication();
             }
         };
-        services.runtime.Runner.addMessageCallback('placeholder_type', placeholderTypeCallback);
+        services.runtime.PythonServer.addMessageCallback('placeholder_type', placeholderTypeCallback);
 
         const runtimeProgressCallback = function (message: messages.RuntimeProgressMessage) {
             printOutputMessage(`Runner-Progress (${message.id}): ${message.data}`);
@@ -275,21 +275,21 @@ const exploreTable = (context: vscode.ExtensionContext) => {
             ) {
                 lastFinishedPipelineExecutionId = pipelineExecutionId;
                 vscode.window.showErrorMessage(`Selected text is not a placeholder!`);
-                services.runtime.Runner.removeMessageCallback('runtime_progress', runtimeProgressCallback);
+                services.runtime.PythonServer.removeMessageCallback('runtime_progress', runtimeProgressCallback);
                 cleanupLoadingIndication();
             }
         };
-        services.runtime.Runner.addMessageCallback('runtime_progress', runtimeProgressCallback);
+        services.runtime.PythonServer.addMessageCallback('runtime_progress', runtimeProgressCallback);
 
         const runtimeErrorCallback = function (message: messages.RuntimeErrorMessage) {
             if (message.id === pipelineExecutionId && lastFinishedPipelineExecutionId !== pipelineExecutionId) {
                 lastFinishedPipelineExecutionId = pipelineExecutionId;
                 vscode.window.showErrorMessage(`Pipeline ran into an Error!`);
-                services.runtime.Runner.removeMessageCallback('runtime_error', runtimeErrorCallback);
+                services.runtime.PythonServer.removeMessageCallback('runtime_error', runtimeErrorCallback);
                 cleanupLoadingIndication();
             }
         };
-        services.runtime.Runner.addMessageCallback('runtime_error', runtimeErrorCallback);
+        services.runtime.PythonServer.addMessageCallback('runtime_error', runtimeErrorCallback);
 
         await doRunPipelineFile(uri, pipelineExecutionId, pipelineName, requestedPlaceholderName);
     };

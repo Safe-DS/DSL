@@ -5,6 +5,7 @@ import { URI } from 'langium';
 import { createSafeDsServices } from '../../../src/language/index.js';
 
 const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
+const pythonServer = services.runtime.PythonServer;
 const runner = services.runtime.Runner;
 
 describe('SafeDsRunner', async () => {
@@ -20,13 +21,13 @@ describe('SafeDsRunner', async () => {
                     resolve();
                 });
             });
-            const foundPort = await runner.findFirstFreePort(portNumber);
+            const foundPort = await pythonServer.findFirstFreePort(portNumber);
             server.close();
             expect(foundPort).toStrictEqual(portNumber + 1);
         });
         it('available', async () => {
             const portNumber = 46825;
-            const foundPort = await runner.findFirstFreePort(portNumber);
+            const foundPort = await pythonServer.findFirstFreePort(portNumber);
             expect(foundPort).toStrictEqual(portNumber);
         });
     });

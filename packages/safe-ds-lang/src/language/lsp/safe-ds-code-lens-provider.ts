@@ -27,7 +27,7 @@ export class SafeDsCodeLensProvider implements CodeLensProvider {
         _params: CodeLensParams,
         cancelToken: CancellationToken = CancellationToken.None,
     ): Promise<CodeLens[] | undefined> {
-        if (!this.runner.isPythonServerAvailable()) {
+        if (!this.runner.isReady()) {
             return;
         }
 
