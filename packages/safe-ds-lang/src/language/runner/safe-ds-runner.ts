@@ -99,13 +99,13 @@ export class SafeDsRunner {
         this.info(`[${pipelineExecutionId}] Launching pipeline "${pipeline.name}" in ${documentUri}`);
 
         const disposables = [
-            this.addMessageCallback((message) => {
+            this.addMessageCallback('placeholder_type', (message) => {
                 if (message.id === pipelineExecutionId) {
                     progress.report(`Computed ${message.data.name}`);
                 }
-            }, 'placeholder_type'),
+            }),
 
-            this.addMessageCallback((message) => {
+            this.addMessageCallback('runtime_error', (message) => {
                 if (message.id === pipelineExecutionId) {
                     progress?.done();
                     disposables.forEach((it) => {
@@ -117,23 +117,23 @@ export class SafeDsRunner {
                 disposables.forEach((it) => {
                     it.dispose();
                 });
-            }, 'runtime_error'),
+            }),
 
-            this.addMessageCallback((message) => {
+            this.addMessageCallback('runtime_progress', (message) => {
                 if (message.id === pipelineExecutionId) {
                     progress.done();
                     disposables.forEach((it) => {
                         it.dispose();
                     });
                 }
-            }, 'runtime_progress'),
+            }),
 
-            this.addMessageCallback(() => {
+            this.addMessageCallback('shutdown', () => {
                 progress.done();
                 disposables.forEach((it) => {
                     it.dispose();
                 });
-            }, 'shutdown'),
+            }),
         ];
 
         await this.executePipeline(pipelineExecutionId, document, pipeline.name);
@@ -148,23 +148,23 @@ export class SafeDsRunner {
     >();
 
     private registerMessageLoggingCallbacks() {
-        this.addMessageCallback((message) => {
+        this.addMessageCallback('placeholder_value', (message) => {
             this.info(
                 `Placeholder value is (${message.id}): ${message.data.name} of type ${message.data.type} = ${message.data.value}`,
             );
-        }, 'placeholder_value');
-        this.addMessageCallback((message) => {
+        });
+        this.addMessageCallback('placeholder_type', (message) => {
             this.info(`Placeholder was calculated (${message.id}): ${message.data.name} of type ${message.data.type}`);
             const execInfo = this.getExecutionContext(message.id);
             execInfo?.calculatedPlaceholders.set(message.data.name, message.data.type);
             // this.sendMessageToPythonServer(
             //    messages.createPlaceholderQueryMessage(message.id, message.data.name),
             //);
-        }, 'placeholder_type');
-        this.addMessageCallback((message) => {
+        });
+        this.addMessageCallback('runtime_progress', (message) => {
             this.info(`Runner-Progress (${message.id}): ${message.data}`);
-        }, 'runtime_progress');
-        this.addMessageCallback(async (message) => {
+        });
+        this.addMessageCallback('runtime_error', async (message) => {
             let readableStacktraceSafeDs: string[] = [];
             const execInfo = this.getExecutionContext(message.id)!;
             const readableStacktracePython = await Promise.all(
@@ -191,7 +191,7 @@ export class SafeDsRunner {
                     .reverse()
                     .join('\n')}`,
             );
-        }, 'runtime_error');
+        });
     }
 
     async connectToPort(port: number): Promise<void> {
@@ -332,12 +332,12 @@ export class SafeDsRunner {
     /**
      * Register a callback to execute when a message from the python server arrives.
      *
-     * @param callback Callback to execute
      * @param messageType Message type to register the callback for.
+     * @param callback Callback to execute
      */
     public addMessageCallback<M extends PythonServerMessage['type']>(
-        callback: (message: Extract<PythonServerMessage, { type: M }>) => void,
         messageType: M,
+        callback: (message: Extract<PythonServerMessage, { type: M }>) => void,
     ): Disposable {
         if (!this.messageCallbacks.has(messageType)) {
             this.messageCallbacks.set(messageType, []);
@@ -360,12 +360,12 @@ export class SafeDsRunner {
     /**
      * Remove a previously registered callback from being called when a message from the python server arrives.
      *
-     * @param callback Callback to remove
      * @param messageType Message type the callback was registered for.
+     * @param callback Callback to remove
      */
     public removeMessageCallback<M extends PythonServerMessage['type']>(
-        callback: (message: Extract<PythonServerMessage, { type: M }>) => void,
         messageType: M,
+        callback: (message: Extract<PythonServerMessage, { type: M }>) => void,
     ): void {
         if (!this.messageCallbacks.has(messageType)) {
             return;

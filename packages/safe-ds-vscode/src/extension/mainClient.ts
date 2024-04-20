@@ -259,11 +259,11 @@ const exploreTable = (context: vscode.ExtensionContext) => {
                     pipelineNode,
                     message.data.name,
                 );
-                services.runtime.Runner.removeMessageCallback(placeholderTypeCallback, 'placeholder_type');
+                services.runtime.Runner.removeMessageCallback('placeholder_type', placeholderTypeCallback);
                 cleanupLoadingIndication();
             }
         };
-        services.runtime.Runner.addMessageCallback(placeholderTypeCallback, 'placeholder_type');
+        services.runtime.Runner.addMessageCallback('placeholder_type', placeholderTypeCallback);
 
         const runtimeProgressCallback = function (message: messages.RuntimeProgressMessage) {
             printOutputMessage(`Runner-Progress (${message.id}): ${message.data}`);
@@ -274,21 +274,21 @@ const exploreTable = (context: vscode.ExtensionContext) => {
             ) {
                 lastFinishedPipelineExecutionId = pipelineExecutionId;
                 vscode.window.showErrorMessage(`Selected text is not a placeholder!`);
-                services.runtime.Runner.removeMessageCallback(runtimeProgressCallback, 'runtime_progress');
+                services.runtime.Runner.removeMessageCallback('runtime_progress', runtimeProgressCallback);
                 cleanupLoadingIndication();
             }
         };
-        services.runtime.Runner.addMessageCallback(runtimeProgressCallback, 'runtime_progress');
+        services.runtime.Runner.addMessageCallback('runtime_progress', runtimeProgressCallback);
 
         const runtimeErrorCallback = function (message: messages.RuntimeErrorMessage) {
             if (message.id === pipelineExecutionId && lastFinishedPipelineExecutionId !== pipelineExecutionId) {
                 lastFinishedPipelineExecutionId = pipelineExecutionId;
                 vscode.window.showErrorMessage(`Pipeline ran into an Error!`);
-                services.runtime.Runner.removeMessageCallback(runtimeErrorCallback, 'runtime_error');
+                services.runtime.Runner.removeMessageCallback('runtime_error', runtimeErrorCallback);
                 cleanupLoadingIndication();
             }
         };
-        services.runtime.Runner.addMessageCallback(runtimeErrorCallback, 'runtime_error');
+        services.runtime.Runner.addMessageCallback('runtime_error', runtimeErrorCallback);
 
         await doRunPipelineFile(uri, pipelineExecutionId, pipelineName, requestedPlaceholderName);
     };

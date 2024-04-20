@@ -345,6 +345,4 @@ const NOOP_PROGRESS_REPORTER: WorkDoneProgressReporter = {
     done() {},
 };
 
-const NOOP_DISPOSABLE: Disposable = {
-    dispose() {},
-};
+const NOOP_DISPOSABLE: Disposable = Disposable.create(() => {});
