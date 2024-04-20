@@ -83,7 +83,7 @@ class PrefixedOutputChannel implements vscode.LogOutputChannel {
  * Initialize the logging system once for the extension.
  */
 export const initializeLog = function () {
-    logOutputChannel = vscode.window.createOutputChannel('Safe-DS', { log: true });
+    logOutputChannel = vscode.window.createOutputChannel('Safe-DS EDA', { log: true });
     logOutputChannel.show();
 };
 

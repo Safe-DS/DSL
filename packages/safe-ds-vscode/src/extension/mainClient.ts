@@ -93,7 +93,7 @@ const createLanguageClient = function (context: vscode.ExtensionContext): Langua
             // Notify the server about file changes to files contained in the workspace
             fileEvents: fileSystemWatcher,
         },
-        outputChannel: new SafeDsLogOutputChannel('Safe-DS Language Client'),
+        outputChannel: new SafeDsLogOutputChannel(),
     };
 
     // Create the language client

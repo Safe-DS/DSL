@@ -6,88 +6,106 @@ const INFO_PREFIX = /^\[Info.*?\] /iu;
 const WARN_PREFIX = /^\[Warn.*?\] /iu;
 const ERROR_PREFIX = /^\[Error.*?\] /iu;
 
-export class SafeDsLogOutputChannel implements LogOutputChannel {
-    private readonly delegate: LogOutputChannel;
+const RUNNER_TRACE_PREFIX = /^.*\[Python Server\].*\[?INFO\]?:?/iu;
+const RUNNER_DEBUG_PREFIX = /^.*\[Python Server\].*\[?DEBUG\]?:?/iu;
+const RUNNER_INFO_PREFIX = /^.*\[Python Server\].*\[?INFO\]?:?/iu;
+const RUNNER_WARN_PREFIX = /^.*\[Python Server\].*\[?WARNING\]?:?/iu;
+const RUNNER_ERROR_PREFIX = /^.*\[Python Server\].*\[?ERROR\]?:?/iu;
 
-    constructor(name: string) {
-        this.delegate = vscode.window.createOutputChannel(name, { log: true });
+export class SafeDsLogOutputChannel implements LogOutputChannel {
+    private readonly languageServer: LogOutputChannel;
+    private readonly runner: LogOutputChannel;
+
+    constructor() {
+        this.languageServer = vscode.window.createOutputChannel('Safe-DS', { log: true });
+        this.runner = vscode.window.createOutputChannel('Safe-DS Runner', { log: true });
     }
 
     get logLevel(): LogLevel {
-        return this.delegate.logLevel;
+        return this.languageServer.logLevel;
     }
 
     get name(): string {
-        return this.delegate.name;
+        return this.languageServer.name;
     }
 
     get onDidChangeLogLevel(): vscode.Event<LogLevel> {
-        return this.delegate.onDidChangeLogLevel;
+        return this.languageServer.onDidChangeLogLevel;
     }
 
     append(value: string): void {
-        this.delegate.append(value);
+        this.languageServer.append(value);
     }
 
     appendLine(value: string): void {
-        if (TRACE_PREFIX.test(value)) {
-            this.delegate.trace(value.replace(TRACE_PREFIX, ''));
+        if (RUNNER_TRACE_PREFIX.test(value)) {
+            this.runner.trace(value.replace(RUNNER_TRACE_PREFIX, ''));
+        } else if (RUNNER_DEBUG_PREFIX.test(value)) {
+            this.runner.debug(value.replace(RUNNER_DEBUG_PREFIX, ''));
+        } else if (RUNNER_INFO_PREFIX.test(value)) {
+            this.runner.info(value.replace(RUNNER_INFO_PREFIX, ''));
+        } else if (RUNNER_WARN_PREFIX.test(value)) {
+            this.runner.warn(value.replace(RUNNER_WARN_PREFIX, ''));
+        } else if (RUNNER_ERROR_PREFIX.test(value)) {
+            this.runner.error(value.replace(RUNNER_ERROR_PREFIX, ''));
+        } else if (TRACE_PREFIX.test(value)) {
+            this.languageServer.trace(value.replace(TRACE_PREFIX, ''));
         } else if (DEBUG_PREFIX.test(value)) {
-            this.delegate.debug(value.replace(DEBUG_PREFIX, ''));
+            this.languageServer.debug(value.replace(DEBUG_PREFIX, ''));
         } else if (INFO_PREFIX.test(value)) {
-            this.delegate.info(value.replace(INFO_PREFIX, ''));
+            this.languageServer.info(value.replace(INFO_PREFIX, ''));
         } else if (WARN_PREFIX.test(value)) {
-            this.delegate.warn(value.replace(WARN_PREFIX, ''));
+            this.languageServer.warn(value.replace(WARN_PREFIX, ''));
         } else if (ERROR_PREFIX.test(value)) {
-            this.delegate.error(value.replace(ERROR_PREFIX, ''));
+            this.languageServer.error(value.replace(ERROR_PREFIX, ''));
         } else {
-            this.delegate.appendLine(value);
+            this.languageServer.appendLine(value);
         }
     }
 
     clear(): void {
-        this.delegate.clear();
+        this.languageServer.clear();
     }
 
     debug(message: string, ...args: any[]): void {
-        this.delegate.debug(message, args);
+        this.languageServer.debug(message, args);
     }
 
     dispose(): void {
-        this.delegate.dispose();
+        this.languageServer.dispose();
     }
 
     error(error: string | Error, ...args: any[]): void {
-        this.delegate.error(error, args);
+        this.languageServer.error(error, args);
     }
 
     hide(): void {
-        this.delegate.hide();
+        this.languageServer.hide();
     }
 
     info(message: string, ...args: any[]): void {
-        this.delegate.info(message, args);
+        this.languageServer.info(message, args);
     }
 
     replace(value: string): void {
-        this.delegate.replace(value);
+        this.languageServer.replace(value);
     }
 
     show(preserveFocus?: boolean): void;
     show(column?: ViewColumn, preserveFocus?: boolean): void;
     show(columnOrPreserveFocus?: ViewColumn | boolean, preserveFocus?: boolean): void {
         if (typeof columnOrPreserveFocus === 'boolean') {
-            this.delegate.show(columnOrPreserveFocus);
+            this.languageServer.show(columnOrPreserveFocus);
         } else {
-            this.delegate.show(columnOrPreserveFocus, preserveFocus);
+            this.languageServer.show(columnOrPreserveFocus, preserveFocus);
         }
     }
 
     trace(message: string, ...args: any[]): void {
-        this.delegate.trace(message, args);
+        this.languageServer.trace(message, args);
     }
 
     warn(message: string, ...args: any[]): void {
-        this.delegate.warn(message, args);
+        this.languageServer.warn(message, args);
     }
 }
