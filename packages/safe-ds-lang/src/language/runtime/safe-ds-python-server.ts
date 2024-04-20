@@ -93,7 +93,7 @@ export class SafeDsPythonServer {
 
         // Connect to the server
         try {
-            await this.connectToWebSocket(port); // extract
+            await this.connectToWebSocket(port); // TODO extract
         } catch (error) {
             await this.stopPythonServer();
             return;
@@ -233,7 +233,7 @@ export class SafeDsPythonServer {
     // TODO ------------------------------------------------------------------------------------------------------------
 
     async stopPythonServer(): Promise<void> {
-        this.logger.info('Stopping python server...');
+        this.logger.info('Stopping...');
         if (this.serverProcess !== undefined) {
             if ((this._isStarted && !(await this.requestGracefulShutdown(2500))) || !this._isStarted) {
                 this.logger.debug(`Tree-killing python server process ${this.serverProcess.pid}...`);
@@ -311,8 +311,8 @@ export class SafeDsPythonServer {
                         if (currentTry > maxConnectionTries) {
                             this.logger.error('Max retries reached. No further attempt at connecting is made.');
                         } else {
-                            this.logger.info(`Server is not yet up. Retrying...`);
-                            setTimeout(tryConnect, timeoutMs * (2 ** currentTry - 1)); // use exponential backoff
+                            this.logger.info(`Not yet up. Retrying...`);
+                            setTimeout(tryConnect, timeoutMs * 2 ** (currentTry - 1)); // use exponential backoff
                             return;
                         }
                     }
@@ -347,11 +347,8 @@ export class SafeDsPythonServer {
                 };
                 this.serverConnection.onclose = (_event) => {
                     if (this._isStarted) {
-                        // The connection was interrupted
-                        this._isStarted = false;
                         this.logger.error('Connection was unexpectedly closed');
-
-                        // TODO attempt to restart the server ?
+                        this.restart();
                     }
                 };
             };
