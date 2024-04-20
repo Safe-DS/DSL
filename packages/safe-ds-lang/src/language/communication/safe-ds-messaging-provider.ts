@@ -7,12 +7,25 @@ import { Disposable } from 'vscode-languageserver-protocol';
  */
 export class SafeDsMessagingProvider {
     private readonly connection: Connection | undefined;
-    private logger: Logger | undefined = undefined;
-    private userMessageProvider: UserMessageProvider | undefined = undefined;
-    private messageBroker: MessageBroker | undefined = undefined;
+    private logger: Partial<SafeDsLogger> | undefined = undefined;
+    private userMessageProvider: Partial<SafeDsUserMessageProvider> | undefined = undefined;
+    private messageBroker: Partial<SafeDsMessageBroker> | undefined = undefined;
 
     constructor(services: SafeDsServices) {
         this.connection = services.shared.lsp.Connection;
+    }
+
+    /**
+     * Create a logger that prepends all messages with the given tag.
+     */
+    createTaggedLogger(tag: string): SafeDsLogger {
+        return {
+            trace: (message: string, verbose?: string) => this.trace(tag, message, verbose),
+            debug: (message: string) => this.debug(tag, message),
+            info: (message: string) => this.info(tag, message),
+            warn: (message: string) => this.warn(tag, message),
+            error: (message: string) => this.error(tag, message),
+        };
     }
 
     /**
@@ -217,21 +230,21 @@ export class SafeDsMessagingProvider {
     /**
      * Set the logger to use for logging messages.
      */
-    setLogger(logger: Logger) {
+    setLogger(logger: Partial<SafeDsLogger>) {
         this.logger = logger;
     }
 
     /**
      * Set the user message provider to use for showing messages to the user.
      */
-    setUserMessageProvider(userMessageProvider: UserMessageProvider) {
+    setUserMessageProvider(userMessageProvider: Partial<SafeDsUserMessageProvider>) {
         this.userMessageProvider = userMessageProvider;
     }
 
     /**
      * Set the message broker to use for communicating with the client.
      */
-    setMessageBroker(messageBroker: MessageBroker) {
+    setMessageBroker(messageBroker: Partial<SafeDsMessageBroker>) {
         this.messageBroker = messageBroker;
     }
 }
@@ -239,44 +252,44 @@ export class SafeDsMessagingProvider {
 /**
  * A logging provider.
  */
-export interface Logger {
+export interface SafeDsLogger {
     /**
      * Log the given data to the trace log.
      */
-    trace?: (message: string, verbose?: string) => void;
+    trace: (message: string, verbose?: string) => void;
 
     /**
      * Log a debug message.
      */
-    debug?: (message: string) => void;
+    debug: (message: string) => void;
 
     /**
      * Log an information message.
      */
-    info?: (message: string) => void;
+    info: (message: string) => void;
 
     /**
      * Log a warning message.
      */
-    warn?: (message: string) => void;
+    warn: (message: string) => void;
 
     /**
      * Log an error message.
      */
-    error?: (message: string) => void;
+    error: (message: string) => void;
 }
 
 /**
  * A service for showing messages to the user.
  */
-export interface UserMessageProvider {
+export interface SafeDsUserMessageProvider {
     /**
      * Prominently show an information message. The message should be short and human-readable.
      *
      * @returns
      * A thenable that resolves to the selected action.
      */
-    showInformationMessage?: <T extends MessageActionItem>(message: string, ...actions: T[]) => Thenable<T | undefined>;
+    showInformationMessage: <T extends MessageActionItem>(message: string, ...actions: T[]) => Thenable<T | undefined>;
 
     /**
      * Prominently show a warning message. The message should be short and human-readable.
@@ -284,7 +297,7 @@ export interface UserMessageProvider {
      * @returns
      * A thenable that resolves to the selected action.
      */
-    showWarningMessage?: <T extends MessageActionItem>(message: string, ...actions: T[]) => Thenable<T | undefined>;
+    showWarningMessage: <T extends MessageActionItem>(message: string, ...actions: T[]) => Thenable<T | undefined>;
 
     /**
      * Prominently show an error message. The message should be short and human-readable.
@@ -292,7 +305,7 @@ export interface UserMessageProvider {
      * @returns
      * A thenable that resolves to the selected action.
      */
-    showErrorMessage?: <T extends MessageActionItem>(message: string, ...actions: T[]) => Thenable<T | undefined>;
+    showErrorMessage: <T extends MessageActionItem>(message: string, ...actions: T[]) => Thenable<T | undefined>;
 
     /**
      * Shows a progress indicator in the client's user interface.
@@ -310,7 +323,7 @@ export interface UserMessageProvider {
      * @returns
      * A thenable that resolves to the progress reporter. Use this reporter to update the progress indicator.
      */
-    showProgress?: (
+    showProgress: (
         title: string,
         percentage?: number,
         message?: string,
@@ -321,14 +334,14 @@ export interface UserMessageProvider {
 /**
  * A message broker for communicating with the client.
  */
-export interface MessageBroker {
+export interface SafeDsMessageBroker {
     /**
      * Installs a notification handler for the given method.
      *
      * @param method The method to register a request handler for.
      * @param handler The handler to install.
      */
-    onNotification?: (method: string, handler: (...args: any[]) => void) => Disposable;
+    onNotification: (method: string, handler: (...args: any[]) => void) => Disposable;
 
     /**
      * Send a notification to the client.
@@ -336,7 +349,7 @@ export interface MessageBroker {
      * @param method The method to invoke on the client.
      * @param args The notification's parameters.
      */
-    sendNotification?: (method: string, ...args: any[]) => Promise<void>;
+    sendNotification: (method: string, ...args: any[]) => Promise<void>;
 }
 
 const NOOP_PROGRESS_REPORTER: WorkDoneProgressReporter = {

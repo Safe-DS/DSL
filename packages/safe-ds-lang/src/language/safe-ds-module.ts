@@ -45,10 +45,10 @@ import { SafeDsMarkdownGenerator } from './generation/safe-ds-markdown-generator
 import { SafeDsCompletionProvider } from './lsp/safe-ds-completion-provider.js';
 import { SafeDsFuzzyMatcher } from './lsp/safe-ds-fuzzy-matcher.js';
 import {
-    type Logger,
-    MessageBroker,
+    type SafeDsLogger,
+    SafeDsMessageBroker,
     SafeDsMessagingProvider,
-    type UserMessageProvider,
+    type SafeDsUserMessageProvider,
 } from './communication/safe-ds-messaging-provider.js';
 import { SafeDsConfigurationProvider } from './workspace/safe-ds-configuration-provider.js';
 import { SafeDsCodeLensProvider } from './lsp/safe-ds-code-lens-provider.js';
@@ -275,7 +275,7 @@ export interface ModuleOptions {
      * A logging provider. If the logger lacks a capability, we fall back to the logger provided by the language server
      * connection, if available.
      */
-    logger?: Logger;
+    logger?: Partial<SafeDsLogger>;
 
     /**
      * By default, builtins are loaded into the workspace. If this option is set to true, builtins are omitted.
@@ -286,7 +286,7 @@ export interface ModuleOptions {
      * A message broker for communicating with the client. If the broker lacks a capability, we fall back to the
      * language server connection, if available.
      */
-    messageBroker?: MessageBroker;
+    messageBroker?: Partial<SafeDsMessageBroker>;
 
     /**
      * Command to start the runner.
@@ -297,5 +297,5 @@ export interface ModuleOptions {
      * A service for showing messages to the user. If the provider lacks a capability, we fall back to the language
      * server connection, if available.
      */
-    userMessageProvider?: UserMessageProvider;
+    userMessageProvider?: Partial<SafeDsUserMessageProvider>;
 }

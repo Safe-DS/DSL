@@ -18,7 +18,7 @@ import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import { SafeDsPythonGenerator } from '../generation/safe-ds-python-generator.js';
 import { isSdsModule, isSdsPipeline } from '../generated/ast.js';
 import semver from 'semver';
-import { SafeDsMessagingProvider } from '../communication/safe-ds-messaging-provider.js';
+import { SafeDsLogger, SafeDsMessagingProvider } from '../communication/safe-ds-messaging-provider.js';
 import crypto from 'crypto';
 
 // Most of the functionality cannot be tested automatically as a functioning runner setup would always be required
@@ -40,6 +40,7 @@ export class SafeDsRunner {
     private readonly astNodeLocator: AstNodeLocator;
     private readonly generator: SafeDsPythonGenerator;
     private readonly langiumDocuments: LangiumDocuments;
+    private readonly logger: SafeDsLogger;
     private readonly messaging: SafeDsMessagingProvider;
 
     private runnerCommand: string = 'safe-ds-runner';
@@ -58,6 +59,7 @@ export class SafeDsRunner {
         this.astNodeLocator = services.workspace.AstNodeLocator;
         this.generator = services.generation.PythonGenerator;
         this.langiumDocuments = services.shared.workspace.LangiumDocuments;
+        this.logger = services.communication.MessagingProvider.createTaggedLogger(RUNNER_TAG);
         this.messaging = services.communication.MessagingProvider;
 
         // Register listeners
@@ -97,7 +99,7 @@ export class SafeDsRunner {
 
         const start = Date.now();
         const progress = await this.messaging.showProgress('Safe-DS Runner', 'Starting...');
-        this.info(`[${pipelineExecutionId}] Running pipeline "${pipeline.name}" in ${documentUri}.`);
+        this.logger.info(`[${pipelineExecutionId}] Running pipeline "${pipeline.name}" in ${documentUri}.`);
 
         const disposables = [
             this.addMessageCallback('placeholder_type', (message) => {
@@ -124,7 +126,7 @@ export class SafeDsRunner {
                 if (message.id === pipelineExecutionId) {
                     progress.done();
                     const timeElapsed = Date.now() - start;
-                    this.info(
+                    this.logger.info(
                         `[${pipelineExecutionId}] Finished running pipeline "${pipeline.name}" in ${timeElapsed}ms.`,
                     );
                     disposables.forEach((it) => {
@@ -154,12 +156,16 @@ export class SafeDsRunner {
 
     private registerMessageLoggingCallbacks() {
         this.addMessageCallback('placeholder_value', (message) => {
-            this.trace(
+            this.logger.trace(
                 `Placeholder value is (${message.id}): ${message.data.name} of type ${message.data.type} = ${message.data.value}`,
+                undefined,
             );
         });
         this.addMessageCallback('placeholder_type', (message) => {
-            this.trace(`Placeholder was calculated (${message.id}): ${message.data.name} of type ${message.data.type}`);
+            this.logger.trace(
+                `Placeholder was calculated (${message.id}): ${message.data.name} of type ${message.data.type}`,
+                undefined,
+            );
             const execInfo = this.getExecutionContext(message.id);
             execInfo?.calculatedPlaceholders.set(message.data.name, message.data.type);
             // this.sendMessageToPythonServer(
@@ -167,7 +173,7 @@ export class SafeDsRunner {
             //);
         });
         this.addMessageCallback('runtime_progress', (message) => {
-            this.trace(`Runner-Progress (${message.id}): ${message.data}`);
+            this.logger.trace(`Runner-Progress (${message.id}): ${message.data}`, undefined);
         });
         this.addMessageCallback('runtime_error', async (message) => {
             let readableStacktraceSafeDs: string[] = [];
@@ -186,12 +192,12 @@ export class SafeDsRunner {
                     return `\tat ${frame.file} line ${frame.line}`;
                 }),
             );
-            this.error(
+            this.logger.error(
                 `Runner-RuntimeError (${message.id}): ${
                     (<RuntimeErrorMessage>message).data.message
                 } \n${readableStacktracePython.join('\n')}`,
             );
-            this.error(
+            this.logger.error(
                 `Safe-DS Error (${message.id}): ${(<RuntimeErrorMessage>message).data.message} \n${readableStacktraceSafeDs
                     .reverse()
                     .join('\n')}`,
@@ -233,7 +239,9 @@ export class SafeDsRunner {
      */
     public async startPythonServer(): Promise<void> {
         if (this.isPythonServerAvailable()) {
-            this.info('As the Safe-DS Runner is currently successfully running, no attempt to start it will be made');
+            this.logger.info(
+                'As the Safe-DS Runner is currently successfully running, no attempt to start it will be made',
+            );
             return;
         }
 
@@ -245,7 +253,9 @@ export class SafeDsRunner {
             const pythonServerTest = child_process.spawn(runnerCommand, [...runnerCommandParts, '-V']);
             const versionString = await this.getPythonServerVersion(pythonServerTest);
             if (!semver.satisfies(versionString, npmVersionRange)) {
-                this.error(`Installed runner version ${versionString} does not meet requirements: ${pipVersionRange}`);
+                this.logger.error(
+                    `Installed runner version ${versionString} does not meet requirements: ${pipVersionRange}`,
+                );
                 const action = await this.messaging.showErrorMessage(
                     `The installed runner version ${versionString} is not compatible with this version of the extension. The installed version should match these requirements: ${pipVersionRange}. Please update to a matching version.`,
                     { title: 'Update runner' },
@@ -255,10 +265,10 @@ export class SafeDsRunner {
                 }
                 return;
             } else {
-                this.debug(`Using safe-ds-runner version: ${versionString}`);
+                this.logger.debug(`Using safe-ds-runner version: ${versionString}`);
             }
         } catch (error) {
-            this.error(`Could not start runner: ${error instanceof Error ? error.message : error}`);
+            this.logger.error(`Could not start runner: ${error instanceof Error ? error.message : error}`);
             const action = await this.messaging.showErrorMessage(
                 `The runner process could not be started: ${error instanceof Error ? error.message : error}`,
                 { title: 'Install runner' },
@@ -270,11 +280,11 @@ export class SafeDsRunner {
         }
         // Start the runner at the specified port
         this.port = await this.findFirstFreePort(5000);
-        this.debug(`Trying to use port ${this.port} to start python server...`);
-        this.debug(`Using command '${this.runnerCommand}' to start python server...`);
+        this.logger.debug(`Trying to use port ${this.port} to start python server...`);
+        this.logger.debug(`Using command '${this.runnerCommand}' to start python server...`);
 
         const runnerArgs = [...runnerCommandParts, 'start', '--port', String(this.port)];
-        this.debug(`Running ${runnerCommand}; Args: ${runnerArgs.join(' ')}`);
+        this.logger.debug(`Running ${runnerCommand}; Args: ${runnerArgs.join(' ')}`);
         this.runnerProcess = child_process.spawn(runnerCommand, runnerArgs);
         this.manageRunnerSubprocessOutputIO();
         try {
@@ -283,7 +293,7 @@ export class SafeDsRunner {
             await this.stopPythonServer();
             return;
         }
-        this.info('Started python server successfully');
+        this.logger.info('Started python server successfully');
     }
 
     /**
@@ -291,17 +301,17 @@ export class SafeDsRunner {
      * If that fails, the whole process tree (starting at the child process spawned by startPythonServer) will get killed.
      */
     async stopPythonServer(): Promise<void> {
-        this.info('Stopping python server...');
+        this.logger.info('Stopping python server...');
         if (this.runnerProcess !== undefined) {
             if ((this.acceptsConnections && !(await this.requestGracefulShutdown(2500))) || !this.acceptsConnections) {
-                this.debug(`Tree-killing python server process ${this.runnerProcess.pid}...`);
+                this.logger.debug(`Tree-killing python server process ${this.runnerProcess.pid}...`);
                 const pid = this.runnerProcess.pid!;
                 // Wait for tree-kill to finish killing the tree
                 await new Promise<void>((resolve, _reject) => {
                     treeKill(pid, (error) => {
                         resolve();
                         if (error) {
-                            this.error(`Error while killing runner process tree: ${error}`);
+                            this.logger.error(`Error while killing runner process tree: ${error}`);
                         }
                     });
                 });
@@ -313,7 +323,7 @@ export class SafeDsRunner {
     }
 
     private async requestGracefulShutdown(maxTimeoutMs: number): Promise<boolean> {
-        this.debug('Trying graceful shutdown...');
+        this.logger.debug('Trying graceful shutdown...');
         this.sendMessageToPythonServer(createShutdownMessage());
         return new Promise((resolve, _reject) => {
             this.runnerProcess?.on('close', () => resolve(true));
@@ -564,13 +574,13 @@ export class SafeDsRunner {
     /* c8 ignore start */
     public sendMessageToPythonServer(message: PythonServerMessage): void {
         const messageString = JSON.stringify(message);
-        this.debug(`Sending message to python server: ${messageString}`);
+        this.logger.debug(`Sending message to python server: ${messageString}`);
         this.serverConnection!.send(messageString);
     }
 
     private async getPythonServerVersion(process: child_process.ChildProcessWithoutNullStreams) {
         process.stderr.on('data', (data: Buffer) => {
-            this.debug(`[Runner-Err] ${data.toString().trim()}`);
+            this.logger.debug(`[Runner-Err] ${data.toString().trim()}`);
         });
         return new Promise<string>((resolve, reject) => {
             process.stdout.on('data', (data: Buffer) => {
@@ -593,13 +603,13 @@ export class SafeDsRunner {
             return;
         }
         this.runnerProcess.stdout.on('data', (data: Buffer) => {
-            this.debug(data.toString().trim());
+            this.logger.debug(data.toString().trim());
         });
         this.runnerProcess.stderr.on('data', (data: Buffer) => {
-            this.debug(data.toString().trim());
+            this.logger.debug(data.toString().trim());
         });
         this.runnerProcess.on('close', (code) => {
-            this.info(`Exited: ${code}`);
+            this.logger.info(`Exited: ${code}`);
             // when the server shuts down, no connections will be accepted
             this.acceptsConnections = false;
             this.runnerProcess = undefined;
@@ -618,21 +628,21 @@ export class SafeDsRunner {
                 });
                 this.serverConnection.onopen = (event) => {
                     this.acceptsConnections = true;
-                    this.debug(`Now accepting connections: ${event.type}`);
+                    this.logger.debug(`Now accepting connections: ${event.type}`);
                     resolve();
                 };
                 this.serverConnection.onerror = (event) => {
                     currentTry += 1;
                     if (event.message.includes('ECONNREFUSED')) {
                         if (currentTry > maxConnectionTries) {
-                            this.error('Max retries reached. No further attempt at connecting is made.');
+                            this.logger.error('Max retries reached. No further attempt at connecting is made.');
                         } else {
-                            this.info(`Server is not yet up. Retrying...`);
+                            this.logger.info(`Server is not yet up. Retrying...`);
                             setTimeout(tryConnect, timeoutMs * (2 ** currentTry - 1)); // use exponential backoff
                             return;
                         }
                     }
-                    this.error(`An error occurred: ${event.message} (${event.type}) {${event.error}}`);
+                    this.logger.error(`An error occurred: ${event.message} (${event.type}) {${event.error}}`);
                     if (this.isPythonServerAvailable()) {
                         return;
                     }
@@ -640,17 +650,21 @@ export class SafeDsRunner {
                 };
                 this.serverConnection.onmessage = (event) => {
                     if (typeof event.data !== 'string') {
-                        this.trace(`Message received: (${event.type}, ${typeof event.data}) ${event.data}`);
+                        this.logger.trace(
+                            `Message received: (${event.type}, ${typeof event.data}) ${event.data}`,
+                            undefined,
+                        );
                         return;
                     }
-                    this.trace(
+                    this.logger.trace(
                         `Message received: '${
                             event.data.length > 128 ? event.data.substring(0, 128) + '<truncated>' : event.data
                         }'`,
+                        undefined,
                     );
                     const pythonServerMessage: PythonServerMessage = JSON.parse(<string>event.data);
                     if (!this.messageCallbacks.has(pythonServerMessage.type)) {
-                        this.trace(`Message type '${pythonServerMessage.type}' is not handled`);
+                        this.logger.trace(`Message type '${pythonServerMessage.type}' is not handled`, undefined);
                         return;
                     }
                     for (const callback of this.messageCallbacks.get(pythonServerMessage.type)!) {
@@ -661,7 +675,7 @@ export class SafeDsRunner {
                     if (this.isPythonServerAvailable()) {
                         // The connection was interrupted
                         this.acceptsConnections = false;
-                        this.error('Connection was unexpectedly closed');
+                        this.logger.error('Connection was unexpectedly closed');
                     }
                 };
             };
@@ -695,24 +709,6 @@ export class SafeDsRunner {
             tryNextPort();
         });
     }
-
-    /* c8 ignore start */
-    private trace(message: string, verbose?: string) {
-        this.messaging.trace(RUNNER_TAG, message, verbose);
-    }
-
-    private debug(message: string) {
-        this.messaging.debug(RUNNER_TAG, message);
-    }
-
-    private info(message: string) {
-        this.messaging.info(RUNNER_TAG, message);
-    }
-
-    private error(message: string) {
-        this.messaging.error(RUNNER_TAG, message);
-    }
-    /* c8 ignore stop */
 }
 
 /**
