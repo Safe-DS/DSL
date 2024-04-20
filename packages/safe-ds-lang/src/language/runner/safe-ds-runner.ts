@@ -20,7 +20,6 @@ import { isSdsModule, isSdsPipeline } from '../generated/ast.js';
 import semver from 'semver';
 import { SafeDsMessagingProvider } from '../communication/safe-ds-messaging-provider.js';
 import crypto from 'crypto';
-import { Connection } from 'vscode-languageserver';
 
 // Most of the functionality cannot be tested automatically as a functioning runner setup would always be required
 
@@ -53,8 +52,6 @@ export class SafeDsRunner {
         ((message: PythonServerMessage) => void)[]
     >();
 
-    private connection: Connection | undefined;
-
     /* c8 ignore start */
     constructor(services: SafeDsServices) {
         this.annotations = services.builtins.Annotations;
@@ -62,7 +59,6 @@ export class SafeDsRunner {
         this.generator = services.generation.PythonGenerator;
         this.langiumDocuments = services.shared.workspace.LangiumDocuments;
         this.messaging = services.communication.MessagingProvider;
-        this.connection = services.shared.lsp.Connection;
 
         // Register listeners
         this.registerMessageLoggingCallbacks();
@@ -99,14 +95,13 @@ export class SafeDsRunner {
 
         const pipelineExecutionId = crypto.randomUUID();
 
-        const progress = await this.connection?.window.createWorkDoneProgress();
-        progress?.begin('Safe-DS Runner', 0, 'Starting...');
+        const progress = await this.messaging.showProgress('Safe-DS Runner', 'Starting...');
         this.info(`[${pipelineExecutionId}] Launching pipeline "${pipeline.name}" in ${documentUri}`);
 
         const disposables = [
             this.addMessageCallback((message) => {
                 if (message.id === pipelineExecutionId) {
-                    progress?.report(`Computed ${message.data.name}`);
+                    progress.report(`Computed ${message.data.name}`);
                 }
             }, 'placeholder_type'),
 
@@ -118,7 +113,7 @@ export class SafeDsRunner {
                     });
                     this.messaging.showErrorMessage('An error occurred during pipeline execution.');
                 }
-                progress?.done();
+                progress.done();
                 disposables.forEach((it) => {
                     it.dispose();
                 });
@@ -126,7 +121,7 @@ export class SafeDsRunner {
 
             this.addMessageCallback((message) => {
                 if (message.id === pipelineExecutionId) {
-                    progress?.done();
+                    progress.done();
                     disposables.forEach((it) => {
                         it.dispose();
                     });
@@ -134,7 +129,7 @@ export class SafeDsRunner {
             }, 'runtime_progress'),
 
             this.addMessageCallback(() => {
-                progress?.done();
+                progress.done();
                 disposables.forEach((it) => {
                     it.dispose();
                 });

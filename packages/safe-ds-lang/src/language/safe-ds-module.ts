@@ -248,11 +248,9 @@ export const createSafeDsServices = async function (
 
     // Apply options
     if (options?.logger) {
-        /* c8 ignore next 2 */
         SafeDs.communication.MessagingProvider.setLogger(options.logger);
     }
     if (options?.messageBroker) {
-        /* c8 ignore next 2 */
         SafeDs.communication.MessagingProvider.setMessageBroker(options.messageBroker);
     }
     if (!options?.omitBuiltins) {
@@ -263,7 +261,6 @@ export const createSafeDsServices = async function (
         await SafeDs.runtime.Runner.updateRunnerCommand(options.runnerCommand);
     }
     if (options?.userMessageProvider) {
-        /* c8 ignore next 2 */
         SafeDs.communication.MessagingProvider.setUserMessageProvider(options.userMessageProvider);
     }
 

@@ -4,6 +4,7 @@ import { SafeDsRunner } from '../runner/safe-ds-runner.js';
 
 export const COMMAND_RUN_PIPELINE = 'safe-ds.runPipeline';
 
+/* c8 ignore start */
 export class SafeDsExecuteCommandHandler extends AbstractExecuteCommandHandler {
     private readonly runner: SafeDsRunner;
 
@@ -18,3 +19,4 @@ export class SafeDsExecuteCommandHandler extends AbstractExecuteCommandHandler {
         acceptor(COMMAND_RUN_PIPELINE, ([documentUri, nodePath]) => this.runner.runPipeline(documentUri, nodePath));
     }
 }
+/* c8 ignore stop */
