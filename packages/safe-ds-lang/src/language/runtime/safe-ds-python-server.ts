@@ -8,6 +8,8 @@ import WebSocket from 'ws';
 import { createShutdownMessage, PythonServerMessage } from './messages.js';
 import net from 'net';
 import { Disposable } from 'langium';
+import { ChildProcessWithoutNullStreams } from 'node:child_process';
+import { SafeDsSettingsProvider } from '../workspace/safe-ds-settings-provider.js';
 
 const LOG_TAG = 'Python Server';
 const LOWEST_SUPPORTED_RUNNER_VERSION = '0.11.0';
@@ -18,23 +20,21 @@ export const pipVersionRange = `>=${LOWEST_SUPPORTED_RUNNER_VERSION},<${LOWEST_U
 export class SafeDsPythonServer {
     private readonly logger: SafeDsLogger;
     private readonly messaging: SafeDsMessagingProvider;
+    private readonly settingsProvider: SafeDsSettingsProvider;
 
-    private runnerCommand: string = 'safe-ds-runner';
     private runnerProcess: child_process.ChildProcessWithoutNullStreams | undefined = undefined;
     private port: number | undefined = undefined;
     private acceptsConnections: boolean = false;
     private serverConnection: WebSocket | undefined = undefined;
-    private messageCallbacks: Map<PythonServerMessage['type'], ((message: PythonServerMessage) => void)[]> = new Map<
-        PythonServerMessage['type'],
-        ((message: PythonServerMessage) => void)[]
-    >();
+    private messageCallbacks: Map<PythonServerMessage['type'], ((message: PythonServerMessage) => void)[]> = new Map();
 
     constructor(services: SafeDsServices) {
         this.logger = services.communication.MessagingProvider.createTaggedLogger(LOG_TAG);
         this.messaging = services.communication.MessagingProvider;
+        this.settingsProvider = services.workspace.SettingsProvider;
 
-        services.workspace.SettingsProvider.onRunnerCommandUpdate(async (newValue) => {
-            await this.updateRunnerCommand(newValue);
+        services.workspace.SettingsProvider.onRunnerCommandUpdate(async () => {
+            await this.restart();
         });
 
         this.messaging.onNotification(RPC_RUNNER_START, async () => {
@@ -47,6 +47,36 @@ export class SafeDsPythonServer {
             await this.stopPythonServer();
         });
     }
+
+    private async restart(): Promise<void> {
+        await this.stopPythonServer();
+        await this.startPythonServer();
+        if (this.isReady()) {
+            await this.messaging.sendNotification(RPC_RUNNER_STARTED, this.port);
+        }
+    }
+
+    private async getPythonServerVersion(process: ChildProcessWithoutNullStreams) {
+        process.stderr.on('data', (data: Buffer) => {
+            this.logger.debug(data.toString().trim());
+        });
+        return new Promise<string>((resolve, reject) => {
+            process.stdout.on('data', (data: Buffer) => {
+                const version = data.toString().trim().split(/\s/u)[1];
+                if (version !== undefined) {
+                    resolve(version);
+                }
+            });
+            process.on('close', (code) => {
+                reject(new Error(`The subprocess shut down: ${code}`));
+            });
+            process.on('error', (err) => {
+                reject(new Error(`The subprocess could not be started (${err.message})`));
+            });
+        });
+    }
+
+    // TODO --------------------------
 
     /**
      * Start the python server on the next usable port, starting at 5000.
@@ -61,7 +91,7 @@ export class SafeDsPythonServer {
         }
 
         this.acceptsConnections = false;
-        const runnerCommandParts = this.runnerCommand.split(/\s/u);
+        const runnerCommandParts = this.settingsProvider.getRunnerCommand().split(/\s/u);
         const runnerCommand = runnerCommandParts.shift()!; // After shift, only the actual args are left
         // Test if the python server can actually be started
         try {
@@ -96,7 +126,7 @@ export class SafeDsPythonServer {
         // Start the runner at the specified port
         this.port = await this.findFirstFreePort(5000);
         this.logger.debug(`Trying to use port ${this.port} to start python server...`);
-        this.logger.debug(`Using command '${this.runnerCommand}' to start python server...`);
+        this.logger.debug(`Using command '${this.settingsProvider.getRunnerCommand()}' to start python server...`);
 
         const runnerArgs = [...runnerCommandParts, 'start', '--port', String(this.port)];
         this.logger.debug(`Running ${runnerCommand}; Args: ${runnerArgs.join(' ')}`);
@@ -138,13 +168,10 @@ export class SafeDsPythonServer {
      *
      * @param command New Runner Command.
      */
-    public async updateRunnerCommand(command: string | undefined): Promise<void> {
-        if (command) {
-            this.runnerCommand = command;
-            await this.startPythonServer();
-            if (this.isReady()) {
-                await this.messaging.sendNotification(RPC_RUNNER_STARTED, this.port);
-            }
+    private async updateRunnerCommand(command: string | undefined): Promise<void> {
+        await this.startPythonServer();
+        if (this.isReady()) {
+            await this.messaging.sendNotification(RPC_RUNNER_STARTED, this.port);
         }
     }
 
@@ -173,26 +200,6 @@ export class SafeDsPythonServer {
         const messageString = JSON.stringify(message);
         this.logger.trace(`Sending message to python server: ${messageString}`);
         this.serverConnection!.send(messageString);
-    }
-
-    private async getPythonServerVersion(process: child_process.ChildProcessWithoutNullStreams) {
-        process.stderr.on('data', (data: Buffer) => {
-            this.logger.debug(data.toString().trim());
-        });
-        return new Promise<string>((resolve, reject) => {
-            process.stdout.on('data', (data: Buffer) => {
-                const version = data.toString().trim().split(/\s/u)[1];
-                if (version !== undefined) {
-                    resolve(version);
-                }
-            });
-            process.on('close', (code) => {
-                reject(new Error(`The subprocess shut down: ${code}`));
-            });
-            process.on('error', (err) => {
-                reject(new Error(`The subprocess could not be started (${err.message})`));
-            });
-        });
     }
 
     private manageRunnerSubprocessOutputIO() {

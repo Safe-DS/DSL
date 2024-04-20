@@ -13,7 +13,7 @@ import { SafeDsEnums, SafeDsImpurityReasons } from './builtins/safe-ds-enums.js'
 import { SafeDsCommentProvider } from './documentation/safe-ds-comment-provider.js';
 import { SafeDsDocumentationProvider } from './documentation/safe-ds-documentation-provider.js';
 import { SafeDsCallGraphComputer } from './flow/safe-ds-call-graph-computer.js';
-import { SafeDsGeneratedModule, SafeDsGeneratedSharedModule } from './generated/module.js';
+import { SafeDsGeneratedModule, SafeDsGeneratedSharedModule, SafeDsLanguageMetaData } from './generated/module.js';
 import { SafeDsPythonGenerator } from './generation/safe-ds-python-generator.js';
 import { SafeDsValueConverter } from './grammar/safe-ds-value-converter.js';
 import { SafeDsNodeMapper } from './helpers/safe-ds-node-mapper.js';
@@ -37,7 +37,7 @@ import { registerValidationChecks } from './validation/safe-ds-validator.js';
 import { SafeDsPackageManager } from './workspace/safe-ds-package-manager.js';
 import { SafeDsWorkspaceManager } from './workspace/safe-ds-workspace-manager.js';
 import { SafeDsPurityComputer } from './purity/safe-ds-purity-computer.js';
-import { SafeDsSettingsProvider } from './workspace/safe-ds-settings-provider.js';
+import { SafeDsSettings, SafeDsSettingsProvider } from './workspace/safe-ds-settings-provider.js';
 import { SafeDsRenameProvider } from './lsp/safe-ds-rename-provider.js';
 import { SafeDsRunner } from './runtime/safe-ds-runner.js';
 import { SafeDsTypeFactory } from './typing/safe-ds-type-factory.js';
@@ -259,9 +259,10 @@ export const createSafeDsServices = async function (
     if (!options?.omitBuiltins) {
         await shared.workspace.WorkspaceManager.initializeWorkspace([]);
     }
-    if (options?.runnerCommand) {
-        /* c8 ignore next 2 */
-        await SafeDs.runtime.PythonServer.updateRunnerCommand(options.runnerCommand);
+    if (options?.settings) {
+        shared.workspace.ConfigurationProvider.updateConfiguration({
+            settings: { [SafeDsLanguageMetaData.languageId]: options.settings },
+        });
     }
     if (options?.userMessageProvider) {
         SafeDs.communication.MessagingProvider.setUserMessageProvider(options.userMessageProvider);
@@ -292,9 +293,9 @@ export interface ModuleOptions {
     messageBroker?: Partial<SafeDsMessageBroker>;
 
     /**
-     * Command to start the runner.
+     * The settings to use for the Safe-DS language server.
      */
-    runnerCommand?: string;
+    settings?: DeepPartial<SafeDsSettings>;
 
     /**
      * A service for showing messages to the user. If the provider lacks a capability, we fall back to the language
