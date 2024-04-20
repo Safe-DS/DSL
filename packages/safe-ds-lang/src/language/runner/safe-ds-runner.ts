@@ -185,13 +185,13 @@ export class SafeDsRunner {
                     return `\tat ${frame.file} line ${frame.line}`;
                 }),
             );
-            this.logger.error(
-                `Runner-RuntimeError (${message.id}): ${
+            this.logger.debug(
+                `[${message.id}] ${
                     (<RuntimeErrorMessage>message).data.message
-                } \n${readableStacktracePython.join('\n')}`,
+                }\n${readableStacktracePython.join('\n')}`,
             );
             this.logger.error(
-                `Safe-DS Error (${message.id}): ${(<RuntimeErrorMessage>message).data.message} \n${readableStacktraceSafeDs
+                `[${message.id}] ${(<RuntimeErrorMessage>message).data.message} \n${readableStacktraceSafeDs
                     .reverse()
                     .join('\n')}`,
             );
