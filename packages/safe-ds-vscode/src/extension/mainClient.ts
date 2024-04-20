@@ -11,7 +11,7 @@ import { AstUtils, LangiumDocument } from 'langium';
 import { EDAPanel } from './eda/edaPanel.ts';
 import { dumpDiagnostics } from './commands/dumpDiagnostics.js';
 import { openDiagnosticsDumps } from './commands/openDiagnosticsDumps.js';
-import { isSdsPipeline, isSdsPlaceholder } from '../../../safe-ds-lang/src/language/generated/ast.js';
+import { isSdsPlaceholder } from '../../../safe-ds-lang/src/language/generated/ast.js';
 import { installRunner } from './commands/installRunner.js';
 import { updateRunner } from './commands/updateRunner.js';
 
@@ -120,7 +120,6 @@ const registerCommands = function (context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('safe-ds.installRunner', installRunner(context, client, services)),
         vscode.commands.registerCommand('safe-ds.openDiagnosticsDumps', openDiagnosticsDumps(context)),
         vscode.commands.registerCommand('safe-ds.refreshWebview', refreshWebview(context)),
-        vscode.commands.registerCommand('safe-ds.runPipeline', runPipeline),
         vscode.commands.registerCommand('safe-ds.updateRunner', updateRunner(context, client, services)),
     );
 };
@@ -356,28 +355,6 @@ export const getPipelineDocument = async function (
     }
 
     return mainDocument;
-};
-
-const runPipeline = async (documentUri: string, nodePath: string) => {
-    const uri = Uri.parse(documentUri);
-    const document = await getPipelineDocument(uri);
-    if (!document) {
-        vscode.window.showErrorMessage('Could not find document.');
-        return;
-    }
-
-    const root = document.parseResult.value;
-    const pipeline = services.workspace.AstNodeLocator.getAstNode(root, nodePath);
-    if (!isSdsPipeline(pipeline)) {
-        vscode.window.showErrorMessage('Selected node is not a pipeline.');
-        return;
-    }
-
-    const pipelineExecutionId = crypto.randomUUID();
-
-    printOutputMessage(`Launching Pipeline (${pipelineExecutionId}): ${documentUri} - ${pipeline.name}`);
-
-    await services.runtime.Runner.executePipeline(pipelineExecutionId, document, pipeline.name);
 };
 
 const validateDocuments = async function (

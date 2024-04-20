@@ -2,7 +2,7 @@ import child_process from 'child_process';
 import net from 'net';
 import WebSocket from 'ws';
 import { SafeDsServices } from '../safe-ds-module.js';
-import { LangiumDocument, URI } from 'langium';
+import { AstNodeLocator, LangiumDocument, LangiumDocuments, URI } from 'langium';
 import path from 'path';
 import {
     createProgramMessage,
@@ -16,9 +16,10 @@ import { SourceMapConsumer } from 'source-map-js';
 import treeKill from 'tree-kill';
 import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import { SafeDsPythonGenerator } from '../generation/safe-ds-python-generator.js';
-import { isSdsModule } from '../generated/ast.js';
+import { isSdsModule, isSdsPipeline } from '../generated/ast.js';
 import semver from 'semver';
 import { SafeDsMessagingProvider } from '../communication/safe-ds-messaging-provider.js';
+import crypto from 'crypto';
 
 // Most of the functionality cannot be tested automatically as a functioning runner setup would always be required
 
@@ -36,7 +37,9 @@ const RUNNER_TAG = 'Runner';
 
 export class SafeDsRunner {
     private readonly annotations: SafeDsAnnotations;
+    private readonly astNodeLocator: AstNodeLocator;
     private readonly generator: SafeDsPythonGenerator;
+    private readonly langiumDocuments: LangiumDocuments;
     private readonly messaging: SafeDsMessagingProvider;
 
     private runnerCommand: string = 'safe-ds-runner';
@@ -49,18 +52,12 @@ export class SafeDsRunner {
         ((message: PythonServerMessage) => void)[]
     >();
 
-    /**
-     * Map that contains information about an execution keyed by the execution id.
-     */
-    private executionInformation: Map<string, PipelineExecutionInformation> = new Map<
-        string,
-        PipelineExecutionInformation
-    >();
-
     /* c8 ignore start */
     constructor(services: SafeDsServices) {
         this.annotations = services.builtins.Annotations;
+        this.astNodeLocator = services.workspace.AstNodeLocator;
         this.generator = services.generation.PythonGenerator;
+        this.langiumDocuments = services.shared.workspace.LangiumDocuments;
         this.messaging = services.communication.MessagingProvider;
 
         // Register listeners
@@ -80,6 +77,36 @@ export class SafeDsRunner {
             await this.stopPythonServer();
         });
     }
+
+    async runPipeline(documentUri: string, nodePath: string) {
+        const uri = URI.parse(documentUri);
+        const document = this.langiumDocuments.getDocument(uri);
+        if (!document) {
+            this.messaging.showErrorMessage('Could not find document.');
+            return;
+        }
+
+        const root = document.parseResult.value;
+        const pipeline = this.astNodeLocator.getAstNode(root, nodePath);
+        if (!isSdsPipeline(pipeline)) {
+            this.messaging.showErrorMessage('Selected node is not a pipeline.');
+            return;
+        }
+
+        const pipelineExecutionId = crypto.randomUUID();
+
+        this.info(`Launching Pipeline (${pipelineExecutionId}): ${documentUri} - ${pipeline.name}`);
+
+        await this.executePipeline(pipelineExecutionId, document, pipeline.name);
+    }
+
+    /**
+     * Map that contains information about an execution keyed by the execution id.
+     */
+    private executionInformation: Map<string, PipelineExecutionInformation> = new Map<
+        string,
+        PipelineExecutionInformation
+    >();
 
     private registerMessageLoggingCallbacks() {
         this.addMessageCallback((message) => {

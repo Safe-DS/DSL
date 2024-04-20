@@ -52,6 +52,8 @@ import {
 } from './communication/safe-ds-messaging-provider.js';
 import { SafeDsConfigurationProvider } from './workspace/safe-ds-configuration-provider.js';
 import { SafeDsCodeLensProvider } from './lsp/safe-ds-code-lens-provider.js';
+import { SafeDsExecuteCommandHandler } from './lsp/safe-ds-execute-command-handler.js';
+import { SafeDsServiceRegistry } from './safe-ds-service-registry.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -105,6 +107,7 @@ export type SafeDsAddedServices = {
 };
 
 export type SafeDsAddedSharedServices = {
+    ServiceRegistry: SafeDsServiceRegistry;
     workspace: {
         ConfigurationProvider: SafeDsConfigurationProvider;
     };
@@ -193,13 +196,15 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
 };
 
 export const SafeDsSharedModule: Module<SafeDsSharedServices, DeepPartial<SafeDsSharedServices>> = {
+    ServiceRegistry: () => new SafeDsServiceRegistry(),
     lsp: {
+        ExecuteCommandHandler: (sharedServices) => new SafeDsExecuteCommandHandler(sharedServices),
         FuzzyMatcher: () => new SafeDsFuzzyMatcher(),
         NodeKindProvider: () => new SafeDsNodeKindProvider(),
     },
     workspace: {
-        ConfigurationProvider: (services) => new SafeDsConfigurationProvider(services),
-        WorkspaceManager: (services) => new SafeDsWorkspaceManager(services),
+        ConfigurationProvider: (sharedServices) => new SafeDsConfigurationProvider(sharedServices),
+        WorkspaceManager: (sharedServices) => new SafeDsWorkspaceManager(sharedServices),
     },
 };
 
