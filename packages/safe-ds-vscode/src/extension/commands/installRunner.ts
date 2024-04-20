@@ -2,8 +2,8 @@ import vscode, { ExtensionContext, Uri } from 'vscode';
 import child_process from 'node:child_process';
 import semver from 'semver';
 import { dependencies, rpc, SafeDsServices } from '@safe-ds/lang';
-import { logError, printOutputMessage } from '../output.js';
 import { LanguageClient } from 'vscode-languageclient/node.js';
+import { safeDsLogger } from '../helpers/logging.js';
 
 const pythonCommandCandidates = ['python3', 'python', 'py'];
 
@@ -46,7 +46,7 @@ const doInstallRunner = async (context: ExtensionContext): Promise<boolean> => {
     const pythonCommand = await getPythonCommand();
     if (!pythonCommand) {
         vscode.window.showErrorMessage('Could not find a matching Python interpreter.');
-        logError('Could not find a matching Python interpreter.');
+        safeDsLogger.error('Could not find a matching Python interpreter.');
         return false;
     }
 
@@ -62,7 +62,7 @@ const doInstallRunner = async (context: ExtensionContext): Promise<boolean> => {
                 return true;
             } catch (error) {
                 vscode.window.showErrorMessage('Failed to create a virtual environment.');
-                logError(String(error));
+                safeDsLogger.error(String(error));
                 return false;
             }
         },
@@ -83,7 +83,7 @@ const doInstallRunner = async (context: ExtensionContext): Promise<boolean> => {
                 return true;
             } catch (error) {
                 vscode.window.showErrorMessage('Failed to install the runner.');
-                logError(String(error));
+                safeDsLogger.error(String(error));
                 return false;
             }
         },
@@ -134,10 +134,10 @@ export const installRunnerInVirtualEnvironment = async (pipCommand: string): Pro
         const process = child_process.spawn(installCommand, { shell: true });
 
         process.stdout.on('data', (data: Buffer) => {
-            printOutputMessage(data.toString().trim());
+            safeDsLogger.info(data.toString().trim());
         });
         process.stderr.on('data', (data: Buffer) => {
-            logError(data.toString().trim());
+            safeDsLogger.error(data.toString().trim());
         });
 
         process.on('error', (error) => {

@@ -1,4 +1,4 @@
-import vscode, { LogLevel, LogOutputChannel, ViewColumn } from 'vscode';
+import vscode, { LogLevel, LogOutputChannel, OutputChannel, ViewColumn } from 'vscode';
 
 const TRACE_PREFIX = /^\[Trace.*?\] /iu;
 const DEBUG_PREFIX = /^\[Debug.*?\] /iu;
@@ -6,18 +6,22 @@ const INFO_PREFIX = /^\[Info.*?\] /iu;
 const WARN_PREFIX = /^\[Warn.*?\] /iu;
 const ERROR_PREFIX = /^\[Error.*?\] /iu;
 
+const RESULT_PREFIX = /^.*\[Result\] /iu;
+
 const RUNNER_TRACE_PREFIX = /^.*\[Python Server\].*\[?INFO\]?:?/iu;
 const RUNNER_DEBUG_PREFIX = /^.*\[Python Server\].*\[?DEBUG\]?:?/iu;
 const RUNNER_INFO_PREFIX = /^.*\[Python Server\].*\[?INFO\]?:?/iu;
 const RUNNER_WARN_PREFIX = /^.*\[Python Server\].*\[?WARNING\]?:?/iu;
 const RUNNER_ERROR_PREFIX = /^.*\[Python Server\].*\[?ERROR\]?:?/iu;
 
-export class SafeDsLogOutputChannel implements LogOutputChannel {
+class SafeDsLogger implements LogOutputChannel {
     private readonly languageServer: LogOutputChannel;
+    private readonly results: OutputChannel;
     private readonly runner: LogOutputChannel;
 
     constructor() {
         this.languageServer = vscode.window.createOutputChannel('Safe-DS', { log: true });
+        this.results = vscode.window.createOutputChannel('Safe-DS Results', 'safe-ds');
         this.runner = vscode.window.createOutputChannel('Safe-DS Runner', { log: true });
     }
 
@@ -48,6 +52,9 @@ export class SafeDsLogOutputChannel implements LogOutputChannel {
             this.runner.warn(value.replace(RUNNER_WARN_PREFIX, ''));
         } else if (RUNNER_ERROR_PREFIX.test(value)) {
             this.runner.error(value.replace(RUNNER_ERROR_PREFIX, ''));
+        } else if (RESULT_PREFIX.test(value)) {
+            this.results.appendLine(value.replace(RESULT_PREFIX, ''));
+            this.results.show(true);
         } else if (TRACE_PREFIX.test(value)) {
             this.languageServer.trace(value.replace(TRACE_PREFIX, ''));
         } else if (DEBUG_PREFIX.test(value)) {
@@ -108,4 +115,19 @@ export class SafeDsLogOutputChannel implements LogOutputChannel {
     warn(message: string, ...args: any[]): void {
         this.languageServer.warn(message, args);
     }
+
+    /**
+     * Create a logger that prepends all messages with the given tag.
+     */
+    createTaggedLogger(tag: string) {
+        return {
+            trace: (message: string, verbose?: string) => this.trace(tag, message, verbose),
+            debug: (message: string) => this.debug(tag, message),
+            info: (message: string) => this.info(tag, message),
+            warn: (message: string) => this.warn(tag, message),
+            error: (message: string) => this.error(tag, message),
+        };
+    }
 }
+
+export const safeDsLogger = new SafeDsLogger();
