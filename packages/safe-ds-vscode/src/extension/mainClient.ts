@@ -14,6 +14,7 @@ import { openDiagnosticsDumps } from './commands/openDiagnosticsDumps.js';
 import { isSdsPlaceholder } from '../../../safe-ds-lang/src/language/generated/ast.js';
 import { installRunner } from './commands/installRunner.js';
 import { updateRunner } from './commands/updateRunner.js';
+import { SafeDsLogOutputChannel } from './logging.js';
 
 let client: LanguageClient;
 let services: SafeDsServices;
@@ -92,7 +93,7 @@ const createLanguageClient = function (context: vscode.ExtensionContext): Langua
             // Notify the server about file changes to files contained in the workspace
             fileEvents: fileSystemWatcher,
         },
-        outputChannel: vscode.window.createOutputChannel('Safe-DS Language Client', 'log'),
+        outputChannel: new SafeDsLogOutputChannel('Safe-DS Language Client'),
     };
 
     // Create the language client
