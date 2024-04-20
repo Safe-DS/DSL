@@ -45,7 +45,7 @@ export class SafeDsRunner {
      * Check if the runner is ready to execute pipelines.
      */
     isReady(): boolean {
-        return this.pythonServer.isReady();
+        return this.pythonServer.isStarted;
     }
 
     async runPipeline(documentUri: string, nodePath: string) {
@@ -156,14 +156,6 @@ export class SafeDsRunner {
         pipelineName: string,
         targetPlaceholder: string | undefined = undefined,
     ) {
-        if (!this.pythonServer.isReady()) {
-            await this.pythonServer.stopPythonServer();
-            await this.pythonServer.startPythonServer();
-            // just fail silently, startPythonServer should already display an error
-            if (!this.pythonServer.isReady()) {
-                return;
-            }
-        }
         const node = pipelineDocument.parseResult.value;
         if (!isSdsModule(node)) {
             return;

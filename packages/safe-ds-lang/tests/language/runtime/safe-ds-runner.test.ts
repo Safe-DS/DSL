@@ -1,36 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { NodeFileSystem } from 'langium/node';
-import net from 'net';
 import { URI } from 'langium';
 import { createSafeDsServices } from '../../../src/language/index.js';
 
 const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
-const pythonServer = services.runtime.PythonServer;
 const runner = services.runtime.Runner;
 
 describe('SafeDsRunner', async () => {
-    describe('findFirstFreePort', async () => {
-        it('occupied', async () => {
-            const server = net.createServer();
-            server.on('error', (err: any) => {
-                throw err;
-            });
-            const portNumber = 46821;
-            await new Promise<void>((resolve, _reject) => {
-                server.listen(portNumber, '127.0.0.1', () => {
-                    resolve();
-                });
-            });
-            const foundPort = await pythonServer.findFirstFreePort(portNumber);
-            server.close();
-            expect(foundPort).toStrictEqual(portNumber + 1);
-        });
-        it('available', async () => {
-            const portNumber = 46825;
-            const foundPort = await pythonServer.findFirstFreePort(portNumber);
-            expect(foundPort).toStrictEqual(portNumber);
-        });
-    });
     describe('getMainModuleName', async () => {
         it('sds', async () => {
             const document = services.shared.workspace.LangiumDocumentFactory.fromString('', URI.file('/a-b c.sds'));
