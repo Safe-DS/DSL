@@ -299,11 +299,23 @@ export class SafeDsRunner {
     public addMessageCallback<M extends PythonServerMessage['type']>(
         callback: (message: Extract<PythonServerMessage, { type: M }>) => void,
         messageType: M,
-    ): void {
+    ): Disposable {
         if (!this.messageCallbacks.has(messageType)) {
             this.messageCallbacks.set(messageType, []);
         }
         this.messageCallbacks.get(messageType)!.push(<(message: PythonServerMessage) => void>callback);
+
+        return {
+            dispose: () => {
+                if (!this.messageCallbacks.has(messageType)) {
+                    return;
+                }
+                this.messageCallbacks.set(
+                    messageType,
+                    this.messageCallbacks.get(messageType)!.filter((storedCallback) => storedCallback !== callback),
+                );
+            },
+        };
     }
 
     /**
