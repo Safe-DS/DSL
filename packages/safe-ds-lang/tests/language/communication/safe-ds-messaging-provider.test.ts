@@ -13,6 +13,7 @@ describe('without connection', async () => {
             info: vi.fn(),
             warn: vi.fn(),
             error: vi.fn(),
+            result: vi.fn(),
         },
         messageBroker: {
             onNotification(event, handler) {
@@ -59,6 +60,11 @@ describe('without connection', async () => {
         it('should call the error function defined in the options', () => {
             messaging.error('Test', 'error');
             expect(options.logger!.error).toHaveBeenCalledWith('[Test] error');
+        });
+
+        it('should call the result function defined in the options', () => {
+            messaging.result('result');
+            expect(options.logger!.result).toHaveBeenCalledWith('[Result] result\n');
         });
     });
 

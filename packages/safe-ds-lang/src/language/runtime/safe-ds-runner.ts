@@ -17,6 +17,7 @@ import { SafeDsLogger, SafeDsMessagingProvider } from '../communication/safe-ds-
 import crypto from 'crypto';
 import { SafeDsPythonServer } from './safe-ds-python-server.js';
 import { RPC_RUNNER_SHOW_IMAGE } from '../communication/rpc.js';
+import { expandToStringLF, joinToNode } from 'langium/generate';
 
 // Most of the functionality cannot be tested automatically as a functioning runner setup would always be required
 
@@ -159,7 +160,7 @@ export class SafeDsRunner {
             this.pythonServer.addMessageCallback('placeholder_type', async (message) => {
                 if (message.id === pipelineExecutionId && message.data.name === placeholder.name) {
                     const data = await this.getPlaceholderValue(placeholder.name, pipelineExecutionId);
-                    this.logger.info(`[Result] val ${placeholder.name} = ${JSON.stringify(data, null, 2)};`);
+                    this.logger.result(`val ${placeholder.name} = ${JSON.stringify(data, null, 2)};`);
                 }
             }),
 
@@ -400,12 +401,23 @@ export class SafeDsRunner {
                     (<RuntimeErrorMessage>message).data.message
                 }\n${readableStacktracePython.join('\n')}`,
             );
-            this.logger.error(
-                `[Result] [${message.id}] ${(<RuntimeErrorMessage>message).data.message} \n${readableStacktraceSafeDs
-                    .reverse()
-                    .join('\n')}`,
-            );
+
+            this.prettyPrintRuntimeError(message, readableStacktraceSafeDs);
         });
+    }
+
+    private prettyPrintRuntimeError(message: RuntimeErrorMessage, readableStacktraceSafeDs: string[]) {
+        const lines = [...message.data.message.split('\n'), ...readableStacktraceSafeDs.reverse()].map((it) =>
+            it.replace('\t', '    '),
+        );
+
+        this.logger.result(
+            expandToStringLF`
+                // ----- Runtime Error ---------------------------------------------------------
+                ${joinToNode(lines, { prefix: '// ', appendNewLineIfNotEmpty: true, skipNewLineAfterLastItem: true })}
+                // -----------------------------------------------------------------------------
+            `,
+        );
     }
 
     /**
