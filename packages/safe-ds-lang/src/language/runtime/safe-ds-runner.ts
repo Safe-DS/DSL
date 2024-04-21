@@ -110,6 +110,76 @@ export class SafeDsRunner {
         await this.executePipeline(pipelineExecutionId, document, pipeline.name);
     }
 
+    async printValue(documentUri: string, nodePath: string) {
+        const uri = URI.parse(documentUri);
+        const document = this.langiumDocuments.getDocument(uri);
+        if (!document) {
+            this.messaging.showErrorMessage('Could not find document.');
+            return;
+        }
+
+        const root = document.parseResult.value;
+        const placeholder = this.astNodeLocator.getAstNode(root, nodePath);
+        if (!isSdsPlaceholder(placeholder)) {
+            this.messaging.showErrorMessage('Selected node is not a placeholder.');
+            return;
+        }
+
+        const pipeline = AstUtils.getContainerOfType(placeholder, isSdsPipeline);
+        if (!pipeline) {
+            this.messaging.showErrorMessage('Could not find pipeline.');
+            return;
+        }
+
+        const pipelineExecutionId = crypto.randomUUID();
+
+        const start = Date.now();
+
+        const progress = await this.messaging.showProgress('Safe-DS Runner', 'Starting...');
+
+        this.logger.info(
+            `[${pipelineExecutionId}] Showing image "${pipeline.name}/${placeholder.name}" in ${documentUri}.`,
+        );
+
+        const disposables = [
+            this.pythonServer.addMessageCallback('runtime_error', (message) => {
+                if (message.id === pipelineExecutionId) {
+                    progress?.done();
+                    disposables.forEach((it) => {
+                        it.dispose();
+                    });
+                    this.messaging.showErrorMessage('An error occurred during pipeline execution.');
+                }
+                progress.done();
+                disposables.forEach((it) => {
+                    it.dispose();
+                });
+            }),
+
+            this.pythonServer.addMessageCallback('placeholder_type', async (message) => {
+                if (message.id === pipelineExecutionId && message.data.name === placeholder.name) {
+                    const data = await this.getPlaceholderValue(placeholder.name, pipelineExecutionId);
+                    this.logger.info(`[Result] val ${placeholder.name} = ${JSON.stringify(data, null, 2)};`);
+                }
+            }),
+
+            this.pythonServer.addMessageCallback('runtime_progress', (message) => {
+                if (message.id === pipelineExecutionId) {
+                    progress.done();
+                    const timeElapsed = Date.now() - start;
+                    this.logger.info(
+                        `[${pipelineExecutionId}] Finished printing value "${pipeline.name}/${placeholder.name}" in ${timeElapsed}ms.`,
+                    );
+                    disposables.forEach((it) => {
+                        it.dispose();
+                    });
+                }
+            }),
+        ];
+
+        await this.executePipeline(pipelineExecutionId, document, pipeline.name, placeholder.name);
+    }
+
     async showImage(documentUri: string, nodePath: string) {
         const uri = URI.parse(documentUri);
         const document = this.langiumDocuments.getDocument(uri);
@@ -331,7 +401,7 @@ export class SafeDsRunner {
                 }\n${readableStacktracePython.join('\n')}`,
             );
             this.logger.error(
-                `[${message.id}] ${(<RuntimeErrorMessage>message).data.message} \n${readableStacktraceSafeDs
+                `[Result] [${message.id}] ${(<RuntimeErrorMessage>message).data.message} \n${readableStacktraceSafeDs
                     .reverse()
                     .join('\n')}`,
             );
