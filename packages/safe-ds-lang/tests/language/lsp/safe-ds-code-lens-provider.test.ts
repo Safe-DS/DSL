@@ -33,7 +33,7 @@ describe('SafeDsCodeLensProvider', () => {
                 code: `pipeline myPipeline {
                     val a = Image.fromFile("test.png");
                 }`,
-                expectedCodeLensTitles: ['Show a'],
+                expectedCodeLensTitles: ['Run myPipeline', 'Show a'],
             },
             {
                 testName: 'block lambda with Image placeholder',
@@ -42,7 +42,7 @@ describe('SafeDsCodeLensProvider', () => {
                         val a = Image.fromFile("test.png");
                     };
                 }`,
-                expectedCodeLensTitles: [],
+                expectedCodeLensTitles: ['Run myPipeline'],
             },
             {
                 testName: 'segment with Image placeholder',
