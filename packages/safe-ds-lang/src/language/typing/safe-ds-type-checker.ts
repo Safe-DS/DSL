@@ -390,6 +390,21 @@ export class SafeDsTypeChecker {
     };
 
     /**
+     * Checks whether {@link type} is some kind of image.
+     */
+    isImage(type: Type): type is ClassType {
+        const imageOrNull = this.coreTypes.Image.withExplicitNullability(true);
+
+        return (
+            !type.equals(this.coreTypes.Nothing) &&
+            !type.equals(this.coreTypes.NothingOrNull) &&
+            this.isSubtypeOf(type, imageOrNull, {
+                ignoreTypeParameters: true,
+            })
+        );
+    }
+
+    /**
      * Checks whether {@link type} is some kind of list (with any element type).
      */
     isList(type: Type): type is ClassType | TypeVariable {

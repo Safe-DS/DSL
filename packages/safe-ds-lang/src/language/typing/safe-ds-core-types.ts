@@ -30,6 +30,10 @@ export class SafeDsCoreTypes {
         return this.createCoreType(this.builtinClasses.Float);
     }
 
+    get Image(): Type {
+        return this.createCoreType(this.builtinClasses.Image);
+    }
+
     get Int(): Type {
         return this.createCoreType(this.builtinClasses.Int);
     }

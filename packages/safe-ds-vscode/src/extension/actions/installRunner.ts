@@ -31,7 +31,7 @@ export const installRunner = (context: ExtensionContext, client: LanguageClient,
             .update('safe-ds.runner.command', getRunnerCommand(context), vscode.ConfigurationTarget.Global);
 
         // Start the runner (needed if the configuration did not change, so no event is fired)
-        await client.sendNotification(rpc.runnerStart);
+        await client.sendNotification(rpc.RPC_RUNNER_START);
 
         // Inform the user
         vscode.window.showInformationMessage('The runner has been installed successfully.');
@@ -134,7 +134,7 @@ export const installRunnerInVirtualEnvironment = async (pipCommand: string): Pro
         const process = child_process.spawn(installCommand, { shell: true });
 
         process.stdout.on('data', (data: Buffer) => {
-            safeDsLogger.info(data.toString().trim());
+            safeDsLogger.debug(data.toString().trim());
         });
         process.stderr.on('data', (data: Buffer) => {
             safeDsLogger.error(data.toString().trim());

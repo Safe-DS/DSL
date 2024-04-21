@@ -223,7 +223,7 @@ export class SafeDsMessagingProvider {
             await this.messageBroker.sendNotification(method, ...args);
         } else if (this.connection) {
             /* c8 ignore next 2 */
-            await this.connection.sendNotification(method, args);
+            await this.connection.sendNotification(method, ...args);
         }
     }
 

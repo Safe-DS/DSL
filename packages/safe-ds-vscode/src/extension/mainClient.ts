@@ -8,12 +8,13 @@ import { NodeFileSystem } from 'langium/node';
 import crypto from 'crypto';
 import { AstUtils, LangiumDocument } from 'langium';
 import { EDAPanel } from './eda/edaPanel.ts';
-import { dumpDiagnostics } from './commands/dumpDiagnostics.js';
-import { openDiagnosticsDumps } from './commands/openDiagnosticsDumps.js';
+import { dumpDiagnostics } from './actions/dumpDiagnostics.js';
+import { openDiagnosticsDumps } from './actions/openDiagnosticsDumps.js';
 import { isSdsPlaceholder } from '../../../safe-ds-lang/src/language/generated/ast.js';
-import { installRunner } from './commands/installRunner.js';
-import { updateRunner } from './commands/updateRunner.js';
+import { installRunner } from './actions/installRunner.js';
+import { updateRunner } from './actions/updateRunner.js';
 import { safeDsLogger } from './helpers/logging.js';
+import { showImage } from './actions/showImage.js';
 
 let client: LanguageClient;
 let services: SafeDsServices;
@@ -96,15 +97,16 @@ const createLanguageClient = function (context: vscode.ExtensionContext): Langua
 
 const registerNotificationListeners = function (context: vscode.ExtensionContext) {
     context.subscriptions.push(
-        client.onNotification(rpc.runnerInstall, async () => {
+        client.onNotification(rpc.RPC_RUNNER_INSTALL, async () => {
             await installRunner(context, client, services)();
         }),
-        client.onNotification(rpc.runnerStarted, async (port: number) => {
+        client.onNotification(rpc.RPC_RUNNER_STARTED, async (port: number) => {
             await services.runtime.PythonServer.connectToPort(port);
         }),
-        client.onNotification(rpc.runnerUpdate, async () => {
+        client.onNotification(rpc.RPC_RUNNER_UPDATE, async () => {
             await updateRunner(context, client, services)();
         }),
+        client.onNotification(rpc.RPC_RUNNER_SHOW_IMAGE, showImage(context)),
     );
 };
 

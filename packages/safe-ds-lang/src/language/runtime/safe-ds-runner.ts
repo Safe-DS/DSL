@@ -1,21 +1,24 @@
 import { SafeDsServices } from '../safe-ds-module.js';
-import { AstNodeLocator, LangiumDocument, LangiumDocuments, URI } from 'langium';
+import { AstNodeLocator, AstUtils, LangiumDocument, LangiumDocuments, URI } from 'langium';
 import path from 'path';
-import { createProgramMessage, ProgramCodeMap, RuntimeErrorBacktraceFrame, RuntimeErrorMessage } from './messages.js';
+import {
+    createPlaceholderQueryMessage,
+    createProgramMessage,
+    PlaceholderValueMessage,
+    ProgramCodeMap,
+    RuntimeErrorBacktraceFrame,
+    RuntimeErrorMessage,
+} from './messages.js';
 import { SourceMapConsumer } from 'source-map-js';
 import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import { SafeDsPythonGenerator } from '../generation/safe-ds-python-generator.js';
-import { isSdsModule, isSdsPipeline } from '../generated/ast.js';
+import { isSdsModule, isSdsPipeline, isSdsPlaceholder } from '../generated/ast.js';
 import { SafeDsLogger, SafeDsMessagingProvider } from '../communication/safe-ds-messaging-provider.js';
 import crypto from 'crypto';
 import { SafeDsPythonServer } from './safe-ds-python-server.js';
+import { RPC_RUNNER_SHOW_IMAGE } from '../communication/rpc.js';
 
 // Most of the functionality cannot be tested automatically as a functioning runner setup would always be required
-
-export const RPC_RUNNER_INSTALL = 'runner/install';
-export const RPC_RUNNER_START = 'runner/start';
-export const RPC_RUNNER_STARTED = 'runner/started';
-export const RPC_RUNNER_UPDATE = 'runner/update';
 
 const RUNNER_TAG = 'Runner';
 
@@ -105,6 +108,102 @@ export class SafeDsRunner {
         ];
 
         await this.executePipeline(pipelineExecutionId, document, pipeline.name);
+    }
+
+    async showImage(documentUri: string, nodePath: string) {
+        const uri = URI.parse(documentUri);
+        const document = this.langiumDocuments.getDocument(uri);
+        if (!document) {
+            this.messaging.showErrorMessage('Could not find document.');
+            return;
+        }
+
+        const root = document.parseResult.value;
+        const placeholder = this.astNodeLocator.getAstNode(root, nodePath);
+        if (!isSdsPlaceholder(placeholder)) {
+            this.messaging.showErrorMessage('Selected node is not a placeholder.');
+            return;
+        }
+
+        const pipeline = AstUtils.getContainerOfType(placeholder, isSdsPipeline);
+        if (!pipeline) {
+            this.messaging.showErrorMessage('Could not find pipeline.');
+            return;
+        }
+
+        const pipelineExecutionId = crypto.randomUUID();
+
+        const start = Date.now();
+
+        const progress = await this.messaging.showProgress('Safe-DS Runner', 'Starting...');
+
+        this.logger.info(
+            `[${pipelineExecutionId}] Showing image "${pipeline.name}/${placeholder.name}" in ${documentUri}.`,
+        );
+
+        const disposables = [
+            this.pythonServer.addMessageCallback('runtime_error', (message) => {
+                if (message.id === pipelineExecutionId) {
+                    progress?.done();
+                    disposables.forEach((it) => {
+                        it.dispose();
+                    });
+                    this.messaging.showErrorMessage('An error occurred during pipeline execution.');
+                }
+                progress.done();
+                disposables.forEach((it) => {
+                    it.dispose();
+                });
+            }),
+
+            this.pythonServer.addMessageCallback('placeholder_type', async (message) => {
+                if (message.id === pipelineExecutionId && message.data.name === placeholder.name) {
+                    const data = await this.getPlaceholderValue(placeholder.name, pipelineExecutionId);
+                    await this.messaging.sendNotification(RPC_RUNNER_SHOW_IMAGE, data);
+                }
+            }),
+
+            this.pythonServer.addMessageCallback('runtime_progress', (message) => {
+                if (message.id === pipelineExecutionId) {
+                    progress.done();
+                    const timeElapsed = Date.now() - start;
+                    this.logger.info(
+                        `[${pipelineExecutionId}] Finished showing image "${pipeline.name}/${placeholder.name}" in ${timeElapsed}ms.`,
+                    );
+                    disposables.forEach((it) => {
+                        it.dispose();
+                    });
+                }
+            }),
+        ];
+
+        await this.executePipeline(pipelineExecutionId, document, pipeline.name, placeholder.name);
+    }
+
+    private async getPlaceholderValue(placeholder: string, pipelineExecutionId: string): Promise<any | undefined> {
+        return new Promise((resolve) => {
+            if (placeholder === '') {
+                resolve(undefined);
+            }
+
+            const placeholderValueCallback = (message: PlaceholderValueMessage) => {
+                if (message.id !== pipelineExecutionId || message.data.name !== placeholder) {
+                    return;
+                }
+                this.pythonServer.removeMessageCallback('placeholder_value', placeholderValueCallback);
+                resolve(message.data.value);
+            };
+
+            this.pythonServer.addMessageCallback('placeholder_value', placeholderValueCallback);
+            this.logger.info('Getting placeholder from Runner ...');
+            this.pythonServer.sendMessageToPythonServer(
+                createPlaceholderQueryMessage(pipelineExecutionId, placeholder),
+            );
+
+            setTimeout(() => {
+                resolve(undefined);
+            }, 30000);
+        });
     }
 
     /**

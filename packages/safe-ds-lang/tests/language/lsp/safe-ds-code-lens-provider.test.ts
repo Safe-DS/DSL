@@ -29,6 +29,29 @@ describe('SafeDsCodeLensProvider', () => {
                 expectedCodeLensTitles: ['Run myPipeline'],
             },
             {
+                testName: 'pipeline with Image placeholder',
+                code: `pipeline myPipeline {
+                    val a = Image.fromFile("test.png");
+                }`,
+                expectedCodeLensTitles: ['Run myPipeline', 'Show a'],
+            },
+            {
+                testName: 'block lambda with Image placeholder',
+                code: `pipeline myPipeline {
+                    () {
+                        val a = Image.fromFile("test.png");
+                    };
+                }`,
+                expectedCodeLensTitles: ['Run myPipeline'],
+            },
+            {
+                testName: 'segment with Image placeholder',
+                code: `segment mySegment {
+                    val a = Image.fromFile("test.png");
+                }`,
+                expectedCodeLensTitles: [],
+            },
+            {
                 testName: 'pipeline with Table placeholder',
                 code: `pipeline myPipeline {
                     val a = Table();

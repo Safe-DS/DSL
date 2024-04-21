@@ -7,7 +7,8 @@ import { isSdsModule, isSdsPipeline, SdsModuleMember, SdsPipeline, SdsPlaceholde
 import { SafeDsRunner } from '../runtime/safe-ds-runner.js';
 import { getModuleMembers, streamPlaceholders } from '../helpers/nodeProperties.js';
 import { SafeDsTypeChecker } from '../typing/safe-ds-type-checker.js';
-import { COMMAND_RUN_PIPELINE } from './safe-ds-execute-command-handler.js';
+
+import { COMMAND_RUN_PIPELINE, COMMAND_SHOW_IMAGE } from '../communication/commands.js';
 
 export class SafeDsCodeLensProvider implements CodeLensProvider {
     private readonly astNodeLocator: AstNodeLocator;
@@ -87,7 +88,19 @@ export class SafeDsCodeLensProvider implements CodeLensProvider {
             return;
         }
 
-        if (this.typeChecker.isTabular(this.typeComputer.computeType(node))) {
+        if (this.typeChecker.isImage(this.typeComputer.computeType(node))) {
+            const documentUri = AstUtils.getDocument(node).uri.toString();
+            const nodePath = this.astNodeLocator.getAstNodePath(node);
+
+            accept({
+                range: cstNode.range,
+                command: {
+                    title: `Show ${node.name}`,
+                    command: COMMAND_SHOW_IMAGE,
+                    arguments: [documentUri, nodePath],
+                },
+            });
+        } else if (this.typeChecker.isTabular(this.typeComputer.computeType(node))) {
             accept({
                 range: cstNode.range,
                 command: {

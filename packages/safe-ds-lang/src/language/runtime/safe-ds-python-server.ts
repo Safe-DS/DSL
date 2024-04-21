@@ -2,7 +2,6 @@ import { SafeDsServices } from '../safe-ds-module.js';
 import treeKill from 'tree-kill';
 import { SafeDsLogger, SafeDsMessagingProvider } from '../communication/safe-ds-messaging-provider.js';
 import child_process from 'child_process';
-import { RPC_RUNNER_INSTALL, RPC_RUNNER_START, RPC_RUNNER_STARTED, RPC_RUNNER_UPDATE } from './safe-ds-runner.js';
 import WebSocket from 'ws';
 import { createShutdownMessage, PythonServerMessage } from './messages.js';
 import { Disposable } from 'langium';
@@ -10,6 +9,7 @@ import { SafeDsSettingsProvider } from '../workspace/safe-ds-settings-provider.j
 import semver from 'semver';
 import net, { AddressInfo } from 'node:net';
 import { ChildProcessWithoutNullStreams } from 'node:child_process';
+import { RPC_RUNNER_INSTALL, RPC_RUNNER_START, RPC_RUNNER_STARTED, RPC_RUNNER_UPDATE } from '../communication/rpc.js';
 
 const LOWEST_SUPPORTED_RUNNER_VERSION = '0.11.0';
 const LOWEST_UNSUPPORTED_RUNNER_VERSION = '0.12.0';
@@ -33,13 +33,13 @@ export class SafeDsPythonServer {
 
         // Restart if the runner command changes
         services.workspace.SettingsProvider.onRunnerCommandUpdate(async () => {
-            await this.restart();
+            await this.restart(false);
         });
 
         // Start if specifically requested. This can happen if the updater installed a new version of the runner but the
         // runner command did not have to be changed.
         this.messaging.onNotification(RPC_RUNNER_START, async () => {
-            await this.restart();
+            await this.restart(false);
         });
 
         // Stop the Python server when the language server is shut down
@@ -121,9 +121,11 @@ export class SafeDsPythonServer {
 
     /**
      * Stop the Python server and start it again.
+     *
+     * @param shouldBeTracked Whether the restart should be tracked. If `false`, the restart will always be executed.
      */
-    private async restart(): Promise<void> {
-        if (!this.restartTracker.shouldRestart()) {
+    private async restart(shouldBeTracked: boolean): Promise<void> {
+        if (shouldBeTracked && !this.restartTracker.shouldRestart()) {
             this.logger.error('Restarting too frequently. Aborting.');
             return;
         }
@@ -380,7 +382,7 @@ export class SafeDsPythonServer {
                 serverConnection.onclose = () => {
                     if (isStarted(this.state) && this.state.serverProcess) {
                         this.logger.error('Connection was unexpectedly closed');
-                        this.restart();
+                        this.restart(true);
                     }
                 };
             };
