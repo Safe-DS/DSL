@@ -1,7 +1,7 @@
 import { AbstractExecuteCommandHandler, ExecuteCommandAcceptor } from 'langium/lsp';
 import { SafeDsSharedServices } from '../safe-ds-module.js';
 import { SafeDsRunner } from '../runtime/safe-ds-runner.js';
-import { COMMAND_RUN_PIPELINE, COMMAND_SHOW_IMAGE } from '../constants/commands.js';
+import { COMMAND_RUN_PIPELINE, COMMAND_SHOW_IMAGE } from '../communication/commands.js';
 
 /* c8 ignore start */
 export class SafeDsExecuteCommandHandler extends AbstractExecuteCommandHandler {

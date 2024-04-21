@@ -134,7 +134,7 @@ export const installRunnerInVirtualEnvironment = async (pipCommand: string): Pro
         const process = child_process.spawn(installCommand, { shell: true });
 
         process.stdout.on('data', (data: Buffer) => {
-            safeDsLogger.info(data.toString().trim());
+            safeDsLogger.debug(data.toString().trim());
         });
         process.stderr.on('data', (data: Buffer) => {
             safeDsLogger.error(data.toString().trim());

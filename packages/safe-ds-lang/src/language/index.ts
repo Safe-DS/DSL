@@ -21,8 +21,8 @@ export { locationToString, positionToString, rangeToString } from '../helpers/lo
 export * as messages from './runtime/messages.js';
 
 // Constants
-export * as commands from './constants/commands.js';
-export * as rpc from './constants/rpc.js';
+export * as commands from './communication/commands.js';
+export * as rpc from './communication/rpc.js';
 
 // Dependencies
 export const dependencies = {

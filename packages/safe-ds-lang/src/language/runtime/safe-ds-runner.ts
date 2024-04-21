@@ -16,7 +16,7 @@ import { isSdsModule, isSdsPipeline, isSdsPlaceholder } from '../generated/ast.j
 import { SafeDsLogger, SafeDsMessagingProvider } from '../communication/safe-ds-messaging-provider.js';
 import crypto from 'crypto';
 import { SafeDsPythonServer } from './safe-ds-python-server.js';
-import { RPC_RUNNER_SHOW_IMAGE } from '../constants/rpc.js';
+import { RPC_RUNNER_SHOW_IMAGE } from '../communication/rpc.js';
 
 // Most of the functionality cannot be tested automatically as a functioning runner setup would always be required
 

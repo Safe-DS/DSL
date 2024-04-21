@@ -8,7 +8,7 @@ import { SafeDsRunner } from '../runtime/safe-ds-runner.js';
 import { getModuleMembers, streamPlaceholders } from '../helpers/nodeProperties.js';
 import { SafeDsTypeChecker } from '../typing/safe-ds-type-checker.js';
 
-import { COMMAND_RUN_PIPELINE, COMMAND_SHOW_IMAGE } from '../constants/commands.js';
+import { COMMAND_RUN_PIPELINE, COMMAND_SHOW_IMAGE } from '../communication/commands.js';
 
 export class SafeDsCodeLensProvider implements CodeLensProvider {
     private readonly astNodeLocator: AstNodeLocator;
