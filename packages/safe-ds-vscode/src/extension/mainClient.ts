@@ -96,14 +96,17 @@ const createLanguageClient = function (context: vscode.ExtensionContext): Langua
 
 const registerNotificationListeners = function (context: vscode.ExtensionContext) {
     context.subscriptions.push(
-        client.onNotification(rpc.runnerInstall, async () => {
+        client.onNotification(rpc.RPC_RUNNER_INSTALL, async () => {
             await installRunner(context, client, services)();
         }),
-        client.onNotification(rpc.runnerStarted, async (port: number) => {
+        client.onNotification(rpc.RPC_RUNNER_STARTED, async (port: number) => {
             await services.runtime.PythonServer.connectToPort(port);
         }),
-        client.onNotification(rpc.runnerUpdate, async () => {
+        client.onNotification(rpc.RPC_RUNNER_UPDATE, async () => {
             await updateRunner(context, client, services)();
+        }),
+        client.onNotification(rpc.RPC_RUNNER_SHOW_IMAGE, async (base64: string) => {
+            safeDsLogger.info(`Received image from server ${base64}`);
         }),
     );
 };

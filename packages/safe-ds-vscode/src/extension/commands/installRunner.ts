@@ -31,7 +31,7 @@ export const installRunner = (context: ExtensionContext, client: LanguageClient,
             .update('safe-ds.runner.command', getRunnerCommand(context), vscode.ConfigurationTarget.Global);
 
         // Start the runner (needed if the configuration did not change, so no event is fired)
-        await client.sendNotification(rpc.runnerStart);
+        await client.sendNotification(rpc.RPC_RUNNER_START);
 
         // Inform the user
         vscode.window.showInformationMessage('The runner has been installed successfully.');

@@ -1,9 +1,3 @@
-import {
-    RPC_RUNNER_INSTALL,
-    RPC_RUNNER_START,
-    RPC_RUNNER_STARTED,
-    RPC_RUNNER_UPDATE,
-} from './runtime/safe-ds-runner.js';
 import { pipVersionRange } from './runtime/safe-ds-python-server.js';
 
 // Services
@@ -26,13 +20,9 @@ export { locationToString, positionToString, rangeToString } from '../helpers/lo
 // Messages
 export * as messages from './runtime/messages.js';
 
-// Remote procedure calls
-export const rpc = {
-    runnerInstall: RPC_RUNNER_INSTALL,
-    runnerStart: RPC_RUNNER_START,
-    runnerStarted: RPC_RUNNER_STARTED,
-    runnerUpdate: RPC_RUNNER_UPDATE,
-};
+// Constants
+export * as commands from './constants/commands.js';
+export * as rpc from './constants/rpc.js';
 
 // Dependencies
 export const dependencies = {

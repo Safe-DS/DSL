@@ -2,7 +2,6 @@ import { SafeDsServices } from '../safe-ds-module.js';
 import treeKill from 'tree-kill';
 import { SafeDsLogger, SafeDsMessagingProvider } from '../communication/safe-ds-messaging-provider.js';
 import child_process from 'child_process';
-import { RPC_RUNNER_INSTALL, RPC_RUNNER_START, RPC_RUNNER_STARTED, RPC_RUNNER_UPDATE } from './safe-ds-runner.js';
 import WebSocket from 'ws';
 import { createShutdownMessage, PythonServerMessage } from './messages.js';
 import { Disposable } from 'langium';
@@ -10,6 +9,7 @@ import { SafeDsSettingsProvider } from '../workspace/safe-ds-settings-provider.j
 import semver from 'semver';
 import net, { AddressInfo } from 'node:net';
 import { ChildProcessWithoutNullStreams } from 'node:child_process';
+import { RPC_RUNNER_INSTALL, RPC_RUNNER_START, RPC_RUNNER_STARTED, RPC_RUNNER_UPDATE } from '../constants/rpc.js';
 
 const LOWEST_SUPPORTED_RUNNER_VERSION = '0.11.0';
 const LOWEST_UNSUPPORTED_RUNNER_VERSION = '0.12.0';
