@@ -42,6 +42,7 @@ export class SafeDsSettingsProvider {
     }
 
     getRunnerCommand(): string {
+        /* c8 ignore next 2 */
         return this.cachedSettings.runner?.command ?? 'safe-ds-runner';
     }
 

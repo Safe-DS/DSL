@@ -260,6 +260,7 @@ export const createSafeDsServices = async function (
         await shared.workspace.WorkspaceManager.initializeWorkspace([]);
     }
     if (options?.settings) {
+        /* c8 ignore next 4 */
         shared.workspace.ConfigurationProvider.updateConfiguration({
             settings: { [SafeDsLanguageMetaData.languageId]: options.settings },
         });

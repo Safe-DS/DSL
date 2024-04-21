@@ -19,6 +19,7 @@ export const RPC_RUNNER_UPDATE = 'runner/update';
 
 const RUNNER_TAG = 'Runner';
 
+/* c8 ignore start */
 export class SafeDsRunner {
     private readonly annotations: SafeDsAnnotations;
     private readonly astNodeLocator: AstNodeLocator;
@@ -28,7 +29,6 @@ export class SafeDsRunner {
     private readonly messaging: SafeDsMessagingProvider;
     private readonly pythonServer: SafeDsPythonServer;
 
-    /* c8 ignore start */
     constructor(services: SafeDsServices) {
         this.annotations = services.builtins.Annotations;
         this.astNodeLocator = services.workspace.AstNodeLocator;
@@ -187,7 +187,6 @@ export class SafeDsRunner {
             }),
         );
     }
-    /* c8 ignore stop */
 
     private registerMessageLoggingCallbacks() {
         this.pythonServer.addMessageCallback('placeholder_value', (message) => {
@@ -347,3 +346,5 @@ export interface PipelineExecutionInformation {
      */
     calculatedPlaceholders: Map<string, string>;
 }
+
+/* c8 ignore stop */

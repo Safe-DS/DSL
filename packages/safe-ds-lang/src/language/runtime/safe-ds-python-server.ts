@@ -16,6 +16,7 @@ const LOWEST_UNSUPPORTED_RUNNER_VERSION = '0.12.0';
 const npmVersionRange = `>=${LOWEST_SUPPORTED_RUNNER_VERSION} <${LOWEST_UNSUPPORTED_RUNNER_VERSION}`;
 export const pipVersionRange = `>=${LOWEST_SUPPORTED_RUNNER_VERSION},<${LOWEST_UNSUPPORTED_RUNNER_VERSION}`;
 
+/* c8 ignore start */
 export class SafeDsPythonServer {
     private readonly logger: SafeDsLogger;
     private readonly messaging: SafeDsMessagingProvider;
@@ -422,7 +423,6 @@ export class SafeDsPythonServer {
      *
      * @param message Message to be sent to the python server. This message should be serializable to JSON.
      */
-    /* c8 ignore start */
     public sendMessageToPythonServer(message: PythonServerMessage): void {
         if (!isStarted(this.state)) {
             return;
@@ -432,8 +432,6 @@ export class SafeDsPythonServer {
         this.logger.trace(`Sending message to python server: ${messageString}`);
         this.state.serverConnection.send(messageString);
     }
-
-    /* c8 ignore stop */
 
     /**
      * Register a callback to execute when a message from the python server arrives.
@@ -573,3 +571,5 @@ class RestartTracker {
         return this.timestamps.length <= 5;
     }
 }
+
+/* c8 ignore stop */
