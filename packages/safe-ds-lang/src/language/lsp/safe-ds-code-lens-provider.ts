@@ -8,7 +8,7 @@ import { SafeDsRunner } from '../runtime/safe-ds-runner.js';
 import { getModuleMembers, streamPlaceholders } from '../helpers/nodeProperties.js';
 import { SafeDsTypeChecker } from '../typing/safe-ds-type-checker.js';
 
-import { COMMAND_RUN_PIPELINE, COMMAND_SHOW_IMAGE } from '../communication/commands.js';
+import { COMMAND_PRINT_VALUE, COMMAND_RUN_PIPELINE, COMMAND_SHOW_IMAGE } from '../communication/commands.js';
 
 export class SafeDsCodeLensProvider implements CodeLensProvider {
     private readonly astNodeLocator: AstNodeLocator;
@@ -100,12 +100,21 @@ export class SafeDsCodeLensProvider implements CodeLensProvider {
                     arguments: [documentUri, nodePath],
                 },
             });
-        } else if (this.typeChecker.isTabular(this.typeComputer.computeType(node))) {
+        } else if (this.typeChecker.isTable(this.typeComputer.computeType(node))) {
             accept({
                 range: cstNode.range,
                 command: {
                     title: `Explore ${node.name}`,
                     command: 'safe-ds.exploreTable',
+                    arguments: this.computeNodeId(node),
+                },
+            });
+        } else if (this.typeChecker.canBePrinted(this.typeComputer.computeType(node))) {
+            accept({
+                range: cstNode.range,
+                command: {
+                    title: `Print ${node.name}`,
+                    command: COMMAND_PRINT_VALUE,
                     arguments: this.computeNodeId(node),
                 },
             });
