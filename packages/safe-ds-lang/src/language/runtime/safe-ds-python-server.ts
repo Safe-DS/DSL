@@ -303,58 +303,68 @@ export class SafeDsPythonServer {
     private async connectToServer(port: number): Promise<void> {
         try {
             await this.doConnectToServer(port);
-        } catch (error) {
+        } catch {
             await this.stop();
         }
     }
 
     private async doConnectToServer(port: number): Promise<void> {
-        // TODO
-        const timeoutMs = 200;
+        if (isStarted(this.state) || isFailed(this.state)) {
+            return;
+        }
+        this.logger.debug(`Connecting to server at port ${port}...`);
+
+        const baseTimeoutMs = 200;
         const maxConnectionTries = 8;
         let currentTry = 0;
-        // Attach WS
+
         return new Promise<void>((resolve, reject) => {
             const tryConnect = () => {
                 const serverConnection = new WebSocket(`ws://127.0.0.1:${port}/WSMain`, {
                     handshakeTimeout: 10 * 1000,
                 });
-                serverConnection.onopen = (event) => {
+
+                // Connected successfully
+                serverConnection.onopen = () => {
+                    this.logger.debug(`Connected successfully.`);
                     this.state = started(this.state.serverProcess, serverConnection);
-                    this.logger.debug(`Now accepting connections: ${event.type}`);
                     resolve();
                 };
+
+                // Handle connection errors
                 serverConnection.onerror = (event) => {
                     currentTry += 1;
+
+                    // Retry if the connection was refused with exponential backoff
                     if (event.message.includes('ECONNREFUSED')) {
                         if (currentTry > maxConnectionTries) {
                             this.logger.error('Max retries reached. No further attempt at connecting is made.');
                         } else {
-                            this.logger.info(`Not yet up. Retrying...`);
-                            setTimeout(tryConnect, timeoutMs * 2 ** (currentTry - 1)); // use exponential backoff
-                            return;
+                            this.logger.debug(`Not yet up. Retrying...`);
+                            setTimeout(tryConnect, baseTimeoutMs * 2 ** (currentTry - 1)); // use exponential backoff
                         }
-                    }
-                    this.logger.error(`An error occurred: ${event.message} (${event.type}) {${event.error}}`);
-                    if (isStarted(this.state)) {
                         return;
                     }
-                    reject();
+
+                    // Log other errors and reject if the server is not started
+                    this.logger.error(`An error occurred: ${event.type} ${event.message}`);
+                    if (!isStarted(this.state)) {
+                        reject();
+                    }
                 };
+
+                // Handle incoming messages
                 serverConnection.onmessage = (event) => {
                     if (typeof event.data !== 'string') {
-                        this.logger.trace(
-                            `Message received: (${event.type}, ${typeof event.data}) ${event.data}`,
-                            undefined,
-                        );
+                        this.logger.trace(`Message received: (${event.type}, ${typeof event.data}) ${event.data}`);
                         return;
                     }
                     this.logger.trace(
                         `Message received: '${
                             event.data.length > 128 ? event.data.substring(0, 128) + '<truncated>' : event.data
                         }'`,
-                        undefined,
                     );
+
                     const pythonServerMessage: PythonServerMessage = JSON.parse(<string>event.data);
                     if (!this.messageCallbacks.has(pythonServerMessage.type)) {
                         this.logger.trace(`Message type '${pythonServerMessage.type}' is not handled`, undefined);
@@ -364,8 +374,10 @@ export class SafeDsPythonServer {
                         callback(pythonServerMessage);
                     }
                 };
-                serverConnection.onclose = (_event) => {
-                    if (isStarted(this.state)) {
+
+                // Handle the server closing the connection
+                serverConnection.onclose = () => {
+                    if (isStarted(this.state) && this.state.serverProcess) {
                         this.logger.error('Connection was unexpectedly closed');
                         this.restart();
                     }
@@ -413,7 +425,6 @@ export class SafeDsPythonServer {
     /* c8 ignore start */
     public sendMessageToPythonServer(message: PythonServerMessage): void {
         if (!isStarted(this.state)) {
-            // TODO
             return;
         }
 
@@ -438,7 +449,6 @@ export class SafeDsPythonServer {
             this.messageCallbacks.set(messageType, []);
         }
         this.messageCallbacks.get(messageType)!.push(<(message: PythonServerMessage) => void>callback);
-        // TODO
         return {
             dispose: () => {
                 if (!this.messageCallbacks.has(messageType)) {
@@ -462,7 +472,6 @@ export class SafeDsPythonServer {
         messageType: M,
         callback: (message: Extract<PythonServerMessage, { type: M }>) => void,
     ): void {
-        // TODO
         if (!this.messageCallbacks.has(messageType)) {
             return;
         }
@@ -474,7 +483,6 @@ export class SafeDsPythonServer {
 
     async connectToPort(port: number): Promise<void> {
         if (isStarted(this.state)) {
-            // TODO
             return;
         }
 
