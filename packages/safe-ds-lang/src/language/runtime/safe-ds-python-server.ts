@@ -90,7 +90,7 @@ export class SafeDsPythonServer {
     /**
      * Stop the Python server.
      */
-    // TODO make private
+    // TODO make private once the execution logic is fully handled in the language server
     async stop(): Promise<void> {
         // Do not stop the server if it is already stopped or failed
         if (isStopped(this.state) || isFailed(this.state)) {

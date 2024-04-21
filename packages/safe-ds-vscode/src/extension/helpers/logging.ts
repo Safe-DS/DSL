@@ -75,7 +75,7 @@ class SafeDsLogger implements LogOutputChannel {
     }
 
     debug(message: string, ...args: any[]): void {
-        this.languageServer.debug(message, args);
+        this.languageServer.debug(message, ...args);
     }
 
     dispose(): void {
@@ -83,7 +83,7 @@ class SafeDsLogger implements LogOutputChannel {
     }
 
     error(error: string | Error, ...args: any[]): void {
-        this.languageServer.error(error, args);
+        this.languageServer.error(error, ...args);
     }
 
     hide(): void {
@@ -91,7 +91,7 @@ class SafeDsLogger implements LogOutputChannel {
     }
 
     info(message: string, ...args: any[]): void {
-        this.languageServer.info(message, args);
+        this.languageServer.info(message, ...args);
     }
 
     replace(value: string): void {
@@ -109,11 +109,11 @@ class SafeDsLogger implements LogOutputChannel {
     }
 
     trace(message: string, ...args: any[]): void {
-        this.languageServer.trace(message, args);
+        this.languageServer.trace(message, ...args);
     }
 
     warn(message: string, ...args: any[]): void {
-        this.languageServer.warn(message, args);
+        this.languageServer.warn(message, ...args);
     }
 
     /**
