@@ -121,13 +121,17 @@ class SafeDsLogger implements LogOutputChannel {
      */
     createTaggedLogger(tag: string) {
         return {
-            trace: (message: string, verbose?: string) => this.trace(tag, message, verbose),
-            debug: (message: string) => this.debug(tag, message),
-            info: (message: string) => this.info(tag, message),
-            warn: (message: string) => this.warn(tag, message),
-            error: (message: string) => this.error(tag, message),
+            trace: (message: string, verbose?: string) => this.trace(formatLogMessage(tag, message), verbose),
+            debug: (message: string) => this.debug(formatLogMessage(tag, message)),
+            info: (message: string) => this.info(formatLogMessage(tag, message)),
+            warn: (message: string) => this.warn(formatLogMessage(tag, message)),
+            error: (message: string) => this.error(formatLogMessage(tag, message)),
         };
     }
 }
 
 export const safeDsLogger = new SafeDsLogger();
+
+const formatLogMessage = (tag: string, message: string): string => {
+    return tag ? `[${tag}] ${message}` : message;
+};
