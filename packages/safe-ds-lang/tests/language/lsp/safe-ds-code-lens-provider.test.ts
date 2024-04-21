@@ -22,9 +22,9 @@ describe('SafeDsCodeLensProvider', () => {
                 expectedCodeLensTitles: ['Run myPipeline'],
             },
             {
-                testName: 'pipeline with Int placeholder',
+                testName: 'pipeline with null placeholder',
                 code: `pipeline myPipeline {
-                    val a = 1;
+                    val a = null;
                 }`,
                 expectedCodeLensTitles: ['Run myPipeline'],
             },
@@ -71,6 +71,29 @@ describe('SafeDsCodeLensProvider', () => {
                 testName: 'segment with Table placeholder',
                 code: `segment mySegment {
                     val a = Table();
+                }`,
+                expectedCodeLensTitles: [],
+            },
+            {
+                testName: 'pipeline with printable placeholder',
+                code: `pipeline myPipeline {
+                    val a = 1;
+                }`,
+                expectedCodeLensTitles: ['Run myPipeline', 'Print a'],
+            },
+            {
+                testName: 'block lambda with printable placeholder',
+                code: `pipeline myPipeline {
+                    () {
+                        val a = 1;
+                    };
+                }`,
+                expectedCodeLensTitles: ['Run myPipeline'],
+            },
+            {
+                testName: 'segment with printable placeholder',
+                code: `segment mySegment {
+                    val a = 1;
                 }`,
                 expectedCodeLensTitles: [],
             },

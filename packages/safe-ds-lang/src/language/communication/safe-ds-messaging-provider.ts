@@ -25,6 +25,7 @@ export class SafeDsMessagingProvider {
             info: (message: string) => this.info(tag, message),
             warn: (message: string) => this.warn(tag, message),
             error: (message: string) => this.error(tag, message),
+            result: (message: string) => this.result(message),
         };
     }
 
@@ -90,6 +91,19 @@ export class SafeDsMessagingProvider {
         } else if (this.connection) {
             /* c8 ignore next 2 */
             this.connection.console.error(text);
+        }
+    }
+
+    /**
+     * Show a result to the user.
+     */
+    result(message: string): void {
+        const text = this.formatLogMessage('Result', message) + '\n';
+        if (this.logger?.result) {
+            this.logger.result(text);
+        } else if (this.connection) {
+            /* c8 ignore next 2 */
+            this.connection.console.log(text);
         }
     }
 
@@ -277,6 +291,11 @@ export interface SafeDsLogger {
      * Log an error message.
      */
     error: (message: string) => void;
+
+    /**
+     * Show a result to the user.
+     */
+    result: (message: string) => void;
 }
 
 /**
