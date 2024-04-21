@@ -5,7 +5,7 @@ import { NodeFileSystem } from 'langium/node';
 import { findTestChecks } from '../../helpers/testChecks.js';
 import { DeepPartial, URI } from 'langium';
 import { createSafeDsServices, SafeDsLanguageMetaData } from '../../../src/language/index.js';
-import { InlayHintsSettings } from '../../../src/language/workspace/safe-ds-settings-provider.js';
+import { SafeDsInlayHintsSettings } from '../../../src/language/workspace/safe-ds-settings-provider.js';
 import { expandToString } from 'langium/generate';
 
 const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
@@ -666,7 +666,7 @@ const getExpectedSimpleInlayHints = (code: string): SimpleInlayHint[] => {
     });
 };
 
-const updateSettings = (settings: DeepPartial<InlayHintsSettings> = {}) => {
+const updateSettings = (settings: DeepPartial<SafeDsInlayHintsSettings> = {}) => {
     configurationProvider.updateConfiguration({
         settings: {
             [SafeDsLanguageMetaData.languageId]: {
@@ -701,7 +701,7 @@ interface InlayHintProviderTest {
     /**
      * The value of the corresponding setting to control which inlay hints should be shown.
      */
-    settings?: DeepPartial<InlayHintsSettings>;
+    settings?: DeepPartial<SafeDsInlayHintsSettings>;
 }
 
 /**

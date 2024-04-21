@@ -13,7 +13,7 @@ import { SafeDsEnums, SafeDsImpurityReasons } from './builtins/safe-ds-enums.js'
 import { SafeDsCommentProvider } from './documentation/safe-ds-comment-provider.js';
 import { SafeDsDocumentationProvider } from './documentation/safe-ds-documentation-provider.js';
 import { SafeDsCallGraphComputer } from './flow/safe-ds-call-graph-computer.js';
-import { SafeDsGeneratedModule, SafeDsGeneratedSharedModule } from './generated/module.js';
+import { SafeDsGeneratedModule, SafeDsGeneratedSharedModule, SafeDsLanguageMetaData } from './generated/module.js';
 import { SafeDsPythonGenerator } from './generation/safe-ds-python-generator.js';
 import { SafeDsValueConverter } from './grammar/safe-ds-value-converter.js';
 import { SafeDsNodeMapper } from './helpers/safe-ds-node-mapper.js';
@@ -37,9 +37,9 @@ import { registerValidationChecks } from './validation/safe-ds-validator.js';
 import { SafeDsPackageManager } from './workspace/safe-ds-package-manager.js';
 import { SafeDsWorkspaceManager } from './workspace/safe-ds-workspace-manager.js';
 import { SafeDsPurityComputer } from './purity/safe-ds-purity-computer.js';
-import { SafeDsSettingsProvider } from './workspace/safe-ds-settings-provider.js';
+import { SafeDsSettings, SafeDsSettingsProvider } from './workspace/safe-ds-settings-provider.js';
 import { SafeDsRenameProvider } from './lsp/safe-ds-rename-provider.js';
-import { SafeDsRunner } from './runner/safe-ds-runner.js';
+import { SafeDsRunner } from './runtime/safe-ds-runner.js';
 import { SafeDsTypeFactory } from './typing/safe-ds-type-factory.js';
 import { SafeDsMarkdownGenerator } from './generation/safe-ds-markdown-generator.js';
 import { SafeDsCompletionProvider } from './lsp/safe-ds-completion-provider.js';
@@ -54,6 +54,7 @@ import { SafeDsConfigurationProvider } from './workspace/safe-ds-configuration-p
 import { SafeDsCodeLensProvider } from './lsp/safe-ds-code-lens-provider.js';
 import { SafeDsExecuteCommandHandler } from './lsp/safe-ds-execute-command-handler.js';
 import { SafeDsServiceRegistry } from './safe-ds-service-registry.js';
+import { SafeDsPythonServer } from './runtime/safe-ds-python-server.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -91,6 +92,7 @@ export type SafeDsAddedServices = {
         PurityComputer: SafeDsPurityComputer;
     };
     runtime: {
+        PythonServer: SafeDsPythonServer;
         Runner: SafeDsRunner;
     };
     typing: {
@@ -180,6 +182,7 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         ScopeProvider: (services) => new SafeDsScopeProvider(services),
     },
     runtime: {
+        PythonServer: (services) => new SafeDsPythonServer(services),
         Runner: (services) => new SafeDsRunner(services),
     },
     typing: {
@@ -256,9 +259,11 @@ export const createSafeDsServices = async function (
     if (!options?.omitBuiltins) {
         await shared.workspace.WorkspaceManager.initializeWorkspace([]);
     }
-    if (options?.runnerCommand) {
-        /* c8 ignore next 2 */
-        await SafeDs.runtime.Runner.updateRunnerCommand(options.runnerCommand);
+    if (options?.settings) {
+        /* c8 ignore next 4 */
+        shared.workspace.ConfigurationProvider.updateConfiguration({
+            settings: { [SafeDsLanguageMetaData.languageId]: options.settings },
+        });
     }
     if (options?.userMessageProvider) {
         SafeDs.communication.MessagingProvider.setUserMessageProvider(options.userMessageProvider);
@@ -289,9 +294,9 @@ export interface ModuleOptions {
     messageBroker?: Partial<SafeDsMessageBroker>;
 
     /**
-     * Command to start the runner.
+     * The settings to use for the Safe-DS language server.
      */
-    runnerCommand?: string;
+    settings?: DeepPartial<SafeDsSettings>;
 
     /**
      * A service for showing messages to the user. If the provider lacks a capability, we fall back to the language

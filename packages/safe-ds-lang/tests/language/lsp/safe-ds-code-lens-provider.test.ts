@@ -55,7 +55,7 @@ describe('SafeDsCodeLensProvider', () => {
 
         it.each(testCases)('should compute code lenses ($testName)', async ({ code, expectedCodeLensTitles }) => {
             const document = await parse(code);
-            services.runtime.Runner.isPythonServerAvailable = () => true;
+            services.runtime.Runner.isReady = () => true;
 
             const actualCodeLenses = await codeLensProvider.provideCodeLens(document, {
                 textDocument: { uri: document.uri.toString() },
@@ -67,7 +67,7 @@ describe('SafeDsCodeLensProvider', () => {
 
         it('should return undefined if the Python server is not available', async () => {
             const document = await parse('');
-            services.runtime.Runner.isPythonServerAvailable = () => false;
+            services.runtime.Runner.isReady = () => false;
             const codeLenses = await codeLensProvider.provideCodeLens(document, {
                 textDocument: { uri: document.uri.toString() },
             });

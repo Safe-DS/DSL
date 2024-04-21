@@ -5,7 +5,6 @@ import type { LanguageClientOptions, ServerOptions } from 'vscode-languageclient
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node.js';
 import { ast, createSafeDsServices, getModuleMembers, messages, rpc, SafeDsServices } from '@safe-ds/lang';
 import { NodeFileSystem } from 'langium/node';
-import { initializeLog, logError, logOutput, printOutputMessage } from './output.js';
 import crypto from 'crypto';
 import { AstUtils, LangiumDocument } from 'langium';
 import { EDAPanel } from './eda/edaPanel.ts';
@@ -14,7 +13,7 @@ import { openDiagnosticsDumps } from './commands/openDiagnosticsDumps.js';
 import { isSdsPlaceholder } from '../../../safe-ds-lang/src/language/generated/ast.js';
 import { installRunner } from './commands/installRunner.js';
 import { updateRunner } from './commands/updateRunner.js';
-import { SafeDsLogOutputChannel } from './logging.js';
+import { safeDsLogger } from './helpers/logging.js';
 
 let client: LanguageClient;
 let services: SafeDsServices;
@@ -28,13 +27,9 @@ let lastSuccessfulPipelineNode: ast.SdsPipeline | undefined;
  * This function is called when the extension is activated.
  */
 export const activate = async function (context: vscode.ExtensionContext) {
-    initializeLog();
     services = (
         await createSafeDsServices(NodeFileSystem, {
-            logger: {
-                info: logOutput,
-                error: logError,
-            },
+            logger: safeDsLogger.createTaggedLogger('Client Services'),
             userMessageProvider: {
                 showErrorMessage: vscode.window.showErrorMessage,
             },
@@ -53,11 +48,10 @@ export const activate = async function (context: vscode.ExtensionContext) {
  * This function is called when the extension is deactivated.
  */
 export const deactivate = async function (): Promise<void> {
-    await services.runtime.Runner.stopPythonServer();
+    await services.runtime.PythonServer.stop();
     if (client) {
         await client.stop();
     }
-    return;
 };
 
 const createLanguageClient = function (context: vscode.ExtensionContext): LanguageClient {
@@ -93,7 +87,7 @@ const createLanguageClient = function (context: vscode.ExtensionContext): Langua
             // Notify the server about file changes to files contained in the workspace
             fileEvents: fileSystemWatcher,
         },
-        outputChannel: new SafeDsLogOutputChannel('Safe-DS Language Client'),
+        outputChannel: safeDsLogger,
     };
 
     // Create the language client
@@ -106,7 +100,7 @@ const registerNotificationListeners = function (context: vscode.ExtensionContext
             await installRunner(context, client, services)();
         }),
         client.onNotification(rpc.runnerStarted, async (port: number) => {
-            await services.runtime.Runner.connectToPort(port);
+            await services.runtime.PythonServer.connectToPort(port);
         }),
         client.onNotification(rpc.runnerUpdate, async () => {
             await updateRunner(context, client, services)();
@@ -170,7 +164,7 @@ const doRunPipelineFile = async function (
         if (!knownPipelineName) {
             const firstPipeline = getModuleMembers(<ast.SdsModule>document.parseResult.value).find(ast.isSdsPipeline);
             if (firstPipeline === undefined) {
-                logError('Cannot execute: no pipeline found');
+                safeDsLogger.error('Cannot execute: no pipeline found');
                 vscode.window.showErrorMessage('The current file cannot be executed, as no pipeline could be found.');
                 return;
             }
@@ -179,7 +173,7 @@ const doRunPipelineFile = async function (
             pipelineName = knownPipelineName;
         }
 
-        printOutputMessage(`Launching Pipeline (${pipelineExecutionId}): ${filePath} - ${pipelineName}`);
+        safeDsLogger.info(`Launching Pipeline (${pipelineExecutionId}): ${filePath} - ${pipelineName}`);
 
         await services.runtime.Runner.executePipeline(pipelineExecutionId, document, pipelineName, placeholderName);
     }
@@ -241,7 +235,7 @@ const exploreTable = (context: vscode.ExtensionContext) => {
         };
 
         const placeholderTypeCallback = function (message: messages.PlaceholderTypeMessage) {
-            printOutputMessage(
+            safeDsLogger.info(
                 `Placeholder was calculated (${message.id}): ${message.data.name} of type ${message.data.type}`,
             );
             if (message.id === pipelineExecutionId && message.data.name === requestedPlaceholderName) {
@@ -260,14 +254,14 @@ const exploreTable = (context: vscode.ExtensionContext) => {
                     pipelineNode,
                     message.data.name,
                 );
-                services.runtime.Runner.removeMessageCallback('placeholder_type', placeholderTypeCallback);
+                services.runtime.PythonServer.removeMessageCallback('placeholder_type', placeholderTypeCallback);
                 cleanupLoadingIndication();
             }
         };
-        services.runtime.Runner.addMessageCallback('placeholder_type', placeholderTypeCallback);
+        services.runtime.PythonServer.addMessageCallback('placeholder_type', placeholderTypeCallback);
 
         const runtimeProgressCallback = function (message: messages.RuntimeProgressMessage) {
-            printOutputMessage(`Runner-Progress (${message.id}): ${message.data}`);
+            safeDsLogger.info(`Runner-Progress (${message.id}): ${message.data}`);
             if (
                 message.id === pipelineExecutionId &&
                 message.data === 'done' &&
@@ -275,21 +269,21 @@ const exploreTable = (context: vscode.ExtensionContext) => {
             ) {
                 lastFinishedPipelineExecutionId = pipelineExecutionId;
                 vscode.window.showErrorMessage(`Selected text is not a placeholder!`);
-                services.runtime.Runner.removeMessageCallback('runtime_progress', runtimeProgressCallback);
+                services.runtime.PythonServer.removeMessageCallback('runtime_progress', runtimeProgressCallback);
                 cleanupLoadingIndication();
             }
         };
-        services.runtime.Runner.addMessageCallback('runtime_progress', runtimeProgressCallback);
+        services.runtime.PythonServer.addMessageCallback('runtime_progress', runtimeProgressCallback);
 
         const runtimeErrorCallback = function (message: messages.RuntimeErrorMessage) {
             if (message.id === pipelineExecutionId && lastFinishedPipelineExecutionId !== pipelineExecutionId) {
                 lastFinishedPipelineExecutionId = pipelineExecutionId;
                 vscode.window.showErrorMessage(`Pipeline ran into an Error!`);
-                services.runtime.Runner.removeMessageCallback('runtime_error', runtimeErrorCallback);
+                services.runtime.PythonServer.removeMessageCallback('runtime_error', runtimeErrorCallback);
                 cleanupLoadingIndication();
             }
         };
-        services.runtime.Runner.addMessageCallback('runtime_error', runtimeErrorCallback);
+        services.runtime.PythonServer.addMessageCallback('runtime_error', runtimeErrorCallback);
 
         await doRunPipelineFile(uri, pipelineExecutionId, pipelineName, requestedPlaceholderName);
     };
@@ -374,9 +368,9 @@ const validateDocuments = async function (
 
     if (errors.length > 0) {
         for (const validationInfo of errors) {
-            logError(`File ${validationInfo.validatedDocument.uri.toString()} has errors:`);
+            safeDsLogger.error(`File ${validationInfo.validatedDocument.uri.toString()} has errors:`);
             for (const validationError of validationInfo.diagnostics) {
-                logError(
+                safeDsLogger.error(
                     `\tat line ${validationError.range.start.line + 1}: ${
                         validationError.message
                     } [${validationInfo.validatedDocument.textDocument.getText(validationError.range)}]`,

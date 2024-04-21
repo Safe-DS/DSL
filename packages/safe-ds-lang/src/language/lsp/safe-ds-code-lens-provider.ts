@@ -4,7 +4,7 @@ import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import { AstNode, AstNodeLocator, AstUtils, interruptAndCheck, LangiumDocument } from 'langium';
 import { isSdsModule, isSdsPipeline, SdsModuleMember, SdsPipeline, SdsPlaceholder } from '../generated/ast.js';
-import { SafeDsRunner } from '../runner/safe-ds-runner.js';
+import { SafeDsRunner } from '../runtime/safe-ds-runner.js';
 import { getModuleMembers, streamPlaceholders } from '../helpers/nodeProperties.js';
 import { SafeDsTypeChecker } from '../typing/safe-ds-type-checker.js';
 import { COMMAND_RUN_PIPELINE } from './safe-ds-execute-command-handler.js';
@@ -27,7 +27,7 @@ export class SafeDsCodeLensProvider implements CodeLensProvider {
         _params: CodeLensParams,
         cancelToken: CancellationToken = CancellationToken.None,
     ): Promise<CodeLens[] | undefined> {
-        if (!this.runner.isPythonServerAvailable()) {
+        if (!this.runner.isReady()) {
             return;
         }
 

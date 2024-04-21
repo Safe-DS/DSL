@@ -5,12 +5,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { installRunner, installRunnerInVirtualEnvironment } from './installRunner.js';
 import { platform } from 'node:os';
-import { logError } from '../output.js';
+import { safeDsLogger } from '../helpers/logging.js';
 
 export const updateRunner = (context: ExtensionContext, client: LanguageClient, services: SafeDsServices) => {
     return async () => {
         // If the runner is already started, do nothing
-        if (services.runtime.Runner.isPythonServerAvailable()) {
+        if (services.runtime.Runner.isReady()) {
             vscode.window.showInformationMessage('The runner is already installed and running.');
             return;
         }
@@ -40,7 +40,7 @@ const doUpdateRunner = async (): Promise<boolean> => {
     const pipCommand = await getPipCommand();
     if (!pipCommand) {
         vscode.window.showErrorMessage('Failed to find pip.');
-        logError('Failed to find pip.');
+        safeDsLogger.error('Failed to find pip.');
         return false;
     }
 
@@ -56,7 +56,7 @@ const doUpdateRunner = async (): Promise<boolean> => {
                 return true;
             } catch (error) {
                 vscode.window.showErrorMessage('Failed to install the runner.');
-                logError(String(error));
+                safeDsLogger.error(String(error));
                 return false;
             }
         },
