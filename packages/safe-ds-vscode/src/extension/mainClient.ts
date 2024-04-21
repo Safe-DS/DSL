@@ -48,11 +48,10 @@ export const activate = async function (context: vscode.ExtensionContext) {
  * This function is called when the extension is deactivated.
  */
 export const deactivate = async function (): Promise<void> {
-    await services.runtime.PythonServer.stopPythonServer();
+    await services.runtime.PythonServer.stop();
     if (client) {
         await client.stop();
     }
-    return;
 };
 
 const createLanguageClient = function (context: vscode.ExtensionContext): LanguageClient {
