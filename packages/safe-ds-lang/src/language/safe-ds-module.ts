@@ -48,7 +48,7 @@ import {
     type SafeDsLogger,
     SafeDsMessageBroker,
     SafeDsMessagingProvider,
-    type SafeDsUserMessageProvider,
+    type SafeDsUserInteractionProvider,
 } from './communication/safe-ds-messaging-provider.js';
 import { SafeDsConfigurationProvider } from './workspace/safe-ds-configuration-provider.js';
 import { SafeDsCodeLensProvider } from './lsp/safe-ds-code-lens-provider.js';
@@ -265,8 +265,8 @@ export const createSafeDsServices = async function (
             settings: { [SafeDsLanguageMetaData.languageId]: options.settings },
         });
     }
-    if (options?.userMessageProvider) {
-        SafeDs.communication.MessagingProvider.setUserMessageProvider(options.userMessageProvider);
+    if (options?.userInteractionProvider) {
+        SafeDs.communication.MessagingProvider.setUserInteractionProvider(options.userInteractionProvider);
     }
 
     return { shared, SafeDs };
@@ -299,8 +299,8 @@ export interface ModuleOptions {
     settings?: DeepPartial<SafeDsSettings>;
 
     /**
-     * A service for showing messages to the user. If the provider lacks a capability, we fall back to the language
-     * server connection, if available.
+     * A service for interacting with the user. If the provider lacks a capability, we fall back to the language server
+     * connection, if available.
      */
-    userMessageProvider?: Partial<SafeDsUserMessageProvider>;
+    userInteractionProvider?: Partial<SafeDsUserInteractionProvider>;
 }

@@ -28,7 +28,7 @@ export const updateRunner = (context: ExtensionContext, client: LanguageClient, 
         }
 
         // Start the runner (needed if the configuration did not change, so no event is fired)
-        await client.sendNotification(rpc.RPC_RUNNER_START);
+        await client.sendNotification(rpc.StartRunnerNotification.type);
 
         // Inform the user
         vscode.window.showInformationMessage('The runner has been updated successfully.');

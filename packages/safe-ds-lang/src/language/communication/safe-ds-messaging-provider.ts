@@ -1,6 +1,21 @@
 import { SafeDsServices } from '../safe-ds-module.js';
-import { Connection, MessageActionItem, WorkDoneProgressReporter } from 'vscode-languageserver';
-import { Disposable } from 'vscode-languageserver-protocol';
+import {
+    CancellationToken,
+    Connection,
+    Disposable,
+    MessageActionItem,
+    NotificationHandler,
+    NotificationHandler0,
+    NotificationType,
+    NotificationType0,
+    RequestHandler,
+    RequestHandler0,
+    RequestType,
+    RequestType0,
+    WorkDoneProgressReporter,
+} from 'vscode-languageserver';
+import { GenericRequestHandler } from 'vscode-jsonrpc/lib/common/connection.js';
+import { GenericNotificationHandler } from 'vscode-languageserver-protocol';
 
 /**
  * Log or show messages in the language client or otherwise communicate with it.
@@ -8,12 +23,14 @@ import { Disposable } from 'vscode-languageserver-protocol';
 export class SafeDsMessagingProvider {
     private readonly connection: Connection | undefined;
     private logger: Partial<SafeDsLogger> | undefined = undefined;
-    private userMessageProvider: Partial<SafeDsUserMessageProvider> | undefined = undefined;
+    private userInteractionProvider: Partial<SafeDsUserInteractionProvider> | undefined = undefined;
     private messageBroker: Partial<SafeDsMessageBroker> | undefined = undefined;
 
     constructor(services: SafeDsServices) {
         this.connection = services.shared.lsp.Connection;
     }
+
+    // Logging ---------------------------------------------------------------------------------------------------------
 
     /**
      * Create a logger that prepends all messages with the given tag.
@@ -111,23 +128,35 @@ export class SafeDsMessagingProvider {
         return tag ? `[${tag}] ${message}` : message;
     }
 
+    // User interaction ------------------------------------------------------------------------------------------------
+
     /**
      * Shows an information message in the client's user interface.
      *
      * Depending on the client this might be a modal dialog with a confirmation button or a notification in a
      * notification center.
      *
-     * @returns
-     * A promise that resolves to the selected action.
+     * @param message The message to show.
      */
     showInformationMessage(message: string): void;
-    async showInformationMessage<T extends MessageActionItem>(message: string, ...actions: T[]): Promise<T | undefined>;
+    /**
+     * Shows an information message in the client's user interface.
+     *
+     * Depending on the client this might be a modal dialog with a confirmation button or a notification in a
+     * notification center.
+     *
+     * @param message The message to show.
+     * @param actions The actions to show.
+     *
+     * @returns A promise that resolves to the selected action.
+     */
+    showInformationMessage<T extends MessageActionItem>(message: string, ...actions: T[]): Promise<T | undefined>;
     async showInformationMessage<T extends MessageActionItem>(
         message: string,
         ...actions: T[]
     ): Promise<T | undefined> {
-        if (this.userMessageProvider?.showInformationMessage) {
-            return this.userMessageProvider.showInformationMessage(message, ...actions);
+        if (this.userInteractionProvider?.showInformationMessage) {
+            return this.userInteractionProvider.showInformationMessage(message, ...actions);
         } /* c8 ignore start */ else if (this.connection) {
             return this.connection.window.showInformationMessage(message, ...actions);
         } else {
@@ -141,14 +170,26 @@ export class SafeDsMessagingProvider {
      * Depending on the client this might be a modal dialog with a confirmation button or a notification in a
      * notification center.
      *
-     * @returns
-     * A promise that resolves to the selected action.
+     * @param message The message to show.
+     *
+     * @returns A promise that resolves to the selected action.
      */
     showWarningMessage(message: string): void;
-    async showWarningMessage<T extends MessageActionItem>(message: string, ...actions: T[]): Promise<T | undefined>;
+    /**
+     * Shows a warning message in the client's user interface.
+     *
+     * Depending on the client this might be a modal dialog with a confirmation button or a notification in a
+     * notification center.
+     *
+     * @param message The message to show.
+     * @param actions The actions to show.
+     *
+     * @returns A promise that resolves to the selected action.
+     */
+    showWarningMessage<T extends MessageActionItem>(message: string, ...actions: T[]): Promise<T | undefined>;
     async showWarningMessage<T extends MessageActionItem>(message: string, ...actions: T[]): Promise<T | undefined> {
-        if (this.userMessageProvider?.showWarningMessage) {
-            return this.userMessageProvider.showWarningMessage(message, ...actions);
+        if (this.userInteractionProvider?.showWarningMessage) {
+            return this.userInteractionProvider.showWarningMessage(message, ...actions);
         } /* c8 ignore start */ else if (this.connection) {
             return this.connection.window.showWarningMessage(message, ...actions);
         } else {
@@ -162,14 +203,26 @@ export class SafeDsMessagingProvider {
      * Depending on the client this might be a modal dialog with a confirmation button or a notification in a
      * notification center.
      *
-     * @returns
-     * A promise that resolves to the selected action.
+     * @param message The message to show.
+     *
+     * @returns A promise that resolves to the selected action.
      */
     showErrorMessage(message: string): void;
-    async showErrorMessage<T extends MessageActionItem>(message: string, ...actions: T[]): Promise<T | undefined>;
+    /**
+     * Shows an error message in the client's user interface.
+     *
+     * Depending on the client this might be a modal dialog with a confirmation button or a notification in a
+     * notification center.
+     *
+     * @param message The message to show.
+     * @param actions The actions to show.
+     *
+     * @returns A promise that resolves to the selected action.
+     */
+    showErrorMessage<T extends MessageActionItem>(message: string, ...actions: T[]): Promise<T | undefined>;
     async showErrorMessage<T extends MessageActionItem>(message: string, ...actions: T[]): Promise<T | undefined> {
-        if (this.userMessageProvider?.showErrorMessage) {
-            return this.userMessageProvider.showErrorMessage(message, ...actions);
+        if (this.userInteractionProvider?.showErrorMessage) {
+            return this.userInteractionProvider.showErrorMessage(message, ...actions);
         } /* c8 ignore start */ else if (this.connection) {
             return this.connection.window.showErrorMessage(message, ...actions);
         } else {
@@ -198,8 +251,8 @@ export class SafeDsMessagingProvider {
         message?: string,
         cancellable: boolean = false,
     ): Promise<WorkDoneProgressReporter> {
-        if (this.userMessageProvider?.showProgress) {
-            return this.userMessageProvider.showProgress(title, 0, message, cancellable);
+        if (this.userInteractionProvider?.showProgress) {
+            return this.userInteractionProvider.showProgress(title, 0, message, cancellable);
         } /* c8 ignore start */ else if (this.connection) {
             const reporter = await this.connection.window.createWorkDoneProgress();
             reporter?.begin(title, 0, message, cancellable);
@@ -209,18 +262,31 @@ export class SafeDsMessagingProvider {
         } /* c8 ignore stop */
     }
 
+    // Message broker --------------------------------------------------------------------------------------------------
+
     /**
      * Installs a notification handler for the given method.
      *
-     * @param method The method to register a request handler for.
+     * @param type The method to register a request handler for.
      * @param handler The handler to install.
      */
-    onNotification(method: string, handler: (...args: any[]) => void): Disposable {
+    onNotification(type: NotificationType0, handler: NotificationHandler0): Disposable;
+    /**
+     * Installs a notification handler for the given method.
+     *
+     * @param type The method to register a request handler for.
+     * @param handler The handler to install.
+     */
+    onNotification<P>(type: NotificationType<P>, handler: NotificationHandler<P>): Disposable;
+    onNotification<P>(
+        type: NotificationType0 | NotificationType<P>,
+        handler: NotificationHandler0 | NotificationHandler<P>,
+    ): Disposable {
         if (this.messageBroker?.onNotification) {
-            return this.messageBroker.onNotification(method, handler);
+            return this.messageBroker.onNotification(type.method, handler);
         } else if (this.connection) {
             /* c8 ignore next 2 */
-            return this.connection.onNotification(method, handler);
+            return this.connection.onNotification(type.method, handler);
         } else {
             return NOOP_DISPOSABLE;
         }
@@ -229,17 +295,92 @@ export class SafeDsMessagingProvider {
     /**
      * Send a notification to the client.
      *
-     * @param method The method to invoke on the client.
-     * @param args The notification's parameters.
+     * @param type The method to invoke on the client.
      */
-    async sendNotification(method: string, ...args: any): Promise<void> {
+    sendNotification(type: NotificationType0): Promise<void>;
+    /**
+     * Send a notification to the client.
+     *
+     * @param type The method to invoke on the client.
+     * @param args The arguments.
+     */
+    sendNotification<P>(type: NotificationType<P>, args: P): Promise<void>;
+    async sendNotification<P>(type: NotificationType0 | NotificationType<P>, args?: P): Promise<void> {
         if (this.messageBroker?.sendNotification) {
-            await this.messageBroker.sendNotification(method, ...args);
+            await this.messageBroker.sendNotification(type.method, args);
         } else if (this.connection) {
             /* c8 ignore next 2 */
-            await this.connection.sendNotification(method, ...args);
+            await this.connection.sendNotification(type.method, args);
         }
     }
+
+    /**
+     * Installs a request handler for the given method.
+     *
+     * @param type The method to register a request handler for.
+     * @param handler The handler to install.
+     */
+    onRequest<R, E>(type: RequestType0<R, E>, handler: RequestHandler0<R, E>): Disposable;
+    /**
+     * Installs a request handler for the given method.
+     *
+     * @param type The method to register a request handler for.
+     * @param handler The handler to install.
+     */
+    onRequest<P, R, E>(type: RequestType<P, R, E>, handler: RequestHandler<P, R, E>): Disposable;
+    onRequest<P, R, E>(
+        type: RequestType0<R, E> | RequestType<P, R, E>,
+        handler: RequestHandler0<R, E> | RequestHandler<P, R, E>,
+    ): Disposable {
+        if (this.messageBroker?.onRequest) {
+            return this.messageBroker.onRequest(type.method, handler);
+        } else if (this.connection) {
+            /* c8 ignore next 2 */
+            return this.connection.onRequest(type.method, handler);
+        } else {
+            return NOOP_DISPOSABLE;
+        }
+    }
+
+    /**
+     * Send a request to the client.
+     *
+     * @param type The method to register a request handler for.
+     * @param token A cancellation token that can be used to cancel the request.
+     *
+     * @returns A promise that resolves to the response.
+     */
+    sendRequest<R, E>(type: RequestType0<R, E>, token?: CancellationToken): Promise<R>;
+    /**
+     * Send a request to the client.
+     *
+     * @param type The method to register a request handler for.
+     * @param args The arguments.
+     * @param token A cancellation token that can be used to cancel the request.
+     *
+     * @returns A promise that resolves to the response.
+     */
+    sendRequest<P, R, E>(type: RequestType<P, R, E>, args: P, token?: CancellationToken): Promise<R>;
+    async sendRequest<P, R, E>(
+        type: RequestType0<R, E> | RequestType<P, R, E>,
+        argsOrToken?: P | CancellationToken,
+        token?: CancellationToken,
+    ): Promise<any> {
+        if (this.messageBroker?.sendRequest) {
+            if (CancellationToken.is(argsOrToken) && !token) {
+                return this.messageBroker.sendRequest(type.method, undefined, argsOrToken);
+            } else {
+                return this.messageBroker.sendRequest(type.method, argsOrToken, token);
+            }
+        } else if (this.connection) {
+            /* c8 ignore next 2 */
+            return this.connection.sendRequest(type.method, argsOrToken, token);
+        } else {
+            return undefined;
+        }
+    }
+
+    // Configuration ---------------------------------------------------------------------------------------------------
 
     /**
      * Set the logger to use for logging messages.
@@ -249,10 +390,10 @@ export class SafeDsMessagingProvider {
     }
 
     /**
-     * Set the user message provider to use for showing messages to the user.
+     * Set the service to interact with the user.
      */
-    setUserMessageProvider(userMessageProvider: Partial<SafeDsUserMessageProvider>) {
-        this.userMessageProvider = userMessageProvider;
+    setUserInteractionProvider(userInteractionProvider: Partial<SafeDsUserInteractionProvider>) {
+        this.userInteractionProvider = userInteractionProvider;
     }
 
     /**
@@ -301,7 +442,7 @@ export interface SafeDsLogger {
 /**
  * A service for showing messages to the user.
  */
-export interface SafeDsUserMessageProvider {
+export interface SafeDsUserInteractionProvider {
     /**
      * Prominently show an information message. The message should be short and human-readable.
      *
@@ -360,15 +501,34 @@ export interface SafeDsMessageBroker {
      * @param method The method to register a request handler for.
      * @param handler The handler to install.
      */
-    onNotification: (method: string, handler: (...args: any[]) => void) => Disposable;
+    onNotification: (method: string, handler: GenericNotificationHandler) => Disposable;
 
     /**
      * Send a notification to the client.
      *
      * @param method The method to invoke on the client.
-     * @param args The notification's parameters.
+     * @param args The arguments.
      */
-    sendNotification: (method: string, ...args: any[]) => Promise<void>;
+    sendNotification: (method: string, args?: any) => Promise<void>;
+
+    /**
+     * Installs a request handler for the given method.
+     *
+     * @param method The method to register a request handler for.
+     * @param handler The handler to install.
+     */
+    onRequest: <R, E>(method: string, handler: GenericRequestHandler<R, E>) => Disposable;
+
+    /**
+     * Send a request to the client.
+     *
+     * @param method The method to register a request handler for.
+     * @param args The arguments.
+     * @param token A cancellation token that can be used to cancel the request.
+     *
+     * @returns A promise that resolves to the response.
+     */
+    sendRequest<R>(method: string, args: any, token?: CancellationToken): Promise<R>;
 }
 
 const NOOP_PROGRESS_REPORTER: WorkDoneProgressReporter = {

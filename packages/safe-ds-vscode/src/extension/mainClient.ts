@@ -31,7 +31,7 @@ export const activate = async function (context: vscode.ExtensionContext) {
     services = (
         await createSafeDsServices(NodeFileSystem, {
             logger: safeDsLogger.createTaggedLogger('Client Services'),
-            userMessageProvider: {
+            userInteractionProvider: {
                 showErrorMessage: vscode.window.showErrorMessage,
             },
         })
@@ -97,16 +97,16 @@ const createLanguageClient = function (context: vscode.ExtensionContext): Langua
 
 const registerNotificationListeners = function (context: vscode.ExtensionContext) {
     context.subscriptions.push(
-        client.onNotification(rpc.RPC_RUNNER_INSTALL, async () => {
+        client.onNotification(rpc.InstallRunnerNotification.type, async () => {
             await installRunner(context, client, services)();
         }),
-        client.onNotification(rpc.RPC_RUNNER_STARTED, async (port: number) => {
+        client.onNotification(rpc.RunnerStartedNotification.type, async ({ port }: rpc.RunnerStartedParams) => {
             await services.runtime.PythonServer.connectToPort(port);
         }),
-        client.onNotification(rpc.RPC_RUNNER_UPDATE, async () => {
+        client.onNotification(rpc.UpdateRunnerNotification.type, async () => {
             await updateRunner(context, client, services)();
         }),
-        client.onNotification(rpc.RPC_RUNNER_SHOW_IMAGE, showImage(context)),
+        client.onNotification(rpc.ShowImageNotification.type, showImage(context)),
     );
 };
 

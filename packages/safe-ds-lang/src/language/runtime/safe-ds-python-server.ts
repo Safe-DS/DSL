@@ -9,7 +9,12 @@ import { SafeDsSettingsProvider } from '../workspace/safe-ds-settings-provider.j
 import semver from 'semver';
 import net, { AddressInfo } from 'node:net';
 import { ChildProcessWithoutNullStreams } from 'node:child_process';
-import { RPC_RUNNER_INSTALL, RPC_RUNNER_START, RPC_RUNNER_STARTED, RPC_RUNNER_UPDATE } from '../communication/rpc.js';
+import {
+    InstallRunnerNotification,
+    RunnerStartedNotification,
+    StartRunnerNotification,
+    UpdateRunnerNotification,
+} from '../communication/rpc.js';
 
 const LOWEST_SUPPORTED_RUNNER_VERSION = '0.11.0';
 const LOWEST_UNSUPPORTED_RUNNER_VERSION = '0.12.0';
@@ -38,7 +43,7 @@ export class SafeDsPythonServer {
 
         // Start if specifically requested. This can happen if the updater installed a new version of the runner but the
         // runner command did not have to be changed.
-        this.messaging.onNotification(RPC_RUNNER_START, async () => {
+        this.messaging.onNotification(StartRunnerNotification.type, async () => {
             await this.restart(false);
         });
 
@@ -84,7 +89,7 @@ export class SafeDsPythonServer {
         // TODO: Removed once all the execution logic is in the language server.
         if (isStarted(this.state)) {
             this.logger.info('Started successfully.');
-            await this.messaging.sendNotification(RPC_RUNNER_STARTED, port);
+            await this.messaging.sendNotification(RunnerStartedNotification.type, { port });
         }
     }
 
@@ -401,7 +406,7 @@ export class SafeDsPythonServer {
             title: 'Install runner',
         });
         if (action?.title === 'Install runner') {
-            await this.messaging.sendNotification(RPC_RUNNER_INSTALL);
+            await this.messaging.sendNotification(InstallRunnerNotification.type);
         }
     }
 
@@ -414,7 +419,7 @@ export class SafeDsPythonServer {
             { title: 'Update runner' },
         );
         if (action?.title === 'Update runner') {
-            await this.messaging.sendNotification(RPC_RUNNER_UPDATE);
+            await this.messaging.sendNotification(UpdateRunnerNotification.type);
         }
     }
 

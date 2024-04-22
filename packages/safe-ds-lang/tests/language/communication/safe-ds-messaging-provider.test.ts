@@ -3,9 +3,12 @@ import { createSafeDsServices } from '../../../src/language/index.js';
 import { NodeFileSystem } from 'langium/node';
 import { ModuleOptions } from '../../../src/language/safe-ds-module.js';
 import { EventEmitter } from 'node:events';
+import { NotificationType, NotificationType0, RequestType, RequestType0 } from 'vscode-languageserver';
+import { CancellationTokenSource } from 'vscode-jsonrpc/lib/common/cancellation.js';
 
 describe('without connection', async () => {
-    const eventEmitter = new EventEmitter();
+    const notificationEventEmitter = new EventEmitter();
+    const requestEventEmitter = new EventEmitter();
     const options: ModuleOptions = {
         logger: {
             trace: vi.fn(),
@@ -17,16 +20,25 @@ describe('without connection', async () => {
         },
         messageBroker: {
             onNotification(event, handler) {
-                eventEmitter.on(event, handler);
+                notificationEventEmitter.on(event, handler);
                 return {
                     dispose() {
-                        eventEmitter.off(event, handler);
+                        notificationEventEmitter.off(event, handler);
                     },
                 };
             },
             sendNotification: vi.fn(),
+            onRequest(event, handler) {
+                requestEventEmitter.on(event, handler);
+                return {
+                    dispose() {
+                        requestEventEmitter.off(event, handler);
+                    },
+                };
+            },
+            sendRequest: vi.fn().mockResolvedValue('result'),
         },
-        userMessageProvider: {
+        userInteractionProvider: {
             showInformationMessage: vi.fn().mockReturnValue(undefined),
             showWarningMessage: vi.fn().mockReturnValue(undefined),
             showErrorMessage: vi.fn().mockReturnValue(undefined),
@@ -68,45 +80,118 @@ describe('without connection', async () => {
         });
     });
 
-    describe('messageBroker', () => {
-        it('should call the onNotification function defined in the options', () => {
-            const listener = vi.fn();
-            messaging.onNotification('Test', listener);
-            eventEmitter.emit('Test', 'onNotification');
-            expect(listener).toHaveBeenCalledWith('onNotification');
-        });
-
-        it('should call the sendNotification function defined in the options', () => {
-            messaging.sendNotification('Test', 'sendNotification');
-            expect(options.messageBroker!.sendNotification).toHaveBeenCalledWith('Test', 'sendNotification');
-        });
-    });
-
-    describe('userMessageProvider', () => {
+    describe('userInteractionProvider', () => {
         it('should call the showInformationMessage function defined in the options', () => {
             messaging.showInformationMessage('Test', { title: 'showInformationMessage' });
-            expect(options.userMessageProvider!.showInformationMessage).toHaveBeenCalledWith('Test', {
+            expect(options.userInteractionProvider!.showInformationMessage).toHaveBeenCalledWith('Test', {
                 title: 'showInformationMessage',
             });
         });
 
         it('should call the showWarningMessage function defined in the options', () => {
             messaging.showWarningMessage('Test', { title: 'showWarningMessage' });
-            expect(options.userMessageProvider!.showWarningMessage).toHaveBeenCalledWith('Test', {
+            expect(options.userInteractionProvider!.showWarningMessage).toHaveBeenCalledWith('Test', {
                 title: 'showWarningMessage',
             });
         });
 
         it('should call the showErrorMessage function defined in the options', () => {
             messaging.showErrorMessage('Test', { title: 'showErrorMessage' });
-            expect(options.userMessageProvider!.showErrorMessage).toHaveBeenCalledWith('Test', {
+            expect(options.userInteractionProvider!.showErrorMessage).toHaveBeenCalledWith('Test', {
                 title: 'showErrorMessage',
             });
         });
 
         it('should call the showProgress function defined in the options', () => {
             messaging.showProgress('Test', 'showProgress');
-            expect(options.userMessageProvider!.showProgress).toHaveBeenCalledWith('Test', 0, 'showProgress', false);
+            expect(options.userInteractionProvider!.showProgress).toHaveBeenCalledWith(
+                'Test',
+                0,
+                'showProgress',
+                false,
+            );
+        });
+    });
+
+    describe('messageBroker', () => {
+        describe('onNotification', () => {
+            it('should call the onNotification function defined in the options (no arguments)', () => {
+                const listener = vi.fn();
+                const disposable = messaging.onNotification(new NotificationType0('Test'), listener);
+                notificationEventEmitter.emit('Test');
+                expect(listener).toHaveBeenCalledWith();
+                disposable.dispose();
+            });
+
+            it('should call the onNotification function defined in the options (with arguments)', () => {
+                const listener = vi.fn();
+                const disposable = messaging.onNotification(new NotificationType0('Test'), listener);
+                notificationEventEmitter.emit('Test', 'onNotification');
+                expect(listener).toHaveBeenCalledWith('onNotification');
+                disposable.dispose();
+            });
+        });
+
+        describe('sendNotification', () => {
+            it('should call the sendNotification function defined in the options (no arguments)', () => {
+                messaging.sendNotification(new NotificationType0('Test'));
+                expect(options.messageBroker!.sendNotification).toHaveBeenCalledWith('Test', undefined);
+            });
+
+            it('should call the sendNotification function defined in the options (with arguments)', () => {
+                messaging.sendNotification(new NotificationType<string>('Test'), 'sendNotification');
+                expect(options.messageBroker!.sendNotification).toHaveBeenCalledWith('Test', 'sendNotification');
+            });
+        });
+
+        describe('onRequest', () => {
+            it('should call the onRequest function defined in the options (no arguments)', () => {
+                const listener = vi.fn();
+                const disposable = messaging.onRequest(new RequestType0('Test'), listener);
+                requestEventEmitter.emit('Test');
+                expect(listener).toHaveBeenCalledWith();
+                disposable.dispose();
+            });
+
+            it('should call the onRequest function defined in the options (with arguments)', () => {
+                const listener = vi.fn();
+                const disposable = messaging.onRequest(new RequestType0('Test'), listener);
+                requestEventEmitter.emit('Test', 'onRequest');
+                expect(listener).toHaveBeenCalledWith('onRequest');
+                disposable.dispose();
+            });
+        });
+
+        describe('sendRequest', () => {
+            it('should call the sendRequest function defined in the options (no arguments, no cancellation token)', () => {
+                messaging.sendRequest(new RequestType0<string, void>('Test'));
+                expect(options.messageBroker!.sendRequest).toHaveBeenCalledWith('Test', undefined, undefined);
+            });
+
+            it('should call the sendRequest function defined in the options (no arguments, with cancellation token)', () => {
+                const token = new CancellationTokenSource().token;
+                messaging.sendRequest(new RequestType0<string, void>('Test'), token);
+                expect(options.messageBroker!.sendRequest).toHaveBeenCalledWith('Test', undefined, token);
+            });
+
+            it('should call the sendRequest function defined in the options (with arguments, no cancellation token)', () => {
+                messaging.sendRequest(new RequestType<string, string, void>('Test'), 'sendRequest');
+                expect(options.messageBroker!.sendRequest).toHaveBeenCalledWith('Test', 'sendRequest', undefined);
+            });
+
+            it('should call the sendRequest function defined in the options (with arguments, with cancellation token)', () => {
+                const token = new CancellationTokenSource().token;
+                messaging.sendRequest(new RequestType<string, string, void>('Test'), 'sendRequest', token);
+                expect(options.messageBroker!.sendRequest).toHaveBeenCalledWith('Test', 'sendRequest', token);
+            });
+
+            it('should return the result of the sendRequest function defined in the options', async () => {
+                const result = await messaging.sendRequest(
+                    new RequestType<string, string, void>('Test'),
+                    'sendRequest',
+                );
+                expect(result).toBe('result');
+            });
         });
     });
 });
