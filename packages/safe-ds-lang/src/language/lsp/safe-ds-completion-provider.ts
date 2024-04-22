@@ -73,7 +73,7 @@ export class SafeDsCompletionProvider extends DefaultCompletionProvider {
         return true;
     }
 
-    private illegalKeywordsInPipelineFile = new Set(['annotation', 'class', 'enum', 'fun', 'schema']);
+    private illegalKeywordsInPipelineFile = new Set(['annotation', 'class', 'enum', 'fun']);
     private illegalKeywordsInStubFile = new Set(['pipeline', 'internal', 'private', 'segment']);
 
     protected override filterKeyword(context: CompletionContext, keyword: Keyword): boolean {

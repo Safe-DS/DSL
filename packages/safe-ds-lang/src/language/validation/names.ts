@@ -38,9 +38,9 @@ import {
     getParameters,
     getResults,
     getTypeParameters,
-    isImplementedDeclaration,
     isStatic,
-    isStubDeclaration,
+    isValidPipelineDeclaration,
+    isValidStubDeclaration,
     streamBlockLambdaResults,
     streamPlaceholders,
 } from '../helpers/nodeProperties.js';
@@ -341,14 +341,14 @@ export const moduleMustContainUniqueNames = (node: SdsModule, accept: Validation
             getModuleMembers(node),
             (name) => `A declaration with name '${name}' exists already in this file.`,
             accept,
-            isImplementedDeclaration,
+            isValidPipelineDeclaration,
         );
     } else if (isInStubFile(node)) {
         namesMustBeUnique(
             getModuleMembers(node),
             (name) => `A declaration with name '${name}' exists already in this file.`,
             accept,
-            isStubDeclaration,
+            isValidStubDeclaration,
         );
     } else if (isInDevFile(node)) {
         namesMustBeUnique(

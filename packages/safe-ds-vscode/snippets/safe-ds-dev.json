@@ -57,15 +57,15 @@
         ],
         "description": "A method."
     },
-    "Schema": {
-        "prefix": ["schema"],
-        "body": ["schema ${1:MySchema} {", "    $0", "}"],
-        "description": "A schema."
-    },
     "Pipeline": {
         "prefix": ["pipeline"],
         "body": ["pipeline ${1:myPipeline} {", "    $0", "}"],
         "description": "A pipeline."
+    },
+    "Schema": {
+        "prefix": ["schema"],
+        "body": ["schema ${1:MySchema} {", "    $0", "}"],
+        "description": "A schema."
     },
     "Segment": {
         "prefix": ["segment"],

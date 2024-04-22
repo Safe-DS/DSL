@@ -9,7 +9,7 @@
 
         {
             "name": "storage.type.safe-ds",
-            "match": "\\b(package|pipeline|segment|val)\\b"
+            "match": "\\b(package|pipeline|schema|segment|val)\\b"
         },
         {
             "name": "storage.modifier.safe-ds",

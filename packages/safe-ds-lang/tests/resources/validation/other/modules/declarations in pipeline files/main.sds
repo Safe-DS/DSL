@@ -24,10 +24,10 @@ enum »MyEnum« {
 }
 // $TEST$ error "A pipeline file must only declare pipelines and segments."
 fun »myFunction«()
-// $TEST$ error "A pipeline file must only declare pipelines and segments."
-schema »MySchema« {}
 
 // $TEST$ no error "A pipeline file must only declare pipelines and segments."
 pipeline »myPipeline« {}
+// $TEST$ no error "A pipeline file must only declare pipelines and segments."
+schema »MySchema« {}
 // $TEST$ no error "A pipeline file must only declare pipelines and segments."
 segment »mySegment«() {}
