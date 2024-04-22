@@ -2,7 +2,7 @@ import vscode, { ExtensionContext, Uri } from 'vscode';
 import { rpc } from '@safe-ds/lang';
 
 export const showImage = (context: ExtensionContext) => {
-    return async (image: rpc.ImageJson) => {
+    return async ({ image }: rpc.ShowImageParams) => {
         // Write the image to a file
         const uri = imageUri(context);
         await vscode.workspace.fs.writeFile(uri, Buffer.from(image.bytes, 'base64'));

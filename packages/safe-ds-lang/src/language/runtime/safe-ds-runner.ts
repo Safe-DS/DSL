@@ -16,7 +16,7 @@ import { isSdsModule, isSdsPipeline, isSdsPlaceholder } from '../generated/ast.j
 import { SafeDsLogger, SafeDsMessagingProvider } from '../communication/safe-ds-messaging-provider.js';
 import crypto from 'crypto';
 import { SafeDsPythonServer } from './safe-ds-python-server.js';
-import { RPC_RUNNER_SHOW_IMAGE } from '../communication/rpc.js';
+import { IsRunnerReadyRequest, ShowImageNotification } from '../communication/rpc.js';
 import { expandToStringLF, joinToNode } from 'langium/generate';
 
 // Most of the functionality cannot be tested automatically as a functioning runner setup would always be required
@@ -43,6 +43,10 @@ export class SafeDsRunner {
         this.pythonServer = services.runtime.PythonServer;
 
         this.registerMessageLoggingCallbacks();
+
+        this.messaging.onRequest(IsRunnerReadyRequest.type, () => {
+            return this.isReady();
+        });
     }
 
     /**
@@ -139,7 +143,7 @@ export class SafeDsRunner {
         const progress = await this.messaging.showProgress('Safe-DS Runner', 'Starting...');
 
         this.logger.info(
-            `[${pipelineExecutionId}] Showing image "${pipeline.name}/${placeholder.name}" in ${documentUri}.`,
+            `[${pipelineExecutionId}] Printing value "${pipeline.name}/${placeholder.name}" in ${documentUri}.`,
         );
 
         const disposables = [
@@ -230,7 +234,7 @@ export class SafeDsRunner {
             this.pythonServer.addMessageCallback('placeholder_type', async (message) => {
                 if (message.id === pipelineExecutionId && message.data.name === placeholder.name) {
                     const data = await this.getPlaceholderValue(placeholder.name, pipelineExecutionId);
-                    await this.messaging.sendNotification(RPC_RUNNER_SHOW_IMAGE, data);
+                    await this.messaging.sendNotification(ShowImageNotification.type, { image: data });
                 }
             }),
 

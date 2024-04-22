@@ -1,7 +1,7 @@
 import vscode, { ExtensionContext, Uri } from 'vscode';
 import child_process from 'node:child_process';
 import semver from 'semver';
-import { dependencies, rpc, SafeDsServices } from '@safe-ds/lang';
+import { dependencies, rpc } from '@safe-ds/lang';
 import { LanguageClient } from 'vscode-languageclient/node.js';
 import { safeDsLogger } from '../helpers/logging.js';
 
@@ -11,10 +11,10 @@ const LOWEST_SUPPORTED_PYTHON_VERSION = '3.11.0';
 const LOWEST_UNSUPPORTED_PYTHON_VERSION = '3.13.0';
 const npmVersionRange = `>=${LOWEST_SUPPORTED_PYTHON_VERSION} <${LOWEST_UNSUPPORTED_PYTHON_VERSION}`;
 
-export const installRunner = (context: ExtensionContext, client: LanguageClient, services: SafeDsServices) => {
+export const installRunner = (context: ExtensionContext, client: LanguageClient) => {
     return async () => {
         // If the runner is already started, do nothing
-        if (services.runtime.Runner.isReady()) {
+        if (await client.sendRequest(rpc.IsRunnerReadyRequest.type)) {
             vscode.window.showInformationMessage('The runner is already installed and running.');
             return;
         }
@@ -31,7 +31,7 @@ export const installRunner = (context: ExtensionContext, client: LanguageClient,
             .update('safe-ds.runner.command', getRunnerCommand(context), vscode.ConfigurationTarget.Global);
 
         // Start the runner (needed if the configuration did not change, so no event is fired)
-        await client.sendNotification(rpc.RPC_RUNNER_START);
+        await client.sendNotification(rpc.StartRunnerNotification.type);
 
         // Inform the user
         vscode.window.showInformationMessage('The runner has been installed successfully.');
