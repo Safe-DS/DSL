@@ -376,6 +376,7 @@ export class SafeDsMessagingProvider {
             /* c8 ignore next 2 */
             return this.connection.sendRequest(type.method, argsOrToken, token);
         } else {
+            /* c8 ignore next 2 */
             return undefined;
         }
     }
