@@ -143,7 +143,7 @@ export class SafeDsRunner {
         const progress = await this.messaging.showProgress('Safe-DS Runner', 'Starting...');
 
         this.logger.info(
-            `[${pipelineExecutionId}] Showing image "${pipeline.name}/${placeholder.name}" in ${documentUri}.`,
+            `[${pipelineExecutionId}] Printing value "${pipeline.name}/${placeholder.name}" in ${documentUri}.`,
         );
 
         const disposables = [

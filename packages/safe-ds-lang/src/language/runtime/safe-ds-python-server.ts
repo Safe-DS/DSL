@@ -66,10 +66,11 @@ export class SafeDsPythonServer {
      * Start the Python server and connect to it.
      */
     private async start(): Promise<void> {
-        // Do not start the server if it is already started or failed
-        if (isStarted(this.state) || isFailed(this.state)) {
+        // Only start a stopped server
+        if (!isStopped(this.state)) {
             return;
         }
+        this.state = starting();
         this.logger.info('Starting...');
 
         // Get the runner command
@@ -98,10 +99,11 @@ export class SafeDsPythonServer {
      */
     // TODO make private once the execution logic is fully handled in the language server
     async stop(): Promise<void> {
-        // Do not stop the server if it is already stopped or failed
-        if (isStopped(this.state) || isFailed(this.state)) {
+        // Only stop a started server
+        if (!isStarted(this.state)) {
             return;
         }
+        this.state = stopping(this.state.serverProcess, this.state.serverConnection);
         this.logger.info('Stopping...');
 
         // Attempt a graceful shutdown first
@@ -222,8 +224,7 @@ export class SafeDsPythonServer {
      * Starts the server using the given command and port.
      */
     private startServerProcess(command: string, port: number) {
-        // Do not start the server if it is already started or failed
-        if (!isStopped(this.state)) {
+        if (!isStarting(this.state)) {
             return;
         }
 
@@ -247,14 +248,14 @@ export class SafeDsPythonServer {
         });
 
         // Update the state
-        this.state = disconnected(serverProcess);
+        this.state = starting(serverProcess);
     }
 
     /**
      * Request a graceful shutdown of the server process.
      */
     private async stopServerProcessGracefully(maxTimeoutMs: number): Promise<void> {
-        if (!isStarted(this.state)) {
+        if (!isStopping(this.state)) {
             return;
         }
         this.logger.debug('Trying graceful shutdown...');
@@ -264,12 +265,10 @@ export class SafeDsPythonServer {
             const cancelToken = setTimeout(resolve, maxTimeoutMs);
 
             // Wait for the server process to close
-            if (isDisconnected(this.state) || isStarted(this.state)) {
-                this.state.serverProcess?.on('close', () => {
-                    clearTimeout(cancelToken);
-                    resolve();
-                });
-            }
+            this.state.serverProcess?.on('close', () => {
+                clearTimeout(cancelToken);
+                resolve();
+            });
 
             // Send a shutdown message to the server. Do this last, so we don't miss the close event.
             this.sendMessageToPythonServer(createShutdownMessage());
@@ -280,7 +279,7 @@ export class SafeDsPythonServer {
      * Kill the server process forcefully.
      */
     private async killServerProcess(): Promise<void> {
-        if (isStopped(this.state) || isFailed(this.state)) {
+        if (!isStopping(this.state)) {
             return;
         }
         this.logger.debug('Killing process...');
@@ -317,7 +316,7 @@ export class SafeDsPythonServer {
     }
 
     private async doConnectToServer(port: number): Promise<void> {
-        if (isStarted(this.state) || isFailed(this.state)) {
+        if (!isStarting(this.state)) {
             return;
         }
         this.logger.debug(`Connecting to server at port ${port}...`);
@@ -393,7 +392,7 @@ export class SafeDsPythonServer {
                         this.state.serverConnection === serverConnection
                     ) {
                         this.logger.error('Connection was unexpectedly closed');
-                        // this.restart(true);
+                        this.restart(true);
                     }
                 };
             };
@@ -493,9 +492,10 @@ export class SafeDsPythonServer {
     }
 
     async connectToPort(port: number): Promise<void> {
-        if (isStarted(this.state)) {
+        if (!isStopped(this.state)) {
             return;
         }
+        this.state = starting();
 
         try {
             await this.doConnectToServer(port);
@@ -519,21 +519,21 @@ const stopped = {
 const isStopped = (state: State): state is typeof stopped => state === stopped;
 
 /**
- * The Python server process is started, but we are not connected to it yet.
+ * The Python server process is being started.
  */
-interface Disconnected {
-    type: 'disconnected';
-    serverProcess: ChildProcessWithoutNullStreams;
+interface Starting {
+    type: 'starting';
+    serverProcess?: ChildProcessWithoutNullStreams;
     serverConnection: undefined;
 }
 
-const disconnected = (serverProcess: ChildProcessWithoutNullStreams): Disconnected => ({
-    type: 'disconnected',
+const starting = (serverProcess?: ChildProcessWithoutNullStreams): Starting => ({
+    type: 'starting',
     serverProcess,
     serverConnection: undefined,
 });
 
-const isDisconnected = (state: State): state is Disconnected => state.type === 'disconnected';
+const isStarting = (state: State): state is Starting => state.type === 'starting';
 
 /**
  * The Python server process is started, and we are connected to it.
@@ -554,6 +554,26 @@ const started = (serverProcess: ChildProcessWithoutNullStreams | undefined, serv
 const isStarted = (state: State): state is Started => state.type === 'started';
 
 /**
+ * The Python server process is being stopped.
+ */
+interface Stopping {
+    type: 'stopping';
+    serverProcess?: ChildProcessWithoutNullStreams;
+    serverConnection?: WebSocket;
+}
+
+const stopping = (
+    serverProcess: ChildProcessWithoutNullStreams | undefined,
+    serverConnection: WebSocket,
+): Stopping => ({
+    type: 'stopping',
+    serverProcess,
+    serverConnection,
+});
+
+const isStopping = (state: State): state is Stopping => state.type === 'stopping';
+
+/**
  * Something went wrong.
  */
 const failed = {
@@ -562,9 +582,7 @@ const failed = {
     serverConnection: undefined,
 } as const;
 
-const isFailed = (state: State): state is typeof failed => state === failed;
-
-type State = typeof stopped | Disconnected | Started | typeof failed;
+type State = typeof stopped | Starting | Started | Stopping | typeof failed;
 
 // Restart tracking ----------------------------------------------------------------------------------------------------
 
