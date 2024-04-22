@@ -20,9 +20,14 @@ export { locationToString, positionToString, rangeToString } from '../helpers/lo
 // Messages
 export * as messages from './runtime/messages.js';
 
-// Constants
+// Commands
 export * as commands from './communication/commands.js';
+
+// RPC
 export * as rpc from './communication/rpc.js';
+
+// Generation
+export { CODEGEN_PREFIX } from './generation/safe-ds-python-generator.js';
 
 // Dependencies
 export const dependencies = {

@@ -1,10 +1,9 @@
 import { Base64Image, Column, Profiling, ProfilingDetailStatistical, Table } from '@safe-ds/eda/types/state.js';
-import { ast, messages, SafeDsServices } from '@safe-ds/lang';
-import { AstNode, LangiumDocument } from 'langium';
+import { ast, CODEGEN_PREFIX, messages, SafeDsServices } from '@safe-ds/lang';
+import { LangiumDocument } from 'langium';
 import * as vscode from 'vscode';
 import crypto from 'crypto';
 import { getPipelineDocument } from '../../mainClient.ts';
-import { CODEGEN_PREFIX } from '../../../../../safe-ds-lang/src/language/generation/safe-ds-python-generator.ts';
 import { safeDsLogger } from '../../helpers/logging.js';
 
 export class RunnerApi {
@@ -12,7 +11,7 @@ export class RunnerApi {
     pipelinePath: vscode.Uri;
     pipelineName: string;
     pipelineNode: ast.SdsPipeline;
-    baseDocument: LangiumDocument<AstNode> | undefined;
+    baseDocument: LangiumDocument | undefined;
     placeholderCounter = 0;
 
     constructor(
@@ -52,11 +51,17 @@ export class RunnerApi {
             const afterPipelineEnd = documentText.substring(endOfPipeline - 1);
             const newDocumentText = beforePipelineEnd + addedLines + afterPipelineEnd;
 
-            const newDoc = this.services.shared.workspace.LangiumDocumentFactory.fromString(
-                newDocumentText,
+            this.services.shared.workspace.LangiumDocuments.deleteDocument(this.pipelinePath);
+            const newDoc = this.services.shared.workspace.LangiumDocuments.createDocument(
                 this.pipelinePath,
+                newDocumentText,
             );
+            await this.services.shared.workspace.DocumentBuilder.build([newDoc]);
+
             await this.services.runtime.Runner.executePipeline(pipelineExecutionId, newDoc, this.pipelineName);
+
+            this.services.shared.workspace.LangiumDocuments.deleteDocument(this.pipelinePath);
+            this.services.shared.workspace.LangiumDocuments.addDocument(this.baseDocument);
 
             const runtimeCallback = (message: messages.RuntimeProgressMessage) => {
                 if (message.id !== pipelineExecutionId) {

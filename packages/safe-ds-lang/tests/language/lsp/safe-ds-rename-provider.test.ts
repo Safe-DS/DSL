@@ -9,7 +9,6 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const documentBuilder = services.shared.workspace.DocumentBuilder;
 const langiumDocuments = services.shared.workspace.LangiumDocuments;
-const langiumDocumentFactory = services.shared.workspace.LangiumDocumentFactory;
 const nameProvider = services.references.NameProvider;
 const renameProvider = services.lsp.RenameProvider!;
 
@@ -258,11 +257,9 @@ describe('SafeDsRenameProvider', async () => {
         }
 
         // Add documents to workspace
-        const documents = descriptions.map((description) => {
-            const document = langiumDocumentFactory.fromString(description.originalContent, URI.parse(description.uri));
-            langiumDocuments.addDocument(document);
-            return document;
-        });
+        const documents = descriptions.map((description) =>
+            langiumDocuments.createDocument(URI.parse(description.uri), description.originalContent),
+        );
         await documentBuilder.build(documents);
 
         // Get the element to rename
