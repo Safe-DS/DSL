@@ -25,7 +25,7 @@ describe('SafeDsCompletionProvider', async () => {
                 `,
                 uri: `file:///test1.sds`,
                 expectedLabels: {
-                    shouldEqual: ['from', 'pipeline', 'internal', 'private', 'segment'],
+                    shouldEqual: ['from', 'schema', 'pipeline', 'internal', 'private', 'segment'],
                 },
             },
             {

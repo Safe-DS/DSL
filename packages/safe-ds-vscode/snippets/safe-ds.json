@@ -9,6 +9,11 @@
         "body": ["pipeline ${1:myPipeline} {", "    $0", "}"],
         "description": "A pipeline."
     },
+    "Schema": {
+        "prefix": ["schema"],
+        "body": ["schema ${1:MySchema} {", "    $0", "}"],
+        "description": "A schema."
+    },
     "Segment": {
         "prefix": ["segment"],
         "body": ["${1|internal ,private |}segment ${2:mySegment}($3) ${4:-> ($5)} ${6:where {$7\\}} {", "    $0", "}"],

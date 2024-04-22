@@ -38,7 +38,6 @@ import {
     getQualifiedName,
     getResults,
     getTypeParameters,
-    isImplementedDeclaration,
     isInternal,
     isPrivate,
     isStatic,
@@ -54,6 +53,7 @@ import { expandToStringLF } from 'langium/generate';
 import { SafeDsClassHierarchy } from '../typing/safe-ds-class-hierarchy.js';
 import { SafeDsClasses } from '../builtins/safe-ds-classes.js';
 import { SafeDsPackageManager } from '../workspace/safe-ds-package-manager.js';
+import { isInPipelineFile } from '../helpers/fileExtensions.js';
 
 const INDENTATION = '    ';
 const LIB = path.join('packages', 'safe-ds-lang', 'lib', 'resources');
@@ -695,7 +695,7 @@ export class SafeDsMarkdownGenerator {
 
         const text = removeLinePrefix(cstNode.text, firstLineIndent);
         const fileName = AstUtils.getDocument(node).uri.path.split('/').pop();
-        const kind = isImplementedDeclaration(node) ? 'Implementation' : 'Stub';
+        const kind = isInPipelineFile(node) ? 'Implementation' : 'Stub';
 
         let result = `??? quote "${kind} code in \`${fileName}\`"\n\n`;
         result += indent(`\`\`\`sds linenums="${startLine + 1}"\n${text}\n\`\`\``);
