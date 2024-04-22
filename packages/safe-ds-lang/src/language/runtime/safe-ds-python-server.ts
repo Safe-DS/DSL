@@ -66,7 +66,6 @@ export class SafeDsPythonServer {
      * Start the Python server and connect to it.
      */
     private async start(): Promise<void> {
-        // Only start a stopped server
         if (!isStopped(this.state)) {
             return;
         }
@@ -76,6 +75,7 @@ export class SafeDsPythonServer {
         // Get the runner command
         const command = await this.getValidRunnerCommand();
         if (!command) {
+            this.state = stopped;
             return;
         }
 
@@ -99,11 +99,10 @@ export class SafeDsPythonServer {
      */
     // TODO make private once the execution logic is fully handled in the language server
     async stop(): Promise<void> {
-        // Only stop a started server
-        if (!isStarted(this.state)) {
+        if (!isStarting(this.state) && !isStarted(this.state)) {
             return;
         }
-        this.state = stopping(this.state.serverProcess, this.state.serverConnection);
+        this.state = stopping(this.state?.serverProcess, this.state?.serverConnection);
         this.logger.info('Stopping...');
 
         // Attempt a graceful shutdown first
@@ -255,7 +254,7 @@ export class SafeDsPythonServer {
      * Request a graceful shutdown of the server process.
      */
     private async stopServerProcessGracefully(maxTimeoutMs: number): Promise<void> {
-        if (!isStopping(this.state)) {
+        if (!isStopping(this.state) || !this.state.serverConnection) {
             return;
         }
         this.logger.debug('Trying graceful shutdown...');
@@ -279,7 +278,7 @@ export class SafeDsPythonServer {
      * Kill the server process forcefully.
      */
     private async killServerProcess(): Promise<void> {
-        if (!isStopping(this.state)) {
+        if (!isStopping(this.state) || !this.state.serverProcess) {
             return;
         }
         this.logger.debug('Killing process...');
@@ -564,7 +563,7 @@ interface Stopping {
 
 const stopping = (
     serverProcess: ChildProcessWithoutNullStreams | undefined,
-    serverConnection: WebSocket,
+    serverConnection: WebSocket | undefined,
 ): Stopping => ({
     type: 'stopping',
     serverProcess,
