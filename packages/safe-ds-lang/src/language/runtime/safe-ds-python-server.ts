@@ -38,13 +38,13 @@ export class SafeDsPythonServer {
 
         // Restart if the runner command changes
         services.workspace.SettingsProvider.onRunnerCommandUpdate(async () => {
-            await this.restart(false);
+            await this.start();
         });
 
         // Start if specifically requested. This can happen if the updater installed a new version of the runner but the
         // runner command did not have to be changed.
         this.messaging.onNotification(StartRunnerNotification.type, async () => {
-            await this.restart(false);
+            await this.start();
         });
 
         // Stop the Python server when the language server is shut down
@@ -345,6 +345,8 @@ export class SafeDsPythonServer {
 
                     // Retry if the connection was refused with exponential backoff
                     if (event.message.includes('ECONNREFUSED')) {
+                        serverConnection.terminate();
+
                         if (currentTry > maxConnectionTries) {
                             this.logger.error('Max retries reached. No further attempt at connecting is made.');
                         } else {
@@ -385,9 +387,13 @@ export class SafeDsPythonServer {
 
                 // Handle the server closing the connection
                 serverConnection.onclose = () => {
-                    if (isStarted(this.state) && this.state.serverProcess) {
+                    if (
+                        isStarted(this.state) &&
+                        this.state.serverProcess &&
+                        this.state.serverConnection === serverConnection
+                    ) {
                         this.logger.error('Connection was unexpectedly closed');
-                        this.restart(true);
+                        // this.restart(true);
                     }
                 };
             };
