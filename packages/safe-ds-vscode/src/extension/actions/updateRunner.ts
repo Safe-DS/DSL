@@ -1,23 +1,23 @@
 import vscode, { ExtensionContext } from 'vscode';
 import { LanguageClient } from 'vscode-languageclient/node.js';
-import { rpc, SafeDsServices } from '@safe-ds/lang';
+import { rpc } from '@safe-ds/lang';
 import fs from 'node:fs';
 import path from 'node:path';
 import { installRunner, installRunnerInVirtualEnvironment } from './installRunner.js';
 import { platform } from 'node:os';
 import { safeDsLogger } from '../helpers/logging.js';
 
-export const updateRunner = (context: ExtensionContext, client: LanguageClient, services: SafeDsServices) => {
+export const updateRunner = (context: ExtensionContext, client: LanguageClient) => {
     return async () => {
         // If the runner is already started, do nothing
-        if (services.runtime.Runner.isReady()) {
+        if (await client.sendRequest(rpc.IsRunnerReadyRequest.type)) {
             vscode.window.showInformationMessage('The runner is already installed and running.');
             return;
         }
 
         // If the runner executable cannot be found at all, install it from scratch
         if (!fs.existsSync(await getRunnerCommand())) {
-            await installRunner(context, client, services)();
+            await installRunner(context, client)();
             return;
         }
 

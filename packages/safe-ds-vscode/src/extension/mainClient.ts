@@ -98,13 +98,13 @@ const createLanguageClient = function (context: vscode.ExtensionContext): Langua
 const registerNotificationListeners = function (context: vscode.ExtensionContext) {
     context.subscriptions.push(
         client.onNotification(rpc.InstallRunnerNotification.type, async () => {
-            await installRunner(context, client, services)();
+            await installRunner(context, client)();
         }),
         client.onNotification(rpc.RunnerStartedNotification.type, async ({ port }: rpc.RunnerStartedParams) => {
             await services.runtime.PythonServer.connectToPort(port);
         }),
         client.onNotification(rpc.UpdateRunnerNotification.type, async () => {
-            await updateRunner(context, client, services)();
+            await updateRunner(context, client)();
         }),
         client.onNotification(rpc.ShowImageNotification.type, showImage(context)),
     );
@@ -114,10 +114,10 @@ const registerCommands = function (context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand('safe-ds.dumpDiagnostics', dumpDiagnostics(context)),
         vscode.commands.registerCommand('safe-ds.exploreTable', exploreTable(context)),
-        vscode.commands.registerCommand('safe-ds.installRunner', installRunner(context, client, services)),
+        vscode.commands.registerCommand('safe-ds.installRunner', installRunner(context, client)),
         vscode.commands.registerCommand('safe-ds.openDiagnosticsDumps', openDiagnosticsDumps(context)),
         vscode.commands.registerCommand('safe-ds.refreshWebview', refreshWebview(context)),
-        vscode.commands.registerCommand('safe-ds.updateRunner', updateRunner(context, client, services)),
+        vscode.commands.registerCommand('safe-ds.updateRunner', updateRunner(context, client)),
     );
 };
 

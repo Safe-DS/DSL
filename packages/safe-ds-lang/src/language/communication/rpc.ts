@@ -1,4 +1,4 @@
-import { MessageDirection, NotificationType0 } from 'vscode-languageserver';
+import { MessageDirection, NotificationType0, RequestType0 } from 'vscode-languageserver';
 import { NotificationType } from 'vscode-languageserver-protocol';
 
 export namespace InstallRunnerNotification {
@@ -50,4 +50,10 @@ export interface ShowImageParams {
          */
         bytes: string;
     };
+}
+
+export namespace IsRunnerReadyRequest {
+    export const method = 'runner/isReady' as const;
+    export const messageDirection = MessageDirection.clientToServer;
+    export const type = new RequestType0(method);
 }

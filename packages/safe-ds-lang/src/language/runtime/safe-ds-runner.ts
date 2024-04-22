@@ -16,7 +16,7 @@ import { isSdsModule, isSdsPipeline, isSdsPlaceholder } from '../generated/ast.j
 import { SafeDsLogger, SafeDsMessagingProvider } from '../communication/safe-ds-messaging-provider.js';
 import crypto from 'crypto';
 import { SafeDsPythonServer } from './safe-ds-python-server.js';
-import { ShowImageNotification } from '../communication/rpc.js';
+import { IsRunnerReadyRequest, ShowImageNotification } from '../communication/rpc.js';
 import { expandToStringLF, joinToNode } from 'langium/generate';
 
 // Most of the functionality cannot be tested automatically as a functioning runner setup would always be required
@@ -43,6 +43,10 @@ export class SafeDsRunner {
         this.pythonServer = services.runtime.PythonServer;
 
         this.registerMessageLoggingCallbacks();
+
+        this.messaging.onRequest(IsRunnerReadyRequest.type, () => {
+            return this.isReady();
+        });
     }
 
     /**
