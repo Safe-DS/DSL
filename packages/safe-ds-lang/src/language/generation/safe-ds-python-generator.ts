@@ -392,7 +392,7 @@ export class SafeDsPythonGenerator {
         utilitySet: Set<UtilityFunction>,
         typeVariableSet: Set<string>,
         generateOptions: GenerateOptions,
-    ): CompositeGeneratorNode {
+    ): Generated {
         const infoFrame = new GenerationInfoFrame(
             importSet,
             utilitySet,
@@ -424,7 +424,7 @@ export class SafeDsPythonGenerator {
     private generateParameters(
         parameters: SdsParameterList | undefined,
         frame: GenerationInfoFrame,
-    ): CompositeGeneratorNode | undefined {
+    ): Generated | undefined {
         if (!parameters) {
             /* c8 ignore next 2 */
             return undefined;
@@ -440,7 +440,7 @@ export class SafeDsPythonGenerator {
         parameter: SdsParameter,
         frame: GenerationInfoFrame,
         defaultValue: boolean = true,
-    ): CompositeGeneratorNode {
+    ): Generated {
         return expandTracedToNode(parameter)`${traceToNode(parameter, 'name')(this.getPythonNameOrDefault(parameter))}${
             defaultValue && parameter.defaultValue !== undefined
                 ? expandToNode`=${this.generateExpression(parameter.defaultValue, frame)}`
@@ -454,7 +454,7 @@ export class SafeDsPythonGenerator {
         utilitySet: Set<UtilityFunction>,
         typeVariableSet: Set<string>,
         generateOptions: GenerateOptions,
-    ): CompositeGeneratorNode {
+    ): Generated {
         const infoFrame = new GenerationInfoFrame(
             importSet,
             utilitySet,
@@ -590,12 +590,8 @@ export class SafeDsPythonGenerator {
         return collectedStatements.reverse();
     }
 
-    private generateStatement(
-        statement: SdsStatement,
-        frame: GenerationInfoFrame,
-        generateLambda: boolean,
-    ): CompositeGeneratorNode {
-        const result: CompositeGeneratorNode[] = [];
+    private generateStatement(statement: SdsStatement, frame: GenerationInfoFrame, generateLambda: boolean): Generated {
+        const result: Generated[] = [];
         if (isSdsAssignment(statement)) {
             if (statement.expression) {
                 for (const node of AstUtils.streamAllContents(statement.expression)) {
@@ -631,7 +627,7 @@ export class SafeDsPythonGenerator {
         assignment: SdsAssignment,
         frame: GenerationInfoFrame,
         generateLambda: boolean,
-    ): CompositeGeneratorNode {
+    ): Generated {
         const rhsType = this.typeComputer.computeType(assignment.expression);
         const requiredAssignees = rhsType instanceof NamedTupleType ? rhsType.length : 1;
 
@@ -674,7 +670,7 @@ export class SafeDsPythonGenerator {
         }
     }
 
-    private generateAssignee(assignee: SdsAssignee): CompositeGeneratorNode {
+    private generateAssignee(assignee: SdsAssignee): Generated {
         if (isSdsBlockLambdaResult(assignee)) {
             return expandTracedToNode(assignee)`${BLOCK_LAMBDA_RESULT_PREFIX}${traceToNode(
                 assignee,
@@ -694,7 +690,7 @@ export class SafeDsPythonGenerator {
         throw new Error(`Unknown SdsAssignment: ${assignee.$type}`);
     }
 
-    private generateBlockLambda(blockLambda: SdsBlockLambda, frame: GenerationInfoFrame): CompositeGeneratorNode {
+    private generateBlockLambda(blockLambda: SdsBlockLambda, frame: GenerationInfoFrame): Generated {
         const results = streamBlockLambdaResults(blockLambda).toArray();
         const lambdaBlock = this.generateBlock(blockLambda.body, frame, true);
         if (results.length !== 0) {
@@ -721,7 +717,7 @@ export class SafeDsPythonGenerator {
             });
     }
 
-    private generateExpressionLambda(node: SdsExpressionLambda, frame: GenerationInfoFrame): CompositeGeneratorNode {
+    private generateExpressionLambda(node: SdsExpressionLambda, frame: GenerationInfoFrame): Generated {
         const name = frame.getUniqueLambdaName(node);
         const parameters = this.generateParameters(node.parameterList, frame);
         const result = this.generateExpression(node.result, frame);
@@ -732,7 +728,7 @@ export class SafeDsPythonGenerator {
         `;
     }
 
-    private generateExpression(expression: SdsExpression, frame: GenerationInfoFrame): CompositeGeneratorNode {
+    private generateExpression(expression: SdsExpression, frame: GenerationInfoFrame): Generated {
         if (isSdsTemplateStringPart(expression)) {
             if (isSdsTemplateStringStart(expression)) {
                 return expandTracedToNode(expression)`${this.formatStringSingleLine(expression.value)}{ `;
@@ -790,14 +786,14 @@ export class SafeDsPythonGenerator {
         } else if (isSdsCall(expression)) {
             const callable = this.nodeMapper.callToCallable(expression);
             const receiver = this.generateExpression(expression.receiver, frame);
-            let call: CompositeGeneratorNode | undefined = undefined;
+            let call: Generated | undefined = undefined;
 
             // Memoize constructor or function call
             if (isSdsFunction(callable) || isSdsClass(callable)) {
                 if (isSdsFunction(callable)) {
                     const pythonCall = this.builtinAnnotations.getPythonCall(callable);
                     if (pythonCall) {
-                        let thisParam: CompositeGeneratorNode | undefined = undefined;
+                        let thisParam: Generated | undefined = undefined;
                         if (isSdsMemberAccess(expression.receiver)) {
                             thisParam = this.generateExpression(expression.receiver.receiver, frame);
                         }
@@ -806,7 +802,7 @@ export class SafeDsPythonGenerator {
                     }
                 }
                 if (!call && this.isMemoizableCall(expression) && !frame.disableRunnerIntegration) {
-                    let thisParam: CompositeGeneratorNode | undefined = undefined;
+                    let thisParam: Generated | undefined = undefined;
                     if (isSdsMemberAccess(expression.receiver)) {
                         thisParam = this.generateExpression(expression.receiver.receiver, frame);
                     }
@@ -933,7 +929,7 @@ export class SafeDsPythonGenerator {
         throw new Error(`Unknown expression type: ${expression.$type}`);
     }
 
-    private generatePlainCall(expression: SdsCall, frame: GenerationInfoFrame): CompositeGeneratorNode {
+    private generatePlainCall(expression: SdsCall, frame: GenerationInfoFrame): Generated {
         const sortedArgs = this.sortArguments(getArguments(expression));
 
         return expandTracedToNode(expression)`${this.generateExpression(expression.receiver, frame)}(${joinTracedToNode(
@@ -945,10 +941,10 @@ export class SafeDsPythonGenerator {
     private generatePythonCall(
         expression: SdsCall,
         pythonCall: string,
-        argumentsMap: Map<string, CompositeGeneratorNode>,
+        argumentsMap: Map<string, Generated>,
         frame: GenerationInfoFrame,
-        thisParam: CompositeGeneratorNode | undefined = undefined,
-    ): CompositeGeneratorNode {
+        thisParam: Generated | undefined = undefined,
+    ): Generated {
         if (thisParam) {
             argumentsMap.set('this', thisParam);
         }
@@ -1030,8 +1026,8 @@ export class SafeDsPythonGenerator {
     private generateMemoizedCall(
         expression: SdsCall,
         frame: GenerationInfoFrame,
-        thisParam: CompositeGeneratorNode | undefined = undefined,
-    ): CompositeGeneratorNode {
+        thisParam: Generated | undefined = undefined,
+    ): Generated {
         frame.addImport({ importPath: RUNNER_PACKAGE });
         const hiddenParameters = this.getMemoizedCallHiddenParameters(expression, frame);
         const callable = this.nodeMapper.callToCallable(expression);
@@ -1120,11 +1116,11 @@ export class SafeDsPythonGenerator {
         return impurityReasons.some((reason) => reason instanceof FileRead && reason.path === parameter);
     }
 
-    private getMemoizedCallHiddenParameters(expression: SdsCall, frame: GenerationInfoFrame): CompositeGeneratorNode[] {
+    private getMemoizedCallHiddenParameters(expression: SdsCall, frame: GenerationInfoFrame): Generated[] {
         const impurityReasons = this.purityComputer.getImpurityReasonsForCallable(
             this.nodeMapper.callToCallable(expression),
         );
-        const hiddenParameters: CompositeGeneratorNode[] = [];
+        const hiddenParameters: Generated[] = [];
         for (const reason of impurityReasons) {
             if (reason instanceof FileRead) {
                 if (typeof reason.path === 'string') {
@@ -1175,11 +1171,8 @@ export class SafeDsPythonGenerator {
         return classMemberPath.join('.');
     }
 
-    private getArgumentsMap(
-        argumentList: SdsArgument[],
-        frame: GenerationInfoFrame,
-    ): Map<string, CompositeGeneratorNode> {
-        const argumentsMap = new Map<string, CompositeGeneratorNode>();
+    private getArgumentsMap(argumentList: SdsArgument[], frame: GenerationInfoFrame): Map<string, Generated> {
+        const argumentsMap = new Map<string, Generated>();
         argumentList.reduce((map, value) => {
             map.set(this.nodeMapper.argumentToParameter(value)?.name!, this.generateArgument(value, frame));
             return map;
@@ -1205,7 +1198,7 @@ export class SafeDsPythonGenerator {
         argument: SdsArgument,
         frame: GenerationInfoFrame,
         generateOptionalParameterName: boolean = true,
-    ): CompositeGeneratorNode {
+    ): Generated {
         const parameter = this.nodeMapper.argumentToParameter(argument);
         return expandTracedToNode(argument)`${
             parameter !== undefined && !Parameter.isRequired(parameter) && generateOptionalParameterName
@@ -1266,7 +1259,7 @@ export class SafeDsPythonGenerator {
 
 interface UtilityFunction {
     readonly name: string;
-    readonly code: CompositeGeneratorNode;
+    readonly code: Generated;
     readonly imports?: ImportData[];
     readonly typeVariables?: string[];
 }
