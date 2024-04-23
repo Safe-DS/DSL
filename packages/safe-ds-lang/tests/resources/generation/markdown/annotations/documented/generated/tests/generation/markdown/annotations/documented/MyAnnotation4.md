@@ -20,7 +20,7 @@ Description of MyAnnotation4.
 
 **Examples:**
 
-```sds
+```sds hl_lines="1"
 // Example of MyAnnotation4.
 ```
 

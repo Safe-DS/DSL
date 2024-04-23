@@ -4,7 +4,7 @@ Description of myFunction5.
 
 **Examples:**
 
-```sds
+```sds hl_lines="1"
 // Example of myFunction5.
 ```
 

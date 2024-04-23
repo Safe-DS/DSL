@@ -4,7 +4,7 @@ Description of MyEnum3.
 
 **Examples:**
 
-```sds
+```sds hl_lines="1"
 // Example of MyEnum3.
 ```
 

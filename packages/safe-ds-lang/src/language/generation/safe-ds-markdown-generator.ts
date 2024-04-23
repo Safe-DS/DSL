@@ -49,7 +49,7 @@ import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import { NamedType, Type, TypeVariable } from '../typing/model.js';
 import path from 'path';
 import { addLinePrefix, removeLinePrefix } from '../../helpers/strings.js';
-import { expandToStringLF } from 'langium/generate';
+import { expandToStringLF, Generated } from 'langium/generate';
 import { SafeDsClassHierarchy } from '../typing/safe-ds-class-hierarchy.js';
 import { SafeDsClasses } from '../builtins/safe-ds-classes.js';
 import { SafeDsPackageManager } from '../workspace/safe-ds-package-manager.js';
@@ -666,18 +666,25 @@ export class SafeDsMarkdownGenerator {
             return '';
         }
 
-        const result = examples
-            .map(
-                (example) =>
-                    expandToStringLF`
-                        \`\`\`sds
-                        ${example}
-                        \`\`\`
-                    `,
-            )
-            .join('\n');
-
+        const result = examples.map((example) => this.renderExample(example, node.name)).join('\n');
         return result + '\n';
+    }
+
+    private renderExample(example: string, name: string): Generated {
+        const regex = new RegExp(`\\b${name}\\b`, 'u');
+        const highlightedLines = example.split('\n').flatMap((line, index) => {
+            if (regex.test(line)) {
+                return [index + 1];
+            } else {
+                return [];
+            }
+        });
+
+        return expandToStringLF`
+            \`\`\`sds${isEmpty(highlightedLines) ? '' : ` hl_lines="${highlightedLines.join(' ')}"`}
+            ${example}
+            \`\`\`
+        `;
     }
 
     private renderSourceCode(node: SdsDeclaration): string {

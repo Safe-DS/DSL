@@ -49,6 +49,6 @@ Description of MyVariant3.
 
 **Examples:**
 
-```sds
+```sds hl_lines="1"
 // Example of MyVariant3.
 ```

@@ -9,7 +9,7 @@ Description of MyClass7.
 
 **Examples:**
 
-```sds
+```sds hl_lines="1"
 // Example of MyClass7.
 ```
 
