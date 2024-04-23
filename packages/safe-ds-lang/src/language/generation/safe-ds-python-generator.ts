@@ -109,6 +109,8 @@ const BLOCK_LAMBDA_RESULT_PREFIX = `${CODEGEN_PREFIX}block_lambda_result_`;
 const YIELD_PREFIX = `${CODEGEN_PREFIX}yield_`;
 
 const RUNNER_PACKAGE = 'safeds_runner';
+const MEMOIZED_DYNAMIC_CALL = `${RUNNER_PACKAGE}.memoized_dynamic_call`;
+const MEMOIZED_STATIC_CALL = `${RUNNER_PACKAGE}.memoized_static_call`;
 const PYTHON_INDENT = '    ';
 
 const SPACING = new CompositeGeneratorNode(NL, NL);
@@ -971,18 +973,14 @@ export class SafeDsPythonGenerator {
         const hiddenParameters = this.getMemoizedCallHiddenParameters(expression, frame);
         const callable = this.nodeMapper.callToCallable(expression);
         if (isSdsFunction(callable) && !isStatic(callable) && isSdsMemberAccess(expression.receiver)) {
-            return expandTracedToNode(
-                expression,
-            )`${RUNNER_PACKAGE}.memoized_dynamic_call("${this.getPythonNameOrDefault(
+            return expandTracedToNode(expression)`${MEMOIZED_DYNAMIC_CALL}("${this.getPythonNameOrDefault(
                 callable,
             )}", lambda *_ : ${generatedPythonCall}, [${thisParam}, ${this.generateMemoizedArgumentList(
                 expression,
                 frame,
             )}], [${joinToNode(hiddenParameters, (param) => param, { separator: ', ' })}])`;
         }
-        return expandTracedToNode(
-            expression,
-        )`${RUNNER_PACKAGE}.memoized_static_call("${this.generateFullyQualifiedFunctionName(
+        return expandTracedToNode(expression)`${MEMOIZED_STATIC_CALL}("${this.generateFullyQualifiedFunctionName(
             expression,
         )}", lambda *_ : ${generatedPythonCall}, [${this.generateMemoizedArgumentList(
             expression,
@@ -1047,16 +1045,16 @@ export class SafeDsPythonGenerator {
                 parameters,
                 hiddenParameters,
             );
+        } else {
+            return this.generateMemoizedStaticCall(
+                expression,
+                containsOptionalArgs,
+                frame,
+                callable,
+                parameters,
+                hiddenParameters,
+            );
         }
-
-        return this.generateMemoizedStaticCall(
-            expression,
-            containsOptionalArgs,
-            frame,
-            callable,
-            parameters,
-            hiddenParameters,
-        );
     }
 
     private generateMemoizedDynamicCall(
@@ -1070,9 +1068,7 @@ export class SafeDsPythonGenerator {
     ) {
         frame.addImport({ importPath: RUNNER_PACKAGE });
 
-        return expandTracedToNode(
-            expression,
-        )`${RUNNER_PACKAGE}.memoized_dynamic_call("${this.getPythonNameOrDefault(callable)}", ${
+        return expandTracedToNode(expression)`${MEMOIZED_DYNAMIC_CALL}("${this.getPythonNameOrDefault(callable)}", ${
             containsOptionalArgs ? 'lambda *_ : ' : ''
         }${containsOptionalArgs ? this.generatePlainCall(expression, frame) : 'None'}, [${thisParam}${
             parameters.length > 0 ? ', ' : ''
@@ -1100,7 +1096,7 @@ export class SafeDsPythonGenerator {
 
         const fullyQualifiedTargetName = this.generateFullyQualifiedFunctionName(expression);
 
-        return expandTracedToNode(expression)`${RUNNER_PACKAGE}.memoized_static_call("${fullyQualifiedTargetName}", ${
+        return expandTracedToNode(expression)`${MEMOIZED_STATIC_CALL}("${fullyQualifiedTargetName}", ${
             containsOptionalArgs ? 'lambda *_ : ' : ''
         }${
             containsOptionalArgs
