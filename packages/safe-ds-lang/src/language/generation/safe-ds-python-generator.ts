@@ -1033,8 +1033,6 @@ export class SafeDsPythonGenerator {
         const hiddenParameters = this.getMemoizedCallHiddenParameters(expression, frame);
         const callable = this.nodeMapper.callToCallable(expression);
         const parameters = getParameters(callable);
-        // For a static function, the thisParam would be the class containing the function. We do not need to generate it in this case
-        const generateThisParam = thisParam && isSdsFunction(callable) && !isStatic(callable);
         const containsOptionalArgs = getArguments(expression).some((arg) =>
             Parameter.isOptional(this.nodeMapper.argumentToParameter(arg)),
         );
@@ -1045,7 +1043,6 @@ export class SafeDsPythonGenerator {
                 callable,
                 containsOptionalArgs,
                 frame,
-                generateThisParam,
                 thisParam,
                 parameters,
                 hiddenParameters,
@@ -1057,7 +1054,6 @@ export class SafeDsPythonGenerator {
             containsOptionalArgs,
             frame,
             callable,
-            thisParam,
             parameters,
             hiddenParameters,
         );
@@ -1068,7 +1064,6 @@ export class SafeDsPythonGenerator {
         callable: SdsFunction,
         containsOptionalArgs: boolean,
         frame: GenerationInfoFrame,
-        generateThisParam: '' | undefined | boolean,
         thisParam: Generated | undefined,
         parameters: SdsParameter[],
         hiddenParameters: Generated[],
@@ -1079,10 +1074,8 @@ export class SafeDsPythonGenerator {
             expression,
         )`${RUNNER_PACKAGE}.memoized_dynamic_call("${this.getPythonNameOrDefault(callable)}", ${
             containsOptionalArgs ? 'lambda *_ : ' : ''
-        }${
-            containsOptionalArgs ? this.generatePlainCall(expression, frame) : 'None'
-        }, [${generateThisParam ? thisParam : ''}${
-            generateThisParam && parameters.length > 0 ? ', ' : ''
+        }${containsOptionalArgs ? this.generatePlainCall(expression, frame) : 'None'}, [${thisParam}${
+            parameters.length > 0 ? ', ' : ''
         }${this.generateMemoizedArgumentList(
             expression,
             frame,
@@ -1094,7 +1087,6 @@ export class SafeDsPythonGenerator {
         containsOptionalArgs: boolean,
         frame: GenerationInfoFrame,
         callable: SdsCallable | undefined,
-        thisParam: Generated,
         parameters: SdsParameter[],
         hiddenParameters: Generated[],
     ) {
