@@ -1044,8 +1044,9 @@ export class SafeDsPythonGenerator {
 
     private generateMemoizedPositionalArgumentList(node: SdsCall, frame: GenerationInfoFrame): Generated {
         const callable = this.nodeMapper.callToCallable(node);
+        const parameters = getParameters(callable);
         const requiredParameters = getParameters(callable).filter(Parameter.isRequired);
-        const parametersToArgument = this.nodeMapper.parametersToArguments(requiredParameters, getArguments(node));
+        const parametersToArgument = this.nodeMapper.parametersToArguments(parameters, getArguments(node));
 
         return joinTracedToNode(node.argumentList, 'arguments')(
             requiredParameters,
@@ -1061,8 +1062,9 @@ export class SafeDsPythonGenerator {
 
     private generateMemoizedKeywordArgumentList(node: SdsCall, frame: GenerationInfoFrame): Generated {
         const callable = this.nodeMapper.callToCallable(node);
+        const parameters = getParameters(callable);
         const optionalParameters = getParameters(callable).filter(Parameter.isOptional);
-        const parametersToArgument = this.nodeMapper.parametersToArguments(optionalParameters, getArguments(node));
+        const parametersToArgument = this.nodeMapper.parametersToArguments(parameters, getArguments(node));
 
         return joinTracedToNode(node.argumentList, 'arguments')(
             optionalParameters,
