@@ -2,7 +2,7 @@ import { expandToNode, Generated } from 'langium/generate';
 
 const CODEGEN_PREFIX = '__gen_';
 
-export const UTILITY_EAGER_OR: UtilityFunction = {
+export const eagerOr: UtilityFunction = {
     name: `${CODEGEN_PREFIX}eager_or`,
     code: expandToNode`
         def ${CODEGEN_PREFIX}eager_or(left_operand: bool, right_operand: bool) -> bool:
@@ -10,7 +10,7 @@ export const UTILITY_EAGER_OR: UtilityFunction = {
     `,
 };
 
-export const UTILITY_EAGER_AND: UtilityFunction = {
+export const eagerAnd: UtilityFunction = {
     name: `${CODEGEN_PREFIX}eager_and`,
     code: expandToNode`
         def ${CODEGEN_PREFIX}eager_and(left_operand: bool, right_operand: bool) -> bool:
@@ -18,7 +18,7 @@ export const UTILITY_EAGER_AND: UtilityFunction = {
     `,
 };
 
-export const UTILITY_EAGER_ELVIS: UtilityFunction = {
+export const eagerElvis: UtilityFunction = {
     name: `${CODEGEN_PREFIX}eager_elvis`,
     code: expandToNode`
         def ${CODEGEN_PREFIX}eager_elvis(left_operand: ${CODEGEN_PREFIX}T, right_operand: ${CODEGEN_PREFIX}T) -> ${CODEGEN_PREFIX}T:
@@ -27,7 +27,7 @@ export const UTILITY_EAGER_ELVIS: UtilityFunction = {
     typeVariables: [`${CODEGEN_PREFIX}T`],
 };
 
-export const UTILITY_NULL_SAFE_CALL: UtilityFunction = {
+export const nullSafeCall: UtilityFunction = {
     name: `${CODEGEN_PREFIX}null_safe_call`,
     code: expandToNode`
         def ${CODEGEN_PREFIX}null_safe_call(receiver: Any, callable: Callable[[], ${CODEGEN_PREFIX}T]) -> ${CODEGEN_PREFIX}T | None:
@@ -40,7 +40,7 @@ export const UTILITY_NULL_SAFE_CALL: UtilityFunction = {
     typeVariables: [`${CODEGEN_PREFIX}T`],
 };
 
-export const UTILITY_NULL_SAFE_INDEXED_ACCESS: UtilityFunction = {
+export const nullSafeIndexedAccess: UtilityFunction = {
     name: `${CODEGEN_PREFIX}null_safe_indexed_access`,
     code: expandToNode`
         def ${CODEGEN_PREFIX}null_safe_indexed_access(receiver: Any, index: Any) -> ${CODEGEN_PREFIX}T | None:
@@ -50,7 +50,7 @@ export const UTILITY_NULL_SAFE_INDEXED_ACCESS: UtilityFunction = {
     typeVariables: [`${CODEGEN_PREFIX}T`],
 };
 
-export const UTILITY_NULL_SAFE_MEMBER_ACCESS: UtilityFunction = {
+export const nullSafeMemberAccess: UtilityFunction = {
     name: `${CODEGEN_PREFIX}null_safe_member_access`,
     code: expandToNode`
         def ${CODEGEN_PREFIX}null_safe_member_access(receiver: Any, member_name: str) -> ${CODEGEN_PREFIX}T | None:

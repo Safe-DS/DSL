@@ -103,12 +103,12 @@ import { SafeDsTypeComputer } from '../../typing/safe-ds-type-computer.js';
 import { NamedTupleType } from '../../typing/model.js';
 import { getOutermostContainerOfType } from '../../helpers/astUtils.js';
 import {
-    UTILITY_EAGER_AND,
-    UTILITY_EAGER_ELVIS,
-    UTILITY_EAGER_OR,
-    UTILITY_NULL_SAFE_CALL,
-    UTILITY_NULL_SAFE_INDEXED_ACCESS,
-    UTILITY_NULL_SAFE_MEMBER_ACCESS,
+    eagerAnd,
+    eagerElvis,
+    eagerOr,
+    nullSafeCall,
+    nullSafeIndexedAccess,
+    nullSafeMemberAccess,
     UtilityFunction,
 } from './utilityFunctions.js';
 import { CODEGEN_PREFIX } from './constants.js';
@@ -764,11 +764,11 @@ export class SafeDsPythonGenerator {
             }
 
             if (expression.isNullSafe) {
-                frame.addUtility(UTILITY_NULL_SAFE_CALL);
+                frame.addUtility(nullSafeCall);
                 return expandTracedToNode(expression)`${traceToNode(
                     expression,
                     'isNullSafe',
-                )(UTILITY_NULL_SAFE_CALL.name)}(${receiver}, lambda: ${call})`;
+                )(nullSafeCall.name)}(${receiver}, lambda: ${call})`;
             } else {
                 return call;
             }
@@ -779,23 +779,23 @@ export class SafeDsPythonGenerator {
             const rightOperand = this.generateExpression(expression.rightOperand, frame);
             switch (expression.operator) {
                 case 'or':
-                    frame.addUtility(UTILITY_EAGER_OR);
+                    frame.addUtility(eagerOr);
                     return expandTracedToNode(expression)`${traceToNode(
                         expression,
                         'operator',
-                    )(UTILITY_EAGER_OR.name)}(${leftOperand}, ${rightOperand})`;
+                    )(eagerOr.name)}(${leftOperand}, ${rightOperand})`;
                 case 'and':
-                    frame.addUtility(UTILITY_EAGER_AND);
+                    frame.addUtility(eagerAnd);
                     return expandTracedToNode(expression)`${traceToNode(
                         expression,
                         'operator',
-                    )(UTILITY_EAGER_AND.name)}(${leftOperand}, ${rightOperand})`;
+                    )(eagerAnd.name)}(${leftOperand}, ${rightOperand})`;
                 case '?:':
-                    frame.addUtility(UTILITY_EAGER_ELVIS);
+                    frame.addUtility(eagerElvis);
                     return expandTracedToNode(expression)`${traceToNode(
                         expression,
                         'operator',
-                    )(UTILITY_EAGER_ELVIS.name)}(${leftOperand}, ${rightOperand})`;
+                    )(eagerElvis.name)}(${leftOperand}, ${rightOperand})`;
                 case '===':
                     return expandTracedToNode(expression)`(${leftOperand}) ${traceToNode(
                         expression,
@@ -814,11 +814,11 @@ export class SafeDsPythonGenerator {
             }
         } else if (isSdsIndexedAccess(expression)) {
             if (expression.isNullSafe) {
-                frame.addUtility(UTILITY_NULL_SAFE_INDEXED_ACCESS);
+                frame.addUtility(nullSafeIndexedAccess);
                 return expandTracedToNode(expression)`${traceToNode(
                     expression,
                     'isNullSafe',
-                )(UTILITY_NULL_SAFE_INDEXED_ACCESS.name)}(${this.generateExpression(
+                )(nullSafeIndexedAccess.name)}(${this.generateExpression(
                     expression.receiver,
                     frame,
                 )}, ${this.generateExpression(expression.index, frame)})`;
@@ -847,11 +847,11 @@ export class SafeDsPythonGenerator {
             } else {
                 const memberExpression = this.generateExpression(expression.member!, frame);
                 if (expression.isNullSafe) {
-                    frame.addUtility(UTILITY_NULL_SAFE_MEMBER_ACCESS);
+                    frame.addUtility(nullSafeMemberAccess);
                     return expandTracedToNode(expression)`${traceToNode(
                         expression,
                         'isNullSafe',
-                    )(UTILITY_NULL_SAFE_MEMBER_ACCESS.name)}(${receiver}, '${memberExpression}')`;
+                    )(nullSafeMemberAccess.name)}(${receiver}, '${memberExpression}')`;
                 } else {
                     return expandTracedToNode(expression)`${receiver}.${memberExpression}`;
                 }
