@@ -1057,7 +1057,6 @@ export class SafeDsPythonGenerator {
             containsOptionalArgs,
             frame,
             callable,
-            generateThisParam,
             thisParam,
             parameters,
             hiddenParameters,
@@ -1095,7 +1094,6 @@ export class SafeDsPythonGenerator {
         containsOptionalArgs: boolean,
         frame: GenerationInfoFrame,
         callable: SdsCallable | undefined,
-        generateThisParam: '' | undefined | boolean,
         thisParam: Generated,
         parameters: SdsParameter[],
         hiddenParameters: Generated[],
@@ -1118,9 +1116,7 @@ export class SafeDsPythonGenerator {
                 : isSdsMemberAccess(expression.receiver)
                   ? this.getClassQualifiedNameForMember(<SdsClassMember>callable)
                   : this.generateExpression(expression.receiver, frame)
-        }, [${generateThisParam ? thisParam : ''}${
-            generateThisParam && parameters.length > 0 ? ', ' : ''
-        }${this.generateMemoizedArgumentList(
+        }, [${this.generateMemoizedArgumentList(
             expression,
             frame,
         )}], [${joinToNode(hiddenParameters, (param) => param, { separator: ', ' })}])`;
