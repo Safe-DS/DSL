@@ -975,14 +975,14 @@ export class SafeDsPythonGenerator {
         if (isSdsFunction(callable) && !isStatic(callable) && isSdsMemberAccess(expression.receiver)) {
             return expandTracedToNode(expression)`${MEMOIZED_STATIC_CALL}("${this.generateFullyQualifiedFunctionName(
                 expression,
-            )}", lambda *_ : ${generatedPythonCall}, [${thisParam}, ${this.generateMemoizedArgumentList(
+            )}", lambda *_ : ${generatedPythonCall}, [${thisParam}, ${this.generateMemoizedPositionalArgumentList(
                 expression,
                 frame,
             )}], [${joinToNode(hiddenParameters, (param) => param, { separator: ', ' })}])`;
         }
         return expandTracedToNode(expression)`${MEMOIZED_STATIC_CALL}("${this.generateFullyQualifiedFunctionName(
             expression,
-        )}", lambda *_ : ${generatedPythonCall}, [${this.generateMemoizedArgumentList(
+        )}", lambda *_ : ${generatedPythonCall}, [${this.generateMemoizedPositionalArgumentList(
             expression,
             frame,
         )}], [${joinToNode(hiddenParameters, (param) => param, { separator: ', ' })}])`;
@@ -1036,15 +1036,7 @@ export class SafeDsPythonGenerator {
         );
 
         if (isSdsFunction(callable) && !isStatic(callable) && isSdsMemberAccess(expression.receiver)) {
-            return this.generateMemoizedDynamicCall(
-                expression,
-                callable,
-                containsOptionalArgs,
-                frame,
-                thisParam,
-                parameters,
-                hiddenParameters,
-            );
+            return this.generateMemoizedDynamicCall(expression, callable, thisParam, frame);
         } else {
             return this.generateMemoizedStaticCall(
                 expression,
@@ -1060,22 +1052,22 @@ export class SafeDsPythonGenerator {
     private generateMemoizedDynamicCall(
         expression: SdsCall,
         callable: SdsFunction,
-        containsOptionalArgs: boolean,
+        thisParam: Generated,
         frame: GenerationInfoFrame,
-        thisParam: Generated | undefined,
-        parameters: SdsParameter[],
-        hiddenParameters: Generated[],
     ) {
         frame.addImport({ importPath: RUNNER_PACKAGE });
 
-        return expandTracedToNode(expression)`${MEMOIZED_DYNAMIC_CALL}("${this.getPythonNameOrDefault(callable)}", ${
-            containsOptionalArgs ? 'lambda *_ : ' : ''
-        }${containsOptionalArgs ? this.generatePlainCall(expression, frame) : 'None'}, [${thisParam}${
-            parameters.length > 0 ? ', ' : ''
-        }${this.generateMemoizedArgumentList(
-            expression,
-            frame,
-        )}], [${joinToNode(hiddenParameters, (param) => param, { separator: ', ' })}])`;
+        const hiddenParameters = this.getMemoizedCallHiddenParameters(expression, frame);
+
+        return expandTracedToNode(expression)`
+            ${MEMOIZED_DYNAMIC_CALL}(
+                ${thisParam},
+                "${this.getPythonNameOrDefault(callable)}",
+                [${this.generateMemoizedPositionalArgumentList(expression, frame)}],
+                {${this.generateMemoizedKeywordArgumentList(expression, frame)}},
+                [${joinToNode(hiddenParameters, (param) => param, { separator: ', ' })}]
+            )
+        `;
     }
 
     private generateMemoizedStaticCall(
@@ -1104,22 +1096,39 @@ export class SafeDsPythonGenerator {
                 : isSdsMemberAccess(expression.receiver)
                   ? this.getClassQualifiedNameForMember(<SdsClassMember>callable)
                   : this.generateExpression(expression.receiver, frame)
-        }, [${this.generateMemoizedArgumentList(
+        }, [${this.generateMemoizedPositionalArgumentList(
             expression,
             frame,
         )}], [${joinToNode(hiddenParameters, (param) => param, { separator: ', ' })}])`;
     }
 
-    private generateMemoizedArgumentList(node: SdsCall, frame: GenerationInfoFrame): Generated {
+    private generateMemoizedPositionalArgumentList(node: SdsCall, frame: GenerationInfoFrame): Generated {
         const callable = this.nodeMapper.callToCallable(node);
-        const parameters = getParameters(callable);
-        const parametersToArgument = this.nodeMapper.parametersToArguments(parameters, getArguments(node));
+        const requiredParameters = getParameters(callable).filter(Parameter.isRequired);
+        const parametersToArgument = this.nodeMapper.parametersToArguments(requiredParameters, getArguments(node));
 
         return joinTracedToNode(node.argumentList, 'arguments')(
-            parameters,
+            requiredParameters,
             (parameter) => {
                 const argument = parametersToArgument.get(parameter);
                 return this.generateMemoizedArgument(argument, parameter, frame);
+            },
+            {
+                separator: ', ',
+            },
+        );
+    }
+
+    private generateMemoizedKeywordArgumentList(node: SdsCall, frame: GenerationInfoFrame): Generated {
+        const callable = this.nodeMapper.callToCallable(node);
+        const optionalParameters = getParameters(callable).filter(Parameter.isOptional);
+        const parametersToArgument = this.nodeMapper.parametersToArguments(optionalParameters, getArguments(node));
+
+        return joinTracedToNode(node.argumentList, 'arguments')(
+            optionalParameters,
+            (parameter) => {
+                const argument = parametersToArgument.get(parameter);
+                return `"${parameter.name}": ` + this.generateMemoizedArgument(argument, parameter, frame);
             },
             {
                 separator: ', ',
