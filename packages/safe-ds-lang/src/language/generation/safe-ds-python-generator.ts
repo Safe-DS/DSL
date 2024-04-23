@@ -61,6 +61,7 @@ import {
     SdsDeclaration,
     SdsExpression,
     SdsExpressionLambda,
+    SdsFunction,
     SdsLambda,
     SdsModule,
     SdsParameter,
@@ -1039,18 +1040,16 @@ export class SafeDsPythonGenerator {
         );
         const fullyQualifiedTargetName = this.generateFullyQualifiedFunctionName(expression);
         if (isSdsFunction(callable) && !isStatic(callable) && isSdsMemberAccess(expression.receiver)) {
-            return expandTracedToNode(
+            return this.generateMemoizedDynamicCall(
                 expression,
-            )`${RUNNER_PACKAGE}.memoized_dynamic_call("${this.getPythonNameOrDefault(callable)}", ${
-                containsOptionalArgs ? 'lambda *_ : ' : ''
-            }${
-                containsOptionalArgs ? this.generatePlainCall(expression, frame) : 'None'
-            }, [${generateThisParam ? thisParam : ''}${
-                generateThisParam && parameters.length > 0 ? ', ' : ''
-            }${this.generateMemoizedArgumentList(
-                expression,
+                callable,
+                containsOptionalArgs,
                 frame,
-            )}], [${joinToNode(hiddenParameters, (param) => param, { separator: ', ' })}])`;
+                generateThisParam,
+                thisParam,
+                parameters,
+                hiddenParameters,
+            );
         }
         if (!containsOptionalArgs && isSdsMemberAccess(expression.receiver)) {
             const classDeclaration = getOutermostContainerOfType(callable, isSdsClass)!;
@@ -1065,6 +1064,30 @@ export class SafeDsPythonGenerator {
                 : isSdsMemberAccess(expression.receiver)
                   ? this.getClassQualifiedNameForMember(<SdsClassMember>callable)
                   : this.generateExpression(expression.receiver, frame)
+        }, [${generateThisParam ? thisParam : ''}${
+            generateThisParam && parameters.length > 0 ? ', ' : ''
+        }${this.generateMemoizedArgumentList(
+            expression,
+            frame,
+        )}], [${joinToNode(hiddenParameters, (param) => param, { separator: ', ' })}])`;
+    }
+
+    private generateMemoizedDynamicCall(
+        expression: SdsCall,
+        callable: SdsFunction,
+        containsOptionalArgs: boolean,
+        frame: GenerationInfoFrame,
+        generateThisParam: '' | undefined | boolean,
+        thisParam: Generated | undefined,
+        parameters: SdsParameter[],
+        hiddenParameters: Generated[],
+    ) {
+        return expandTracedToNode(
+            expression,
+        )`${RUNNER_PACKAGE}.memoized_dynamic_call("${this.getPythonNameOrDefault(callable)}", ${
+            containsOptionalArgs ? 'lambda *_ : ' : ''
+        }${
+            containsOptionalArgs ? this.generatePlainCall(expression, frame) : 'None'
         }, [${generateThisParam ? thisParam : ''}${
             generateThisParam && parameters.length > 0 ? ', ' : ''
         }${this.generateMemoizedArgumentList(
