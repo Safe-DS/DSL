@@ -4,7 +4,7 @@ Description of mySegment6.
 
 **Examples:**
 
-```sds
+```sds hl_lines="1"
 // Example of mySegment6.
 ```
 

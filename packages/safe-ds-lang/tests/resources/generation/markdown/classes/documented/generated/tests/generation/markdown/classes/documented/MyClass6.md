@@ -128,7 +128,7 @@ Description of myAttribute3.
 
 **Examples:**
 
-```sds
+```sds hl_lines="1"
 // Example of myAttribute3.
 ```
 

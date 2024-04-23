@@ -17,7 +17,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="187"
+    ```sds linenums="188"
     class String {
 
         /**
@@ -65,7 +65,7 @@ Parses the string to a floating-point number.
 
 **Examples:**
 
-```sds
+```sds hl_lines="2"
 pipeline example {
     val float = "1.0".toFloat(); // 1.0
 }
@@ -73,7 +73,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="197"
+    ```sds linenums="198"
     @Pure
     @PythonCall("float($this)")
     fun toFloat() -> f: Float
@@ -97,12 +97,12 @@ Parses the string to an integer.
 
 **Examples:**
 
-```sds
+```sds hl_lines="2"
 pipeline example {
     val int = "10".toInt(); // 10
 }
 ```
-```sds
+```sds hl_lines="2"
 pipeline example {
     val int = "10".toInt(base = 2); // 2
 }
@@ -110,7 +110,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="216"
+    ```sds linenums="217"
     @Pure
     @PythonCall("int($this, $base)")
     fun toInt(base: Int = 10) -> i: Int

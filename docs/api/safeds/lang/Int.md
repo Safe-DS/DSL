@@ -21,6 +21,7 @@ pipeline example {
 
     ```sds linenums="54"
     class Int sub Number {
+
         /**
          * Converts this integer to a floating-point number.
          *
@@ -47,7 +48,7 @@ Converts this integer to a floating-point number.
 
 **Examples:**
 
-```sds
+```sds hl_lines="2"
 pipeline example {
     val float = 1.toFloat(); // 1.0
 }
@@ -55,7 +56,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="63"
+    ```sds linenums="64"
     @Pure
     @PythonCall("float($this)")
     fun toFloat() -> f: Float

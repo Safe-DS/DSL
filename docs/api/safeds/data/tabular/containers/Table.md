@@ -754,7 +754,7 @@ pipeline example {
          *
          * The original table is not modified.
          *
-         * @result result1 The table with the transformed column.
+         * @result transformedTable The table with the transformed column.
          *
          * @example
          * pipeline example {
@@ -765,8 +765,8 @@ pipeline example {
         @PythonName("transform_column")
         fun transformColumn(
             name: String,
-            transformer: (param1: Row) -> param2: Any
-        ) -> result1: Table
+            transformer: (row: Row) -> newColumnValue: Any?
+        ) -> transformedTable: Table
 
         /**
          * Return a new `Table` with a learned transformation applied to this table.
@@ -2436,13 +2436,13 @@ The original table is not modified.
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `name` | [`String`][safeds.lang.String] | - | - |
-| `transformer` | `#!sds (param1: Row) -> (param2: Any)` | - | - |
+| `transformer` | `#!sds (row: Row) -> (newColumnValue: Any?)` | - | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Table`][safeds.data.tabular.containers.Table] | The table with the transformed column. |
+| `transformedTable` | [`Table`][safeds.data.tabular.containers.Table] | The table with the transformed column. |
 
 **Examples:**
 
@@ -2459,8 +2459,8 @@ pipeline example {
     @PythonName("transform_column")
     fun transformColumn(
         name: String,
-        transformer: (param1: Row) -> param2: Any
-    ) -> result1: Table
+        transformer: (row: Row) -> newColumnValue: Any?
+    ) -> transformedTable: Table
     ```
 
 ## `#!sds fun` transformTable {#safeds.data.tabular.containers.Table.transformTable data-toc-label='transformTable'}

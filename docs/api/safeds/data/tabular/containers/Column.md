@@ -17,7 +17,7 @@ A column is a named collection of values.
 
 **Examples:**
 
-```sds
+```sds hl_lines="2"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
 }
@@ -514,7 +514,7 @@ Return the name of the column.
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
     val name = column.name; // "test"
@@ -529,7 +529,7 @@ Return the number of elements in the column.
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
     val numberOfRows = column.numberOfRows; // 3
@@ -544,13 +544,13 @@ Return the type of the column.
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
     val type = column.type; // Integer
 }
 ```
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", ["a", "b", "c"]);
     val type = column.type; // String
@@ -575,13 +575,13 @@ Check if all values have a given property.
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
     val allMatch = column.all((value) -> value < 4); // true
 }
 ```
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
     val allMatch = column.all((value) -> value < 2); // false
@@ -615,13 +615,13 @@ Check if any value has a given property.
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
     val anyMatch = column.any((value) -> value < 2); // true
 }
 ```
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
     val anyMatch = column.any((value) -> value < 1); // false
@@ -655,14 +655,14 @@ Calculate Pearson correlation between this and another column. Both columns have
 
 **Examples:**
 
-```sds
+```sds hl_lines="4"
 pipeline example {
     val column1 = Column("test1", [1, 2, 3]);
     val column2 = Column("test2", [2, 4, 6]);
     val correlation = column1.correlationWith(column2); // 1.0
 }
 ```
-```sds
+```sds hl_lines="4"
 pipeline example {
     val column1 = Column("test1", [1, 2, 3]);
     val column2 = Column("test2", [3, 2, 1]);
@@ -692,7 +692,7 @@ Return a list of all unique values in the column.
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3, 2, 4, 3]);
     val uniqueValues = column.getUniqueValues(); // [1, 2, 3, 4]
@@ -725,7 +725,7 @@ Return column value at specified index, starting at 0.
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
     val value = column.getValue(1); // 2
@@ -754,13 +754,13 @@ Return whether the column has missing values.
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3, null]);
     val hasMissingValues = column.hasMissingValues(); // true
 }
 ```
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
     val hasMissingValues = column.hasMissingValues(); // false
@@ -793,13 +793,13 @@ $$
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
     val idness = column.idness(); // 1.0
 }
 ```
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 2, 3]);
     val idness = column.idness(); // 0.75
@@ -825,7 +825,7 @@ Return the maximum value of the column. The column has to be numerical.
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
     val maximum = column.maximum(); // 3
@@ -851,7 +851,7 @@ Return the mean value of the column. The column has to be numerical.
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
     val mean = column.mean(); // 2.0
@@ -877,13 +877,13 @@ Return the median value of the column. The column has to be numerical.
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
     val median = column.median(); // 2.0
 }
 ```
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3, 4]);
     val median = column.median(); // 2.5
@@ -909,7 +909,7 @@ Return the minimum value of the column. The column has to be numerical.
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
     val minimum = column.minimum(); // 1
@@ -935,13 +935,13 @@ Return the ratio of missing values to the total number of elements in the column
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3, 4]);
     val missingValueRatio = column.missingValueRatio(); // 0.0
 }
 ```
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3, null]);
     val missingValueRatio = column.missingValueRatio(); // 0.25
@@ -968,13 +968,13 @@ Return the mode of the column.
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 2, 3]);
     val mode = column.mode(); // [2]
 }
 ```
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 2, 3, 3]);
     val mode = column.mode(); // [2, 3]
@@ -1006,13 +1006,13 @@ Check if no values has a given property.
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
     val noneMatch = column.none((value) -> value < 1); // true
 }
 ```
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
     val noneMatch = column.none((value) -> value > 1); // false
@@ -1040,7 +1040,7 @@ Plot this column in a boxplot. This function can only plot real numerical data.
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
     val plot = column.plotBoxplot();
@@ -1067,7 +1067,7 @@ Plot a column in a histogram.
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
     val plot = column.plotHistogram();
@@ -1102,7 +1102,7 @@ The original column is not modified.
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
     val renamedColumn = column.rename("new_name");
@@ -1138,13 +1138,13 @@ The stability is not defined for a column with only null values.
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 2, 3]);
     val stability = column.stability(); // 0.5
 }
 ```
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 2, 3, null]);
     val stability = column.stability(); // 0.5
@@ -1170,7 +1170,7 @@ Return the standard deviation of the column. The column has to be numerical.
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
     val standardDeviation = column.standardDeviation(); // 1.0
@@ -1197,7 +1197,7 @@ Return the sum of the column. The column has to be numerical.
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
     val sum = column.sum(); // 6
@@ -1223,7 +1223,7 @@ Return an HTML representation of the column.
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
     val html = column.toHtml();
@@ -1264,7 +1264,7 @@ The original column is not modified.
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
     val price = Column("price", [4.99, 5.99, 2.49]);
     val discountedPrice = price.transform((value) -> value * 0.75);
@@ -1292,7 +1292,7 @@ Return the variance of the column. The column has to be numerical.
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
     val variance = column.variance(); // 1.0

@@ -19,7 +19,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="76"
+    ```sds linenums="77"
     class Float sub Number {
         /**
          * Converts this floating-point number to an integer by truncating the fractional part.
@@ -47,7 +47,7 @@ Converts this floating-point number to an integer by truncating the fractional p
 
 **Examples:**
 
-```sds
+```sds hl_lines="2"
 pipeline example {
     val int = 1.0.toInt(); // 1
 }
@@ -55,7 +55,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="85"
+    ```sds linenums="86"
     @Pure
     @PythonCall("int($this)")
     fun toInt() -> i: Int

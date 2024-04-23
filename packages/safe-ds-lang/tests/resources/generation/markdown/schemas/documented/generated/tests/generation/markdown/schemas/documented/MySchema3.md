@@ -4,7 +4,7 @@ Description of MySchema3.
 
 **Examples:**
 
-```sds
+```sds hl_lines="1"
 // Example of MySchema3.
 ```
 
