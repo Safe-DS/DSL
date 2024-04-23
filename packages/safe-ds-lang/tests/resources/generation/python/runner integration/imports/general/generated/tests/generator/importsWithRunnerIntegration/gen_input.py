@@ -15,57 +15,57 @@ def test():
     f(segment2InSamePackage())
     f(safeds_runner.memoized_static_call(
         "tests.generator.differentPackageWithRunnerIntegration.function1InDifferentPackage",
-         function1InDifferentPackage,
-         [],
-         {},
-         []
+        function1InDifferentPackage,
+        [],
+        {},
+        []
     ))
     f(safeds_runner.memoized_static_call(
         "tests.generator.differentPackageWithRunnerIntegration.function1InDifferentPackage",
-         function1InDifferentPackage,
-         [],
-         {},
-         []
+        function1InDifferentPackage,
+        [],
+        {},
+        []
     ))
     f(safeds_runner.memoized_static_call(
         "tests.generator.differentPackageWithRunnerIntegration.function2InDifferentPackage",
-         g,
-         [],
-         {},
-         []
+        g,
+        [],
+        {},
+        []
     ))
     f(safeds_runner.memoized_static_call(
         "tests.generator.differentPackageWithRunnerIntegration.function2InDifferentPackage",
-         g,
-         [],
-         {},
-         []
+        g,
+        [],
+        {},
+        []
     ))
     f(safeds_runner.memoized_static_call(
         "special_location.function1InCompilationUnitWithPythonModule",
-         function1InCompilationUnitWithPythonModule,
-         [],
-         {},
-         []
+        function1InCompilationUnitWithPythonModule,
+        [],
+        {},
+        []
     ))
     f(safeds_runner.memoized_static_call(
         "special_location.function1InCompilationUnitWithPythonModule",
-         function1InCompilationUnitWithPythonModule,
-         [],
-         {},
-         []
+        function1InCompilationUnitWithPythonModule,
+        [],
+        {},
+        []
     ))
     f(safeds_runner.memoized_static_call(
         "special_location.function2InCompilationUnitWithPythonModule",
-         h,
-         [],
-         {},
-         []
+        h,
+        [],
+        {},
+        []
     ))
     f(safeds_runner.memoized_static_call(
         "special_location.function2InCompilationUnitWithPythonModule",
-         h,
-         [],
-         {},
-         []
+        h,
+        [],
+        {},
+        []
     ))
