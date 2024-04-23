@@ -26,35 +26,35 @@ def test():
         "tests.generator.runnerIntegration.expressions.calls.main.g",
          g,
          [1],
-         {"param2": [object Object]},
+         {"param2": 1},
          []
     ))
     f(safeds_runner.memoized_static_call(
         "tests.generator.runnerIntegration.expressions.calls.main.g",
          g,
          [2],
-         {"param2": [object Object]},
+         {"param2": 2},
          []
     ))
     f(safeds_runner.memoized_static_call(
         "tests.generator.runnerIntegration.expressions.calls.main.h",
          h,
          [1],
-         {"param2": [object Object]},
+         {"param2": 1},
          []
     ))
     f(safeds_runner.memoized_static_call(
         "tests.generator.runnerIntegration.expressions.calls.main.h",
          h,
          [2],
-         {"param2": [object Object]},
+         {"param2": 2},
          []
     ))
     f(safeds_runner.memoized_static_call(
         "tests.generator.runnerIntegration.expressions.calls.main.h",
          h,
          [2],
-         {"param2": [object Object]},
+         {"param2": 2},
          []
     ))
     'abc'.i()
@@ -64,35 +64,35 @@ def test():
         "tests.generator.runnerIntegration.expressions.calls.main.g",
          g,
          [1],
-         {"param2": [object Object]},
+         {"param2": 1},
          []
     )))
     __gen_null_safe_call(f, lambda: f(safeds_runner.memoized_static_call(
         "tests.generator.runnerIntegration.expressions.calls.main.g",
          g,
          [2],
-         {"param2": [object Object]},
+         {"param2": 2},
          []
     )))
     __gen_null_safe_call(f, lambda: f(safeds_runner.memoized_static_call(
         "tests.generator.runnerIntegration.expressions.calls.main.h",
          h,
          [1],
-         {"param2": [object Object]},
+         {"param2": 1},
          []
     )))
     __gen_null_safe_call(f, lambda: f(safeds_runner.memoized_static_call(
         "tests.generator.runnerIntegration.expressions.calls.main.h",
          h,
          [2],
-         {"param2": [object Object]},
+         {"param2": 2},
          []
     )))
     __gen_null_safe_call(f, lambda: f(safeds_runner.memoized_static_call(
         "tests.generator.runnerIntegration.expressions.calls.main.h",
          h,
          [2],
-         {"param2": [object Object]},
+         {"param2": 2},
          []
     )))
     __gen_null_safe_call(i, lambda: 'abc'.i())

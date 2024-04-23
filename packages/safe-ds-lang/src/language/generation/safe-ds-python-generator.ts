@@ -1114,7 +1114,7 @@ export class SafeDsPythonGenerator {
             optionalParameters,
             (parameter) => {
                 const argument = parametersToArgument.get(parameter);
-                return `"${parameter.name}": ` + this.generateMemoizedArgument(argument, parameter, frame);
+                return expandToNode`"${parameter.name}": ${this.generateMemoizedArgument(argument, parameter, frame)}`;
             },
             {
                 separator: ', ',

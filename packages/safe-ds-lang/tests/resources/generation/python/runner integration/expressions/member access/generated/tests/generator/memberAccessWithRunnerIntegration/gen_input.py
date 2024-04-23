@@ -126,21 +126,21 @@ def test():
         ),
         "m",
         [],
-        {"param": [object Object]},
+        {"param": 213},
         []
     ))
     f(safeds_runner.memoized_dynamic_call(
         c1,
         "m",
         [],
-        {"param": [object Object]},
+        {"param": 213},
         []
     ))
     f(safeds_runner.memoized_static_call(
         "tests.generator.memberAccessWithRunnerIntegration.C.n",
          C.n,
          [],
-         {"param": [object Object]},
+         {"param": 213},
          []
     ))
     f(safeds_runner.memoized_dynamic_call(
@@ -148,12 +148,12 @@ def test():
             "tests.generator.memberAccessWithRunnerIntegration.C.o",
              C.o,
              [],
-             {"param": [object Object]},
+             {"param": 42},
              []
         ),
         "m",
         [],
-        {"param": [object Object]},
+        {"param": 213},
         []
     ))
     f(safeds_runner.memoized_dynamic_call(
@@ -161,7 +161,7 @@ def test():
             "tests.generator.memberAccessWithRunnerIntegration.C.o",
              C.o,
              [],
-             {"param": [object Object]},
+             {"param": 42},
              []
         ),
         "j",
