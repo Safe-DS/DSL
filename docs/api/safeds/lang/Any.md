@@ -38,7 +38,7 @@ Returns a string representation of the object.
 
 **Examples:**
 
-```sds
+```sds hl_lines="2"
 pipeline example {
     val string = 1.toString(); // "1"
 }

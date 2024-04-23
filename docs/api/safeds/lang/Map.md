@@ -28,7 +28,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="125"
+    ```sds linenums="126"
     class Map<K, out V> {
 
         /**
@@ -96,7 +96,7 @@ Returns the keys of the map.
 
 **Examples:**
 
-```sds
+```sds hl_lines="7"
 pipeline example {
     val map = {
         "a": 1,
@@ -109,7 +109,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="157"
+    ```sds linenums="158"
     @Pure
     @PythonCall("list($this.keys())")
     fun keys() -> keys: List<K>
@@ -127,7 +127,7 @@ Returns the number of entries in the map.
 
 **Examples:**
 
-```sds
+```sds hl_lines="7"
 pipeline example {
     val map = {
         "a": 1,
@@ -140,7 +140,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="140"
+    ```sds linenums="141"
     @Pure
     @PythonCall("len($this)")
     fun size() -> size: Int
@@ -158,7 +158,7 @@ Returns the values of the map.
 
 **Examples:**
 
-```sds
+```sds hl_lines="7"
 pipeline example {
     val map = {
         "a": 1,
@@ -171,7 +171,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="174"
+    ```sds linenums="175"
     @Pure
     @PythonCall("list($this.values())")
     fun values() -> values: List<V>

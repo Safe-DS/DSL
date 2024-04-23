@@ -429,7 +429,7 @@ pipeline example {
          * @param name The name of the column to be transformed.
          * @param transformer The transformer to the given column
          *
-         * @result result1 The time series with the transformed column.
+         * @result transformedTimeSeries The table with the transformed column.
          *
          * @example
          * pipeline example {
@@ -440,8 +440,8 @@ pipeline example {
         @PythonName("transform_column")
         fun transformColumn(
             name: String,
-            transformer: (param1: Row) -> param2: Any
-        ) -> result1: TimeSeries
+            transformer: (row: Row) -> newColumnValue: Any?
+        ) -> transformedTimeSeries: TimeSeries
 
         /**
          * Plot a lagplot for the target column.
@@ -2073,13 +2073,13 @@ The original time series is not modified.
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `name` | [`String`][safeds.lang.String] | The name of the column to be transformed. | - |
-| `transformer` | `#!sds (param1: Row) -> (param2: Any)` | The transformer to the given column | - |
+| `transformer` | `#!sds (row: Row) -> (newColumnValue: Any?)` | The transformer to the given column | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | The time series with the transformed column. |
+| `transformedTimeSeries` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | The table with the transformed column. |
 
 **Examples:**
 
@@ -2096,8 +2096,8 @@ pipeline example {
     @PythonName("transform_column")
     fun transformColumn(
         name: String,
-        transformer: (param1: Row) -> param2: Any
-    ) -> result1: TimeSeries
+        transformer: (row: Row) -> newColumnValue: Any?
+    ) -> transformedTimeSeries: TimeSeries
     ```
 
 ## `#!sds fun` transformTable {#safeds.data.tabular.containers.TimeSeries.transformTable data-toc-label='transformTable'}

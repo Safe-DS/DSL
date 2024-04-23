@@ -23,7 +23,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="98"
+    ```sds linenums="99"
     class List<out E> {
 
         /**
@@ -52,7 +52,7 @@ Returns the number of elements in the list.
 
 **Examples:**
 
-```sds
+```sds hl_lines="2"
 pipeline example {
     val size = [1, 2, 3].size(); // 3
 }
@@ -60,7 +60,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="108"
+    ```sds linenums="109"
     @Pure
     @PythonCall("len($this)")
     fun size() -> size: Int
