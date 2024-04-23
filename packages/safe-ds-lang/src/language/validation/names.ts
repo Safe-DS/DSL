@@ -25,7 +25,7 @@ import {
     SdsSegment,
     SdsTypeParameter,
 } from '../generated/ast.js';
-import { CODEGEN_PREFIX } from '../generation/safe-ds-python-generator.js';
+import { CODEGEN_PREFIX } from '../generation/python/safe-ds-python-generator.js';
 import { isInDevFile, isInPipelineFile, isInStubFile } from '../helpers/fileExtensions.js';
 import {
     getClassMembers,

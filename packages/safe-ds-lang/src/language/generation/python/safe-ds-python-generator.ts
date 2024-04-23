@@ -14,8 +14,8 @@ import {
 import path from 'path';
 import { SourceMapGenerator, StartOfSourceMap } from 'source-map';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { groupBy, isEmpty } from '../../helpers/collections.js';
-import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
+import { groupBy, isEmpty } from '../../../helpers/collections.js';
+import { SafeDsAnnotations } from '../../builtins/safe-ds-annotations.js';
 import {
     isSdsAbstractCall,
     isSdsAbstractResult,
@@ -72,9 +72,9 @@ import {
     SdsReference,
     SdsSegment,
     SdsStatement,
-} from '../generated/ast.js';
-import { isStubFile } from '../helpers/fileExtensions.js';
-import { IdManager } from '../helpers/idManager.js';
+} from '../../generated/ast.js';
+import { isStubFile } from '../../helpers/fileExtensions.js';
+import { IdManager } from '../../helpers/idManager.js';
 import {
     getAbstractResults,
     getArguments,
@@ -86,24 +86,33 @@ import {
     isStatic,
     Parameter,
     streamBlockLambdaResults,
-} from '../helpers/nodeProperties.js';
-import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
+} from '../../helpers/nodeProperties.js';
+import { SafeDsNodeMapper } from '../../helpers/safe-ds-node-mapper.js';
 import {
     BooleanConstant,
     FloatConstant,
     IntConstant,
     NullConstant,
     StringConstant,
-} from '../partialEvaluation/model.js';
-import { SafeDsPartialEvaluator } from '../partialEvaluation/safe-ds-partial-evaluator.js';
-import { SafeDsServices } from '../safe-ds-module.js';
-import { SafeDsPurityComputer } from '../purity/safe-ds-purity-computer.js';
-import { FileRead, ImpurityReason } from '../purity/model.js';
-import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
-import { NamedTupleType } from '../typing/model.js';
-import { getOutermostContainerOfType } from '../helpers/astUtils.js';
+} from '../../partialEvaluation/model.js';
+import { SafeDsPartialEvaluator } from '../../partialEvaluation/safe-ds-partial-evaluator.js';
+import { SafeDsServices } from '../../safe-ds-module.js';
+import { SafeDsPurityComputer } from '../../purity/safe-ds-purity-computer.js';
+import { FileRead, ImpurityReason } from '../../purity/model.js';
+import { SafeDsTypeComputer } from '../../typing/safe-ds-type-computer.js';
+import { NamedTupleType } from '../../typing/model.js';
+import { getOutermostContainerOfType } from '../../helpers/astUtils.js';
+import {
+    UTILITY_EAGER_AND,
+    UTILITY_EAGER_ELVIS,
+    UTILITY_EAGER_OR,
+    UTILITY_NULL_SAFE_CALL,
+    UTILITY_NULL_SAFE_INDEXED_ACCESS,
+    UTILITY_NULL_SAFE_MEMBER_ACCESS,
+    UtilityFunction,
+} from './utilityFunctions.js';
+import { CODEGEN_PREFIX } from './constants.js';
 
-export const CODEGEN_PREFIX = '__gen_';
 const LAMBDA_PREFIX = `${CODEGEN_PREFIX}lambda_`;
 const BLOCK_LAMBDA_RESULT_PREFIX = `${CODEGEN_PREFIX}block_lambda_result_`;
 const YIELD_PREFIX = `${CODEGEN_PREFIX}yield_`;
@@ -114,70 +123,6 @@ const MEMOIZED_STATIC_CALL = `${RUNNER_PACKAGE}.memoized_static_call`;
 const PYTHON_INDENT = '    ';
 
 const SPACING = new CompositeGeneratorNode(NL, NL);
-
-const UTILITY_EAGER_OR: UtilityFunction = {
-    name: `${CODEGEN_PREFIX}eager_or`,
-    code: expandToNode`def ${CODEGEN_PREFIX}eager_or(left_operand: bool, right_operand: bool) -> bool:`
-        .appendNewLine()
-        .indent({ indentedChildren: ['return left_operand or right_operand'], indentation: PYTHON_INDENT }),
-};
-
-const UTILITY_EAGER_AND: UtilityFunction = {
-    name: `${CODEGEN_PREFIX}eager_and`,
-    code: expandToNode`def ${CODEGEN_PREFIX}eager_and(left_operand: bool, right_operand: bool) -> bool:`
-        .appendNewLine()
-        .indent({ indentedChildren: ['return left_operand and right_operand'], indentation: PYTHON_INDENT }),
-};
-
-const UTILITY_EAGER_ELVIS: UtilityFunction = {
-    name: `${CODEGEN_PREFIX}eager_elvis`,
-    code: expandToNode`def ${CODEGEN_PREFIX}eager_elvis(left_operand: ${CODEGEN_PREFIX}T, right_operand: ${CODEGEN_PREFIX}T) -> ${CODEGEN_PREFIX}T:`
-        .appendNewLine()
-        .indent({
-            indentedChildren: ['return left_operand if left_operand is not None else right_operand'],
-            indentation: PYTHON_INDENT,
-        }),
-    typeVariables: [`${CODEGEN_PREFIX}T`],
-};
-
-const UTILITY_NULL_SAFE_CALL: UtilityFunction = {
-    name: `${CODEGEN_PREFIX}null_safe_call`,
-    code: expandToNode`def ${CODEGEN_PREFIX}null_safe_call(receiver: Any, callable: Callable[[], ${CODEGEN_PREFIX}T]) -> ${CODEGEN_PREFIX}T | None:`
-        .appendNewLine()
-        .indent({
-            indentedChildren: ['return callable() if receiver is not None else None'],
-            indentation: PYTHON_INDENT,
-        }),
-    imports: [
-        { importPath: 'typing', declarationName: 'Any' },
-        { importPath: 'typing', declarationName: 'Callable' },
-    ],
-    typeVariables: [`${CODEGEN_PREFIX}T`],
-};
-
-const UTILITY_NULL_SAFE_INDEXED_ACCESS: UtilityFunction = {
-    name: `${CODEGEN_PREFIX}null_safe_indexed_access`,
-    code: expandToNode`def ${CODEGEN_PREFIX}null_safe_indexed_access(receiver: Any, index: Any) -> ${CODEGEN_PREFIX}T | None:`
-        .appendNewLine()
-        .indent({
-            indentedChildren: ['return receiver[index] if receiver is not None else None'],
-            indentation: PYTHON_INDENT,
-        }),
-    imports: [{ importPath: 'typing', declarationName: 'Any' }],
-    typeVariables: [`${CODEGEN_PREFIX}T`],
-};
-
-const UTILITY_NULL_SAFE_MEMBER_ACCESS: UtilityFunction = {
-    name: `${CODEGEN_PREFIX}null_safe_member_access`,
-    code: expandToNode`def ${CODEGEN_PREFIX}null_safe_member_access(receiver: Any, member_name: str) -> ${CODEGEN_PREFIX}T | None:`
-        .appendNewLine()
-        .indent({
-            indentedChildren: ['return getattr(receiver, member_name) if receiver is not None else None'],
-            indentation: PYTHON_INDENT,
-        }),
-    imports: [{ importPath: 'typing', declarationName: 'Any' }],
-    typeVariables: [`${CODEGEN_PREFIX}T`],
-};
 
 export class SafeDsPythonGenerator {
     private readonly builtinAnnotations: SafeDsAnnotations;
@@ -1287,13 +1232,6 @@ export class SafeDsPythonGenerator {
     private formatStringSingleLine(value: string): string {
         return value.replaceAll('\r\n', '\\n').replaceAll('\n', '\\n');
     }
-}
-
-interface UtilityFunction {
-    readonly name: string;
-    readonly code: Generated;
-    readonly imports?: ImportData[];
-    readonly typeVariables?: string[];
 }
 
 interface ImportData {
