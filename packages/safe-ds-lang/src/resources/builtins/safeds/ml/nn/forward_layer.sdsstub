@@ -1,0 +1,15 @@
+package safeds.ml.nn
+
+/**
+ * @param outputSize The number of neurons in this layer
+ * @param inputSize The number of neurons in the previous layer
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
+ */
+class ForwardLayer(
+    @PythonName("output_size") outputSize: Int,
+    @PythonName("input_size") inputSize: Int? = null
+) sub Layer

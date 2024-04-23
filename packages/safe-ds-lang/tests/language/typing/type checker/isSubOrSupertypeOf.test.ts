@@ -33,6 +33,7 @@ import {
 } from '../../../../src/language/typing/model.js';
 import { getNodeOfType } from '../../../helpers/nodeFinder.js';
 import { AstUtils } from 'langium';
+import { TypeCheckOptions } from '../../../../src/language/typing/safe-ds-type-checker.js';
 
 const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const coreTypes = services.typing.CoreTypes;
@@ -136,6 +137,14 @@ const basic = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             type1: callableType3,
             type2: callableType4,
             expected: false,
+        },
+        {
+            type1: callableType3,
+            type2: callableType4,
+            options: {
+                ignoreParameterNames: true,
+            },
+            expected: true,
         },
         {
             type1: callableType3,
@@ -1028,7 +1037,7 @@ const classTypesWithTypeParameters = async (): Promise<IsSubOrSupertypeOfTest[]>
     ];
 };
 
-const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
+const typeVariables = async (): Promise<IsSubOrSupertypeOfTest[]> => {
     const code = `
         class TestClass<
             Unbounded,
@@ -1227,17 +1236,17 @@ const typeParameterTypes = async (): Promise<IsSubOrSupertypeOfTest[]> => {
 };
 
 describe('SafeDsTypeChecker', async () => {
-    const testCases = (await Promise.all([basic(), classTypesWithTypeParameters(), typeParameterTypes()])).flat();
+    const testCases = (await Promise.all([basic(), classTypesWithTypeParameters(), typeVariables()])).flat();
 
-    describe.each(testCases)('isSubtypeOf', ({ type1, type2, expected }) => {
-        it(`should check whether ${type1} a subtype of ${type2}`, () => {
-            expect(typeChecker.isSubtypeOf(type1, type2)).toBe(expected);
+    describe.each(testCases)('isSubtypeOf', ({ type1, type2, options, expected }) => {
+        it(`should check whether ${type1} a subtype of ${type2} ${options ? `with options ${JSON.stringify(options)}` : ''}`, () => {
+            expect(typeChecker.isSubtypeOf(type1, type2, options)).toBe(expected);
         });
     });
 
-    describe.each(testCases)('isSupertypeOf', ({ type2, type1, expected }) => {
-        it(`should check whether ${type2} a supertype of ${type1}`, () => {
-            expect(typeChecker.isSupertypeOf(type2, type1)).toBe(expected);
+    describe.each(testCases)('isSupertypeOf', ({ type2, type1, options, expected }) => {
+        it(`should check whether ${type2} a supertype of ${type1} ${options ? `with options ${JSON.stringify(options)}` : ''}`, () => {
+            expect(typeChecker.isSupertypeOf(type2, type1, options)).toBe(expected);
         });
     });
 });
@@ -1262,6 +1271,11 @@ interface IsSubOrSupertypeOfTest {
      * The second type to check.
      */
     type2: Type;
+
+    /**
+     * Options for type checking.
+     */
+    options?: TypeCheckOptions;
 
     /**
      * Whether {@link type1} is expected to be assignable to {@link type2}.

@@ -11,41 +11,46 @@ exclude_docs: |
 
 nav:
   - Home:
-      - README.md
-  - Language:
-      - language/README.md
-      - Pipeline Language:
-          - language/pipeline-language/README.md
-          - Pipelines: language/pipeline-language/pipelines.md
-          - Segments: language/pipeline-language/segments.md
-          - Statements: language/pipeline-language/statements.md
-          - Expressions: language/pipeline-language/expressions.md
-      - Common:
-          - language/common/README.md
-          - Comments: language/common/comments.md
-          - Packages: language/common/packages.md
-          - Imports: language/common/imports.md
-          - Parameters: language/common/parameters.md
-          - Results: language/common/results.md
-          - Types: language/common/types.md
-          - Variance: language/common/variance.md
-      - Stub Language:
-          - language/stub-language/README.md
-          - Classes: language/stub-language/classes.md
-          - Global Functions: language/stub-language/global-functions.md
-          - Enumerations: language/stub-language/enumerations.md
-          - Annotations: language/stub-language/annotations.md
-          - Type Parameters: language/stub-language/type-parameters.md
-  - Standard Library: stdlib/
+    - README.md
+  - Getting Started:
+    - Installation: getting-started/installation.md
+    - First Program: getting-started/first-program.md
+  - Language Reference:
+    - pipeline-language/README.md
+    - Packages: pipeline-language/packages.md
+    - Pipelines: pipeline-language/pipelines.md
+    - Statements: pipeline-language/statements.md
+    - Expressions: pipeline-language/expressions.md
+    - Segments: pipeline-language/segments.md
+    - Types: pipeline-language/types.md
+    - Comments: pipeline-language/comments.md
+    - Imports: pipeline-language/imports.md
+  - API Reference: api/
+  - Integrating New Libraries:
+    - stub-language/README.md
+    - Packages: stub-language/packages.md
+    - Imports: stub-language/imports.md
+    - Classes: stub-language/classes.md
+    - Global Functions: stub-language/global-functions.md
+    - Enumerations: stub-language/enumerations.md
+    - Annotations: stub-language/annotations.md
+    - Comments: stub-language/comments.md
+    - Parameters: stub-language/parameters.md
+    - Results: stub-language/results.md
+    - Types: stub-language/types.md
+    - Type Parameters: stub-language/type-parameters.md
+    - Variance: stub-language/variance.md
   - Development:
-      - Call Graph Testing: development/call-graph-testing.md
-      - Formatting Testing: development/formatting-testing.md
-      - Generation Testing: development/generation-testing.md
-      - Grammar Testing: development/grammar-testing.md
-      - Partial Evaluation Testing: development/partial-evaluation-testing.md
-      - Scoping Testing: development/scoping-testing.md
-      - Typing Testing: development/typing-testing.md
-      - Validation Testing: development/validation-testing.md
+    - Testing:
+      - Call Graph Testing: development/testing/call-graph-testing.md
+      - Formatting Testing: development/testing/formatting-testing.md
+      - Generation Testing: development/testing/generation-testing.md
+      - Grammar Testing: development/testing/grammar-testing.md
+      - Partial Evaluation Testing: development/testing/partial-evaluation-testing.md
+      - Scoping Testing: development/testing/scoping-testing.md
+      - Typing Testing: development/testing/typing-testing.md
+      - Validation Testing: development/testing/validation-testing.md
+    - Contributing 🌐: https://github.com/Safe-DS/DSL/contribute
 
 # Configuration of MkDocs & Material for MkDocs --------------------------------
 
@@ -71,12 +76,17 @@ theme:
       accent: indigo
   features:
     - content.code.copy
+    - content.tabs.link
     - content.tooltips
-    - navigation.tabs
     - navigation.indexes
     - navigation.instant
+    - navigation.instant.progress
+    - navigation.prune
     - navigation.sections
+    - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.top
+    - toc.follow
 
 plugins:
   - literate-nav:
@@ -133,9 +143,9 @@ markdown_extensions:
       permalink: true
 
 extra_css:
-  - stylesheets/extra.css
+  - src/stylesheets/extra.css
 
 extra_javascript:
-  - javascript/mathjax.js
+  - src/javascript/mathjax.js
   - https://polyfill.io/v3/polyfill.min.js?features=es6
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js

@@ -9,6 +9,11 @@ from safeds.ml.classical.regression import Regressor
  * @param alpha Controls the regularization of the model. The higher the value, the more regularized it becomes.
  * @param lassoRatio Number between 0 and 1 that controls the ratio between Lasso and Ridge regularization. If 0, only Ridge
  * regularization is used. If 1, only Lasso regularization is used.
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 class ElasticNetRegressor(
     const alpha: Float = 1.0,
@@ -20,10 +25,20 @@ class ElasticNetRegressor(
 } {
     /**
      * Get the regularization of the model.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     attr alpha: Float
     /**
      * Get the ratio between Lasso and Ridge regularization.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @PythonName("lasso_ratio") attr lassoRatio: Float
 
@@ -35,6 +50,11 @@ class ElasticNetRegressor(
      * @param trainingSet The training data containing the feature and target vectors.
      *
      * @result fittedRegressor The fitted regressor.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun fit(

@@ -5,6 +5,11 @@ from safeds.ml.classical.classification import Classifier
 
 /**
  * Regularized logistic regression.
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 class LogisticRegressionClassifier() sub Classifier {
     /**
@@ -15,6 +20,11 @@ class LogisticRegressionClassifier() sub Classifier {
      * @param trainingSet The training data containing the feature and target vectors.
      *
      * @result fittedClassifier The fitted classifier.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun fit(

@@ -1,6 +1,6 @@
 {
     "name": "safe-ds",
-    "version": "0.11.0",
+    "version": "0.12.0",
     "private": true,
     "description": "Statically checked Data Science programs.",
     "author": {
@@ -55,16 +55,43 @@
                 "id": "safe-ds",
                 "aliases": [
                     "Safe-DS",
-                    "safe-ds",
                     "SafeDS",
-                    "safeds",
-                    "SDS",
-                    "sds"
+                    "SDS"
                 ],
                 "extensions": [
-                    ".sdspipe",
-                    ".sdsstub",
-                    ".sdstest"
+                    ".sds"
+                ],
+                "configuration": "./language-configuration.json",
+                "icon": {
+                    "light": "img/safe-ds_file_icon_light.svg",
+                    "dark": "img/safe-ds_file_icon_dark.svg"
+                }
+            },
+            {
+                "id": "safe-ds-stub",
+                "aliases": [
+                    "Safe-DS Stub",
+                    "SafeDS Stub",
+                    "SDS Stub"
+                ],
+                "extensions": [
+                    ".sdsstub"
+                ],
+                "configuration": "./language-configuration.json",
+                "icon": {
+                    "light": "img/safe-ds_file_icon_light.svg",
+                    "dark": "img/safe-ds_file_icon_dark.svg"
+                }
+            },
+            {
+                "id": "safe-ds-dev",
+                "aliases": [
+                    "Safe-DS Dev",
+                    "SafeDS Dev",
+                    "SDS Dev"
+                ],
+                "extensions": [
+                    ".sdsdev"
                 ],
                 "configuration": "./language-configuration.json",
                 "icon": {
@@ -78,6 +105,30 @@
                 "language": "safe-ds",
                 "scopeName": "source.safe-ds",
                 "path": "./syntaxes/safe-ds.tmLanguage.json"
+            },
+            {
+                "language": "safe-ds-stub",
+                "scopeName": "source.safe-ds-stub",
+                "path": "./syntaxes/safe-ds-stub.tmLanguage.json"
+            },
+            {
+                "language": "safe-ds-dev",
+                "scopeName": "source.safe-ds-dev",
+                "path": "./syntaxes/safe-ds-dev.tmLanguage.json"
+            }
+        ],
+        "snippets": [
+            {
+                "language": "safe-ds",
+                "path": "./snippets/safe-ds.json"
+            },
+            {
+                "language": "safe-ds-stub",
+                "path": "./snippets/safe-ds-stub.json"
+            },
+            {
+                "language": "safe-ds-dev",
+                "path": "./snippets/safe-ds-dev.json"
             }
         ],
         "configuration": {
@@ -92,6 +143,16 @@
                     "type": "boolean",
                     "default": true,
                     "description": "Show inferred types for lambda parameters without manifest types."
+                },
+                "safe-ds.inlayHints.collapseClassTypes": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Collapse the type arguments of class types."
+                },
+                "safe-ds.inlayHints.collapseLiteralTypes": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Collapse the literals of literal types."
                 },
                 "safe-ds.inlayHints.parameterNames.enabled": {
                     "type": "string",
@@ -119,7 +180,8 @@
                 "safe-ds.runner.command": {
                     "type": "string",
                     "default": "safe-ds-runner",
-                    "description": "Command to start the Safe-DS runner"
+                    "description": "Command to start the Safe-DS runner",
+                    "ignoreSync": true
                 },
                 "safe-ds.trace.server": {
                     "scope": "window",
@@ -161,26 +223,31 @@
                 "editor.wordBasedSuggestions": "off",
                 "editor.wordSeparators": "`~!@#%^&*()-=+[]{}\\|;:'\",.<>/?»«",
                 "files.trimTrailingWhitespace": true
+            },
+            "[safe-ds-stub]": {
+                "editor.semanticHighlighting.enabled": true,
+                "editor.suggest.snippetsPreventQuickSuggestions": true,
+                "editor.wordBasedSuggestions": "off",
+                "editor.wordSeparators": "`~!@#%^&*()-=+[]{}\\|;:'\",.<>/?»«",
+                "files.trimTrailingWhitespace": true
+            },
+            "[safe-ds-dev]": {
+                "editor.semanticHighlighting.enabled": true,
+                "editor.suggest.snippetsPreventQuickSuggestions": true,
+                "editor.wordBasedSuggestions": "off",
+                "editor.wordSeparators": "`~!@#%^&*()-=+[]{}\\|;:'\",.<>/?»«",
+                "files.trimTrailingWhitespace": true
             }
-        },
-        "menus": {
-            "editor/title/run": [
-                {
-                    "command": "safe-ds.runPipelineFile",
-                    "when": "resourceLangId == safe-ds",
-                    "group": "navigation@1"
-                }
-            ],
-            "editor/context": [
-                {
-                    "command": "safe-ds.runEdaFromContext"
-                }
-            ]
         },
         "commands": [
             {
                 "command": "safe-ds.dumpDiagnostics",
                 "title": "Dump Diagnostics to JSON",
+                "category": "Safe-DS"
+            },
+            {
+                "command": "safe-ds.installRunner",
+                "title": "Install the Safe-DS Runner",
                 "category": "Safe-DS"
             },
             {
@@ -194,21 +261,9 @@
                 "category": "Safe-DS"
             },
             {
-                "command": "safe-ds.runEdaFromContext",
-                "title": "Explore Table",
+                "command": "safe-ds.updateRunner",
+                "title": "Update the Safe-DS Runner",
                 "category": "Safe-DS"
-            },
-            {
-                "command": "safe-ds.runPipelineFile",
-                "title": "Run Pipeline",
-                "category": "Safe-DS",
-                "icon": "$(play)"
-            }
-        ],
-        "snippets": [
-            {
-                "language": "safe-ds",
-                "path": "./snippets/safe-ds.json"
             }
         ]
     },
@@ -224,6 +279,7 @@
         "deploy": "vsce publish"
     },
     "dependencies": {
+        "semver": "^7.6.0",
         "vscode-languageclient": "^9.0.1"
     },
     "devDependencies": {

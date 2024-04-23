@@ -20,8 +20,10 @@ import {
     isSdsNamedType,
     isSdsParameter,
     isSdsParameterBound,
+    isSdsPipeline,
     isSdsPlaceholder,
     isSdsQualifiedImport,
+    isSdsSchema,
     isSdsSegment,
     isSdsTypeArgumentList,
     isSdsTypeParameter,
@@ -98,6 +100,15 @@ export namespace Argument {
 
     export const isPositional = (node: SdsArgument | undefined): boolean => {
         return isSdsArgument(node) && !node.parameter;
+    };
+}
+
+export namespace Class {
+    /**
+     * Checks whether the class is only for typing, i.e. whether it has no constructor and no static members.
+     */
+    export const isOnlyForTyping = (node: SdsClass | undefined): boolean => {
+        return isSdsClass(node) && !node.parameterList && !getClassMembers(node).some((it) => isStatic(it));
     };
 }
 
@@ -184,6 +195,20 @@ export namespace TypeParameter {
         return isSdsTypeParameter(node) && !node.variance;
     };
 }
+
+/**
+ * Checks whether the declaration is valid in a pipeline file.
+ */
+export const isValidPipelineDeclaration = (node: SdsDeclaration): boolean => {
+    return isSdsPipeline(node) || isSdsSchema(node) || isSdsSegment(node);
+};
+
+/**
+ * Checks whether the declaration is valid in a stub file.
+ */
+export const isValidStubDeclaration = (node: SdsDeclaration): boolean => {
+    return isSdsAnnotation(node) || isSdsClass(node) || isSdsEnum(node) || isSdsFunction(node) || isSdsSchema(node);
+};
 
 // -------------------------------------------------------------------------------------------------
 // Accessors for list elements
@@ -324,7 +349,7 @@ export const getParentTypes = (node: SdsClass | undefined): SdsType[] => {
     return node?.parentTypeList?.parentTypes ?? [];
 };
 
-export const getQualifiedName = (node: SdsDeclaration | undefined): string | undefined => {
+export const getQualifiedName = (node: SdsDeclaration | undefined): string => {
     const segments = [];
 
     let current: SdsDeclaration | undefined = node;

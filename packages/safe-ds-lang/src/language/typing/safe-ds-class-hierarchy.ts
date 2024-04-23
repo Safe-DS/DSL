@@ -1,14 +1,18 @@
-import { AstUtils, EMPTY_STREAM, stream, Stream } from 'langium';
+import { AstUtils, CstUtils, EMPTY_STREAM, LangiumDocuments, References, stream, Stream } from 'langium';
 import { SafeDsClasses } from '../builtins/safe-ds-classes.js';
-import { isSdsClass, isSdsNamedType, SdsClass, type SdsClassMember } from '../generated/ast.js';
+import { isSdsClass, isSdsNamedType, isSdsParentTypeList, SdsClass, type SdsClassMember } from '../generated/ast.js';
 import { getClassMembers, getParentTypes, isStatic } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 
 export class SafeDsClassHierarchy {
     private readonly builtinClasses: SafeDsClasses;
+    private readonly langiumDocuments: LangiumDocuments;
+    private readonly references: References;
 
     constructor(services: SafeDsServices) {
         this.builtinClasses = services.builtins.Classes;
+        this.langiumDocuments = services.shared.workspace.LangiumDocuments;
+        this.references = services.references.References;
     }
 
     /**
@@ -56,12 +60,30 @@ export class SafeDsClassHierarchy {
         }
     }
 
+    /**
+     * Returns a stream of all members of the superclasses of the given class. Direct ancestors are considered first,
+     * followed by their ancestors and so on. The members of the class itself are not included in the stream.
+     */
     streamSuperclassMembers(node: SdsClass | undefined): Stream<SdsClassMember> {
         if (!node) {
             return EMPTY_STREAM;
         }
 
         return this.streamProperSuperclasses(node).flatMap(getClassMembers);
+    }
+
+    /**
+     * Returns a stream of all instance members that are inherited by the given class. Direct ancestors are considered
+     * first, followed by their ancestors and so on. The members of the class itself are not included in the stream.
+     */
+    streamInheritedMembers(node: SdsClass | undefined): Stream<SdsClassMember> {
+        if (!node) {
+            return EMPTY_STREAM;
+        }
+
+        return this.streamProperSuperclasses(node)
+            .flatMap(getClassMembers)
+            .filter((it) => !isStatic(it));
     }
 
     /**
@@ -105,5 +127,55 @@ export class SafeDsClassHierarchy {
         return this.streamSuperclassMembers(containingClass)
             .filter((it) => !isStatic(it) && it.name === node.name)
             .head();
+    }
+
+    /**
+     * Returns a stream of all direct subclasses of the given class. There is no guarantee about the order in which the
+     * subclasses are returned. The class itself is not included in the stream.
+     *
+     * Returns an empty stream for "Any".
+     */
+    streamDirectSubclasses(node: SdsClass | undefined): Stream<SdsClass> {
+        if (!node || node === this.builtinClasses.Any) {
+            return EMPTY_STREAM;
+        }
+
+        return this.references
+            .findReferences(node, {
+                includeDeclaration: false,
+            })
+            .flatMap((it) => {
+                const document = this.langiumDocuments.getDocument(it.sourceUri);
+                if (!document) {
+                    /* c8 ignore next 2 */
+                    return [];
+                }
+
+                const rootNode = document.parseResult.value;
+                if (!rootNode.$cstNode) {
+                    /* c8 ignore next 2 */
+                    return [];
+                }
+
+                const targetCstNode = CstUtils.findLeafNodeAtOffset(rootNode.$cstNode, it.segment.offset);
+                if (!targetCstNode) {
+                    /* c8 ignore next 2 */
+                    return [];
+                }
+
+                // Only consider the first parent type
+                const targetNode = targetCstNode.astNode;
+                if (!isSdsParentTypeList(targetNode.$container) || targetNode.$containerIndex !== 0) {
+                    return [];
+                }
+
+                const containingClass = AstUtils.getContainerOfType(targetNode, isSdsClass);
+                if (!containingClass) {
+                    /* c8 ignore next 2 */
+                    return [];
+                }
+
+                return [containingClass];
+            });
     }
 }

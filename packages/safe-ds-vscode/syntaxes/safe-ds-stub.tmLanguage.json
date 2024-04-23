@@ -1,0 +1,22 @@
+{
+    "name": "safe-ds-stub",
+    "scopeName": "source.safe-ds-stub",
+    "fileTypes": [".sdsstub"],
+    "patterns": [
+        {
+            "include": "source.safe-ds#shared"
+        },
+        {
+            "name": "storage.type.safe-ds-stub",
+            "match": "\\b(annotation|attr|class|enum|fun|package|schema|val)\\b"
+        },
+        {
+            "name": "storage.modifier.safe-ds-stub",
+            "match": "\\b(const|in|out|static)\\b"
+        },
+        {
+            "name": "keyword.operator.expression.safe-ds-stub",
+            "match": "\\b(and|not|or|sub)\\b"
+        }
+    ]
+}

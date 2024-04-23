@@ -168,6 +168,9 @@ describe('SafeDsDocumentationProvider', () => {
                      * @result result ${testDocumentation}
                      * @typeParam T ${testDocumentation}
                      * @since 1.0.0
+                     * @example
+                     * package test
+                     * myFunction('test')
                      */
                     fun myFunction<T>(param: String) -> result: String
                 `,
@@ -182,6 +185,12 @@ describe('SafeDsDocumentationProvider', () => {
                     **@typeParam** *T* — Lorem ipsum.
 
                     **@since** — 1.0.0
+
+                    **@example**
+                    \`\`\`safe-ds-dev
+                    package test
+                    myFunction('test')
+                    \`\`\`
                 `,
             },
             {
@@ -218,6 +227,7 @@ describe('SafeDsDocumentationProvider', () => {
                      * @result result ${testDocumentation}
                      * @typeParam T ${testDocumentation}
                      * @since 1.0.0
+                     * @example myFunction('test')
                      */
                     fun myFunction<T>(param: String) -> result: String
                 `,
@@ -234,6 +244,7 @@ describe('SafeDsDocumentationProvider', () => {
                      * @result result ${testDocumentation}
                      * @typeParam T ${testDocumentation}
                      * @since 1.0.0
+                     * @example myFunction('test')
                      *
                      * ${testDocumentation}
                      */
@@ -336,6 +347,67 @@ describe('SafeDsDocumentationProvider', () => {
         it.each(testCases)('$testName', async ({ code, predicate, expectedDocumentation }) => {
             const node = await getNodeOfType(services, code, predicate);
             const normalizedActual = normalizeLineBreaks(documentationProvider.getSince(node));
+            const normalizedExpected = normalizeLineBreaks(expectedDocumentation);
+            expect(normalizedActual).toStrictEqual(normalizedExpected);
+        });
+    });
+
+    describe('getExamples', () => {
+        const testCases: DocumentationProviderTest[] = [
+            {
+                testName: 'no example tag',
+                code: `
+                    /**
+                     * ${testDocumentation}
+                     */
+                    fun myFunction()
+                `,
+                predicate: isSdsFunction,
+                expectedDocumentation: undefined,
+            },
+            {
+                testName: 'one example tag',
+                code: `
+                    /**
+                     * ${testDocumentation}
+                     *
+                     * @example myFunction()
+                     *
+                     * ${testDocumentation}
+                     */
+                    fun myFunction()
+                `,
+                predicate: isSdsFunction,
+                expectedDocumentation: expandToString`
+                    myFunction()
+                `,
+            },
+            {
+                testName: 'multiple example tags',
+                code: `
+                    /**
+                     * ${testDocumentation}
+                     *
+                     * @example myFunction()
+                     * @example
+                     * package test
+                     * myFunction()
+                     */
+                    fun myFunction()
+                `,
+                predicate: isSdsFunction,
+                expectedDocumentation: expandToString`
+                    myFunction()
+
+                    package test
+                    myFunction()
+                `,
+            },
+        ];
+
+        it.each(testCases)('$testName', async ({ code, predicate, expectedDocumentation }) => {
+            const node = await getNodeOfType(services, code, predicate);
+            const normalizedActual = normalizeLineBreaks(documentationProvider.getExamples(node).join('\n\n'));
             const normalizedExpected = normalizeLineBreaks(expectedDocumentation);
             expect(normalizedActual).toStrictEqual(normalizedExpected);
         });

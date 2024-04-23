@@ -2,18 +2,38 @@ package safeds.data.image.containers
 
 /**
  * A container for image data.
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 class Image {
     /**
      * Get the width of the image in pixels.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     attr width: Int
     /**
      * Get the height of the image in pixels.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     attr height: Int
     /**
      * Get the number of channels of the image.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     attr channel: Int
 
@@ -24,6 +44,11 @@ class Image {
      * @param device The device where the tensor will be saved on. Defaults to the default device
      *
      * @result result1 The image.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
     @PythonName("from_file")
@@ -35,6 +60,11 @@ class Image {
      * Save the image as a JPEG file.
      *
      * @param path The path to the JPEG file.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_jpeg_file")
@@ -46,12 +76,32 @@ class Image {
      * Save the image as a PNG file.
      *
      * @param path The path to the PNG file.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_png_file")
     fun toPngFile(
         path: String
     )
+
+    /**
+     * Return a new `Image` that has the given number of channels.
+     *
+     * The original image is not modified.
+     *
+     * @param channel The new number of channels. 1 will result in a grayscale image.
+     *
+     * @result result1 The image with the given number of channels.
+     */
+    @Pure
+    @PythonName("change_channel")
+    fun changeChannel(
+        channel: Int
+    ) -> result1: Image
 
     /**
      * Return a new `Image` that has been resized to a given size.
@@ -62,6 +112,11 @@ class Image {
      * @param newHeight The new height of the image.
      *
      * @result result1 The image with the given width and height.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun resize(
@@ -78,6 +133,11 @@ class Image {
      * The original image is not modified.
      *
      * @result result1 The grayscale image.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("convert_to_grayscale")
@@ -94,6 +154,11 @@ class Image {
      * @param height The height of the bounding rectangle.
      *
      * @result result1 The cropped image.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun crop(
@@ -114,6 +179,11 @@ class Image {
      * The original image is not modified.
      *
      * @result result1 The flipped image.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("flip_vertically")
@@ -125,6 +195,11 @@ class Image {
      * The original image is not modified.
      *
      * @result result1 The flipped image.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("flip_horizontally")
@@ -142,6 +217,11 @@ class Image {
      * Has to be bigger than or equal to 0 (black).
      *
      * @result result1 The Image with adjusted brightness.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("adjust_brightness")
@@ -159,6 +239,11 @@ class Image {
      * @param standardDeviation The standard deviation of the normal distribution. Has to be bigger than or equal to 0.
      *
      * @result result1 The image with added noise.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("add_noise")
@@ -179,6 +264,11 @@ class Image {
      * Has to be bigger than or equal to 0 (gray).
      *
      * @result result1 New image with adjusted contrast.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("adjust_contrast")
@@ -199,6 +289,11 @@ class Image {
      * If factor > 1, increase color balance of image.
      *
      * @result result1 The new, adjusted image.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("adjust_color_balance")
@@ -217,6 +312,11 @@ class Image {
      * each direction. A radius of 1 will result in a united box of 9 pixels.
      *
      * @result result1 The blurred image.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun blur(
@@ -236,6 +336,11 @@ class Image {
      * Has to be bigger than or equal to 0 (blurred).
      *
      * @result result1 The image sharpened by the given factor.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun sharpen(
@@ -250,6 +355,11 @@ class Image {
      * The original image is not modified.
      *
      * @result result1 The image with inverted colors.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("invert_colors")
@@ -261,6 +371,11 @@ class Image {
      * The original image is not modified.
      *
      * @result result1 The image rotated 90 degrees clockwise.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("rotate_right")
@@ -272,6 +387,11 @@ class Image {
      * The original image is not modified.
      *
      * @result result1 The image rotated 90 degrees counter-clockwise.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("rotate_left")
@@ -283,6 +403,11 @@ class Image {
      * The original image is not modified.
      *
      * @result result1 The image with edges found.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("find_edges")

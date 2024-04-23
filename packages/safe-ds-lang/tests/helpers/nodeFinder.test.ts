@@ -16,7 +16,7 @@ describe('getNodeByLocation', async () => {
     it('should throw if no document is found', () => {
         expect(() => {
             getNodeByLocation(services, {
-                uri: 'file:///test.sdstest',
+                uri: 'file:///test.sdsdev',
                 range: { start: { line: 0, character: 0 }, end: { line: 0, character: 0 } },
             });
         }).toThrowErrorMatchingSnapshot();

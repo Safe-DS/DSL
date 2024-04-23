@@ -8,6 +8,11 @@ from safeds.ml.classical.regression import Regressor
  *
  * @param numberOfNeighbors The number of neighbors to use for interpolation. Has to be greater than 0 (validated in the constructor) and
  * less than or equal to the sample size (validated when calling `fit`).
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 class KNearestNeighborsRegressor(
     @PythonName("number_of_neighbors") const numberOfNeighbors: Int
@@ -16,6 +21,11 @@ class KNearestNeighborsRegressor(
 } {
     /**
      * Get the number of neighbors used for interpolation.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @PythonName("number_of_neighbors") attr numberOfNeighbors: Int
 
@@ -27,6 +37,11 @@ class KNearestNeighborsRegressor(
      * @param trainingSet The training data containing the feature and target vectors.
      *
      * @result fittedRegressor The fitted regressor.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun fit(

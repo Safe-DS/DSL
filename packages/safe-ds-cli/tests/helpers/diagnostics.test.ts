@@ -26,7 +26,7 @@ describe('diagnosticToString', () => {
                 range,
                 message,
             },
-            expected: chalk.red(`test.sdstest:1:1: [error] message`),
+            expected: chalk.red(`test.sdsdev:1:1: [error] message`),
         },
         {
             testName: 'warning',
@@ -35,7 +35,7 @@ describe('diagnosticToString', () => {
                 range,
                 message,
             },
-            expected: chalk.yellow(`test.sdstest:1:1: [warning] message`),
+            expected: chalk.yellow(`test.sdsdev:1:1: [warning] message`),
         },
         {
             testName: 'warning (strict)',
@@ -47,7 +47,7 @@ describe('diagnosticToString', () => {
             options: {
                 strict: true,
             },
-            expected: chalk.red(`test.sdstest:1:1: [warning] message`),
+            expected: chalk.red(`test.sdsdev:1:1: [warning] message`),
         },
         {
             testName: 'info',
@@ -56,7 +56,7 @@ describe('diagnosticToString', () => {
                 range,
                 message,
             },
-            expected: chalk.blue(`test.sdstest:1:1: [info] message`),
+            expected: chalk.blue(`test.sdsdev:1:1: [info] message`),
         },
         {
             testName: 'hint',
@@ -65,7 +65,7 @@ describe('diagnosticToString', () => {
                 range,
                 message,
             },
-            expected: chalk.gray(`test.sdstest:1:1: [hint] message`),
+            expected: chalk.gray(`test.sdsdev:1:1: [hint] message`),
         },
         {
             testName: 'with code',
@@ -75,12 +75,12 @@ describe('diagnosticToString', () => {
                 message,
                 code: 'CODE',
             },
-            expected: chalk.red(`test.sdstest:1:1: [error] message (CODE)`),
+            expected: chalk.red(`test.sdsdev:1:1: [error] message (CODE)`),
         },
     ];
 
     it.each(tests)('$testName', ({ diagnostic, options, expected }) => {
-        const uri = URI.file(path.join(process.cwd(), 'test.sdstest'));
+        const uri = URI.file(path.join(process.cwd(), 'test.sdsdev'));
         const actual = diagnosticToString(uri, diagnostic, options);
         expect(actual).toBe(expected);
     });

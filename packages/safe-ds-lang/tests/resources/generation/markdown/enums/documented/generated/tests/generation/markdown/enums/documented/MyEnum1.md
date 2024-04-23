@@ -2,7 +2,7 @@
 
 Description of MyEnum1.
 
-??? quote "Source code in `main.sdsstub`"
+??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="6"
     enum MyEnum1

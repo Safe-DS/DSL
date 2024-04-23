@@ -18,7 +18,7 @@ Description of myFunction2.
 | `TypeParam2` | [`MyClass1`][tests.generation.markdown.functions.documented.MyClass1] | Description of TypeParam2. | - |
 | `TypeParam3` | `#!sds Any?` | Description of TypeParam3. | [`MyClass1`][tests.generation.markdown.functions.documented.MyClass1] |
 
-??? quote "Source code in `main.sdsstub`"
+??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="17"
     fun myFunction2<TypeParam1, TypeParam2 sub MyClass1, TypeParam3 = MyClass1>(

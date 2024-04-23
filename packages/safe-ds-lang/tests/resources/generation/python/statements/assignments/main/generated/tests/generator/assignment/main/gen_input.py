@@ -24,11 +24,11 @@ def testPipeline():
     f1(l)
     f1(m)
     f1(n)
-    def __gen_block_lambda_0():
+    def __gen_lambda_0():
         g()
         a, _, __gen_block_lambda_result_c = g()
         x, _, _ = g()
         f1(a)
         f1(x)
         return __gen_block_lambda_result_c
-    f2(__gen_block_lambda_0)
+    f2(__gen_lambda_0)

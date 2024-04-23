@@ -11,7 +11,7 @@ import {
     StaticType,
     Type,
     TypeParameterSubstitutions,
-    TypeParameterType,
+    TypeVariable,
     UnionType,
 } from './model.js';
 import { Constant } from '../partialEvaluation/model.js';
@@ -66,8 +66,8 @@ export class SafeDsTypeFactory {
         return new StaticType(this.services, instanceType);
     }
 
-    createTypeParameterType(declaration: SdsTypeParameter, isExplicitlyNullable: boolean): TypeParameterType {
-        return new TypeParameterType(declaration, isExplicitlyNullable);
+    createTypeVariable(declaration: SdsTypeParameter, isExplicitlyNullable: boolean): TypeVariable {
+        return new TypeVariable(declaration, isExplicitlyNullable);
     }
 
     createUnionType(...types: Type[]): UnionType {

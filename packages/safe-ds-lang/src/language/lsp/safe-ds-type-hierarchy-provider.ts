@@ -1,14 +1,6 @@
-import { type AstNode, AstUtils, CstUtils, type ReferenceDescription, stream, type Stream } from 'langium';
+import { type AstNode, AstUtils, stream } from 'langium';
 import { type TypeHierarchyItem } from 'vscode-languageserver';
-import {
-    isSdsClass,
-    isSdsEnum,
-    isSdsEnumVariant,
-    isSdsParentTypeList,
-    SdsClass,
-    SdsEnum,
-    SdsEnumVariant,
-} from '../generated/ast.js';
+import { isSdsClass, isSdsEnum, isSdsEnumVariant, SdsClass, SdsEnum, SdsEnumVariant } from '../generated/ast.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsClassHierarchy } from '../typing/safe-ds-class-hierarchy.js';
 import { SafeDsNodeInfoProvider } from './safe-ds-node-info-provider.js';
@@ -68,14 +60,10 @@ export class SafeDsTypeHierarchyProvider extends AbstractTypeHierarchyProvider {
     }
 
     protected override getSubtypes(node: AstNode): TypeHierarchyItem[] | undefined {
-        const references = this.references.findReferences(node, {
-            includeDeclaration: false,
-        });
-
         let items: TypeHierarchyItem[];
 
         if (isSdsClass(node)) {
-            items = this.getSubtypesOfClass(references);
+            items = this.getSubtypesOfClass(node);
         } else if (isSdsEnum(node)) {
             items = this.getSubtypesOfEnum(node);
         } else {
@@ -85,40 +73,17 @@ export class SafeDsTypeHierarchyProvider extends AbstractTypeHierarchyProvider {
         return items.length === 0 ? undefined : items;
     }
 
-    private getSubtypesOfClass(references: Stream<ReferenceDescription>): TypeHierarchyItem[] {
-        return references
+    private getSubtypesOfClass(node: SdsClass): TypeHierarchyItem[] {
+        return this.classHierarchy
+            .streamDirectSubclasses(node)
             .flatMap((it) => {
-                const document = this.documents.getDocument(it.sourceUri);
+                const document = AstUtils.getDocument(it);
                 if (!document) {
                     /* c8 ignore next 2 */
                     return [];
                 }
 
-                const rootNode = document.parseResult.value;
-                if (!rootNode.$cstNode) {
-                    /* c8 ignore next 2 */
-                    return [];
-                }
-
-                const targetCstNode = CstUtils.findLeafNodeAtOffset(rootNode.$cstNode, it.segment.offset);
-                if (!targetCstNode) {
-                    /* c8 ignore next 2 */
-                    return [];
-                }
-
-                // Only consider the first parent type
-                const targetNode = targetCstNode.astNode;
-                if (!isSdsParentTypeList(targetNode.$container) || targetNode.$containerIndex !== 0) {
-                    return [];
-                }
-
-                const containingClass = AstUtils.getContainerOfType(targetNode, isSdsClass);
-                if (!containingClass) {
-                    /* c8 ignore next 2 */
-                    return [];
-                }
-
-                return this.getTypeHierarchyItems(containingClass, document) ?? [];
+                return this.getTypeHierarchyItems(it, document) ?? [];
             })
             .toArray();
     }

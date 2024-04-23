@@ -8,6 +8,11 @@ from safeds.data.tabular.containers import Column, Row, Table
  * @param targetName Name of the target column.
  * @param timeName Name of the time column
  * @param featureNames Names of the feature columns. If None, all columns except the target and time columns are used.
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 class TimeSeries(
     data: Map<String, List<Any>>,
@@ -17,14 +22,29 @@ class TimeSeries(
 ) sub Table {
     /**
      * Get the target column of the tagged table.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     attr target: Column
     /**
      * Get the feature columns of the tagged table.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     attr features: Table
     /**
      * Get the time column of the time series.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     attr time: Column
 
@@ -36,6 +56,11 @@ class TimeSeries(
      * @param column The column to be added.
      *
      * @result result1 The time series with the column attached as neither target nor feature column.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("add_column")
@@ -51,6 +76,11 @@ class TimeSeries(
      * @param column The column to be added.
      *
      * @result result1 The time series with the attached feature column.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("add_column_as_feature")
@@ -66,6 +96,11 @@ class TimeSeries(
      * @param columns The columns to be added as features.
      *
      * @result result1 The time series with the attached feature columns.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("add_columns_as_features")
@@ -81,6 +116,11 @@ class TimeSeries(
      * @param columns The columns to be added.
      *
      * @result result1 A new time series combining the original table and the given columns as neither target nor feature columns.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("add_columns")
@@ -96,6 +136,11 @@ class TimeSeries(
      * @param row The row to be added.
      *
      * @result result1 A new time series with the added row at the end.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("add_row")
@@ -111,6 +156,11 @@ class TimeSeries(
      * @param rows The rows to be added.
      *
      * @result result1 A new time series which combines the original time series and the given rows.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("add_rows")
@@ -126,6 +176,11 @@ class TimeSeries(
      * @param query A Callable that is applied to all rows.
      *
      * @result result1 A time series containing only the rows to match the query.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("filter_rows")
@@ -141,6 +196,11 @@ class TimeSeries(
      * @param columnNames A list containing the columns to be kept.
      *
      * @result result1 A time series containing only the given column(s).
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("keep_only_columns")
@@ -156,6 +216,11 @@ class TimeSeries(
      * @param columnNames The names of all columns to be dropped.
      *
      * @result result1 A time series without the given columns.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("remove_columns")
@@ -169,6 +234,11 @@ class TimeSeries(
      * The original time series is not modified.
      *
      * @result result1 A time series without the columns that contain missing values.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("remove_columns_with_missing_values")
@@ -180,6 +250,11 @@ class TimeSeries(
      * The original time series is not modified.
      *
      * @result result1 A time series without the columns that contain non-numerical values.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("remove_columns_with_non_numerical_values")
@@ -191,6 +266,11 @@ class TimeSeries(
      * The original time series is not modified.
      *
      * @result result1 The time series with the duplicate rows removed.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("remove_duplicate_rows")
@@ -202,6 +282,11 @@ class TimeSeries(
      * The original time series is not modified.
      *
      * @result result1 A time series without the rows that contain missing values.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("remove_rows_with_missing_values")
@@ -217,6 +302,11 @@ class TimeSeries(
      * The original time series is not modified.
      *
      * @result result1 A new time series without rows containing outliers.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("remove_rows_with_outliers")
@@ -231,6 +321,11 @@ class TimeSeries(
      * @param newName The new name of the column.
      *
      * @result result1 The time series with the renamed column.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("rename_column")
@@ -252,6 +347,11 @@ class TimeSeries(
      * @param newColumns The new columns replacing the old column.
      *
      * @result result1 A time series with the old column replaced by the new columns.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("replace_column")
@@ -270,6 +370,11 @@ class TimeSeries(
      * @param step The step size used to iterate through the time series, 1 by default.
      *
      * @result result1 The resulting time series.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("slice_rows")
@@ -296,6 +401,11 @@ class TimeSeries(
      * @param comparator The function used to compare two columns.
      *
      * @result result1 A new time series with sorted columns.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("sort_columns")
@@ -311,14 +421,19 @@ class TimeSeries(
      * @param name The name of the column to be transformed.
      * @param transformer The transformer to the given column
      *
-     * @result result1 The time series with the transformed column.
+     * @result transformedTimeSeries The table with the transformed column.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("transform_column")
     fun transformColumn(
         name: String,
-        transformer: (param1: Row) -> param2: Any
-    ) -> result1: TimeSeries
+        transformer: (row: Row) -> newColumnValue: Any?
+    ) -> transformedTimeSeries: TimeSeries
 
     /**
      * Plot a lagplot for the target column.
@@ -326,6 +441,11 @@ class TimeSeries(
      * @param lag The amount of lag used to plot
      *
      * @result result1 The plot as an image.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("plot_lagplot")
@@ -343,6 +463,11 @@ class TimeSeries(
      * @param yColumnName The column name of the column to be plotted on the y-Axis, default is the target column.
      *
      * @result result1 The plot as an image.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("plot_lineplot")
@@ -361,6 +486,11 @@ class TimeSeries(
      * @param yColumnName The column name of the column to be plotted on the y-Axis.
      *
      * @result result1 The plot as an image.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     @PythonName("plot_scatterplot")

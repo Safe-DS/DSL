@@ -2,7 +2,11 @@
 
 Description of MyAnnotation3.
 
-??? quote "Source code in `main.sdsstub`"
+**Targets:**
+
+- `Annotation`
+
+??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="20"
     annotation MyAnnotation3

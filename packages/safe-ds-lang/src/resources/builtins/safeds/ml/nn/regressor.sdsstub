@@ -1,13 +1,18 @@
 package safeds.ml.nn
 
 from safeds.data.tabular.containers import Table, TaggedTable
-from safeds.ml.nn import FNNLayer
+from safeds.ml.nn import Layer
 
 class NeuralNetworkRegressor(
-    layers: List<FNNLayer>
+    layers: List<Layer>
 ) {
     /**
      * Check if the model is fitted.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @PythonName("is_fitted") attr isFitted: Boolean
 
@@ -19,16 +24,23 @@ class NeuralNetworkRegressor(
      * @param trainData The data the network should be trained on.
      * @param epochSize The number of times the training cycle should be done.
      * @param batchSize The size of data batches that should be loaded at one time.
+     * @param learningRate The learning rate of the neural network.
      * @param callbackOnBatchCompletion Function used to view metrics while training. Gets called after a batch is completed with the index of the last batch and the overall loss average.
      * @param callbackOnEpochCompletion Function used to view metrics while training. Gets called after an epoch is completed with the index of the last epoch and the overall loss average.
      *
      * @result trainedRegressor The trained Model
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun fit(
         @PythonName("train_data") trainData: TaggedTable,
         @PythonName("epoch_size") const epochSize: Int = 25,
         @PythonName("batch_size") const batchSize: Int = 1,
+        @PythonName("learning_rate") learningRate: Float = 0.001,
         @PythonName("callback_on_batch_completion") callbackOnBatchCompletion: (param1: Int, param2: Float) -> () = (param1, param2) {},
         @PythonName("callback_on_epoch_completion") callbackOnEpochCompletion: (param1: Int, param2: Float) -> () = (param1, param2) {}
     ) -> trainedRegressor: NeuralNetworkRegressor where {
@@ -44,6 +56,11 @@ class NeuralNetworkRegressor(
      * @param testData The data the network should predict.
      *
      * @result prediction The given test_data with an added "prediction" column at the end
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun predict(

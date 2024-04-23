@@ -13,7 +13,7 @@ import { SafeDsEnums, SafeDsImpurityReasons } from './builtins/safe-ds-enums.js'
 import { SafeDsCommentProvider } from './documentation/safe-ds-comment-provider.js';
 import { SafeDsDocumentationProvider } from './documentation/safe-ds-documentation-provider.js';
 import { SafeDsCallGraphComputer } from './flow/safe-ds-call-graph-computer.js';
-import { SafeDsGeneratedModule, SafeDsGeneratedSharedModule } from './generated/module.js';
+import { SafeDsGeneratedModule, SafeDsGeneratedSharedModule, SafeDsLanguageMetaData } from './generated/module.js';
 import { SafeDsPythonGenerator } from './generation/safe-ds-python-generator.js';
 import { SafeDsValueConverter } from './grammar/safe-ds-value-converter.js';
 import { SafeDsNodeMapper } from './helpers/safe-ds-node-mapper.js';
@@ -34,20 +34,27 @@ import { SafeDsCoreTypes } from './typing/safe-ds-core-types.js';
 import { SafeDsTypeChecker } from './typing/safe-ds-type-checker.js';
 import { SafeDsTypeComputer } from './typing/safe-ds-type-computer.js';
 import { registerValidationChecks } from './validation/safe-ds-validator.js';
-import { SafeDsDocumentBuilder } from './workspace/safe-ds-document-builder.js';
 import { SafeDsPackageManager } from './workspace/safe-ds-package-manager.js';
 import { SafeDsWorkspaceManager } from './workspace/safe-ds-workspace-manager.js';
 import { SafeDsPurityComputer } from './purity/safe-ds-purity-computer.js';
-import { SafeDsSettingsProvider } from './workspace/safe-ds-settings-provider.js';
+import { SafeDsSettings, SafeDsSettingsProvider } from './workspace/safe-ds-settings-provider.js';
 import { SafeDsRenameProvider } from './lsp/safe-ds-rename-provider.js';
-import { SafeDsRunner } from './runner/safe-ds-runner.js';
+import { SafeDsRunner } from './runtime/safe-ds-runner.js';
 import { SafeDsTypeFactory } from './typing/safe-ds-type-factory.js';
 import { SafeDsMarkdownGenerator } from './generation/safe-ds-markdown-generator.js';
 import { SafeDsCompletionProvider } from './lsp/safe-ds-completion-provider.js';
 import { SafeDsFuzzyMatcher } from './lsp/safe-ds-fuzzy-matcher.js';
-import { type Logger, SafeDsMessagingProvider, type UserMessageProvider } from './lsp/safe-ds-messaging-provider.js';
+import {
+    type SafeDsLogger,
+    SafeDsMessageBroker,
+    SafeDsMessagingProvider,
+    type SafeDsUserInteractionProvider,
+} from './communication/safe-ds-messaging-provider.js';
 import { SafeDsConfigurationProvider } from './workspace/safe-ds-configuration-provider.js';
 import { SafeDsCodeLensProvider } from './lsp/safe-ds-code-lens-provider.js';
+import { SafeDsExecuteCommandHandler } from './lsp/safe-ds-execute-command-handler.js';
+import { SafeDsServiceRegistry } from './safe-ds-service-registry.js';
+import { SafeDsPythonServer } from './runtime/safe-ds-python-server.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -58,6 +65,9 @@ export type SafeDsAddedServices = {
         Classes: SafeDsClasses;
         Enums: SafeDsEnums;
         ImpurityReasons: SafeDsImpurityReasons;
+    };
+    communication: {
+        MessagingProvider: SafeDsMessagingProvider;
     };
     documentation: {
         DocumentationProvider: SafeDsDocumentationProvider;
@@ -76,13 +86,13 @@ export type SafeDsAddedServices = {
         NodeMapper: SafeDsNodeMapper;
     };
     lsp: {
-        MessagingProvider: SafeDsMessagingProvider;
         NodeInfoProvider: SafeDsNodeInfoProvider;
     };
     purity: {
         PurityComputer: SafeDsPurityComputer;
     };
     runtime: {
+        PythonServer: SafeDsPythonServer;
         Runner: SafeDsRunner;
     };
     typing: {
@@ -99,6 +109,7 @@ export type SafeDsAddedServices = {
 };
 
 export type SafeDsAddedSharedServices = {
+    ServiceRegistry: SafeDsServiceRegistry;
     workspace: {
         ConfigurationProvider: SafeDsConfigurationProvider;
     };
@@ -127,6 +138,9 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         Enums: (services) => new SafeDsEnums(services),
         ImpurityReasons: (services) => new SafeDsImpurityReasons(services),
     },
+    communication: {
+        MessagingProvider: (services) => new SafeDsMessagingProvider(services),
+    },
     documentation: {
         CommentProvider: (services) => new SafeDsCommentProvider(services),
         DocumentationProvider: (services) => new SafeDsDocumentationProvider(services),
@@ -151,7 +165,6 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         DocumentSymbolProvider: (services) => new SafeDsDocumentSymbolProvider(services),
         Formatter: () => new SafeDsFormatter(),
         InlayHintProvider: (services) => new SafeDsInlayHintProvider(services),
-        MessagingProvider: (services) => new SafeDsMessagingProvider(services),
         NodeInfoProvider: (services) => new SafeDsNodeInfoProvider(services),
         RenameProvider: (services) => new SafeDsRenameProvider(services),
         SemanticTokenProvider: (services) => new SafeDsSemanticTokenProvider(services),
@@ -169,6 +182,7 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         ScopeProvider: (services) => new SafeDsScopeProvider(services),
     },
     runtime: {
+        PythonServer: (services) => new SafeDsPythonServer(services),
         Runner: (services) => new SafeDsRunner(services),
     },
     typing: {
@@ -185,14 +199,15 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
 };
 
 export const SafeDsSharedModule: Module<SafeDsSharedServices, DeepPartial<SafeDsSharedServices>> = {
+    ServiceRegistry: () => new SafeDsServiceRegistry(),
     lsp: {
+        ExecuteCommandHandler: (sharedServices) => new SafeDsExecuteCommandHandler(sharedServices),
         FuzzyMatcher: () => new SafeDsFuzzyMatcher(),
         NodeKindProvider: () => new SafeDsNodeKindProvider(),
     },
     workspace: {
-        ConfigurationProvider: (services) => new SafeDsConfigurationProvider(services),
-        DocumentBuilder: (services) => new SafeDsDocumentBuilder(services),
-        WorkspaceManager: (services) => new SafeDsWorkspaceManager(services),
+        ConfigurationProvider: (sharedServices) => new SafeDsConfigurationProvider(sharedServices),
+        WorkspaceManager: (sharedServices) => new SafeDsWorkspaceManager(sharedServices),
     },
 };
 
@@ -236,19 +251,22 @@ export const createSafeDsServices = async function (
 
     // Apply options
     if (options?.logger) {
-        /* c8 ignore next 2 */
-        SafeDs.lsp.MessagingProvider.setLogger(options.logger);
+        SafeDs.communication.MessagingProvider.setLogger(options.logger);
+    }
+    if (options?.messageBroker) {
+        SafeDs.communication.MessagingProvider.setMessageBroker(options.messageBroker);
     }
     if (!options?.omitBuiltins) {
         await shared.workspace.WorkspaceManager.initializeWorkspace([]);
     }
-    if (options?.runnerCommand) {
-        /* c8 ignore next 2 */
-        SafeDs.runtime.Runner.updateRunnerCommand(options.runnerCommand);
+    if (options?.settings) {
+        /* c8 ignore next 4 */
+        shared.workspace.ConfigurationProvider.updateConfiguration({
+            settings: { [SafeDsLanguageMetaData.languageId]: options.settings },
+        });
     }
-    if (options?.userMessageProvider) {
-        /* c8 ignore next 2 */
-        SafeDs.lsp.MessagingProvider.setUserMessageProvider(options.userMessageProvider);
+    if (options?.userInteractionProvider) {
+        SafeDs.communication.MessagingProvider.setUserInteractionProvider(options.userInteractionProvider);
     }
 
     return { shared, SafeDs };
@@ -262,7 +280,7 @@ export interface ModuleOptions {
      * A logging provider. If the logger lacks a capability, we fall back to the logger provided by the language server
      * connection, if available.
      */
-    logger?: Logger;
+    logger?: Partial<SafeDsLogger>;
 
     /**
      * By default, builtins are loaded into the workspace. If this option is set to true, builtins are omitted.
@@ -270,13 +288,19 @@ export interface ModuleOptions {
     omitBuiltins?: boolean;
 
     /**
-     * Command to start the runner.
+     * A message broker for communicating with the client. If the broker lacks a capability, we fall back to the
+     * language server connection, if available.
      */
-    runnerCommand?: string;
+    messageBroker?: Partial<SafeDsMessageBroker>;
 
     /**
-     * A service for showing messages to the user. If the provider lacks a capability, we fall back to the language
-     * server connection, if available.
+     * The settings to use for the Safe-DS language server.
      */
-    userMessageProvider?: UserMessageProvider;
+    settings?: DeepPartial<SafeDsSettings>;
+
+    /**
+     * A service for interacting with the user. If the provider lacks a capability, we fall back to the language server
+     * connection, if available.
+     */
+    userInteractionProvider?: Partial<SafeDsUserInteractionProvider>;
 }

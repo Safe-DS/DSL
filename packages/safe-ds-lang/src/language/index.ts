@@ -1,4 +1,4 @@
-import { RPC_RUNNER_STARTED } from './runner/safe-ds-runner.js';
+import { pipVersionRange } from './runtime/safe-ds-python-server.js';
 
 // Services
 export type { SafeDsServices } from './safe-ds-module.js';
@@ -18,9 +18,20 @@ export * from './helpers/nodeProperties.js';
 export { locationToString, positionToString, rangeToString } from '../helpers/locations.js';
 
 // Messages
-export * as messages from './runner/messages.js';
+export * as messages from './runtime/messages.js';
 
-// Remote procedure calls
-export const rpc = {
-    runnerStarted: RPC_RUNNER_STARTED,
+// Commands
+export * as commands from './communication/commands.js';
+
+// RPC
+export * as rpc from './communication/rpc.js';
+
+// Generation
+export { CODEGEN_PREFIX } from './generation/safe-ds-python-generator.js';
+
+// Dependencies
+export const dependencies = {
+    'safe-ds-runner': {
+        pipVersionRange,
+    },
 };

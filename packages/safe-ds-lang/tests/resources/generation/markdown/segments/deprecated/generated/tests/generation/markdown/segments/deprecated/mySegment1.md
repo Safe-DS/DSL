@@ -4,7 +4,7 @@
 
     This segment is deprecated.
 
-??? quote "Source code in `main.sdspipe`"
+??? quote "Implementation code in `main.sds`"
 
     ```sds linenums="4"
     segment mySegment1() {}

@@ -46,6 +46,8 @@ class MyClass6 {
         attr myAttribut4: Int
         /**
          * Description of myAttribute3.
+         *
+         * @example // Example of myAttribute3.
          */
         attr myAttribute3: Int
     }
@@ -53,7 +55,12 @@ class MyClass6 {
     /**
      * Description of MyEnum1.
      */
-    enum MyEnum1
+    enum MyEnum1 {
+        /**
+         * Description of MyVariant1.
+         */
+        MyVariant1
+    }
 
     /**
      * Description of myFunction1.
@@ -72,4 +79,21 @@ class MyClass6 {
      * Description of myAttribute2.
      */
     static attr myAttribute2: Float
+}
+
+/**
+ * Description of MyClass7.
+ *
+ * @example // Example of MyClass7.
+ */
+class MyClass7
+
+/**
+ * Description of MyClass8.
+ */
+class MyClass8 sub MyClass6 {
+    /**
+     * Description of myAttribute1.
+     */
+    attr myAttribute1: MyClass1
 }

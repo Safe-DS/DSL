@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`getNodeByLocation > should throw if no document is found 1`] = `[AssertionError: No document found at file:///test.sdstest]`;
+exports[`getNodeByLocation > should throw if no document is found 1`] = `[AssertionError: No document found at file:///test.sdsdev]`;
 
 exports[`getNodeOfType > should throw if no node is found 1`] = `[AssertionError: Expected to find a matching node but found none.]`;
 

@@ -19,12 +19,35 @@ describe('SafeDsCodeLensProvider', () => {
             {
                 testName: 'empty pipeline',
                 code: 'pipeline myPipeline {}',
-                expectedCodeLensTitles: [],
+                expectedCodeLensTitles: ['Run myPipeline'],
             },
             {
-                testName: 'pipeline with Int placeholder',
+                testName: 'pipeline with null placeholder',
                 code: `pipeline myPipeline {
-                    val a = 1;
+                    val a = null;
+                }`,
+                expectedCodeLensTitles: ['Run myPipeline'],
+            },
+            {
+                testName: 'pipeline with Image placeholder',
+                code: `pipeline myPipeline {
+                    val a = Image.fromFile("test.png");
+                }`,
+                expectedCodeLensTitles: ['Run myPipeline', 'Show a'],
+            },
+            {
+                testName: 'block lambda with Image placeholder',
+                code: `pipeline myPipeline {
+                    () {
+                        val a = Image.fromFile("test.png");
+                    };
+                }`,
+                expectedCodeLensTitles: ['Run myPipeline'],
+            },
+            {
+                testName: 'segment with Image placeholder',
+                code: `segment mySegment {
+                    val a = Image.fromFile("test.png");
                 }`,
                 expectedCodeLensTitles: [],
             },
@@ -33,7 +56,7 @@ describe('SafeDsCodeLensProvider', () => {
                 code: `pipeline myPipeline {
                     val a = Table();
                 }`,
-                expectedCodeLensTitles: ['Explore a'],
+                expectedCodeLensTitles: ['Run myPipeline', 'Explore a'],
             },
             {
                 testName: 'block lambda with Table placeholder',
@@ -42,7 +65,7 @@ describe('SafeDsCodeLensProvider', () => {
                         val a = Table();
                     };
                 }`,
-                expectedCodeLensTitles: [],
+                expectedCodeLensTitles: ['Run myPipeline'],
             },
             {
                 testName: 'segment with Table placeholder',
@@ -51,11 +74,34 @@ describe('SafeDsCodeLensProvider', () => {
                 }`,
                 expectedCodeLensTitles: [],
             },
+            {
+                testName: 'pipeline with printable placeholder',
+                code: `pipeline myPipeline {
+                    val a = 1;
+                }`,
+                expectedCodeLensTitles: ['Run myPipeline', 'Print a'],
+            },
+            {
+                testName: 'block lambda with printable placeholder',
+                code: `pipeline myPipeline {
+                    () {
+                        val a = 1;
+                    };
+                }`,
+                expectedCodeLensTitles: ['Run myPipeline'],
+            },
+            {
+                testName: 'segment with printable placeholder',
+                code: `segment mySegment {
+                    val a = 1;
+                }`,
+                expectedCodeLensTitles: [],
+            },
         ];
 
         it.each(testCases)('should compute code lenses ($testName)', async ({ code, expectedCodeLensTitles }) => {
             const document = await parse(code);
-            services.runtime.Runner.isPythonServerAvailable = () => true;
+            services.runtime.Runner.isReady = () => true;
 
             const actualCodeLenses = await codeLensProvider.provideCodeLens(document, {
                 textDocument: { uri: document.uri.toString() },
@@ -67,7 +113,7 @@ describe('SafeDsCodeLensProvider', () => {
 
         it('should return undefined if the Python server is not available', async () => {
             const document = await parse('');
-            services.runtime.Runner.isPythonServerAvailable = () => false;
+            services.runtime.Runner.isReady = () => false;
             const codeLenses = await codeLensProvider.provideCodeLens(document, {
                 textDocument: { uri: document.uri.toString() },
             });

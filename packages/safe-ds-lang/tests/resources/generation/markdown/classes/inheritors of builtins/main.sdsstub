@@ -1,0 +1,5 @@
+package safeds.lang
+
+class Number
+
+class Int sub Number

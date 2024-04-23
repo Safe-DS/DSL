@@ -4,7 +4,7 @@
 
     This schema is deprecated since version **1.0.0**.
 
-??? quote "Source code in `main.sdsstub`"
+??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="19"
     schema MySchema4 {}

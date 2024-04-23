@@ -5,8 +5,8 @@ package safeds.lang
  *
  * @param targets An exhaustive list of the valid targets.
  */
-@Target([AnnotationTarget.Annotation])
-annotation Target(
+@Targets([AnnotationTarget.Annotation])
+annotation Targets(
     targets: List<AnnotationTarget>
 )
 
@@ -66,6 +66,11 @@ enum AnnotationTarget {
     Result
 
     /**
+     * The annotation can be called on schemas.
+     */
+    Schema
+
+    /**
      * The annotation can be called on segments.
      */
     Segment
@@ -79,5 +84,5 @@ enum AnnotationTarget {
 /**
  * The annotation can be called multiple times for the same declaration.
  */
-@Target([AnnotationTarget.Annotation])
+@Targets([AnnotationTarget.Annotation])
 annotation Repeatable

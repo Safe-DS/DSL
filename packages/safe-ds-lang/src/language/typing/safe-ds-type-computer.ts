@@ -44,6 +44,7 @@ import {
     isSdsUnknown,
     isSdsUnknownType,
     isSdsYield,
+    SdsAbstractCall,
     SdsAbstractResult,
     SdsAssignee,
     type SdsBlockLambda,
@@ -103,7 +104,7 @@ import {
     StaticType,
     Type,
     TypeParameterSubstitutions,
-    TypeParameterType,
+    TypeVariable,
     UnionType,
     UnknownType,
 } from './model.js';
@@ -144,13 +145,26 @@ export class SafeDsTypeComputer {
      * simplified as much as possible.
      */
     computeType(node: AstNode | undefined, substitutions: TypeParameterSubstitutions = NO_SUBSTITUTIONS): Type {
+        return this.computeTypeWithRecursionCheck(node, {}, substitutions);
+    }
+
+    computeTypeWithRecursionCheck(
+        node: AstNode | undefined,
+        state: ComputeTypeState,
+        substitutions: TypeParameterSubstitutions = NO_SUBSTITUTIONS,
+    ): Type {
         if (!node) {
             return UnknownType;
         }
 
+        // Don't cache the result if we are inferring type of lambda parameter from context
+        if (state?.computingSubstitutionsForCall) {
+            return this.doComputeTypeWithRecursionCheck(node, state).simplify();
+        }
+
         // Ignore type parameter substitutions for caching
         const unsubstitutedType = this.nodeTypeCache.get(this.getNodeId(node), () =>
-            this.doComputeType(node).simplify(),
+            this.doComputeTypeWithRecursionCheck(node, {}).simplify(),
         );
         if (isEmpty(substitutions)) {
             return unsubstitutedType;
@@ -169,23 +183,23 @@ export class SafeDsTypeComputer {
         return `${documentUri}~${nodePath}`;
     }
 
-    private doComputeType(node: AstNode): Type {
+    private doComputeTypeWithRecursionCheck(node: AstNode | undefined, state: ComputeTypeState): Type {
         if (isSdsAssignee(node)) {
-            return this.computeTypeOfAssignee(node);
+            return this.computeTypeOfAssignee(node, state);
         } else if (isSdsDeclaration(node)) {
-            return this.computeTypeOfDeclaration(node);
+            return this.computeTypeOfDeclaration(node, state);
         } else if (isSdsExpression(node)) {
-            return this.computeTypeOfExpression(node);
+            return this.computeTypeOfExpression(node, state);
         } else if (isSdsType(node)) {
-            return this.computeTypeOfType(node);
+            return this.computeTypeOfType(node, state);
         } else if (isSdsTypeArgument(node)) {
-            return this.computeTypeOfType(node.value);
+            return this.computeTypeOfType(node.value, state);
         } /* c8 ignore start */ else {
             return UnknownType;
         } /* c8 ignore stop */
     }
 
-    private computeTypeOfAssignee(node: SdsAssignee): Type {
+    private computeTypeOfAssignee(node: SdsAssignee, state: ComputeTypeState): Type {
         const containingAssignment = AstUtils.getContainerOfType(node, isSdsAssignment);
         if (!containingAssignment) {
             /* c8 ignore next 2 */
@@ -193,7 +207,7 @@ export class SafeDsTypeComputer {
         }
 
         const assigneePosition = node.$containerIndex ?? -1;
-        const expressionType = this.computeType(containingAssignment?.expression);
+        const expressionType = this.computeTypeWithRecursionCheck(containingAssignment?.expression, state);
         if (expressionType instanceof NamedTupleType) {
             return expressionType.getTypeOfEntryByIndex(assigneePosition);
         } else if (assigneePosition === 0) {
@@ -203,10 +217,10 @@ export class SafeDsTypeComputer {
         return UnknownType;
     }
 
-    private computeTypeOfDeclaration(node: SdsDeclaration): Type {
+    private computeTypeOfDeclaration(node: SdsDeclaration, state: ComputeTypeState): Type {
         if (isSdsAnnotation(node)) {
             const parameterEntries = getParameters(node).map(
-                (it) => new NamedTupleEntry(it, it.name, this.computeType(it.type)),
+                (it) => new NamedTupleEntry(it, it.name, this.computeTypeWithRecursionCheck(it.type, state)),
             );
 
             return this.factory.createCallableType(
@@ -216,7 +230,7 @@ export class SafeDsTypeComputer {
                 this.factory.createNamedTupleType(),
             );
         } else if (isSdsAttribute(node)) {
-            return this.computeType(node.type);
+            return this.computeTypeWithRecursionCheck(node.type, state);
         } else if (isSdsClass(node)) {
             return this.factory.createClassType(node, NO_SUBSTITUTIONS, false);
         } else if (isSdsEnum(node)) {
@@ -224,30 +238,33 @@ export class SafeDsTypeComputer {
         } else if (isSdsEnumVariant(node)) {
             return this.factory.createEnumVariantType(node, false);
         } else if (isSdsFunction(node)) {
-            return this.computeTypeOfCallableWithManifestTypes(node);
+            return this.computeTypeOfCallableWithManifestTypes(node, state);
         } else if (isSdsParameter(node)) {
-            return this.computeTypeOfParameter(node);
+            return this.computeTypeOfParameter(node, state);
         } else if (isSdsPipeline(node)) {
             return UnknownType;
         } else if (isSdsResult(node)) {
-            return this.computeType(node.type);
+            return this.computeTypeWithRecursionCheck(node.type, state);
         } else if (isSdsSchema(node)) {
             return UnknownType;
         } else if (isSdsSegment(node)) {
-            return this.computeTypeOfCallableWithManifestTypes(node);
+            return this.computeTypeOfCallableWithManifestTypes(node, state);
         } else if (isSdsTypeParameter(node)) {
-            return this.factory.createTypeParameterType(node, false);
+            return this.factory.createTypeVariable(node, false);
         } /* c8 ignore start */ else {
             return UnknownType;
         } /* c8 ignore stop */
     }
 
-    private computeTypeOfCallableWithManifestTypes(node: SdsFunction | SdsSegment | SdsCallableType): Type {
+    private computeTypeOfCallableWithManifestTypes(
+        node: SdsFunction | SdsSegment | SdsCallableType,
+        state: ComputeTypeState,
+    ): Type {
         const parameterEntries = getParameters(node).map(
-            (it) => new NamedTupleEntry(it, it.name, this.computeType(it.type)),
+            (it) => new NamedTupleEntry(it, it.name, this.computeTypeWithRecursionCheck(it.type, state)),
         );
         const resultEntries = getResults(node.resultList).map(
-            (it) => new NamedTupleEntry(it, it.name, this.computeType(it.type)),
+            (it) => new NamedTupleEntry(it, it.name, this.computeTypeWithRecursionCheck(it.type, state)),
         );
 
         return this.factory.createCallableType(
@@ -258,15 +275,15 @@ export class SafeDsTypeComputer {
         );
     }
 
-    private computeTypeOfParameter(node: SdsParameter): Type {
+    private computeTypeOfParameter(node: SdsParameter, state: ComputeTypeState): Type {
         // Manifest type
         if (node.type) {
-            const type = this.computeType(node.type);
+            const type = this.computeTypeWithRecursionCheck(node.type, state);
             return this.rememberParameterInCallableType(node, type);
         }
 
         // Infer type from context
-        const contextType = this.computeTypeOfParameterContext(node);
+        const contextType = this.computeTypeOfParameterContext(node, state);
         if (!(contextType instanceof CallableType)) {
             return UnknownType;
         }
@@ -276,7 +293,7 @@ export class SafeDsTypeComputer {
         return this.rememberParameterInCallableType(node, type);
     }
 
-    private computeTypeOfParameterContext(node: SdsParameter): Type {
+    private computeTypeOfParameterContext(node: SdsParameter, state: ComputeTypeState): Type {
         const containingCallable = AstUtils.getContainerOfType(node, isSdsCallable);
         if (!isSdsLambda(containingCallable)) {
             return UnknownType;
@@ -290,12 +307,28 @@ export class SafeDsTypeComputer {
             if (!parameter) {
                 return UnknownType;
             }
-            return this.computeType(parameter?.type);
+
+            // Don't continue if we are already computing substitutions for a call. Otherwise, we would end up in an
+            // infinite loop.
+            const parameterType = this.computeTypeWithRecursionCheck(parameter, state);
+            if (state?.computingSubstitutionsForCall) {
+                return parameterType;
+            }
+
+            // Compute substitutions for containing call
+            const containingCall = AstUtils.getContainerOfType(containerOfLambda, isSdsCall);
+            if (!containingCall) {
+                /* c8 ignore next 2 */
+                return parameterType;
+            }
+
+            const substitutions = this.computeSubstitutionsForCall(containingCall);
+            return parameterType.substituteTypeParameters(substitutions);
         }
 
         // Lambda passed as default value
         if (isSdsParameter(containerOfLambda)) {
-            return this.computeType(containerOfLambda);
+            return this.computeTypeWithRecursionCheck(containerOfLambda, state);
         }
 
         // Yielded lambda
@@ -304,7 +337,7 @@ export class SafeDsTypeComputer {
             if (!isSdsYield(firstAssignee)) {
                 return UnknownType;
             }
-            return this.computeType(firstAssignee.result?.ref);
+            return this.computeTypeWithRecursionCheck(firstAssignee.result?.ref, state);
         }
 
         return UnknownType;
@@ -318,10 +351,10 @@ export class SafeDsTypeComputer {
         }
     }
 
-    private computeTypeOfExpression(node: SdsExpression): Type {
+    private computeTypeOfExpression(node: SdsExpression, state: ComputeTypeState): Type {
         // Type cast
         if (isSdsTypeCast(node)) {
-            return this.computeType(node.type);
+            return this.computeTypeWithRecursionCheck(node.type, state);
         }
 
         // Partial evaluation (definitely handles SdsBoolean, SdsFloat, SdsInt, SdsNull, and SdsString)
@@ -332,10 +365,14 @@ export class SafeDsTypeComputer {
 
         // Terminal cases
         if (isSdsList(node)) {
-            const elementType = this.lowestCommonSupertype(node.elements.map((it) => this.computeType(it)));
+            const elementType = this.lowestCommonSupertype(
+                node.elements.map((it) => this.computeTypeWithRecursionCheck(it, state)),
+            );
             return this.coreTypes.List(elementType);
         } else if (isSdsMap(node)) {
-            let keyType = this.lowestCommonSupertype(node.entries.map((it) => this.computeType(it.key)));
+            let keyType = this.lowestCommonSupertype(
+                node.entries.map((it) => this.computeTypeWithRecursionCheck(it.key, state)),
+            );
 
             // Keeping literal types for keys is too strict: We would otherwise infer the key type of `{"a": 1, "b": 2}`
             // as `Literal<"a", "b">`. But then we would be unable to pass an unknown `String` as the key in an indexed
@@ -343,7 +380,9 @@ export class SafeDsTypeComputer {
             // evaluator.
             keyType = this.computeClassTypeForLiteralType(keyType);
 
-            const valueType = this.lowestCommonSupertype(node.entries.map((it) => this.computeType(it.value)));
+            const valueType = this.lowestCommonSupertype(
+                node.entries.map((it) => this.computeTypeWithRecursionCheck(it.value, state)),
+            );
             return this.coreTypes.Map(keyType, valueType);
         } else if (isSdsTemplateString(node)) {
             return this.coreTypes.String;
@@ -353,15 +392,15 @@ export class SafeDsTypeComputer {
 
         // Recursive cases
         else if (isSdsArgument(node)) {
-            return this.computeType(node.value);
+            return this.computeTypeWithRecursionCheck(node.value, state);
         } else if (isSdsBlockLambda(node)) {
-            return this.computeTypeOfBlockLambda(node);
+            return this.computeTypeOfBlockLambda(node, state);
         } else if (isSdsCall(node)) {
-            return this.computeTypeOfCall(node);
+            return this.computeTypeOfCall(node, state);
         } else if (isSdsExpressionLambda(node)) {
-            return this.computeTypeOfExpressionLambda(node);
+            return this.computeTypeOfExpressionLambda(node, state);
         } else if (isSdsIndexedAccess(node)) {
-            return this.computeTypeOfIndexedAccess(node);
+            return this.computeTypeOfIndexedAccess(node, state);
         } else if (isSdsInfixOperation(node)) {
             switch (node.operator) {
                 // Boolean operators
@@ -388,11 +427,11 @@ export class SafeDsTypeComputer {
                 case '-':
                 case '*':
                 case '/':
-                    return this.computeTypeOfArithmeticInfixOperation(node);
+                    return this.computeTypeOfArithmeticInfixOperation(node, state);
 
                 // Elvis operator
                 case '?:':
-                    return this.computeTypeOfElvisOperation(node);
+                    return this.computeTypeOfElvisOperation(node, state);
 
                 // Unknown operator
                 /* c8 ignore next 2 */
@@ -400,15 +439,15 @@ export class SafeDsTypeComputer {
                     return UnknownType;
             }
         } else if (isSdsMemberAccess(node)) {
-            return this.computeTypeOfMemberAccess(node);
+            return this.computeTypeOfMemberAccess(node, state);
         } else if (isSdsParenthesizedExpression(node)) {
-            return this.computeType(node.expression);
+            return this.computeTypeWithRecursionCheck(node.expression, state);
         } else if (isSdsPrefixOperation(node)) {
             switch (node.operator) {
                 case 'not':
                     return this.coreTypes.Boolean;
                 case '-':
-                    return this.computeTypeOfArithmeticPrefixOperation(node);
+                    return this.computeTypeOfArithmeticPrefixOperation(node, state);
 
                 // Unknown operator
                 /* c8 ignore next 2 */
@@ -416,18 +455,18 @@ export class SafeDsTypeComputer {
                     return UnknownType;
             }
         } else if (isSdsReference(node)) {
-            return this.computeTypeOfReference(node);
+            return this.computeTypeOfReference(node, state);
         } /* c8 ignore start */ else {
             return UnknownType;
         } /* c8 ignore stop */
     }
 
-    private computeTypeOfBlockLambda(node: SdsBlockLambda): Type {
+    private computeTypeOfBlockLambda(node: SdsBlockLambda, state: ComputeTypeState): Type {
         const parameterEntries = getParameters(node).map(
-            (it) => new NamedTupleEntry(it, it.name, this.computeType(it)),
+            (it) => new NamedTupleEntry(it, it.name, this.computeTypeWithRecursionCheck(it, state)),
         );
         const resultEntries = streamBlockLambdaResults(node)
-            .map((it) => new NamedTupleEntry(it, it.name, this.computeType(it)))
+            .map((it) => new NamedTupleEntry(it, it.name, this.computeTypeWithRecursionCheck(it, state)))
             .toArray();
 
         return this.factory.createCallableType(
@@ -438,8 +477,8 @@ export class SafeDsTypeComputer {
         );
     }
 
-    private computeTypeOfCall(node: SdsCall): Type {
-        const receiverType = this.computeType(node.receiver);
+    private computeTypeOfCall(node: SdsCall, state: ComputeTypeState): Type {
+        const receiverType = this.computeTypeWithRecursionCheck(node.receiver, state);
         const nonNullableReceiverType = this.computeNonNullableType(receiverType);
         let result: Type = UnknownType;
 
@@ -475,12 +514,16 @@ export class SafeDsTypeComputer {
         return result.withExplicitNullability(receiverType.isExplicitlyNullable && node.isNullSafe);
     }
 
-    private computeTypeOfExpressionLambda(node: SdsExpressionLambda): Type {
+    private computeTypeOfExpressionLambda(node: SdsExpressionLambda, state: ComputeTypeState): Type {
         const parameterEntries = getParameters(node).map(
-            (it) => new NamedTupleEntry(it, it.name, this.computeType(it)),
+            (it) => new NamedTupleEntry(it, it.name, this.computeTypeWithRecursionCheck(it, state)),
         );
         const resultEntries = [
-            new NamedTupleEntry<SdsAbstractResult>(undefined, 'result', this.computeType(node.result)),
+            new NamedTupleEntry<SdsAbstractResult>(
+                undefined,
+                'result',
+                this.computeTypeWithRecursionCheck(node.result, state),
+            ),
         ];
 
         return this.factory.createCallableType(
@@ -491,9 +534,9 @@ export class SafeDsTypeComputer {
         );
     }
 
-    private computeTypeOfIndexedAccess(node: SdsIndexedAccess): Type {
-        const receiverType = this.computeType(node.receiver);
-        if (!(receiverType instanceof ClassType) && !(receiverType instanceof TypeParameterType)) {
+    private computeTypeOfIndexedAccess(node: SdsIndexedAccess, state: ComputeTypeState): Type {
+        const receiverType = this.computeTypeWithRecursionCheck(node.receiver, state);
+        if (!(receiverType instanceof ClassType) && !(receiverType instanceof TypeVariable)) {
             return UnknownType;
         }
 
@@ -516,9 +559,9 @@ export class SafeDsTypeComputer {
         return UnknownType;
     }
 
-    private computeTypeOfArithmeticInfixOperation(node: SdsInfixOperation): Type {
-        const leftOperandType = this.computeType(node.leftOperand);
-        const rightOperandType = this.computeType(node.rightOperand);
+    private computeTypeOfArithmeticInfixOperation(node: SdsInfixOperation, state: ComputeTypeState): Type {
+        const leftOperandType = this.computeTypeWithRecursionCheck(node.leftOperand, state);
+        const rightOperandType = this.computeTypeWithRecursionCheck(node.rightOperand, state);
 
         if (
             this.typeChecker.isSubtypeOf(leftOperandType, this.coreTypes.Int) &&
@@ -530,18 +573,18 @@ export class SafeDsTypeComputer {
         }
     }
 
-    private computeTypeOfElvisOperation(node: SdsInfixOperation): Type {
-        const leftOperandType = this.computeType(node.leftOperand);
+    private computeTypeOfElvisOperation(node: SdsInfixOperation, state: ComputeTypeState): Type {
+        const leftOperandType = this.computeTypeWithRecursionCheck(node.leftOperand, state);
         if (leftOperandType.isExplicitlyNullable) {
-            const rightOperandType = this.computeType(node.rightOperand);
+            const rightOperandType = this.computeTypeWithRecursionCheck(node.rightOperand, state);
             return this.lowestCommonSupertype([leftOperandType.withExplicitNullability(false), rightOperandType]);
         } else {
             return leftOperandType;
         }
     }
 
-    private computeTypeOfMemberAccess(node: SdsMemberAccess) {
-        const memberType = this.computeType(node.member);
+    private computeTypeOfMemberAccess(node: SdsMemberAccess, state: ComputeTypeState) {
+        const memberType = this.computeTypeWithRecursionCheck(node.member, state);
 
         // A member access of an enum variant without parameters always yields an instance, even if it is not in a call
         if (memberType instanceof StaticType && !isSdsCall(node.$container)) {
@@ -552,18 +595,12 @@ export class SafeDsTypeComputer {
             }
         }
 
-        const receiverType = this.computeType(node.receiver);
+        const receiverType = this.computeTypeWithRecursionCheck(node.receiver, state);
         let result: Type = memberType;
 
-        // Substitute type parameters (must also work for inherited members)
-        if (receiverType instanceof ClassType) {
-            const classContainingMember = AstUtils.getContainerOfType(node.member?.target.ref, isSdsClass);
-            const typeContainingMember = this.computeMatchingSupertype(receiverType, classContainingMember);
-
-            if (typeContainingMember) {
-                result = result.substituteTypeParameters(typeContainingMember.substitutions);
-            }
-        }
+        // Substitute type parameters
+        const substitutions = this.computeSubstitutionsForMemberAccess(node);
+        result = result.substituteTypeParameters(substitutions);
 
         // Update nullability
         return result.withExplicitNullability(
@@ -571,8 +608,8 @@ export class SafeDsTypeComputer {
         );
     }
 
-    private computeTypeOfArithmeticPrefixOperation(node: SdsPrefixOperation): Type {
-        const operandType = this.computeType(node.operand);
+    private computeTypeOfArithmeticPrefixOperation(node: SdsPrefixOperation, state: ComputeTypeState): Type {
+        const operandType = this.computeTypeWithRecursionCheck(node.operand, state);
 
         if (this.typeChecker.isSubtypeOf(operandType, this.coreTypes.Int)) {
             return this.coreTypes.Int;
@@ -581,9 +618,9 @@ export class SafeDsTypeComputer {
         }
     }
 
-    private computeTypeOfReference(node: SdsReference): Type {
+    private computeTypeOfReference(node: SdsReference, state: ComputeTypeState): Type {
         const target = node.target.ref;
-        const instanceType = this.computeType(target);
+        const instanceType = this.computeTypeWithRecursionCheck(target, state);
 
         if (isSdsNamedTypeDeclaration(target) && instanceType instanceof NamedType) {
             return this.factory.createStaticType(instanceType.withExplicitNullability(false));
@@ -592,19 +629,19 @@ export class SafeDsTypeComputer {
         }
     }
 
-    private computeTypeOfType(node: SdsType): Type {
+    private computeTypeOfType(node: SdsType, state: ComputeTypeState): Type {
         if (isSdsCallableType(node)) {
-            return this.computeTypeOfCallableWithManifestTypes(node);
+            return this.computeTypeOfCallableWithManifestTypes(node, state);
         } else if (isSdsLiteralType(node)) {
             return this.computeTypeOfLiteralType(node);
         } else if (isSdsMemberType(node)) {
-            return this.computeType(node.member);
+            return this.computeTypeWithRecursionCheck(node.member, state);
         } else if (isSdsNamedType(node)) {
-            return this.computeTypeOfNamedType(node);
+            return this.computeTypeOfNamedType(node, state);
         } else if (isSdsUnionType(node)) {
             const typeArguments = getTypeArguments(node.typeArgumentList);
             return this.factory.createUnionType(
-                ...typeArguments.map((typeArgument) => this.computeType(typeArgument.value)),
+                ...typeArguments.map((typeArgument) => this.computeTypeWithRecursionCheck(typeArgument.value, state)),
             );
         } else if (isSdsUnknownType(node)) {
             return UnknownType;
@@ -622,44 +659,17 @@ export class SafeDsTypeComputer {
         } /* c8 ignore stop */
     }
 
-    private computeTypeOfNamedType(node: SdsNamedType) {
-        const unparameterizedType = this.computeType(node.declaration?.ref).withExplicitNullability(node.isNullable);
+    private computeTypeOfNamedType(node: SdsNamedType, state: ComputeTypeState) {
+        const unparameterizedType = this.computeTypeWithRecursionCheck(
+            node.declaration?.ref,
+            state,
+        ).withExplicitNullability(node.isNullable);
         if (!(unparameterizedType instanceof ClassType)) {
             return unparameterizedType;
         }
 
-        const substitutions = this.computeTypeParameterSubstitutionsForNamedType(node, unparameterizedType.declaration);
+        const substitutions = this.computeSubstitutionsForNamedType(node, unparameterizedType.declaration);
         return this.factory.createClassType(unparameterizedType.declaration, substitutions, node.isNullable);
-    }
-
-    private computeTypeParameterSubstitutionsForNamedType(
-        node: SdsNamedType,
-        clazz: SdsClass,
-    ): TypeParameterSubstitutions {
-        const typeParameters = getTypeParameters(clazz);
-        if (isEmpty(typeParameters)) {
-            return NO_SUBSTITUTIONS;
-        }
-
-        // Map type parameters to the first type argument that sets it
-        const typeArgumentsByTypeParameters = new Map<SdsTypeParameter, SdsTypeArgument>();
-        for (const typeArgument of getTypeArguments(node)) {
-            const typeParameter = this.nodeMapper.typeArgumentToTypeParameter(typeArgument);
-            if (typeParameter && !typeArgumentsByTypeParameters.has(typeParameter)) {
-                typeArgumentsByTypeParameters.set(typeParameter, typeArgument);
-            }
-        }
-
-        // Compute substitutions (ordered by the position of the type parameters)
-        const result = new Map<SdsTypeParameter, Type>();
-
-        for (const typeParameter of typeParameters) {
-            const typeArgument = typeArgumentsByTypeParameters.get(typeParameter);
-            const type = this.computeType(typeArgument?.value ?? typeParameter.defaultValue);
-            result.set(typeParameter, type);
-        }
-
-        return result;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -745,19 +755,19 @@ export class SafeDsTypeComputer {
      * invalid upper bounds are specified, but are invalid (e.g. because of an unresolved reference or a cycle),
      * `unknown` is returned. The result is simplified as much as possible.
      */
-    computeUpperBound(nodeOrType: SdsTypeParameter | TypeParameterType, options: ComputeUpperBoundOptions = {}): Type {
-        let type: TypeParameterType;
-        if (nodeOrType instanceof TypeParameterType) {
+    computeUpperBound(nodeOrType: SdsTypeParameter | TypeVariable, options: ComputeUpperBoundOptions = {}): Type {
+        let type: TypeVariable;
+        if (nodeOrType instanceof TypeVariable) {
             type = nodeOrType;
         } else {
-            type = this.computeType(nodeOrType) as TypeParameterType;
+            type = this.computeType(nodeOrType) as TypeVariable;
         }
 
         const result = this.doComputeUpperBound(type, options);
         return result.withExplicitNullability(result.isExplicitlyNullable || type.isExplicitlyNullable);
     }
 
-    private doComputeUpperBound(type: TypeParameterType, options: ComputeUpperBoundOptions): Type {
+    private doComputeUpperBound(type: TypeVariable, options: ComputeUpperBoundOptions): Type {
         const upperBound = type.declaration.upperBound;
         if (!upperBound) {
             return this.coreTypes.AnyOrNull;
@@ -766,7 +776,7 @@ export class SafeDsTypeComputer {
         const boundType = this.computeType(upperBound);
         if (!(boundType instanceof NamedType)) {
             return UnknownType;
-        } else if (options.stopAtTypeParameterType || !(boundType instanceof TypeParameterType)) {
+        } else if (options.stopAtTypeVariable || !(boundType instanceof TypeVariable)) {
             return boundType;
         } else {
             return this.doComputeUpperBound(boundType, options);
@@ -780,26 +790,42 @@ export class SafeDsTypeComputer {
     /**
      * Computes substitutions for the type parameters of a callable in the context of a call.
      *
-     * @param call The call to compute substitutions for.
+     * @param node The call to compute substitutions for.
      * @returns The computed substitutions for the type parameters of the callable.
      */
-    computeSubstitutionsForCall(call: SdsCall): TypeParameterSubstitutions {
-        const callable = this.nodeMapper.callToCallable(call);
+    computeSubstitutionsForCall(node: SdsAbstractCall): TypeParameterSubstitutions {
+        // Compute substitutions for member access
+        const substitutionsFromReceiver =
+            isSdsCall(node) && isSdsMemberAccess(node.receiver)
+                ? this.computeSubstitutionsForMemberAccess(node.receiver)
+                : NO_SUBSTITUTIONS;
+
+        // Compute substitutions for arguments
+        const callable = this.nodeMapper.callToCallable(node);
         const typeParameters = getTypeParameters(callable);
         if (isEmpty(typeParameters)) {
-            return NO_SUBSTITUTIONS;
+            return substitutionsFromReceiver;
         }
 
         const parameters = getParameters(callable);
-        const args = getArguments(call);
+        const args = getArguments(node);
 
         const parametersToArguments = this.nodeMapper.parametersToArguments(parameters, args);
         const parameterTypesToArgumentTypes: [Type, Type][] = parameters.map((parameter) => {
             const argument = parametersToArguments.get(parameter);
-            return [this.computeType(parameter.type), this.computeType(argument?.value ?? parameter.defaultValue)];
+            return [
+                this.computeType(parameter.type),
+                this.computeTypeWithRecursionCheck(argument?.value ?? parameter.defaultValue, {
+                    computingSubstitutionsForCall: true,
+                }),
+            ];
         });
+        const substitutionsFromArguments = this.computeSubstitutionsForArguments(
+            typeParameters,
+            parameterTypesToArgumentTypes,
+        );
 
-        return this.computeTypeParameterSubstitutionsForArguments(typeParameters, parameterTypesToArgumentTypes);
+        return new Map([...substitutionsFromReceiver, ...substitutionsFromArguments]);
     }
 
     /**
@@ -828,7 +854,49 @@ export class SafeDsTypeComputer {
             ownTypesToOverriddenTypes.push([ownParameterTypes[i]!, overriddenParameterTypes[i]!]);
         }
 
-        return this.computeTypeParameterSubstitutionsForArguments(ownTypeParameters, ownTypesToOverriddenTypes);
+        return this.computeSubstitutionsForArguments(ownTypeParameters, ownTypesToOverriddenTypes);
+    }
+
+    private computeSubstitutionsForMemberAccess(node: SdsMemberAccess): TypeParameterSubstitutions {
+        const receiverType = this.computeType(node.receiver);
+        if (receiverType instanceof ClassType) {
+            // Must also work for inherited members
+            const classContainingMember = AstUtils.getContainerOfType(node.member?.target.ref, isSdsClass);
+            const typeContainingMember = this.computeMatchingSupertype(receiverType, classContainingMember);
+
+            if (typeContainingMember) {
+                return typeContainingMember.substitutions;
+            }
+        }
+
+        return NO_SUBSTITUTIONS;
+    }
+
+    private computeSubstitutionsForNamedType(node: SdsNamedType, clazz: SdsClass): TypeParameterSubstitutions {
+        const typeParameters = getTypeParameters(clazz);
+        if (isEmpty(typeParameters)) {
+            return NO_SUBSTITUTIONS;
+        }
+
+        // Map type parameters to the first type argument that sets it
+        const typeArgumentsByTypeParameters = new Map<SdsTypeParameter, SdsTypeArgument>();
+        for (const typeArgument of getTypeArguments(node)) {
+            const typeParameter = this.nodeMapper.typeArgumentToTypeParameter(typeArgument);
+            if (typeParameter && !typeArgumentsByTypeParameters.has(typeParameter)) {
+                typeArgumentsByTypeParameters.set(typeParameter, typeArgument);
+            }
+        }
+
+        // Compute substitutions (ordered by the position of the type parameters)
+        const result = new Map<SdsTypeParameter, Type>();
+
+        for (const typeParameter of typeParameters) {
+            const typeArgument = typeArgumentsByTypeParameters.get(typeParameter);
+            const type = this.computeType(typeArgument?.value ?? typeParameter.defaultValue);
+            result.set(typeParameter, type);
+        }
+
+        return result;
     }
 
     /**
@@ -839,19 +907,19 @@ export class SafeDsTypeComputer {
      * @param parameterTypesToArgumentTypes Pairs of parameter types and the corresponding argument types.
      * @returns The computed substitutions for the type parameters in the parameter types.
      */
-    private computeTypeParameterSubstitutionsForArguments(
+    private computeSubstitutionsForArguments(
         typeParameters: SdsTypeParameter[],
         parameterTypesToArgumentTypes: [Type, Type][],
     ): TypeParameterSubstitutions {
         // Build initial state
-        const state: ComputeTypeParameterSubstitutionsForParametersState = {
+        const state: ComputeSubstitutionsForParametersState = {
             substitutions: new Map(typeParameters.map((it) => [it, UnknownType])),
             remainingVariances: new Map(typeParameters.map((it) => [it, 'bivariant'])),
         };
 
         // Compute substitutions
         for (const [parameterType, argumentType] of parameterTypesToArgumentTypes) {
-            this.computeTypeParameterSubstitutionsForParameter(parameterType, argumentType, 'covariant', state);
+            this.computeSubstitutionsForParameter(parameterType, argumentType, 'covariant', state);
         }
 
         // Normalize substitutions
@@ -871,7 +939,7 @@ export class SafeDsTypeComputer {
 
             // Clamp to upper bound
             const upperBound = this.computeUpperBound(typeParameter, {
-                stopAtTypeParameterType: true,
+                stopAtTypeVariable: true,
             }).substituteTypeParameters(state.substitutions);
 
             if (!this.typeChecker.isSubtypeOf(newSubstitution, upperBound)) {
@@ -884,13 +952,13 @@ export class SafeDsTypeComputer {
         return state.substitutions;
     }
 
-    private computeTypeParameterSubstitutionsForParameter(
+    private computeSubstitutionsForParameter(
         parameterType: Type,
         argumentType: Type,
         currentVariance: Variance,
-        state: ComputeTypeParameterSubstitutionsForParametersState,
+        state: ComputeSubstitutionsForParametersState,
     ) {
-        if (argumentType instanceof TypeParameterType && state.substitutions.has(argumentType.declaration)) {
+        if (argumentType instanceof TypeVariable && state.substitutions.has(argumentType.declaration)) {
             // Can happen for lambdas without manifest parameter types. We gain no information here.
             return;
         } else if (parameterType instanceof CallableType && argumentType instanceof CallableType) {
@@ -901,7 +969,7 @@ export class SafeDsTypeComputer {
             for (let i = 0; i < minParametersLength; i++) {
                 const parameterEntry = parameterTypeParameters[i]!;
                 const argumentEntry = argumentTypeParameters[i]!;
-                this.computeTypeParameterSubstitutionsForParameter(
+                this.computeSubstitutionsForParameter(
                     parameterEntry.type,
                     argumentEntry.type,
                     this.flippedVariance(currentVariance),
@@ -916,22 +984,12 @@ export class SafeDsTypeComputer {
             for (let i = 0; i < minResultsLength; i++) {
                 const parameterEntry = parameterTypeResults[i]!;
                 const argumentEntry = argumentTypeResults[i]!;
-                this.computeTypeParameterSubstitutionsForParameter(
-                    parameterEntry.type,
-                    argumentEntry.type,
-                    currentVariance,
-                    state,
-                );
+                this.computeSubstitutionsForParameter(parameterEntry.type, argumentEntry.type, currentVariance, state);
             }
         } else if (parameterType instanceof CallableType && argumentType instanceof StaticType) {
             if (currentVariance === 'covariant') {
                 const callableArgumentType = this.computeCallableTypeForStaticType(argumentType);
-                this.computeTypeParameterSubstitutionsForParameter(
-                    parameterType,
-                    callableArgumentType,
-                    currentVariance,
-                    state,
-                );
+                this.computeSubstitutionsForParameter(parameterType, callableArgumentType, currentVariance, state);
             }
         } else if (parameterType instanceof ClassType && argumentType instanceof ClassType) {
             let matchingParameterType: ClassType | undefined = parameterType;
@@ -958,14 +1016,14 @@ export class SafeDsTypeComputer {
                 }
 
                 if (TypeParameter.isCovariant(typeParameter)) {
-                    this.computeTypeParameterSubstitutionsForParameter(
+                    this.computeSubstitutionsForParameter(
                         argumentTypeSubstitutions,
                         parameterTypeSubstitutions,
                         currentVariance,
                         state,
                     );
                 } else if (TypeParameter.isContravariant(typeParameter)) {
-                    this.computeTypeParameterSubstitutionsForParameter(
+                    this.computeSubstitutionsForParameter(
                         argumentTypeSubstitutions,
                         parameterTypeSubstitutions,
                         this.flippedVariance(currentVariance),
@@ -973,7 +1031,7 @@ export class SafeDsTypeComputer {
                     );
                 }
             }
-        } else if (parameterType instanceof TypeParameterType) {
+        } else if (parameterType instanceof TypeVariable) {
             const currentSubstitution = state.substitutions.get(parameterType.declaration);
             const remainingVariance = state.remainingVariances.get(parameterType.declaration);
             if (!currentSubstitution) {
@@ -1020,8 +1078,8 @@ export class SafeDsTypeComputer {
             return simplifiedTypes[0]!;
         }
 
-        // Replace type parameter types by their upper bound
-        const replacedTypes = this.replaceTypeParameterTypesWithUpperBound(simplifiedTypes);
+        // Replace type variables by their upper bound
+        const replacedTypes = this.replaceVariablesWithUpperBound(simplifiedTypes);
 
         // Partition types by their kind
         const partitionedTypes = this.partitionTypesLCS(replacedTypes);
@@ -1074,9 +1132,9 @@ export class SafeDsTypeComputer {
         }
     }
 
-    private replaceTypeParameterTypesWithUpperBound(simplifiedTypes: Type[]) {
+    private replaceVariablesWithUpperBound(simplifiedTypes: Type[]) {
         return simplifiedTypes.map((it) => {
-            if (it instanceof TypeParameterType) {
+            if (it instanceof TypeVariable) {
                 return this.computeUpperBound(it);
             } else {
                 return it;
@@ -1398,7 +1456,7 @@ export class SafeDsTypeComputer {
         const substitutions: TypeParameterSubstitutions = new Map();
 
         for (const typeParameter of typeParameters) {
-            substitutions.set(typeParameter, this.factory.createTypeParameterType(typeParameter, false));
+            substitutions.set(typeParameter, this.factory.createTypeVariable(typeParameter, false));
         }
 
         return this.factory.createClassType(declaration, substitutions, type.isExplicitlyNullable);
@@ -1418,7 +1476,7 @@ export class SafeDsTypeComputer {
         // See where the type parameters ended up in the computed super type
         const invertedTypeParameterMap = new Map<SdsTypeParameter, SdsTypeParameter>();
         for (const [key, value] of superType.substitutions) {
-            if (value instanceof TypeParameterType) {
+            if (value instanceof TypeVariable) {
                 invertedTypeParameterMap.set(value.declaration, key);
             }
         }
@@ -1501,7 +1559,7 @@ export class SafeDsTypeComputer {
      * parameters on parent types get substituted.
      */
     computeMatchingSupertype(
-        type: ClassType | TypeParameterType | undefined,
+        type: ClassType | TypeVariable | undefined,
         target: SdsClass | undefined,
     ): ClassType | undefined {
         // Handle undefined
@@ -1510,7 +1568,7 @@ export class SafeDsTypeComputer {
         }
 
         // Handle type parameter types
-        if (type instanceof TypeParameterType) {
+        if (type instanceof TypeVariable) {
             const upperBound = this.computeUpperBound(type);
             if (upperBound instanceof ClassType) {
                 return this.computeMatchingSupertype(upperBound, target);
@@ -1616,13 +1674,25 @@ export class SafeDsTypeComputer {
  */
 interface ComputeUpperBoundOptions {
     /**
-     * If `true`, the computation stops at type parameter types and returns them as is. Otherwise, it finds the bounds
-     * for the type parameter types recursively.
+     * If `true`, the computation stops at type variables and returns them as is. Otherwise, it finds the bounds for the
+     * type variable recursively.
      */
-    stopAtTypeParameterType?: boolean;
+    stopAtTypeVariable?: boolean;
 }
 
-interface ComputeTypeParameterSubstitutionsForParametersState {
+interface ComputeTypeState {
+    /**
+     * Indicates that we are currently computing substitutions for a call. This is used to avoid infinite recursion:
+     *
+     * 1. The type of the lambda parameter gets inferred from the context. If the lambda is passed as an argument, the
+     *    result might include type parameters.
+     * 2. Substitutions are computed for the type parameters from the context (i.e. the call). This involves
+     *    computing the type of the lambda parameter.
+     */
+    computingSubstitutionsForCall?: boolean;
+}
+
+interface ComputeSubstitutionsForParametersState {
     substitutions: TypeParameterSubstitutions;
     remainingVariances: Map<SdsTypeParameter, Variance | undefined>;
 }

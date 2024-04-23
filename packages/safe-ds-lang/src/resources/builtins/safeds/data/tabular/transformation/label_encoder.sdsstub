@@ -5,6 +5,11 @@ from safeds.data.tabular.transformation import InvertibleTableTransformer
 
 /**
  * The LabelEncoder encodes one or more given columns into labels.
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
 class LabelEncoder() sub InvertibleTableTransformer {
     /**
@@ -16,6 +21,11 @@ class LabelEncoder() sub InvertibleTableTransformer {
      * @param columnNames The list of columns from the table used to fit the transformer. If `None`, all columns are used.
      *
      * @result result1 The fitted transformer.
+     *
+     * @example
+     * pipeline example {
+     *     // TODO
+     * }
      */
     @Pure
     fun fit(

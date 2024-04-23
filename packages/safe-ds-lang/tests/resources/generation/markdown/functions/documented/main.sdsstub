@@ -38,4 +38,12 @@ fun myFunction3(param1: MyClass1, param2: Float = 1.0)
 @Pure
 fun myFunction4() -> (result1: MyClass1, result2: Float)
 
+/**
+ * Description of myFunction5.
+ *
+ * @example // Example of myFunction5.
+ */
+@Pure
+fun myFunction5()
+
 class MyClass1

@@ -4,7 +4,7 @@
         "noEmit": true
     },
     "include": [
-        "docs/javascript/**/*",
+        "docs/src/javascript/**/*",
         "packages/safe-ds-cli/bin/cli.js",
         ".eslintrc.cjs",
         "release.config.cjs",

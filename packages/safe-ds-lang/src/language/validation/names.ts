@@ -26,7 +26,7 @@ import {
     SdsTypeParameter,
 } from '../generated/ast.js';
 import { CODEGEN_PREFIX } from '../generation/safe-ds-python-generator.js';
-import { isInPipelineFile, isInStubFile, isInTestFile } from '../helpers/fileExtensions.js';
+import { isInDevFile, isInPipelineFile, isInStubFile } from '../helpers/fileExtensions.js';
 import {
     getClassMembers,
     getColumns,
@@ -38,11 +38,13 @@ import {
     getParameters,
     getResults,
     getTypeParameters,
+    isStatic,
+    isValidPipelineDeclaration,
+    isValidStubDeclaration,
     streamBlockLambdaResults,
     streamPlaceholders,
 } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
-import { declarationIsAllowedInPipelineFile, declarationIsAllowedInStubFile } from './other/modules.js';
 
 export const CODE_NAME_CODEGEN_PREFIX = 'name/codegen-prefix';
 export const CODE_NAME_CORE_DECLARATION = 'name/core-declaration';
@@ -226,6 +228,28 @@ export const classMustContainUniqueNames = (node: SdsClass, accept: ValidationAc
     namesMustBeUnique(getClassMembers(node), (name) => `A class member with name '${name}' exists already.`, accept);
 };
 
+export const staticClassMemberNamesMustNotCollideWithInheritedMembers = (services: SafeDsServices) => {
+    const classHierarchy = services.typing.ClassHierarchy;
+
+    return (node: SdsClass, accept: ValidationAcceptor): void => {
+        const staticMembers = getClassMembers(node).filter(isStatic);
+        const inheritedMembers = classHierarchy
+            .streamInheritedMembers(node)
+            .map((it) => it.name)
+            .toSet();
+
+        for (const staticMember of staticMembers) {
+            if (inheritedMembers.has(staticMember.name)) {
+                accept('error', `An inherited member with name 'myInstanceAttribute1' exists already.`, {
+                    node: staticMember,
+                    property: 'name',
+                    code: CODE_NAME_DUPLICATE,
+                });
+            }
+        }
+    };
+};
+
 export const enumMustContainUniqueNames = (node: SdsEnum, accept: ValidationAcceptor): void => {
     namesMustBeUnique(getEnumVariants(node), (name) => `A variant with name '${name}' exists already.`, accept);
 };
@@ -317,16 +341,16 @@ export const moduleMustContainUniqueNames = (node: SdsModule, accept: Validation
             getModuleMembers(node),
             (name) => `A declaration with name '${name}' exists already in this file.`,
             accept,
-            declarationIsAllowedInPipelineFile,
+            isValidPipelineDeclaration,
         );
     } else if (isInStubFile(node)) {
         namesMustBeUnique(
             getModuleMembers(node),
             (name) => `A declaration with name '${name}' exists already in this file.`,
             accept,
-            declarationIsAllowedInStubFile,
+            isValidStubDeclaration,
         );
-    } else if (isInTestFile(node)) {
+    } else if (isInDevFile(node)) {
         namesMustBeUnique(
             getModuleMembers(node),
             (name) => `A declaration with name '${name}' exists already in this file.`,

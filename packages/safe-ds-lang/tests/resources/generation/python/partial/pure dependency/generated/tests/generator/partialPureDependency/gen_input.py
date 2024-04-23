@@ -12,14 +12,16 @@ def testPipeline():
     lStrMulti = 'multi\nline'
     boolean1 = True
     value1 = g(True, -1.0, 1, None, 'multi\nline')
-    def __gen_block_lambda_0():
+    def __gen_lambda_0():
         i = 1
         i2 = 3
         j = 6
         j2 = 4
         __gen_block_lambda_result_z = 7
         return __gen_block_lambda_result_z
-    o = (f(__gen_block_lambda_0)) + (f(lambda : 2))
+    def __gen_lambda_1():
+        return 2
+    o = (f(__gen_lambda_0)) + (f(__gen_lambda_1))
     mapKey = 'key'
     mapValue = 'value'
     mapResult = g2({'key': 'value'})

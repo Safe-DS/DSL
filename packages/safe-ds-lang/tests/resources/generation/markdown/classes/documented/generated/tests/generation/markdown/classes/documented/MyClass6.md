@@ -2,7 +2,11 @@
 
 Description of MyClass6.
 
-??? quote "Source code in `main.sdsstub`"
+**Inheritors:**
+
+- [`MyClass8`][tests.generation.markdown.classes.documented.MyClass8]
+
+??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="38"
     class MyClass6 {
@@ -16,15 +20,22 @@ Description of MyClass6.
             attr myAttribut4: Int
             /**
              * Description of myAttribute3.
+             *
+             * @example // Example of myAttribute3.
              */
             attr myAttribute3: Int
         }
-    
+
         /**
          * Description of MyEnum1.
          */
-        enum MyEnum1
-    
+        enum MyEnum1 {
+            /**
+             * Description of MyVariant1.
+             */
+            MyVariant1
+        }
+
         /**
          * Description of myFunction1.
          */
@@ -33,7 +44,7 @@ Description of MyClass6.
          * Description of myFunction2.
          */
         @Pure static fun myFunction2()
-    
+
         /**
          * Description of myAttribute1.
          */
@@ -55,9 +66,9 @@ Description of myAttribute1.
 
 Description of myFunction1.
 
-??? quote "Source code in `main.sdsstub`"
+??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="61"
+    ```sds linenums="68"
     @Pure fun myFunction1()
     ```
 
@@ -71,17 +82,22 @@ Description of myAttribute2.
 
 Description of myFunction2.
 
-??? quote "Source code in `main.sdsstub`"
+??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="65"
+    ```sds linenums="72"
     @Pure static fun myFunction2()
     ```
+
+---
+search:
+  boost: 0.5
+---
 
 ## `#!sds abstract class` MyClass7 {#tests.generation.markdown.classes.documented.MyClass6.MyClass7 data-toc-label='MyClass7'}
 
 Description of MyClass7.
 
-??? quote "Source code in `main.sdsstub`"
+??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="42"
     class MyClass7 {
@@ -91,6 +107,8 @@ Description of MyClass7.
         attr myAttribut4: Int
         /**
          * Description of myAttribute3.
+         *
+         * @example // Example of myAttribute3.
          */
         attr myAttribute3: Int
     }
@@ -108,12 +126,27 @@ Description of myAttribute3.
 
 **Type:** `#!sds Int`
 
+**Examples:**
+
+```sds hl_lines="1"
+// Example of myAttribute3.
+```
+
 ## `#!sds enum` MyEnum1 {#tests.generation.markdown.classes.documented.MyClass6.MyEnum1 data-toc-label='MyEnum1'}
 
 Description of MyEnum1.
 
-??? quote "Source code in `main.sdsstub`"
+??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="56"
-    enum MyEnum1
+    ```sds linenums="58"
+    enum MyEnum1 {
+        /**
+         * Description of MyVariant1.
+         */
+        MyVariant1
+    }
     ```
+
+### MyVariant1 {#tests.generation.markdown.classes.documented.MyClass6.MyEnum1.MyVariant1 data-toc-label='MyVariant1'}
+
+Description of MyVariant1.

@@ -1,10 +1,9 @@
 import { AstUtils, ValidationAcceptor } from 'langium';
 import {
-    isSdsMap,
     isSdsUnionType,
     type SdsConstraintList,
     type SdsLiteralType,
-    type SdsMap,
+    SdsSchema,
     type SdsUnionType,
 } from '../generated/ast.js';
 import { SafeDsServices } from '../safe-ds-module.js';
@@ -45,22 +44,18 @@ export const literalTypesShouldBeUsedWithCaution = (services: SafeDsServices) =>
     };
 };
 
-export const mapsShouldBeUsedWithCaution = (services: SafeDsServices) => {
+export const schemasShouldBeUsedWithCaution = (services: SafeDsServices) => {
     const settingsProvider = services.workspace.SettingsProvider;
 
-    return (node: SdsMap, accept: ValidationAcceptor) => {
+    return (node: SdsSchema, accept: ValidationAcceptor) => {
         if (!settingsProvider.shouldValidateExperimentalLanguageFeatures()) {
             /* c8 ignore next 2 */
             return;
         }
 
-        // There's already a warning on the container
-        if (AstUtils.hasContainerOfType(node.$container, isSdsMap)) {
-            return;
-        }
-
-        accept('warning', 'Map literals are experimental and may change without prior notice.', {
+        accept('warning', 'Schemas are experimental and may change without prior notice.', {
             node,
+            property: 'name',
             code: CODE_EXPERIMENTAL_LANGUAGE_FEATURE,
         });
     };

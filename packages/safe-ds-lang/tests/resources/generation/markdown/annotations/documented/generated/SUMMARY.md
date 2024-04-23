@@ -1,3 +1,8 @@
+---
+search:
+  exclude: true
+---
+
 - tests
     - generation
         - markdown
@@ -6,4 +11,5 @@
                     - [MyAnnotation1](tests/generation/markdown/annotations/documented/MyAnnotation1.md)
                     - [MyAnnotation2](tests/generation/markdown/annotations/documented/MyAnnotation2.md)
                     - [MyAnnotation3](tests/generation/markdown/annotations/documented/MyAnnotation3.md)
+                    - [MyAnnotation4](tests/generation/markdown/annotations/documented/MyAnnotation4.md)
                     - [MyEnum1](tests/generation/markdown/annotations/documented/MyEnum1.md)

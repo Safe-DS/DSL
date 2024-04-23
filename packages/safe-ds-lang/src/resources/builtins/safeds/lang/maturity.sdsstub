@@ -8,7 +8,7 @@ package safeds.lang
  * @param sinceVersion When the declaration was deprecated.
  * @param removalVersion When the declaration will be removed.
  */
-@Target([
+@Targets([
     AnnotationTarget.Annotation,
     AnnotationTarget.Attribute,
     AnnotationTarget.Class,
@@ -17,6 +17,7 @@ package safeds.lang
     AnnotationTarget.Function,
     AnnotationTarget.Parameter,
     AnnotationTarget.Result,
+    AnnotationTarget.Schema,
     AnnotationTarget.Segment,
 ])
 annotation Deprecated(
@@ -29,7 +30,7 @@ annotation Deprecated(
 /**
  * The declaration might change without a major version bump.
  */
-@Target([
+@Targets([
     AnnotationTarget.Annotation,
     AnnotationTarget.Attribute,
     AnnotationTarget.Class,
@@ -38,6 +39,7 @@ annotation Deprecated(
     AnnotationTarget.Function,
     AnnotationTarget.Parameter,
     AnnotationTarget.Result,
+    AnnotationTarget.Schema,
     AnnotationTarget.Segment,
 ])
 annotation Experimental

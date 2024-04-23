@@ -18,14 +18,14 @@ describe('SafeDsCompletionProvider', async () => {
                 },
             },
             {
-                testName: 'after package (sdspipe)',
+                testName: 'after package (sds)',
                 code: `
                     package myPackage
                     <|>
                 `,
-                uri: `file:///test1.sdspipe`,
+                uri: `file:///test1.sds`,
                 expectedLabels: {
-                    shouldEqual: ['from', 'pipeline', 'internal', 'private', 'segment'],
+                    shouldEqual: ['from', 'schema', 'pipeline', 'internal', 'private', 'segment'],
                 },
             },
             {
@@ -40,12 +40,12 @@ describe('SafeDsCompletionProvider', async () => {
                 },
             },
             {
-                testName: 'after package (sdstest)',
+                testName: 'after package (sdsdev)',
                 code: `
                     package myPackage
                     <|>
                 `,
-                uri: `file:///test3.sdstest`,
+                uri: `file:///test3.sdsdev`,
                 expectedLabels: {
                     shouldEqual: [
                         'from',
@@ -250,6 +250,23 @@ describe('SafeDsCompletionProvider', async () => {
                 expectedLabels: {
                     shouldContain: ['f1'],
                     shouldNotContain: ['g2'],
+                },
+            },
+            {
+                testName: 'reference (class only for typing)',
+                code: `
+                    class MyClass1
+                    class MyClass2()
+                    class MyClass3 {
+                        static attr myAttribute: Int
+                    }
+
+                    pipeline myPipeline {
+                        <|>
+                `,
+                expectedLabels: {
+                    shouldContain: ['MyClass2', 'MyClass3'],
+                    shouldNotContain: ['MyClass1'],
                 },
             },
             {

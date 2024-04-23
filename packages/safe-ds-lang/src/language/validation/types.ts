@@ -10,6 +10,7 @@ import {
     isSdsPipeline,
     isSdsReference,
     isSdsSchema,
+    SdsAbstractCall,
     SdsAttribute,
     SdsCall,
     SdsIndexedAccess,
@@ -26,7 +27,7 @@ import {
 } from '../generated/ast.js';
 import { getArguments, getTypeArguments, getTypeParameters, TypeParameter } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
-import { ClassType, NamedTupleType, TypeParameterType, UnknownType } from '../typing/model.js';
+import { ClassType, NamedTupleType, TypeVariable, UnknownType } from '../typing/model.js';
 
 export const CODE_TYPE_CALLABLE_RECEIVER = 'type/callable-receiver';
 export const CODE_TYPE_MISMATCH = 'type/mismatch';
@@ -37,12 +38,12 @@ export const CODE_TYPE_MISSING_TYPE_HINT = 'type/missing-type-hint';
 // Type checking
 // -----------------------------------------------------------------------------
 
-export const callArgumentTypesMustMatchParameterTypes = (services: SafeDsServices) => {
+export const argumentTypesMustMatchParameterTypes = (services: SafeDsServices) => {
     const nodeMapper = services.helpers.NodeMapper;
     const typeChecker = services.typing.TypeChecker;
     const typeComputer = services.typing.TypeComputer;
 
-    return (node: SdsCall, accept: ValidationAcceptor) => {
+    return (node: SdsAbstractCall, accept: ValidationAcceptor) => {
         const substitutions = typeComputer.computeSubstitutionsForCall(node);
 
         for (const argument of getArguments(node)) {
@@ -54,7 +55,7 @@ export const callArgumentTypesMustMatchParameterTypes = (services: SafeDsService
             const argumentType = typeComputer.computeType(argument).substituteTypeParameters(substitutions);
             const parameterType = typeComputer.computeType(parameter).substituteTypeParameters(substitutions);
 
-            if (!typeChecker.isSubtypeOf(argumentType, parameterType)) {
+            if (!typeChecker.isSubtypeOf(argumentType, parameterType, { ignoreParameterNames: true })) {
                 accept('error', `Expected type '${parameterType}' but got '${argumentType}'.`, {
                     node: argument,
                     property: 'value',
@@ -135,7 +136,7 @@ export const indexedAccessIndexMustHaveCorrectType = (services: SafeDsServices) 
                     code: CODE_TYPE_MISMATCH,
                 });
             }
-        } else if (receiverType instanceof ClassType || receiverType instanceof TypeParameterType) {
+        } else if (receiverType instanceof ClassType || receiverType instanceof TypeVariable) {
             const mapType = typeComputer.computeMatchingSupertype(receiverType, coreClasses.Map);
             if (mapType) {
                 const keyType = mapType.getTypeParameterTypeByIndex(0);
@@ -176,11 +177,25 @@ export const infixOperationOperandsMustHaveCorrectType = (services: SafeDsServic
                     });
                 }
                 return;
+            case '+':
+                if (
+                    typeChecker.isSubtypeOf(leftType, coreTypes.String) ||
+                    typeChecker.isSubtypeOf(rightType, coreTypes.String)
+                ) {
+                    accept('error', `Use template strings for concatenation.`, {
+                        node,
+                        code: CODE_TYPE_MISMATCH,
+                        codeDescription: {
+                            href: 'https://dsl.safeds.com/en/stable/language/pipeline-language/expressions/#template-strings',
+                        },
+                    });
+                    return;
+                }
+            // fallthrough
             case '<':
             case '<=':
             case '>=':
             case '>':
-            case '+':
             case '-':
             case '*':
             case '/':
@@ -279,7 +294,7 @@ export const namedTypeTypeArgumentsMustMatchBounds = (services: SafeDsServices) 
             }
 
             const upperBound = typeComputer
-                .computeUpperBound(typeParameter, { stopAtTypeParameterType: true })
+                .computeUpperBound(typeParameter, { stopAtTypeVariable: true })
                 .substituteTypeParameters(type.substitutions);
 
             if (!typeChecker.isSubtypeOf(typeArgumentType, upperBound)) {
@@ -306,7 +321,7 @@ export const parameterDefaultValueTypeMustMatchParameterType = (services: SafeDs
         const defaultValueType = typeComputer.computeType(defaultValue);
         const parameterType = typeComputer.computeType(node);
 
-        if (!typeChecker.isSubtypeOf(defaultValueType, parameterType)) {
+        if (!typeChecker.isSubtypeOf(defaultValueType, parameterType, { ignoreParameterNames: true })) {
             accept('error', `Expected type '${parameterType}' but got '${defaultValueType}'.`, {
                 node,
                 property: 'defaultValue',
@@ -386,7 +401,7 @@ export const typeParameterDefaultValueMustMatchUpperBound = (services: SafeDsSer
         }
 
         const defaultValueType = typeComputer.computeType(node.defaultValue);
-        const upperBoundType = typeComputer.computeUpperBound(node, { stopAtTypeParameterType: true });
+        const upperBoundType = typeComputer.computeUpperBound(node, { stopAtTypeVariable: true });
 
         if (!typeChecker.isSubtypeOf(defaultValueType, upperBoundType)) {
             accept('error', `Expected type '${upperBoundType}' but got '${defaultValueType}'.`, {
@@ -411,7 +426,7 @@ export const yieldTypeMustMatchResultType = (services: SafeDsServices) => {
         const yieldType = typeComputer.computeType(node);
         const resultType = typeComputer.computeType(result);
 
-        if (!typeChecker.isSubtypeOf(yieldType, resultType)) {
+        if (!typeChecker.isSubtypeOf(yieldType, resultType, { ignoreParameterNames: true })) {
             accept('error', `Expected type '${resultType}' but got '${yieldType}'.`, {
                 node,
                 property: 'result',

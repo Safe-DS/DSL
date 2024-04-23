@@ -7,7 +7,7 @@
 | `column1` | `#!sds String` |
 | `column2` | `#!sds Int` |
 
-??? quote "Source code in `main.sdsstub`"
+??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="5"
     schema MySchema2 {

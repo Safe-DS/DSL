@@ -1,3 +1,8 @@
+---
+search:
+  exclude: true
+---
+
 - tests
     - generation
         - markdown
@@ -8,3 +13,4 @@
                     - [mySegment3](tests/generation/markdown/segments/documented/mySegment3.md)
                     - [mySegment4](tests/generation/markdown/segments/documented/mySegment4.md)
                     - [mySegment5](tests/generation/markdown/segments/documented/mySegment5.md)
+                    - [mySegment6](tests/generation/markdown/segments/documented/mySegment6.md)

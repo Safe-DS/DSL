@@ -44,7 +44,7 @@ export abstract class Type {
     /**
      * Returns a string representation of this type.
      */
-    abstract toString(): string;
+    abstract toString(options?: ToStringOptions): string;
 
     /**
      * Returns an equivalent type that is simplified as much as possible. Types computed by
@@ -184,8 +184,12 @@ export class LiteralType extends Type {
         );
     }
 
-    override toString(): string {
-        return `literal<${this.constants.join(', ')}>`;
+    override toString(options?: ToStringOptions): string {
+        if (options?.collapseLiteralTypes) {
+            return `literal<…>`;
+        } else {
+            return `literal<${this.constants.join(', ')}>`;
+        }
     }
 
     override simplify(): Type {
@@ -414,13 +418,17 @@ export class ClassType extends NamedType<SdsClass> {
         );
     }
 
-    override toString(): string {
+    override toString(options?: ToStringOptions): string {
         let result = this.declaration.name;
 
         if (this.substitutions.size > 0) {
-            result += `<${Array.from(this.substitutions.values())
-                .map((value) => value.toString())
-                .join(', ')}>`;
+            if (options?.collapseClassTypes) {
+                result += `<…>`;
+            } else {
+                result += `<${Array.from(this.substitutions.values())
+                    .map((value) => value.toString())
+                    .join(', ')}>`;
+            }
         }
 
         if (this.isExplicitlyNullable) {
@@ -532,7 +540,7 @@ export class EnumVariantType extends NamedType<SdsEnumVariant> {
     }
 }
 
-export class TypeParameterType extends NamedType<SdsTypeParameter> {
+export class TypeVariable extends NamedType<SdsTypeParameter> {
     override readonly isFullySubstituted = false;
 
     constructor(
@@ -545,7 +553,7 @@ export class TypeParameterType extends NamedType<SdsTypeParameter> {
     override equals(other: unknown): boolean {
         if (other === this) {
             return true;
-        } else if (!(other instanceof TypeParameterType)) {
+        } else if (!(other instanceof TypeVariable)) {
             return false;
         }
 
@@ -564,12 +572,12 @@ export class TypeParameterType extends NamedType<SdsTypeParameter> {
         }
     }
 
-    override withExplicitNullability(isExplicitlyNullable: boolean): TypeParameterType {
+    override withExplicitNullability(isExplicitlyNullable: boolean): TypeVariable {
         if (this.isExplicitlyNullable === isExplicitlyNullable) {
             return this;
         }
 
-        return new TypeParameterType(this.declaration, isExplicitlyNullable);
+        return new TypeVariable(this.declaration, isExplicitlyNullable);
     }
 }
 
@@ -803,6 +811,21 @@ class UnknownTypeClass extends Type {
 }
 
 export const UnknownType = new UnknownTypeClass();
+
+/**
+ * Options for {@link Type.toString}.
+ */
+export interface ToStringOptions {
+    /**
+     * Collapse the type arguments of class types.
+     */
+    collapseClassTypes?: boolean;
+
+    /**
+     * Collapse the literals of literal types.
+     */
+    collapseLiteralTypes?: boolean;
+}
 
 // -------------------------------------------------------------------------------------------------
 // Helpers

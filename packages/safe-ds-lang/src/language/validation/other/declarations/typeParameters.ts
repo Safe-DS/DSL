@@ -32,8 +32,12 @@ export const typeParameterMustHaveSufficientContext = (node: SdsTypeParameter, a
     }
     /* c8 ignore stop */
 
-    // Classes without constructor can only be used as named types, where type arguments are manifest
-    if (isSdsClass(containingCallable) && !containingCallable.parameterList) {
+    // Optional type parameters of classes get initialized to their default value if there is insufficient context in
+    // the constructor. Elsewhere, the class might be used as a named type, where type arguments are manifest, so having
+    // the type parameter is beneficial. This is not the case for functions, where type parameters only get inferred.
+    //
+    // Classes without constructor can only be used as named types, where type arguments are manifest.
+    if (isSdsClass(containingCallable) && (TypeParameter.isOptional(node) || !containingCallable.parameterList)) {
         return;
     }
 

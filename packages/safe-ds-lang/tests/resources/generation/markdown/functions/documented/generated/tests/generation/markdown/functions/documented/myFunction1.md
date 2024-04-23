@@ -2,7 +2,7 @@
 
 Description of myFunction1.
 
-??? quote "Source code in `main.sdsstub`"
+??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="7"
     fun myFunction1()

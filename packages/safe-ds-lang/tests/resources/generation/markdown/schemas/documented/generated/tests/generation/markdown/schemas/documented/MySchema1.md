@@ -2,7 +2,7 @@
 
 Description of MySchema1.
 
-??? quote "Source code in `main.sdsstub`"
+??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="8"
     schema MySchema1 {}

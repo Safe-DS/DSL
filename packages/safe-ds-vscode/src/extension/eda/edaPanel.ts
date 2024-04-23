@@ -2,9 +2,9 @@ import * as vscode from 'vscode';
 import { ToExtensionMessage } from '@safe-ds/eda/types/messaging.js';
 import * as webviewApi from './apis/webviewApi.ts';
 import { State } from '@safe-ds/eda/types/state.ts';
-import { logOutput, printOutputMessage } from '../output.ts';
 import { SafeDsServices, ast } from '@safe-ds/lang';
 import { RunnerApi } from './apis/runnerApi.ts';
+import { safeDsLogger } from '../helpers/logging.js';
 
 export class EDAPanel {
     // Map to track multiple panels
@@ -64,7 +64,7 @@ export class EDAPanel {
         // Handle messages from the webview
         const webview = this.panel.webview;
         this.webviewListener = webview.onDidReceiveMessage(async (data: ToExtensionMessage) => {
-            printOutputMessage(data.command + ' called');
+            safeDsLogger.info(data.command + ' called');
             switch (data.command) {
                 case 'setInfo': {
                     if (!data.value) {
@@ -197,7 +197,7 @@ export class EDAPanel {
 
     //#region Disposal
     public static kill(tableIdentifier: string) {
-        printOutputMessage('kill ' + tableIdentifier);
+        safeDsLogger.info('kill ' + tableIdentifier);
         let panel = EDAPanel.panelsMap.get(tableIdentifier);
         if (panel) {
             panel.panel.dispose();
@@ -301,10 +301,10 @@ export class EDAPanel {
         scriptUri = webview.asWebviewUri(scriptPath);
         try {
             await vscode.workspace.fs.stat(scriptPath);
-            logOutput('Using EDA build from EDA package.');
+            safeDsLogger.info('Using EDA build from EDA package.');
         } catch (error) {
             // If not use the static one from the dist folder here
-            logOutput('Using EDA build from local dist.');
+            safeDsLogger.info('Using EDA build from local dist.');
             scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this.extensionUri, 'dist', 'eda-webview', 'main.js'));
         }
 
