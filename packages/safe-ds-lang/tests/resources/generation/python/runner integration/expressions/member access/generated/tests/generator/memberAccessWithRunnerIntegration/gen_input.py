@@ -18,26 +18,98 @@ def __gen_null_safe_member_access(receiver: Any, member_name: str) -> __gen_T | 
 # Pipelines --------------------------------------------------------------------
 
 def test():
-    f(safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.g", g, [], []))
-    f(safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.h", h, [], [])[0])
-    f(safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.h", h, [], [])[1])
-    f(safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.C", C, [], []).a)
-    f(safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.C", C, [], []).c)
-    f(__gen_null_safe_member_access(safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.factory", factory, [], []), 'a'))
-    f(__gen_null_safe_member_access(safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.factory", factory, [], []), 'c'))
-    f(safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.C.i", lambda *_ : 1.i(safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.C", C, [], [])), [safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.C", C, [], []), 1], []))
-    c1 = safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.C", C, [], [])
+    f(safeds_runner.memoized_static_call(
+        "tests.generator.memberAccessWithRunnerIntegration.g",
+         g,
+         [],
+         {},
+         []
+    ))
+    f(safeds_runner.memoized_static_call(
+        "tests.generator.memberAccessWithRunnerIntegration.h",
+         h,
+         [],
+         {},
+         []
+    )[0])
+    f(safeds_runner.memoized_static_call(
+        "tests.generator.memberAccessWithRunnerIntegration.h",
+         h,
+         [],
+         {},
+         []
+    )[1])
+    f(safeds_runner.memoized_static_call(
+        "tests.generator.memberAccessWithRunnerIntegration.C",
+         C,
+         [],
+         {},
+         []
+    ).a)
+    f(safeds_runner.memoized_static_call(
+        "tests.generator.memberAccessWithRunnerIntegration.C",
+         C,
+         [],
+         {},
+         []
+    ).c)
+    f(__gen_null_safe_member_access(safeds_runner.memoized_static_call(
+        "tests.generator.memberAccessWithRunnerIntegration.factory",
+         factory,
+         [],
+         {},
+         []
+    ), 'a'))
+    f(__gen_null_safe_member_access(safeds_runner.memoized_static_call(
+        "tests.generator.memberAccessWithRunnerIntegration.factory",
+         factory,
+         [],
+         {},
+         []
+    ), 'c'))
+    f(safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.C.i", lambda *_ : 1.i(safeds_runner.memoized_static_call(
+        "tests.generator.memberAccessWithRunnerIntegration.C",
+         C,
+         [],
+         {},
+         []
+    )), [safeds_runner.memoized_static_call(
+        "tests.generator.memberAccessWithRunnerIntegration.C",
+         C,
+         [],
+         {},
+         []
+    ), 1], []))
+    c1 = safeds_runner.memoized_static_call(
+        "tests.generator.memberAccessWithRunnerIntegration.C",
+         C,
+         [],
+         {},
+         []
+    )
     safeds_runner.save_placeholder('c1', c1)
     f(safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.C.i", lambda *_ : 1.i(c1), [c1, 1], []))
     f(safeds_runner.memoized_dynamic_call(
-        safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.C", C, [], []),
+        safeds_runner.memoized_static_call(
+            "tests.generator.memberAccessWithRunnerIntegration.C",
+             C,
+             [],
+             {},
+             []
+        ),
         "j",
         [123],
         {},
         []
     ))
     f(safeds_runner.memoized_dynamic_call(
-        safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.C", C, [], []),
+        safeds_runner.memoized_static_call(
+            "tests.generator.memberAccessWithRunnerIntegration.C",
+             C,
+             [],
+             {},
+             []
+        ),
         "k2",
         ['abc'],
         {},
@@ -45,7 +117,13 @@ def test():
     ))
     f(safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.C.l", lambda *_ : 2.i(), [2], []))
     f(safeds_runner.memoized_dynamic_call(
-        safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.C", C, [], []),
+        safeds_runner.memoized_static_call(
+            "tests.generator.memberAccessWithRunnerIntegration.C",
+             C,
+             [],
+             {},
+             []
+        ),
         "m",
         [],
         {"param": [object Object]},
@@ -58,33 +136,75 @@ def test():
         {"param": [object Object]},
         []
     ))
-    f(safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.C.n", lambda *_ : C.n(param=213), [], []))
+    f(safeds_runner.memoized_static_call(
+        "tests.generator.memberAccessWithRunnerIntegration.C.n",
+         C.n,
+         [],
+         {"param": [object Object]},
+         []
+    ))
     f(safeds_runner.memoized_dynamic_call(
-        safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.C.o", C.o, [], []),
+        safeds_runner.memoized_static_call(
+            "tests.generator.memberAccessWithRunnerIntegration.C.o",
+             C.o,
+             [],
+             {"param": [object Object]},
+             []
+        ),
         "m",
         [],
         {"param": [object Object]},
         []
     ))
     f(safeds_runner.memoized_dynamic_call(
-        safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.C.o", C.o, [], []),
+        safeds_runner.memoized_static_call(
+            "tests.generator.memberAccessWithRunnerIntegration.C.o",
+             C.o,
+             [],
+             {"param": [object Object]},
+             []
+        ),
         "j",
         [213],
         {},
         []
     ))
     f(safeds_runner.memoized_dynamic_call(
-        safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.C.p", C.p, [], []),
+        safeds_runner.memoized_static_call(
+            "tests.generator.memberAccessWithRunnerIntegration.C.p",
+             C.p,
+             [],
+             {},
+             []
+        ),
         "j",
         [213],
         {},
         []
     ))
-    f(safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.C.from_csv_file", C.from_csv_file, [safeds_runner.absolute_path('abc.csv')], [safeds_runner.file_mtime('abc.csv')]))
-    a = safeds_runner.memoized_static_call("safeds.data.tabular.containers.Table.from_csv_file", Table.from_csv_file, [safeds_runner.absolute_path('abc.csv')], [safeds_runner.file_mtime('abc.csv')])
+    f(safeds_runner.memoized_static_call(
+        "tests.generator.memberAccessWithRunnerIntegration.C.from_csv_file",
+         C.from_csv_file,
+         [safeds_runner.absolute_path('abc.csv')],
+         {},
+         [safeds_runner.file_mtime('abc.csv')]
+    ))
+    a = safeds_runner.memoized_static_call(
+        "safeds.data.tabular.containers.Table.from_csv_file",
+         Table.from_csv_file,
+         [safeds_runner.absolute_path('abc.csv')],
+         {},
+         [safeds_runner.file_mtime('abc.csv')]
+    )
     safeds_runner.save_placeholder('a', a)
     a2 = safeds_runner.memoized_dynamic_call(
-        safeds_runner.memoized_static_call("safeds.data.tabular.containers.Table.from_csv_file", Table.from_csv_file, [safeds_runner.absolute_path('abc.csv')], [safeds_runner.file_mtime('abc.csv')]),
+        safeds_runner.memoized_static_call(
+            "safeds.data.tabular.containers.Table.from_csv_file",
+             Table.from_csv_file,
+             [safeds_runner.absolute_path('abc.csv')],
+             {},
+             [safeds_runner.file_mtime('abc.csv')]
+        ),
         "remove_columns",
         [['u']],
         {},
@@ -171,8 +291,20 @@ def test():
     f(p)
     f(r)
     f(q)
-    f(safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.Outer.Nested.f", Outer.Nested.f, [], []))
-    nestedInstance = safeds_runner.memoized_static_call("tests.generator.memberAccessWithRunnerIntegration.factoryNested", factoryNested, [], [])
+    f(safeds_runner.memoized_static_call(
+        "tests.generator.memberAccessWithRunnerIntegration.Outer.Nested.f",
+         Outer.Nested.f,
+         [],
+         {},
+         []
+    ))
+    nestedInstance = safeds_runner.memoized_static_call(
+        "tests.generator.memberAccessWithRunnerIntegration.factoryNested",
+         factoryNested,
+         [],
+         {},
+         []
+    )
     safeds_runner.save_placeholder('nestedInstance', nestedInstance)
     nestedResult = safeds_runner.memoized_dynamic_call(
         nestedInstance,
@@ -184,7 +316,13 @@ def test():
     safeds_runner.save_placeholder('nestedResult', nestedResult)
     f(nestedResult)
     encoder = safeds_runner.memoized_dynamic_call(
-        safeds_runner.memoized_static_call("safeds.data.tabular.transformation.OneHotEncoder", OneHotEncoder, [], []),
+        safeds_runner.memoized_static_call(
+            "safeds.data.tabular.transformation.OneHotEncoder",
+             OneHotEncoder,
+             [],
+             {},
+             []
+        ),
         "fit",
         [a, ['b']],
         {},
