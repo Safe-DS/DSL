@@ -973,8 +973,8 @@ export class SafeDsPythonGenerator {
         const hiddenParameters = this.getMemoizedCallHiddenParameters(expression, frame);
         const callable = this.nodeMapper.callToCallable(expression);
         if (isSdsFunction(callable) && !isStatic(callable) && isSdsMemberAccess(expression.receiver)) {
-            return expandTracedToNode(expression)`${MEMOIZED_DYNAMIC_CALL}("${this.getPythonNameOrDefault(
-                callable,
+            return expandTracedToNode(expression)`${MEMOIZED_STATIC_CALL}("${this.generateFullyQualifiedFunctionName(
+                expression,
             )}", lambda *_ : ${generatedPythonCall}, [${thisParam}, ${this.generateMemoizedArgumentList(
                 expression,
                 frame,
