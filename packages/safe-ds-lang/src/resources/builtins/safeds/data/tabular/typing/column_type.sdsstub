@@ -10,6 +10,7 @@ package safeds.data.tabular.typing
  *     // TODO
  * }
  */
+@Experimental
 class ColumnType {
     /**
      * Return whether the given column type is nullable.

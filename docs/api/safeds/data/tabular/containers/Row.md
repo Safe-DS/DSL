@@ -1,4 +1,4 @@
-# `#!sds class` Row {#safeds.data.tabular.containers.Row data-toc-label='Row'}
+# :test_tube:{ title="Experimental" } `#!sds class` Row {#safeds.data.tabular.containers.Row data-toc-label='Row'}
 
 A row is a collection of named values.
 
@@ -18,7 +18,7 @@ pipeline example {
 
 ??? quote "Stub code in `row.sdsstub`"
 
-    ```sds linenums="15"
+    ```sds linenums="16"
     class Row(
         data: Map<String, Any>? = null // TODO: update default value to empty map
     ) {
@@ -260,7 +260,7 @@ pipeline example {
 
 ??? quote "Stub code in `row.sdsstub`"
 
-    ```sds linenums="118"
+    ```sds linenums="119"
     @Pure
     @PythonName("get_column_type")
     fun getColumnType(
@@ -295,7 +295,7 @@ pipeline example {
 
 ??? quote "Stub code in `row.sdsstub`"
 
-    ```sds linenums="80"
+    ```sds linenums="81"
     @Pure
     @PythonName("get_value")
     fun getValue(
@@ -330,7 +330,7 @@ pipeline example {
 
 ??? quote "Stub code in `row.sdsstub`"
 
-    ```sds linenums="99"
+    ```sds linenums="100"
     @Pure
     @PythonName("has_column")
     fun hasColumn(
@@ -359,7 +359,7 @@ pipeline example {
 
 ??? quote "Stub code in `row.sdsstub`"
 
-    ```sds linenums="178"
+    ```sds linenums="179"
     @Pure
     @PythonName("to_html")
     fun toHtml() -> html: String
@@ -386,7 +386,7 @@ pipeline example {
 
 ??? quote "Stub code in `row.sdsstub`"
 
-    ```sds linenums="163"
+    ```sds linenums="164"
     @Pure
     @PythonName("to_dict")
     fun toMap() -> map: Map<String, Any>
@@ -418,7 +418,7 @@ pipeline example {
 
 ??? quote "Stub code in `row.sdsstub`"
 
-    ```sds linenums="61"
+    ```sds linenums="62"
     @Pure
     @PythonName("from_dict")
     static fun fromDict(

@@ -1,4 +1,4 @@
-# `#!sds class` TaggedTable {#safeds.data.tabular.containers.TaggedTable data-toc-label='TaggedTable'}
+# :test_tube:{ title="Experimental" } `#!sds class` TaggedTable {#safeds.data.tabular.containers.TaggedTable data-toc-label='TaggedTable'}
 
 A tagged table is a table that additionally knows which columns are features and which are the target to predict.
 
@@ -22,7 +22,7 @@ pipeline example {
 
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="17"
+    ```sds linenums="18"
     class TaggedTable(
         data: Map<String, List<Any>>,
         @PythonName("target_name") targetName: String,
@@ -592,7 +592,7 @@ pipeline example {
 
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="95"
+    ```sds linenums="96"
     @Pure
     @PythonName("add_column")
     fun addColumn(
@@ -628,7 +628,7 @@ pipeline example {
 
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="55"
+    ```sds linenums="56"
     @Pure
     @PythonName("add_column_as_feature")
     fun addColumnAsFeature(
@@ -664,7 +664,7 @@ pipeline example {
 
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="115"
+    ```sds linenums="116"
     @Pure
     @PythonName("add_columns")
     fun addColumns(
@@ -700,7 +700,7 @@ pipeline example {
 
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="75"
+    ```sds linenums="76"
     @Pure
     @PythonName("add_columns_as_features")
     fun addColumnsAsFeatures(
@@ -736,7 +736,7 @@ pipeline example {
 
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="135"
+    ```sds linenums="136"
     @Pure
     @PythonName("add_row")
     fun addRow(
@@ -772,7 +772,7 @@ pipeline example {
 
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="155"
+    ```sds linenums="156"
     @Pure
     @PythonName("add_rows")
     fun addRows(
@@ -808,7 +808,7 @@ pipeline example {
 
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="175"
+    ```sds linenums="176"
     @Pure
     @PythonName("filter_rows")
     fun filterRows(
@@ -1069,7 +1069,7 @@ pipeline example {
 
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="195"
+    ```sds linenums="196"
     @Pure
     @PythonName("keep_only_columns")
     fun keepOnlyColumns(
@@ -1258,7 +1258,7 @@ pipeline example {
 
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="215"
+    ```sds linenums="216"
     @Pure
     @PythonName("remove_columns")
     fun removeColumns(
@@ -1288,7 +1288,7 @@ pipeline example {
 
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="233"
+    ```sds linenums="234"
     @Pure
     @PythonName("remove_columns_with_missing_values")
     fun removeColumnsWithMissingValues() -> result1: TaggedTable
@@ -1316,7 +1316,7 @@ pipeline example {
 
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="249"
+    ```sds linenums="250"
     @Pure
     @PythonName("remove_columns_with_non_numerical_values")
     fun removeColumnsWithNonNumericalValues() -> result1: TaggedTable
@@ -1344,7 +1344,7 @@ pipeline example {
 
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="265"
+    ```sds linenums="266"
     @Pure
     @PythonName("remove_duplicate_rows")
     fun removeDuplicateRows() -> result1: TaggedTable
@@ -1372,7 +1372,7 @@ pipeline example {
 
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="281"
+    ```sds linenums="282"
     @Pure
     @PythonName("remove_rows_with_missing_values")
     fun removeRowsWithMissingValues() -> result1: TaggedTable
@@ -1404,7 +1404,7 @@ pipeline example {
 
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="301"
+    ```sds linenums="302"
     @Pure
     @PythonName("remove_rows_with_outliers")
     fun removeRowsWithOutliers() -> result1: TaggedTable
@@ -1439,7 +1439,7 @@ pipeline example {
 
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="320"
+    ```sds linenums="321"
     @Pure
     @PythonName("rename_column")
     fun renameColumn(
@@ -1481,7 +1481,7 @@ pipeline example {
 
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="346"
+    ```sds linenums="347"
     @Pure
     @PythonName("replace_column")
     fun replaceColumn(
@@ -1512,7 +1512,7 @@ pipeline example {
 
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="365"
+    ```sds linenums="366"
     @Pure
     @PythonName("shuffle_rows")
     fun shuffleRows() -> result1: TaggedTable
@@ -1548,7 +1548,7 @@ pipeline example {
 
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="385"
+    ```sds linenums="386"
     @Pure
     @PythonName("slice_rows")
     fun sliceRows(
@@ -1595,7 +1595,7 @@ pipeline example {
 
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="416"
+    ```sds linenums="417"
     @Pure
     @PythonName("sort_columns")
     fun sortColumns(
@@ -1638,7 +1638,7 @@ pipeline example {
 
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="443"
+    ```sds linenums="444"
     @Pure
     @PythonName("sort_rows")
     fun sortRows(
@@ -1995,7 +1995,7 @@ pipeline example {
 
 ??? quote "Stub code in `tagged_table.sdsstub`"
 
-    ```sds linenums="461"
+    ```sds linenums="462"
     @Pure
     @PythonName("transform_column")
     fun transformColumn(

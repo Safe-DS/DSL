@@ -1,4 +1,4 @@
-# `#!sds class` TimeSeries {#safeds.data.tabular.containers.TimeSeries data-toc-label='TimeSeries'}
+# :test_tube:{ title="Experimental" } `#!sds class` TimeSeries {#safeds.data.tabular.containers.TimeSeries data-toc-label='TimeSeries'}
 
 **Parent type:** [`Table`][safeds.data.tabular.containers.Table]
 
@@ -21,7 +21,7 @@ pipeline example {
 
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="17"
+    ```sds linenums="18"
     class TimeSeries(
         data: Map<String, List<Any>>,
         @PythonName("target_name") targetName: String,
@@ -639,7 +639,7 @@ pipeline example {
 
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="65"
+    ```sds linenums="66"
     @Pure
     @PythonName("add_column")
     fun addColumn(
@@ -675,7 +675,7 @@ pipeline example {
 
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="85"
+    ```sds linenums="86"
     @Pure
     @PythonName("add_column_as_feature")
     fun addColumnAsFeature(
@@ -711,7 +711,7 @@ pipeline example {
 
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="125"
+    ```sds linenums="126"
     @Pure
     @PythonName("add_columns")
     fun addColumns(
@@ -747,7 +747,7 @@ pipeline example {
 
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="105"
+    ```sds linenums="106"
     @Pure
     @PythonName("add_columns_as_features")
     fun addColumnsAsFeatures(
@@ -783,7 +783,7 @@ pipeline example {
 
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="145"
+    ```sds linenums="146"
     @Pure
     @PythonName("add_row")
     fun addRow(
@@ -819,7 +819,7 @@ pipeline example {
 
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="165"
+    ```sds linenums="166"
     @Pure
     @PythonName("add_rows")
     fun addRows(
@@ -855,7 +855,7 @@ pipeline example {
 
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="185"
+    ```sds linenums="186"
     @Pure
     @PythonName("filter_rows")
     fun filterRows(
@@ -1116,7 +1116,7 @@ pipeline example {
 
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="205"
+    ```sds linenums="206"
     @Pure
     @PythonName("keep_only_columns")
     fun keepOnlyColumns(
@@ -1228,7 +1228,7 @@ pipeline example {
 
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="450"
+    ```sds linenums="451"
     @Pure
     @PythonName("plot_lagplot")
     fun plotLagplot(
@@ -1266,7 +1266,7 @@ pipeline example {
 
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="472"
+    ```sds linenums="473"
     @Pure
     @PythonName("plot_lineplot")
     fun plotLineplot(
@@ -1305,7 +1305,7 @@ pipeline example {
 
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="495"
+    ```sds linenums="496"
     @Pure
     @PythonName("plot_scatterplot")
     fun plotScatterplot(
@@ -1342,7 +1342,7 @@ pipeline example {
 
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="225"
+    ```sds linenums="226"
     @Pure
     @PythonName("remove_columns")
     fun removeColumns(
@@ -1372,7 +1372,7 @@ pipeline example {
 
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="243"
+    ```sds linenums="244"
     @Pure
     @PythonName("remove_columns_with_missing_values")
     fun removeColumnsWithMissingValues() -> result1: TimeSeries
@@ -1400,7 +1400,7 @@ pipeline example {
 
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="259"
+    ```sds linenums="260"
     @Pure
     @PythonName("remove_columns_with_non_numerical_values")
     fun removeColumnsWithNonNumericalValues() -> result1: TimeSeries
@@ -1428,7 +1428,7 @@ pipeline example {
 
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="275"
+    ```sds linenums="276"
     @Pure
     @PythonName("remove_duplicate_rows")
     fun removeDuplicateRows() -> result1: TimeSeries
@@ -1456,7 +1456,7 @@ pipeline example {
 
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="291"
+    ```sds linenums="292"
     @Pure
     @PythonName("remove_rows_with_missing_values")
     fun removeRowsWithMissingValues() -> result1: TimeSeries
@@ -1488,7 +1488,7 @@ pipeline example {
 
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="311"
+    ```sds linenums="312"
     @Pure
     @PythonName("remove_rows_with_outliers")
     fun removeRowsWithOutliers() -> result1: TimeSeries
@@ -1523,7 +1523,7 @@ pipeline example {
 
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="330"
+    ```sds linenums="331"
     @Pure
     @PythonName("rename_column")
     fun renameColumn(
@@ -1565,7 +1565,7 @@ pipeline example {
 
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="356"
+    ```sds linenums="357"
     @Pure
     @PythonName("replace_column")
     fun replaceColumn(
@@ -1633,7 +1633,7 @@ pipeline example {
 
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="379"
+    ```sds linenums="380"
     @Pure
     @PythonName("slice_rows")
     fun sliceRows(
@@ -1680,7 +1680,7 @@ pipeline example {
 
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="410"
+    ```sds linenums="411"
     @Pure
     @PythonName("sort_columns")
     fun sortColumns(
@@ -2089,7 +2089,7 @@ pipeline example {
 
 ??? quote "Stub code in `time_series.sdsstub`"
 
-    ```sds linenums="431"
+    ```sds linenums="432"
     @Pure
     @PythonName("transform_column")
     fun transformColumn(

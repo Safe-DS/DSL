@@ -1,4 +1,4 @@
-# `#!sds abstract class` ImageList {#safeds.data.image.containers.ImageList data-toc-label='ImageList'}
+# :test_tube:{ title="Experimental" } `#!sds abstract class` ImageList {#safeds.data.image.containers.ImageList data-toc-label='ImageList'}
 
 An ImageList is a list of different images. It can hold different sizes of Images. The channel of all images is the same.
 
@@ -11,7 +11,7 @@ To create an `ImageList` call one of the following static methods:
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="15"
+    ```sds linenums="16"
     class ImageList {
         /**
          * Return the number of images in this image list.
@@ -559,7 +559,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="164"
+    ```sds linenums="165"
     @Pure
     @PythonName("add_image")
     fun addImage(
@@ -587,7 +587,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="179"
+    ```sds linenums="180"
     @Pure
     @PythonName("add_images")
     fun addImages(
@@ -615,7 +615,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="382"
+    ```sds linenums="383"
     @Pure
     @PythonName("add_noise")
     fun addNoise(
@@ -645,7 +645,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="365"
+    ```sds linenums="366"
     @Pure
     @PythonName("adjust_brightness")
     fun adjustBrightness(
@@ -675,7 +675,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="422"
+    ```sds linenums="423"
     @Pure
     @PythonName("adjust_color_balance")
     fun adjustColorBalance(
@@ -705,7 +705,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="402"
+    ```sds linenums="403"
     @Pure
     @PythonName("adjust_contrast")
     fun adjustContrast(
@@ -735,7 +735,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="440"
+    ```sds linenums="441"
     @Pure
     fun blur(
         const radius: Int
@@ -764,7 +764,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="149"
+    ```sds linenums="150"
     @Pure
     @PythonName("change_channel")
     fun changeChannel(
@@ -786,7 +786,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="301"
+    ```sds linenums="302"
     @Pure
     @PythonName("convert_to_grayscale")
     fun convertToGrayscale() -> imageList: ImageList
@@ -815,7 +815,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="317"
+    ```sds linenums="318"
     @Pure
     fun crop(
         const x: Int,
@@ -844,7 +844,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="506"
+    ```sds linenums="507"
     @Pure
     @PythonName("find_edges")
     fun findEdges() -> imageList: ImageList
@@ -864,7 +864,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="348"
+    ```sds linenums="349"
     @Pure
     @PythonName("flip_horizontally")
     fun flipHorizontally() -> imageList: ImageList
@@ -884,7 +884,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="337"
+    ```sds linenums="338"
     @Pure
     @PythonName("flip_vertically")
     fun flipVertically() -> imageList: ImageList
@@ -908,7 +908,7 @@ Return the image at the given index.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="72"
+    ```sds linenums="73"
     @Pure
     @PythonName("get_image")
     fun getImage(
@@ -934,7 +934,7 @@ Return whether the given image is in this image list.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="99"
+    ```sds linenums="100"
     @Pure
     @PythonName("has_image")
     fun hasImage(
@@ -962,7 +962,7 @@ If the image has multiple occurrences, all indices will be returned
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="87"
+    ```sds linenums="88"
     @Pure
     fun index(
         image: Image
@@ -983,7 +983,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="473"
+    ```sds linenums="474"
     @Pure
     @PythonName("invert_colors")
     fun invertColors() -> imageList: ImageList
@@ -1005,7 +1005,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="260"
+    ```sds linenums="261"
     @Pure
     @PythonName("remove_duplicate_images")
     fun removeDuplicateImages() -> imageList: ImageList
@@ -1033,7 +1033,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="196"
+    ```sds linenums="197"
     @Pure
     @PythonName("remove_image")
     fun removeImage(
@@ -1061,7 +1061,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="228"
+    ```sds linenums="229"
     @Pure
     @PythonName("remove_image_by_index")
     fun removeImageByIndex(
@@ -1091,7 +1091,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="213"
+    ```sds linenums="214"
     @Pure
     @PythonName("remove_images")
     fun removeImages(
@@ -1120,7 +1120,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="244"
+    ```sds linenums="245"
     @Pure
     @PythonName("remove_images_with_size")
     fun removeImagesWithSize(
@@ -1150,7 +1150,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="285"
+    ```sds linenums="286"
     @Pure
     fun resize(
         @PythonName("new_width") const newWidth: Int,
@@ -1175,7 +1175,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="495"
+    ```sds linenums="496"
     @Pure
     @PythonName("rotate_left")
     fun rotateLeft() -> imageList: ImageList
@@ -1195,7 +1195,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="484"
+    ```sds linenums="485"
     @Pure
     @PythonName("rotate_right")
     fun rotateRight() -> imageList: ImageList
@@ -1221,7 +1221,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="459"
+    ```sds linenums="460"
     @Pure
     fun sharpen(
         const factor: Float
@@ -1244,7 +1244,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="271"
+    ```sds linenums="272"
     @Pure
     @PythonName("shuffle_images")
     fun shuffleImages() -> imageList: ImageList
@@ -1268,7 +1268,7 @@ Return a list of all images in this image list.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="134"
+    ```sds linenums="135"
     @Pure
     @PythonName("to_images")
     fun toImages(
@@ -1288,7 +1288,7 @@ Save all images as jpeg files.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="110"
+    ```sds linenums="111"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_jpeg_files")
     fun toJpegFiles(
@@ -1308,7 +1308,7 @@ Save all images as png files.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="121"
+    ```sds linenums="122"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_png_files")
     fun toPngFiles(
@@ -1336,7 +1336,7 @@ If you provide a path to a directory the images will be sorted alphabetically wh
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="59"
+    ```sds linenums="60"
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
     @PythonName("from_files")
     static fun fromFiles(
@@ -1362,7 +1362,7 @@ Create an ImageList from a list of images.
 
 ??? quote "Stub code in `image_list.sdsstub`"
 
-    ```sds linenums="44"
+    ```sds linenums="45"
     @Pure
     @PythonName("from_images")
     static fun fromImages(
