@@ -27,7 +27,7 @@ export * as commands from './communication/commands.js';
 export * as rpc from './communication/rpc.js';
 
 // Generation
-export { CODEGEN_PREFIX } from './generation/safe-ds-python-generator.js';
+export { CODEGEN_PREFIX } from './generation/python/constants.js';
 
 // Dependencies
 export const dependencies = {
