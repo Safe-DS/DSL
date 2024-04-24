@@ -13,15 +13,20 @@ Support vector machine.
 
 **Examples:**
 
-```sds
+```sds hl_lines="4 5"
 pipeline example {
-    // TODO
+    val training = Table.fromCsvFile("training.csv").tagColumns("target");
+    val test = Table.fromCsvFile("test.csv").tagColumns("target");
+    val classifier = SupportVectorMachineClassifier(
+        kernel = SupportVectorMachineClassifier.Kernel.Linear
+    ).fit(training);
+    val accuracy = classifier.accuracy(test);
 }
 ```
 
 ??? quote "Stub code in `support_vector_machine.sdsstub`"
 
-    ```sds linenums="17"
+    ```sds linenums="22"
     class SupportVectorMachineClassifier(
         const c: Float = 1.0,
         kernel: SupportVectorMachineClassifier.Kernel = SupportVectorMachineClassifier.Kernel.RadialBasisFunction
@@ -30,20 +35,10 @@ pipeline example {
     } {
         /**
          * The kernel functions that can be used in the support vector machine.
-         *
-         * @example
-         * pipeline example {
-         *     // TODO
-         * }
          */
         enum Kernel {
             /**
              * A linear kernel.
-             *
-             * @example
-             * pipeline example {
-             *     // TODO
-             * }
              */
             Linear
 
@@ -51,51 +46,26 @@ pipeline example {
              * A polynomial kernel.
              *
              * @param degree The degree of the polynomial.
-             *
-             * @example
-             * pipeline example {
-             *     // TODO
-             * }
              */
             Polynomial(degree: Int)
 
             /**
              * A sigmoid kernel.
-             *
-             * @example
-             * pipeline example {
-             *     // TODO
-             * }
              */
             Sigmoid
 
             /**
              * A radial basis function kernel.
-             *
-             * @example
-             * pipeline example {
-             *     // TODO
-             * }
              */
             RadialBasisFunction
         }
 
         /**
          * Get the regularization strength.
-         *
-         * @example
-         * pipeline example {
-         *     // TODO
-         * }
          */
         attr c: Float
         /**
          * Get the type of kernel used.
-         *
-         * @example
-         * pipeline example {
-         *     // TODO
-         * }
          */
         attr kernel: SupportVectorMachineClassifier.Kernel
 
@@ -107,11 +77,6 @@ pipeline example {
          * @param trainingSet The training data containing the feature and target vectors.
          *
          * @result fittedClassifier The fitted classifier.
-         *
-         * @example
-         * pipeline example {
-         *     // TODO
-         * }
          */
         @Pure
         fun fit(
@@ -126,27 +91,11 @@ Get the regularization strength.
 
 **Type:** [`Float`][safeds.lang.Float]
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ## `#!sds attr` kernel {#safeds.ml.classical.classification.SupportVectorMachineClassifier.kernel data-toc-label='kernel'}
 
 Get the type of kernel used.
 
 **Type:** [`Kernel`][safeds.ml.classical.classification.SupportVectorMachineClassifier.Kernel]
-
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
 
 ## `#!sds fun` accuracy {#safeds.ml.classical.classification.SupportVectorMachineClassifier.accuracy data-toc-label='accuracy'}
 
@@ -164,17 +113,9 @@ Compute the accuracy of the classifier on the given data.
 |------|------|-------------|
 | `accuracy` | [`Float`][safeds.lang.Float] | The calculated accuracy score, i.e. the percentage of equal data. |
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="76"
+    ```sds linenums="51"
     @Pure
     fun accuracy(
         @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable
@@ -198,17 +139,9 @@ Compute the classifier's $F_1$-score on the given data.
 |------|------|-------------|
 | `f1Score` | [`Float`][safeds.lang.Float] | The calculated $F_1$-score, i.e. the harmonic mean between precision and recall. Return 1 if there are no positive expectations and predictions. |
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="135"
+    ```sds linenums="95"
     @Pure
     @PythonName("f1_score")
     fun f1Score(
@@ -235,17 +168,9 @@ This classifier is not modified.
 |------|------|-------------|
 | `fittedClassifier` | [`SupportVectorMachineClassifier`][safeds.ml.classical.classification.SupportVectorMachineClassifier] | The fitted classifier. |
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `support_vector_machine.sdsstub`"
 
-    ```sds linenums="108"
+    ```sds linenums="73"
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TaggedTable
@@ -262,17 +187,9 @@ Check if the classifier is fitted.
 |------|------|-------------|
 | `isFitted` | [`Boolean`][safeds.lang.Boolean] | Whether the classifier is fitted. |
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="60"
+    ```sds linenums="40"
     @Pure
     @PythonName("is_fitted")
     fun isFitted() -> isFitted: Boolean
@@ -295,17 +212,9 @@ Compute the classifier's precision on the given data.
 |------|------|-------------|
 | `precision` | [`Float`][safeds.lang.Float] | The calculated precision score, i.e. the ratio of correctly predicted positives to all predicted positives. Return 1 if no positive predictions are made. |
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="95"
+    ```sds linenums="65"
     @Pure
     fun precision(
         @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable,
@@ -329,17 +238,9 @@ Predict a target vector using a dataset containing feature vectors. The model ha
 |------|------|-------------|
 | `prediction` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A dataset containing the given feature vectors and the predicted target vector. |
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="45"
+    ```sds linenums="30"
     @Pure
     fun predict(
         dataset: Table
@@ -363,17 +264,9 @@ Compute the classifier's recall on the given data.
 |------|------|-------------|
 | `recall` | [`Float`][safeds.lang.Float] | The calculated recall score, i.e. the ratio of correctly predicted positives to all expected positives. Return 1 if there are no positive expectations. |
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="115"
+    ```sds linenums="80"
     @Pure
     fun recall(
         @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable,
@@ -385,25 +278,12 @@ pipeline example {
 
 The kernel functions that can be used in the support vector machine.
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `support_vector_machine.sdsstub`"
 
     ```sds linenums="31"
     enum Kernel {
         /**
          * A linear kernel.
-         *
-         * @example
-         * pipeline example {
-         *     // TODO
-         * }
          */
         Linear
 
@@ -411,31 +291,16 @@ pipeline example {
          * A polynomial kernel.
          *
          * @param degree The degree of the polynomial.
-         *
-         * @example
-         * pipeline example {
-         *     // TODO
-         * }
          */
         Polynomial(degree: Int)
 
         /**
          * A sigmoid kernel.
-         *
-         * @example
-         * pipeline example {
-         *     // TODO
-         * }
          */
         Sigmoid
 
         /**
          * A radial basis function kernel.
-         *
-         * @example
-         * pipeline example {
-         *     // TODO
-         * }
          */
         RadialBasisFunction
     }
@@ -444,14 +309,6 @@ pipeline example {
 ### Linear {#safeds.ml.classical.classification.SupportVectorMachineClassifier.Kernel.Linear data-toc-label='Linear'}
 
 A linear kernel.
-
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
 
 ### Polynomial {#safeds.ml.classical.classification.SupportVectorMachineClassifier.Kernel.Polynomial data-toc-label='Polynomial'}
 
@@ -463,34 +320,10 @@ A polynomial kernel.
 |------|------|-------------|---------|
 | `degree` | [`Int`][safeds.lang.Int] | The degree of the polynomial. | - |
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ### RadialBasisFunction {#safeds.ml.classical.classification.SupportVectorMachineClassifier.Kernel.RadialBasisFunction data-toc-label='RadialBasisFunction'}
 
 A radial basis function kernel.
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ### Sigmoid {#safeds.ml.classical.classification.SupportVectorMachineClassifier.Kernel.Sigmoid data-toc-label='Sigmoid'}
 
 A sigmoid kernel.
-
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```

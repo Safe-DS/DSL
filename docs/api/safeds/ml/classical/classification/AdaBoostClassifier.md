@@ -14,15 +14,18 @@ Ada Boost classification.
 
 **Examples:**
 
-```sds
+```sds hl_lines="4"
 pipeline example {
-    // TODO
+    val training = Table.fromCsvFile("training.csv").tagColumns("target");
+    val test = Table.fromCsvFile("test.csv").tagColumns("target");
+    val classifier = AdaBoostClassifier(maximumNumberOfLearners = 100).fit(training);
+    val accuracy = classifier.accuracy(test);
 }
 ```
 
 ??? quote "Stub code in `ada_boost.sdsstub`"
 
-    ```sds linenums="20"
+    ```sds linenums="23"
     class AdaBoostClassifier(
         learner: Classifier = DecisionTreeClassifier(),
         @PythonName("maximum_number_of_learners") const maximumNumberOfLearners: Int = 50,
@@ -33,29 +36,14 @@ pipeline example {
     } {
         /**
          * Get the base learner used for training the ensemble.
-         *
-         * @example
-         * pipeline example {
-         *     // TODO
-         * }
          */
         attr learner: Classifier
         /**
          * Get the maximum number of learners in the ensemble.
-         *
-         * @example
-         * pipeline example {
-         *     // TODO
-         * }
          */
         @PythonName("maximum_number_of_learners") attr maximumNumberOfLearners: Int
         /**
          * Get the learning rate.
-         *
-         * @example
-         * pipeline example {
-         *     // TODO
-         * }
          */
         @PythonName("learning_rate") attr learningRate: Float
 
@@ -67,11 +55,6 @@ pipeline example {
          * @param trainingSet The training data containing the feature and target vectors.
          *
          * @result fittedClassifier The fitted classifier.
-         *
-         * @example
-         * pipeline example {
-         *     // TODO
-         * }
          */
         @Pure
         fun fit(
@@ -86,41 +69,17 @@ Get the base learner used for training the ensemble.
 
 **Type:** [`Classifier`][safeds.ml.classical.classification.Classifier]
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ## `#!sds attr` learningRate {#safeds.ml.classical.classification.AdaBoostClassifier.learningRate data-toc-label='learningRate'}
 
 Get the learning rate.
 
 **Type:** [`Float`][safeds.lang.Float]
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ## `#!sds attr` maximumNumberOfLearners {#safeds.ml.classical.classification.AdaBoostClassifier.maximumNumberOfLearners data-toc-label='maximumNumberOfLearners'}
 
 Get the maximum number of learners in the ensemble.
 
 **Type:** [`Int`][safeds.lang.Int]
-
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
 
 ## `#!sds fun` accuracy {#safeds.ml.classical.classification.AdaBoostClassifier.accuracy data-toc-label='accuracy'}
 
@@ -138,17 +97,9 @@ Compute the accuracy of the classifier on the given data.
 |------|------|-------------|
 | `accuracy` | [`Float`][safeds.lang.Float] | The calculated accuracy score, i.e. the percentage of equal data. |
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="76"
+    ```sds linenums="51"
     @Pure
     fun accuracy(
         @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable
@@ -172,17 +123,9 @@ Compute the classifier's $F_1$-score on the given data.
 |------|------|-------------|
 | `f1Score` | [`Float`][safeds.lang.Float] | The calculated $F_1$-score, i.e. the harmonic mean between precision and recall. Return 1 if there are no positive expectations and predictions. |
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="135"
+    ```sds linenums="95"
     @Pure
     @PythonName("f1_score")
     fun f1Score(
@@ -209,17 +152,9 @@ This classifier is not modified.
 |------|------|-------------|
 | `fittedClassifier` | [`AdaBoostClassifier`][safeds.ml.classical.classification.AdaBoostClassifier] | The fitted classifier. |
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `ada_boost.sdsstub`"
 
-    ```sds linenums="70"
+    ```sds linenums="53"
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TaggedTable
@@ -236,17 +171,9 @@ Check if the classifier is fitted.
 |------|------|-------------|
 | `isFitted` | [`Boolean`][safeds.lang.Boolean] | Whether the classifier is fitted. |
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="60"
+    ```sds linenums="40"
     @Pure
     @PythonName("is_fitted")
     fun isFitted() -> isFitted: Boolean
@@ -269,17 +196,9 @@ Compute the classifier's precision on the given data.
 |------|------|-------------|
 | `precision` | [`Float`][safeds.lang.Float] | The calculated precision score, i.e. the ratio of correctly predicted positives to all predicted positives. Return 1 if no positive predictions are made. |
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="95"
+    ```sds linenums="65"
     @Pure
     fun precision(
         @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable,
@@ -303,17 +222,9 @@ Predict a target vector using a dataset containing feature vectors. The model ha
 |------|------|-------------|
 | `prediction` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A dataset containing the given feature vectors and the predicted target vector. |
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="45"
+    ```sds linenums="30"
     @Pure
     fun predict(
         dataset: Table
@@ -337,17 +248,9 @@ Compute the classifier's recall on the given data.
 |------|------|-------------|
 | `recall` | [`Float`][safeds.lang.Float] | The calculated recall score, i.e. the ratio of correctly predicted positives to all expected positives. Return 1 if there are no positive expectations. |
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="115"
+    ```sds linenums="80"
     @Pure
     fun recall(
         @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable,

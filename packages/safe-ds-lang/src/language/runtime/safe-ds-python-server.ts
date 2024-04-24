@@ -16,8 +16,8 @@ import {
     UpdateRunnerNotification,
 } from '../communication/rpc.js';
 
-const LOWEST_SUPPORTED_RUNNER_VERSION = '0.12.0';
-const LOWEST_UNSUPPORTED_RUNNER_VERSION = '0.13.0';
+const LOWEST_SUPPORTED_RUNNER_VERSION = '0.13.0';
+const LOWEST_UNSUPPORTED_RUNNER_VERSION = '0.14.0';
 const npmVersionRange = `>=${LOWEST_SUPPORTED_RUNNER_VERSION} <${LOWEST_UNSUPPORTED_RUNNER_VERSION}`;
 export const pipVersionRange = `>=${LOWEST_SUPPORTED_RUNNER_VERSION},<${LOWEST_UNSUPPORTED_RUNNER_VERSION}`;
 
@@ -152,19 +152,28 @@ export class SafeDsPythonServer {
         this.logger.debug(`Using runner command "${command}".`);
 
         // Check whether the runner command is set properly and get the runner version
-        let version: string;
+        let installedVersion: string;
         try {
-            version = await this.getRunnerVersion(command);
-            this.logger.debug(`Found safe-ds-runner with version "${version}".`);
+            installedVersion = await this.getInstalledRunnerVersion(command);
+            this.logger.debug(`Found safe-ds-runner with version "${installedVersion}".`);
         } catch (error) {
             await this.reportBadRunnerCommand(command, error);
             return undefined;
         }
 
         // Check whether the runner version is supported
-        if (!this.isValidVersion(version)) {
-            await this.reportOutdatedRunner(version);
+        if (!this.isValidVersion(installedVersion)) {
+            await this.reportInvalidRunnerVersion(installedVersion);
             return undefined;
+        }
+
+        // Check whether a new version of the runner is available
+        const latestVersion = await this.getLatestMatchingRunnerVersion();
+        if (latestVersion && semver.gt(latestVersion, installedVersion)) {
+            if (await this.reportOutdatedRunner(installedVersion, latestVersion)) {
+                // Abort the start process if the user wants to update the runner
+                return undefined;
+            }
         }
 
         return command;
@@ -176,7 +185,7 @@ export class SafeDsPythonServer {
      * @returns A promise that resolves to the version of the runner if it could be determined, otherwise the promise is
      * rejected.
      */
-    private async getRunnerVersion(command: string): Promise<string> {
+    private async getInstalledRunnerVersion(command: string): Promise<string> {
         const versionProcess = child_process.spawn(command, ['-V']);
 
         return new Promise((resolve, reject) => {
@@ -193,6 +202,30 @@ export class SafeDsPythonServer {
                 reject(new Error(`The subprocess closed with code ${code}.`));
             });
         });
+    }
+
+    /**
+     * Get the latest version of the runner in the required version range.
+     */
+    private async getLatestMatchingRunnerVersion(): Promise<string | undefined> {
+        // Get information about `safe-ds-runner` from Pypi
+        const response = await fetch('https://pypi.org/pypi/safe-ds-runner/json', {
+            signal: AbortSignal.timeout(2000),
+        });
+        if (!response.ok) {
+            this.logger.error(`Could not fetch the latest version of safe-ds-runner: ${response.statusText}`);
+            return undefined;
+        }
+
+        // Parse the response
+        try {
+            const jsonData = await response.json();
+            const allReleases = Object.keys(jsonData.releases);
+            return semver.maxSatisfying(allReleases, `>=0.13.0 <0.14.0`) ?? undefined;
+        } catch (error) {
+            this.logger.error(`Could not parse the response from PyPI: ${error}`);
+            return undefined;
+        }
     }
 
     /**
@@ -401,6 +434,9 @@ export class SafeDsPythonServer {
 
     // User interaction ------------------------------------------------------------------------------------------------
 
+    /**
+     * Report to the user that the runner cannot be started with the configured command.
+     */
     private async reportBadRunnerCommand(command: string, error: unknown): Promise<void> {
         const message = error instanceof Error ? error.message : String(error);
         this.logger.error(`Could not start runner with command "${command}": ${message}`);
@@ -414,7 +450,10 @@ export class SafeDsPythonServer {
         }
     }
 
-    private async reportOutdatedRunner(version: string): Promise<void> {
+    /**
+     * Report to the user that the runner version does not match the required version range.
+     */
+    private async reportInvalidRunnerVersion(version: string): Promise<void> {
         this.logger.error(`Installed runner version ${version} is not in range "${pipVersionRange}".`);
 
         // Show an error message to the user and offer to update the runner
@@ -424,6 +463,28 @@ export class SafeDsPythonServer {
         );
         if (action?.title === 'Update runner') {
             await this.messaging.sendNotification(UpdateRunnerNotification.type);
+        }
+    }
+
+    /**
+     * Report to the user that the installed runner is outdated.
+     *
+     * @returns Whether the user decided to update the runner. Returning `true` aborts the start process.
+     */
+    private async reportOutdatedRunner(installedVersion: string, availableVersion: string): Promise<boolean> {
+        this.logger.info(
+            `Installed runner version ${installedVersion} is outdated. Latest version is ${availableVersion}.`,
+        );
+
+        // Show an error message to the user and offer to update the runner
+        const action = await this.messaging.showInformationMessage(`A new version of the runner is available.`, {
+            title: 'Update runner',
+        });
+        if (action?.title === 'Update runner') {
+            await this.messaging.sendNotification(UpdateRunnerNotification.type);
+            return true;
+        } else {
+            return false;
         }
     }
 

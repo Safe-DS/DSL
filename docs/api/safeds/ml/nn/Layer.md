@@ -3,7 +3,7 @@ search:
   boost: 0.5
 ---
 
-# `#!sds abstract class` Layer {#safeds.ml.nn.Layer data-toc-label='Layer'}
+# :test_tube:{ title="Experimental" } `#!sds abstract class` Layer {#safeds.ml.nn.Layer data-toc-label='Layer'}
 
 **Inheritors:**
 
@@ -11,7 +11,7 @@ search:
 
 ??? quote "Stub code in `_layer.sdsstub`"
 
-    ```sds linenums="3"
+    ```sds linenums="4"
     class Layer {
         /**
          * Get the input_size of this layer.

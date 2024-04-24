@@ -11,7 +11,12 @@ from safeds.ml.classical.classification import Classifier
  *
  * @example
  * pipeline example {
- *     // TODO
+ *     val training = Table.fromCsvFile("training.csv").tagColumns("target");
+ *     val test = Table.fromCsvFile("test.csv").tagColumns("target");
+ *     val classifier = SupportVectorMachineClassifier(
+ *         kernel = SupportVectorMachineClassifier.Kernel.Linear
+ *     ).fit(training);
+ *     val accuracy = classifier.accuracy(test);
  * }
  */
 class SupportVectorMachineClassifier(
@@ -22,20 +27,10 @@ class SupportVectorMachineClassifier(
 } {
     /**
      * The kernel functions that can be used in the support vector machine.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     enum Kernel {
         /**
          * A linear kernel.
-         *
-         * @example
-         * pipeline example {
-         *     // TODO
-         * }
          */
         Linear
 
@@ -43,51 +38,26 @@ class SupportVectorMachineClassifier(
          * A polynomial kernel.
          *
          * @param degree The degree of the polynomial.
-         *
-         * @example
-         * pipeline example {
-         *     // TODO
-         * }
          */
         Polynomial(degree: Int)
 
         /**
          * A sigmoid kernel.
-         *
-         * @example
-         * pipeline example {
-         *     // TODO
-         * }
          */
         Sigmoid
 
         /**
          * A radial basis function kernel.
-         *
-         * @example
-         * pipeline example {
-         *     // TODO
-         * }
          */
         RadialBasisFunction
     }
 
     /**
      * Get the regularization strength.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     attr c: Float
     /**
      * Get the type of kernel used.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     attr kernel: SupportVectorMachineClassifier.Kernel
 
@@ -99,11 +69,6 @@ class SupportVectorMachineClassifier(
      * @param trainingSet The training data containing the feature and target vectors.
      *
      * @result fittedClassifier The fitted classifier.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @Pure
     fun fit(

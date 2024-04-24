@@ -2,8 +2,14 @@ package safeds.ml.classical.regression
 
 /**
  * Auto Regressive Integrated Moving Average Model.
+ *
+ * @example
+ * pipeline example {
+ *     // TODO
+ * }
  */
- @PythonName("ArimaModelRegressor")
+@Experimental
+@PythonName("ArimaModelRegressor")
 class ArimaRegressor() {
     /**
      * Create a copy of this ARIMA Model and fit it with the given training data.

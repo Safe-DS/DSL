@@ -1,4 +1,4 @@
-# `#!sds class` ForwardLayer {#safeds.ml.nn.ForwardLayer data-toc-label='ForwardLayer'}
+# :test_tube:{ title="Experimental" } `#!sds class` ForwardLayer {#safeds.ml.nn.ForwardLayer data-toc-label='ForwardLayer'}
 
 **Parent type:** [`Layer`][safeds.ml.nn.Layer]
 
@@ -19,7 +19,7 @@ pipeline example {
 
 ??? quote "Stub code in `forward_layer.sdsstub`"
 
-    ```sds linenums="12"
+    ```sds linenums="13"
     class ForwardLayer(
         @PythonName("output_size") outputSize: Int,
         @PythonName("input_size") inputSize: Int? = null

@@ -4,27 +4,25 @@ from safeds.data.tabular.containers import Table, TaggedTable
 from safeds.ml.classical.regression import Regressor
 
 /**
- * Lasso regression.
+ * Ridge regression.
  *
  * @param alpha Controls the regularization of the model. The higher the value, the more regularized it becomes.
  *
  * @example
  * pipeline example {
- *     // TODO
+ *     val training = Table.fromCsvFile("training.csv").tagColumns("target");
+ *     val test = Table.fromCsvFile("test.csv").tagColumns("target");
+ *     val regressor = RidgeRegressor(alpha = 2.0).fit(training);
+ *     val meanSquaredError = regressor.meanSquaredError(test);
  * }
  */
-class LassoRegressor(
+class RidgeRegressor(
     const alpha: Float = 1.0
 ) sub Regressor where {
     alpha >= 0.0
 } {
     /**
      * Get the regularization of the model.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     attr alpha: Float
 
@@ -36,14 +34,9 @@ class LassoRegressor(
      * @param trainingSet The training data containing the feature and target vectors.
      *
      * @result fittedRegressor The fitted regressor.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TaggedTable
-    ) -> fittedRegressor: LassoRegressor
+    ) -> fittedRegressor: RidgeRegressor
 }

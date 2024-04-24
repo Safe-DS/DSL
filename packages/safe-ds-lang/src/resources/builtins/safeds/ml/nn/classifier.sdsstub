@@ -3,6 +3,7 @@ package safeds.ml.nn
 from safeds.data.tabular.containers import Table, TaggedTable
 from safeds.ml.nn import Layer
 
+@Experimental
 class NeuralNetworkClassifier(
     layers: List<Layer>
 ) {

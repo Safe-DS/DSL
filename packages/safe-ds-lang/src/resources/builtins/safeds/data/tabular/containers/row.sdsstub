@@ -9,18 +9,20 @@ from safeds.data.tabular.typing import ColumnType, Schema
  *
  * @example
  * pipeline example {
- *     // TODO
+ *     val row = Row({"a": 1, "b": 2});
  * }
  */
+@Experimental
 class Row(
-    data: Map<String, List<Any>>? = null // TODO: update default value to empty map
+    data: Map<String, Any>? = null // TODO: update default value to empty map
 ) {
     /**
      * Return a list of all column names in the row.
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val row = Row({"a": 1, "b": 2});
+     *     val columnNames = row.columnNames; // ["a", "b"]
      * }
      */
     @PythonName("column_names") attr columnNames: List<String>
@@ -29,16 +31,18 @@ class Row(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val row = Row({"a": 1, "b": 2});
+     *     val numberOfColumns = row.numberOfColumns; // 2
      * }
      */
-    @PythonName("number_of_column") attr numberOfColumn: Int
+    @PythonName("number_of_column") attr numberOfColumns: Int
     /**
      * Return the schema of the row.
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val row = Row({"a": 1, "b": 2});
+     *     val `schema` = row.`schema`;
      * }
      */
     attr `schema`: Schema
@@ -48,72 +52,75 @@ class Row(
      *
      * @param data The data.
      *
-     * @result result1 The created row.
+     * @result row The created row.
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val row = Row.fromDict({"a": 1, "b": 2});
      * }
      */
     @Pure
     @PythonName("from_dict")
     static fun fromDict(
         data: Map<String, Any>
-    ) -> result1: Row
+    ) -> row: Row
 
     /**
      * Return the value of a specified column.
      *
      * @param columnName The column name.
      *
-     * @result result1 The column value.
+     * @result value The column value.
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val row = Row({"a": 1, "b": 2});
+     *     val value = row.getValue("a"); // 1
      * }
      */
     @Pure
     @PythonName("get_value")
     fun getValue(
         @PythonName("column_name") columnName: String
-    ) -> result1: Any
+    ) -> value: Any
 
     /**
      * Check whether the row contains a given column.
      *
      * @param columnName The column name.
      *
-     * @result result1 True, if the row contains the column, False otherwise.
+     * @result hasColumn True, if the row contains the column, False otherwise.
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val row = Row({"a": 1, "b": 2});
+     *     val hasColumn = row.hasColumn("a"); // True
      * }
      */
     @Pure
     @PythonName("has_column")
     fun hasColumn(
         @PythonName("column_name") columnName: String
-    ) -> result1: Boolean
+    ) -> hasColumn: Boolean
 
     /**
      * Return the type of the specified column.
      *
      * @param columnName The column name.
      *
-     * @result result1 The type of the column.
+     * @result type The type of the column.
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val row = Row({"a": 1, "b": 2});
+     *     val type = row.getColumnType("a"); // Integer
      * }
      */
     @Pure
     @PythonName("get_column_type")
     fun getColumnType(
         @PythonName("column_name") columnName: String
-    ) -> result1: ColumnType
+    ) -> type: ColumnType
 
     // // TODO Safe-DS does not support tuple types.
     // /**
@@ -130,39 +137,46 @@ class Row(
     //  *
     //  * @param comparator The function used to compare two tuples of (ColumnName, Value).
     //  *
-    //  * @result result1 A new row with sorted columns.
+    //  * @result sortedRow A new row with sorted columns.
+    //  *
+    //  * @example
+    //  * pipeline example {
+    //  *     // TODO
+    //  * }
     //  */
     // @Pure
     // @PythonName("sort_columns")
     // fun sortColumns(
     //     comparator: (param1: Tuple<Any>, param2: Tuple<Any>) -> param3: Int
-    // ) -> result1: Row
+    // ) -> sortedRow: Row
 
     /**
-     * Return a dictionary that maps column names to column values.
+     * Return a map of column names to column values.
      *
-     * @result result1 Dictionary representation of the row.
+     * @result map Map representation of the row.
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val row = Row({"a": 1, "b": 2});
+     *     val map = row.toMap(); // {"a": 1, "b": 2}
      * }
      */
     @Pure
     @PythonName("to_dict")
-    fun toDict() -> result1: Map<String, Any>
+    fun toMap() -> map: Map<String, Any>
 
     /**
      * Return an HTML representation of the row.
      *
-     * @result result1 The generated HTML.
+     * @result html The generated HTML.
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val row = Row({"a": 1, "b": 2});
+     *     val html = row.toHtml();
      * }
      */
     @Pure
     @PythonName("to_html")
-    fun toHtml() -> result1: String
+    fun toHtml() -> html: String
 }

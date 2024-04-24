@@ -12,6 +12,7 @@ from safeds.data.tabular.typing import ColumnType
  *     // TODO
  * }
  */
+@Experimental
 class Schema {
     /**
      * Return a list of all column names saved in this schema.

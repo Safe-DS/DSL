@@ -8,7 +8,12 @@ from safeds.data.tabular.transformation import InvertibleTableTransformer
  *
  * @example
  * pipeline example {
- *     // TODO
+ *    val table = Table({"a": ["z", "y"], "b": [3, 4]});
+ *    val encoder = LabelEncoder().fit(table, ["a"]);
+ *    val transformedTable = encoder.transform(table);
+ *    // Table({"a": [1, 0], "b": [3, 4]})
+ *    val originalTable = encoder.inverseTransform(transformedTable);
+ *    // Table({"a": ["z", "y"], "b": [3, 4]})
  * }
  */
 class LabelEncoder() sub InvertibleTableTransformer {
@@ -21,11 +26,6 @@ class LabelEncoder() sub InvertibleTableTransformer {
      * @param columnNames The list of columns from the table used to fit the transformer. If `None`, all columns are used.
      *
      * @result result1 The fitted transformer.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @Pure
     fun fit(

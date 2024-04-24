@@ -3,7 +3,7 @@ search:
   boost: 0.5
 ---
 
-# `#!sds abstract class` ColumnType {#safeds.data.tabular.typing.ColumnType data-toc-label='ColumnType'}
+# :test_tube:{ title="Experimental" } `#!sds abstract class` ColumnType {#safeds.data.tabular.typing.ColumnType data-toc-label='ColumnType'}
 
 Abstract base class for column types.
 
@@ -17,7 +17,7 @@ pipeline example {
 
 ??? quote "Stub code in `column_type.sdsstub`"
 
-    ```sds linenums="13"
+    ```sds linenums="14"
     class ColumnType {
         /**
          * Return whether the given column type is nullable.
@@ -69,7 +69,7 @@ pipeline example {
 
 ??? quote "Stub code in `column_type.sdsstub`"
 
-    ```sds linenums="24"
+    ```sds linenums="25"
     @Pure
     @PythonName("is_nullable")
     fun isNullable() -> result1: Boolean
@@ -95,7 +95,7 @@ pipeline example {
 
 ??? quote "Stub code in `column_type.sdsstub`"
 
-    ```sds linenums="38"
+    ```sds linenums="39"
     @Pure
     @PythonName("is_numeric")
     fun isNumeric() -> result1: Boolean

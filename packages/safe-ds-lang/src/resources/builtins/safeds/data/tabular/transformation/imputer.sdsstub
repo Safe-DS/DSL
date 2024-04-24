@@ -10,7 +10,18 @@ from safeds.data.tabular.transformation import TableTransformer
  *
  * @example
  * pipeline example {
- *     // TODO
+ *    val table = Table({"a": [1, null], "b": [3, 4]});
+ *    val imputer = Imputer(Imputer.Strategy.Mean).fit(table, ["a"]);
+ *    val transformedTable = imputer.transform(table);
+ *    // Table({"a": [1, 1], "b": [3, 4]})
+ * }
+ *
+* @example
+ * pipeline example {
+ *    val table = Table({"a": [1, null], "b": [3, 4]});
+ *    val imputer = Imputer(Imputer.Strategy.Constant(0)).fit(table, ["a"]);
+ *    val transformedTable = imputer.transform(table);
+ *    // Table({"a": [1, 0], "b": [3, 4]})
  * }
  */
 class Imputer(
@@ -49,11 +60,6 @@ class Imputer(
      * @param columnNames The list of columns from the table used to fit the transformer. If `None`, all columns are used.
      *
      * @result result1 The fitted transformer.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @Pure
     fun fit(
