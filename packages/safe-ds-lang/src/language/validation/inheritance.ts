@@ -63,6 +63,7 @@ export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: 
         } else if (typeChecker.isSubtypeOf(substitutedOverriddenMemberType, ownMemberType)) {
             // Prevents the info from showing when editing the builtin files
             if (isInSafedsLangAnyClass(services, node)) {
+                /* c8 ignore next 2 */
                 return;
             }
 
@@ -220,6 +221,12 @@ export const overridingAndOverriddenMethodsMustNotHavePythonCall = (services: Sa
     const builtinAnnotations = services.builtins.Annotations;
 
     return (node: SdsFunction, accept: ValidationAcceptor): void => {
+        // Prevents the errors from showing when editing the builtin files
+        if (isInSafedsLangAnyClass(services, node)) {
+            /* c8 ignore next 2 */
+            return;
+        }
+
         // Check whether the function overrides something
         const overriddenMember = services.typing.ClassHierarchy.getOverriddenMember(node);
         if (!overriddenMember) {
