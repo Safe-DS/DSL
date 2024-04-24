@@ -16,8 +16,8 @@ import {
     UpdateRunnerNotification,
 } from '../communication/rpc.js';
 
-const LOWEST_SUPPORTED_RUNNER_VERSION = '0.11.0';
-const LOWEST_UNSUPPORTED_RUNNER_VERSION = '0.12.0';
+const LOWEST_SUPPORTED_RUNNER_VERSION = '0.12.0';
+const LOWEST_UNSUPPORTED_RUNNER_VERSION = '0.13.0';
 const npmVersionRange = `>=${LOWEST_SUPPORTED_RUNNER_VERSION} <${LOWEST_UNSUPPORTED_RUNNER_VERSION}`;
 export const pipVersionRange = `>=${LOWEST_SUPPORTED_RUNNER_VERSION},<${LOWEST_UNSUPPORTED_RUNNER_VERSION}`;
 
@@ -435,7 +435,7 @@ export class SafeDsPythonServer {
      * @param message Message to be sent to the python server. This message should be serializable to JSON.
      */
     public sendMessageToPythonServer(message: PythonServerMessage): void {
-        if (!isStarted(this.state)) {
+        if (!this.state.serverConnection) {
             return;
         }
 
