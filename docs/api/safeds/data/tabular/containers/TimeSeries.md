@@ -1847,7 +1847,7 @@ pipeline example {
         "age":      [23, 16],
         "survived": [ 0,  1],
     });
-    val taggedTable = table.tagColumns("target", features = ["age"]);
+    val taggedTable = table.tagColumns("target", featureNames = ["age"]);
 }
 ```
 
@@ -1917,32 +1917,6 @@ pipeline example {
     fun toCsvFile(
         path: String
     )
-    ```
-
-## `#!sds fun` toDict {#safeds.data.tabular.containers.TimeSeries.toDict data-toc-label='toDict'}
-
-Return a dictionary that maps column names to column values.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Map<String, List<Any>>`][safeds.lang.Map] | Dictionary representation of the table. |
-
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
-??? quote "Stub code in `table.sdsstub`"
-
-    ```sds linenums="1082"
-    @Pure
-    @PythonName("to_dict")
-    fun toDict() -> result1: Map<String, List<Any>>
     ```
 
 ## `#!sds fun` toExcelFile {#safeds.data.tabular.containers.TimeSeries.toExcelFile data-toc-label='toExcelFile'}
@@ -2034,6 +2008,32 @@ pipeline example {
     )
     ```
 
+## `#!sds fun` toMap {#safeds.data.tabular.containers.TimeSeries.toMap data-toc-label='toMap'}
+
+Return a dictionary that maps column names to column values.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result1` | [`Map<String, List<Any?>>`][safeds.lang.Map] | Dictionary representation of the table. |
+
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
+??? quote "Stub code in `table.sdsstub`"
+
+    ```sds linenums="1082"
+    @Pure
+    @PythonName("to_dict")
+    fun toMap() -> result1: Map<String, List<Any?>>
+    ```
+
 ## `#!sds fun` toRows {#safeds.data.tabular.containers.TimeSeries.toRows data-toc-label='toRows'}
 
 Return a list of the rows.
@@ -2121,9 +2121,9 @@ The original table is not modified.
 ```sds hl_lines="4"
 pipeline example {
    val table = Table({"a": [1, null], "b": [3, 4]});
-   val imputer = Imputer(Imputer.Strategy.Constant(2));
+   val imputer = Imputer(Imputer.Strategy.Mean).fit(table, ["a"]);
    val transformedTable = table.transformTable(imputer);
-   // Table({"a": [1, 2], "b": [3, 4]})
+   // Table({"a": [1, 1], "b": [3, 4]})
 }
 ```
 

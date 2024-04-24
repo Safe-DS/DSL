@@ -151,7 +151,7 @@ pipeline example {
         @Pure
         @PythonName("from_dict")
         static fun fromMap(
-            data: Map<String, List<Any>>
+            data: Map<String, List<Any?>>
         ) -> table: Table
 
         /**
@@ -188,6 +188,7 @@ pipeline example {
          *     val table = Table.fromRows([row1, row2]);
          * }
          */
+        @Experimental
         @Pure
         @PythonName("from_rows")
         static fun fromRows(
@@ -218,7 +219,7 @@ pipeline example {
          *
          * @param columnName The name of the column.
          *
-         * @result result1 True if the column exists.
+         * @result hasColumn True if the column exists.
          *
          * @example
          * pipeline example {
@@ -230,7 +231,7 @@ pipeline example {
         @PythonName("has_column")
         fun hasColumn(
             @PythonName("column_name") columnName: String
-        ) -> result1: Boolean
+        ) -> hasColumn: Boolean
 
         /**
          * Return the type of the given column.
@@ -256,7 +257,7 @@ pipeline example {
          *
          * @param index The index.
          *
-         * @result result1 The row of the table at the index.
+         * @result row The row of the table at the index.
          *
          * @example
          * pipeline example {
@@ -268,7 +269,7 @@ pipeline example {
         @PythonName("get_row")
         fun getRow(
             index: Int
-        ) -> result1: Row
+        ) -> row: Row
 
         /**
          * Return a table with a number of statistical key values.
@@ -757,7 +758,7 @@ pipeline example {
         @Pure
         @PythonName("sort_columns")
         fun sortColumns(
-            comparator: (param1: Column, param2: Column) -> param3: Int
+            comparator: (column1: Column, column2: Column) -> comparison: Int
         ) -> sortedTable: Table
 
         /**
@@ -793,7 +794,7 @@ pipeline example {
         @Pure
         @PythonName("sort_rows")
         fun sortRows(
-            comparator: (param1: Row, param2: Row) -> param3: Int
+            comparator: (row1: Row, row2: Row) -> comparison: Int
         ) -> sortedTable: Table
 
         /**
@@ -853,7 +854,7 @@ pipeline example {
          *         "age":      [23, 16],
          *         "survived": [ 0,  1],
          *     });
-         *     val taggedTable = table.tagColumns("target", features = ["age"]);
+         *     val taggedTable = table.tagColumns("target", featureNames = ["age"]);
          * }
          */
         @Pure
@@ -876,7 +877,7 @@ pipeline example {
          *         "product": ["apple", "banana", "cherry"],
          *         "price":   [    100,        2,        4],
          *     });
-         *     val discountedPrices = price.transformColumn("price", (row) ->
+         *     val discountedPrices = prices.transformColumn("price", (row) ->
          *         row.getValue("price") as Int * 0.5
          *     );
          *     // Table({
@@ -922,32 +923,37 @@ pipeline example {
          *
          * @param transformer A transformer that was fitted with columns, which are all present in the table.
          *
-         * @result result1 The original table.
+         * @result originalTable The original table.
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val table = Table({"a": ["z", "y"], "b": [3, 4]});
+         *     val encoder = LabelEncoder().fit(table, ["a"]);
+         *     val transformedTable = table.transformTable(encoder);
+         *     val originalTable = transformedTable.inverseTransformTable(encoder);
+         *     // Table({"a": ["z", "y"], "b": [3, 4]})
          * }
          */
         @Pure
         @PythonName("inverse_transform_table")
         fun inverseTransformTable(
             transformer: InvertibleTableTransformer
-        ) -> result1: Table
+        ) -> originalTable: Table
 
         /**
          * Plot a correlation heatmap for all numerical columns of this `Table`.
          *
-         * @result result1 The plot as an image.
+         * @result correlationHeatmap The plot as an image.
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val table = Table({"a": [1, 2], "b": [3, 4]});
+         *     val correlationHeatmap = table.plotCorrelationHeatmap();
          * }
          */
         @Pure
         @PythonName("plot_correlation_heatmap")
-        fun plotCorrelationHeatmap() -> result1: Image
+        fun plotCorrelationHeatmap() -> correlationHeatmap: Image
 
         /**
          * Plot two columns against each other in a lineplot.
@@ -958,11 +964,12 @@ pipeline example {
          * @param xColumnName The column name of the column to be plotted on the x-Axis.
          * @param yColumnName The column name of the column to be plotted on the y-Axis.
          *
-         * @result result1 The plot as an image.
+         * @result lineplot The plot as an image.
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val table = Table({"a": [1, 2], "b": [3, 4]});
+         *     val lineplot = table.plotLineplot("a", "b");
          * }
          */
         @Pure
@@ -970,7 +977,7 @@ pipeline example {
         fun plotLineplot(
             @PythonName("x_column_name") xColumnName: String,
             @PythonName("y_column_name") yColumnName: String
-        ) -> result1: Image
+        ) -> lineplot: Image
 
         /**
          * Plot two columns against each other in a scatterplot.
@@ -978,11 +985,12 @@ pipeline example {
          * @param xColumnName The column name of the column to be plotted on the x-Axis.
          * @param yColumnName The column name of the column to be plotted on the y-Axis.
          *
-         * @result result1 The plot as an image.
+         * @result scatterplot The plot as an image.
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val table = Table({"a": [1, 2], "b": [3, 4]});
+         *     val scatterplot = table.plotScatterplot("a", "b");
          * }
          */
         @Pure
@@ -990,35 +998,37 @@ pipeline example {
         fun plotScatterplot(
             @PythonName("x_column_name") xColumnName: String,
             @PythonName("y_column_name") yColumnName: String
-        ) -> result1: Image
+        ) -> scatterplot: Image
 
         /**
          * Plot a boxplot for every numerical column.
          *
-         * @result result1 The plot as an image.
+         * @result boxplots The plot as an image.
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val table = Table({"a": [1, 2], "b": [3, 4]});
+         *     val boxplots = table.plotBoxplots();
          * }
          */
         @Pure
         @PythonName("plot_boxplots")
-        fun plotBoxplots() -> result1: Image
+        fun plotBoxplots() -> boxplots: Image
 
         /**
          * Plot a histogram for every column.
          *
-         * @result result1 The plot as an image.
+         * @result histograms The plot as an image.
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val table = Table({"a": [1, 2], "b": [3, 4]});
+         *     val histograms = table.plotHistograms();
          * }
          */
         @Pure
         @PythonName("plot_histograms")
-        fun plotHistograms() -> result1: Image
+        fun plotHistograms() -> histograms: Image
 
         /**
          * Write the data from the table into a CSV file.
@@ -1030,7 +1040,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val table = Table({"a": [1, 2], "b": [3, 4]});
+         *     table.toCsvFile("path/to/file.csv");
          * }
          */
         @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
@@ -1050,7 +1061,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val table = Table({"a": [1, 2], "b": [3, 4]});
+         *     table.toExcelFile("path/to/file.xlsx");
          * }
          */
         @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
@@ -1069,7 +1081,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val table = Table({"a": [1, 2], "b": [3, 4]});
+         *     table.toJsonFile("path/to/file.json");
          * }
          */
         @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
@@ -1079,60 +1092,68 @@ pipeline example {
         )
 
         /**
-         * Return a dictionary that maps column names to column values.
+         * Return a map of column names to column values.
          *
-         * @result result1 Dictionary representation of the table.
+         * @result map Map representation of the table.
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val table = Table({"a": [1, 2], "b": [3, 4]});
+         *     val map = table.toMap();
+         *     // {"a": [1, 2], "b": [3, 4]}
          * }
          */
         @Pure
         @PythonName("to_dict")
-        fun toDict() -> result1: Map<String, List<Any>>
+        fun toMap() -> map: Map<String, List<Any?>>
 
         /**
          * Return an HTML representation of the table.
          *
-         * @result result1 The generated HTML.
+         * @result html The generated HTML.
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val table = Table({"a": [1, 2], "b": [3, 4]});
+         *     val html = table.toHtml();
          * }
          */
         @Pure
         @PythonName("to_html")
-        fun toHtml() -> result1: String
+        fun toHtml() -> html: String
 
         /**
          * Return a list of the columns.
          *
-         * @result result1 List of columns.
+         * @result columns List of columns.
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val table = Table({"a": [1, 2], "b": [3, 4]});
+         *     val columns = table.toColumns();
+         *     // [Column("a", [1, 2]), Column("b", [3, 4])]
          * }
          */
         @Pure
         @PythonName("to_columns")
-        fun toColumns() -> result1: List<Column>
+        fun toColumns() -> columns: List<Column>
 
         /**
          * Return a list of the rows.
          *
-         * @result result1 List of rows.
+         * @result rows List of rows.
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val table = Table({"a": [1, 2], "b": [3, 4]});
+         *     val rows = table.toRows();
+         *     // [Row({"a": 1, "b": 3}), Row({"a": 2, "b": 4})]
          * }
          */
+        @Experimental
         @Pure
         @PythonName("to_rows")
-        fun toRows() -> result1: List<Row>
+        fun toRows() -> rows: List<Row>
     }
     ```
 
@@ -1231,7 +1252,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="300"
+    ```sds linenums="301"
     @Pure
     @PythonName("add_column")
     fun addColumn(
@@ -1276,7 +1297,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="329"
+    ```sds linenums="330"
     @Pure
     @PythonName("add_columns")
     fun addColumns(
@@ -1323,7 +1344,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="360"
+    ```sds linenums="361"
     @Pure
     @PythonName("add_row")
     fun addRow(
@@ -1369,7 +1390,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="390"
+    ```sds linenums="391"
     @Pure
     @PythonName("add_rows")
     fun addRows(
@@ -1409,7 +1430,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="414"
+    ```sds linenums="415"
     @Pure
     @PythonName("filter_rows")
     fun filterRows(
@@ -1444,7 +1465,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="201"
+    ```sds linenums="202"
     @Pure
     @PythonName("get_column")
     fun getColumn(
@@ -1479,7 +1500,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="239"
+    ```sds linenums="240"
     @Pure
     @PythonName("get_column_type")
     fun getColumnType(
@@ -1501,7 +1522,7 @@ Return the row at a specified index.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Row`][safeds.data.tabular.containers.Row] | The row of the table at the index. |
+| `row` | [`Row`][safeds.data.tabular.containers.Row] | The row of the table at the index. |
 
 **Examples:**
 
@@ -1514,12 +1535,12 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="258"
+    ```sds linenums="259"
     @Pure
     @PythonName("get_row")
     fun getRow(
         index: Int
-    ) -> result1: Row
+    ) -> row: Row
     ```
 
 ## `#!sds fun` groupRows {#safeds.data.tabular.containers.Table.groupRows data-toc-label='groupRows'}
@@ -1563,7 +1584,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="441"
+    ```sds linenums="442"
     @Pure
     @PythonName("group_rows_by")
     fun groupRows<T>(
@@ -1585,7 +1606,7 @@ Return whether the table contains a given column.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Boolean`][safeds.lang.Boolean] | True if the column exists. |
+| `hasColumn` | [`Boolean`][safeds.lang.Boolean] | True if the column exists. |
 
 **Examples:**
 
@@ -1598,12 +1619,12 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="220"
+    ```sds linenums="221"
     @Pure
     @PythonName("has_column")
     fun hasColumn(
         @PythonName("column_name") columnName: String
-    ) -> result1: Boolean
+    ) -> hasColumn: Boolean
     ```
 
 ## `#!sds fun` inverseTransformTable {#safeds.data.tabular.containers.Table.inverseTransformTable data-toc-label='inverseTransformTable'}
@@ -1622,24 +1643,28 @@ The original table is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Table`][safeds.data.tabular.containers.Table] | The original table. |
+| `originalTable` | [`Table`][safeds.data.tabular.containers.Table] | The original table. |
 
 **Examples:**
 
-```sds
+```sds hl_lines="5"
 pipeline example {
-    // TODO
+    val table = Table({"a": ["z", "y"], "b": [3, 4]});
+    val encoder = LabelEncoder().fit(table, ["a"]);
+    val transformedTable = table.transformTable(encoder);
+    val originalTable = transformedTable.inverseTransformTable(encoder);
+    // Table({"a": ["z", "y"], "b": [3, 4]})
 }
 ```
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="923"
+    ```sds linenums="928"
     @Pure
     @PythonName("inverse_transform_table")
     fun inverseTransformTable(
         transformer: InvertibleTableTransformer
-    ) -> result1: Table
+    ) -> originalTable: Table
     ```
 
 ## `#!sds fun` keepOnlyColumns {#safeds.data.tabular.containers.Table.keepOnlyColumns data-toc-label='keepOnlyColumns'}
@@ -1674,7 +1699,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="465"
+    ```sds linenums="466"
     @Pure
     @PythonName("keep_only_columns")
     fun keepOnlyColumns(
@@ -1690,22 +1715,23 @@ Plot a boxplot for every numerical column.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
+| `boxplots` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // TODO
+    val table = Table({"a": [1, 2], "b": [3, 4]});
+    val boxplots = table.plotBoxplots();
 }
 ```
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="996"
+    ```sds linenums="1005"
     @Pure
     @PythonName("plot_boxplots")
-    fun plotBoxplots() -> result1: Image
+    fun plotBoxplots() -> boxplots: Image
     ```
 
 ## `#!sds fun` plotCorrelationHeatmap {#safeds.data.tabular.containers.Table.plotCorrelationHeatmap data-toc-label='plotCorrelationHeatmap'}
@@ -1716,22 +1742,23 @@ Plot a correlation heatmap for all numerical columns of this `Table`.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
+| `correlationHeatmap` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // TODO
+    val table = Table({"a": [1, 2], "b": [3, 4]});
+    val correlationHeatmap = table.plotCorrelationHeatmap();
 }
 ```
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="939"
+    ```sds linenums="945"
     @Pure
     @PythonName("plot_correlation_heatmap")
-    fun plotCorrelationHeatmap() -> result1: Image
+    fun plotCorrelationHeatmap() -> correlationHeatmap: Image
     ```
 
 ## `#!sds fun` plotHistograms {#safeds.data.tabular.containers.Table.plotHistograms data-toc-label='plotHistograms'}
@@ -1742,22 +1769,23 @@ Plot a histogram for every column.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
+| `histograms` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // TODO
+    val table = Table({"a": [1, 2], "b": [3, 4]});
+    val histograms = table.plotHistograms();
 }
 ```
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="1010"
+    ```sds linenums="1020"
     @Pure
     @PythonName("plot_histograms")
-    fun plotHistograms() -> result1: Image
+    fun plotHistograms() -> histograms: Image
     ```
 
 ## `#!sds fun` plotLineplot {#safeds.data.tabular.containers.Table.plotLineplot data-toc-label='plotLineplot'}
@@ -1778,25 +1806,26 @@ and the lower-transparency area around the line representing the 95% confidence 
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
+| `lineplot` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // TODO
+    val table = Table({"a": [1, 2], "b": [3, 4]});
+    val lineplot = table.plotLineplot("a", "b");
 }
 ```
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="959"
+    ```sds linenums="966"
     @Pure
     @PythonName("plot_lineplot")
     fun plotLineplot(
         @PythonName("x_column_name") xColumnName: String,
         @PythonName("y_column_name") yColumnName: String
-    ) -> result1: Image
+    ) -> lineplot: Image
     ```
 
 ## `#!sds fun` plotScatterplot {#safeds.data.tabular.containers.Table.plotScatterplot data-toc-label='plotScatterplot'}
@@ -1814,25 +1843,26 @@ Plot two columns against each other in a scatterplot.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
+| `scatterplot` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // TODO
+    val table = Table({"a": [1, 2], "b": [3, 4]});
+    val scatterplot = table.plotScatterplot("a", "b");
 }
 ```
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="979"
+    ```sds linenums="987"
     @Pure
     @PythonName("plot_scatterplot")
     fun plotScatterplot(
         @PythonName("x_column_name") xColumnName: String,
         @PythonName("y_column_name") yColumnName: String
-    ) -> result1: Image
+    ) -> scatterplot: Image
     ```
 
 ## `#!sds fun` removeColumns {#safeds.data.tabular.containers.Table.removeColumns data-toc-label='removeColumns'}
@@ -1867,7 +1897,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="489"
+    ```sds linenums="490"
     @Pure
     @PythonName("remove_columns")
     fun removeColumns(
@@ -1901,7 +1931,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="511"
+    ```sds linenums="512"
     @Pure
     @PythonName("remove_columns_with_missing_values")
     fun removeColumnsWithMissingValues() -> projectedTable: Table
@@ -1933,7 +1963,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="531"
+    ```sds linenums="532"
     @Pure
     @PythonName("remove_columns_with_non_numerical_values")
     fun removeColumnsWithNonNumericalValues() -> projectedTable: Table
@@ -1963,7 +1993,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="549"
+    ```sds linenums="550"
     @Pure
     @PythonName("remove_duplicate_rows")
     fun removeDuplicateRows() -> filteredTable: Table
@@ -1993,7 +2023,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="567"
+    ```sds linenums="568"
     @Pure
     @PythonName("remove_rows_with_missing_values")
     fun removeRowsWithMissingValues() -> filteredTable: Table
@@ -2033,7 +2063,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="595"
+    ```sds linenums="596"
     @Pure
     @PythonName("remove_rows_with_outliers")
     fun removeRowsWithOutliers() -> filteredTable: Table
@@ -2070,7 +2100,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="616"
+    ```sds linenums="617"
     @Pure
     @PythonName("rename_column")
     fun renameColumn(
@@ -2122,7 +2152,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="652"
+    ```sds linenums="653"
     @Pure
     @PythonName("replace_column")
     fun replaceColumn(
@@ -2154,7 +2184,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="672"
+    ```sds linenums="673"
     @Pure
     @PythonName("shuffle_rows")
     fun shuffleRows() -> shuffledTable: Table
@@ -2206,7 +2236,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="708"
+    ```sds linenums="709"
     @Pure
     @PythonName("slice_rows")
     fun sliceRows(
@@ -2235,7 +2265,7 @@ The original table is not modified.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `comparator` | `#!sds (param1: Column<Any?>, param2: Column<Any?>) -> (param3: Int)` | The function used to compare two columns. | - |
+| `comparator` | `#!sds (column1: Column<Any?>, column2: Column<Any?>) -> (comparison: Int)` | The function used to compare two columns. | - |
 
 **Results:**
 
@@ -2262,11 +2292,11 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="748"
+    ```sds linenums="749"
     @Pure
     @PythonName("sort_columns")
     fun sortColumns(
-        comparator: (param1: Column, param2: Column) -> param3: Int
+        comparator: (column1: Column, column2: Column) -> comparison: Int
     ) -> sortedTable: Table
     ```
 
@@ -2287,7 +2317,7 @@ The original table is not modified.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `comparator` | `#!sds (param1: Row, param2: Row) -> (param3: Int)` | The function used to compare two rows. | - |
+| `comparator` | `#!sds (row1: Row, row2: Row) -> (comparison: Int)` | The function used to compare two rows. | - |
 
 **Results:**
 
@@ -2314,11 +2344,11 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="784"
+    ```sds linenums="785"
     @Pure
     @PythonName("sort_rows")
     fun sortRows(
-        comparator: (param1: Row, param2: Row) -> param3: Int
+        comparator: (row1: Row, row2: Row) -> comparison: Int
     ) -> sortedTable: Table
     ```
 
@@ -2355,7 +2385,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="811"
+    ```sds linenums="812"
     @Pure
     @PythonName("split_rows")
     fun splitRows(
@@ -2386,7 +2416,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="277"
+    ```sds linenums="278"
     @Pure
     @PythonName("summarize_statistics")
     fun summarizeStatistics() -> statistics: Table
@@ -2429,13 +2459,13 @@ pipeline example {
         "age":      [23, 16],
         "survived": [ 0,  1],
     });
-    val taggedTable = table.tagColumns("target", features = ["age"]);
+    val taggedTable = table.tagColumns("target", featureNames = ["age"]);
 }
 ```
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="850"
+    ```sds linenums="851"
     @Pure
     @PythonName("tag_columns")
     fun tagColumns(
@@ -2452,22 +2482,24 @@ Return a list of the columns.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`List<Column<Any?>>`][safeds.lang.List] | List of columns. |
+| `columns` | [`List<Column<Any?>>`][safeds.lang.List] | List of columns. |
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // TODO
+    val table = Table({"a": [1, 2], "b": [3, 4]});
+    val columns = table.toColumns();
+    // [Column("a", [1, 2]), Column("b", [3, 4])]
 }
 ```
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="1110"
+    ```sds linenums="1128"
     @Pure
     @PythonName("to_columns")
-    fun toColumns() -> result1: List<Column>
+    fun toColumns() -> columns: List<Column>
     ```
 
 ## `#!sds fun` toCsvFile {#safeds.data.tabular.containers.Table.toCsvFile data-toc-label='toCsvFile'}
@@ -2485,46 +2517,21 @@ overwritten.
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // TODO
+    val table = Table({"a": [1, 2], "b": [3, 4]});
+    table.toCsvFile("path/to/file.csv");
 }
 ```
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="1027"
+    ```sds linenums="1038"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_csv_file")
     fun toCsvFile(
         path: String
     )
-    ```
-
-## `#!sds fun` toDict {#safeds.data.tabular.containers.Table.toDict data-toc-label='toDict'}
-
-Return a dictionary that maps column names to column values.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Map<String, List<Any>>`][safeds.lang.Map] | Dictionary representation of the table. |
-
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
-??? quote "Stub code in `table.sdsstub`"
-
-    ```sds linenums="1082"
-    @Pure
-    @PythonName("to_dict")
-    fun toDict() -> result1: Map<String, List<Any>>
     ```
 
 ## `#!sds fun` toExcelFile {#safeds.data.tabular.containers.Table.toExcelFile data-toc-label='toExcelFile'}
@@ -2543,15 +2550,16 @@ overwritten.
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // TODO
+    val table = Table({"a": [1, 2], "b": [3, 4]});
+    table.toExcelFile("path/to/file.xlsx");
 }
 ```
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="1047"
+    ```sds linenums="1059"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_excel_file")
     fun toExcelFile(
@@ -2567,22 +2575,23 @@ Return an HTML representation of the table.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`String`][safeds.lang.String] | The generated HTML. |
+| `html` | [`String`][safeds.lang.String] | The generated HTML. |
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // TODO
+    val table = Table({"a": [1, 2], "b": [3, 4]});
+    val html = table.toHtml();
 }
 ```
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="1096"
+    ```sds linenums="1112"
     @Pure
     @PythonName("to_html")
-    fun toHtml() -> result1: String
+    fun toHtml() -> html: String
     ```
 
 ## `#!sds fun` toJsonFile {#safeds.data.tabular.containers.Table.toJsonFile data-toc-label='toJsonFile'}
@@ -2600,15 +2609,16 @@ overwritten.
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // TODO
+    val table = Table({"a": [1, 2], "b": [3, 4]});
+    table.toJsonFile("path/to/file.json");
 }
 ```
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="1066"
+    ```sds linenums="1079"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_json_file")
     fun toJsonFile(
@@ -2616,7 +2626,35 @@ pipeline example {
     )
     ```
 
-## `#!sds fun` toRows {#safeds.data.tabular.containers.Table.toRows data-toc-label='toRows'}
+## `#!sds fun` toMap {#safeds.data.tabular.containers.Table.toMap data-toc-label='toMap'}
+
+Return a map of column names to column values.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `map` | [`Map<String, List<Any?>>`][safeds.lang.Map] | Map representation of the table. |
+
+**Examples:**
+
+```sds hl_lines="3"
+pipeline example {
+    val table = Table({"a": [1, 2], "b": [3, 4]});
+    val map = table.toMap();
+    // {"a": [1, 2], "b": [3, 4]}
+}
+```
+
+??? quote "Stub code in `table.sdsstub`"
+
+    ```sds linenums="1097"
+    @Pure
+    @PythonName("to_dict")
+    fun toMap() -> map: Map<String, List<Any?>>
+    ```
+
+## :test_tube:{ title="Experimental" } `#!sds fun` toRows {#safeds.data.tabular.containers.Table.toRows data-toc-label='toRows'}
 
 Return a list of the rows.
 
@@ -2624,22 +2662,25 @@ Return a list of the rows.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`List<Row>`][safeds.lang.List] | List of rows. |
+| `rows` | [`List<Row>`][safeds.lang.List] | List of rows. |
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // TODO
+    val table = Table({"a": [1, 2], "b": [3, 4]});
+    val rows = table.toRows();
+    // [Row({"a": 1, "b": 3}), Row({"a": 2, "b": 4})]
 }
 ```
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="1124"
+    ```sds linenums="1144"
+    @Experimental
     @Pure
     @PythonName("to_rows")
-    fun toRows() -> result1: List<Row>
+    fun toRows() -> rows: List<Row>
     ```
 
 ## `#!sds fun` transformColumn {#safeds.data.tabular.containers.Table.transformColumn data-toc-label='transformColumn'}
@@ -2669,7 +2710,7 @@ pipeline example {
         "product": ["apple", "banana", "cherry"],
         "price":   [    100,        2,        4],
     });
-    val discountedPrices = price.transformColumn("price", (row) ->
+    val discountedPrices = prices.transformColumn("price", (row) ->
         row.getValue("price") as Int * 0.5
     );
     // Table({
@@ -2681,7 +2722,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="879"
+    ```sds linenums="880"
     @Pure
     @PythonName("transform_column")
     fun transformColumn(
@@ -2721,7 +2762,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="903"
+    ```sds linenums="904"
     @Pure
     @PythonName("transform_table")
     fun transformTable(
@@ -2877,7 +2918,7 @@ Create a table from a map of column names to column values.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `data` | [`Map<String, List<Any>>`][safeds.lang.Map] | The data. | - |
+| `data` | [`Map<String, List<Any?>>`][safeds.lang.Map] | The data. | - |
 
 **Results:**
 
@@ -2899,11 +2940,11 @@ pipeline example {
     @Pure
     @PythonName("from_dict")
     static fun fromMap(
-        data: Map<String, List<Any>>
+        data: Map<String, List<Any?>>
     ) -> table: Table
     ```
 
-## `#!sds static fun` fromRows {#safeds.data.tabular.containers.Table.fromRows data-toc-label='fromRows'}
+## :test_tube:{ title="Experimental" } `#!sds static fun` fromRows {#safeds.data.tabular.containers.Table.fromRows data-toc-label='fromRows'}
 
 Return a table created from a list of rows.
 
@@ -2932,6 +2973,7 @@ pipeline example {
 ??? quote "Stub code in `table.sdsstub`"
 
     ```sds linenums="182"
+    @Experimental
     @Pure
     @PythonName("from_rows")
     static fun fromRows(

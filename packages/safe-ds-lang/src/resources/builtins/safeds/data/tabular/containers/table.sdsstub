@@ -179,6 +179,7 @@ class Table(
      *     val table = Table.fromRows([row1, row2]);
      * }
      */
+    @Experimental
     @Pure
     @PythonName("from_rows")
     static fun fromRows(
@@ -209,7 +210,7 @@ class Table(
      *
      * @param columnName The name of the column.
      *
-     * @result result1 True if the column exists.
+     * @result hasColumn True if the column exists.
      *
      * @example
      * pipeline example {
@@ -221,7 +222,7 @@ class Table(
     @PythonName("has_column")
     fun hasColumn(
         @PythonName("column_name") columnName: String
-    ) -> result1: Boolean
+    ) -> hasColumn: Boolean
 
     /**
      * Return the type of the given column.
@@ -247,7 +248,7 @@ class Table(
      *
      * @param index The index.
      *
-     * @result result1 The row of the table at the index.
+     * @result row The row of the table at the index.
      *
      * @example
      * pipeline example {
@@ -259,7 +260,7 @@ class Table(
     @PythonName("get_row")
     fun getRow(
         index: Int
-    ) -> result1: Row
+    ) -> row: Row
 
     /**
      * Return a table with a number of statistical key values.
@@ -748,7 +749,7 @@ class Table(
     @Pure
     @PythonName("sort_columns")
     fun sortColumns(
-        comparator: (param1: Column, param2: Column) -> param3: Int
+        comparator: (column1: Column, column2: Column) -> comparison: Int
     ) -> sortedTable: Table
 
     /**
@@ -784,7 +785,7 @@ class Table(
     @Pure
     @PythonName("sort_rows")
     fun sortRows(
-        comparator: (param1: Row, param2: Row) -> param3: Int
+        comparator: (row1: Row, row2: Row) -> comparison: Int
     ) -> sortedTable: Table
 
     /**
@@ -913,32 +914,37 @@ class Table(
      *
      * @param transformer A transformer that was fitted with columns, which are all present in the table.
      *
-     * @result result1 The original table.
+     * @result originalTable The original table.
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val table = Table({"a": ["z", "y"], "b": [3, 4]});
+     *     val encoder = LabelEncoder().fit(table, ["a"]);
+     *     val transformedTable = table.transformTable(encoder);
+     *     val originalTable = transformedTable.inverseTransformTable(encoder);
+     *     // Table({"a": ["z", "y"], "b": [3, 4]})
      * }
      */
     @Pure
     @PythonName("inverse_transform_table")
     fun inverseTransformTable(
         transformer: InvertibleTableTransformer
-    ) -> result1: Table
+    ) -> originalTable: Table
 
     /**
      * Plot a correlation heatmap for all numerical columns of this `Table`.
      *
-     * @result result1 The plot as an image.
+     * @result correlationHeatmap The plot as an image.
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val table = Table({"a": [1, 2], "b": [3, 4]});
+     *     val correlationHeatmap = table.plotCorrelationHeatmap();
      * }
      */
     @Pure
     @PythonName("plot_correlation_heatmap")
-    fun plotCorrelationHeatmap() -> result1: Image
+    fun plotCorrelationHeatmap() -> correlationHeatmap: Image
 
     /**
      * Plot two columns against each other in a lineplot.
@@ -949,11 +955,12 @@ class Table(
      * @param xColumnName The column name of the column to be plotted on the x-Axis.
      * @param yColumnName The column name of the column to be plotted on the y-Axis.
      *
-     * @result result1 The plot as an image.
+     * @result lineplot The plot as an image.
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val table = Table({"a": [1, 2], "b": [3, 4]});
+     *     val lineplot = table.plotLineplot("a", "b");
      * }
      */
     @Pure
@@ -961,7 +968,7 @@ class Table(
     fun plotLineplot(
         @PythonName("x_column_name") xColumnName: String,
         @PythonName("y_column_name") yColumnName: String
-    ) -> result1: Image
+    ) -> lineplot: Image
 
     /**
      * Plot two columns against each other in a scatterplot.
@@ -969,11 +976,12 @@ class Table(
      * @param xColumnName The column name of the column to be plotted on the x-Axis.
      * @param yColumnName The column name of the column to be plotted on the y-Axis.
      *
-     * @result result1 The plot as an image.
+     * @result scatterplot The plot as an image.
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val table = Table({"a": [1, 2], "b": [3, 4]});
+     *     val scatterplot = table.plotScatterplot("a", "b");
      * }
      */
     @Pure
@@ -981,35 +989,37 @@ class Table(
     fun plotScatterplot(
         @PythonName("x_column_name") xColumnName: String,
         @PythonName("y_column_name") yColumnName: String
-    ) -> result1: Image
+    ) -> scatterplot: Image
 
     /**
      * Plot a boxplot for every numerical column.
      *
-     * @result result1 The plot as an image.
+     * @result boxplots The plot as an image.
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val table = Table({"a": [1, 2], "b": [3, 4]});
+     *     val boxplots = table.plotBoxplots();
      * }
      */
     @Pure
     @PythonName("plot_boxplots")
-    fun plotBoxplots() -> result1: Image
+    fun plotBoxplots() -> boxplots: Image
 
     /**
      * Plot a histogram for every column.
      *
-     * @result result1 The plot as an image.
+     * @result histograms The plot as an image.
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val table = Table({"a": [1, 2], "b": [3, 4]});
+     *     val histograms = table.plotHistograms();
      * }
      */
     @Pure
     @PythonName("plot_histograms")
-    fun plotHistograms() -> result1: Image
+    fun plotHistograms() -> histograms: Image
 
     /**
      * Write the data from the table into a CSV file.
@@ -1021,7 +1031,8 @@ class Table(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val table = Table({"a": [1, 2], "b": [3, 4]});
+     *     table.toCsvFile("path/to/file.csv");
      * }
      */
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
@@ -1041,7 +1052,8 @@ class Table(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val table = Table({"a": [1, 2], "b": [3, 4]});
+     *     table.toExcelFile("path/to/file.xlsx");
      * }
      */
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
@@ -1060,7 +1072,8 @@ class Table(
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val table = Table({"a": [1, 2], "b": [3, 4]});
+     *     table.toJsonFile("path/to/file.json");
      * }
      */
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
@@ -1070,58 +1083,66 @@ class Table(
     )
 
     /**
-     * Return a dictionary that maps column names to column values.
+     * Return a map of column names to column values.
      *
-     * @result result1 Dictionary representation of the table.
+     * @result map Map representation of the table.
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val table = Table({"a": [1, 2], "b": [3, 4]});
+     *     val map = table.toMap();
+     *     // {"a": [1, 2], "b": [3, 4]}
      * }
      */
     @Pure
     @PythonName("to_dict")
-    fun toMap() -> result1: Map<String, List<Any?>>
+    fun toMap() -> map: Map<String, List<Any?>>
 
     /**
      * Return an HTML representation of the table.
      *
-     * @result result1 The generated HTML.
+     * @result html The generated HTML.
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val table = Table({"a": [1, 2], "b": [3, 4]});
+     *     val html = table.toHtml();
      * }
      */
     @Pure
     @PythonName("to_html")
-    fun toHtml() -> result1: String
+    fun toHtml() -> html: String
 
     /**
      * Return a list of the columns.
      *
-     * @result result1 List of columns.
+     * @result columns List of columns.
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val table = Table({"a": [1, 2], "b": [3, 4]});
+     *     val columns = table.toColumns();
+     *     // [Column("a", [1, 2]), Column("b", [3, 4])]
      * }
      */
     @Pure
     @PythonName("to_columns")
-    fun toColumns() -> result1: List<Column>
+    fun toColumns() -> columns: List<Column>
 
     /**
      * Return a list of the rows.
      *
-     * @result result1 List of rows.
+     * @result rows List of rows.
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val table = Table({"a": [1, 2], "b": [3, 4]});
+     *     val rows = table.toRows();
+     *     // [Row({"a": 1, "b": 3}), Row({"a": 2, "b": 4})]
      * }
      */
+    @Experimental
     @Pure
     @PythonName("to_rows")
-    fun toRows() -> result1: List<Row>
+    fun toRows() -> rows: List<Row>
 }
