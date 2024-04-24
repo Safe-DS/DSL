@@ -435,7 +435,7 @@ export class SafeDsPythonServer {
      * @param message Message to be sent to the python server. This message should be serializable to JSON.
      */
     public sendMessageToPythonServer(message: PythonServerMessage): void {
-        if (!isStarted(this.state)) {
+        if (!this.state.serverConnection) {
             return;
         }
 
