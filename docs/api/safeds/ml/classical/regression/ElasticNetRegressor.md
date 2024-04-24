@@ -13,15 +13,18 @@ Elastic net regression.
 
 **Examples:**
 
-```sds
+```sds hl_lines="4"
 pipeline example {
-    // TODO
+    val training = Table.fromCsvFile("training.csv").tagColumns("target");
+    val test = Table.fromCsvFile("test.csv").tagColumns("target");
+    val regressor = ElasticNetRegressor(lassoRatio = 0.8).fit(training);
+    val meanSquaredError = regressor.meanSquaredError(test);
 }
 ```
 
-??? quote "Stub code in `elastic_net_regression.sdsstub`"
+??? quote "Stub code in `elastic_net.sdsstub`"
 
-    ```sds linenums="18"
+    ```sds linenums="21"
     class ElasticNetRegressor(
         const alpha: Float = 1.0,
         @PythonName("lasso_ratio") const lassoRatio: Float = 0.5
@@ -85,9 +88,9 @@ This regressor is not modified.
 |------|------|-------------|
 | `fittedRegressor` | [`ElasticNetRegressor`][safeds.ml.classical.regression.ElasticNetRegressor] | The fitted regressor. |
 
-??? quote "Stub code in `elastic_net_regression.sdsstub`"
+??? quote "Stub code in `elastic_net.sdsstub`"
 
-    ```sds linenums="44"
+    ```sds linenums="47"
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TaggedTable

@@ -6,15 +6,18 @@ Linear regression.
 
 **Examples:**
 
-```sds
+```sds hl_lines="4"
 pipeline example {
-    // TODO
+    val training = Table.fromCsvFile("training.csv").tagColumns("target");
+    val test = Table.fromCsvFile("test.csv").tagColumns("target");
+    val regressor = LinearRegressionRegressor().fit(training);
+    val meanSquaredError = regressor.meanSquaredError(test);
 }
 ```
 
 ??? quote "Stub code in `linear_regression.sdsstub`"
 
-    ```sds linenums="14"
+    ```sds linenums="17"
     class LinearRegressionRegressor() sub Regressor {
         /**
          * Create a copy of this regressor and fit it with the given training data.
@@ -52,7 +55,7 @@ This regressor is not modified.
 
 ??? quote "Stub code in `linear_regression.sdsstub`"
 
-    ```sds linenums="24"
+    ```sds linenums="27"
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TaggedTable

@@ -14,15 +14,18 @@ Ada Boost regression.
 
 **Examples:**
 
-```sds
+```sds hl_lines="4"
 pipeline example {
-    // TODO
+    val training = Table.fromCsvFile("training.csv").tagColumns("target");
+    val test = Table.fromCsvFile("test.csv").tagColumns("target");
+    val regressor = AdaBoostRegressor(maximumNumberOfLearners = 100).fit(training);
+    val meanSquaredError = regressor.meanSquaredError(test);
 }
 ```
 
 ??? quote "Stub code in `ada_boost.sdsstub`"
 
-    ```sds linenums="20"
+    ```sds linenums="23"
     class AdaBoostRegressor(
         learner: Regressor = DecisionTreeRegressor(),
         @PythonName("maximum_number_of_learners") const maximumNumberOfLearners: Int = 50,
@@ -98,7 +101,7 @@ This regressor is not modified.
 
 ??? quote "Stub code in `ada_boost.sdsstub`"
 
-    ```sds linenums="50"
+    ```sds linenums="53"
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TaggedTable

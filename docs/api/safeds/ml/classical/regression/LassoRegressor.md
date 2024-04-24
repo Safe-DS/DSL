@@ -12,15 +12,18 @@ Lasso regression.
 
 **Examples:**
 
-```sds
+```sds hl_lines="4"
 pipeline example {
-    // TODO
+    val training = Table.fromCsvFile("training.csv").tagColumns("target");
+    val test = Table.fromCsvFile("test.csv").tagColumns("target");
+    val regressor = LassoRegressor(alpha = 2.0).fit(training);
+    val meanSquaredError = regressor.meanSquaredError(test);
 }
 ```
 
-??? quote "Stub code in `lasso_regression.sdsstub`"
+??? quote "Stub code in `lasso.sdsstub`"
 
-    ```sds linenums="16"
+    ```sds linenums="19"
     class LassoRegressor(
         const alpha: Float = 1.0
     ) sub Regressor where {
@@ -71,9 +74,9 @@ This regressor is not modified.
 |------|------|-------------|
 | `fittedRegressor` | [`LassoRegressor`][safeds.ml.classical.regression.LassoRegressor] | The fitted regressor. |
 
-??? quote "Stub code in `lasso_regression.sdsstub`"
+??? quote "Stub code in `lasso.sdsstub`"
 
-    ```sds linenums="35"
+    ```sds linenums="38"
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TaggedTable

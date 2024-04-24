@@ -12,7 +12,10 @@ from safeds.ml.classical.regression import Regressor
  *
  * @example
  * pipeline example {
- *     // TODO
+ *     val training = Table.fromCsvFile("training.csv").tagColumns("target");
+ *     val test = Table.fromCsvFile("test.csv").tagColumns("target");
+ *     val regressor = ElasticNetRegressor(lassoRatio = 0.8).fit(training);
+ *     val meanSquaredError = regressor.meanSquaredError(test);
  * }
  */
 class ElasticNetRegressor(

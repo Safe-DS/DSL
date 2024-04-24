@@ -12,15 +12,18 @@ K-nearest-neighbors regression.
 
 **Examples:**
 
-```sds
+```sds hl_lines="4"
 pipeline example {
-    // TODO
+    val training = Table.fromCsvFile("training.csv").tagColumns("target");
+    val test = Table.fromCsvFile("test.csv").tagColumns("target");
+    val regressor = KNearestNeighborsRegressor(numberOfNeighbors = 5).fit(training);
+    val meanSquaredError = regressor.meanSquaredError(test);
 }
 ```
 
 ??? quote "Stub code in `k_nearest_neighbors.sdsstub`"
 
-    ```sds linenums="17"
+    ```sds linenums="20"
     class KNearestNeighborsRegressor(
         @PythonName("number_of_neighbors") const numberOfNeighbors: Int
     ) sub Regressor where {
@@ -73,7 +76,7 @@ This regressor is not modified.
 
 ??? quote "Stub code in `k_nearest_neighbors.sdsstub`"
 
-    ```sds linenums="36"
+    ```sds linenums="39"
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TaggedTable

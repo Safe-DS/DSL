@@ -13,15 +13,18 @@ Gradient boosting regression.
 
 **Examples:**
 
-```sds
+```sds hl_lines="4"
 pipeline example {
-    // TODO
+    val training = Table.fromCsvFile("training.csv").tagColumns("target");
+    val test = Table.fromCsvFile("test.csv").tagColumns("target");
+    val regressor = GradientBoostingRegressor(numberOfTrees = 50).fit(training);
+    val meanSquaredError = regressor.meanSquaredError(test);
 }
 ```
 
 ??? quote "Stub code in `gradient_boosting.sdsstub`"
 
-    ```sds linenums="19"
+    ```sds linenums="22"
     class GradientBoostingRegressor(
         @PythonName("number_of_trees") const numberOfTrees: Int = 100,
         @PythonName("learning_rate") const learningRate: Float = 0.1
@@ -86,7 +89,7 @@ This regressor is not modified.
 
 ??? quote "Stub code in `gradient_boosting.sdsstub`"
 
-    ```sds linenums="44"
+    ```sds linenums="47"
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TaggedTable

@@ -17,7 +17,7 @@ Gradient boosting classification.
 pipeline example {
     val training = Table.fromCsvFile("training.csv").tagColumns("target");
     val test = Table.fromCsvFile("test.csv").tagColumns("target");
-    val classifier = GradientBoostingClassifier().fit(training);
+    val classifier = GradientBoostingClassifier(numberOfTrees = 50).fit(training);
     val accuracy = classifier.accuracy(test);
 }
 ```

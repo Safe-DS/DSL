@@ -13,15 +13,20 @@ Support vector machine.
 
 **Examples:**
 
-```sds
+```sds hl_lines="4 5"
 pipeline example {
-    // TODO
+    val training = Table.fromCsvFile("training.csv").tagColumns("target");
+    val test = Table.fromCsvFile("test.csv").tagColumns("target");
+    val regressor = SupportVectorMachineRegressor(
+        kernel = SupportVectorMachineRegressor.Kernel.Linear
+    ).fit(training);
+    val meanSquaredError = regressor.meanSquaredError(test);
 }
 ```
 
 ??? quote "Stub code in `support_vector_machine.sdsstub`"
 
-    ```sds linenums="17"
+    ```sds linenums="22"
     class SupportVectorMachineRegressor(
         const c: Float = 1.0,
         kernel: SupportVectorMachineRegressor.Kernel = SupportVectorMachineRegressor.Kernel.RadialBasisFunction
@@ -112,7 +117,7 @@ This regressor is not modified.
 
 ??? quote "Stub code in `support_vector_machine.sdsstub`"
 
-    ```sds linenums="68"
+    ```sds linenums="73"
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TaggedTable
@@ -220,7 +225,7 @@ The kernel functions that can be used in the support vector machine.
 
 ??? quote "Stub code in `support_vector_machine.sdsstub`"
 
-    ```sds linenums="26"
+    ```sds linenums="31"
     enum Kernel {
         /**
          * A linear kernel.
