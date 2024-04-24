@@ -4,11 +4,6 @@ from safeds.data.tabular.containers import Table, TaggedTable
 
 /**
  * Abstract base class for all classifiers.
- *
- * @example
- * pipeline example {
- *     // TODO
- * }
  */
 class Classifier {
     /**
@@ -19,11 +14,6 @@ class Classifier {
      * @param trainingSet The training data containing the feature and target vectors.
      *
      * @result fittedClassifier The fitted classifier.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @Pure
     fun fit(
@@ -36,11 +26,6 @@ class Classifier {
      * @param dataset The dataset containing the feature vectors.
      *
      * @result prediction A dataset containing the given feature vectors and the predicted target vector.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @Pure
     fun predict(
@@ -51,11 +36,6 @@ class Classifier {
      * Check if the classifier is fitted.
      *
      * @result isFitted Whether the classifier is fitted.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @Pure
     @PythonName("is_fitted")
@@ -67,11 +47,6 @@ class Classifier {
      * @param validationOrTestSet The validation or test set.
      *
      * @result accuracy The calculated accuracy score, i.e. the percentage of equal data.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @Pure
     fun accuracy(
@@ -86,11 +61,6 @@ class Classifier {
      *
      * @result precision The calculated precision score, i.e. the ratio of correctly predicted positives to all predicted positives.
      * Return 1 if no positive predictions are made.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @Pure
     fun precision(
@@ -106,11 +76,6 @@ class Classifier {
      *
      * @result recall The calculated recall score, i.e. the ratio of correctly predicted positives to all expected positives.
      * Return 1 if there are no positive expectations.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @Pure
     fun recall(
@@ -126,11 +91,6 @@ class Classifier {
      *
      * @result f1Score The calculated $F_1$-score, i.e. the harmonic mean between precision and recall.
      * Return 1 if there are no positive expectations and predictions.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @Pure
     @PythonName("f1_score")

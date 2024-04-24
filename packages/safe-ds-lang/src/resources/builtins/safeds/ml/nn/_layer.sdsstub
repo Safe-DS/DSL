@@ -1,5 +1,6 @@
 package safeds.ml.nn
 
+@Experimental
 class Layer {
     /**
      * Get the input_size of this layer.

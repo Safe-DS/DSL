@@ -14,7 +14,10 @@ from safeds.ml.classical.classification import Classifier
  *
  * @example
  * pipeline example {
- *     // TODO
+ *     val training = Table.fromCsvFile("training.csv").tagColumns("target");
+ *     val test = Table.fromCsvFile("test.csv").tagColumns("target");
+ *     val classifier = AdaBoostClassifier(maximumNumberOfLearners = 100).fit(training);
+ *     val accuracy = classifier.accuracy(test);
  * }
  */
 class AdaBoostClassifier(
@@ -27,29 +30,14 @@ class AdaBoostClassifier(
 } {
     /**
      * Get the base learner used for training the ensemble.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     attr learner: Classifier
     /**
      * Get the maximum number of learners in the ensemble.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @PythonName("maximum_number_of_learners") attr maximumNumberOfLearners: Int
     /**
      * Get the learning rate.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @PythonName("learning_rate") attr learningRate: Float
 
@@ -61,11 +49,6 @@ class AdaBoostClassifier(
      * @param trainingSet The training data containing the feature and target vectors.
      *
      * @result fittedClassifier The fitted classifier.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @Pure
     fun fit(

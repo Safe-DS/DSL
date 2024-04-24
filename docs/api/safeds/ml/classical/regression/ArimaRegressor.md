@@ -1,10 +1,18 @@
-# `#!sds class` ArimaRegressor {#safeds.ml.classical.regression.ArimaRegressor data-toc-label='ArimaRegressor'}
+# :test_tube:{ title="Experimental" } `#!sds class` ArimaRegressor {#safeds.ml.classical.regression.ArimaRegressor data-toc-label='ArimaRegressor'}
 
 Auto Regressive Integrated Moving Average Model.
 
+**Examples:**
+
+```sds
+pipeline example {
+    // TODO
+}
+```
+
 ??? quote "Stub code in `arima.sdsstub`"
 
-    ```sds linenums="7"
+    ```sds linenums="13"
     class ArimaRegressor() {
         /**
          * Create a copy of this ARIMA Model and fit it with the given training data.
@@ -76,7 +84,7 @@ This ARIMA Model is not modified.
 
 ??? quote "Stub code in `arima.sdsstub`"
 
-    ```sds linenums="17"
+    ```sds linenums="23"
     @Pure
     fun fit(
         @PythonName("time_series") timeSeries: TimeSeries
@@ -95,7 +103,7 @@ Check if the classifier is fitted.
 
 ??? quote "Stub code in `arima.sdsstub`"
 
-    ```sds linenums="52"
+    ```sds linenums="58"
     @Pure
     @PythonName("is_fitted")
     fun isFitted() -> isFitted: Boolean
@@ -119,7 +127,7 @@ Plot the predictions of the trained model to the given target of the time series
 
 ??? quote "Stub code in `arima.sdsstub`"
 
-    ```sds linenums="41"
+    ```sds linenums="47"
     @Pure
     @PythonName("plot_predictions")
     fun plotPredictions(
@@ -145,7 +153,7 @@ Predict a target vector using a time series target column. The model has to be t
 
 ??? quote "Stub code in `arima.sdsstub`"
 
-    ```sds linenums="29"
+    ```sds linenums="35"
     @Pure
     fun predict(
         @PythonName("time_series") timeSeries: TimeSeries

@@ -4,11 +4,6 @@ from safeds.data.tabular.containers import Table, TaggedTable
 
 /**
  * Abstract base class for all regressors.
- *
- * @example
- * pipeline example {
- *     // TODO
- * }
  */
 class Regressor {
     /**
@@ -19,11 +14,6 @@ class Regressor {
      * @param trainingSet The training data containing the feature and target vectors.
      *
      * @result fittedRegressor The fitted regressor.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @Pure
     fun fit(
@@ -36,11 +26,6 @@ class Regressor {
      * @param dataset The dataset containing the feature vectors.
      *
      * @result prediction A dataset containing the given feature vectors and the predicted target vector.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @Pure
     fun predict(
@@ -51,11 +36,6 @@ class Regressor {
      * Check if the classifier is fitted.
      *
      * @result isFitted Whether the regressor is fitted.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @Pure
     @PythonName("is_fitted")
@@ -67,11 +47,6 @@ class Regressor {
      * @param validationOrTestSet The validation or test set.
      *
      * @result meanSquaredError The calculated mean squared error (the average of the distance of each individual row squared).
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @Pure
     @PythonName("mean_squared_error")
@@ -85,11 +60,6 @@ class Regressor {
      * @param validationOrTestSet The validation or test set.
      *
      * @result meanAbsoluteError The calculated mean absolute error (the average of the distance of each individual row).
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @Pure
     @PythonName("mean_absolute_error")

@@ -11,7 +11,10 @@ from safeds.ml.classical.classification import Classifier
  *
  * @example
  * pipeline example {
- *     // TODO
+ *     val training = Table.fromCsvFile("training.csv").tagColumns("target");
+ *     val test = Table.fromCsvFile("test.csv").tagColumns("target");
+ *     val classifier = KNearestNeighborsClassifier(5).fit(training);
+ *     val accuracy = classifier.accuracy(test);
  * }
  */
 class KNearestNeighborsClassifier(
@@ -21,11 +24,6 @@ class KNearestNeighborsClassifier(
 } {
     /**
      * Get the number of neighbors used for interpolation.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @PythonName("number_of_neighbors") attr numberOfNeighbors: Int
 
@@ -37,11 +35,6 @@ class KNearestNeighborsClassifier(
      * @param trainingSet The training data containing the feature and target vectors.
      *
      * @result fittedClassifier The fitted classifier.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @Pure
     fun fit(

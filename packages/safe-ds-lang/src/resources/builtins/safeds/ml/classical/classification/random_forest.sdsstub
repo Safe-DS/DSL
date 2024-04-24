@@ -10,7 +10,10 @@ from safeds.ml.classical.classification import Classifier
  *
  * @example
  * pipeline example {
- *     // TODO
+ *     val training = Table.fromCsvFile("training.csv").tagColumns("target");
+ *     val test = Table.fromCsvFile("test.csv").tagColumns("target");
+ *     val classifier = RandomForestClassifier(numberOfTrees = 10).fit(training);
+ *     val accuracy = classifier.accuracy(test);
  * }
  */
 class RandomForestClassifier(
@@ -20,11 +23,6 @@ class RandomForestClassifier(
 } {
     /**
      * Get the number of trees used in the random forest.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @PythonName("number_of_trees") attr numberOfTrees: Int
 
@@ -36,11 +34,6 @@ class RandomForestClassifier(
      * @param trainingSet The training data containing the feature and target vectors.
      *
      * @result fittedClassifier The fitted classifier.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @Pure
     fun fit(

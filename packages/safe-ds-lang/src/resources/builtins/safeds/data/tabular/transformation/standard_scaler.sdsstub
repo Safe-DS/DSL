@@ -8,7 +8,12 @@ from safeds.data.tabular.transformation import InvertibleTableTransformer
  *
  * @example
  * pipeline example {
- *     // TODO
+ *     val table = Table({"a": [0, 1, 0]});
+ *     val scaler = StandardScaler().fit(table, ["a"]);
+ *     val transformedTable = scaler.transform(table);
+ *     // transformedTable = Table({"a": [-0.707,  1.414, -0.707]});
+ *     val originalTable = scaler.inverseTransform(transformedTable);
+ *     // originalTable = Table({"a": [1, 2, 3]});
  * }
  */
 class StandardScaler() sub InvertibleTableTransformer {
@@ -21,11 +26,6 @@ class StandardScaler() sub InvertibleTableTransformer {
      * @param columnNames The list of columns from the table used to fit the transformer. If `None`, all columns are used.
      *
      * @result result1 The fitted transformer.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @Pure
     fun fit(

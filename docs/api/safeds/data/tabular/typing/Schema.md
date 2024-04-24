@@ -3,7 +3,7 @@ search:
   boost: 0.5
 ---
 
-# `#!sds abstract class` Schema {#safeds.data.tabular.typing.Schema data-toc-label='Schema'}
+# :test_tube:{ title="Experimental" } `#!sds abstract class` Schema {#safeds.data.tabular.typing.Schema data-toc-label='Schema'}
 
 Store column names and corresponding data types for a `Table` or `Row`.
 
@@ -17,7 +17,7 @@ pipeline example {
 
 ??? quote "Stub code in `schema.sdsstub`"
 
-    ```sds linenums="15"
+    ```sds linenums="16"
     class Schema {
         /**
          * Return a list of all column names saved in this schema.
@@ -121,7 +121,7 @@ pipeline example {
 
 ??? quote "Stub code in `schema.sdsstub`"
 
-    ```sds linenums="56"
+    ```sds linenums="57"
     @Pure
     @PythonName("get_column_type")
     fun getColumnType(
@@ -155,7 +155,7 @@ pipeline example {
 
 ??? quote "Stub code in `schema.sdsstub`"
 
-    ```sds linenums="38"
+    ```sds linenums="39"
     @Pure
     @PythonName("has_column")
     fun hasColumn(
@@ -183,7 +183,7 @@ pipeline example {
 
 ??? quote "Stub code in `schema.sdsstub`"
 
-    ```sds linenums="72"
+    ```sds linenums="73"
     @Pure
     @PythonName("to_dict")
     fun toDict() -> result1: Map<String, ColumnType>

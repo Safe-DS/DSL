@@ -1,4 +1,4 @@
-# `#!sds class` NeuralNetworkRegressor {#safeds.ml.nn.NeuralNetworkRegressor data-toc-label='NeuralNetworkRegressor'}
+# :test_tube:{ title="Experimental" } `#!sds class` NeuralNetworkRegressor {#safeds.ml.nn.NeuralNetworkRegressor data-toc-label='NeuralNetworkRegressor'}
 
 **Parameters:**
 
@@ -8,7 +8,7 @@
 
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="6"
+    ```sds linenums="7"
     class NeuralNetworkRegressor(
         layers: List<Layer>
     ) {
@@ -122,7 +122,7 @@ pipeline example {
 
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="38"
+    ```sds linenums="39"
     @Pure
     fun fit(
         @PythonName("train_data") trainData: TaggedTable,
@@ -165,7 +165,7 @@ pipeline example {
 
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="65"
+    ```sds linenums="66"
     @Pure
     fun predict(
         @PythonName("test_data") testData: Table
