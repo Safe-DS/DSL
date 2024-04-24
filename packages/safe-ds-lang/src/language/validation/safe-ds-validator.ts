@@ -35,6 +35,8 @@ import {
     classMemberMustMatchOverriddenMemberAndShouldBeNeeded,
     classMustNotInheritItself,
     classMustOnlyInheritASingleClass,
+    overridingAndOverriddenMethodsMustNotHavePythonCall,
+    overridingMemberPythonNameMustMatchOverriddenMember,
 } from './inheritance.js';
 import {
     annotationMustContainUniqueNames,
@@ -260,7 +262,10 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             staticClassMemberNamesMustNotCollideWithInheritedMembers(services),
         ],
         SdsClassBody: [classBodyShouldNotBeEmpty(services)],
-        SdsClassMember: [classMemberMustMatchOverriddenMemberAndShouldBeNeeded(services)],
+        SdsClassMember: [
+            classMemberMustMatchOverriddenMemberAndShouldBeNeeded(services),
+            overridingMemberPythonNameMustMatchOverriddenMember(services),
+        ],
         SdsConstraintList: [constraintListsShouldBeUsedWithCaution(services), constraintListShouldNotBeEmpty(services)],
         SdsDeclaration: [
             nameMustNotOccurOnCoreDeclaration(services),
@@ -283,6 +288,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             impurityReasonShouldNotBeSetMultipleTimes(services),
             pythonCallMustOnlyContainValidTemplateExpressions(services),
             pythonNameMustNotBeSetIfPythonCallIsSet(services),
+            overridingAndOverriddenMethodsMustNotHavePythonCall(services),
         ],
         SdsImport: [importPackageMustExist(services), importPackageShouldNotBeEmpty(services)],
         SdsImportedDeclaration: [importedDeclarationAliasShouldDifferFromDeclarationName(services)],

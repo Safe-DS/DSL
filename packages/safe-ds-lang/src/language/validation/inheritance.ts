@@ -1,6 +1,6 @@
 import { AstUtils, ValidationAcceptor } from 'langium';
 import { isEmpty, isEqualSet } from '../../helpers/collections.js';
-import { isSdsClass, isSdsFunction, SdsClass, type SdsClassMember } from '../generated/ast.js';
+import { isSdsClass, isSdsFunction, SdsClass, type SdsClassMember, SdsFunction } from '../generated/ast.js';
 import { getParentTypes, getQualifiedName } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { ClassType, Type, UnknownType } from '../typing/model.js';
@@ -13,6 +13,8 @@ export const CODE_INHERITANCE_IDENTICAL_TO_OVERRIDDEN_MEMBER = 'inheritance/iden
 export const CODE_INHERITANCE_INCOMPATIBLE_TO_OVERRIDDEN_MEMBER = 'inheritance/incompatible-to-overridden-member';
 export const CODE_INHERITANCE_NOT_A_CLASS = 'inheritance/not-a-class';
 export const CODE_INHERITANCE_NULLABLE = 'inheritance/nullable';
+export const CODE_INHERITANCE_PYTHON_CALL = 'inheritance/python-call';
+export const CODE_INHERITANCE_PYTHON_NAME = 'inheritance/python-name';
 
 export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: SafeDsServices) => {
     const builtinAnnotations = services.builtins.Annotations;
@@ -32,6 +34,18 @@ export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: 
             computeMemberTypes(node, overriddenMember, typeComputer);
 
         // Check whether the overriding is legal and needed
+        if (
+            // It's an error if the overriding member calls the `@PythonCall` annotation
+            (isSdsFunction(node) && builtinAnnotations.getPythonCall(node)) ||
+            // It's an error if the overridden member calls the `@PythonCall` annotation
+            (isSdsFunction(overriddenMember) && builtinAnnotations.getPythonCall(overriddenMember)) ||
+            // It's an error if the overriding member has a different Python name than the overridden member
+            (builtinAnnotations.getPythonName(node) ?? node.name) !==
+                (builtinAnnotations.getPythonName(overriddenMember) ?? overriddenMember.name)
+        ) {
+            return;
+        }
+
         if (!typeChecker.isSubtypeOf(substitutedOwnMemberType, overriddenMemberType)) {
             accept(
                 'error',
@@ -197,6 +211,67 @@ export const classMustNotInheritItself = (services: SafeDsServices) => {
             accept('error', 'A class must not directly or indirectly be a subtype of itself.', {
                 node: getParentTypes(node)[0]!,
                 code: CODE_INHERITANCE_CYCLE,
+            });
+        }
+    };
+};
+
+export const overridingAndOverriddenMethodsMustNotHavePythonCall = (services: SafeDsServices) => {
+    const builtinAnnotations = services.builtins.Annotations;
+
+    return (node: SdsFunction, accept: ValidationAcceptor): void => {
+        // Check whether the function overrides something
+        const overriddenMember = services.typing.ClassHierarchy.getOverriddenMember(node);
+        if (!overriddenMember) {
+            return;
+        }
+
+        // Check whether the function calls the `@PythonCall` annotation
+        const ownPythonCall = builtinAnnotations.getPythonCall(node);
+        if (ownPythonCall !== undefined) {
+            accept('error', "An overriding method must not call the '@PythonCall' annotation.", {
+                node,
+                property: 'name',
+                code: CODE_INHERITANCE_PYTHON_CALL,
+            });
+            return;
+        }
+
+        // Check whether the overridden function calls the `@PythonCall` annotation
+        if (!isSdsFunction(overriddenMember)) {
+            return;
+        }
+
+        const overriddenPythonCall = builtinAnnotations.getPythonCall(overriddenMember);
+        if (overriddenPythonCall !== undefined) {
+            accept('error', "Cannot override a method that calls the '@PythonCall' annotation.", {
+                node,
+                property: 'name',
+                code: CODE_INHERITANCE_PYTHON_CALL,
+            });
+        }
+    };
+};
+
+export const overridingMemberPythonNameMustMatchOverriddenMember = (services: SafeDsServices) => {
+    const builtinAnnotations = services.builtins.Annotations;
+
+    return (node: SdsClassMember, accept: ValidationAcceptor): void => {
+        // Check whether the function overrides something
+        const overriddenMember = services.typing.ClassHierarchy.getOverriddenMember(node);
+        if (!overriddenMember) {
+            return;
+        }
+
+        // Check whether the function has a different Python name than the overridden member
+        if (
+            (builtinAnnotations.getPythonName(node) ?? node.name) !==
+            (builtinAnnotations.getPythonName(overriddenMember) ?? overriddenMember.name)
+        ) {
+            accept('error', 'The Python name must match the overridden member.', {
+                node,
+                property: 'name',
+                code: CODE_INHERITANCE_PYTHON_NAME,
             });
         }
     };
