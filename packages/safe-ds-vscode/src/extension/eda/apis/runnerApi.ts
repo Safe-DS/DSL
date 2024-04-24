@@ -1,5 +1,5 @@
 import { Base64Image, Column, Profiling, ProfilingDetailStatistical, Table } from '@safe-ds/eda/types/state.js';
-import { ast, CODEGEN_PREFIX, messages, SafeDsServices , getPlaceholderByName} from '@safe-ds/lang';
+import { ast, CODEGEN_PREFIX, messages, SafeDsServices, getPlaceholderByName } from '@safe-ds/lang';
 import { LangiumDocument } from 'langium';
 import * as vscode from 'vscode';
 import crypto from 'crypto';
@@ -78,10 +78,11 @@ export class RunnerApi {
 
             const newDoc = this.services.shared.workspace.LangiumDocumentFactory.fromString(
                 newDocumentText,
-                this.pipelinePath
+                this.pipelinePath,
             );
             await this.services.shared.workspace.DocumentBuilder.build([newDoc]);
-            
+
+            safeDsLogger.info(`Executing pipeline ${this.pipelineName} with added lines`);
             await this.services.runtime.Runner.executePipeline(pipelineExecutionId, newDoc, this.pipelineName);
 
             this.services.shared.workspace.LangiumDocuments.deleteDocument(this.pipelinePath);
@@ -92,6 +93,7 @@ export class RunnerApi {
                     return;
                 }
                 if (message.data === 'done') {
+                    safeDsLogger.info(`Pipeline execution ${this.pipelineName} done`);
                     this.services.runtime.PythonServer.removeMessageCallback('runtime_progress', runtimeCallback);
                     this.services.runtime.PythonServer.removeMessageCallback('runtime_error', errorCallback);
                     resolve();
@@ -101,6 +103,7 @@ export class RunnerApi {
                 if (message.id !== pipelineExecutionId) {
                     return;
                 }
+                safeDsLogger.error(`Pipeline execution ${this.pipelineName} ran into error: ${message.data}`);
                 this.services.runtime.PythonServer.removeMessageCallback('runtime_progress', runtimeCallback);
                 this.services.runtime.PythonServer.removeMessageCallback('runtime_error', errorCallback);
                 reject(message.data);
@@ -170,12 +173,16 @@ export class RunnerApi {
                 if (message.id !== pipelineExecutionId || message.data.name !== placeholder) {
                     return;
                 }
+                safeDsLogger.info(
+                    `Got ${message.data.name} of type ${message.data.type} value: ${JSON.stringify(message.data.value).substring(0, 200)}`,
+                );
                 this.services.runtime.PythonServer.removeMessageCallback('placeholder_value', placeholderValueCallback);
                 resolve(message.data.value);
             };
 
             this.services.runtime.PythonServer.addMessageCallback('placeholder_value', placeholderValueCallback);
-            safeDsLogger.info('Getting placeholder from Runner ...');
+
+            safeDsLogger.info('Requesting placeholder: ' + placeholder);
             this.services.runtime.PythonServer.sendMessageToPythonServer(
                 messages.createPlaceholderQueryMessage(pipelineExecutionId, placeholder),
             );
@@ -190,6 +197,7 @@ export class RunnerApi {
 
     //#region Table fetching
     public async getTableByPlaceholder(tableName: string, pipelineExecutionId: string): Promise<Table | undefined> {
+        safeDsLogger.info('Getting table by placeholder: ' + tableName);
         const pythonTableColumns = await this.getPlaceholderValue(tableName, pipelineExecutionId);
         if (pythonTableColumns) {
             const table: Table = {
@@ -236,6 +244,8 @@ export class RunnerApi {
 
     //#region Profiling
     public async getProfiling(table: Table): Promise<{ columnName: string; profiling: Profiling }[]> {
+        safeDsLogger.info('Getting profiling for table: ' + table.name);
+
         const columns = table.columns;
 
         let sdsStrings = '';

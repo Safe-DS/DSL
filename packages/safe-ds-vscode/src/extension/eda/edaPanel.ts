@@ -206,6 +206,7 @@ export class EDAPanel {
     }
 
     public dispose() {
+        safeDsLogger.info('dispose ' + this.tableIdentifier);
         EDAPanel.panelsMap.delete(this.tableIdentifier);
 
         // Clean up our panel
