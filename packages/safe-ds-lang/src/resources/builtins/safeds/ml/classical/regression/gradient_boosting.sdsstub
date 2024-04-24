@@ -25,20 +25,10 @@ class GradientBoostingRegressor(
 } {
     /**
      * Get the number of trees (estimators) in the ensemble.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @PythonName("number_of_trees") attr numberOfTrees: Int
     /**
      * Get the learning rate.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @PythonName("learning_rate") attr learningRate: Float
 
@@ -50,11 +40,6 @@ class GradientBoostingRegressor(
      * @param trainingSet The training data containing the feature and target vectors.
      *
      * @result fittedRegressor The fitted regressor.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @Pure
     fun fit(

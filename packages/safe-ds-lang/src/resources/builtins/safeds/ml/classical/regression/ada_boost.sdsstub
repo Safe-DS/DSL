@@ -27,29 +27,14 @@ class AdaBoostRegressor(
 } {
     /**
      * Get the base learner used for training the ensemble.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     attr learner: Regressor
     /**
      * Get the maximum number of learners in the ensemble.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @PythonName("maximum_number_of_learners") attr maximumNumberOfLearners: Int
     /**
      * Get the learning rate.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @PythonName("learning_rate") attr learningRate: Float
 
@@ -61,11 +46,6 @@ class AdaBoostRegressor(
      * @param trainingSet The training data containing the feature and target vectors.
      *
      * @result fittedRegressor The fitted regressor.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @Pure
     fun fit(

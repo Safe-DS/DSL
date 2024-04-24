@@ -20,11 +20,6 @@ class LinearRegressionRegressor() sub Regressor {
      * @param trainingSet The training data containing the feature and target vectors.
      *
      * @result fittedRegressor The fitted regressor.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @Pure
     fun fit(

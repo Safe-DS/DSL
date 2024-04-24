@@ -20,11 +20,6 @@ class RandomForestRegressor(
 } {
     /**
      * Get the number of trees used in the random forest.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @PythonName("number_of_trees") attr numberOfTrees: Int
 
@@ -36,11 +31,6 @@ class RandomForestRegressor(
      * @param trainingSet The training data containing the feature and target vectors.
      *
      * @result fittedRegressor The fitted regressor.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @Pure
     fun fit(

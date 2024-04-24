@@ -21,11 +21,6 @@ class KNearestNeighborsRegressor(
 } {
     /**
      * Get the number of neighbors used for interpolation.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @PythonName("number_of_neighbors") attr numberOfNeighbors: Int
 
@@ -37,11 +32,6 @@ class KNearestNeighborsRegressor(
      * @param trainingSet The training data containing the feature and target vectors.
      *
      * @result fittedRegressor The fitted regressor.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @Pure
     fun fit(

@@ -20,11 +20,6 @@ class LassoRegressor(
 } {
     /**
      * Get the regularization of the model.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     attr alpha: Float
 
@@ -36,11 +31,6 @@ class LassoRegressor(
      * @param trainingSet The training data containing the feature and target vectors.
      *
      * @result fittedRegressor The fitted regressor.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
      */
     @Pure
     fun fit(
