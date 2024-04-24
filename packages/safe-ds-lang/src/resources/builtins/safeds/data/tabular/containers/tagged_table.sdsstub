@@ -417,7 +417,7 @@ class TaggedTable(
     @Pure
     @PythonName("sort_columns")
     fun sortColumns(
-        comparator: (param1: Column, param2: Column) -> param3: Int
+        comparator: (column1: Column, column2: Column) -> comparison: Int
     ) -> result1: TaggedTable
 
     /**
@@ -444,7 +444,7 @@ class TaggedTable(
     @Pure
     @PythonName("sort_rows")
     fun sortRows(
-        comparator: (param1: Row, param2: Row) -> param3: Int
+        comparator: (row1: Row, row2: Row) -> comparison: Int
     ) -> result1: TaggedTable
 
     /**

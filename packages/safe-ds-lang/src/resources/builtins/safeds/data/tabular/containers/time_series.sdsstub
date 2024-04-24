@@ -411,7 +411,7 @@ class TimeSeries(
     @Pure
     @PythonName("sort_columns")
     fun sortColumns(
-        comparator: (param1: Column, param2: Column) -> param3: Int
+        comparator: (column1: Column, column2: Column) -> comparison: Int
     ) -> result1: TimeSeries
 
     /**

@@ -6,15 +6,20 @@ The StandardScaler transforms column values to a range by removing the mean and 
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // TODO
+    val table = Table({"a": [0, 1, 0]});
+    val scaler = StandardScaler().fit(table, ["a"]);
+    val transformedTable = scaler.transform(table);
+    // transformedTable = Table({"a": [-0.707,  1.414, -0.707]});
+    val originalTable = scaler.inverseTransform(transformedTable);
+    // originalTable = Table({"a": [1, 2, 3]});
 }
 ```
 
 ??? quote "Stub code in `standard_scaler.sdsstub`"
 
-    ```sds linenums="14"
+    ```sds linenums="19"
     class StandardScaler() sub InvertibleTableTransformer {
         /**
          * Learn a transformation for a set of columns in a table.
@@ -25,11 +30,6 @@ pipeline example {
          * @param columnNames The list of columns from the table used to fit the transformer. If `None`, all columns are used.
          *
          * @result result1 The fitted transformer.
-         *
-         * @example
-         * pipeline example {
-         *     // TODO
-         * }
          */
         @Pure
         fun fit(
@@ -57,14 +57,6 @@ This transformer is not modified.
 | Name | Type | Description |
 |------|------|-------------|
 | `result1` | [`StandardScaler`][safeds.data.tabular.transformation.StandardScaler] | The fitted transformer. |
-
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
 
 ??? quote "Stub code in `standard_scaler.sdsstub`"
 
@@ -95,17 +87,9 @@ The table is not modified. If you also need the fitted transformer, use `fit` an
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The transformed table. |
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `table_transformer.sdsstub`"
 
-    ```sds linenums="125"
+    ```sds linenums="85"
     @Pure
     @PythonName("fit_and_transform")
     fun fitAndTransform(
@@ -124,17 +108,9 @@ Get the names of all new columns that have been added by the transformer.
 |------|------|-------------|
 | `result1` | [`List<String>`][safeds.lang.List] | A list of names of the added columns, ordered as they will appear in the table. |
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `table_transformer.sdsstub`"
 
-    ```sds linenums="64"
+    ```sds linenums="44"
     @Pure
     @PythonName("get_names_of_added_columns")
     fun getNamesOfAddedColumns() -> result1: List<String>
@@ -150,17 +126,9 @@ Get the names of all columns that have been changed by the transformer.
 |------|------|-------------|
 | `result1` | [`List<String>`][safeds.lang.List] | A list of names of changed columns, ordered as they appear in the table. |
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `table_transformer.sdsstub`"
 
-    ```sds linenums="78"
+    ```sds linenums="53"
     @Pure
     @PythonName("get_names_of_changed_columns")
     fun getNamesOfChangedColumns() -> result1: List<String>
@@ -176,17 +144,9 @@ Get the names of all columns that have been removed by the transformer.
 |------|------|-------------|
 | `result1` | [`List<String>`][safeds.lang.List] | A list of names of the removed columns, ordered as they appear in the table the transformer was fitted on. |
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `table_transformer.sdsstub`"
 
-    ```sds linenums="92"
+    ```sds linenums="62"
     @Pure
     @PythonName("get_names_of_removed_columns")
     fun getNamesOfRemovedColumns() -> result1: List<String>
@@ -210,17 +170,9 @@ The table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The original table. |
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `table_transformer.sdsstub`"
 
-    ```sds linenums="175"
+    ```sds linenums="120"
     @Pure
     @PythonName("inverse_transform")
     fun inverseTransform(
@@ -238,17 +190,9 @@ Check if the transformer is fitted.
 |------|------|-------------|
 | `result1` | [`Boolean`][safeds.lang.Boolean] | Whether the transformer is fitted. |
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `table_transformer.sdsstub`"
 
-    ```sds linenums="106"
+    ```sds linenums="71"
     @Pure
     @PythonName("is_fitted")
     fun isFitted() -> result1: Boolean
@@ -272,17 +216,9 @@ The table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The transformed table. |
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ??? quote "Stub code in `table_transformer.sdsstub`"
 
-    ```sds linenums="49"
+    ```sds linenums="34"
     @Pure
     fun transform(
         table: Table
