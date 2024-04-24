@@ -1,0 +1,24 @@
+package tests.validation.inheritance.overridingMethodMustNotHavePythonCallAnnotation
+
+class MyClass1 {
+    // $TEST$ no error "An overriding method must not call the '@PythonCall' annotation."
+    @Pure
+    @PythonCall("some_other_function")
+    fun »withPythonCall«()
+
+    // $TEST$ no error "An overriding method must not call the '@PythonCall' annotation."
+    @Pure
+    fun »withoutPythonCall«()
+}
+
+class MyClass2 sub MyClass1 {
+    // $TEST$ error "An overriding method must not call the '@PythonCall' annotation."
+    @Pure
+    @PythonCall("some_other_function")
+    fun »withPythonCall«()
+
+    // $TEST$ error "An overriding method must not call the '@PythonCall' annotation."
+    @Pure
+    @PythonCall("some_other_function")
+    fun »withoutPythonCall«()
+}

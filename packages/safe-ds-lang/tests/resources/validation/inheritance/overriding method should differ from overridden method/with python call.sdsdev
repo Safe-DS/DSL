@@ -1,0 +1,13 @@
+package tests.validation.inheritance.overridingMethodShouldDifferFromOverriddenMethod.withPythonCall
+
+class MyClass1 {
+    @Pure
+    fun f()
+}
+
+class MyClass2 {
+    // $TEST$ no info "Overriding member is identical to overridden member and can be removed."
+    @Pure
+    @PythonCall("")
+    fun »f«()
+}

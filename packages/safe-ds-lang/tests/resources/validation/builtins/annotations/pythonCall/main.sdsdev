@@ -33,7 +33,3 @@ fun myFunction3()
 // $TEST$ error "The template expressions '$param1', '$param2' cannot be interpreted."
 @»PythonCall«("myFunction4($param1, $param2)")
 fun myFunction4()
-
-// $TEST$ no error "An expert parameter must be optional."
-@»PythonCall«("$this")
-annotation MyAnnotation()
