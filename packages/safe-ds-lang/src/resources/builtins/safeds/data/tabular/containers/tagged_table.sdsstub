@@ -175,7 +175,7 @@ class TaggedTable(
     @Pure
     @PythonName("filter_rows")
     fun filterRows(
-        query: (param1: Row) -> param2: Boolean
+        query: (row: Row) -> matches: Boolean
     ) -> result1: TaggedTable
 
     /**

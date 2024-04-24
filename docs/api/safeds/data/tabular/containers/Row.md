@@ -6,7 +6,7 @@ A row is a collection of named values.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `data` | [`Map<String, List<Any>>?`][safeds.lang.Map] | The data. If None, an empty row is created. | `#!sds null` |
+| `data` | [`Map<String, Any>?`][safeds.lang.Map] | The data. If None, an empty row is created. | `#!sds null` |
 
 **Examples:**
 
@@ -20,7 +20,7 @@ pipeline example {
 
     ```sds linenums="15"
     class Row(
-        data: Map<String, List<Any>>? = null // TODO: update default value to empty map
+        data: Map<String, Any>? = null // TODO: update default value to empty map
     ) {
         /**
          * Return a list of all column names in the row.
@@ -48,7 +48,7 @@ pipeline example {
          * @example
          * pipeline example {
          *     val row = Row({"a": 1, "b": 2});
-         *     val schema = row.schema;
+         *     val `schema` = row.`schema`;
          * }
          */
         attr `schema`: Schema
@@ -229,7 +229,7 @@ Return the schema of the row.
 ```sds hl_lines="3"
 pipeline example {
     val row = Row({"a": 1, "b": 2});
-    val schema = row.schema;
+    val `schema` = row.`schema`;
 }
 ```
 

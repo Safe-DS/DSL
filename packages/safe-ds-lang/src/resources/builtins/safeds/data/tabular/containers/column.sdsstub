@@ -110,7 +110,7 @@ class Column<out T = Any?>(
      */
     @Pure
     fun all(
-        predicate: (param1: T) -> param2: Boolean
+        predicate: (value: T) -> matches: Boolean
     ) -> allMatch: Boolean
 
     /**
@@ -134,7 +134,7 @@ class Column<out T = Any?>(
      */
     @Pure
     fun any(
-        predicate: (param1: T) -> param2: Boolean
+        predicate: (value: T) -> matches: Boolean
     ) -> anyMatch: Boolean
 
     /**
@@ -158,7 +158,7 @@ class Column<out T = Any?>(
      */
     @Pure
     fun none(
-        predicate: (param1: T) -> param2: Boolean
+        predicate: (value: T) -> matches: Boolean
     ) -> noneMatch: Boolean
 
     /**
@@ -209,7 +209,7 @@ class Column<out T = Any?>(
      *
      * @param transformer Function that will be applied to all data points.
      *
-     * @result transformedColum The transformed column.
+     * @result transformedColumn The transformed column.
      *
      * @example
      * pipeline example {
@@ -219,8 +219,8 @@ class Column<out T = Any?>(
      */
     @Pure
     fun transform<R>(
-        transformer: (param1: T) -> param2: R
-    ) -> transformedColum: Column<R>
+        transformer: (value: T) -> transformedValue: R
+    ) -> transformedColumn: Column<R>
 
     /**
      * Calculate Pearson correlation between this and another column. Both columns have to be numerical.

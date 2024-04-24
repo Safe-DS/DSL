@@ -122,7 +122,7 @@ pipeline example {
          */
         @Pure
         fun all(
-            predicate: (param1: T) -> param2: Boolean
+            predicate: (value: T) -> matches: Boolean
         ) -> allMatch: Boolean
 
         /**
@@ -146,7 +146,7 @@ pipeline example {
          */
         @Pure
         fun any(
-            predicate: (param1: T) -> param2: Boolean
+            predicate: (value: T) -> matches: Boolean
         ) -> anyMatch: Boolean
 
         /**
@@ -170,7 +170,7 @@ pipeline example {
          */
         @Pure
         fun none(
-            predicate: (param1: T) -> param2: Boolean
+            predicate: (value: T) -> matches: Boolean
         ) -> noneMatch: Boolean
 
         /**
@@ -221,7 +221,7 @@ pipeline example {
          *
          * @param transformer Function that will be applied to all data points.
          *
-         * @result transformedColum The transformed column.
+         * @result transformedColumn The transformed column.
          *
          * @example
          * pipeline example {
@@ -231,8 +231,8 @@ pipeline example {
          */
         @Pure
         fun transform<R>(
-            transformer: (param1: T) -> param2: R
-        ) -> transformedColum: Column<R>
+            transformer: (value: T) -> transformedValue: R
+        ) -> transformedColumn: Column<R>
 
         /**
          * Calculate Pearson correlation between this and another column. Both columns have to be numerical.
@@ -565,7 +565,7 @@ Check if all values have a given property.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `predicate` | `#!sds (param1: T) -> (param2: Boolean)` | Callable that is used to find matches. | - |
+| `predicate` | `#!sds (value: T) -> (matches: Boolean)` | Callable that is used to find matches. | - |
 
 **Results:**
 
@@ -593,7 +593,7 @@ pipeline example {
     ```sds linenums="111"
     @Pure
     fun all(
-        predicate: (param1: T) -> param2: Boolean
+        predicate: (value: T) -> matches: Boolean
     ) -> allMatch: Boolean
     ```
 
@@ -605,7 +605,7 @@ Check if any value has a given property.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `predicate` | `#!sds (param1: T) -> (param2: Boolean)` | Callable that is used to find matches. | - |
+| `predicate` | `#!sds (value: T) -> (matches: Boolean)` | Callable that is used to find matches. | - |
 
 **Results:**
 
@@ -633,7 +633,7 @@ pipeline example {
     ```sds linenums="135"
     @Pure
     fun any(
-        predicate: (param1: T) -> param2: Boolean
+        predicate: (value: T) -> matches: Boolean
     ) -> anyMatch: Boolean
     ```
 
@@ -996,7 +996,7 @@ Check if no values has a given property.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `predicate` | `#!sds (param1: T) -> (param2: Boolean)` | Callable that is used to find matches. | - |
+| `predicate` | `#!sds (value: T) -> (matches: Boolean)` | Callable that is used to find matches. | - |
 
 **Results:**
 
@@ -1024,7 +1024,7 @@ pipeline example {
     ```sds linenums="159"
     @Pure
     fun none(
-        predicate: (param1: T) -> param2: Boolean
+        predicate: (value: T) -> matches: Boolean
     ) -> noneMatch: Boolean
     ```
 
@@ -1248,13 +1248,13 @@ The original column is not modified.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `transformer` | `#!sds (param1: T) -> (param2: R)` | Function that will be applied to all data points. | - |
+| `transformer` | `#!sds (value: T) -> (transformedValue: R)` | Function that will be applied to all data points. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `transformedColum` | [`Column<R>`][safeds.data.tabular.containers.Column] | The transformed column. |
+| `transformedColumn` | [`Column<R>`][safeds.data.tabular.containers.Column] | The transformed column. |
 
 **Type parameters:**
 
@@ -1276,8 +1276,8 @@ pipeline example {
     ```sds linenums="220"
     @Pure
     fun transform<R>(
-        transformer: (param1: T) -> param2: R
-    ) -> transformedColum: Column<R>
+        transformer: (value: T) -> transformedValue: R
+    ) -> transformedColumn: Column<R>
     ```
 
 ## `#!sds fun` variance {#safeds.data.tabular.containers.Column.variance data-toc-label='variance'}
