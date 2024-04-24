@@ -1,6 +1,8 @@
 package tests.validation.inheritance.mustNotOverrideMethodWithPythonCallAnnotation
 
 class MyClass1 {
+    attr myAttribute: Int
+
     // $TEST$ no error "Cannot override a method that calls the '@PythonCall' annotation."
     @Pure
     @PythonCall("some_other_function")
@@ -24,6 +26,10 @@ class MyClass2 sub MyClass1 {
 }
 
 class MyClass3 sub MyClass1 {
+    // $TEST$ no error "Cannot override a method that calls the '@PythonCall' annotation."
+    @Pure
+    fun »myAttribute«()
+
     // $TEST$ error "Cannot override a method that calls the '@PythonCall' annotation."
     @Pure
     fun »withPythonCall«()
