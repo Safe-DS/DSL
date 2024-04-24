@@ -1,1 +1,1 @@
-{"version":3,"sources":["input.sdsdev"],"names":["test","myclass"],"mappings":"AAEA;;;;;;;AAIA,IAASA,IAAI;IACT,IAAQ,4GAAAC,OAAO,GAAC,CAAC;IAAjB","file":"gen_input.py"}
+{"version":3,"sources":["input.sdsdev"],"names":["test","myclass"],"mappings":"AAEA;;;;;;;AAIA,IAASA,IAAI;IACT,IAAQ;;QAAAC,OAAO;SAAC,CAAC;;;;IAAjB","file":"gen_input.py"}

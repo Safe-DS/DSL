@@ -14,7 +14,7 @@ import { SafeDsCommentProvider } from './documentation/safe-ds-comment-provider.
 import { SafeDsDocumentationProvider } from './documentation/safe-ds-documentation-provider.js';
 import { SafeDsCallGraphComputer } from './flow/safe-ds-call-graph-computer.js';
 import { SafeDsGeneratedModule, SafeDsGeneratedSharedModule, SafeDsLanguageMetaData } from './generated/module.js';
-import { SafeDsPythonGenerator } from './generation/safe-ds-python-generator.js';
+import { SafeDsPythonGenerator } from './generation/python/safe-ds-python-generator.js';
 import { SafeDsValueConverter } from './grammar/safe-ds-value-converter.js';
 import { SafeDsNodeMapper } from './helpers/safe-ds-node-mapper.js';
 import { SafeDsCallHierarchyProvider } from './lsp/safe-ds-call-hierarchy-provider.js';

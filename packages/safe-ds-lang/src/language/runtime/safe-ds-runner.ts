@@ -11,7 +11,7 @@ import {
 } from './messages.js';
 import { SourceMapConsumer } from 'source-map-js';
 import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
-import { SafeDsPythonGenerator } from '../generation/safe-ds-python-generator.js';
+import { SafeDsPythonGenerator } from '../generation/python/safe-ds-python-generator.js';
 import { isSdsModule, isSdsPipeline, isSdsPlaceholder } from '../generated/ast.js';
 import { SafeDsLogger, SafeDsMessagingProvider } from '../communication/safe-ds-messaging-provider.js';
 import crypto from 'crypto';
