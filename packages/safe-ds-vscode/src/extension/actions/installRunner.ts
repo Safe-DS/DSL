@@ -130,7 +130,7 @@ const createRunnerVirtualEnvironment = async (context: ExtensionContext, pythonC
 
 export const installRunnerInVirtualEnvironment = async (pipCommand: string): Promise<void> => {
     return new Promise((resolve, reject) => {
-        const installCommand = `${pipCommand} install "safe-ds-runner${dependencies['safe-ds-runner'].pipVersionRange}"`;
+        const installCommand = `${pipCommand} install --upgrade "safe-ds-runner${dependencies['safe-ds-runner'].pipVersionRange}"`;
         const process = child_process.spawn(installCommand, { shell: true });
 
         process.stdout.on('data', (data: Buffer) => {
