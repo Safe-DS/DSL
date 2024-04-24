@@ -106,7 +106,7 @@ pipeline example {
          *
          * @param predicate Callable that is used to find matches.
          *
-         * @result result1 True if all match.
+         * @result allMatch True if all match.
          *
          * @example
          * pipeline example {
@@ -123,14 +123,14 @@ pipeline example {
         @Pure
         fun all(
             predicate: (param1: T) -> param2: Boolean
-        ) -> result1: Boolean
+        ) -> allMatch: Boolean
 
         /**
          * Check if any value has a given property.
          *
          * @param predicate Callable that is used to find matches.
          *
-         * @result result1 True if any match.
+         * @result anyMatch True if any match.
          *
          * @example
          * pipeline example {
@@ -147,14 +147,14 @@ pipeline example {
         @Pure
         fun any(
             predicate: (param1: T) -> param2: Boolean
-        ) -> result1: Boolean
+        ) -> anyMatch: Boolean
 
         /**
          * Check if no values has a given property.
          *
          * @param predicate Callable that is used to find matches.
          *
-         * @result result1 True if none match.
+         * @result noneMatch True if none match.
          *
          * @example
          * pipeline example {
@@ -171,12 +171,12 @@ pipeline example {
         @Pure
         fun none(
             predicate: (param1: T) -> param2: Boolean
-        ) -> result1: Boolean
+        ) -> noneMatch: Boolean
 
         /**
          * Return whether the column has missing values.
          *
-         * @result result1 True if missing values exist.
+         * @result hasMissingValues True if missing values exist.
          *
          * @example
          * pipeline example {
@@ -192,7 +192,7 @@ pipeline example {
          */
         @Pure
         @PythonName("has_missing_values")
-        fun hasMissingValues() -> result1: Boolean
+        fun hasMissingValues() -> hasMissingValues: Boolean
 
         /**
          * Return a new column with a new name.
@@ -201,7 +201,7 @@ pipeline example {
          *
          * @param newName The new name of the column.
          *
-         * @result result1 A new column with the new name.
+         * @result renamedColumn A new column with the new name.
          *
          * @example
          * pipeline example {
@@ -212,7 +212,7 @@ pipeline example {
         @Pure
         fun rename(
             @PythonName("new_name") newName: String
-        ) -> result1: Column
+        ) -> renamedColumn: Column
 
         /**
          * Apply a transform method to every data point.
@@ -221,7 +221,7 @@ pipeline example {
          *
          * @param transformer Function that will be applied to all data points.
          *
-         * @result result1 The transformed column.
+         * @result transformedColum The transformed column.
          *
          * @example
          * pipeline example {
@@ -232,12 +232,12 @@ pipeline example {
         @Pure
         fun transform<R>(
             transformer: (param1: T) -> param2: R
-        ) -> result1: Column<R>
+        ) -> transformedColum: Column<R>
 
         /**
          * Calculate Pearson correlation between this and another column. Both columns have to be numerical.
          *
-         * @result result1 Correlation between the two columns.
+         * @result correlation Correlation between the two columns.
          *
          * @example
          * pipeline example {
@@ -257,7 +257,7 @@ pipeline example {
         @PythonName("correlation_with")
         fun correlationWith(
             @PythonName("other_column") otherColumn: Column
-        ) -> result1: Float
+        ) -> correlation: Float
 
         /**
          * Calculate the idness of this column.
@@ -268,7 +268,7 @@ pipeline example {
          * \frac{\text{number of different values}}{\text{number of rows}}
          * $$
          *
-         * @result result1 The idness of the column.
+         * @result idness The idness of the column.
          *
          * @example
          * pipeline example {
@@ -283,12 +283,12 @@ pipeline example {
          * }
          */
         @Pure
-        fun idness() -> result1: Float
+        fun idness() -> idness: Float
 
         /**
          * Return the maximum value of the column. The column has to be numerical.
          *
-         * @result result1 The maximum value.
+         * @result maximum The maximum value.
          *
          * @example
          * pipeline example {
@@ -297,12 +297,12 @@ pipeline example {
          * }
          */
         @Pure
-        fun maximum() -> result1: Float
+        fun maximum() -> maximum: Float
 
         /**
          * Return the mean value of the column. The column has to be numerical.
          *
-         * @result result1 The mean value.
+         * @result mean The mean value.
          *
          * @example
          * pipeline example {
@@ -311,12 +311,12 @@ pipeline example {
          * }
          */
         @Pure
-        fun mean() -> result1: Float
+        fun mean() -> mean: Float
 
         /**
          * Return the median value of the column. The column has to be numerical.
          *
-         * @result result1 The median value.
+         * @result median The median value.
          *
          * @example
          * pipeline example {
@@ -331,12 +331,12 @@ pipeline example {
          * }
          */
         @Pure
-        fun median() -> result1: Float
+        fun median() -> median: Float
 
         /**
          * Return the minimum value of the column. The column has to be numerical.
          *
-         * @result result1 The minimum value.
+         * @result minimum The minimum value.
          *
          * @example
          * pipeline example {
@@ -345,12 +345,12 @@ pipeline example {
          * }
          */
         @Pure
-        fun minimum() -> result1: Float
+        fun minimum() -> minimum: Float
 
         /**
          * Return the ratio of missing values to the total number of elements in the column.
          *
-         * @result result1 The ratio of missing values to the total number of elements in the column.
+         * @result missinValueRatio The ratio of missing values to the total number of elements in the column.
          *
          * @example
          * pipeline example {
@@ -366,12 +366,12 @@ pipeline example {
          */
         @Pure
         @PythonName("missing_value_ratio")
-        fun missingValueRatio() -> result1: Float
+        fun missingValueRatio() -> missinValueRatio: Float
 
         /**
          * Return the mode of the column.
          *
-         * @result result1 Returns a list with the most common values.
+         * @result mode Returns a list with the most common values.
          *
          * @example
          * pipeline example {
@@ -386,7 +386,7 @@ pipeline example {
          * }
          */
         @Pure
-        fun mode() -> result1: List<T>
+        fun mode() -> mode: List<T>
 
         /**
          * Calculate the stability of this column.
@@ -399,7 +399,7 @@ pipeline example {
          *
          * The stability is not defined for a column with only null values.
          *
-         * @result result1 The stability of the column.
+         * @result stability The stability of the column.
          *
          * @example
          * pipeline example {
@@ -414,12 +414,12 @@ pipeline example {
          * }
          */
         @Pure
-        fun stability() -> result1: Float
+        fun stability() -> stability: Float
 
         /**
          * Return the standard deviation of the column. The column has to be numerical.
          *
-         * @result result1 The standard deviation of all values.
+         * @result standardDeviation The standard deviation of all values.
          *
          * @example
          * pipeline example {
@@ -429,12 +429,12 @@ pipeline example {
          */
         @Pure
         @PythonName("standard_deviation")
-        fun standardDeviation() -> result1: Float
+        fun standardDeviation() -> standardDeviation: Float
 
         /**
          * Return the sum of the column. The column has to be numerical.
          *
-         * @result result1 The sum of all values.
+         * @result sum The sum of all values.
          *
          * @example
          * pipeline example {
@@ -443,12 +443,12 @@ pipeline example {
          * }
          */
         @Pure
-        fun sum() -> result1: Float
+        fun sum() -> sum: Float
 
         /**
          * Return the variance of the column. The column has to be numerical.
          *
-         * @result result1 The variance of all values.
+         * @result variance The variance of all values.
          *
          * @example
          * pipeline example {
@@ -457,12 +457,12 @@ pipeline example {
          * }
          */
         @Pure
-        fun variance() -> result1: Float
+        fun variance() -> variance: Float
 
         /**
          * Plot this column in a boxplot. This function can only plot real numerical data.
          *
-         * @result result1 The plot as an image.
+         * @result boxplot The plot as an image.
          *
          * @example
          * pipeline example {
@@ -472,12 +472,12 @@ pipeline example {
          */
         @Pure
         @PythonName("plot_boxplot")
-        fun plotBoxplot() -> result1: Image
+        fun plotBoxplot() -> boxplot: Image
 
         /**
          * Plot a column in a histogram.
          *
-         * @result result1 The plot as an image.
+         * @result histogram The plot as an image.
          *
          * @example
          * pipeline example {
@@ -487,12 +487,12 @@ pipeline example {
          */
         @Pure
         @PythonName("plot_histogram")
-        fun plotHistogram() -> result1: Image
+        fun plotHistogram() -> histogram: Image
 
         /**
          * Return an HTML representation of the column.
          *
-         * @result result1 The generated HTML.
+         * @result html The generated HTML.
          *
          * @example
          * pipeline example {
@@ -502,7 +502,7 @@ pipeline example {
          */
         @Pure
         @PythonName("to_html")
-        fun toHtml() -> result1: String
+        fun toHtml() -> html: String
     }
     ```
 
@@ -571,7 +571,7 @@ Check if all values have a given property.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Boolean`][safeds.lang.Boolean] | True if all match. |
+| `allMatch` | [`Boolean`][safeds.lang.Boolean] | True if all match. |
 
 **Examples:**
 
@@ -594,7 +594,7 @@ pipeline example {
     @Pure
     fun all(
         predicate: (param1: T) -> param2: Boolean
-    ) -> result1: Boolean
+    ) -> allMatch: Boolean
     ```
 
 ## `#!sds fun` any {#safeds.data.tabular.containers.Column.any data-toc-label='any'}
@@ -611,7 +611,7 @@ Check if any value has a given property.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Boolean`][safeds.lang.Boolean] | True if any match. |
+| `anyMatch` | [`Boolean`][safeds.lang.Boolean] | True if any match. |
 
 **Examples:**
 
@@ -634,7 +634,7 @@ pipeline example {
     @Pure
     fun any(
         predicate: (param1: T) -> param2: Boolean
-    ) -> result1: Boolean
+    ) -> anyMatch: Boolean
     ```
 
 ## `#!sds fun` correlationWith {#safeds.data.tabular.containers.Column.correlationWith data-toc-label='correlationWith'}
@@ -651,7 +651,7 @@ Calculate Pearson correlation between this and another column. Both columns have
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Float`][safeds.lang.Float] | Correlation between the two columns. |
+| `correlation` | [`Float`][safeds.lang.Float] | Correlation between the two columns. |
 
 **Examples:**
 
@@ -677,7 +677,7 @@ pipeline example {
     @PythonName("correlation_with")
     fun correlationWith(
         @PythonName("other_column") otherColumn: Column
-    ) -> result1: Float
+    ) -> correlation: Float
     ```
 
 ## `#!sds fun` getUniqueValues {#safeds.data.tabular.containers.Column.getUniqueValues data-toc-label='getUniqueValues'}
@@ -750,7 +750,7 @@ Return whether the column has missing values.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Boolean`][safeds.lang.Boolean] | True if missing values exist. |
+| `hasMissingValues` | [`Boolean`][safeds.lang.Boolean] | True if missing values exist. |
 
 **Examples:**
 
@@ -772,7 +772,7 @@ pipeline example {
     ```sds linenums="181"
     @Pure
     @PythonName("has_missing_values")
-    fun hasMissingValues() -> result1: Boolean
+    fun hasMissingValues() -> hasMissingValues: Boolean
     ```
 
 ## `#!sds fun` idness {#safeds.data.tabular.containers.Column.idness data-toc-label='idness'}
@@ -789,7 +789,7 @@ $$
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Float`][safeds.lang.Float] | The idness of the column. |
+| `idness` | [`Float`][safeds.lang.Float] | The idness of the column. |
 
 **Examples:**
 
@@ -810,7 +810,7 @@ pipeline example {
 
     ```sds linenums="273"
     @Pure
-    fun idness() -> result1: Float
+    fun idness() -> idness: Float
     ```
 
 ## `#!sds fun` maximum {#safeds.data.tabular.containers.Column.maximum data-toc-label='maximum'}
@@ -821,7 +821,7 @@ Return the maximum value of the column. The column has to be numerical.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Float`][safeds.lang.Float] | The maximum value. |
+| `maximum` | [`Float`][safeds.lang.Float] | The maximum value. |
 
 **Examples:**
 
@@ -836,7 +836,7 @@ pipeline example {
 
     ```sds linenums="287"
     @Pure
-    fun maximum() -> result1: Float
+    fun maximum() -> maximum: Float
     ```
 
 ## `#!sds fun` mean {#safeds.data.tabular.containers.Column.mean data-toc-label='mean'}
@@ -847,7 +847,7 @@ Return the mean value of the column. The column has to be numerical.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Float`][safeds.lang.Float] | The mean value. |
+| `mean` | [`Float`][safeds.lang.Float] | The mean value. |
 
 **Examples:**
 
@@ -862,7 +862,7 @@ pipeline example {
 
     ```sds linenums="301"
     @Pure
-    fun mean() -> result1: Float
+    fun mean() -> mean: Float
     ```
 
 ## `#!sds fun` median {#safeds.data.tabular.containers.Column.median data-toc-label='median'}
@@ -873,7 +873,7 @@ Return the median value of the column. The column has to be numerical.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Float`][safeds.lang.Float] | The median value. |
+| `median` | [`Float`][safeds.lang.Float] | The median value. |
 
 **Examples:**
 
@@ -894,7 +894,7 @@ pipeline example {
 
     ```sds linenums="321"
     @Pure
-    fun median() -> result1: Float
+    fun median() -> median: Float
     ```
 
 ## `#!sds fun` minimum {#safeds.data.tabular.containers.Column.minimum data-toc-label='minimum'}
@@ -905,7 +905,7 @@ Return the minimum value of the column. The column has to be numerical.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Float`][safeds.lang.Float] | The minimum value. |
+| `minimum` | [`Float`][safeds.lang.Float] | The minimum value. |
 
 **Examples:**
 
@@ -920,7 +920,7 @@ pipeline example {
 
     ```sds linenums="335"
     @Pure
-    fun minimum() -> result1: Float
+    fun minimum() -> minimum: Float
     ```
 
 ## `#!sds fun` missingValueRatio {#safeds.data.tabular.containers.Column.missingValueRatio data-toc-label='missingValueRatio'}
@@ -931,7 +931,7 @@ Return the ratio of missing values to the total number of elements in the column
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Float`][safeds.lang.Float] | The ratio of missing values to the total number of elements in the column. |
+| `missinValueRatio` | [`Float`][safeds.lang.Float] | The ratio of missing values to the total number of elements in the column. |
 
 **Examples:**
 
@@ -953,7 +953,7 @@ pipeline example {
     ```sds linenums="355"
     @Pure
     @PythonName("missing_value_ratio")
-    fun missingValueRatio() -> result1: Float
+    fun missingValueRatio() -> missinValueRatio: Float
     ```
 
 ## `#!sds fun` mode {#safeds.data.tabular.containers.Column.mode data-toc-label='mode'}
@@ -964,7 +964,7 @@ Return the mode of the column.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`List<T>`][safeds.lang.List] | Returns a list with the most common values. |
+| `mode` | [`List<T>`][safeds.lang.List] | Returns a list with the most common values. |
 
 **Examples:**
 
@@ -985,7 +985,7 @@ pipeline example {
 
     ```sds linenums="376"
     @Pure
-    fun mode() -> result1: List<T>
+    fun mode() -> mode: List<T>
     ```
 
 ## `#!sds fun` none {#safeds.data.tabular.containers.Column.none data-toc-label='none'}
@@ -1002,7 +1002,7 @@ Check if no values has a given property.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Boolean`][safeds.lang.Boolean] | True if none match. |
+| `noneMatch` | [`Boolean`][safeds.lang.Boolean] | True if none match. |
 
 **Examples:**
 
@@ -1025,7 +1025,7 @@ pipeline example {
     @Pure
     fun none(
         predicate: (param1: T) -> param2: Boolean
-    ) -> result1: Boolean
+    ) -> noneMatch: Boolean
     ```
 
 ## `#!sds fun` plotBoxplot {#safeds.data.tabular.containers.Column.plotBoxplot data-toc-label='plotBoxplot'}
@@ -1036,7 +1036,7 @@ Plot this column in a boxplot. This function can only plot real numerical data.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
+| `boxplot` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
 **Examples:**
 
@@ -1052,7 +1052,7 @@ pipeline example {
     ```sds linenums="461"
     @Pure
     @PythonName("plot_boxplot")
-    fun plotBoxplot() -> result1: Image
+    fun plotBoxplot() -> boxplot: Image
     ```
 
 ## `#!sds fun` plotHistogram {#safeds.data.tabular.containers.Column.plotHistogram data-toc-label='plotHistogram'}
@@ -1063,7 +1063,7 @@ Plot a column in a histogram.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
+| `histogram` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
 
 **Examples:**
 
@@ -1079,7 +1079,7 @@ pipeline example {
     ```sds linenums="476"
     @Pure
     @PythonName("plot_histogram")
-    fun plotHistogram() -> result1: Image
+    fun plotHistogram() -> histogram: Image
     ```
 
 ## `#!sds fun` rename {#safeds.data.tabular.containers.Column.rename data-toc-label='rename'}
@@ -1098,7 +1098,7 @@ The original column is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Column<Any?>`][safeds.data.tabular.containers.Column] | A new column with the new name. |
+| `renamedColumn` | [`Column<Any?>`][safeds.data.tabular.containers.Column] | A new column with the new name. |
 
 **Examples:**
 
@@ -1115,7 +1115,7 @@ pipeline example {
     @Pure
     fun rename(
         @PythonName("new_name") newName: String
-    ) -> result1: Column
+    ) -> renamedColumn: Column
     ```
 
 ## `#!sds fun` stability {#safeds.data.tabular.containers.Column.stability data-toc-label='stability'}
@@ -1134,7 +1134,7 @@ The stability is not defined for a column with only null values.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Float`][safeds.lang.Float] | The stability of the column. |
+| `stability` | [`Float`][safeds.lang.Float] | The stability of the column. |
 
 **Examples:**
 
@@ -1155,7 +1155,7 @@ pipeline example {
 
     ```sds linenums="404"
     @Pure
-    fun stability() -> result1: Float
+    fun stability() -> stability: Float
     ```
 
 ## `#!sds fun` standardDeviation {#safeds.data.tabular.containers.Column.standardDeviation data-toc-label='standardDeviation'}
@@ -1166,7 +1166,7 @@ Return the standard deviation of the column. The column has to be numerical.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Float`][safeds.lang.Float] | The standard deviation of all values. |
+| `standardDeviation` | [`Float`][safeds.lang.Float] | The standard deviation of all values. |
 
 **Examples:**
 
@@ -1182,7 +1182,7 @@ pipeline example {
     ```sds linenums="418"
     @Pure
     @PythonName("standard_deviation")
-    fun standardDeviation() -> result1: Float
+    fun standardDeviation() -> standardDeviation: Float
     ```
 
 ## `#!sds fun` sum {#safeds.data.tabular.containers.Column.sum data-toc-label='sum'}
@@ -1193,7 +1193,7 @@ Return the sum of the column. The column has to be numerical.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Float`][safeds.lang.Float] | The sum of all values. |
+| `sum` | [`Float`][safeds.lang.Float] | The sum of all values. |
 
 **Examples:**
 
@@ -1208,7 +1208,7 @@ pipeline example {
 
     ```sds linenums="433"
     @Pure
-    fun sum() -> result1: Float
+    fun sum() -> sum: Float
     ```
 
 ## `#!sds fun` toHtml {#safeds.data.tabular.containers.Column.toHtml data-toc-label='toHtml'}
@@ -1219,7 +1219,7 @@ Return an HTML representation of the column.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`String`][safeds.lang.String] | The generated HTML. |
+| `html` | [`String`][safeds.lang.String] | The generated HTML. |
 
 **Examples:**
 
@@ -1235,7 +1235,7 @@ pipeline example {
     ```sds linenums="491"
     @Pure
     @PythonName("to_html")
-    fun toHtml() -> result1: String
+    fun toHtml() -> html: String
     ```
 
 ## `#!sds fun` transform {#safeds.data.tabular.containers.Column.transform data-toc-label='transform'}
@@ -1254,7 +1254,7 @@ The original column is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Column<R>`][safeds.data.tabular.containers.Column] | The transformed column. |
+| `transformedColum` | [`Column<R>`][safeds.data.tabular.containers.Column] | The transformed column. |
 
 **Type parameters:**
 
@@ -1277,7 +1277,7 @@ pipeline example {
     @Pure
     fun transform<R>(
         transformer: (param1: T) -> param2: R
-    ) -> result1: Column<R>
+    ) -> transformedColum: Column<R>
     ```
 
 ## `#!sds fun` variance {#safeds.data.tabular.containers.Column.variance data-toc-label='variance'}
@@ -1288,7 +1288,7 @@ Return the variance of the column. The column has to be numerical.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Float`][safeds.lang.Float] | The variance of all values. |
+| `variance` | [`Float`][safeds.lang.Float] | The variance of all values. |
 
 **Examples:**
 
@@ -1303,5 +1303,5 @@ pipeline example {
 
     ```sds linenums="447"
     @Pure
-    fun variance() -> result1: Float
+    fun variance() -> variance: Float
     ```
