@@ -86,11 +86,11 @@ export const hasAnnotationCallOf = (
 };
 
 export const isInternal = (node: SdsDeclaration | undefined): boolean => {
-    return isSdsSegment(node) && node.visibility === 'internal';
+    return isSdsModuleMember(node) && node.visibility === 'internal';
 };
 
 export const isPrivate = (node: SdsDeclaration | undefined): boolean => {
-    return isSdsSegment(node) && node.visibility === 'private';
+    return isSdsModuleMember(node) && node.visibility === 'private';
 };
 
 export namespace Argument {
