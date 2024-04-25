@@ -134,8 +134,8 @@ fun optional(a: Int = 1)
 
 Most commonly, default values in Python are literals, since default values are only evaluated once in Python rather than every time the function is called. The following table shows how Safe-DS literals and Python literals correspond:
 
-| Safe-DS Literal                       | Python Literal                    |
-|---------------------------------------|-----------------------------------|
+| Safe-DS Literal                             | Python Literal                    |
+|---------------------------------------------|-----------------------------------|
 | `#!sds 1` ([int][int-literals])             | `#!py 1`                          |
 | `#!sds 1.0` ([float][float-literals])       | `#!py 1.0`                        |
 | `#!sds "hello"` ([string][string-literals]) | `#!py "hello"` or `#!sds 'hello'` |
@@ -146,12 +146,12 @@ Most commonly, default values in Python are literals, since default values are o
 [types]: types.md
 [types-python]: types.md#corresponding-python-code
 [segments]: ../pipeline-language/segments.md
-[calls]: ../pipeline-language/expressions.md#calls
+[calls]: ../pipeline-language/expressions/calls.md#calls
 [stub-language]: README.md
-[int-literals]: ../pipeline-language/expressions.md#int-literals
-[float-literals]: ../pipeline-language/expressions.md#float-literals
-[string-literals]: ../pipeline-language/expressions.md#string-literals
-[boolean-literals]: ../pipeline-language/expressions.md#boolean-literals
-[null-literals]: ../pipeline-language/expressions.md#sds-null-literal
+[int-literals]: ../pipeline-language/expressions/literals.md#int-literals
+[float-literals]: ../pipeline-language/expressions/literals.md#float-literals
+[string-literals]: ../pipeline-language/expressions/literals.md#string-literals
+[boolean-literals]: ../pipeline-language/expressions/literals.md#boolean-literals
+[null-literals]: ../pipeline-language/expressions/literals.md#sds-null-literal
 [python-keyword-only]: https://peps.python.org/pep-3102/
 [python-positional-only]: https://peps.python.org/pep-0570/

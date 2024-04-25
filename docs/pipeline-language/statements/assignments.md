@@ -1,35 +1,8 @@
-# Statements
+# Assignments
 
-Statements are used in the [pipeline language][pipeline-language] to run a specific action. Safe-DS supports only two type of statements, namely
+An assignment evaluates an [expression][expressions], its _right-hand side_, exactly once. This is identical to [expression statements][expression-statements]. However, the results of this expression can then either be [assigned to placeholders](#declaring-placeholders), [assigned to results](#yielding-results), or [ignored](#ignoring-results).
 
-- [expression statements](#expression-statements), which are used to evaluate an expression exactly once and discard any results, and
-- [assignments](#assignments), which also evaluate an expression exactly once, but can then [assign selected results to placeholders](#declaring-placeholders) or [assign them to own results](#yielding-results).
-
-Other types of statements such as
-
-- if-statements to conditionally execute code or
-- while-statements to repeatedly execute code
-
-are not planned since we want to keep the language small and easy to learn. Moreover, we want to refrain from developing yet another general-purpose programming language. Instead, code that depends on such features can be implemented in Python, integrated into Safe-DS using the [stub language][stub-language], and called in a Safe-DS program using the provided statements.
-
-## Expression Statements
-
-Expression statements are used to evaluate an [expression][expressions] exactly once. The results of this expression are ignored. Therefore, expression statements are only useful if the expression has side effects. The following snippet demonstrates this by [calling][calls] the `#!sds print` function that prints the given string to the console:
-
-```sds
-print("Hello, world!");
-```
-
-As we can see here, an expression statement has the following syntactic elements:
-
-- The [expression][expressions] to evaluate.
-- A semicolon at the end.
-
-## Assignments
-
-An assignment evaluates an [expression][expressions], its _right-hand side_, exactly once. This is identical to [expression statements](#expression-statements). However, the results of this expression can then either be [assigned to placeholders](#declaring-placeholders), [assigned to results](#yielding-results), or [ignored](#ignoring-results).
-
-### Declaring Placeholders
+## Declaring Placeholders
 
 Placeholders are used to provide a name for a fixed value. This later allows us to use this value without recomputing it. In line with those semantics, placeholders must be given a value exactly once: They must be given a value directly when they are declared and that value cannot be changed afterwards (immutability).
 
@@ -47,7 +20,7 @@ This assignment to a placeholder has the following syntactic elements:
 - The expression to evaluate (right-hand side).
 - A semicolon at the end.
 
-#### References to Placeholder
+### References to Placeholder
 
 We can access the value of a placeholder in any statement that follows the assignment of that placeholder in the closest containing [pipeline][pipelines], [segment][segments], or [block lambda][block-lambdas] using a [reference][references]. Here is a basic example, where we print the value of the `#!sds one` placeholder (here `#!sds 1`) to the console:
 
@@ -60,11 +33,11 @@ segment loadMovieRatingsSample(nInstances: Int) {
 
 More information about references can be found in the [linked document][references].
 
-### Yielding Results
+## Yielding Results
 
 In addition to the [declaration of placeholders](#declaring-placeholders), assignments are used to assign a value to a [result of a segment](#yielding-results-of-segments) or declare [results of a block lambda](#declare-results-of-block-lambdas).
 
-#### Yielding Results of Segments
+### Yielding Results of Segments
 
 The following snippet shows how we can assign a value to a declared [result][results] of a [segment][segments]:
 
@@ -82,7 +55,7 @@ The assignment here has the following syntactic elements:
 - The expression to evaluate (right-hand side).
 - A semicolon at the end.
 
-#### Declare Results of Block Lambdas
+### Declare Results of Block Lambdas
 
 Similar syntax is used to yield results of [block lambdas][block-lambdas]. The difference to segments is that block lambdas do not declare their results in their header. Instead the results are declared within the assignments, just like [placeholders](#declaring-placeholders). The block lambda in the following snippet has a single result called `#!sds greeting`, which gets the value `#!sds "Hello, world!"`:
 
@@ -100,15 +73,15 @@ The assignment here has the following syntactic elements:
 - The expression to evaluate (right-hand side).
 - A semicolon at the end.
 
-### Ignoring Results
+## Ignoring Results
 
-In case we want to ignore a result of the expression on the right-hand side of the assignment we can inserting an underscore (called _wildcard_). The following snippet is equivalent to the [expression statement](#expression-statements) `#!sds 1;`:
+In case we want to ignore a result of the expression on the right-hand side of the assignment we can inserting an underscore (called _wildcard_). The following snippet is equivalent to the [expression statement][expression-statements] `#!sds 1;`:
 
 ```sds
 _ = 1;
 ```
 
-### Multiple Assignees
+## Multiple Assignees
 
 So far, the left-hand side of the assignment always had a single assignee. However, when the right-hand side of the assignment produces more than one value, it is possible to freely decide for each value whether it should be [assigned to a placeholder](#declaring-placeholders), [yielded](#yielding-results) or [ignored](#ignoring-results).
 
@@ -124,9 +97,9 @@ segment createModel(fullDataset: Dataset) -> trainedModel: Model {
 Let us sum up the complete syntax of an assignment:
 
 - A comma-separated list of assignees, possibly with a trailing comma (left-hand side). Each entry is one of
-  - [Placeholder](#declaring-placeholders)
-  - [Yield](#yielding-results)
-  - [Wildcard](#ignoring-results)
+    - [Placeholder](#declaring-placeholders)
+    - [Yield](#yielding-results)
+    - [Wildcard](#ignoring-results)
 - An `#!sds =` sign.
 - The expression to evaluate (right-hand side).
 - A semicolon at the end.
@@ -135,12 +108,13 @@ Let us sum up the complete syntax of an assignment:
 
 Assignment happens by index, so the first result is assigned to the first assignee, the second result is assigned to the second assignee, and so forth. If there are more results than assignees, any trailing results are implicitly ignored.
 
-[results]: segments.md#results
-[stub-language]: ../stub-language/README.md
-[pipeline-language]: README.md
-[expressions]: expressions.md
-[block-lambdas]: expressions.md#block-lambdas
-[calls]: expressions.md#calls
-[references]: expressions.md#references
-[segments]: segments.md
-[pipelines]: pipelines.md
+[expression-statements]: expression-statements.md
+[results]: ../segments.md#results
+[stub-language]: ../../stub-language/README.md
+[pipeline-language]: ../README.md
+[expressions]: ../expressions/README.md
+[block-lambdas]: ../expressions/lambdas.md#block-lambdas
+[calls]: ../expressions/calls.md#calls
+[references]: ../expressions/references.md#references
+[segments]: ../segments.md
+[pipelines]: ../pipelines.md

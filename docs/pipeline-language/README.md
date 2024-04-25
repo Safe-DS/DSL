@@ -22,8 +22,8 @@ This remaining documentation provides a detailed reference for the concepts of t
 
 [packages]: packages.md
 [pipelines]: pipelines.md
-[statements]: statements.md
-[expressions]: expressions.md
+[statements]: statements/README.md
+[expressions]: expressions/README.md
 [segments]: segments.md
 [types]: types.md
 [comments]: comments.md

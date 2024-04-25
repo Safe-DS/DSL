@@ -1,0 +1,6 @@
+package safeds.lang
+
+class Any {
+    // $TEST$ no error "Cannot override a method that calls the '@PythonCall' annotation."
+    fun »toString«() -> s: String
+}
