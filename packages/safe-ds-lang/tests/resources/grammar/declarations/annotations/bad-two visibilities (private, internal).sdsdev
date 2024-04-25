@@ -1,0 +1,3 @@
+// $TEST$ syntax_error
+
+private internal annotation MyAnnotation
