@@ -1,0 +1,5 @@
+internal  schema  MySchema  { }
+
+// -----------------------------------------------------------------------------
+
+internal schema MySchema {}
