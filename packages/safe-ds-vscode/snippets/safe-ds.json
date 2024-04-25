@@ -21,7 +21,7 @@
     },
     "Minimal Segment": {
         "prefix": ["minimal-segment"],
-        "body": ["${1|internal ,private |}segment ${2:mySegment}($3) {", "    $0", "}"],
+        "body": ["segment ${1:mySegment}($2) {", "    $0", "}"],
         "description": "A segment."
     },
     "Block Lambda": {
