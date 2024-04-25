@@ -1,7 +1,7 @@
 package tests.scoping.references.acrossFiles.toSegments
 
 from safeds.scoping.references.acrossFiles.toSegments import mySegment
-from tests.scoping.references.acrossFiles.toSegments.other import publicSegmentInAnotherPackage, public2SegmentInAnotherPackage
+from tests.scoping.references.acrossFiles.toSegments.other import publicSegmentInAnotherPackage, publicSegmentInAnotherPackage2
 from tests.scoping.references.acrossFiles.toSegments.other import internalSegmentInAnotherPackage
 from tests.scoping.references.acrossFiles.toSegments.other import privateSegmentInAnotherPackage
 
@@ -33,8 +33,8 @@ pipeline myPipeline {
     // $TEST$ references other_publicSegmentInAnotherPackage
     »publicSegmentInAnotherPackage«;
 
-    // $TEST$ references other_public2SegmentInAnotherPackage
-    »public2SegmentInAnotherPackage«;
+    // $TEST$ references other_publicSegmentInAnotherPackage2
+    »publicSegmentInAnotherPackage2«;
 
     // $TEST$ unresolved
     »internalSegmentInAnotherPackage«;

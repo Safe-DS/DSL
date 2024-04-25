@@ -9,24 +9,52 @@ segment mySegment(
     p1: »MyClass«,
 
 
-    // $TEST$ references same_ClassInSamePackage
-    p2: »ClassInSamePackage«,
+    // $TEST$ references same_PublicClassInSamePackage
+    p2: »PublicClassInSamePackage«,
 
-    // $TEST$ references safeds_ClassInSafeDsPackage
-    p3: »ClassInSafeDsPackage«,
-
-    // $TEST$ unresolved
-    p4: »ClassInAnotherPackage«,
+    // $TEST$ references same_InternalClassInSamePackage
+    p3: »InternalClassInSamePackage«,
 
     // $TEST$ unresolved
-    p5: »ClassWithoutPackage«,
+    p4: »PrivateClassInSamePackage«,
 
-    // $TEST$ references same_MyClass
-    p6: »MyClassInSamePackage«,
 
-    // $TEST$ references safeds_MyClass
-    p7: »MyClassInSafeDsPackage«,
+    // $TEST$ references safeds_PublicClassInSafeDsPackage
+    p5: »PublicClassInSafeDsPackage«,
 
-    // $TEST$ references other_MyClass
-    p8: »MyClassInAnotherPackage«,
+    // $TEST$ unresolved
+    p6: »InternalClassInSafeDsPackage«,
+
+    // $TEST$ unresolved
+    p7: »PrivateClassInSafeDsPackage«,
+
+
+    // $TEST$ unresolved
+    p8: »PublicClassInAnotherPackage«,
+
+    // $TEST$ unresolved
+    p9: »InternalClassInAnotherPackage«,
+
+    // $TEST$ unresolved
+    p10: »PrivateClassInAnotherPackage«,
+
+
+    // $TEST$ unresolved
+    p11: »PublicClassWithoutPackage«,
+
+    // $TEST$ unresolved
+    p12: »InternalClassWithoutPackage«,
+
+    // $TEST$ unresolved
+    p13: »PrivateClassWithoutPackage«,
+
+
+    // $TEST$ references same_myClass
+    p14: »myClassInSamePackage«,
+
+    // $TEST$ references safeds_myClass
+    p15: »myClassInSafeDsPackage«,
+
+    // $TEST$ references other_myClass
+    p16: »myClassInAnotherPackage«,
 ) {}

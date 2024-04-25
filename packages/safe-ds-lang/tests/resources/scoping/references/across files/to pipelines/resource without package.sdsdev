@@ -1,5 +1,11 @@
 // $TEST$ target without_myPipeline
 pipeline »myPipeline« {}
 
-// $TEST$ target without_pipelineWithoutPackage
-pipeline »pipelineWithoutPackage« {}
+// $TEST$ target without_publicPipelineWithoutPackage
+pipeline »publicPipelineWithoutPackage« {}
+
+// $TEST$ target same_internalPipelineInSamePackage
+internal pipeline »internalPipelineInSamePackage« {}
+
+// $TEST$ target same_privatePipelineInSamePackage
+private pipeline »privatePipelineInSamePackage« {}

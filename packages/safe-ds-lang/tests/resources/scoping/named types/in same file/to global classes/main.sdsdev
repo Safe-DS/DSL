@@ -1,18 +1,42 @@
 package tests.scoping.namedTypes.inSameFile.toGlobalClasses
 
-// $TEST$ target before
-class »BeforeClass«
+// $TEST$ target privateBefore
+private class »PrivateBeforeClass«
+
+// $TEST$ target internalBefore
+internal class »InternalBeforeClass«
+
+// $TEST$ target publicBefore
+class »PublicBeforeClass«
 
 segment mySegment(
-    // $TEST$ references before
-    p1: »BeforeClass«,
+    // $TEST$ references privateBefore
+    p1: »PrivateBeforeClass«,
 
-    // $TEST$ references after
-    p2: »AfterClass«,
+    // $TEST$ references internalBefore
+    p2: »InternalBeforeClass«,
+
+    // $TEST$ references publicBefore
+    p3: »PublicBeforeClass«,
+
+    // $TEST$ references privateAfter
+    p4: »PrivateAfterClass«,
+
+    // $TEST$ references internalAfter
+    p5: »InternalAfterClass«,
+
+    // $TEST$ references publicAfter
+    p6: »PublicAfterClass«,
 
     // $TEST$ unresolved
-    p3: »Unresolved«,
+    p7: »Unresolved«,
 ) {}
 
-// $TEST$ target after
-class »AfterClass«
+// $TEST$ target privateAfter
+private class »PrivateAfterClass«
+
+// $TEST$ target internalAfter
+internal class »InternalAfterClass«
+
+// $TEST$ target publicAfter
+class »PublicAfterClass«

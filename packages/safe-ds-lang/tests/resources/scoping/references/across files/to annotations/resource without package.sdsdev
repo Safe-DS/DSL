@@ -1,5 +1,11 @@
 // $TEST$ target without_MyAnnotation
 annotation »MyAnnotation«
 
-// $TEST$ target without_AnnotationWithoutPackage
-annotation »AnnotationWithoutPackage«
+// $TEST$ target without_PublicAnnotationWithoutPackage
+annotation »PublicAnnotationWithoutPackage«
+
+// $TEST$ target same_InternalAnnotationInSamePackage
+internal annotation »InternalAnnotationInSamePackage«
+
+// $TEST$ target same_PrivateAnnotationInSamePackage
+private annotation »PrivateAnnotationInSamePackage«

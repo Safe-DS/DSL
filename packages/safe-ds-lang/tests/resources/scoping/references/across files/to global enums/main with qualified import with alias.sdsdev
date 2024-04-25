@@ -9,17 +9,44 @@ pipeline myPipeline {
     »MyEnum«;
 
 
-    // $TEST$ references same_EnumInSamePackage
-    »EnumInSamePackage«;
+    // $TEST$ references same_PublicEnumInSamePackage
+    »PublicEnumInSamePackage«;
 
-    // $TEST$ references safeds_EnumInSafeDsPackage
-    »EnumInSafeDsPackage«;
-
-    // $TEST$ unresolved
-    »EnumInAnotherPackage«;
+    // $TEST$ references same_InternallEnumInSamePackage
+    »InternallEnumInSamePackage«;
 
     // $TEST$ unresolved
-    »EnumWithoutPackage«;
+    »PrivateEnumInSamePackage«;
+
+
+    // $TEST$ references safeds_PublicEnumInSafeDsPackage
+    »PublicEnumInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »InternallEnumInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »PrivateEnumInSafeDsPackage«;
+
+
+    // $TEST$ unresolved
+    »PublicEnumInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »InternallEnumInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »PrivateEnumInAnotherPackage«;
+
+
+    // $TEST$ unresolved
+    »PublicEnumWithoutPackage«;
+
+    // $TEST$ unresolved
+    »InternallEnumWithoutPackage«;
+
+    // $TEST$ unresolved
+    »PrivateEnumWithoutPackage«;
 
 
     // $TEST$ references same_MyEnum

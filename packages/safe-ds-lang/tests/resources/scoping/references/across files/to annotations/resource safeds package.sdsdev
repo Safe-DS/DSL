@@ -3,5 +3,11 @@ package safeds.scoping.references.acrossFiles.toAnnotations
 // $TEST$ target safeds_MyAnnotation
 annotation »MyAnnotation«
 
-// $TEST$ target safeds_AnnotationInSafeDsPackage
-annotation »AnnotationInSafeDsPackage«
+// $TEST$ target safeds_PublicAnnotationInSafeDsPackage
+annotation »PublicAnnotationInSafeDsPackage«
+
+// $TEST$ target safeds_InternalAnnotationInSafeDsPackage
+internal annotation »InternalAnnotationInSafeDsPackage«
+
+// $TEST$ target safeds_PrivateAnnotationInSafeDsPackage
+private annotation »PrivateAnnotationInSafeDsPackage«

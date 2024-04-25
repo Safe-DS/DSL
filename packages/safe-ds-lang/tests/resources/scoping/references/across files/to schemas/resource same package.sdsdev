@@ -3,5 +3,11 @@ package tests.scoping.references.acrossFiles.toSchemas
 // $TEST$ target same_MySchema
 schema »MySchema« {}
 
-// $TEST$ target same_SchemaInSamePackage
-schema »SchemaInSamePackage« {}
+// $TEST$ target same_PublicSchemaInSamePackage
+schema »PublicSchemaInSamePackage« {}
+
+// $TEST$ target same_InternalSchemaInSamePackage
+internal schema »InternalSchemaInSamePackage« {}
+
+// $TEST$ target same_PrivateSchemaInSamePackage
+private schema »PrivateSchemaInSamePackage« {}

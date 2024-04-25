@@ -9,17 +9,45 @@ pipeline myPipeline {
     »MyClass«;
 
 
-    // $TEST$ references same_ClassInSamePackage
-    »ClassInSamePackage«;
+    // $TEST$ references same_PublicClassInSamePackage
+    »PublicClassInSamePackage«;
 
-    // $TEST$ references safeds_ClassInSafeDsPackage
-    »ClassInSafeDsPackage«;
-
-    // $TEST$ unresolved
-    »ClassInAnotherPackage«;
+    // $TEST$ references same_InternalClassInSamePackage
+    »InternalClassInSamePackage«;
 
     // $TEST$ unresolved
-    »ClassWithoutPackage«;
+    »PrivateClassInSamePackage«;
+
+
+    // $TEST$ references safeds_PublicClassInSafeDsPackage
+    »PublicClassInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »InternalClassInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »PrivateClassInSafeDsPackage«;
+
+
+    // $TEST$ unresolved
+    »PublicClassInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »InternalClassInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »PrivateClassInAnotherPackage«;
+
+
+    // $TEST$ unresolved
+    »PublicClassWithoutPackage«;
+
+    // $TEST$ unresolved
+    »InternalClassWithoutPackage«;
+
+    // $TEST$ unresolved
+    »PrivateClassWithoutPackage«;
+
 
     // $TEST$ references same_MyClass
     »MyClassInSamePackage«;

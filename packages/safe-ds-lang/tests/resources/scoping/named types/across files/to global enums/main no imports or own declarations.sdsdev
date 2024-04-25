@@ -4,15 +4,43 @@ segment mySegment(
     // $TEST$ references same_MyEnum
     p1: »MyEnum«,
 
-    // $TEST$ references same_EnumInSamePackage
-    p2: »EnumInSamePackage«,
 
-    // $TEST$ references safeds_EnumInSafeDsPackage
-    p3: »EnumInSafeDsPackage«,
+    // $TEST$ references same_PublicEnumInSamePackage
+    p2: »PublicEnumInSamePackage«,
 
-    // $TEST$ unresolved
-    p4: »EnumInAnotherPackage«,
+    // $TEST$ references same_InternalEnumInSamePackage
+    p3: »InternalEnumInSamePackage«,
 
     // $TEST$ unresolved
-    p5: »EnumWithoutPackage«,
+    p4: »PrivateEnumInSamePackage«,
+
+
+    // $TEST$ references safeds_PublicEnumInSafeDsPackage
+    p5: »PublicEnumInSafeDsPackage«,
+
+    // $TEST$ unresolved
+    p6: »InternalEnumInSafeDsPackage«,
+
+    // $TEST$ unresolved
+    p7: »PrivateEnumInSafeDsPackage«,
+
+
+    // $TEST$ unresolved
+    p8: »PublicEnumInAnotherPackage«,
+
+    // $TEST$ unresolved
+    p9: »InternalEnumInAnotherPackage«,
+
+    // $TEST$ unresolved
+    p10: »PrivateEnumInAnotherPackage«,
+
+
+    // $TEST$ unresolved
+    p11: »PublicEnumWithoutPackage«,
+
+    // $TEST$ unresolved
+    p12: »InternalEnumWithoutPackage«,
+
+    // $TEST$ unresolved
+    p13: »PrivateEnumWithoutPackage«,
 ) {}

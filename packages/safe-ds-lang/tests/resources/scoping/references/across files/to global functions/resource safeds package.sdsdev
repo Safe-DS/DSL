@@ -3,5 +3,11 @@ package safeds.scoping.references.acrossFiles.toGlobalFunctions
 // $TEST$ target safeds_myFunction
 fun »myFunction«()
 
-// $TEST$ target safeds_functionInSafeDsPackage
-fun »functionInSafeDsPackage«()
+// $TEST$ target safeds_publicFunctionInSafeDsPackage
+fun »publicFunctionInSafeDsPackage«()
+
+// $TEST$ target safeds_internalFunctionInSafeDsPackage
+internal fun »internalFunctionInSafeDsPackage«()
+
+// $TEST$ target safeds_privateFunctionInSafeDsPackage
+private fun »privateFunctionInSafeDsPackage«()

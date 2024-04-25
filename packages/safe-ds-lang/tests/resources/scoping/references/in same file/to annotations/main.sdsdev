@@ -1,15 +1,35 @@
 package tests.scoping.references.inSameFile.toAnnotations
 
-// $TEST$ target before
-annotation »Before«
+// $TEST$ target PrivateBefore
+private annotation »PrivateBefore«
+// $TEST$ target InternalBefore
+internal annotation »InternalBefore«
+// $TEST$ target PublicBefore
+annotation »PublicBefore«
 
-segment mySegment() {
-    // $TEST$ references before
-    »Before«;
+pipeline myPipeline {
+    // $TEST$ references PrivateBefore
+    »PrivateBefore«;
 
-    // $TEST$ references after
-    »After«;
+    // $TEST$ references InternalBefore
+    »InternalBefore«;
+
+    // $TEST$ references PublicBefore
+    »PublicBefore«;
+
+    // $TEST$ references PrivateAfter
+    »PrivateAfter«;
+
+    // $TEST$ references InternalAfter
+    »InternalAfter«;
+
+    // $TEST$ references PublicAfter
+    »PublicAfter«;
 }
 
-// $TEST$ target after
-annotation »After«
+// $TEST$ target PrivateAfter
+private annotation »PrivateAfter«
+// $TEST$ target InternalAfter
+internal annotation »InternalAfter«
+// $TEST$ target PublicAfter
+annotation »PublicAfter«
