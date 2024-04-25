@@ -189,7 +189,7 @@ To specify that a declaration accepts instances of `#!sds SomeInnerClass` where 
 SomeOuterClass<Int>.SomeInnerClass<Int>
 ```
 
-Finally, as with [named types](#named-types), `#!sds null` is not an allowed value by default. To allow it, add a question mark at the end of the member type. This can be used independently from [type arguments](#type-arguments):
+Finally, as with [named types](#named-types), `#!sds null` is not an allowed value by default. To allow it, add a question mark at the end of the member type. This can be used independently of [type arguments](#type-arguments):
 
 ```sds
 SomeOuterClass<Int>.SomeInnerClass<Int>?
@@ -333,8 +333,8 @@ from typing import Callable, Optional, Tuple, TypeVar, Union
 
 The following table shows how Safe-DS types can be written as Python [type hints][type-hints]:
 
-| Safe-DS Type                           | Python Type Hint                             |
-|----------------------------------------|----------------------------------------------|
+| Safe-DS Type                                 | Python Type Hint                             |
+|----------------------------------------------|----------------------------------------------|
 | `#!sds Boolean`                              | `#!py bool`                                  |
 | `#!sds Float`                                | `#!py float`                                 |
 | `#!sds Int`                                  | `#!py int`                                   |
@@ -384,10 +384,10 @@ Getting the `<result type`> depends on the number of results. If there is only a
 [enum-variant-constructors]: enumerations.md#constructors
 [methods]: classes.md#defining-methods
 [global-functions]: global-functions.md
-[member-accesses]: ../pipeline-language/expressions.md#member-access-of-enum-variants
-[null-literal]: ../pipeline-language/expressions.md#sds-null-literal
-[calls]: ../pipeline-language/expressions.md#calls
+[member-accesses]: ../pipeline-language/expressions/member-accesses.md#member-access-of-enum-variants
+[null-literal]: ../pipeline-language/expressions/literals.md#sds-null-literal
+[calls]: ../pipeline-language/expressions/calls.md#calls
 [segments]: ../pipeline-language/segments.md
-[lambdas]: ../pipeline-language/expressions.md#lambdas
+[lambdas]: ../pipeline-language/expressions/lambdas.md#lambdas
 [mypy]: http://mypy-lang.org/
 [type-hints]: https://docs.python.org/3/library/typing.html

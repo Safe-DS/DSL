@@ -130,6 +130,6 @@ It is important to note that the `#!sds @PythonModule` annotation only affects t
 [annotations]: annotations.md
 [annotation-calls]: annotations.md#calling-an-annotation
 [imports]: imports.md
-[string-literals]: ../pipeline-language/expressions.md#string-literals
+[string-literals]: ../pipeline-language/expressions/literals.md#string-literals
 [python-modules]: https://docs.python.org/3/tutorial/modules.html#modules
 [python-packages]: https://docs.python.org/3/tutorial/modules.html#packages

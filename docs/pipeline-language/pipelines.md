@@ -34,4 +34,4 @@ pipeline predictSpeed {
 More information about statements can be found in the [linked document][statements]. Note particularly, that all statements must end with a semicolon.
 
 [segments]: segments.md
-[statements]: statements.md
+[statements]: statements/README.md
