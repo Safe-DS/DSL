@@ -4,8 +4,8 @@ from safeds.scoping.references.acrossFiles.toGlobalClasses import MyClass
 from tests.scoping.references.acrossFiles.toGlobalClasses.other import PublicClassInAnotherPackage, PublicClassInAnotherPackage2
 
 pipeline myPipeline {
-    // $TEST$ references safeds_myClass
-    »myClass«;
+    // $TEST$ references safeds_MyClass
+    »MyClass«;
 
 
     // $TEST$ references same_PublicClassInSamePackage

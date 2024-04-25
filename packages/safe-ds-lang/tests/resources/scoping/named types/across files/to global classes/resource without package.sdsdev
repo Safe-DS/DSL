@@ -4,8 +4,8 @@ class »MyClass«
 // $TEST$ target without_PublicClassWithoutPackage
 class »PublicClassWithoutPackage«
 
-// $TEST$ target same_InternalClassInSamePackage
+// $TEST$ target without_InternalClassInSamePackage
 internal class »InternalClassInSamePackage«
 
-// $TEST$ target same_PrivateClassInSamePackage
+// $TEST$ target without_PrivateClassInSamePackage
 private class »PrivateClassInSamePackage«

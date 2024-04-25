@@ -4,8 +4,8 @@ schema »MySchema« {}
 // $TEST$ target without_PublicSchemaWithoutPackage
 schema »PublicSchemaWithoutPackage« {}
 
-// $TEST$ target same_InternalSchemaInSamePackage
+// $TEST$ target without_InternalSchemaInSamePackage
 internal schema »InternalSchemaInSamePackage« {}
 
-// $TEST$ target same_PrivateSchemaInSamePackage
+// $TEST$ target without_PrivateSchemaInSamePackage
 private schema »PrivateSchemaInSamePackage« {}

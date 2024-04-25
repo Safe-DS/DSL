@@ -4,45 +4,45 @@ from safeds.scoping.namedTypes.acrossFiles.toGlobalEnums import *
 
 segment mySegment(
     // $TEST$ references safeds_MyEnum
-    »MyEnum«;
+    p1: »MyEnum«,
 
 
     // $TEST$ references same_PublicEnumInSamePackage
-    »PublicEnumInSamePackage«;
+    p2: »PublicEnumInSamePackage«,
 
     // $TEST$ references same_InternalEnumInSamePackage
-    »InternalEnumInSamePackage«;
+    p3: »InternalEnumInSamePackage«,
 
     // $TEST$ unresolved
-    »PrivateEnumInSamePackage«;
+    p4: »PrivateEnumInSamePackage«,
 
 
     // $TEST$ references safeds_PublicEnumInSafeDsPackage
-    »PublicEnumInSafeDsPackage«;
+    p5: »PublicEnumInSafeDsPackage«,
 
     // $TEST$ unresolved
-    »InternalEnumInSafeDsPackage«;
+    p6: »InternalEnumInSafeDsPackage«,
 
     // $TEST$ unresolved
-    »PrivateEnumInSafeDsPackage«;
-
-
-    // $TEST$ unresolved
-    »PublicEnumInAnotherPackage«;
-
-    // $TEST$ unresolved
-    »InternalEnumInAnotherPackage«;
-
-    // $TEST$ unresolved
-    »PrivateEnumInAnotherPackage«;
+    p7: »PrivateEnumInSafeDsPackage«,
 
 
     // $TEST$ unresolved
-    »PublicEnumWithoutPackage«;
+    p8: »PublicEnumInAnotherPackage«,
 
     // $TEST$ unresolved
-    »InternalEnumWithoutPackage«;
+    p9: »InternalEnumInAnotherPackage«,
 
     // $TEST$ unresolved
-    »PrivateEnumWithoutPackage«;
+    p10: »PrivateEnumInAnotherPackage«,
+
+
+    // $TEST$ unresolved
+    p11: »PublicEnumWithoutPackage«,
+
+    // $TEST$ unresolved
+    p12: »InternalEnumWithoutPackage«,
+
+    // $TEST$ unresolved
+    p12: »PrivateEnumWithoutPackage«,
 ) {}

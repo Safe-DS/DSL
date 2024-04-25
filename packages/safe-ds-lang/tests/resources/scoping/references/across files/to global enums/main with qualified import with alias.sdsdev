@@ -12,8 +12,8 @@ pipeline myPipeline {
     // $TEST$ references same_PublicEnumInSamePackage
     »PublicEnumInSamePackage«;
 
-    // $TEST$ references same_InternallEnumInSamePackage
-    »InternallEnumInSamePackage«;
+    // $TEST$ references same_InternalEnumInSamePackage
+    »InternalEnumInSamePackage«;
 
     // $TEST$ unresolved
     »PrivateEnumInSamePackage«;
@@ -23,7 +23,7 @@ pipeline myPipeline {
     »PublicEnumInSafeDsPackage«;
 
     // $TEST$ unresolved
-    »InternallEnumInSafeDsPackage«;
+    »InternalEnumInSafeDsPackage«;
 
     // $TEST$ unresolved
     »PrivateEnumInSafeDsPackage«;

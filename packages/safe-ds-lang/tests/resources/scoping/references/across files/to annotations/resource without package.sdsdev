@@ -4,8 +4,8 @@ annotation »MyAnnotation«
 // $TEST$ target without_PublicAnnotationWithoutPackage
 annotation »PublicAnnotationWithoutPackage«
 
-// $TEST$ target same_InternalAnnotationInSamePackage
+// $TEST$ target without_InternalAnnotationInSamePackage
 internal annotation »InternalAnnotationInSamePackage«
 
-// $TEST$ target same_PrivateAnnotationInSamePackage
+// $TEST$ target without_PrivateAnnotationInSamePackage
 private annotation »PrivateAnnotationInSamePackage«

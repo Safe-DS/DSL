@@ -49,12 +49,12 @@ segment mySegment(
     p13: »PrivateClassWithoutPackage«,
 
 
-    // $TEST$ references same_myClass
-    p14: »myClassInSamePackage«,
+    // $TEST$ references same_MyClass
+    p14: »MyClassInSamePackage«,
 
-    // $TEST$ references safeds_myClass
-    p15: »myClassInSafeDsPackage«,
+    // $TEST$ references safeds_MyClass
+    p15: »MyClassInSafeDsPackage«,
 
-    // $TEST$ references other_myClass
-    p16: »myClassInAnotherPackage«,
+    // $TEST$ references other_MyClass
+    p16: »MyClassInAnotherPackage«,
 ) {}

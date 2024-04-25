@@ -6,7 +6,7 @@ class »MyClass«
 // $TEST$ target other_PublicClassInAnotherPackage
 class »PublicClassInAnotherPackage«
 
-// $TEST$ target other_PublicClas2InAnotherPackage2
+// $TEST$ target other_PublicClassInAnotherPackage2
 class »PublicClassInAnotherPackage2«
 
 // $TEST$ target other_InternalClassInAnotherPackage

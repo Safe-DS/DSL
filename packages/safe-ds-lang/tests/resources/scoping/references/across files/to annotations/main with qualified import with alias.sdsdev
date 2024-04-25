@@ -5,8 +5,8 @@ from safeds.scoping.references.acrossFiles.toAnnotations import MyAnnotation as 
 from tests.scoping.references.acrossFiles.toAnnotations.other import MyAnnotation as MyAnnotationInAnotherPackage
 
 pipeline myPipeline {
-    // $TEST$ references same_myAnnotation
-    »myAnnotation«;
+    // $TEST$ references same_MyAnnotation
+    »MyAnnotation«;
 
 
     // $TEST$ references same_PublicAnnotationInSamePackage
@@ -49,12 +49,12 @@ pipeline myPipeline {
     »PrivateAnnotationWithoutPackage«;
 
 
-    // $TEST$ references same_myAnnotation
-    »myAnnotationInSamePackage«;
+    // $TEST$ references same_MyAnnotation
+    »MyAnnotationInSamePackage«;
 
-    // $TEST$ references safeds_myAnnotation
-    »myAnnotationInSafeDsPackage«;
+    // $TEST$ references safeds_MyAnnotation
+    »MyAnnotationInSafeDsPackage«;
 
-    // $TEST$ references other_myAnnotation
-    »myAnnotationInAnotherPackage«;
+    // $TEST$ references other_MyAnnotation
+    »MyAnnotationInAnotherPackage«;
 }

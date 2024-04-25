@@ -4,8 +4,8 @@ fun »myFunction«()
 // $TEST$ target without_publicFunctionWithoutPackage
 fun »publicFunctionWithoutPackage«()
 
-// $TEST$ target same_internalFunctionInSamePackage
+// $TEST$ target without_internalFunctionInSamePackage
 internal fun »internalFunctionInSamePackage«()
 
-// $TEST$ target same_privateFunctionInSamePackage
+// $TEST$ target without_privateFunctionInSamePackage
 private fun »privateFunctionInSamePackage«()
