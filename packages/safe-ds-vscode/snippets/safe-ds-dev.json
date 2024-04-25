@@ -26,9 +26,11 @@
     },
     "Global Class": {
         "prefix": ["class"],
-        "body": ["${1|internal ,private |}class ${2:MyClass}${3:<$4>}${5:($6)} ${7:sub $8} ${9:where {$10\\}} ${11:{$0\\}}"],
+        "body": [
+            "${1|internal ,private |}class ${2:MyClass}${3:<$4>}${5:($6)} ${7:sub $8} ${9:where {$10\\}} ${11:{$0\\}}"
+        ],
         "description": "A global class."
-    },    
+    },
     "Nested Class": {
         "prefix": ["class"],
         "body": ["class ${1:MyClass}${2:<$3>}${4:($5)} ${6:sub $7} ${8:where {$9\\}} ${10:{$0\\}}"],
@@ -38,7 +40,7 @@
         "prefix": ["enumeration"],
         "body": ["${1|internal ,private |}enum ${2:MyEnum} {", "    $0", "}"],
         "description": "A global enumeration."
-    },    
+    },
     "Nested Enum": {
         "prefix": ["enumeration"],
         "body": ["enum ${1:MyEnum} {", "    $0", "}"],
@@ -51,7 +53,10 @@
     },
     "Global Function": {
         "prefix": ["function"],
-        "body": ["${1|@Pure,@Impure([])|}", "${2|internal ,private |}fun ${3:myFunction}${4:<$5>}($6) ${7:-> ($8)} ${9:where {$0\\}}"],
+        "body": [
+            "${1|@Pure,@Impure([])|}",
+            "${2|internal ,private |}fun ${3:myFunction}${4:<$5>}($6) ${7:-> ($8)} ${9:where {$0\\}}"
+        ],
         "description": "A global function."
     },
     "Minimal Pure Method": {
