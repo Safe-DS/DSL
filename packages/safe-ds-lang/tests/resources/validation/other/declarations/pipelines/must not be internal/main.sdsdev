@@ -1,0 +1,4 @@
+package tests.validation.other.declarations.pipelines.mustNotBeInternal
+
+// $TEST$ error "Pipelines are always private and cannot be declared as internal."
+»internal« pipeline myPipeline {}
