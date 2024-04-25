@@ -1,5 +1,11 @@
 // $TEST$ target without_MyClass
 class »MyClass«
 
-// $TEST$ target without_ClassWithoutPackage
-class »ClassWithoutPackage«
+// $TEST$ target without_PublicClassWithoutPackage
+class »PublicClassWithoutPackage«
+
+// $TEST$ target without_InternalClassInSamePackage
+internal class »InternalClassInSamePackage«
+
+// $TEST$ target without_PrivateClassInSamePackage
+private class »PrivateClassInSamePackage«

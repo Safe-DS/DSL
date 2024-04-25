@@ -3,5 +3,11 @@ package tests.scoping.namedTypes.acrossFiles.toGlobalClasses
 // $TEST$ target same_MyClass
 class »MyClass«
 
-// $TEST$ target same_ClassInSamePackage
-class »ClassInSamePackage«
+// $TEST$ target same_PublicClassInSamePackage
+class »PublicClassInSamePackage«
+
+// $TEST$ target same_InternalClassInSamePackage
+internal class »InternalClassInSamePackage«
+
+// $TEST$ target same_PrivateClassInSamePackage
+private class »PrivateClassInSamePackage«

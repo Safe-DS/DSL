@@ -3,8 +3,14 @@ package tests.scoping.references.acrossFiles.toGlobalEnums.other
 // $TEST$ target other_MyEnum
 enum »MyEnum«
 
-// $TEST$ target other_EnumInAnotherPackage
-enum »EnumInAnotherPackage«
+// $TEST$ target other_PublicEnumInAnotherPackage
+enum »PublicEnumInAnotherPackage«
 
-// $TEST$ target other_Enum2InAnotherPackage
-enum »Enum2InAnotherPackage«
+// $TEST$ target other_PublicEnumInAnotherPackage2
+enum »PublicEnumInAnotherPackage2«
+
+// $TEST$ target other_InternalEnumInAnotherPackage
+internal enum »InternalEnumInAnotherPackage«
+
+// $TEST$ target other_PrivateEnumInAnotherPackage
+private enum »PrivateEnumInAnotherPackage«

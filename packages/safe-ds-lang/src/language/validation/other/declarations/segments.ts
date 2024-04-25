@@ -6,7 +6,6 @@ import { DiagnosticTag } from 'vscode-languageserver';
 
 export const CODE_SEGMENT_DUPLICATE_YIELD = 'segment/duplicate-yield';
 export const CODE_SEGMENT_UNASSIGNED_RESULT = 'segment/unassigned-result';
-export const CODE_SEGMENT_UNUSED = 'segment/unused';
 export const CODE_SEGMENT_UNUSED_PARAMETER = 'segment/unused-parameter';
 
 export const segmentResultMustBeAssignedExactlyOnce = (services: SafeDsServices) => {
@@ -33,27 +32,6 @@ export const segmentResultMustBeAssignedExactlyOnce = (services: SafeDsServices)
                     code: CODE_SEGMENT_DUPLICATE_YIELD,
                 });
             }
-        }
-    };
-};
-
-export const segmentShouldBeUsed = (services: SafeDsServices) => {
-    const referenceProvider = services.references.References;
-
-    return (node: SdsSegment, accept: ValidationAcceptor) => {
-        // Don't show this warning for public segments
-        if (node.visibility === undefined) {
-            return;
-        }
-
-        const references = referenceProvider.findReferences(node, {});
-        if (references.isEmpty()) {
-            accept('warning', 'This segment is unused and can be removed.', {
-                node,
-                property: 'name',
-                code: CODE_SEGMENT_UNUSED,
-                tags: [DiagnosticTag.Unnecessary],
-            });
         }
     };
 };

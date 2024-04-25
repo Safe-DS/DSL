@@ -1,5 +1,11 @@
 // $TEST$ target without_myFunction
 fun »myFunction«()
 
-// $TEST$ target without_functionWithoutPackage
-fun »functionWithoutPackage«()
+// $TEST$ target without_publicFunctionWithoutPackage
+fun »publicFunctionWithoutPackage«()
+
+// $TEST$ target without_internalFunctionInSamePackage
+internal fun »internalFunctionInSamePackage«()
+
+// $TEST$ target without_privateFunctionInSamePackage
+private fun »privateFunctionInSamePackage«()

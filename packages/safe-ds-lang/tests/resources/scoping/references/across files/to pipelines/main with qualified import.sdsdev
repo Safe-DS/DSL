@@ -7,18 +7,46 @@ segment mySegment() {
     // $TEST$ unresolved
     »myPipeline«;
 
-    // $TEST$ unresolved
-    »pipelineInSamePackage«;
 
     // $TEST$ unresolved
-    »pipelineInSafeDsPackage«;
+    »publicPipelineInSamePackage«;
 
     // $TEST$ unresolved
-    »pipelineInAnotherPackage«;
+    »internalPipelineInSamePackage«;
 
     // $TEST$ unresolved
-    »pipeline2InAnotherPackage«;
+    »privatePipelineInSamePackage«;
+
 
     // $TEST$ unresolved
-    »pipelineWithoutPackage«;
+    »publicPipelineInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »internalPipelineInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »privatePipelineInSafeDsPackage«;
+
+
+    // $TEST$ unresolved
+    »publicPipelineInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »publicPipelineInAnotherPackage2«;
+
+    // $TEST$ unresolved
+    »internalPipelineInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »privatePipelineInAnotherPackage«;
+
+
+    // $TEST$ unresolved
+    »publicPipelineWithoutPackage«;
+
+    // $TEST$ unresolved
+    »internalPipelineWithoutPackage«;
+
+    // $TEST$ unresolved
+    »privatePipelineWithoutPackage«;
 }

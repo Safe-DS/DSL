@@ -74,7 +74,7 @@ export class SafeDsCompletionProvider extends DefaultCompletionProvider {
     }
 
     private illegalKeywordsInPipelineFile = new Set(['annotation', 'class', 'enum', 'fun']);
-    private illegalKeywordsInStubFile = new Set(['pipeline', 'internal', 'private', 'segment']);
+    private illegalKeywordsInStubFile = new Set(['pipeline', 'segment']);
 
     protected override filterKeyword(context: CompletionContext, keyword: Keyword): boolean {
         // Filter out keywords that do not contain any word character

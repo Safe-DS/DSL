@@ -1,27 +1,56 @@
 package tests.scoping.namedTypes.acrossFiles.toGlobalEnums
 
 from safeds.scoping.namedTypes.acrossFiles.toGlobalEnums import MyEnum
-from tests.scoping.namedTypes.acrossFiles.toGlobalEnums.other import EnumInAnotherPackage, Enum2InAnotherPackage, notANamedTypeDeclaration
+from tests.scoping.namedTypes.acrossFiles.toGlobalEnums.other import PublicEnumInAnotherPackage, PublicEnumInAnotherPackage2, notANamedTypeDeclaration
 
 segment mySegment(
     // $TEST$ references safeds_MyEnum
     p1: »MyEnum«,
 
-    // $TEST$ references same_EnumInSamePackage
-    p2: »EnumInSamePackage«,
 
-    // $TEST$ references safeds_EnumInSafeDsPackage
-    p3: »EnumInSafeDsPackage«,
+    // $TEST$ references same_PublicEnumInSamePackage
+    p2: »PublicEnumInSamePackage«,
 
-    // $TEST$ references other_EnumInAnotherPackage
-    p4: »EnumInAnotherPackage«,
-
-    // $TEST$ references other_Enum2InAnotherPackage
-    p5: »Enum2InAnotherPackage«,
+    // $TEST$ references same_InternalEnumInSamePackage
+    p3: »InternalEnumInSamePackage«,
 
     // $TEST$ unresolved
-    p6: »notANamedTypeDeclaration«,
+    p4: »PrivateEnumInSamePackage«,
+
+
+    // $TEST$ references safeds_PublicEnumInSafeDsPackage
+    p5: »PublicEnumInSafeDsPackage«,
 
     // $TEST$ unresolved
-    p7: »EnumWithoutPackage«,
+    p6: »InternalEnumInSafeDsPackage«,
+
+    // $TEST$ unresolved
+    p7: »PrivateEnumInSafeDsPackage«,
+
+
+    // $TEST$ references other_PublicEnumInAnotherPackage
+    p8: »PublicEnumInAnotherPackage«,
+
+    // $TEST$ references other_PublicEnumInAnotherPackage2
+    p9: »PublicEnumInAnotherPackage2«,
+
+    // $TEST$ unresolved
+    p10: »InternalEnumInAnotherPackage«,
+
+    // $TEST$ unresolved
+    p11: »PrivateEnumInAnotherPackage«,
+
+
+    // $TEST$ unresolved
+    p12: »PublicEnumWithoutPackage«,
+
+    // $TEST$ unresolved
+    p13: »InternalEnumWithoutPackage«,
+
+    // $TEST$ unresolved
+    p14: »PrivateEnumWithoutPackage«,
+
+
+    // $TEST$ unresolved
+    p15: »notANamedTypeDeclaration«,
 ) {}

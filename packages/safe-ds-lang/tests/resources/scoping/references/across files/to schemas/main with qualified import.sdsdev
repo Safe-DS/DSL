@@ -1,24 +1,52 @@
 package tests.scoping.references.acrossFiles.toSchemas
 
 from safeds.scoping.references.acrossFiles.toSchemas import MySchema
-from tests.scoping.references.acrossFiles.toSchemas.other import SchemaInAnotherPackage, Schema2InAnotherPackage
+from tests.scoping.references.acrossFiles.toSchemas.other import PublicSchemaInAnotherPackage, PublicSchemaInAnotherPackage2
 
 pipeline myPipeline {
     // $TEST$ references safeds_MySchema
     »MySchema«;
 
-    // $TEST$ references same_SchemaInSamePackage
-    »SchemaInSamePackage«;
 
-    // $TEST$ references safeds_SchemaInSafeDsPackage
-    »SchemaInSafeDsPackage«;
+    // $TEST$ references same_PublicSchemaInSamePackage
+    »PublicSchemaInSamePackage«;
 
-    // $TEST$ references other_SchemaInAnotherPackage
-    »SchemaInAnotherPackage«;
-
-    // $TEST$ references other_Schema2InAnotherPackage
-    »Schema2InAnotherPackage«;
+    // $TEST$ references same_InternalSchemaInSamePackage
+    »InternalSchemaInSamePackage«;
 
     // $TEST$ unresolved
-    »SchemaWithoutPackage«;
+    »PrivateSchemaInSamePackage«;
+
+
+    // $TEST$ references safeds_PublicSchemaInSafeDsPackage
+    »PublicSchemaInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »InternalSchemaInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »PrivateSchemaInSafeDsPackage«;
+
+
+    // $TEST$ references other_PublicSchemaInAnotherPackage
+    »PublicSchemaInAnotherPackage«;
+
+    // $TEST$ references other_PublicSchemaInAnotherPackage2
+    »PublicSchemaInAnotherPackage2«;
+
+    // $TEST$ unresolved
+    »InternalSchemaInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »PrivateSchemaInAnotherPackage«;
+
+
+    // $TEST$ unresolved
+    »PublicSchemaWithoutPackage«;
+
+    // $TEST$ unresolved
+    »InternalSchemaWithoutPackage«;
+
+    // $TEST$ unresolved
+    »PrivateSchemaWithoutPackage«;
 }

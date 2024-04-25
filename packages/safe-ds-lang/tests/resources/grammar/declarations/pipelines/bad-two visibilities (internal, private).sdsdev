@@ -1,0 +1,3 @@
+// $TEST$ syntax_error
+
+internal private pipeline myPipeline {}

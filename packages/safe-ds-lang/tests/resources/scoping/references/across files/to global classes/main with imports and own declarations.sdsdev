@@ -1,7 +1,7 @@
 package tests.scoping.references.acrossFiles.toGlobalClasses
 
 from safeds.scoping.references.acrossFiles.toGlobalClasses import MyClass as MyOwnClass
-from tests.scoping.references.acrossFiles.toGlobalClasses.other import ClassInAnotherPackage, Class2InAnotherPackage
+from tests.scoping.references.acrossFiles.toGlobalClasses.other import PublicClassInAnotherPackage, PublicClassInAnotherPackage2
 
 // $TEST$ target own_MyOwnClass
 class »MyOwnClass«
@@ -10,18 +10,46 @@ pipeline myPipeline {
     // $TEST$ references own_MyOwnClass
     »MyOwnClass«;
 
-    // $TEST$ references same_ClassInSamePackage
-    »ClassInSamePackage«;
 
-    // $TEST$ references safeds_ClassInSafeDsPackage
-    »ClassInSafeDsPackage«;
+    // $TEST$ references same_PublicClassInSamePackage
+    »PublicClassInSamePackage«;
 
-    // $TEST$ references other_ClassInAnotherPackage
-    »ClassInAnotherPackage«;
-
-    // $TEST$ references other_Class2InAnotherPackage
-    »Class2InAnotherPackage«;
+    // $TEST$ references same_InternalClassInSamePackage
+    »InternalClassInSamePackage«;
 
     // $TEST$ unresolved
-    »ClassWithoutPackage«;
+    »PrivateClassInSamePackage«;
+
+
+    // $TEST$ references safeds_PublicClassInSafeDsPackage
+    »PublicClassInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »InternalClassInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »PrivateClassInSafeDsPackage«;
+
+
+    // $TEST$ references other_PublicClassInAnotherPackage
+    »PublicClassInAnotherPackage«;
+
+    // $TEST$ references other_PublicClassInAnotherPackage2
+    »PublicClassInAnotherPackage2«;
+
+    // $TEST$ unresolved
+    »InternalClassInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »PrivateClassInAnotherPackage«;
+
+
+    // $TEST$ unresolved
+    »PublicClassWithoutPackage«;
+
+    // $TEST$ unresolved
+    »InternalClassWithoutPackage«;
+
+    // $TEST$ unresolved
+    »PrivateClassWithoutPackage«;
 }

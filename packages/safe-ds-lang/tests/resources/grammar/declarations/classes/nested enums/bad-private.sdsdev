@@ -1,0 +1,5 @@
+// $TEST$ syntax_error
+
+class MyClass {
+    private enum MyEnum
+}

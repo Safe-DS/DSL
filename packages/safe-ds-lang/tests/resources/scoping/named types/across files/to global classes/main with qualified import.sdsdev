@@ -1,27 +1,56 @@
 package tests.scoping.namedTypes.acrossFiles.toGlobalClasses
 
 from safeds.scoping.namedTypes.acrossFiles.toGlobalClasses import MyClass
-from tests.scoping.namedTypes.acrossFiles.toGlobalClasses.other import ClassInAnotherPackage, Class2InAnotherPackage, notANamedTypeDeclaration
+from tests.scoping.namedTypes.acrossFiles.toGlobalClasses.other import PublicClassInAnotherPackage, PublicClassInAnotherPackage2, notANamedTypeDeclaration
 
 segment mySegment(
     // $TEST$ references safeds_MyClass
     p1: »MyClass«,
 
-    // $TEST$ references same_ClassInSamePackage
-    p2: »ClassInSamePackage«,
 
-    // $TEST$ references safeds_ClassInSafeDsPackage
-    p3: »ClassInSafeDsPackage«,
+    // $TEST$ references same_PublicClassInSamePackage
+    p2: »PublicClassInSamePackage«,
 
-    // $TEST$ references other_ClassInAnotherPackage
-    p4: »ClassInAnotherPackage«,
-
-    // $TEST$ references other_Class2InAnotherPackage
-    p5: »Class2InAnotherPackage«,
+    // $TEST$ references same_InternalClassInSamePackage
+    p3: »InternalClassInSamePackage«,
 
     // $TEST$ unresolved
-    p6: »notANamedTypeDeclaration«,
+    p4: »PrivateClassInSamePackage«,
+
+
+    // $TEST$ references safeds_PublicClassInSafeDsPackage
+    p5: »PublicClassInSafeDsPackage«,
 
     // $TEST$ unresolved
-    p7: »ClassWithoutPackage«,
+    p6: »InternalClassInSafeDsPackage«,
+
+    // $TEST$ unresolved
+    p7: »PrivateClassInSafeDsPackage«,
+
+
+    // $TEST$ references other_PublicClassInAnotherPackage
+    p8: »PublicClassInAnotherPackage«,
+
+    // $TEST$ references other_PublicClassInAnotherPackage2
+    p9: »PublicClassInAnotherPackage2«,
+
+    // $TEST$ unresolved
+    p10: »InternalClassInAnotherPackage«,
+
+    // $TEST$ unresolved
+    p11: »PrivateClassInAnotherPackage«,
+
+
+    // $TEST$ unresolved
+    p12: »PublicClassWithoutPackage«,
+
+    // $TEST$ unresolved
+    p13: »InternalClassWithoutPackage«,
+
+    // $TEST$ unresolved
+    p14: »PrivateClassWithoutPackage«,
+
+
+    // $TEST$ unresolved
+    p15: »notANamedTypeDeclaration«,
 ) {}

@@ -1,15 +1,35 @@
 package tests.scoping.references.inSameFile.toGlobalFunctions
 
-// $TEST$ target before
-fun »before«()
+// $TEST$ target privateBefore
+private fun »privateBefore«()
+// $TEST$ target internalBefore
+internal fun »internalBefore«()
+// $TEST$ target publicBefore
+fun »publicBefore«()
 
 pipeline myPipeline {
-    // $TEST$ references before
-    »before«();
+    // $TEST$ references privateBefore
+    »privateBefore«();
 
-    // $TEST$ references after
-    »after«();
+    // $TEST$ references internalBefore
+    »internalBefore«();
+
+    // $TEST$ references publicBefore
+    »publicBefore«();
+
+    // $TEST$ references privateAfter
+    »privateAfter«();
+
+    // $TEST$ references internalAfter
+    »internalAfter«();
+
+    // $TEST$ references publicAfter
+    »publicAfter«();
 }
 
-// $TEST$ target after
-fun »after«()
+// $TEST$ target privateAfter
+private fun »privateAfter«()
+// $TEST$ target internalAfter
+internal fun »internalAfter«()
+// $TEST$ target publicAfter
+fun »publicAfter«()

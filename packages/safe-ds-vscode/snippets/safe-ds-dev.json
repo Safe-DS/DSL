@@ -11,7 +11,7 @@
     },
     "Annotation": {
         "prefix": ["annotation"],
-        "body": ["annotation ${1:MyAnnotation}${2:($3)} ${4:where {$0\\}}"],
+        "body": ["${1|internal ,private |}annotation ${2:MyAnnotation}${3:($4)} ${5:where {$0\\}}"],
         "description": "An annotation."
     },
     "Attribute": {
@@ -24,25 +24,40 @@
         "body": ["class ${0:MyClass}"],
         "description": "A minimal class."
     },
-    "Class": {
+    "Global Class": {
+        "prefix": ["class"],
+        "body": [
+            "${1|internal ,private |}class ${2:MyClass}${3:<$4>}${5:($6)} ${7:sub $8} ${9:where {$10\\}} ${11:{$0\\}}"
+        ],
+        "description": "A global class."
+    },
+    "Nested Class": {
         "prefix": ["class"],
         "body": ["class ${1:MyClass}${2:<$3>}${4:($5)} ${6:sub $7} ${8:where {$9\\}} ${10:{$0\\}}"],
-        "description": "A class."
+        "description": "A class when nested in another class."
     },
-    "Enum": {
+    "Global Enum": {
+        "prefix": ["enumeration"],
+        "body": ["${1|internal ,private |}enum ${2:MyEnum} {", "    $0", "}"],
+        "description": "A global enumeration."
+    },
+    "Nested Enum": {
         "prefix": ["enumeration"],
         "body": ["enum ${1:MyEnum} {", "    $0", "}"],
-        "description": "An enumeration."
+        "description": "An enumeration when nested in a class."
     },
     "Minimal Pure Function": {
         "prefix": ["minimal-pure-function"],
         "body": ["@Pure", "fun ${1:myFunction}($0)"],
         "description": "A minimal pure function."
     },
-    "Function": {
+    "Global Function": {
         "prefix": ["function"],
-        "body": ["${1|@Pure,@Impure([])|}", "fun ${2:myFunction}${3:<$4>}($5) ${6:-> ($7)} ${8:where {$0\\}}"],
-        "description": "A function."
+        "body": [
+            "${1|@Pure,@Impure([])|}",
+            "${2|internal ,private |}fun ${3:myFunction}${4:<$5>}($6) ${7:-> ($8)} ${9:where {$0\\}}"
+        ],
+        "description": "A global function."
     },
     "Minimal Pure Method": {
         "prefix": ["minimal-pure-method"],
@@ -64,7 +79,7 @@
     },
     "Schema": {
         "prefix": ["schema"],
-        "body": ["schema ${1:MySchema} {", "    $0", "}"],
+        "body": ["${1|internal ,private |}schema ${2:MySchema} {", "    $0", "}"],
         "description": "A schema."
     },
     "Segment": {
@@ -74,7 +89,7 @@
     },
     "Minimal Segment": {
         "prefix": ["minimal-segment"],
-        "body": ["${1|internal ,private |}segment ${2:mySegment}($3) {", "    $0", "}"],
+        "body": ["segment ${1:mySegment}($2) {", "    $0", "}"],
         "description": "A segment."
     },
     "Block Lambda": {

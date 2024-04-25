@@ -1,24 +1,52 @@
 package tests.scoping.references.acrossFiles.toGlobalFunctions
 
 from safeds.scoping.references.acrossFiles.toGlobalFunctions import myFunction
-from tests.scoping.references.acrossFiles.toGlobalFunctions.other import functionInAnotherPackage, function2InAnotherPackage
+from tests.scoping.references.acrossFiles.toGlobalFunctions.other import publicFunctionInAnotherPackage, publicFunctionInAnotherPackage2
 
 pipeline myPipeline {
     // $TEST$ references safeds_myFunction
     »myFunction«;
 
-    // $TEST$ references same_functionInSamePackage
-    »functionInSamePackage«;
 
-    // $TEST$ references safeds_functionInSafeDsPackage
-    »functionInSafeDsPackage«;
+    // $TEST$ references same_publicFunctionInSamePackage
+    »publicFunctionInSamePackage«;
 
-    // $TEST$ references other_functionInAnotherPackage
-    »functionInAnotherPackage«;
-
-    // $TEST$ references other_function2InAnotherPackage
-    »function2InAnotherPackage«;
+    // $TEST$ references same_internalFunctionInSamePackage
+    »internalFunctionInSamePackage«;
 
     // $TEST$ unresolved
-    »functionWithoutPackage«;
+    »privateFunctionInSamePackage«;
+
+
+    // $TEST$ references safeds_publicFunctionInSafeDsPackage
+    »publicFunctionInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »internalFunctionInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »privateFunctionInSafeDsPackage«;
+
+
+    // $TEST$ references other_publicFunctionInAnotherPackage
+    »publicFunctionInAnotherPackage«;
+
+    // $TEST$ references other_publicFunctionInAnotherPackage2
+    »publicFunctionInAnotherPackage2«;
+
+    // $TEST$ unresolved
+    »internalFunctionInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »privateFunctionInAnotherPackage«;
+
+
+    // $TEST$ unresolved
+    »publicFunctionWithoutPackage«;
+
+    // $TEST$ unresolved
+    »internalFunctionWithoutPackage«;
+
+    // $TEST$ unresolved
+    »privateFunctionWithoutPackage«;
 }

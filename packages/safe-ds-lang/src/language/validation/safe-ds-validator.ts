@@ -76,11 +76,7 @@ import {
     constantParameterMustHaveTypeThatCanBeEvaluatedToConstant,
 } from './other/declarations/parameters.js';
 import { placeholderShouldBeUsed, placeholdersMustNotBeAnAlias } from './other/declarations/placeholders.js';
-import {
-    segmentParameterShouldBeUsed,
-    segmentResultMustBeAssignedExactlyOnce,
-    segmentShouldBeUsed,
-} from './other/declarations/segments.js';
+import { segmentParameterShouldBeUsed, segmentResultMustBeAssignedExactlyOnce } from './other/declarations/segments.js';
 import {
     typeParameterMustBeUsedInCorrectPosition,
     typeParameterMustHaveSufficientContext,
@@ -190,6 +186,8 @@ import {
 } from './other/declarations/parameterBounds.js';
 import { unknownMustOnlyBeUsedAsDefaultValueOfStub } from './other/expressions/literals.js';
 import { tagsShouldNotHaveDuplicateEntries } from './builtins/tags.js';
+import { moduleMemberShouldBeUsed } from './other/declarations/moduleMembers.js';
+import { pipelinesMustBePrivate } from './other/declarations/pipelines.js';
 
 /**
  * Register custom validation checks.
@@ -325,6 +323,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             pipelineFileMustNotBeInBuiltinPackage,
             pythonModuleShouldDifferFromSafeDsPackage(services),
         ],
+        SdsModuleMember: [moduleMemberShouldBeUsed(services)],
         SdsNamedType: [
             namedTypeDeclarationShouldNotBeDeprecated(services),
             namedTypeDeclarationShouldNotBeExperimental(services),
@@ -350,7 +349,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             parameterBoundRightOperandMustEvaluateToFloatConstantOrIntConstant(services),
         ],
         SdsParameterList: [parameterListMustNotHaveRequiredParametersAfterOptionalParameters],
-        SdsPipeline: [pipelineMustContainUniqueNames],
+        SdsPipeline: [pipelinesMustBePrivate, pipelineMustContainUniqueNames],
         SdsPlaceholder: [placeholdersMustNotBeAnAlias, placeholderShouldBeUsed(services)],
         SdsPrefixOperation: [prefixOperationOperandMustHaveCorrectType(services)],
         SdsReference: [
@@ -367,7 +366,6 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             segmentParameterShouldBeUsed(services),
             segmentResultMustBeAssignedExactlyOnce(services),
             segmentResultListShouldNotBeEmpty(services),
-            segmentShouldBeUsed(services),
         ],
         SdsStatement: [statementMustDoSomething(services)],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],

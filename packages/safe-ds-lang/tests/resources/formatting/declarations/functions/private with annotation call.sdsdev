@@ -1,0 +1,10 @@
+package test
+
+@Annotation  private  fun  myFunction ( )
+
+// -----------------------------------------------------------------------------
+
+package test
+
+@Annotation
+private fun myFunction()
