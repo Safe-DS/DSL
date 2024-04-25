@@ -187,6 +187,7 @@ import {
 import { unknownMustOnlyBeUsedAsDefaultValueOfStub } from './other/expressions/literals.js';
 import { tagsShouldNotHaveDuplicateEntries } from './builtins/tags.js';
 import { moduleMemberShouldBeUsed } from './other/declarations/moduleMembers.js';
+import { pipelinesMustBePrivate } from './other/declarations/pipelines.js';
 
 /**
  * Register custom validation checks.
@@ -348,7 +349,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             parameterBoundRightOperandMustEvaluateToFloatConstantOrIntConstant(services),
         ],
         SdsParameterList: [parameterListMustNotHaveRequiredParametersAfterOptionalParameters],
-        SdsPipeline: [pipelineMustContainUniqueNames],
+        SdsPipeline: [pipelinesMustBePrivate, pipelineMustContainUniqueNames],
         SdsPlaceholder: [placeholdersMustNotBeAnAlias, placeholderShouldBeUsed(services)],
         SdsPrefixOperation: [prefixOperationOperandMustHaveCorrectType(services)],
         SdsReference: [
