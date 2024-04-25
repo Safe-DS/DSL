@@ -85,7 +85,7 @@ import {
     typeParameterMustBeUsedInCorrectPosition,
     typeParameterMustHaveSufficientContext,
     typeParameterMustOnlyBeVariantOnClass,
-    typeParameterUpperBoundMustBeNamedType,
+    typeParameterUpperBoundMustNotBeUnknown,
 } from './other/declarations/typeParameters.js';
 import { callArgumentMustBeConstantIfParameterIsConstant, callMustNotBeRecursive } from './other/expressions/calls.js';
 import { divisionDivisorMustNotBeZero } from './other/expressions/infixOperations.js';
@@ -377,7 +377,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             typeParameterMustBeUsedInCorrectPosition(services),
             typeParameterMustHaveSufficientContext,
             typeParameterMustOnlyBeVariantOnClass,
-            typeParameterUpperBoundMustBeNamedType(services),
+            typeParameterUpperBoundMustNotBeUnknown(services),
         ],
         SdsTypeParameterList: [
             typeParameterListMustNotHaveRequiredTypeParametersAfterOptionalTypeParameters,
