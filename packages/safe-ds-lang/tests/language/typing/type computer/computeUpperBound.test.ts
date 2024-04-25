@@ -5,18 +5,24 @@ import { createSafeDsServices, getModuleMembers, getTypeParameters } from '../..
 import { Type, UnknownType } from '../../../../src/language/typing/model.js';
 import { getNodeOfType } from '../../../helpers/nodeFinder.js';
 import { expectEqualTypes } from '../../../helpers/testAssertions.js';
+import { IntConstant } from '../../../../src/language/partialEvaluation/model.js';
 
 const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const coreTypes = services.typing.CoreTypes;
 const typeComputer = services.typing.TypeComputer;
+const typeFactory = services.typing.TypeFactory;
 
 const code = `
     class MyClass<
         Unbounded,
-        LegalDirectBounds sub Number,
-        LegalIndirectBounds sub LegalDirectBounds,
-        UnnamedBounds sub literal<2>,
-        UnresolvedBounds sub Unresolved,
+        LiteralBounds sub literal<2>,
+        NamedBounds sub Number,
+        TypeParameterBounds sub NamedBounds,
+
+        // Illegal
+        CallableBounds sub () -> (),
+        UnionBounds sub union<Number, String>,
+        UnknownBounds sub unknown,
     >
 `;
 const module = await getNodeOfType(services, code, isSdsModule);
@@ -25,10 +31,12 @@ const classes = getModuleMembers(module).filter(isSdsClass);
 const typeParameters = getTypeParameters(classes[0]);
 
 const unbounded = typeParameters[0]!;
-const legalDirectBounds = typeParameters[1]!;
-const legalIndirectBounds = typeParameters[2]!;
-const unnamedBounds = typeParameters[3]!;
-const unresolvedBounds = typeParameters[4]!;
+const literalBounds = typeParameters[1]!;
+const namedBounds = typeParameters[2]!;
+const typeParameterBounds = typeParameters[3]!;
+const callableBounds = typeParameters[4]!;
+const unionBounds = typeParameters[5]!;
+const unknownBounds = typeParameters[6]!;
 
 const computeUpperBoundTests: ComputeUpperBoundTest[] = [
     {
@@ -36,19 +44,27 @@ const computeUpperBoundTests: ComputeUpperBoundTest[] = [
         expected: coreTypes.AnyOrNull,
     },
     {
-        typeParameter: legalDirectBounds,
+        typeParameter: literalBounds,
+        expected: typeFactory.createLiteralType(new IntConstant(2n)),
+    },
+    {
+        typeParameter: namedBounds,
         expected: coreTypes.Number,
     },
     {
-        typeParameter: legalIndirectBounds,
+        typeParameter: typeParameterBounds,
         expected: coreTypes.Number,
     },
     {
-        typeParameter: unnamedBounds,
+        typeParameter: callableBounds,
         expected: UnknownType,
     },
     {
-        typeParameter: unresolvedBounds,
+        typeParameter: unionBounds,
+        expected: UnknownType,
+    },
+    {
+        typeParameter: unknownBounds,
         expected: UnknownType,
     },
 ];

@@ -774,7 +774,9 @@ export class SafeDsTypeComputer {
         }
 
         const boundType = this.computeType(upperBound);
-        if (!(boundType instanceof NamedType)) {
+        if (boundType instanceof LiteralType) {
+            return boundType;
+        } else if (!(boundType instanceof NamedType)) {
             return UnknownType;
         } else if (options.stopAtTypeVariable || !(boundType instanceof TypeVariable)) {
             return boundType;
