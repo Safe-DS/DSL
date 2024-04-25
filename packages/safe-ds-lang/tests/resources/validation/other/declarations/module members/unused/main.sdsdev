@@ -1,4 +1,4 @@
-package tests.validation.other.declarations.unused
+package tests.validation.other.declarations.moduleMembers.unused
 
 // $TEST$ warning "This declaration is unused and can be removed."
 private segment »myUnusedPrivateSegment«() {}
@@ -19,13 +19,13 @@ segment »myUnusedPublicSegment«() {}
 segment »myUsedPublicSegment«() {}
 
 
-// $TEST$ warning "This declaration is unused and can be removed."
+// $TEST$ no warning "This declaration is unused and can be removed."
 private pipeline »myUnusedPrivatePipeline« {}
 
 // $TEST$ no warning "This declaration is unused and can be removed."
 private pipeline »myUsedPrivatePipeline« {}
 
-// $TEST$ warning "This declaration is unused and can be removed."
+// $TEST$ no warning "This declaration is unused and can be removed."
 internal pipeline »myUnusedInternalPipeline« {}
 
 // $TEST$ no warning "This declaration is unused and can be removed."
