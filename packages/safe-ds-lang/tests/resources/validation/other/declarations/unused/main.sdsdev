@@ -1,0 +1,43 @@
+package tests.validation.other.declarations.unused
+
+// $TEST$ warning "This declaration is unused and can be removed."
+private segment »myUnusedPrivateSegment«() {}
+
+// $TEST$ no warning "This declaration is unused and can be removed."
+private segment »myUsedPrivateSegment«() {}
+
+// $TEST$ warning "This declaration is unused and can be removed."
+internal segment »myUnusedInternalSegment«() {}
+
+// $TEST$ no warning "This declaration is unused and can be removed."
+internal segment »myUsedInternalSegment«() {}
+
+// $TEST$ no warning "This declaration is unused and can be removed."
+segment »myUnusedPublicSegment«() {}
+
+// $TEST$ no warning "This declaration is unused and can be removed."
+segment »myUsedPublicSegment«() {}
+
+
+// $TEST$ warning "This declaration is unused and can be removed."
+private pipeline »myUnusedPrivatePipeline« {}
+
+// $TEST$ no warning "This declaration is unused and can be removed."
+private pipeline »myUsedPrivatePipeline« {}
+
+// $TEST$ warning "This declaration is unused and can be removed."
+internal pipeline »myUnusedInternalPipeline« {}
+
+// $TEST$ no warning "This declaration is unused and can be removed."
+internal pipeline »myUsedInternalPipeline« {}
+
+// $TEST$ no warning "This declaration is unused and can be removed."
+pipeline »myUnusedPublicPipeline« {}
+
+// $TEST$ no warning "This declaration is unused and can be removed."
+pipeline »myUsedPublicPipeline« {}
+
+
+pipeline myPipeline1 {
+    myUsedPrivateSegment();
+}
