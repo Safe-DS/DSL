@@ -51,6 +51,24 @@ Here are the syntactic elements:
 
 The results of a block lambda are [declared in its body using assignments][assignments-to-block-lambda-results].
 
+### Declare Results of Block Lambdas
+
+Similar syntax is used to yield results of [block lambdas][block-lambdas]. The difference to segments is that block lambdas do not declare their results in their header. Instead the results are declared within the assignments, just like [placeholders](#declaring-placeholders). The block lambda in the following snippet has a single result called `#!sds greeting`, which gets the value `#!sds "Hello, world!"`:
+
+```sds
+() -> {
+    yield greeting = "Hello, world!";
+}
+```
+
+The assignment here has the following syntactic elements:
+
+- The keyword `#!sds yield`, which indicates that we want to declare a result.
+- The name of the result, here `#!sds result`. This can be any combination of upper- and lowercase letters, underscores, and numbers, as long as it does not start with a number. However, we suggest using `#!sds lowerCamelCase` for the names of results.
+- An `#!sds =` sign.
+- The expression to evaluate (right-hand side).
+- A semicolon at the end.
+
 ## Expression Lambdas
 
 Often, the body of a [block lambda](#block-lambdas) only consists of yielding a single result, as is the case in the example above. The syntax of [block lambdas](#block-lambdas) is quite verbose for such a common use-case, which is why Safe-DS has _expression lambdas_ as a shorter but less flexible alternative. Using an expression lambda we can rewrite the example above as
