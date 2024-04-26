@@ -4,6 +4,7 @@ import { createMarkdownGenerationTests } from './creator.js';
 import { loadDocuments } from '../../../helpers/testResources.js';
 import { URI } from 'langium';
 import { createSafeDsServices } from '../../../../src/language/index.js';
+import { expandToString } from 'langium/generate';
 
 const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const markdownGenerator = services.generation.MarkdownGenerator;
@@ -32,7 +33,7 @@ describe('generation', async () => {
         // File contents must match
         for (const [uriString, code] of actualOutputs) {
             const fsPath = URI.parse(uriString).fsPath;
-            await expect(code).toMatchFileSnapshot(fsPath);
+            await expect(expandToString`${code}`).toMatchFileSnapshot(fsPath);
         }
 
         // File paths must match

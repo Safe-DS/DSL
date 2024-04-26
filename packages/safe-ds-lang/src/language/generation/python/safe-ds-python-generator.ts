@@ -48,6 +48,7 @@ import {
     isSdsTemplateStringInner,
     isSdsTemplateStringPart,
     isSdsTemplateStringStart,
+    isSdsThis,
     isSdsTypeCast,
     isSdsWildcard,
     isSdsYield,
@@ -677,7 +678,11 @@ export class SafeDsPythonGenerator {
         `;
     }
 
-    private generateExpression(expression: SdsExpression, frame: GenerationInfoFrame): Generated {
+    private generateExpression(
+        expression: SdsExpression,
+        frame: GenerationInfoFrame,
+        thisParam?: Generated,
+    ): Generated {
         if (isSdsTemplateStringPart(expression)) {
             if (isSdsTemplateStringStart(expression)) {
                 return expandTracedToNode(expression)`${this.formatStringSingleLine(expression.value)}{ `;
@@ -742,20 +747,20 @@ export class SafeDsPythonGenerator {
                 if (isSdsFunction(callable)) {
                     const pythonCall = this.builtinAnnotations.getPythonCall(callable);
                     if (pythonCall) {
-                        let thisParam: Generated | undefined = undefined;
+                        let newThisParam: Generated | undefined = undefined;
                         if (isSdsMemberAccess(expression.receiver)) {
-                            thisParam = this.generateExpression(expression.receiver.receiver, frame);
+                            newThisParam = this.generateExpression(expression.receiver.receiver, frame);
                         }
                         const argumentsMap = this.getArgumentsMap(getArguments(expression), frame);
-                        call = this.generatePythonCall(expression, pythonCall, argumentsMap, frame, thisParam);
+                        call = this.generatePythonCall(expression, pythonCall, argumentsMap, frame, newThisParam);
                     }
                 }
                 if (!call && this.isMemoizableCall(expression) && !frame.disableRunnerIntegration) {
-                    let thisParam: Generated | undefined = undefined;
+                    let newThisParam: Generated | undefined = undefined;
                     if (isSdsMemberAccess(expression.receiver)) {
-                        thisParam = this.generateExpression(expression.receiver.receiver, frame);
+                        newThisParam = this.generateExpression(expression.receiver.receiver, frame);
                     }
-                    call = this.generateMemoizedCall(expression, frame, thisParam);
+                    call = this.generateMemoizedCall(expression, frame, newThisParam);
                 }
             }
 
@@ -871,6 +876,8 @@ export class SafeDsPythonGenerator {
             const referenceImport = this.createImportDataForReference(expression);
             frame.addImport(referenceImport);
             return traceToNode(expression)(referenceImport?.alias ?? this.getPythonNameOrDefault(declaration));
+        } else if (isSdsThis(expression)) {
+            return thisParam;
         } else if (isSdsTypeCast(expression)) {
             return traceToNode(expression)(this.generateExpression(expression.expression, frame));
         }
@@ -1006,7 +1013,7 @@ export class SafeDsPythonGenerator {
                 ${thisParam},
                 "${this.getPythonNameOrDefault(callable)}",
                 [${this.generateMemoizedPositionalArgumentList(expression, frame)}],
-                {${this.generateMemoizedKeywordArgumentList(expression, frame)}},
+                {${this.generateMemoizedKeywordArgumentList(expression, frame, thisParam)}},
                 [${joinToNode(hiddenParameters, (param) => param, { separator: ', ' })}]
             )
         `;
@@ -1060,7 +1067,11 @@ export class SafeDsPythonGenerator {
         );
     }
 
-    private generateMemoizedKeywordArgumentList(node: SdsCall, frame: GenerationInfoFrame): Generated {
+    private generateMemoizedKeywordArgumentList(
+        node: SdsCall,
+        frame: GenerationInfoFrame,
+        thisParam?: Generated,
+    ): Generated {
         const callable = this.nodeMapper.callToCallable(node);
         const parameters = getParameters(callable);
         const optionalParameters = getParameters(callable).filter(Parameter.isOptional);
@@ -1070,7 +1081,7 @@ export class SafeDsPythonGenerator {
             optionalParameters,
             (parameter) => {
                 const argument = parametersToArgument.get(parameter);
-                return expandToNode`"${this.getPythonNameOrDefault(parameter)}": ${this.generateMemoizedArgument(argument, parameter, frame)}`;
+                return expandToNode`"${this.getPythonNameOrDefault(parameter)}": ${this.generateMemoizedArgument(argument, parameter, frame, thisParam)}`;
             },
             {
                 separator: ', ',
@@ -1082,6 +1093,7 @@ export class SafeDsPythonGenerator {
         argument: SdsArgument | undefined,
         parameter: SdsParameter,
         frame: GenerationInfoFrame,
+        thisParam?: Generated | undefined,
     ): Generated {
         const value = argument?.value ?? parameter?.defaultValue;
         if (!value) {
@@ -1089,7 +1101,7 @@ export class SafeDsPythonGenerator {
             throw new Error(`No value passed for required parameter "${parameter.name}".`);
         }
 
-        const result = this.generateExpression(value, frame);
+        const result = this.generateExpression(value, frame, thisParam);
         if (!this.isMemoizedPath(parameter)) {
             return result;
         }
