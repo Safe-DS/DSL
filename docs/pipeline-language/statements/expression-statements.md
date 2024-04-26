@@ -1,12 +1,15 @@
 # Expression Statements
 
-Expression statements are used to evaluate an [expression][expressions] exactly once. The results of this expression are ignored. Therefore, expression statements are only useful if the expression has side effects. The following snippet demonstrates this by [calling][calls] the `#!sds toCsvFile` function that writes a `Table` to a CSV file:
+Expression statements evaluate an [expression][expressions] and discard any results. Therefore, they are only useful if
+the expression has side effects, for example if it writes to a file. The following snippet demonstrates this by
+[calling][calls] the [`toCsvFile`][safeds.data.tabular.containers.Table.toCsvFile] function that writes a
+[`Table`][safeds.data.tabular.containers.Table] to a CSV file:
 
 ```sds
-Table({"demo": [1, 2]}).toCsvFile("demo.csv");
+Table({"ids": [1, 2, 3]}).toCsvFile("example.csv");
 ```
 
-As we can see here, an expression statement has the following syntactic elements:
+An expression statement has the following syntactic elements:
 
 - The [expression][expressions] to evaluate.
 - A semicolon at the end.
