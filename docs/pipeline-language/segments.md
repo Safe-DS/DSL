@@ -202,6 +202,28 @@ In the assignment beginning with `#!sds yield features =` we specify the value o
 
 The order of the [result declarations](#result-declaration) does not need to match the order of assignment. However, **each result must be assigned exactly once**. Note that unlike the `#!sds return` in other programming languages, `#!sds yield` does not stop the execution of the segment, which allows [assignments][assignments] to different results to be split across multiple [statements][statements].
 
+## Yielding Results
+
+In addition to the [declaration of placeholders](#declaring-placeholders), assignments are used to assign a value to a [result of a segment](#yielding-results-of-segments) or declare [results of a block lambda](#declare-results-of-block-lambdas).
+
+### Yielding Results of Segments
+
+The following snippet shows how we can assign a value to a declared [result][results] of a [segment][segments]:
+
+```sds
+segment trulyRandomInt() -> result: Int {
+    yield result = 1;
+}
+```
+
+The assignment here has the following syntactic elements:
+
+- The keyword `#!sds yield`, which indicates that we want to assign to a result.
+- The name of the result, here `#!sds greeting`. This must be identical to one of the names of a declared result in the header of the segment.
+- An `#!sds =` sign.
+- The expression to evaluate (right-hand side).
+- A semicolon at the end.
+
 ## Statements
 
 In order to describe what should be done when the segment is executed, we need to add [statements][statements] to its body. The previous example in the section ["References to Parameters"](#references-to-parameters) already contained a statement - an [expression statement][expression-statements] to be precise. Here is another example, this time showing an [assignment][assignments]:

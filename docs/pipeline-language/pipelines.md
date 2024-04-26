@@ -42,7 +42,6 @@ pipeline whoSurvived {
 Note particularly, that all statements must end with a semicolon. More information about statements can be found in the
 [dedicated document][statements].
 
-
 ## Running a Pipeline in VS Code
 
 Running a pipeline requires a working installation of the [Safe-DS Runner][runner]. Follow the instructions in the
@@ -62,10 +61,11 @@ separate view by clicking on the `Explore <placeholder name>` code lens:
 ![Explore Table](../img/pipeline-language/code-lens-explore-table-dark.png#only-dark)
 ![Explore Table](../img/pipeline-language/code-lens-explore-table-light.png#only-light)
 
-More information about code lenses for value inspection can be found in the [dedicated document][assignments].
+More information about code lenses for value inspection can be found in the [dedicated document][inspecting-placeholders].
 
 
 [assignments]: statements/assignments.md
+[inspecting-placeholders]: statements/assignments.md#inspecting-placeholder-values-in-vs-code
 [installation]: ../getting-started/installation.md
 [runner]: https://github.com/Safe-DS/Runner
 [segments]: segments.md
