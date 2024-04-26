@@ -33,6 +33,7 @@ import {
     isSdsTemplateStringEnd,
     isSdsTemplateStringInner,
     isSdsTemplateStringStart,
+    isSdsThis,
     isSdsTypeCast,
     isSdsUnknown,
     type SdsArgument,
@@ -213,7 +214,7 @@ export class SafeDsPartialEvaluator {
             return new StringConstant(node.value);
         } else if (isSdsTemplateStringEnd(node)) {
             return new StringConstant(node.value);
-        } else if (isSdsUnknown(node)) {
+        } else if (isSdsThis(node) || isSdsUnknown(node)) {
             return UnknownEvaluatedNode;
         } else if (isSdsBlockLambda(node)) {
             return new BlockLambdaClosure(node, substitutions);
