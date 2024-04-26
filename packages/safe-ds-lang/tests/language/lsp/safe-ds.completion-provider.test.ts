@@ -71,6 +71,17 @@ describe('SafeDsCompletionProvider', async () => {
                     shouldEqual: ['static', 'attr', 'class', 'enum', 'fun'],
                 },
             },
+            {
+                testName: 'in pipeline',
+                uri: `file:///test4.sds`,
+                code: `
+                    pipeline myPipeline {
+                        <|>
+                `,
+                expectedLabels: {
+                    shouldNotContain: ['this'],
+                },
+            },
 
             // Cross-references
             {
