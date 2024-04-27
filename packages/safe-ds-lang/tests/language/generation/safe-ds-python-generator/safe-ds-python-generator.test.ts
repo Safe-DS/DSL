@@ -4,6 +4,7 @@ import { createPythonGenerationTests } from './creator.js';
 import { loadDocuments } from '../../../helpers/testResources.js';
 import { stream, URI } from 'langium';
 import { createSafeDsServices } from '../../../../src/language/index.js';
+import { isEmpty } from '../../../../src/helpers/collections.js';
 
 const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const langiumDocuments = services.shared.workspace.LangiumDocuments;
@@ -22,10 +23,10 @@ describe('generation', async () => {
         const documents = await loadDocuments(services, test.inputUris);
 
         // Get target placeholder name for "run until"
-        let runUntilPlaceholderName: string | undefined = undefined;
-        if (test.runUntil) {
-            const document = langiumDocuments.getDocument(URI.parse(test.runUntil.uri))!;
-            runUntilPlaceholderName = document.textDocument.getText(test.runUntil.range);
+        let targetNames: string[] | undefined = undefined;
+        if (test.targets && !isEmpty(test.targets)) {
+            const document = langiumDocuments.getDocument(URI.parse(test.targets[0]!.uri))!;
+            targetNames = test.targets.map((target) => document.textDocument.getText(target.range));
         }
 
         // Generate code for all documents
@@ -34,7 +35,7 @@ describe('generation', async () => {
                 pythonGenerator.generate(document, {
                     destination: test.outputRoot,
                     createSourceMaps: true,
-                    targetPlaceholder: runUntilPlaceholderName,
+                    targetPlaceholders: targetNames,
                     disableRunnerIntegration: test.disableRunnerIntegration,
                 }),
             )

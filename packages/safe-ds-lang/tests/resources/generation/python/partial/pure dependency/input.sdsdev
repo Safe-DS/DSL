@@ -75,7 +75,7 @@ line";
     val listResult = g3(list);
     val listResult2 = g3(list2); // Should not be generated
 
-    // $TEST$ run_until
+    // $TEST$ target
     val »result« = -o + 1 + value1 + mapResult * listResult / g4(listValue);
 
     val lDouble3 = 1.0; // Should not be generated - pure cannot affect result after result is already calculated

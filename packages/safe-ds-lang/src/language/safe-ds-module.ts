@@ -55,6 +55,7 @@ import { SafeDsCodeLensProvider } from './lsp/safe-ds-code-lens-provider.js';
 import { SafeDsExecuteCommandHandler } from './lsp/safe-ds-execute-command-handler.js';
 import { SafeDsServiceRegistry } from './safe-ds-service-registry.js';
 import { SafeDsPythonServer } from './runtime/safe-ds-python-server.js';
+import { SafeDsSlicer } from './flow/safe-ds-slicer.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -77,6 +78,7 @@ export type SafeDsAddedServices = {
     };
     flow: {
         CallGraphComputer: SafeDsCallGraphComputer;
+        Slicer: SafeDsSlicer;
     };
     generation: {
         MarkdownGenerator: SafeDsMarkdownGenerator;
@@ -150,6 +152,7 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
     },
     flow: {
         CallGraphComputer: (services) => new SafeDsCallGraphComputer(services),
+        Slicer: (services) => new SafeDsSlicer(services),
     },
     generation: {
         MarkdownGenerator: (services) => new SafeDsMarkdownGenerator(services),

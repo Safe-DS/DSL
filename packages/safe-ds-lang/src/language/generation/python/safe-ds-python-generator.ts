@@ -70,7 +70,6 @@ import {
     SdsParameter,
     SdsParameterList,
     SdsPipeline,
-    SdsPlaceholder,
     SdsReference,
     SdsSegment,
     SdsStatement,
@@ -100,7 +99,7 @@ import {
 import { SafeDsPartialEvaluator } from '../../partialEvaluation/safe-ds-partial-evaluator.js';
 import { SafeDsServices } from '../../safe-ds-module.js';
 import { SafeDsPurityComputer } from '../../purity/safe-ds-purity-computer.js';
-import { FileRead, ImpurityReason } from '../../purity/model.js';
+import { FileRead } from '../../purity/model.js';
 import { SafeDsTypeComputer } from '../../typing/safe-ds-type-computer.js';
 import { NamedTupleType } from '../../typing/model.js';
 import { getOutermostContainerOfType } from '../../helpers/astUtils.js';
@@ -114,6 +113,7 @@ import {
     UtilityFunction,
 } from './utilityFunctions.js';
 import { CODEGEN_PREFIX } from './constants.js';
+import { SafeDsSlicer } from '../../flow/safe-ds-slicer.js';
 
 const LAMBDA_PREFIX = `${CODEGEN_PREFIX}lambda_`;
 const BLOCK_LAMBDA_RESULT_PREFIX = `${CODEGEN_PREFIX}block_lambda_result_`;
@@ -132,6 +132,7 @@ export class SafeDsPythonGenerator {
     private readonly nodeMapper: SafeDsNodeMapper;
     private readonly partialEvaluator: SafeDsPartialEvaluator;
     private readonly purityComputer: SafeDsPurityComputer;
+    private readonly slicer: SafeDsSlicer;
     private readonly typeComputer: SafeDsTypeComputer;
 
     constructor(services: SafeDsServices) {
@@ -139,6 +140,7 @@ export class SafeDsPythonGenerator {
         this.nodeMapper = services.helpers.NodeMapper;
         this.partialEvaluator = services.evaluation.PartialEvaluator;
         this.purityComputer = services.purity.PurityComputer;
+        this.slicer = services.flow.Slicer;
         this.typeComputer = services.typing.TypeComputer;
     }
 
@@ -412,7 +414,7 @@ export class SafeDsPythonGenerator {
             utilitySet,
             typeVariableSet,
             true,
-            generateOptions.targetPlaceholder,
+            generateOptions.targetPlaceholders,
             generateOptions.disableRunnerIntegration,
         );
         return expandTracedToNode(pipeline)`def ${traceToNode(
@@ -464,10 +466,12 @@ export class SafeDsPythonGenerator {
         frame: GenerationInfoFrame,
         generateLambda: boolean = false,
     ): CompositeGeneratorNode {
-        const targetPlaceholder = getPlaceholderByName(block, frame.targetPlaceholder);
         let statements = getStatements(block).filter((stmt) => this.purityComputer.statementDoesSomething(stmt));
-        if (targetPlaceholder) {
-            statements = this.getStatementsNeededForPartialExecution(targetPlaceholder, statements);
+        if (frame.targetPlaceholders) {
+            const targetPlaceholders = frame.targetPlaceholders.flatMap((it) => getPlaceholderByName(block, it) ?? []);
+            if (!isEmpty(targetPlaceholders)) {
+                statements = this.slicer.computeBackwardSlice(statements, targetPlaceholders);
+            }
         }
         if (statements.length === 0) {
             return traceToNode(block)('pass');
@@ -480,68 +484,6 @@ export class SafeDsPythonGenerator {
             },
         )!;
     }
-
-    private getStatementsNeededForPartialExecution(
-        targetPlaceholder: SdsPlaceholder,
-        statementsWithEffect: SdsStatement[],
-    ): SdsStatement[] {
-        // Find assignment of placeholder, to search used placeholders and impure dependencies
-        const assignment = AstUtils.getContainerOfType(targetPlaceholder, isSdsAssignment);
-        if (!assignment || !assignment.expression) {
-            /* c8 ignore next 2 */
-            throw new Error(`No assignment for placeholder: ${targetPlaceholder.name}`);
-        }
-        // All collected referenced placeholders that are needed for calculating the target placeholder. An expression in the assignment will always exist here
-        const referencedPlaceholders = new Set<SdsPlaceholder>(
-            AstUtils.streamAllContents(assignment.expression!)
-                .filter(isSdsReference)
-                .filter((reference) => isSdsPlaceholder(reference.target.ref))
-                .map((reference) => <SdsPlaceholder>reference.target.ref!)
-                .toArray(),
-        );
-        const impurityReasons = new Set<ImpurityReason>(this.purityComputer.getImpurityReasonsForStatement(assignment));
-        const collectedStatements: SdsStatement[] = [assignment];
-        for (const prevStatement of statementsWithEffect.reverse()) {
-            // Statements after the target assignment can always be skipped
-            if (prevStatement.$containerIndex! >= assignment.$containerIndex!) {
-                continue;
-            }
-            const prevStmtImpurityReasons: ImpurityReason[] =
-                this.purityComputer.getImpurityReasonsForStatement(prevStatement);
-            if (
-                // Placeholder is relevant
-                (isSdsAssignment(prevStatement) &&
-                    getAssignees(prevStatement)
-                        .filter(isSdsPlaceholder)
-                        .some((prevPlaceholder) => referencedPlaceholders.has(prevPlaceholder))) ||
-                // Impurity is relevant
-                prevStmtImpurityReasons.some((pastReason) =>
-                    Array.from(impurityReasons).some((futureReason) =>
-                        pastReason.canAffectFutureImpurityReason(futureReason),
-                    ),
-                )
-            ) {
-                collectedStatements.push(prevStatement);
-                // Collect all referenced placeholders
-                if (isSdsExpressionStatement(prevStatement) || isSdsAssignment(prevStatement)) {
-                    AstUtils.streamAllContents(prevStatement.expression!)
-                        .filter(isSdsReference)
-                        .filter((reference) => isSdsPlaceholder(reference.target.ref))
-                        .map((reference) => <SdsPlaceholder>reference.target.ref!)
-                        .forEach((prevPlaceholder) => {
-                            referencedPlaceholders.add(prevPlaceholder);
-                        });
-                }
-                // Collect impurity reasons
-                prevStmtImpurityReasons.forEach((prevReason) => {
-                    impurityReasons.add(prevReason);
-                });
-            }
-        }
-        // Get all statements in sorted order
-        return collectedStatements.reverse();
-    }
-
     private generateStatement(statement: SdsStatement, frame: GenerationInfoFrame, generateLambda: boolean): Generated {
         const result: Generated[] = [];
 
@@ -1251,7 +1193,7 @@ class GenerationInfoFrame {
     private readonly utilitySet: Set<UtilityFunction>;
     private readonly typeVariableSet: Set<string>;
     public readonly isInsidePipeline: boolean;
-    public readonly targetPlaceholder: string | undefined;
+    public readonly targetPlaceholders: string[] | undefined;
     public readonly disableRunnerIntegration: boolean;
     private extraStatements = new Map<SdsExpression, Generated>();
 
@@ -1260,7 +1202,7 @@ class GenerationInfoFrame {
         utilitySet: Set<UtilityFunction> = new Set<UtilityFunction>(),
         typeVariableSet: Set<string> = new Set<string>(),
         insidePipeline: boolean = false,
-        targetPlaceholder: string | undefined = undefined,
+        targetPlaceholders: string[] | undefined = undefined,
         disableRunnerIntegration: boolean = false,
     ) {
         this.idManager = new IdManager();
@@ -1268,7 +1210,7 @@ class GenerationInfoFrame {
         this.utilitySet = utilitySet;
         this.typeVariableSet = typeVariableSet;
         this.isInsidePipeline = insidePipeline;
-        this.targetPlaceholder = targetPlaceholder;
+        this.targetPlaceholders = targetPlaceholders;
         this.disableRunnerIntegration = disableRunnerIntegration;
     }
 
@@ -1325,6 +1267,6 @@ class GenerationInfoFrame {
 export interface GenerateOptions {
     destination: URI;
     createSourceMaps: boolean;
-    targetPlaceholder: string | undefined;
+    targetPlaceholders: string[] | undefined;
     disableRunnerIntegration: boolean;
 }

@@ -182,7 +182,7 @@ export class SafeDsRunner {
             }),
         ];
 
-        await this.executePipeline(pipelineExecutionId, document, pipeline.name, placeholder.name);
+        await this.executePipeline(pipelineExecutionId, document, pipeline.name, [placeholder.name]);
     }
 
     async showImage(documentUri: string, nodePath: string) {
@@ -252,7 +252,7 @@ export class SafeDsRunner {
             }),
         ];
 
-        await this.executePipeline(pipelineExecutionId, document, pipeline.name, placeholder.name);
+        await this.executePipeline(pipelineExecutionId, document, pipeline.name, [placeholder.name]);
     }
 
     private async getPlaceholderValue(placeholder: string, pipelineExecutionId: string): Promise<any | undefined> {
@@ -322,13 +322,13 @@ export class SafeDsRunner {
      * @param id A unique id that is used in further communication with this pipeline.
      * @param pipelineDocument Document containing the main Safe-DS pipeline to execute.
      * @param pipelineName Name of the pipeline that should be run
-     * @param targetPlaceholder The name of the target placeholder, used to do partial execution. If no value or undefined is provided, the entire pipeline is run.
+     * @param targetPlaceholders The names of the target placeholders, used to do partial execution. If undefined is provided, the entire pipeline is run.
      */
     public async executePipeline(
         id: string,
         pipelineDocument: LangiumDocument,
         pipelineName: string,
-        targetPlaceholder: string | undefined = undefined,
+        targetPlaceholders: string[] | undefined = undefined,
     ) {
         const node = pipelineDocument.parseResult.value;
         if (!isSdsModule(node)) {
@@ -339,7 +339,7 @@ export class SafeDsRunner {
         const mainPackage = mainPythonModuleName === undefined ? node.name.split('.') : [mainPythonModuleName];
         const mainModuleName = this.getMainModuleName(pipelineDocument);
         // Code generation
-        const [codeMap, lastGeneratedSources] = this.generateCodeForRunner(pipelineDocument, targetPlaceholder);
+        const [codeMap, lastGeneratedSources] = this.generateCodeForRunner(pipelineDocument, targetPlaceholders);
         // Store information about the run
         this.executionInformation.set(id, {
             generatedSource: lastGeneratedSources,
@@ -466,13 +466,13 @@ export class SafeDsRunner {
 
     public generateCodeForRunner(
         pipelineDocument: LangiumDocument,
-        targetPlaceholder: string | undefined,
+        targetPlaceholders: string[] | undefined,
     ): [ProgramCodeMap, Map<string, string>] {
         const rootGenerationDir = path.parse(pipelineDocument.uri.fsPath).dir;
         const generatedDocuments = this.generator.generate(pipelineDocument, {
             destination: URI.file(rootGenerationDir), // actual directory of main module file
             createSourceMaps: true,
-            targetPlaceholder,
+            targetPlaceholders,
             disableRunnerIntegration: false,
         });
         const lastGeneratedSources = new Map<string, string>();
