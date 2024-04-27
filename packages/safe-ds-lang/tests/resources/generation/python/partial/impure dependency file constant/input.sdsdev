@@ -19,6 +19,6 @@ pipeline testPipeline {
     val impureFileWrite2B = iFileWriteB();
     val impureFileReadAgainB = iFileReadB();
 
-    // $TEST$ run_until
+    // $TEST$ target
     val »result« = impureFileReadAgain + impureFileReadAgainB;
 }

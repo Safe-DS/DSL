@@ -62,7 +62,7 @@ const createPythonGenerationTest = async (parentDirectory: URI, inputUris: URI[]
             const check = checksResult.value[0]!;
 
             // Partial execution
-            if (check.comment !== 'run_until') {
+            if (check.comment !== 'target') {
                 return invalidTest('FILE', new InvalidCommentError(check.comment, uri));
             }
         }
