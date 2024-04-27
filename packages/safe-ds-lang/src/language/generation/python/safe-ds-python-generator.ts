@@ -414,7 +414,7 @@ export class SafeDsPythonGenerator {
             utilitySet,
             typeVariableSet,
             true,
-            generateOptions.targetPlaceholder,
+            generateOptions.targetPlaceholders,
             generateOptions.disableRunnerIntegration,
         );
         return expandTracedToNode(pipeline)`def ${traceToNode(
@@ -466,10 +466,12 @@ export class SafeDsPythonGenerator {
         frame: GenerationInfoFrame,
         generateLambda: boolean = false,
     ): CompositeGeneratorNode {
-        const targetPlaceholder = getPlaceholderByName(block, frame.targetPlaceholder);
         let statements = getStatements(block).filter((stmt) => this.purityComputer.statementDoesSomething(stmt));
-        if (targetPlaceholder) {
-            statements = this.slicer.computeBackwardSlice(statements, [targetPlaceholder]);
+        if (frame.targetPlaceholders) {
+            const targetPlaceholders = frame.targetPlaceholders.flatMap((it) => getPlaceholderByName(block, it) ?? []);
+            if (!isEmpty(targetPlaceholders)) {
+                statements = this.slicer.computeBackwardSlice(statements, targetPlaceholders);
+            }
         }
         if (statements.length === 0) {
             return traceToNode(block)('pass');
@@ -1191,7 +1193,7 @@ class GenerationInfoFrame {
     private readonly utilitySet: Set<UtilityFunction>;
     private readonly typeVariableSet: Set<string>;
     public readonly isInsidePipeline: boolean;
-    public readonly targetPlaceholder: string | undefined;
+    public readonly targetPlaceholders: string[] | undefined;
     public readonly disableRunnerIntegration: boolean;
     private extraStatements = new Map<SdsExpression, Generated>();
 
@@ -1200,7 +1202,7 @@ class GenerationInfoFrame {
         utilitySet: Set<UtilityFunction> = new Set<UtilityFunction>(),
         typeVariableSet: Set<string> = new Set<string>(),
         insidePipeline: boolean = false,
-        targetPlaceholder: string | undefined = undefined,
+        targetPlaceholders: string[] | undefined = undefined,
         disableRunnerIntegration: boolean = false,
     ) {
         this.idManager = new IdManager();
@@ -1208,7 +1210,7 @@ class GenerationInfoFrame {
         this.utilitySet = utilitySet;
         this.typeVariableSet = typeVariableSet;
         this.isInsidePipeline = insidePipeline;
-        this.targetPlaceholder = targetPlaceholder;
+        this.targetPlaceholders = targetPlaceholders;
         this.disableRunnerIntegration = disableRunnerIntegration;
     }
 
@@ -1265,6 +1267,6 @@ class GenerationInfoFrame {
 export interface GenerateOptions {
     destination: URI;
     createSourceMaps: boolean;
-    targetPlaceholder: string | undefined;
+    targetPlaceholders: string[] | undefined;
     disableRunnerIntegration: boolean;
 }

@@ -472,7 +472,7 @@ export class SafeDsRunner {
         const generatedDocuments = this.generator.generate(pipelineDocument, {
             destination: URI.file(rootGenerationDir), // actual directory of main module file
             createSourceMaps: true,
-            targetPlaceholder,
+            targetPlaceholders: targetPlaceholder ? [targetPlaceholder] : undefined,
             disableRunnerIntegration: false,
         });
         const lastGeneratedSources = new Map<string, string>();

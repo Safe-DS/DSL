@@ -10,9 +10,9 @@ import { findTestChecks } from '../../../helpers/testChecks.js';
 import { Location } from 'vscode-languageserver';
 import { NodeFileSystem } from 'langium/node';
 import { TestDescription, TestDescriptionError } from '../../../helpers/testDescription.js';
-import { locationToString } from '../../../../src/helpers/locations.js';
 import { URI } from 'langium';
-import { createSafeDsServices } from '../../../../src/language/index.js';
+import { createSafeDsServices, locationToString } from '../../../../src/language/index.js';
+import { isEmpty } from '../../../../src/helpers/collections.js';
 
 const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const langiumDocuments = services.shared.workspace.LangiumDocuments;
@@ -30,7 +30,7 @@ export const createPythonGenerationTests = async (): Promise<PythonGenerationTes
 const createPythonGenerationTest = async (parentDirectory: URI, inputUris: URI[]): Promise<PythonGenerationTest> => {
     const outputRoot = URI.file(path.join(parentDirectory.fsPath, 'generated'));
     const expectedOutputUris = listExpectedOutputFiles(outputRoot);
-    let runUntil: Location | undefined;
+    let targets: Location[] | undefined;
 
     // Load all files, so they get linked
     await loadDocuments(services, inputUris, { validation: true });
@@ -67,13 +67,17 @@ const createPythonGenerationTest = async (parentDirectory: URI, inputUris: URI[]
             }
         }
 
-        // Must not contain multiple run_until locations in various files
-        const newRunUntil = checksResult.value[0]?.location;
-        if (runUntil && newRunUntil) {
-            return invalidTest('SUITE', new MultipleRunUntilLocationsError([runUntil, newRunUntil], parentDirectory));
+        // Add target
+        const newTarget = checksResult.value[0]?.location;
+        if (!newTarget) {
+            // Do nothing
+        } else if (!targets || isEmpty(targets)) {
+            targets = [newTarget];
+        } else if (newTarget.uri !== targets[0]!.uri) {
+            return invalidTest('FILE', new MultipleTargetFilesError([targets[0]!, newTarget], uri));
+        } else {
+            targets.push(newTarget);
         }
-
-        runUntil = newRunUntil;
     }
 
     const shortenedResourceName = uriToShortenedTestResourceName(parentDirectory, rootResourceName);
@@ -82,7 +86,7 @@ const createPythonGenerationTest = async (parentDirectory: URI, inputUris: URI[]
         inputUris,
         outputRoot,
         expectedOutputUris,
-        runUntil,
+        targets,
         disableRunnerIntegration: !shortenedResourceName.startsWith(runnerIntegration),
     };
 };
@@ -135,9 +139,9 @@ interface PythonGenerationTest extends TestDescription {
     expectedOutputUris: URI[];
 
     /**
-     * Location after which execution should be stopped.
+     * Target placeholders that should be calculated.
      */
-    runUntil?: Location;
+    targets?: Location[];
 
     /**
      * Whether the test should run with runner integration (memoization & placeholder saving) disabled.
@@ -165,19 +169,19 @@ class InvalidCommentError extends TestDescriptionError {
         readonly comment: string,
         uri: URI,
     ) {
-        super(`Invalid test comment (valid values 'run_until'): ${comment}`, uri);
+        super(`Invalid test comment (valid values 'target'): ${comment}`, uri);
     }
 }
 
 /**
- * Multiple files have a run_until locations.
+ * Multiple files have a targets.
  */
-class MultipleRunUntilLocationsError extends TestDescriptionError {
+class MultipleTargetFilesError extends TestDescriptionError {
     constructor(
         readonly locations: Location[],
         uri: URI,
     ) {
         const locationsString = locations.map((it) => `\n    - ${locationToString(it)}`).join('');
-        super(`Found multiple run_until locations:${locationsString}`, uri);
+        super(`Found multiple files with targets:${locationsString}`, uri);
     }
 }
