@@ -116,6 +116,7 @@ import { CODEGEN_PREFIX } from './constants.js';
 
 const LAMBDA_PREFIX = `${CODEGEN_PREFIX}lambda_`;
 const BLOCK_LAMBDA_RESULT_PREFIX = `${CODEGEN_PREFIX}block_lambda_result_`;
+const RECEIVER_PREFIX = `${CODEGEN_PREFIX}receiver_`;
 const YIELD_PREFIX = `${CODEGEN_PREFIX}yield_`;
 
 const RUNNER_PACKAGE = 'safeds_runner';
@@ -756,11 +757,11 @@ export class SafeDsPythonGenerator {
                     }
                 }
                 if (!call && this.isMemoizableCall(expression) && !frame.disableRunnerIntegration) {
-                    let newThisParam: Generated | undefined = undefined;
+                    let newReceiver: SdsExpression | undefined = undefined;
                     if (isSdsMemberAccess(expression.receiver)) {
-                        newThisParam = this.generateExpression(expression.receiver.receiver, frame);
+                        newReceiver = expression.receiver.receiver;
                     }
-                    call = this.generateMemoizedCall(expression, frame, newThisParam);
+                    call = this.generateMemoizedCall(expression, frame, newReceiver);
                 }
             }
 
@@ -987,12 +988,12 @@ export class SafeDsPythonGenerator {
     private generateMemoizedCall(
         expression: SdsCall,
         frame: GenerationInfoFrame,
-        thisParam: Generated | undefined = undefined,
+        receiver: SdsExpression | undefined,
     ): Generated {
         const callable = this.nodeMapper.callToCallable(expression);
 
         if (isSdsFunction(callable) && !isStatic(callable) && isSdsMemberAccess(expression.receiver)) {
-            return this.generateMemoizedDynamicCall(expression, callable, thisParam, frame);
+            return this.generateMemoizedDynamicCall(expression, callable, receiver, frame);
         } else {
             return this.generateMemoizedStaticCall(expression, callable, frame);
         }
@@ -1001,12 +1002,13 @@ export class SafeDsPythonGenerator {
     private generateMemoizedDynamicCall(
         expression: SdsCall,
         callable: SdsFunction,
-        thisParam: Generated,
+        receiver: SdsExpression,
         frame: GenerationInfoFrame,
     ) {
         frame.addImport({ importPath: RUNNER_PACKAGE });
 
         const hiddenParameters = this.getMemoizedCallHiddenParameters(expression, frame);
+        const thisParam = frame.getUniqueReceiverName(receiver);
 
         return expandTracedToNode(expression)`
             ${MEMOIZED_DYNAMIC_CALL}(
@@ -1264,7 +1266,7 @@ interface ImportData {
 }
 
 class GenerationInfoFrame {
-    private readonly lambdaManager: IdManager<SdsLambda>;
+    private readonly idManager: IdManager<SdsExpression>;
     private readonly importSet: Map<String, ImportData>;
     private readonly utilitySet: Set<UtilityFunction>;
     private readonly typeVariableSet: Set<string>;
@@ -1280,7 +1282,7 @@ class GenerationInfoFrame {
         targetPlaceholder: string | undefined = undefined,
         disableRunnerIntegration: boolean = false,
     ) {
-        this.lambdaManager = new IdManager();
+        this.idManager = new IdManager();
         this.importSet = importSet;
         this.utilitySet = utilitySet;
         this.typeVariableSet = typeVariableSet;
@@ -1317,7 +1319,11 @@ class GenerationInfoFrame {
     }
 
     getUniqueLambdaName(lambda: SdsLambda): string {
-        return `${LAMBDA_PREFIX}${this.lambdaManager.assignId(lambda)}`;
+        return `${LAMBDA_PREFIX}${this.idManager.assignId(lambda)}`;
+    }
+
+    getUniqueReceiverName(receiver: SdsExpression): string {
+        return `${RECEIVER_PREFIX}${this.idManager.assignId(receiver)}`;
     }
 }
 
