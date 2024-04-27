@@ -41,7 +41,7 @@ pipeline example {
          * }
          */
         @Pure
-        @PythonMacro("$this.__contains__($substring)")
+        @PythonMacro("$substring in $this")
         fun contains(substring: String) -> contains: Boolean
 
         /**
@@ -298,7 +298,7 @@ pipeline example {
 
     ```sds linenums="243"
     @Pure
-    @PythonMacro("$this.__contains__($substring)")
+    @PythonMacro("$substring in $this")
     fun contains(substring: String) -> contains: Boolean
     ```
 

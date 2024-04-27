@@ -913,7 +913,7 @@ export class SafeDsPythonGenerator {
         }
         const splitRegex = /(\$[_a-zA-Z][_a-zA-Z0-9]*)/gu;
         const splitPythonMacroDefinition = pythonCall.split(splitRegex);
-        return joinTracedToNode(expression)(
+        return expandToNode`(${joinTracedToNode(expression)(
             splitPythonMacroDefinition,
             (part) => {
                 if (splitRegex.test(part)) {
@@ -923,7 +923,7 @@ export class SafeDsPythonGenerator {
                 }
             },
             { separator: '' },
-        )!;
+        )!})`;
     }
 
     private isMemoizableCall(expression: SdsCall): boolean {

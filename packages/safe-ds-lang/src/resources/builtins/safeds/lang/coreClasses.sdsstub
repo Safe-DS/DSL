@@ -241,7 +241,7 @@ class String {
      * }
      */
     @Pure
-    @PythonMacro("$this.__contains__($substring)")
+    @PythonMacro("$substring in $this")
     fun contains(substring: String) -> contains: Boolean
 
     /**
