@@ -13,7 +13,7 @@ The common superclass of all classes.
     class Any {
 
         /**
-         * Returns a string representation of the object.
+         * Return a string representation of the object.
          *
          * @example
          * pipeline example {
@@ -21,20 +21,20 @@ The common superclass of all classes.
          * }
          */
         @Pure
-        @PythonCall("str($this)")
-        fun toString() -> s: String
+        @PythonMacro("str($this)")
+        fun toString() -> string: String
     }
     ```
 
 ## `#!sds fun` toString {#safeds.lang.Any.toString data-toc-label='toString'}
 
-Returns a string representation of the object.
+Return a string representation of the object.
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `s` | [`String`][safeds.lang.String] | - |
+| `string` | [`String`][safeds.lang.String] | - |
 
 **Examples:**
 
@@ -48,6 +48,6 @@ pipeline example {
 
     ```sds linenums="16"
     @Pure
-    @PythonCall("str($this)")
-    fun toString() -> s: String
+    @PythonMacro("str($this)")
+    fun toString() -> string: String
     ```

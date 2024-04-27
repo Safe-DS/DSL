@@ -23,7 +23,7 @@ def test():
     f(__gen_null_safe_member_access(factory(), 'a'))
     f(__gen_null_safe_member_access(factory(), 'c'))
     __gen_receiver_0 = C()
-    f(1.i(__gen_receiver_0))
+    f(((1).i((__gen_receiver_0))))
     f(C().j(123))
     f(C().k2('abc'))
     f(C.from_csv_file('abc.csv'))

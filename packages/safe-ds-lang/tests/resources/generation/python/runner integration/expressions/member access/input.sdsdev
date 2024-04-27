@@ -11,7 +11,7 @@ class C() {
     @PythonName("c") attr b: Int
 
     @Pure
-    @PythonCall("$param.i($this)")
+    @PythonMacro("$param.i($this)")
     fun i(param: Any?) -> result: Boolean
 
     @Pure
@@ -21,7 +21,7 @@ class C() {
     @PythonName("k2") fun k(param: Any?) -> result: Boolean
 
     @Pure
-    @PythonCall("$param.i()")
+    @PythonMacro("$param.i()")
     static fun l(param: Any?) -> result: Boolean
 
     @Pure

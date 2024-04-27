@@ -5,5 +5,5 @@ from tests.generator.partialRedundantImpurity import noPartialEvalInt
 # Pipelines --------------------------------------------------------------------
 
 def testPipeline():
-    pureValue = noPartialEvalInt(2)
-    result = (pureValue) - (1)
+    __gen_pureValue = noPartialEvalInt(2)
+    __gen_result = (__gen_pureValue) - (1)

@@ -21,7 +21,7 @@ The name of the corresponding API element in Python. By default, this is the nam
 
 ??? quote "Stub code in `codeGeneration.sdsstub`"
 
-    ```sds linenums="39"
+    ```sds linenums="38"
     annotation PythonName(
         name: String
     )

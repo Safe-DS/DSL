@@ -5,4 +5,4 @@ from tests.generator.assignment.rhsIsClassCall import MyClass1
 # Pipelines --------------------------------------------------------------------
 
 def testPipeline():
-    a = MyClass1()
+    __gen_a = MyClass1()
