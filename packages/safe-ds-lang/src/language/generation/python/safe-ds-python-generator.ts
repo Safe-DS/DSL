@@ -746,8 +746,7 @@ export class SafeDsPythonGenerator {
                         if (isSdsMemberAccess(expression.receiver)) {
                             newReceiver = expression.receiver.receiver;
                         }
-                        const argumentsMap = this.getArgumentsMap(getArguments(expression), frame);
-                        call = this.generatePythonMacro(expression, pythonCall, argumentsMap, frame, newReceiver);
+                        call = this.generatePythonMacro(expression, pythonCall, frame, newReceiver);
                     }
                 }
                 if (!call && this.isMemoizableCall(expression) && !frame.disableRunnerIntegration) {
@@ -897,10 +896,10 @@ export class SafeDsPythonGenerator {
     private generatePythonMacro(
         expression: SdsCall,
         pythonCall: string,
-        argumentsMap: Map<string, Generated>,
         frame: GenerationInfoFrame,
         receiver: SdsExpression | undefined,
     ): Generated {
+        const argumentsMap = this.getArgumentsMap(getArguments(expression), frame);
         let thisParam: Generated | undefined = undefined;
 
         if (receiver) {
