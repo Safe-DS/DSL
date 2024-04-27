@@ -925,36 +925,8 @@ export class SafeDsPythonGenerator {
             },
             { separator: '' },
         )!;
-        // Non-memoizable calls can be directly generated
-        if (!this.isMemoizableCall(expression) || frame.disableRunnerIntegration) {
-            return generatedPythonMacro;
-        }
-        frame.addImport({ importPath: RUNNER_PACKAGE });
-        const callable = this.nodeMapper.callToCallable(expression);
-        const fullyQualifiedTargetName = this.generateFullyQualifiedFunctionName(expression);
-        const hiddenParameters = this.getMemoizedCallHiddenParameters(expression, frame);
 
-        if (isSdsFunction(callable) && !isStatic(callable) && isSdsMemberAccess(expression.receiver) && thisParam) {
-            return expandTracedToNode(expression)`
-                ${MEMOIZED_STATIC_CALL}(
-                    "${fullyQualifiedTargetName}",
-                    lambda *_ : ${generatedPythonMacro},
-                    [${thisParam}, ${this.generateMemoizedPositionalArgumentList(expression, frame)}],
-                    {${this.generateMemoizedKeywordArgumentList(expression, frame)}},
-                    [${joinToNode(hiddenParameters, (param) => param, { separator: ', ' })}]
-                )
-            `;
-        }
-
-        return expandTracedToNode(expression)`
-            ${MEMOIZED_STATIC_CALL}(
-                "${fullyQualifiedTargetName}",
-                lambda *_ : ${generatedPythonMacro},
-                [${this.generateMemoizedPositionalArgumentList(expression, frame)}],
-                {${this.generateMemoizedKeywordArgumentList(expression, frame)}},
-                [${joinToNode(hiddenParameters, (param) => param, { separator: ', ' })}]
-            )
-        `;
+        return generatedPythonMacro;
     }
 
     private isMemoizableCall(expression: SdsCall): boolean {
