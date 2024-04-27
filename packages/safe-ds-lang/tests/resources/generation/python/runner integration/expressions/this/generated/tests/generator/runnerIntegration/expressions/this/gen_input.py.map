@@ -1,1 +1,1 @@
-{"version":3,"sources":["input.sdsdev"],"names":["mypipeline","myclass"],"mappings":"AAAA;;;;;;;AAOA,IAASA,UAAU;IACf,IAAQ;QAAA;;YAAAC,OAAO;;;;;;;cAAP;;YAAAA,OAAO;;;;;;;IAAf","file":"gen_input.py"}
+{"version":3,"sources":["input.sdsdev"],"names":["mypipeline","myclass"],"mappings":"AAAA;;;;;;;AAOA,IAASA,UAAU;IACP,mBAAA;;QAAAC,OAAO;;;;;IAAf,IAAQ;;;;;;;IAAR","file":"gen_input.py"}

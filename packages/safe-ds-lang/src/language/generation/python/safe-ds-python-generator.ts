@@ -1003,6 +1003,10 @@ export class SafeDsPythonGenerator {
 
         const hiddenParameters = this.getMemoizedCallHiddenParameters(expression, frame);
         const thisParam = frame.getUniqueReceiverName(receiver);
+        const extraStatement = expandTracedToNode(receiver)`
+            ${thisParam} = ${this.generateExpression(receiver, frame)}
+        `;
+        frame.addExtraStatement(receiver, extraStatement);
 
         return expandTracedToNode(expression)`
             ${MEMOIZED_DYNAMIC_CALL}(
