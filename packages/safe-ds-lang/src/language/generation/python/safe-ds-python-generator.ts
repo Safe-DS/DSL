@@ -913,19 +913,17 @@ export class SafeDsPythonGenerator {
         }
         const splitRegex = /(\$[_a-zA-Z][_a-zA-Z0-9]*)/gu;
         const splitPythonMacroDefinition = pythonCall.split(splitRegex);
-        const generatedPythonMacro = joinTracedToNode(expression)(
+        return joinTracedToNode(expression)(
             splitPythonMacroDefinition,
             (part) => {
                 if (splitRegex.test(part)) {
-                    return argumentsMap.get(part.substring(1))!;
+                    return `(${argumentsMap.get(part.substring(1))!})`;
                 } else {
                     return part;
                 }
             },
             { separator: '' },
         )!;
-
-        return generatedPythonMacro;
     }
 
     private isMemoizableCall(expression: SdsCall): boolean {
