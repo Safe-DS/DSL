@@ -1158,7 +1158,7 @@ export class SafeDsPythonGenerator {
     private getArgumentsMap(argumentList: SdsArgument[], frame: GenerationInfoFrame): Map<string, Generated> {
         const argumentsMap = new Map<string, Generated>();
         argumentList.reduce((map, value) => {
-            map.set(this.nodeMapper.argumentToParameter(value)?.name!, this.generateArgument(value, frame));
+            map.set(this.nodeMapper.argumentToParameter(value)?.name!, this.generateArgument(value, frame, false));
             return map;
         }, argumentsMap);
         return argumentsMap;
