@@ -7,7 +7,7 @@ class MyClass {
 
     // $TEST$ no error r"The template expressions? .* cannot be interpreted."
     @»PythonCall«("myMethod2($this)")
-    fun myMethod2(this: Int)
+    fun myMethod2(`this`: Int)
 
     // $TEST$ no error "The template expression '$this' cannot be interpreted."
     @»PythonCall«("myMethod3($this)")
@@ -24,7 +24,7 @@ fun myFunction1(param: Int)
 
 // $TEST$ no error r"The template expressions? .* cannot be interpreted."
 @»PythonCall«("myFunction2($this)")
-fun myFunction2(this: Int)
+fun myFunction2(`this`: Int)
 
 // $TEST$ error "The template expression '$this' cannot be interpreted."
 @»PythonCall«("myFunction3($this)")

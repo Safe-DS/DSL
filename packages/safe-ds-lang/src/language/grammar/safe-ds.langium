@@ -757,6 +757,7 @@ SdsPrimaryExpression returns SdsExpression:
   | SdsParenthesizedExpression
   | SdsReference
   | SdsTemplateString
+  | SdsThis
 ;
 
 interface SdsLiteral extends SdsExpression {}
@@ -894,6 +895,12 @@ interface SdsTemplateStringEnd extends SdsTemplateStringPart {}
 SdsTemplateStringEnd returns SdsExpression:
     {SdsTemplateStringEnd}
     value=TEMPLATE_STRING_END
+;
+
+interface SdsThis extends SdsExpression {}
+
+SdsThis returns SdsThis:
+    {SdsThis} 'this'
 ;
 
 

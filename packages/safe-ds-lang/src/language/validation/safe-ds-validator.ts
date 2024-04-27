@@ -188,6 +188,7 @@ import { unknownMustOnlyBeUsedAsDefaultValueOfStub } from './other/expressions/l
 import { tagsShouldNotHaveDuplicateEntries } from './builtins/tags.js';
 import { moduleMemberShouldBeUsed } from './other/declarations/moduleMembers.js';
 import { pipelinesMustBePrivate } from './other/declarations/pipelines.js';
+import { thisMustReferToClassInstance } from './other/expressions/this.js';
 
 /**
  * Register custom validation checks.
@@ -369,6 +370,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         ],
         SdsStatement: [statementMustDoSomething(services)],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
+        SdsThis: [thisMustReferToClassInstance(services)],
         SdsTypeCast: [typeCastMustNotAlwaysFail(services)],
         SdsTypeParameter: [
             typeParameterDefaultValueMustMatchUpperBound(services),
