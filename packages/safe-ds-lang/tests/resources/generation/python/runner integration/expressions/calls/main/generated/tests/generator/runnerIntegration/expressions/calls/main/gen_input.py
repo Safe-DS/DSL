@@ -57,9 +57,9 @@ def test():
         {"param_2": 0},
         []
     ))
-    'abc'.i()
-    'abc'.j(123)
-    k(456, 1.23)
+    ('abc').i()
+    ('abc').j((123))
+    k((456), (1.23))
     __gen_null_safe_call(f, lambda: f(safeds_runner.memoized_static_call(
         "tests.generator.runnerIntegration.expressions.calls.main.g",
         g,
@@ -95,9 +95,9 @@ def test():
         {"param_2": 0},
         []
     )))
-    __gen_null_safe_call(i, lambda: 'abc'.i())
-    __gen_null_safe_call(j, lambda: 'abc'.j(123))
-    __gen_null_safe_call(k, lambda: k(456, 1.23))
+    __gen_null_safe_call(i, lambda: ('abc').i())
+    __gen_null_safe_call(j, lambda: ('abc').j((123)))
+    __gen_null_safe_call(k, lambda: k((456), (1.23)))
     f(safeds_runner.memoized_static_call(
         "tests.generator.runnerIntegration.expressions.calls.main.readFile",
         readFile,

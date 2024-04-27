@@ -74,7 +74,7 @@ def test():
         {},
         []
     )
-    f(1.i(__gen_receiver_0))
+    f((1).i((__gen_receiver_0)))
     __gen_c1 = safeds_runner.memoized_static_call(
         "tests.generator.memberAccessWithRunnerIntegration.C",
         C,
@@ -84,7 +84,7 @@ def test():
     )
     safeds_runner.save_placeholder('c1', __gen_c1)
     __gen_receiver_1 = __gen_c1
-    f(1.i(__gen_receiver_1))
+    f((1).i((__gen_receiver_1)))
     __gen_receiver_2 = safeds_runner.memoized_static_call(
         "tests.generator.memberAccessWithRunnerIntegration.C",
         C,
@@ -114,7 +114,7 @@ def test():
         []
     ))
     __gen_receiver_4 = C
-    f(2.i())
+    f((2).i())
     __gen_receiver_5 = safeds_runner.memoized_static_call(
         "tests.generator.memberAccessWithRunnerIntegration.C",
         C,

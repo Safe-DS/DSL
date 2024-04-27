@@ -917,7 +917,7 @@ export class SafeDsPythonGenerator {
             splitPythonMacroDefinition,
             (part) => {
                 if (splitRegex.test(part)) {
-                    return `(${argumentsMap.get(part.substring(1))!})`;
+                    return expandToNode`(${argumentsMap.get(part.substring(1))!})`;
                 } else {
                     return part;
                 }
