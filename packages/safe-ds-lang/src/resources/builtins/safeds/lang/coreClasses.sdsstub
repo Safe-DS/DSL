@@ -381,7 +381,7 @@ class String {
 
     /**
      * Normalize the casing of a string to make it suitable for case-insensitive matching. This is essentially a more
-     * aggressive form of lowercasing. For example, the German lowercase letter 'ß' gets converted to "ss".
+     * aggressive form of lowercasing. For example, the German lowercase letter "ß" gets converted to "ss".
      *
      * Casefolding is described in section 3.13 of the [Unicode Standard](https://www.unicode.org/versions/latest/).
      *

@@ -4,7 +4,7 @@ A reason why a function is impure.
 
 ??? quote "Stub code in `purity.sdsstub`"
 
-    ```sds linenums="27"
+    ```sds linenums="28"
     enum ImpurityReason {
 
         /**

@@ -23,7 +23,7 @@ pipeline example {
     class Int sub Number {
 
         /**
-         * Converts this integer to a floating-point number.
+         * Convert this integer to a floating-point number.
          *
          * @example
          * pipeline example {
@@ -31,20 +31,20 @@ pipeline example {
          * }
          */
         @Pure
-        @PythonCall("float($this)")
-        fun toFloat() -> f: Float
+        @PythonMacro("float($this)")
+        fun toFloat() -> float: Float
     }
     ```
 
 ## `#!sds fun` toFloat {#safeds.lang.Int.toFloat data-toc-label='toFloat'}
 
-Converts this integer to a floating-point number.
+Convert this integer to a floating-point number.
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `f` | [`Float`][safeds.lang.Float] | - |
+| `float` | [`Float`][safeds.lang.Float] | - |
 
 **Examples:**
 
@@ -58,6 +58,6 @@ pipeline example {
 
     ```sds linenums="64"
     @Pure
-    @PythonCall("float($this)")
-    fun toFloat() -> f: Float
+    @PythonMacro("float($this)")
+    fun toFloat() -> float: Float
     ```

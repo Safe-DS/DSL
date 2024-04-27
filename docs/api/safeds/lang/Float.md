@@ -21,8 +21,9 @@ pipeline example {
 
     ```sds linenums="77"
     class Float sub Number {
+
         /**
-         * Converts this floating-point number to an integer by truncating the fractional part.
+         * Convert this floating-point number to an integer by truncating the fractional part.
          *
          * @example
          * pipeline example {
@@ -30,20 +31,20 @@ pipeline example {
          * }
          */
         @Pure
-        @PythonCall("int($this)")
-        fun toInt() -> i: Int
+        @PythonMacro("int($this)")
+        fun toInt() -> int: Int
     }
     ```
 
 ## `#!sds fun` toInt {#safeds.lang.Float.toInt data-toc-label='toInt'}
 
-Converts this floating-point number to an integer by truncating the fractional part.
+Convert this floating-point number to an integer by truncating the fractional part.
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `i` | [`Int`][safeds.lang.Int] | - |
+| `int` | [`Int`][safeds.lang.Int] | - |
 
 **Examples:**
 
@@ -55,8 +56,8 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="86"
+    ```sds linenums="87"
     @Pure
-    @PythonCall("int($this)")
-    fun toInt() -> i: Int
+    @PythonMacro("int($this)")
+    fun toInt() -> int: Int
     ```

@@ -28,11 +28,11 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="126"
+    ```sds linenums="159"
     class Map<K, out V> {
 
         /**
-         * Returns the number of entries in the map.
+         * Return the number of entries in the map.
          *
          * @example
          * pipeline example {
@@ -45,11 +45,11 @@ pipeline example {
          * }
          */
         @Pure
-        @PythonCall("len($this)")
+        @PythonMacro("len($this)")
         fun size() -> size: Int
 
         /**
-         * Returns the keys of the map.
+         * Return the keys of the map.
          *
          * @example
          * pipeline example {
@@ -62,11 +62,11 @@ pipeline example {
          * }
          */
         @Pure
-        @PythonCall("list($this.keys())")
+        @PythonMacro("list($this.keys())")
         fun keys() -> keys: List<K>
 
         /**
-         * Returns the values of the map.
+         * Return the values of the map.
          *
          * @example
          * pipeline example {
@@ -79,14 +79,14 @@ pipeline example {
          * }
          */
         @Pure
-        @PythonCall("list($this.values())")
+        @PythonMacro("list($this.values())")
         fun values() -> values: List<V>
     }
     ```
 
 ## `#!sds fun` keys {#safeds.lang.Map.keys data-toc-label='keys'}
 
-Returns the keys of the map.
+Return the keys of the map.
 
 **Results:**
 
@@ -109,15 +109,15 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="158"
+    ```sds linenums="191"
     @Pure
-    @PythonCall("list($this.keys())")
+    @PythonMacro("list($this.keys())")
     fun keys() -> keys: List<K>
     ```
 
 ## `#!sds fun` size {#safeds.lang.Map.size data-toc-label='size'}
 
-Returns the number of entries in the map.
+Return the number of entries in the map.
 
 **Results:**
 
@@ -140,15 +140,15 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="141"
+    ```sds linenums="174"
     @Pure
-    @PythonCall("len($this)")
+    @PythonMacro("len($this)")
     fun size() -> size: Int
     ```
 
 ## `#!sds fun` values {#safeds.lang.Map.values data-toc-label='values'}
 
-Returns the values of the map.
+Return the values of the map.
 
 **Results:**
 
@@ -171,8 +171,8 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="175"
+    ```sds linenums="208"
     @Pure
-    @PythonCall("list($this.values())")
+    @PythonMacro("list($this.values())")
     fun values() -> values: List<V>
     ```

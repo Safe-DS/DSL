@@ -46,7 +46,7 @@ search:
         - [Nothing](safeds/lang/Nothing.md)
         - [Number](safeds/lang/Number.md)
         - [Pure](safeds/lang/Pure.md)
-        - [PythonCall](safeds/lang/PythonCall.md)
+        - [PythonMacro](safeds/lang/PythonMacro.md)
         - [PythonModule](safeds/lang/PythonModule.md)
         - [PythonName](safeds/lang/PythonName.md)
         - [Repeatable](safeds/lang/Repeatable.md)
