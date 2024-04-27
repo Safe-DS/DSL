@@ -27,6 +27,7 @@ import {
     isSdsClass,
     isSdsDeclaration,
     isSdsEnumVariant,
+    isSdsExpression,
     isSdsExpressionLambda,
     isSdsExpressionStatement,
     isSdsFunction,
@@ -543,35 +544,21 @@ export class SafeDsPythonGenerator {
 
     private generateStatement(statement: SdsStatement, frame: GenerationInfoFrame, generateLambda: boolean): Generated {
         const result: Generated[] = [];
+
         if (isSdsAssignment(statement)) {
-            if (statement.expression) {
-                for (const node of AstUtils.streamAllContents(statement.expression)) {
-                    if (isSdsBlockLambda(node)) {
-                        result.push(this.generateBlockLambda(node, frame));
-                    } else if (isSdsExpressionLambda(node)) {
-                        result.push(this.generateExpressionLambda(node, frame));
-                    }
-                }
-            }
-            result.push(this.generateAssignment(statement, frame, generateLambda));
-            return joinTracedToNode(statement)(result, (stmt) => stmt, {
-                separator: NL,
-            })!;
+            const assignment = this.generateAssignment(statement, frame, generateLambda);
+            result.push(...frame.getExtraStatements(), assignment);
         } else if (isSdsExpressionStatement(statement)) {
-            for (const node of AstUtils.streamAllContents(statement.expression)) {
-                if (isSdsBlockLambda(node)) {
-                    result.push(this.generateBlockLambda(node, frame));
-                } else if (isSdsExpressionLambda(node)) {
-                    result.push(this.generateExpressionLambda(node, frame));
-                }
-            }
-            result.push(this.generateExpression(statement.expression, frame));
-            return joinTracedToNode(statement)(result, (stmt) => stmt, {
-                separator: NL,
-            })!;
-        }
-        /* c8 ignore next 2 */
-        throw new Error(`Unknown SdsStatement: ${statement}`);
+            const expressionStatement = this.generateExpression(statement.expression, frame);
+            result.push(...frame.getExtraStatements(), expressionStatement);
+        } /* c8 ignore start */ else {
+            throw new Error(`Unknown statement: ${statement}`);
+        } /* c8 ignore stop */
+
+        frame.resetExtraStatements();
+        return joinTracedToNode(statement)(result, {
+            separator: NL,
+        });
     }
 
     private generateAssignment(
@@ -658,7 +645,8 @@ export class SafeDsPythonGenerator {
                 )}`,
             );
         }
-        return expandTracedToNode(blockLambda)`def ${frame.getUniqueLambdaName(
+
+        const extraStatement = expandTracedToNode(blockLambda)`def ${frame.getUniqueLambdaName(
             blockLambda,
         )}(${this.generateParameters(blockLambda.parameterList, frame)}):`
             .appendNewLine()
@@ -666,6 +654,9 @@ export class SafeDsPythonGenerator {
                 indentedChildren: [lambdaBlock],
                 indentation: PYTHON_INDENT,
             });
+        frame.addExtraStatement(blockLambda, extraStatement);
+
+        return traceToNode(blockLambda)(frame.getUniqueLambdaName(blockLambda));
     }
 
     private generateExpressionLambda(node: SdsExpressionLambda, frame: GenerationInfoFrame): Generated {
@@ -673,10 +664,13 @@ export class SafeDsPythonGenerator {
         const parameters = this.generateParameters(node.parameterList, frame);
         const result = this.generateExpression(node.result, frame);
 
-        return expandTracedToNode(node)`
+        const extraStatement = expandTracedToNode(node)`
             def ${name}(${parameters}):
                 return ${result}
         `;
+        frame.addExtraStatement(node, extraStatement);
+
+        return traceToNode(node)(name);
     }
 
     private generateExpression(
@@ -737,7 +731,7 @@ export class SafeDsPythonGenerator {
                 { separator: ', ' },
             )}]`;
         } else if (isSdsBlockLambda(expression)) {
-            return traceToNode(expression)(frame.getUniqueLambdaName(expression));
+            return this.generateBlockLambda(expression, frame);
         } else if (isSdsCall(expression)) {
             const callable = this.nodeMapper.callToCallable(expression);
             const receiver = this.generateExpression(expression.receiver, frame);
@@ -779,7 +773,7 @@ export class SafeDsPythonGenerator {
                 return call;
             }
         } else if (isSdsExpressionLambda(expression)) {
-            return traceToNode(expression)(frame.getUniqueLambdaName(expression));
+            return this.generateExpressionLambda(expression, frame);
         } else if (isSdsInfixOperation(expression)) {
             const leftOperand = this.generateExpression(expression.leftOperand, frame);
             const rightOperand = this.generateExpression(expression.rightOperand, frame);
@@ -992,7 +986,7 @@ export class SafeDsPythonGenerator {
     ): Generated {
         const callable = this.nodeMapper.callToCallable(expression);
 
-        if (isSdsFunction(callable) && !isStatic(callable) && isSdsMemberAccess(expression.receiver)) {
+        if (isSdsFunction(callable) && !isStatic(callable) && isSdsExpression(receiver)) {
             return this.generateMemoizedDynamicCall(expression, callable, receiver, frame);
         } else {
             return this.generateMemoizedStaticCall(expression, callable, frame);
@@ -1273,6 +1267,7 @@ class GenerationInfoFrame {
     public readonly isInsidePipeline: boolean;
     public readonly targetPlaceholder: string | undefined;
     public readonly disableRunnerIntegration: boolean;
+    private extraStatements = new Map<SdsExpression, Generated>();
 
     constructor(
         importSet: Map<String, ImportData> = new Map<String, ImportData>(),
@@ -1316,6 +1311,20 @@ class GenerationInfoFrame {
         for (const typeVariable of typeVariables) {
             this.typeVariableSet.add(typeVariable);
         }
+    }
+
+    addExtraStatement(node: SdsExpression, statement: Generated): void {
+        if (!this.extraStatements.has(node)) {
+            this.extraStatements.set(node, statement);
+        }
+    }
+
+    resetExtraStatements(): void {
+        this.extraStatements.clear();
+    }
+
+    getExtraStatements(): Generated[] {
+        return Array.from(this.extraStatements.values());
     }
 
     getUniqueLambdaName(lambda: SdsLambda): string {
