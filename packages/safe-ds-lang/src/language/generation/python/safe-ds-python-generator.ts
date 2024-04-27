@@ -596,7 +596,7 @@ export class SafeDsPythonGenerator {
                     assignmentStatements.push(
                         expandTracedToNode(
                             savableAssignment,
-                        )`${RUNNER_PACKAGE}.save_placeholder('${savableAssignment.name}', ${savableAssignment.name})`,
+                        )`${RUNNER_PACKAGE}.save_placeholder('${savableAssignment.name}', ${CODEGEN_PREFIX}${savableAssignment.name})`,
                     );
                 }
             }
@@ -615,7 +615,7 @@ export class SafeDsPythonGenerator {
                 'name',
             )(assignee.name)}`;
         } else if (isSdsPlaceholder(assignee)) {
-            return traceToNode(assignee)(assignee.name);
+            return expandTracedToNode(assignee)`${CODEGEN_PREFIX}${assignee.name}`;
         } else if (isSdsWildcard(assignee)) {
             return traceToNode(assignee)('_');
         } else if (isSdsYield(assignee)) {
@@ -870,7 +870,12 @@ export class SafeDsPythonGenerator {
             const declaration = expression.target.ref!;
             const referenceImport = this.createImportDataForReference(expression);
             frame.addImport(referenceImport);
-            return traceToNode(expression)(referenceImport?.alias ?? this.getPythonNameOrDefault(declaration));
+
+            if (isSdsPlaceholder(declaration)) {
+                return traceToNode(expression)(`${CODEGEN_PREFIX}${declaration.name}`);
+            } else {
+                return traceToNode(expression)(referenceImport?.alias ?? this.getPythonNameOrDefault(declaration));
+            }
         } else if (isSdsThis(expression)) {
             return thisParam;
         } else if (isSdsTypeCast(expression)) {
