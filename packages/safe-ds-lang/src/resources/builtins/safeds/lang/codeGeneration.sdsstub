@@ -1,8 +1,7 @@
 package safeds.lang
 
 /**
- * The specification of a corresponding function call in Python. By default, the function is called as specified in the
- * stubs.
+ * The specification of the corresponding Python code. By default, the function is called as specified in the stubs.
  *
  * The specification can contain template expressions, which are replaced by the corresponding arguments of the function
  * call. `$this` is replaced by the receiver of the call. `$param` is replaced by the value of the parameter called
@@ -10,8 +9,8 @@ package safeds.lang
  */
 @Experimental
 @Targets([AnnotationTarget.Function])
-annotation PythonCall(
-    callSpecification: String
+annotation PythonMacro(
+    template: String
 )
 
 /**

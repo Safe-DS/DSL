@@ -20,7 +20,7 @@ import { requiredParameterMustNotBeExpert } from './builtins/expert.js';
 import { pythonCallMustOnlyContainValidTemplateExpressions } from './builtins/pythonCall.js';
 import { pythonModuleShouldDifferFromSafeDsPackage } from './builtins/pythonModule.js';
 import {
-    pythonNameMustNotBeSetIfPythonCallIsSet,
+    pythonNameMustNotBeSetIfPythonMacroIsSet,
     pythonNameShouldDifferFromSafeDsName,
 } from './builtins/pythonName.js';
 import { singleUseAnnotationsMustNotBeRepeated } from './builtins/repeatable.js';
@@ -35,7 +35,7 @@ import {
     classMemberMustMatchOverriddenMemberAndShouldBeNeeded,
     classMustNotInheritItself,
     classMustOnlyInheritASingleClass,
-    overridingAndOverriddenMethodsMustNotHavePythonCall,
+    overridingAndOverriddenMethodsMustNotHavePythonMacro,
     overridingMemberPythonNameMustMatchOverriddenMember,
 } from './inheritance.js';
 import {
@@ -286,8 +286,8 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             impurityReasonParameterNameMustBelongToParameterOfCorrectType(services),
             impurityReasonShouldNotBeSetMultipleTimes(services),
             pythonCallMustOnlyContainValidTemplateExpressions(services),
-            pythonNameMustNotBeSetIfPythonCallIsSet(services),
-            overridingAndOverriddenMethodsMustNotHavePythonCall(services),
+            pythonNameMustNotBeSetIfPythonMacroIsSet(services),
+            overridingAndOverriddenMethodsMustNotHavePythonMacro(services),
         ],
         SdsImport: [importPackageMustExist(services), importPackageShouldNotBeEmpty(services)],
         SdsImportedDeclaration: [importedDeclarationAliasShouldDifferFromDeclarationName(services)],

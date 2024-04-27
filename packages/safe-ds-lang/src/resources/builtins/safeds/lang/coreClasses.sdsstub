@@ -14,7 +14,7 @@ class Any {
      * }
      */
     @Pure
-    @PythonCall("str($this)")
+    @PythonMacro("str($this)")
     fun toString() -> string: String
 }
 
@@ -62,7 +62,7 @@ class Int sub Number {
      * }
      */
     @Pure
-    @PythonCall("float($this)")
+    @PythonMacro("float($this)")
     fun toFloat() -> float: Float
 }
 
@@ -85,7 +85,7 @@ class Float sub Number {
      * }
      */
     @Pure
-    @PythonCall("int($this)")
+    @PythonMacro("int($this)")
     fun toInt() -> int: Int
 }
 
@@ -113,7 +113,7 @@ class List<out E> {
      * }
      */
     @Pure
-    @PythonCall("$separator.join($this)")
+    @PythonMacro("$separator.join($this)")
     fun join(separator: String = ", ") -> string: String
 
     /**
@@ -128,7 +128,7 @@ class List<out E> {
      * }
      */
     @Pure
-    @PythonCall("$this[$start:$end]")
+    @PythonMacro("$this[$start:$end]")
     fun slice(start: Int = 0, end: Int = -1) -> slice: List<E>
 
     /**
@@ -140,7 +140,7 @@ class List<out E> {
      * }
      */
     @Pure
-    @PythonCall("len($this)")
+    @PythonMacro("len($this)")
     fun size() -> size: Int
 }
 
@@ -172,7 +172,7 @@ class Map<K, out V> {
      * }
      */
     @Pure
-    @PythonCall("len($this)")
+    @PythonMacro("len($this)")
     fun size() -> size: Int
 
     /**
@@ -189,7 +189,7 @@ class Map<K, out V> {
      * }
      */
     @Pure
-    @PythonCall("list($this.keys())")
+    @PythonMacro("list($this.keys())")
     fun keys() -> keys: List<K>
 
     /**
@@ -206,7 +206,7 @@ class Map<K, out V> {
      * }
      */
     @Pure
-    @PythonCall("list($this.values())")
+    @PythonMacro("list($this.values())")
     fun values() -> values: List<V>
 }
 
@@ -229,7 +229,7 @@ class String {
      * }
      */
     @Pure
-    @PythonCall("len($this)")
+    @PythonMacro("len($this)")
     fun length() -> length: Int
 
     /**
@@ -241,7 +241,7 @@ class String {
      * }
      */
     @Pure
-    @PythonCall("$this.__contains__($substring)")
+    @PythonMacro("$this.__contains__($substring)")
     fun contains(substring: String) -> boolean: Boolean
 
     /**
@@ -253,7 +253,7 @@ class String {
      * }
      */
     @Pure
-    @PythonCall("$this.endswith($suffix)")
+    @PythonMacro("$this.endswith($suffix)")
     fun endsWith(suffix: String) -> boolean: Boolean
 
     /**
@@ -265,7 +265,7 @@ class String {
      * }
      */
     @Pure
-    @PythonCall("$this.startswith($prefix)")
+    @PythonMacro("$this.startswith($prefix)")
     fun startsWith(prefix: String) -> boolean: Boolean
 
     /**
@@ -280,7 +280,7 @@ class String {
      * }
      */
     @Pure
-    @PythonCall("$this[$start:$end]")
+    @PythonMacro("$this[$start:$end]")
     fun substring(start: Int = 0, end: Int = -1) -> substring: String
 
     /**
@@ -292,7 +292,7 @@ class String {
      * }
      */
     @Pure
-    @PythonCall("$this.split($separator)")
+    @PythonMacro("$this.split($separator)")
     fun split(separator: String) -> parts: List<String>
 
     /**
@@ -304,7 +304,7 @@ class String {
      * }
      */
     @Pure
-    @PythonCall("float($this)")
+    @PythonMacro("float($this)")
     fun toFloat() -> float: Float
 
     /**
@@ -323,7 +323,7 @@ class String {
      * }
      */
     @Pure
-    @PythonCall("int($this, $base)")
+    @PythonMacro("int($this, $base)")
     fun toInt(base: Int = 10) -> int: Int
 }
 

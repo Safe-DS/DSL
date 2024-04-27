@@ -138,8 +138,8 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
 
     // Python ----------------------------------------------------------------------------------------------------------
 
-    getPythonCall(node: SdsFunction | undefined): string | undefined {
-        const value = this.getParameterValue(node, this.PythonCall, 'callSpecification');
+    getPythonMacro(node: SdsFunction | undefined): string | undefined {
+        const value = this.getParameterValue(node, this.PythonMacro, 'template');
         if (value instanceof StringConstant) {
             return value.value;
         } else {
@@ -147,8 +147,8 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         }
     }
 
-    get PythonCall(): SdsAnnotation | undefined {
-        return this.getAnnotation(CODE_GENERATION_URI, 'PythonCall');
+    get PythonMacro(): SdsAnnotation | undefined {
+        return this.getAnnotation(CODE_GENERATION_URI, 'PythonMacro');
     }
 
     // PythonModule ----------------------------------------------------------------------------------------------------

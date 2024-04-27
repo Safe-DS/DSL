@@ -1,4 +1,4 @@
-package tests.validation.inheritance.overridingMethodShouldDifferFromOverriddenMethod.withPythonCall
+package tests.validation.inheritance.overridingMethodShouldDifferFromOverriddenMethod.withPythonMacro
 
 class MyClass1 {
     @Pure
@@ -8,6 +8,6 @@ class MyClass1 {
 class MyClass2 {
     // $TEST$ no info "Overriding member is identical to overridden member and can be removed."
     @Pure
-    @PythonCall("")
+    @PythonMacro("")
     fun »f«()
 }

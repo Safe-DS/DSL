@@ -740,14 +740,14 @@ export class SafeDsPythonGenerator {
             // Memoize constructor or function call
             if (isSdsFunction(callable) || isSdsClass(callable)) {
                 if (isSdsFunction(callable)) {
-                    const pythonCall = this.builtinAnnotations.getPythonCall(callable);
+                    const pythonCall = this.builtinAnnotations.getPythonMacro(callable);
                     if (pythonCall) {
                         let newReceiver: SdsExpression | undefined = undefined;
                         if (isSdsMemberAccess(expression.receiver)) {
                             newReceiver = expression.receiver.receiver;
                         }
                         const argumentsMap = this.getArgumentsMap(getArguments(expression), frame);
-                        call = this.generatePythonCall(expression, pythonCall, argumentsMap, frame, newReceiver);
+                        call = this.generatePythonMacro(expression, pythonCall, argumentsMap, frame, newReceiver);
                     }
                 }
                 if (!call && this.isMemoizableCall(expression) && !frame.disableRunnerIntegration) {
@@ -889,7 +889,7 @@ export class SafeDsPythonGenerator {
         )(sortedArgs, (arg) => this.generateArgument(arg, frame), { separator: ', ' })})`;
     }
 
-    private generatePythonCall(
+    private generatePythonMacro(
         expression: SdsCall,
         pythonCall: string,
         argumentsMap: Map<string, Generated>,
@@ -908,9 +908,9 @@ export class SafeDsPythonGenerator {
             argumentsMap.set('this', thisParam);
         }
         const splitRegex = /(\$[_a-zA-Z][_a-zA-Z0-9]*)/gu;
-        const splitPythonCallDefinition = pythonCall.split(splitRegex);
-        const generatedPythonCall = joinTracedToNode(expression)(
-            splitPythonCallDefinition,
+        const splitPythonMacroDefinition = pythonCall.split(splitRegex);
+        const generatedPythonMacro = joinTracedToNode(expression)(
+            splitPythonMacroDefinition,
             (part) => {
                 if (splitRegex.test(part)) {
                     return argumentsMap.get(part.substring(1))!;
@@ -922,7 +922,7 @@ export class SafeDsPythonGenerator {
         )!;
         // Non-memoizable calls can be directly generated
         if (!this.isMemoizableCall(expression) || frame.disableRunnerIntegration) {
-            return generatedPythonCall;
+            return generatedPythonMacro;
         }
         frame.addImport({ importPath: RUNNER_PACKAGE });
         const callable = this.nodeMapper.callToCallable(expression);
@@ -933,7 +933,7 @@ export class SafeDsPythonGenerator {
             return expandTracedToNode(expression)`
                 ${MEMOIZED_STATIC_CALL}(
                     "${fullyQualifiedTargetName}",
-                    lambda *_ : ${generatedPythonCall},
+                    lambda *_ : ${generatedPythonMacro},
                     [${thisParam}, ${this.generateMemoizedPositionalArgumentList(expression, frame)}],
                     {${this.generateMemoizedKeywordArgumentList(expression, frame)}},
                     [${joinToNode(hiddenParameters, (param) => param, { separator: ', ' })}]
@@ -944,7 +944,7 @@ export class SafeDsPythonGenerator {
         return expandTracedToNode(expression)`
             ${MEMOIZED_STATIC_CALL}(
                 "${fullyQualifiedTargetName}",
-                lambda *_ : ${generatedPythonCall},
+                lambda *_ : ${generatedPythonMacro},
                 [${this.generateMemoizedPositionalArgumentList(expression, frame)}],
                 {${this.generateMemoizedKeywordArgumentList(expression, frame)}},
                 [${joinToNode(hiddenParameters, (param) => param, { separator: ', ' })}]

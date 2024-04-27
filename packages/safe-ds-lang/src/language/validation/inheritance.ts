@@ -13,7 +13,7 @@ export const CODE_INHERITANCE_IDENTICAL_TO_OVERRIDDEN_MEMBER = 'inheritance/iden
 export const CODE_INHERITANCE_INCOMPATIBLE_TO_OVERRIDDEN_MEMBER = 'inheritance/incompatible-to-overridden-member';
 export const CODE_INHERITANCE_NOT_A_CLASS = 'inheritance/not-a-class';
 export const CODE_INHERITANCE_NULLABLE = 'inheritance/nullable';
-export const CODE_INHERITANCE_PYTHON_CALL = 'inheritance/python-call';
+export const CODE_INHERITANCE_PYTHON_MACRO = 'inheritance/python-macro';
 export const CODE_INHERITANCE_PYTHON_NAME = 'inheritance/python-name';
 
 export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: SafeDsServices) => {
@@ -35,10 +35,10 @@ export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: 
 
         // Check whether the overriding is legal and needed
         if (
-            // It's an error if the overriding member calls the `@PythonCall` annotation
-            (isSdsFunction(node) && builtinAnnotations.getPythonCall(node)) ||
-            // It's an error if the overridden member calls the `@PythonCall` annotation
-            (isSdsFunction(overriddenMember) && builtinAnnotations.getPythonCall(overriddenMember)) ||
+            // It's an error if the overriding member calls the `@PythonMacro` annotation
+            (isSdsFunction(node) && builtinAnnotations.getPythonMacro(node)) ||
+            // It's an error if the overridden member calls the `@PythonMacro` annotation
+            (isSdsFunction(overriddenMember) && builtinAnnotations.getPythonMacro(overriddenMember)) ||
             // It's an error if the overriding member has a different Python name than the overridden member
             (builtinAnnotations.getPythonName(node) ?? node.name) !==
                 (builtinAnnotations.getPythonName(overriddenMember) ?? overriddenMember.name)
@@ -217,7 +217,7 @@ export const classMustNotInheritItself = (services: SafeDsServices) => {
     };
 };
 
-export const overridingAndOverriddenMethodsMustNotHavePythonCall = (services: SafeDsServices) => {
+export const overridingAndOverriddenMethodsMustNotHavePythonMacro = (services: SafeDsServices) => {
     const builtinAnnotations = services.builtins.Annotations;
 
     return (node: SdsFunction, accept: ValidationAcceptor): void => {
@@ -233,28 +233,28 @@ export const overridingAndOverriddenMethodsMustNotHavePythonCall = (services: Sa
             return;
         }
 
-        // Check whether the function calls the `@PythonCall` annotation
-        const ownPythonCall = builtinAnnotations.getPythonCall(node);
-        if (ownPythonCall !== undefined) {
-            accept('error', "An overriding method must not call the '@PythonCall' annotation.", {
+        // Check whether the function calls the `@PythonMacro` annotation
+        const ownPythonMacro = builtinAnnotations.getPythonMacro(node);
+        if (ownPythonMacro !== undefined) {
+            accept('error', "An overriding method must not call the '@PythonMacro' annotation.", {
                 node,
                 property: 'name',
-                code: CODE_INHERITANCE_PYTHON_CALL,
+                code: CODE_INHERITANCE_PYTHON_MACRO,
             });
             return;
         }
 
-        // Check whether the overridden function calls the `@PythonCall` annotation
+        // Check whether the overridden function calls the `@PythonMacro` annotation
         if (!isSdsFunction(overriddenMember)) {
             return;
         }
 
-        const overriddenPythonCall = builtinAnnotations.getPythonCall(overriddenMember);
-        if (overriddenPythonCall !== undefined) {
-            accept('error', "Cannot override a method that calls the '@PythonCall' annotation.", {
+        const overriddenPythonMacro = builtinAnnotations.getPythonMacro(overriddenMember);
+        if (overriddenPythonMacro !== undefined) {
+            accept('error', "Cannot override a method that calls the '@PythonMacro' annotation.", {
                 node,
                 property: 'name',
-                code: CODE_INHERITANCE_PYTHON_CALL,
+                code: CODE_INHERITANCE_PYTHON_MACRO,
             });
         }
     };
