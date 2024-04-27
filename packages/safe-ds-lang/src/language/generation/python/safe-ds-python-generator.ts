@@ -742,12 +742,12 @@ export class SafeDsPythonGenerator {
                 if (isSdsFunction(callable)) {
                     const pythonCall = this.builtinAnnotations.getPythonCall(callable);
                     if (pythonCall) {
-                        let newThisParam: Generated | undefined = undefined;
+                        let newReceiver: SdsExpression | undefined = undefined;
                         if (isSdsMemberAccess(expression.receiver)) {
-                            newThisParam = this.generateExpression(expression.receiver.receiver, frame);
+                            newReceiver = expression.receiver.receiver;
                         }
                         const argumentsMap = this.getArgumentsMap(getArguments(expression), frame);
-                        call = this.generatePythonCall(expression, pythonCall, argumentsMap, frame, newThisParam);
+                        call = this.generatePythonCall(expression, pythonCall, argumentsMap, frame, newReceiver);
                     }
                 }
                 if (!call && this.isMemoizableCall(expression) && !frame.disableRunnerIntegration) {
@@ -894,9 +894,17 @@ export class SafeDsPythonGenerator {
         pythonCall: string,
         argumentsMap: Map<string, Generated>,
         frame: GenerationInfoFrame,
-        thisParam: Generated | undefined = undefined,
+        receiver: SdsExpression | undefined,
     ): Generated {
-        if (thisParam) {
+        let thisParam: Generated | undefined = undefined;
+
+        if (receiver) {
+            thisParam = frame.getUniqueReceiverName(receiver);
+            const extraStatement = expandTracedToNode(receiver)`
+                ${thisParam} = ${this.generateExpression(receiver, frame)}
+            `;
+            frame.addExtraStatement(receiver, extraStatement);
+
             argumentsMap.set('this', thisParam);
         }
         const splitRegex = /(\$[_a-zA-Z][_a-zA-Z0-9]*)/gu;
@@ -921,7 +929,7 @@ export class SafeDsPythonGenerator {
         const fullyQualifiedTargetName = this.generateFullyQualifiedFunctionName(expression);
         const hiddenParameters = this.getMemoizedCallHiddenParameters(expression, frame);
 
-        if (isSdsFunction(callable) && !isStatic(callable) && isSdsMemberAccess(expression.receiver)) {
+        if (isSdsFunction(callable) && !isStatic(callable) && isSdsMemberAccess(expression.receiver) && thisParam) {
             return expandTracedToNode(expression)`
                 ${MEMOIZED_STATIC_CALL}(
                     "${fullyQualifiedTargetName}",
