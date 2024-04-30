@@ -3,5 +3,11 @@ package safeds.scoping.references.acrossFiles.toGlobalClasses
 // $TEST$ target safeds_MyClass
 class »MyClass«
 
-// $TEST$ target safeds_ClassInSafeDsPackage
-class »ClassInSafeDsPackage«
+// $TEST$ target safeds_PublicClassInSafeDsPackage
+class »PublicClassInSafeDsPackage«
+
+// $TEST$ target safeds_InternalClassInSafeDsPackage
+internal class »InternalClassInSafeDsPackage«
+
+// $TEST$ target safeds_PrivateClassInSafeDsPackage
+private class »PrivateClassInSafeDsPackage«

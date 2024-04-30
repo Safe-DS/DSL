@@ -22,6 +22,9 @@ pipeline myPipeline {
 
     // $TEST$ references internalAfter
     »internalAfter«();
+
+    // $TEST$ references publicAfter
+    »publicAfter«();
 }
 
 // $TEST$ target privateAfter

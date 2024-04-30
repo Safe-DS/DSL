@@ -32,7 +32,7 @@ pipeline testPipeline {
     val impureA2 = i1(noPartialEvalInt(pureValueForImpure3));
     i1(4);
 
-    // $TEST$ run_until
+    // $TEST$ target
     val »result« = i1(impureA2);
     i1(4); // Should not be generated - impure cannot affect result after result is already calculated
     val someImpureValue = i1(4); // Should not be generated - impure cannot affect result after result is already calculated

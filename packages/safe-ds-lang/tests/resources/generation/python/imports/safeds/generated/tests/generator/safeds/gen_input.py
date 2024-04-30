@@ -5,4 +5,4 @@ from safeds.data.tabular.containers import Table
 # Pipelines --------------------------------------------------------------------
 
 def test():
-    a = Table()
+    __gen_a = Table()

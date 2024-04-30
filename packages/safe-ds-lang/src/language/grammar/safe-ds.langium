@@ -111,7 +111,13 @@ QualifiedName returns string:
 // Declarations
 // -----------------------------------------------------------------------------
 
-interface SdsModuleMember extends SdsDeclaration {}
+interface SdsModuleMember extends SdsDeclaration {
+    visibility?: string
+}
+
+SdsVisibility returns string:
+    'internal' | 'private'
+;
 
 SdsAnnotatedModuleMember returns SdsModuleMember:
     {SdsAnnotationCallList}
@@ -121,12 +127,15 @@ SdsAnnotatedModuleMember returns SdsModuleMember:
         SdsAnnotationFragment
 
       | {SdsClass.annotationCallList=current}
+        visibility=SdsVisibility?
         SdsClassFragment
 
       | {SdsEnum.annotationCallList=current}
+        visibility=SdsVisibility?
         SdsEnumFragment
 
       | {SdsFunction.annotationCallList=current}
+        visibility=SdsVisibility?
         SdsFunctionFragment
 
       | {SdsSchema.annotationCallList=current}
@@ -145,12 +154,15 @@ SdsUnannotatedModuleMember returns SdsModuleMember:
       SdsAnnotationFragment
 
     | {SdsClass}
+      visibility=SdsVisibility?
       SdsClassFragment
 
     | {SdsEnum}
+      visibility=SdsVisibility?
       SdsEnumFragment
 
     | {SdsFunction}
+      visibility=SdsVisibility?
       SdsFunctionFragment
 
     | {SdsSchema}
@@ -168,6 +180,7 @@ interface SdsAnnotation extends SdsCallable, SdsModuleMember {
 }
 
 fragment SdsAnnotationFragment:
+    visibility=SdsVisibility?
     'annotation' name=ID
     parameterList=SdsParameterList?
     constraintList=SdsConstraintList?
@@ -312,20 +325,20 @@ interface SdsPipeline extends SdsModuleMember {
 }
 
 fragment SdsPipelineFragment:
+    visibility=SdsVisibility?
     'pipeline'
     name=ID
     body=SdsBlock
 ;
 
 interface SdsSegment extends SdsCallable, SdsModuleMember {
-    visibility?: string
     resultList?: SdsResultList
     constraintList?: SdsConstraintList
     body: SdsBlock
 }
 
 fragment SdsSegmentFragment:
-    visibility=('internal' | 'private')?
+    visibility=SdsVisibility?
     'segment'
     name=ID
     parameterList=SdsParameterList
@@ -744,6 +757,7 @@ SdsPrimaryExpression returns SdsExpression:
   | SdsParenthesizedExpression
   | SdsReference
   | SdsTemplateString
+  | SdsThis
 ;
 
 interface SdsLiteral extends SdsExpression {}
@@ -881,6 +895,12 @@ interface SdsTemplateStringEnd extends SdsTemplateStringPart {}
 SdsTemplateStringEnd returns SdsExpression:
     {SdsTemplateStringEnd}
     value=TEMPLATE_STRING_END
+;
+
+interface SdsThis extends SdsExpression {}
+
+SdsThis returns SdsThis:
+    {SdsThis} 'this'
 ;
 
 
@@ -1050,6 +1070,7 @@ interface SdsSchema extends SdsModuleMember {
 }
 
 fragment SdsSchemaFragment:
+    visibility=SdsVisibility?
     'schema'
     name=ID
     columnList=SdsColumnList

@@ -11,6 +11,7 @@ import {
     isSdsCallable,
     isSdsCallableType,
     isSdsClass,
+    isSdsClassMember,
     isSdsDeclaration,
     isSdsEnum,
     isSdsEnumVariant,
@@ -36,6 +37,7 @@ import {
     isSdsSchema,
     isSdsSegment,
     isSdsTemplateString,
+    isSdsThis,
     isSdsType,
     isSdsTypeArgument,
     isSdsTypeCast,
@@ -64,6 +66,7 @@ import {
     SdsPrefixOperation,
     SdsReference,
     SdsSegment,
+    SdsThis,
     SdsType,
     SdsTypeArgument,
     SdsTypeParameter,
@@ -77,6 +80,7 @@ import {
     getResults,
     getTypeArguments,
     getTypeParameters,
+    isStatic,
     streamBlockLambdaResults,
     TypeParameter,
 } from '../helpers/nodeProperties.js';
@@ -364,27 +368,7 @@ export class SafeDsTypeComputer {
         }
 
         // Terminal cases
-        if (isSdsList(node)) {
-            const elementType = this.lowestCommonSupertype(
-                node.elements.map((it) => this.computeTypeWithRecursionCheck(it, state)),
-            );
-            return this.coreTypes.List(elementType);
-        } else if (isSdsMap(node)) {
-            let keyType = this.lowestCommonSupertype(
-                node.entries.map((it) => this.computeTypeWithRecursionCheck(it.key, state)),
-            );
-
-            // Keeping literal types for keys is too strict: We would otherwise infer the key type of `{"a": 1, "b": 2}`
-            // as `Literal<"a", "b">`. But then we would be unable to pass an unknown `String` as the key in an indexed
-            // access. Where possible, we already validate the existence of keys in indexed accesses using the partial
-            // evaluator.
-            keyType = this.computeClassTypeForLiteralType(keyType);
-
-            const valueType = this.lowestCommonSupertype(
-                node.entries.map((it) => this.computeTypeWithRecursionCheck(it.value, state)),
-            );
-            return this.coreTypes.Map(keyType, valueType);
-        } else if (isSdsTemplateString(node)) {
+        if (isSdsTemplateString(node)) {
             return this.coreTypes.String;
         } else if (isSdsUnknown(node)) {
             return this.coreTypes.Nothing;
@@ -438,6 +422,26 @@ export class SafeDsTypeComputer {
                 default:
                     return UnknownType;
             }
+        } else if (isSdsList(node)) {
+            const elementType = this.lowestCommonSupertype(
+                node.elements.map((it) => this.computeTypeWithRecursionCheck(it, state)),
+            );
+            return this.coreTypes.List(elementType);
+        } else if (isSdsMap(node)) {
+            let keyType = this.lowestCommonSupertype(
+                node.entries.map((it) => this.computeTypeWithRecursionCheck(it.key, state)),
+            );
+
+            // Keeping literal types for keys is too strict: We would otherwise infer the key type of `{"a": 1, "b": 2}`
+            // as `Literal<"a", "b">`. But then we would be unable to pass an unknown `String` as the key in an indexed
+            // access. Where possible, we already validate the existence of keys in indexed accesses using the partial
+            // evaluator.
+            keyType = this.computeClassTypeForLiteralType(keyType);
+
+            const valueType = this.lowestCommonSupertype(
+                node.entries.map((it) => this.computeTypeWithRecursionCheck(it.value, state)),
+            );
+            return this.coreTypes.Map(keyType, valueType);
         } else if (isSdsMemberAccess(node)) {
             return this.computeTypeOfMemberAccess(node, state);
         } else if (isSdsParenthesizedExpression(node)) {
@@ -456,6 +460,8 @@ export class SafeDsTypeComputer {
             }
         } else if (isSdsReference(node)) {
             return this.computeTypeOfReference(node, state);
+        } else if (isSdsThis(node)) {
+            return this.computeTypeOfThis(node, state);
         } /* c8 ignore start */ else {
             return UnknownType;
         } /* c8 ignore stop */
@@ -629,6 +635,23 @@ export class SafeDsTypeComputer {
         }
     }
 
+    private computeTypeOfThis(node: SdsThis, state: ComputeTypeState): Type {
+        // If closest callable is a class, return the class type
+        const containingCallable = AstUtils.getContainerOfType(node, isSdsCallable);
+        if (isSdsClass(containingCallable)) {
+            return this.computeTypeWithRecursionCheck(containingCallable, state);
+        }
+
+        // Invalid if the callable is not a class member or static
+        if (!isSdsClassMember(containingCallable) || isStatic(containingCallable)) {
+            return UnknownType;
+        }
+
+        // Otherwise, return the type of the containing class or unknown if not in a class
+        const containingClass = AstUtils.getContainerOfType(containingCallable, isSdsClass);
+        return this.computeTypeWithRecursionCheck(containingClass, state);
+    }
+
     private computeTypeOfType(node: SdsType, state: ComputeTypeState): Type {
         if (isSdsCallableType(node)) {
             return this.computeTypeOfCallableWithManifestTypes(node, state);
@@ -774,7 +797,9 @@ export class SafeDsTypeComputer {
         }
 
         const boundType = this.computeType(upperBound);
-        if (!(boundType instanceof NamedType)) {
+        if (boundType instanceof LiteralType) {
+            return boundType;
+        } else if (!(boundType instanceof NamedType)) {
             return UnknownType;
         } else if (options.stopAtTypeVariable || !(boundType instanceof TypeVariable)) {
             return boundType;

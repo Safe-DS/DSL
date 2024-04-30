@@ -104,5 +104,5 @@ The package `#!sds safeds.lang` contains several annotations that are processed 
 [segments]: ../pipeline-language/segments.md
 [type-parameters]: type-parameters.md
 [pipelines]: ../pipeline-language/pipelines.md
-[calls]: ../pipeline-language/expressions.md#calls
-[argument-restrictions]: ../pipeline-language/expressions.md#restrictions-for-arguments
+[calls]: ../pipeline-language/expressions/calls.md#calls
+[argument-restrictions]: ../pipeline-language/expressions/calls.md#restrictions-for-arguments

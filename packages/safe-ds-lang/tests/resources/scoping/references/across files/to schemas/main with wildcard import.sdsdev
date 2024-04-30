@@ -6,15 +6,43 @@ pipeline myPipeline {
     // $TEST$ references safeds_MySchema
     »MySchema«;
 
-    // $TEST$ references same_SchemaInSamePackage
-    »SchemaInSamePackage«;
 
-    // $TEST$ references safeds_SchemaInSafeDsPackage
-    »SchemaInSafeDsPackage«;
+    // $TEST$ references same_PublicSchemaInSamePackage
+    »PublicSchemaInSamePackage«;
 
-    // $TEST$ unresolved
-    »SchemaInAnotherPackage«;
+    // $TEST$ references same_InternalSchemaInSamePackage
+    »InternalSchemaInSamePackage«;
 
     // $TEST$ unresolved
-    »SchemaWithoutPackage«;
+    »PrivateSchemaInSamePackage«;
+
+
+    // $TEST$ references safeds_PublicSchemaInSafeDsPackage
+    »PublicSchemaInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »InternalSchemaInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »PrivateSchemaInSafeDsPackage«;
+
+
+    // $TEST$ unresolved
+    »PublicSchemaInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »InternalSchemaInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »PrivateSchemaInAnotherPackage«;
+
+
+    // $TEST$ unresolved
+    »PublicSchemaWithoutPackage«;
+
+    // $TEST$ unresolved
+    »InternalSchemaWithoutPackage«;
+
+    // $TEST$ unresolved
+    »PrivateSchemaWithoutPackage«;
 }

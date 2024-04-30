@@ -1,7 +1,7 @@
 package tests.scoping.references.acrossFiles.toGlobalEnums
 
 from safeds.scoping.references.acrossFiles.toGlobalEnums import MyEnum as MyOwnEnum
-from tests.scoping.references.acrossFiles.toGlobalEnums.other import EnumInAnotherPackage, Enum2InAnotherPackage
+from tests.scoping.references.acrossFiles.toGlobalEnums.other import PublicEnumInAnotherPackage, PublicEnumInAnotherPackage2
 
 // $TEST$ target own_MyOwnEnum
 enum »MyOwnEnum«
@@ -10,18 +10,46 @@ pipeline myPipeline {
     // $TEST$ references own_MyOwnEnum
     »MyOwnEnum«;
 
-    // $TEST$ references same_EnumInSamePackage
-    »EnumInSamePackage«;
 
-    // $TEST$ references safeds_EnumInSafeDsPackage
-    »EnumInSafeDsPackage«;
+    // $TEST$ references same_PublicEnumInSamePackage
+    »PublicEnumInSamePackage«;
 
-    // $TEST$ references other_EnumInAnotherPackage
-    »EnumInAnotherPackage«;
-
-    // $TEST$ references other_Enum2InAnotherPackage
-    »Enum2InAnotherPackage«;
+    // $TEST$ references same_InternalEnumInSamePackage
+    »InternalEnumInSamePackage«;
 
     // $TEST$ unresolved
-    »EnumWithoutPackage«;
+    »PrivateEnumInSamePackage«;
+
+
+    // $TEST$ references safeds_PublicEnumInSafeDsPackage
+    »PublicEnumInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »InternalEnumInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »PrivateEnumInSafeDsPackage«;
+
+
+    // $TEST$ references other_PublicEnumInAnotherPackage
+    »PublicEnumInAnotherPackage«;
+
+    // $TEST$ references other_PublicEnumInAnotherPackage2
+    »PublicEnumInAnotherPackage2«;
+
+    // $TEST$ unresolved
+    »InternalEnumInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »PrivateEnumInAnotherPackage«;
+
+
+    // $TEST$ unresolved
+    »PublicEnumWithoutPackage«;
+
+    // $TEST$ unresolved
+    »InternalEnumWithoutPackage«;
+
+    // $TEST$ unresolved
+    »PrivateEnumWithoutPackage«;
 }

@@ -17,6 +17,10 @@
         {
             "name": "keyword.operator.expression.safe-ds-dev",
             "match": "\\b(and|not|or|sub)\\b"
+        },
+        {
+            "name": "variable.language.safe-ds-dev",
+            "match": "\\b(this)\\b"
         }
     ]
 }

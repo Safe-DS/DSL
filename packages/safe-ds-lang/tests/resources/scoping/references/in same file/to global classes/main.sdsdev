@@ -1,15 +1,35 @@
 package tests.scoping.references.inSameFile.toGlobalClasses
 
-// $TEST$ target before
-class »Before«()
+// $TEST$ target PrivateBefore
+private class »PrivateBefore«
+// $TEST$ target InternalBefore
+internal class »InternalBefore«
+// $TEST$ target PublicBefore
+class »PublicBefore«
 
 pipeline myPipeline {
-    // $TEST$ references before
-    »Before«;
+    // $TEST$ references PrivateBefore
+    »PrivateBefore«;
 
-    // $TEST$ references after
-    »After«;
+    // $TEST$ references InternalBefore
+    »InternalBefore«;
+
+    // $TEST$ references PublicBefore
+    »PublicBefore«;
+
+    // $TEST$ references PrivateAfter
+    »PrivateAfter«;
+
+    // $TEST$ references InternalAfter
+    »InternalAfter«;
+
+    // $TEST$ references PublicAfter
+    »PublicAfter«;
 }
 
-// $TEST$ target after
-class »After«()
+// $TEST$ target PrivateAfter
+private class »PrivateAfter«
+// $TEST$ target InternalAfter
+internal class »InternalAfter«
+// $TEST$ target PublicAfter
+class »PublicAfter«

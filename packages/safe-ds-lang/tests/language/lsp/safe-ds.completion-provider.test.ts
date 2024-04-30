@@ -25,7 +25,7 @@ describe('SafeDsCompletionProvider', async () => {
                 `,
                 uri: `file:///test1.sds`,
                 expectedLabels: {
-                    shouldEqual: ['from', 'schema', 'pipeline', 'internal', 'private', 'segment'],
+                    shouldEqual: ['from', 'internal', 'private', 'schema', 'pipeline', 'segment'],
                 },
             },
             {
@@ -36,7 +36,7 @@ describe('SafeDsCompletionProvider', async () => {
                 `,
                 uri: `file:///test2.sdsstub`,
                 expectedLabels: {
-                    shouldEqual: ['from', 'annotation', 'class', 'enum', 'fun', 'schema'],
+                    shouldEqual: ['from', 'internal', 'private', 'annotation', 'class', 'enum', 'fun', 'schema'],
                 },
             },
             {
@@ -49,14 +49,14 @@ describe('SafeDsCompletionProvider', async () => {
                 expectedLabels: {
                     shouldEqual: [
                         'from',
+                        'internal',
+                        'private',
                         'annotation',
                         'class',
                         'enum',
                         'fun',
                         'schema',
                         'pipeline',
-                        'internal',
-                        'private',
                         'segment',
                     ],
                 },
@@ -69,6 +69,17 @@ describe('SafeDsCompletionProvider', async () => {
                 `,
                 expectedLabels: {
                     shouldEqual: ['static', 'attr', 'class', 'enum', 'fun'],
+                },
+            },
+            {
+                testName: 'in pipeline',
+                uri: `file:///test4.sds`,
+                code: `
+                    pipeline myPipeline {
+                        <|>
+                `,
+                expectedLabels: {
+                    shouldNotContain: ['this'],
                 },
             },
 

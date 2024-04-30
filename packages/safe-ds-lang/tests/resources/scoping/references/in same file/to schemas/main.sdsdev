@@ -1,15 +1,35 @@
 package tests.scoping.references.inSameFile.toSchemas
 
-// $TEST$ target before
-schema »Before« {}
+// $TEST$ target PrivateBefore
+private schema »PrivateBefore« {}
+// $TEST$ target InternalBefore
+internal schema »InternalBefore« {}
+// $TEST$ target PublicBefore
+schema »PublicBefore« {}
 
-segment mySegment() {
-    // $TEST$ references before
-    »Before«;
+pipeline myPipeline {
+    // $TEST$ references PrivateBefore
+    »PrivateBefore«;
 
-    // $TEST$ references after
-    »After«;
+    // $TEST$ references InternalBefore
+    »InternalBefore«;
+
+    // $TEST$ references PublicBefore
+    »PublicBefore«;
+
+    // $TEST$ references PrivateAfter
+    »PrivateAfter«;
+
+    // $TEST$ references InternalAfter
+    »InternalAfter«;
+
+    // $TEST$ references PublicAfter
+    »PublicAfter«;
 }
 
-// $TEST$ target after
-schema »After« {}
+// $TEST$ target PrivateAfter
+private schema »PrivateAfter« {}
+// $TEST$ target InternalAfter
+internal schema »InternalAfter« {}
+// $TEST$ target PublicAfter
+schema »PublicAfter« {}

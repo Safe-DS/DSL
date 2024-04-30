@@ -4,8 +4,8 @@ segment »mySegment«() {}
 // $TEST$ target without_publicSegmentWithoutPackage
 segment »publicSegmentWithoutPackage«() {}
 
-// $TEST$ target without_internalSegmentWithoutPackage
-internal segment »internalSegmentWithoutPackage«() {}
+// $TEST$ target without_internalSegmentInSamePackage
+internal segment »internalSegmentInSamePackage«() {}
 
-// $TEST$ target without_privateSegmentWithoutPackage
-private segment »privateSegmentWithoutPackage«() {}
+// $TEST$ target without_privateSegmentInSamePackage
+private segment »privateSegmentInSamePackage«() {}

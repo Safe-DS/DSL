@@ -1,6 +1,6 @@
 # :test_tube:{ title="Experimental" } `#!sds annotation` Impure {#safeds.lang.Impure data-toc-label='Impure'}
 
-Indicates that the function has side effects and/or does not always return the same results given the same arguments.
+The function has side effects and/or does not always return the same results given the same arguments.
 
 **Parameters:**
 
@@ -14,6 +14,6 @@ Indicates that the function has side effects and/or does not always return the s
 
 ??? quote "Stub code in `purity.sdsstub`"
 
-    ```sds linenums="22"
+    ```sds linenums="23"
     annotation Impure(allReasons: List<ImpurityReason>)
     ```

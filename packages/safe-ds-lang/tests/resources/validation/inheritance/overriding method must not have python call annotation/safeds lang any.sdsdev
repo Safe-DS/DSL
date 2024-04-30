@@ -1,0 +1,7 @@
+package safeds.lang
+
+class Any {
+    // $TEST$ no error "An overriding method must not call the '@PythonMacro' annotation."
+    @PythonMacro("str($this)")
+    fun »toString«() -> s: String
+}

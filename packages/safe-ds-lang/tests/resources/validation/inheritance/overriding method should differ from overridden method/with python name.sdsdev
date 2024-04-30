@@ -1,0 +1,34 @@
+package tests.validation.inheritance.overridingMethodShouldDifferFromOverriddenMethod.withPythonName
+
+class MyClass1 {
+    @Pure
+    fun myFunction1()
+
+    @Pure
+    @PythonName("my_function_2")
+    fun myFunction2()
+}
+
+class MyClass2 sub MyClass1 {
+    // $TEST$ info "Overriding member is identical to overridden member and can be removed."
+    @Pure
+    @PythonName("myFunction1")
+    fun »myFunction1«()
+
+    // $TEST$ info "Overriding member is identical to overridden member and can be removed."
+    @Pure
+    @PythonName("my_function_2")
+    fun »myFunction2«()
+}
+
+class MyClass3 sub MyClass1 {
+    // $TEST$ no info "Overriding member is identical to overridden member and can be removed."
+    @Pure
+    @PythonName("anotherFunction1")
+    fun »myFunction1«()
+
+    // $TEST$ no info "Overriding member is identical to overridden member and can be removed."
+    @Pure
+    @PythonName("anotherFunction2")
+    fun »myFunction2«()
+}

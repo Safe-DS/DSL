@@ -1,6 +1,6 @@
 import { AstUtils, ValidationAcceptor } from 'langium';
 import { isEmpty, isEqualSet } from '../../helpers/collections.js';
-import { isSdsClass, isSdsFunction, SdsClass, type SdsClassMember } from '../generated/ast.js';
+import { isSdsClass, isSdsFunction, SdsClass, type SdsClassMember, SdsFunction } from '../generated/ast.js';
 import { getParentTypes, getQualifiedName } from '../helpers/nodeProperties.js';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { ClassType, Type, UnknownType } from '../typing/model.js';
@@ -13,6 +13,8 @@ export const CODE_INHERITANCE_IDENTICAL_TO_OVERRIDDEN_MEMBER = 'inheritance/iden
 export const CODE_INHERITANCE_INCOMPATIBLE_TO_OVERRIDDEN_MEMBER = 'inheritance/incompatible-to-overridden-member';
 export const CODE_INHERITANCE_NOT_A_CLASS = 'inheritance/not-a-class';
 export const CODE_INHERITANCE_NULLABLE = 'inheritance/nullable';
+export const CODE_INHERITANCE_PYTHON_MACRO = 'inheritance/python-macro';
+export const CODE_INHERITANCE_PYTHON_NAME = 'inheritance/python-name';
 
 export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: SafeDsServices) => {
     const builtinAnnotations = services.builtins.Annotations;
@@ -32,6 +34,18 @@ export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: 
             computeMemberTypes(node, overriddenMember, typeComputer);
 
         // Check whether the overriding is legal and needed
+        if (
+            // It's an error if the overriding member calls the `@PythonMacro` annotation
+            (isSdsFunction(node) && builtinAnnotations.getPythonMacro(node)) ||
+            // It's an error if the overridden member calls the `@PythonMacro` annotation
+            (isSdsFunction(overriddenMember) && builtinAnnotations.getPythonMacro(overriddenMember)) ||
+            // It's an error if the overriding member has a different Python name than the overridden member
+            (builtinAnnotations.getPythonName(node) ?? node.name) !==
+                (builtinAnnotations.getPythonName(overriddenMember) ?? overriddenMember.name)
+        ) {
+            return;
+        }
+
         if (!typeChecker.isSubtypeOf(substitutedOwnMemberType, overriddenMemberType)) {
             accept(
                 'error',
@@ -49,6 +63,7 @@ export const classMemberMustMatchOverriddenMemberAndShouldBeNeeded = (services: 
         } else if (typeChecker.isSubtypeOf(substitutedOverriddenMemberType, ownMemberType)) {
             // Prevents the info from showing when editing the builtin files
             if (isInSafedsLangAnyClass(services, node)) {
+                /* c8 ignore next 2 */
                 return;
             }
 
@@ -197,6 +212,73 @@ export const classMustNotInheritItself = (services: SafeDsServices) => {
             accept('error', 'A class must not directly or indirectly be a subtype of itself.', {
                 node: getParentTypes(node)[0]!,
                 code: CODE_INHERITANCE_CYCLE,
+            });
+        }
+    };
+};
+
+export const overridingAndOverriddenMethodsMustNotHavePythonMacro = (services: SafeDsServices) => {
+    const builtinAnnotations = services.builtins.Annotations;
+
+    return (node: SdsFunction, accept: ValidationAcceptor): void => {
+        // Prevents the errors from showing when editing the builtin files
+        if (isInSafedsLangAnyClass(services, node)) {
+            /* c8 ignore next 2 */
+            return;
+        }
+
+        // Check whether the function overrides something
+        const overriddenMember = services.typing.ClassHierarchy.getOverriddenMember(node);
+        if (!overriddenMember) {
+            return;
+        }
+
+        // Check whether the function calls the `@PythonMacro` annotation
+        const ownPythonMacro = builtinAnnotations.getPythonMacro(node);
+        if (ownPythonMacro !== undefined) {
+            accept('error', "An overriding method must not call the '@PythonMacro' annotation.", {
+                node,
+                property: 'name',
+                code: CODE_INHERITANCE_PYTHON_MACRO,
+            });
+            return;
+        }
+
+        // Check whether the overridden function calls the `@PythonMacro` annotation
+        if (!isSdsFunction(overriddenMember)) {
+            return;
+        }
+
+        const overriddenPythonMacro = builtinAnnotations.getPythonMacro(overriddenMember);
+        if (overriddenPythonMacro !== undefined) {
+            accept('error', "Cannot override a method that calls the '@PythonMacro' annotation.", {
+                node,
+                property: 'name',
+                code: CODE_INHERITANCE_PYTHON_MACRO,
+            });
+        }
+    };
+};
+
+export const overridingMemberPythonNameMustMatchOverriddenMember = (services: SafeDsServices) => {
+    const builtinAnnotations = services.builtins.Annotations;
+
+    return (node: SdsClassMember, accept: ValidationAcceptor): void => {
+        // Check whether the function overrides something
+        const overriddenMember = services.typing.ClassHierarchy.getOverriddenMember(node);
+        if (!overriddenMember) {
+            return;
+        }
+
+        // Check whether the function has a different Python name than the overridden member
+        if (
+            (builtinAnnotations.getPythonName(node) ?? node.name) !==
+            (builtinAnnotations.getPythonName(overriddenMember) ?? overriddenMember.name)
+        ) {
+            accept('error', 'The Python name must match the overridden member.', {
+                node,
+                property: 'name',
+                code: CODE_INHERITANCE_PYTHON_NAME,
             });
         }
     };

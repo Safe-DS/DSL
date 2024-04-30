@@ -23,11 +23,43 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="99"
+    ```sds linenums="100"
     class List<out E> {
 
         /**
-         * Returns the number of elements in the list.
+         * Join the elements of the list into a string using the separator.
+         *
+         * @example
+         * pipeline example {
+         *     val string = [1, 2, 3].join(); // "1, 2, 3"
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val string = [1, 2, 3].join("-"); // "1-2-3"
+         * }
+         */
+        @Pure
+        @PythonMacro("$separator.join($this)")
+        fun join(separator: String = ", ") -> string: String
+
+        /**
+         * Return the slice of the list starting at the start index up to but excluding the end index.
+         *
+         * @param start The start index (inclusive).
+         * @param end The end index (exclusive). Negative indices count from the end of the list.
+         *
+         * @example
+         * pipeline example {
+         *     val slice = [1, 2, 3].slice(1, 3); // [2, 3]
+         * }
+         */
+        @Pure
+        @PythonMacro("$this[$start:$end]")
+        fun slice(start: Int = 0, end: Int = this.size()) -> slice: List<E>
+
+        /**
+         * Return the number of elements in the list.
          *
          * @example
          * pipeline example {
@@ -35,14 +67,51 @@ pipeline example {
          * }
          */
         @Pure
-        @PythonCall("len($this)")
+        @PythonMacro("len($this)")
         fun size() -> size: Int
     }
     ```
 
+## `#!sds fun` join {#safeds.lang.List.join data-toc-label='join'}
+
+Join the elements of the list into a string using the separator.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `separator` | [`String`][safeds.lang.String] | - | `#!sds ", "` |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `string` | [`String`][safeds.lang.String] | - |
+
+**Examples:**
+
+```sds hl_lines="2"
+pipeline example {
+    val string = [1, 2, 3].join(); // "1, 2, 3"
+}
+```
+```sds hl_lines="2"
+pipeline example {
+    val string = [1, 2, 3].join("-"); // "1-2-3"
+}
+```
+
+??? quote "Stub code in `coreClasses.sdsstub`"
+
+    ```sds linenums="115"
+    @Pure
+    @PythonMacro("$separator.join($this)")
+    fun join(separator: String = ", ") -> string: String
+    ```
+
 ## `#!sds fun` size {#safeds.lang.List.size data-toc-label='size'}
 
-Returns the number of elements in the list.
+Return the number of elements in the list.
 
 **Results:**
 
@@ -60,8 +129,41 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="109"
+    ```sds linenums="142"
     @Pure
-    @PythonCall("len($this)")
+    @PythonMacro("len($this)")
     fun size() -> size: Int
+    ```
+
+## `#!sds fun` slice {#safeds.lang.List.slice data-toc-label='slice'}
+
+Return the slice of the list starting at the start index up to but excluding the end index.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `start` | [`Int`][safeds.lang.Int] | The start index (inclusive). | `#!sds 0` |
+| `end` | [`Int`][safeds.lang.Int] | The end index (exclusive). Negative indices count from the end of the list. | `#!sds this.size()` |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `slice` | [`List<E>`][safeds.lang.List] | - |
+
+**Examples:**
+
+```sds hl_lines="2"
+pipeline example {
+    val slice = [1, 2, 3].slice(1, 3); // [2, 3]
+}
+```
+
+??? quote "Stub code in `coreClasses.sdsstub`"
+
+    ```sds linenums="130"
+    @Pure
+    @PythonMacro("$this[$start:$end]")
+    fun slice(start: Int = 0, end: Int = this.size()) -> slice: List<E>
     ```

@@ -156,7 +156,7 @@ const doRunPipelineFile = async function (
     filePath: vscode.Uri | undefined,
     pipelineExecutionId: string,
     knownPipelineName?: string,
-    placeholderName?: string,
+    placeholderNames?: string[],
 ) {
     const document = await getPipelineDocument(filePath);
 
@@ -177,7 +177,7 @@ const doRunPipelineFile = async function (
 
         safeDsLogger.info(`Launching Pipeline (${pipelineExecutionId}): ${filePath} - ${pipelineName}`);
 
-        await services.runtime.Runner.executePipeline(pipelineExecutionId, document, pipelineName, placeholderName);
+        await services.runtime.Runner.executePipeline(pipelineExecutionId, document, pipelineName, placeholderNames);
     }
 };
 
@@ -287,7 +287,7 @@ const exploreTable = (context: vscode.ExtensionContext) => {
         };
         services.runtime.PythonServer.addMessageCallback('runtime_error', runtimeErrorCallback);
 
-        await doRunPipelineFile(uri, pipelineExecutionId, pipelineName, requestedPlaceholderName);
+        await doRunPipelineFile(uri, pipelineExecutionId, pipelineName, [requestedPlaceholderName]);
     };
 };
 

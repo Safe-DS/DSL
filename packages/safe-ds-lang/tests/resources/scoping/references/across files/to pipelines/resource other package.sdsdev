@@ -3,8 +3,14 @@ package tests.scoping.references.acrossFiles.toPipelines.other
 // $TEST$ target other_myPipeline
 pipeline »myPipeline« {}
 
-// $TEST$ target other_pipelineInAnotherPackage
-pipeline »pipelineInAnotherPackage« {}
+// $TEST$ target other_publicPipelineInAnotherPackage
+pipeline »publicPipelineInAnotherPackage« {}
 
-// $TEST$ target other_pipeline2InAnotherPackage
-pipeline »pipeline2InAnotherPackage« {}
+// $TEST$ target other_publicPipelineInAnotherPackage2
+pipeline »publicPipelineInAnotherPackage2« {}
+
+// $TEST$ target other_internalPipelineInAnotherPackage
+internal pipeline »internalPipelineInAnotherPackage« {}
+
+// $TEST$ target other_privatePipelineInAnotherPackage
+private pipeline »privatePipelineInAnotherPackage« {}

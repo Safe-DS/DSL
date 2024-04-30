@@ -2,13 +2,11 @@
 
 Types describe the values that a declaration can accept. Safe-DS has various categories of types, which are explained in this document.
 
-## Categories of Types
-
-### Named Types
+## Named Types
 
 _Named types_ either denote that a declaration must be an instance of a [class][classes] or one of its [subclasses][subclassing], or an instance of a [variant][variants] of an [enum][enums]. In either case the syntax of the type is just the name of the [class][classes] or the [enum][enums] respectively.
 
-#### Class Types
+### Class Types
 
 A declaration with a _class type_ must be an instance of a [class][classes] or one of its [subclasses][subclassing]. Let us use the following [classes][classes] for our example:
 
@@ -24,7 +22,7 @@ To denote that a declaration accepts instances of `#!sds SomeClass` and its [sub
 SomeClass
 ```
 
-##### Nullable Class Types
+#### Nullable Class Types
 
 The value `#!sds null` (see [null][null-literal]) deserves special treatment since it is not possible to operate on it in the same manner as on proper instances of a [class][classes]. For this reason `#!sds null` cannot be assigned to declarations with class types such as `#!sds SomeClass`.
 
@@ -34,7 +32,7 @@ To specifically allow `#!sds null` as a value, simply add a question mark to the
 SomeClass?
 ```
 
-#### Enum Types
+### Enum Types
 
 A declaration with an _enum type_ must be one of the [variants][variants] of the [enum][enums]. Let us use the following [enum][enums] for our example:
 
@@ -53,7 +51,7 @@ SomeEnum
 
 This type expects either the value `#!sds SomeEnum.SomeEnumVariant` (see [member access][member-accesses]) or anything constructed from the [variant][variants] `#!sds SomeOtherEnumVariant` such as `#!sds SomeEnum.SomeOtherEnumVariant(3)`.
 
-#### Type Arguments
+### Type Arguments
 
 **Note:** This is an advanced section. Feel free to skip it initially.
 
@@ -123,7 +121,7 @@ We will again go over the syntax:
 
 We will now look at the values that we can pass within type arguments.
 
-##### Type Projection
+#### Type Projection
 
 The most basic case is that we pass a concrete type as the value. We have already seen this in the example above where we constructed the type for a list of integers:
 
@@ -133,11 +131,11 @@ SomeSpecialList<Int>
 
 The value of the type argument is just another named type (here `#!sds Int`).
 
-### Member Types
+## Member Types
 
 A member type is essentially the same as a [named type](#named-types) with the difference that the declaration we refer to is nested inside [classes][classes] or [enums][enums].
 
-#### Class Member Types
+### Class Member Types
 
 We begin with nested classes and use these declarations to illustrate the concept:
 
@@ -195,7 +193,7 @@ Finally, as with [named types](#named-types), `#!sds null` is not an allowed val
 SomeOuterClass<Int>.SomeInnerClass<Int>?
 ```
 
-#### Enum Variant Types
+### Enum Variant Types
 
 Member types are also used to specify that a declaration is an instance of a single [variant][variants] of an [enum][enums]. For this, we use the following declarations:
 
@@ -233,7 +231,7 @@ To now allow only instances of the [variant][variants] `#!sds SomeEnumVariant` w
 SomeEnum.SomeEnumVariant<Int>
 ```
 
-### Callable Types
+## Callable Types
 
 A _callable type_ denotes that only values that can be [called][calls] are accepted. This includes:
 
@@ -305,10 +303,10 @@ If exactly one result is expected, the surrounding parentheses may be also remov
 [enum-variant-constructors]: ../stub-language/enumerations.md#constructors
 [methods]: ../stub-language/classes.md#defining-methods
 [global-functions]: ../stub-language/global-functions.md
-[member-accesses]: ../pipeline-language/expressions.md#member-access-of-enum-variants
-[null-literal]: ../pipeline-language/expressions.md#sds-null-literal
-[calls]: ../pipeline-language/expressions.md#calls
+[member-accesses]: expressions/member-accesses.md#member-access-of-enum-variants
+[null-literal]: expressions/literals.md#sds-null-literal
+[calls]: expressions/calls.md#calls
 [segments]: ../pipeline-language/segments.md
-[lambdas]: ../pipeline-language/expressions.md#lambdas
+[lambdas]: expressions/lambdas.md#lambdas
 [mypy]: http://mypy-lang.org/
 [type-hints]: https://docs.python.org/3/library/typing.html

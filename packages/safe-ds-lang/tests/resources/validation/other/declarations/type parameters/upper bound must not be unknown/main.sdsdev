@@ -1,0 +1,34 @@
+package tests.validation.other.declarations.typeParameters.upperBoundMustNotBeUnknown
+
+class C
+enum E {
+    V
+}
+
+// $TEST$ no error "The upper bound of a type parameter must not have an unknown type."
+class MyClass1<T sub »() -> ()«>
+
+// $TEST$ no error "The upper bound of a type parameter must not have an unknown type."
+class MyClass2<T sub »literal<1>«>
+
+// $TEST$ no error "The upper bound of a type parameter must not have an unknown type."
+class MyClass3<T sub »C«>
+
+// $TEST$ no error "The upper bound of a type parameter must not have an unknown type."
+class MyClass4<T sub »E«>
+
+// $TEST$ no error "The upper bound of a type parameter must not have an unknown type."
+class MyClass5<T sub »E.V«>
+
+// $TEST$ no error "The upper bound of a type parameter must not have an unknown type."
+class MyClass6<T sub »union<C, E>«>
+
+// $TEST$ error "The upper bound of a type parameter must not have an unknown type."
+// $TEST$ no error "The upper bound of a type parameter must not have an unknown type."
+class MyClass7<T1 sub »T2«, T2 sub »T1«>
+
+// $TEST$ error "The upper bound of a type parameter must not have an unknown type."
+class MyClass8<T sub »Unresolved«>
+
+// $TEST$ error "The upper bound of a type parameter must not have an unknown type."
+class MyClass9<T sub »unknown«>

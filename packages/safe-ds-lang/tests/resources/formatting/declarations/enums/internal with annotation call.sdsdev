@@ -1,0 +1,10 @@
+package test
+
+@Annotation  internal  enum  MyEnum
+
+// -----------------------------------------------------------------------------
+
+package test
+
+@Annotation
+internal enum MyEnum

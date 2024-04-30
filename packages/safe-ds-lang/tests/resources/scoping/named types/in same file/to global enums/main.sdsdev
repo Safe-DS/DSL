@@ -1,18 +1,42 @@
 package tests.scoping.namedTypes.inSameFile.toGlobalEnums
 
-// $TEST$ target before
-enum »BeforeEnum«
+// $TEST$ target privateBefore
+private enum »PrivateBeforeEnum«
+
+// $TEST$ target internalBefore
+internal enum »InternalBeforeEnum«
+
+// $TEST$ target publicBefore
+enum »PublicBeforeEnum«
 
 segment mySegment(
-    // $TEST$ references before
-    p1: »BeforeEnum«,
+    // $TEST$ references privateBefore
+    p1: »PrivateBeforeEnum«,
 
-    // $TEST$ references after
-    p2: »AfterEnum«,
+    // $TEST$ references internalBefore
+    p2: »InternalBeforeEnum«,
+
+    // $TEST$ references publicBefore
+    p3: »PublicBeforeEnum«,
+
+    // $TEST$ references privateAfter
+    p4: »PrivateAfterEnum«,
+
+    // $TEST$ references internalAfter
+    p5: »InternalAfterEnum«,
+
+    // $TEST$ references publicAfter
+    p6: »PublicAfterEnum«,
 
     // $TEST$ unresolved
-    p3: »Unresolved«,
+    p7: »Unresolved«,
 ) {}
 
-// $TEST$ target after
-enum »AfterEnum«
+// $TEST$ target privateAfter
+private enum »PrivateAfterEnum«
+
+// $TEST$ target internalAfter
+internal enum »InternalAfterEnum«
+
+// $TEST$ target publicAfter
+enum »PublicAfterEnum«

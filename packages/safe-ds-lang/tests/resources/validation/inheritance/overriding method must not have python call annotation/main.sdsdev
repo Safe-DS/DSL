@@ -1,0 +1,24 @@
+package tests.validation.inheritance.overridingMethodMustNotHavePythonMacroAnnotation
+
+class MyClass1 {
+    // $TEST$ no error "An overriding method must not call the '@PythonMacro' annotation."
+    @Pure
+    @PythonMacro("some_other_function")
+    fun »withPythonMacro«()
+
+    // $TEST$ no error "An overriding method must not call the '@PythonMacro' annotation."
+    @Pure
+    fun »withoutPythonMacro«()
+}
+
+class MyClass2 sub MyClass1 {
+    // $TEST$ error "An overriding method must not call the '@PythonMacro' annotation."
+    @Pure
+    @PythonMacro("some_other_function")
+    fun »withPythonMacro«()
+
+    // $TEST$ error "An overriding method must not call the '@PythonMacro' annotation."
+    @Pure
+    @PythonMacro("some_other_function")
+    fun »withoutPythonMacro«()
+}

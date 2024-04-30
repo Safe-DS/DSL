@@ -8,7 +8,7 @@ import {
     IndexManager,
     LangiumDocuments,
 } from 'langium';
-import { isSdsSegment } from '../generated/ast.js';
+import { isSdsDeclaration } from '../generated/ast.js';
 import { getPackageName, isInternal } from '../helpers/nodeProperties.js';
 
 export class SafeDsPackageManager {
@@ -112,7 +112,7 @@ export class SafeDsPackageManager {
         }
 
         if (hideInternal) {
-            result = result.filter((it) => !isSdsSegment(it.node) || !isInternal(it.node));
+            result = result.filter((it) => !isSdsDeclaration(it.node) || !isInternal(it.node));
         }
 
         return result;

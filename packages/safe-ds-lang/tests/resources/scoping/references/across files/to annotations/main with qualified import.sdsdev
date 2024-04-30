@@ -1,24 +1,52 @@
 package tests.scoping.references.acrossFiles.toAnnotations
 
 from safeds.scoping.references.acrossFiles.toAnnotations import MyAnnotation
-from tests.scoping.references.acrossFiles.toAnnotations.other import AnnotationInAnotherPackage, Annotation2InAnotherPackage
+from tests.scoping.references.acrossFiles.toAnnotations.other import PublicAnnotationInAnotherPackage, PublicAnnotationInAnotherPackage2
 
 pipeline myPipeline {
     // $TEST$ references safeds_MyAnnotation
     »MyAnnotation«;
 
-    // $TEST$ references same_AnnotationInSamePackage
-    »AnnotationInSamePackage«;
 
-    // $TEST$ references safeds_AnnotationInSafeDsPackage
-    »AnnotationInSafeDsPackage«;
+    // $TEST$ references same_PublicAnnotationInSamePackage
+    »PublicAnnotationInSamePackage«;
 
-    // $TEST$ references other_AnnotationInAnotherPackage
-    »AnnotationInAnotherPackage«;
-
-    // $TEST$ references other_Annotation2InAnotherPackage
-    »Annotation2InAnotherPackage«;
+    // $TEST$ references same_InternalAnnotationInSamePackage
+    »InternalAnnotationInSamePackage«;
 
     // $TEST$ unresolved
-    »AnnotationWithoutPackage«;
+    »PrivateAnnotationInSamePackage«;
+
+
+    // $TEST$ references safeds_PublicAnnotationInSafeDsPackage
+    »PublicAnnotationInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »InternalAnnotationInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »PrivateAnnotationInSafeDsPackage«;
+
+
+    // $TEST$ references other_PublicAnnotationInAnotherPackage
+    »PublicAnnotationInAnotherPackage«;
+
+    // $TEST$ references other_PublicAnnotationInAnotherPackage2
+    »PublicAnnotationInAnotherPackage2«;
+
+    // $TEST$ unresolved
+    »InternalAnnotationInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »PrivateAnnotationInAnotherPackage«;
+
+
+    // $TEST$ unresolved
+    »PublicAnnotationWithoutPackage«;
+
+    // $TEST$ unresolved
+    »InternalAnnotationWithoutPackage«;
+
+    // $TEST$ unresolved
+    »PrivateAnnotationWithoutPackage«;
 }

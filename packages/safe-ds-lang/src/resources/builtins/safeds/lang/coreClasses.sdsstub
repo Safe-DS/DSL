@@ -6,7 +6,7 @@ package safeds.lang
 class Any {
 
     /**
-     * Returns a string representation of the object.
+     * Return a string representation of the object.
      *
      * @example
      * pipeline example {
@@ -14,8 +14,8 @@ class Any {
      * }
      */
     @Pure
-    @PythonCall("str($this)")
-    fun toString() -> s: String
+    @PythonMacro("str($this)")
+    fun toString() -> string: String
 }
 
 /**
@@ -54,7 +54,7 @@ class Number
 class Int sub Number {
 
     /**
-     * Converts this integer to a floating-point number.
+     * Convert this integer to a floating-point number.
      *
      * @example
      * pipeline example {
@@ -62,8 +62,8 @@ class Int sub Number {
      * }
      */
     @Pure
-    @PythonCall("float($this)")
-    fun toFloat() -> f: Float
+    @PythonMacro("float($this)")
+    fun toFloat() -> float: Float
 }
 
 /**
@@ -75,8 +75,9 @@ class Int sub Number {
  * }
  */
 class Float sub Number {
+
     /**
-     * Converts this floating-point number to an integer by truncating the fractional part.
+     * Convert this floating-point number to an integer by truncating the fractional part.
      *
      * @example
      * pipeline example {
@@ -84,8 +85,8 @@ class Float sub Number {
      * }
      */
     @Pure
-    @PythonCall("int($this)")
-    fun toInt() -> i: Int
+    @PythonMacro("int($this)")
+    fun toInt() -> int: Int
 }
 
 /**
@@ -99,7 +100,39 @@ class Float sub Number {
 class List<out E> {
 
     /**
-     * Returns the number of elements in the list.
+     * Join the elements of the list into a string using the separator.
+     *
+     * @example
+     * pipeline example {
+     *     val string = [1, 2, 3].join(); // "1, 2, 3"
+     * }
+     *
+     * @example
+     * pipeline example {
+     *     val string = [1, 2, 3].join("-"); // "1-2-3"
+     * }
+     */
+    @Pure
+    @PythonMacro("$separator.join($this)")
+    fun join(separator: String = ", ") -> string: String
+
+    /**
+     * Return the slice of the list starting at the start index up to but excluding the end index.
+     *
+     * @param start The start index (inclusive).
+     * @param end The end index (exclusive). Negative indices count from the end of the list.
+     *
+     * @example
+     * pipeline example {
+     *     val slice = [1, 2, 3].slice(1, 3); // [2, 3]
+     * }
+     */
+    @Pure
+    @PythonMacro("$this[$start:$end]")
+    fun slice(start: Int = 0, end: Int = this.size()) -> slice: List<E>
+
+    /**
+     * Return the number of elements in the list.
      *
      * @example
      * pipeline example {
@@ -107,7 +140,7 @@ class List<out E> {
      * }
      */
     @Pure
-    @PythonCall("len($this)")
+    @PythonMacro("len($this)")
     fun size() -> size: Int
 }
 
@@ -126,7 +159,7 @@ class List<out E> {
 class Map<K, out V> {
 
     /**
-     * Returns the number of entries in the map.
+     * Return the number of entries in the map.
      *
      * @example
      * pipeline example {
@@ -139,11 +172,11 @@ class Map<K, out V> {
      * }
      */
     @Pure
-    @PythonCall("len($this)")
+    @PythonMacro("len($this)")
     fun size() -> size: Int
 
     /**
-     * Returns the keys of the map.
+     * Return the keys of the map.
      *
      * @example
      * pipeline example {
@@ -156,11 +189,11 @@ class Map<K, out V> {
      * }
      */
     @Pure
-    @PythonCall("list($this.keys())")
+    @PythonMacro("list($this.keys())")
     fun keys() -> keys: List<K>
 
     /**
-     * Returns the values of the map.
+     * Return the values of the map.
      *
      * @example
      * pipeline example {
@@ -173,7 +206,7 @@ class Map<K, out V> {
      * }
      */
     @Pure
-    @PythonCall("list($this.values())")
+    @PythonMacro("list($this.values())")
     fun values() -> values: List<V>
 }
 
@@ -188,7 +221,224 @@ class Map<K, out V> {
 class String {
 
     /**
-     * Parses the string to a floating-point number.
+     * Return the number of characters in the string.
+     *
+     * @example
+     * pipeline example {
+     *     val length = "Hello, world!".length(); // 13
+     * }
+     */
+    @Pure
+    @PythonMacro("len($this)")
+    fun length() -> length: Int
+
+    /**
+     * Check if the string contains the substring.
+     *
+     * @example
+     * pipeline example {
+     *     val contains = "Hello, world!".contains("world!"); // true
+     * }
+     */
+    @Pure
+    @PythonMacro("$substring in $this")
+    fun contains(substring: String) -> contains: Boolean
+
+    /**
+     * Check if the string ends with the suffix.
+     *
+     * @example
+     * pipeline example {
+     *     val endsWith = "Hello, world!".endsWith("world!"); // true
+     * }
+     */
+    @Pure
+    @PythonMacro("$this.endswith($suffix)")
+    fun endsWith(suffix: String) -> endsWith: Boolean
+
+    /**
+     * Check if the string starts with the prefix.
+     *
+     * @example
+     * pipeline example {
+     *     val startsWith = "Hello, world!".startsWith("Hello"); // true
+     * }
+     */
+    @Pure
+    @PythonMacro("$this.startswith($prefix)")
+    fun startsWith(prefix: String) -> startsWith: Boolean
+
+    /**
+     * Return the substring of the string starting at the start index up to but excluding the end index.
+     *
+     * @param start The start index (inclusive).
+     * @param end The end index (exclusive).
+     *
+     * @example
+     * pipeline example {
+     *     val substring = "Hello, world!".substring(7, 12); // "world"
+     * }
+     */
+    @Pure
+    @PythonMacro("$this[$start:$end]")
+    fun substring(start: Int = 0, end: Int = this.length()) -> substring: String
+
+    /**
+     * Return the index of the first occurrence of the substring in the string or -1 if the substring is not found.
+     *
+     * @example
+     * pipeline example {
+     *     val index = "Hello, world!".indexOf("o"); // 4
+     * }
+     */
+    @Pure
+    @PythonMacro("$this.find($substring)")
+    fun indexOf(substring: String) -> index: Int
+
+    /**
+     * Return the index of the last occurrence of the substring in the string or -1 if the substring is not found.
+     *
+     * @example
+     * pipeline example {
+     *     val index = "Hello, world!".lastIndexOf("o"); // 8
+     * }
+     */
+    @Pure
+    @PythonMacro("$this.rfind($substring)")
+    fun lastIndexOf(substring: String) -> index: Int
+
+    /**
+     * Replace all occurrences of the old substring with the new substring.
+     *
+     * @example
+     * pipeline example {
+     *     val replacedString = "Hello, world!".replace("world", "Safe-DS"); // "Hello, Safe-DS!"
+     * }
+     */
+    @Pure
+    @PythonMacro("$this.replace($old, $new)")
+    fun replace(old: String, new: String) -> replacedString: String
+
+    /**
+     * Repeat the string n times.
+     *
+     * @example
+     * pipeline example {
+     *     val repeatedString = "Ha".repeat(3); // "HaHaHa"
+     * }
+     */
+    @Pure
+    @PythonMacro("$this * $n")
+    fun repeat(n: Int) -> repeatedString: String
+
+    /**
+     * Split the string into parts using the separator.
+     *
+     * @example
+     * pipeline example {
+     *     val parts = "a,b,c".split(","); // ["a", "b", "c"]
+     * }
+     */
+    @Pure
+    @PythonMacro("$this.split($separator)")
+    fun split(separator: String) -> parts: List<String>
+
+    /**
+     * Trim leading and trailing whitespace from the string.
+     *
+     * @example
+     * pipeline example {
+     *     val trimmed = "  Hello, world!  ".trim(); // "Hello, world!"
+     * }
+     */
+    @Pure
+    @PythonMacro("$this.strip()")
+    fun trim() -> trimmed: String
+
+    /**
+     * Trim leading whitespace from the string.
+     *
+     * @example
+     * pipeline example {
+     *     val trimmed = "  Hello, world!  ".trimStart(); // "Hello, world!  "
+     * }
+     */
+    @Pure
+    @PythonMacro("$this.lstrip()")
+    fun trimStart() -> trimmed: String
+
+    /**
+     * Trim trailing whitespace from the string.
+     *
+     * @example
+     * pipeline example {
+     *     val trimmed = "  Hello, world!  ".trimEnd(); // "  Hello, world!"
+     * }
+     */
+    @Pure
+    @PythonMacro("$this.rstrip()")
+    fun trimEnd() -> trimmed: String
+
+    /**
+     * Normalize the casing of a string to make it suitable for case-insensitive matching. This is essentially a more
+     * aggressive form of lowercasing. For example, the German lowercase letter "ß" gets converted to "ss".
+     *
+     * Casefolding is described in section 3.13 of the [Unicode Standard](https://www.unicode.org/versions/latest/).
+     *
+     * @example
+     * pipeline example {
+     *     val casefolded = "Hello, world!".toCasefolded(); // "hello, world!"
+     * }
+     *
+     * @example
+     * pipeline example {
+     *     val casefolded = "Poststraße".toCasefolded(); // "poststrasse"
+     * }
+     */
+    @Pure
+    @PythonMacro("$this.casefold()")
+    fun toCasefolded() -> casefolded: String
+
+    /**
+     * Convert the string to lowercase. Prefer {@link String.toCasefolded} for case-insensitive matching.
+     *
+     * Lowercasing is described in section 3.13 of the [Unicode Standard](https://www.unicode.org/versions/latest/).
+     *
+     * @example
+     * pipeline example {
+     *     val lowercase = "Hello, world!".toLowercase(); // "hello, world!"
+     * }
+     *
+     * @example
+     * pipeline example {
+     *     val lowercase = "Poststraße".toLowercase(); // "poststraße"
+     * }
+     */
+    @Pure
+    @PythonMacro("$this.lower()")
+    fun toLowercase() -> lowercase: String
+
+    /**
+     * Convert the string to uppercase. Prefer {@link String.toCasefolded} for case-insensitive matching.
+     *
+     * Uppercasing is described in section 3.13 of the [Unicode Standard](https://www.unicode.org/versions/latest/).
+     *
+     * @example
+     * pipeline example {
+     *     val uppercase = "Hello, world!".toUppercase(); // "HELLO, WORLD!"
+     * }
+     *
+     * @example
+     * pipeline example {
+     *     val uppercase = "Poststraße".toUppercase(); // "POSTSTRASSE"
+     * }
+     */
+    @Pure
+    @PythonMacro("$this.upper()")
+    fun toUppercase() -> uppercase: String
+
+    /**
+     * Parse the string to a floating-point number.
      *
      * @example
      * pipeline example {
@@ -196,11 +446,11 @@ class String {
      * }
      */
     @Pure
-    @PythonCall("float($this)")
-    fun toFloat() -> f: Float
+    @PythonMacro("float($this)")
+    fun toFloat() -> float: Float
 
     /**
-     * Parses the string to an integer.
+     * Parse the string to an integer.
      *
      * @param base The base of the integer.
      *
@@ -215,6 +465,6 @@ class String {
      * }
      */
     @Pure
-    @PythonCall("int($this, $base)")
-    fun toInt(base: Int = 10) -> i: Int
+    @PythonMacro("int($this, $base)")
+    fun toInt(base: Int = 10) -> int: Int
 }

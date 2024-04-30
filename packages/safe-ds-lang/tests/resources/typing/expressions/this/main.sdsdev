@@ -1,0 +1,39 @@
+package tests.typing.expressions.`this`
+
+// $TEST$ serialization unknown
+annotation MyAnnotation(p: Any? = »this«)
+
+// $TEST$ serialization MyClass
+class MyClass(p: Any? = »this«) {
+
+    // $TEST$ serialization MyClass
+    @Pure fun myInstanceMethod(p: Any? = »this«)
+
+    // $TEST$ serialization unknown
+    @Pure static fun myStaticMethod(p: Any? = »this«)
+
+    // $TEST$ serialization MyNestedClass
+    class MyNestedClass(p: Any? = »this«) {
+
+        // $TEST$ serialization MyNestedClass
+        @Pure fun myInstanceMethod(p: Any? = »this«)
+    }
+
+    enum MyNestedEnum {
+        // $TEST$ serialization unknown
+        MyEnumVariant(p: Any? = »this«)
+    }
+}
+
+enum MyEnum {
+    // $TEST$ serialization unknown
+    MyEnumVariant(p: Any? = »this«)
+}
+
+pipeline myPipeline {
+    // $TEST$ serialization unknown
+    »this«;
+}
+
+// $TEST$ serialization unknown
+segment mySegment(p: Any? = »this«) {}

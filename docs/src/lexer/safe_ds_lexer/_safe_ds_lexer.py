@@ -42,6 +42,7 @@ keywords_generic = (
     "private",
     "schema",
     "static",
+    "this",
     "union",
     "where",
     "yield",

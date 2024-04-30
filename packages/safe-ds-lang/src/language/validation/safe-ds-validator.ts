@@ -20,7 +20,7 @@ import { requiredParameterMustNotBeExpert } from './builtins/expert.js';
 import { pythonCallMustOnlyContainValidTemplateExpressions } from './builtins/pythonCall.js';
 import { pythonModuleShouldDifferFromSafeDsPackage } from './builtins/pythonModule.js';
 import {
-    pythonNameMustNotBeSetIfPythonCallIsSet,
+    pythonNameMustNotBeSetIfPythonMacroIsSet,
     pythonNameShouldDifferFromSafeDsName,
 } from './builtins/pythonName.js';
 import { singleUseAnnotationsMustNotBeRepeated } from './builtins/repeatable.js';
@@ -35,6 +35,8 @@ import {
     classMemberMustMatchOverriddenMemberAndShouldBeNeeded,
     classMustNotInheritItself,
     classMustOnlyInheritASingleClass,
+    overridingAndOverriddenMethodsMustNotHavePythonMacro,
+    overridingMemberPythonNameMustMatchOverriddenMember,
 } from './inheritance.js';
 import {
     annotationMustContainUniqueNames,
@@ -74,16 +76,12 @@ import {
     constantParameterMustHaveTypeThatCanBeEvaluatedToConstant,
 } from './other/declarations/parameters.js';
 import { placeholderShouldBeUsed, placeholdersMustNotBeAnAlias } from './other/declarations/placeholders.js';
-import {
-    segmentParameterShouldBeUsed,
-    segmentResultMustBeAssignedExactlyOnce,
-    segmentShouldBeUsed,
-} from './other/declarations/segments.js';
+import { segmentParameterShouldBeUsed, segmentResultMustBeAssignedExactlyOnce } from './other/declarations/segments.js';
 import {
     typeParameterMustBeUsedInCorrectPosition,
     typeParameterMustHaveSufficientContext,
     typeParameterMustOnlyBeVariantOnClass,
-    typeParameterUpperBoundMustBeNamedType,
+    typeParameterUpperBoundMustNotBeUnknown,
 } from './other/declarations/typeParameters.js';
 import { callArgumentMustBeConstantIfParameterIsConstant, callMustNotBeRecursive } from './other/expressions/calls.js';
 import { divisionDivisorMustNotBeZero } from './other/expressions/infixOperations.js';
@@ -188,6 +186,9 @@ import {
 } from './other/declarations/parameterBounds.js';
 import { unknownMustOnlyBeUsedAsDefaultValueOfStub } from './other/expressions/literals.js';
 import { tagsShouldNotHaveDuplicateEntries } from './builtins/tags.js';
+import { moduleMemberShouldBeUsed } from './other/declarations/moduleMembers.js';
+import { pipelinesMustBePrivate } from './other/declarations/pipelines.js';
+import { thisMustReferToClassInstance } from './other/expressions/this.js';
 
 /**
  * Register custom validation checks.
@@ -260,7 +261,10 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             staticClassMemberNamesMustNotCollideWithInheritedMembers(services),
         ],
         SdsClassBody: [classBodyShouldNotBeEmpty(services)],
-        SdsClassMember: [classMemberMustMatchOverriddenMemberAndShouldBeNeeded(services)],
+        SdsClassMember: [
+            classMemberMustMatchOverriddenMemberAndShouldBeNeeded(services),
+            overridingMemberPythonNameMustMatchOverriddenMember(services),
+        ],
         SdsConstraintList: [constraintListsShouldBeUsedWithCaution(services), constraintListShouldNotBeEmpty(services)],
         SdsDeclaration: [
             nameMustNotOccurOnCoreDeclaration(services),
@@ -282,7 +286,8 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             impurityReasonParameterNameMustBelongToParameterOfCorrectType(services),
             impurityReasonShouldNotBeSetMultipleTimes(services),
             pythonCallMustOnlyContainValidTemplateExpressions(services),
-            pythonNameMustNotBeSetIfPythonCallIsSet(services),
+            pythonNameMustNotBeSetIfPythonMacroIsSet(services),
+            overridingAndOverriddenMethodsMustNotHavePythonMacro(services),
         ],
         SdsImport: [importPackageMustExist(services), importPackageShouldNotBeEmpty(services)],
         SdsImportedDeclaration: [importedDeclarationAliasShouldDifferFromDeclarationName(services)],
@@ -319,6 +324,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             pipelineFileMustNotBeInBuiltinPackage,
             pythonModuleShouldDifferFromSafeDsPackage(services),
         ],
+        SdsModuleMember: [moduleMemberShouldBeUsed(services)],
         SdsNamedType: [
             namedTypeDeclarationShouldNotBeDeprecated(services),
             namedTypeDeclarationShouldNotBeExperimental(services),
@@ -344,7 +350,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             parameterBoundRightOperandMustEvaluateToFloatConstantOrIntConstant(services),
         ],
         SdsParameterList: [parameterListMustNotHaveRequiredParametersAfterOptionalParameters],
-        SdsPipeline: [pipelineMustContainUniqueNames],
+        SdsPipeline: [pipelinesMustBePrivate, pipelineMustContainUniqueNames],
         SdsPlaceholder: [placeholdersMustNotBeAnAlias, placeholderShouldBeUsed(services)],
         SdsPrefixOperation: [prefixOperationOperandMustHaveCorrectType(services)],
         SdsReference: [
@@ -361,17 +367,17 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             segmentParameterShouldBeUsed(services),
             segmentResultMustBeAssignedExactlyOnce(services),
             segmentResultListShouldNotBeEmpty(services),
-            segmentShouldBeUsed(services),
         ],
         SdsStatement: [statementMustDoSomething(services)],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
+        SdsThis: [thisMustReferToClassInstance(services)],
         SdsTypeCast: [typeCastMustNotAlwaysFail(services)],
         SdsTypeParameter: [
             typeParameterDefaultValueMustMatchUpperBound(services),
             typeParameterMustBeUsedInCorrectPosition(services),
             typeParameterMustHaveSufficientContext,
             typeParameterMustOnlyBeVariantOnClass,
-            typeParameterUpperBoundMustBeNamedType(services),
+            typeParameterUpperBoundMustNotBeUnknown(services),
         ],
         SdsTypeParameterList: [
             typeParameterListMustNotHaveRequiredTypeParametersAfterOptionalTypeParameters,

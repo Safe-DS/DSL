@@ -1,6 +1,6 @@
-package tests.validation.builtins.annotations.pythonName.mutuallyExclusiveWithPythonCall
+package tests.validation.builtins.annotations.pythonName.mutuallyExclusiveWithPythonMacro
 
-@PythonCall("myFunction1()")
+@PythonMacro("myFunction1()")
 // $TEST$ error "A Python name must not be set if a Python call is set."
 @»PythonName«("my_function_1")
 // $TEST$ no error "A Python name must not be set if a Python call is set."
@@ -11,7 +11,7 @@ fun myFunction1()
 @»PythonName«("my_function_2")
 // $TEST$ no error "A Python name must not be set if a Python call is set."
 @»PythonName«("my_function_2")
-@PythonCall("myFunction2()")
+@PythonMacro("myFunction2()")
 fun myFunction2()
 
 // $TEST$ no error "A Python name must not be set if a Python call is set."
@@ -22,5 +22,5 @@ fun myFunction3()
 @»PythonName«("my_function_2")
 // $TEST$ no error "A Python name must not be set if a Python call is set."
 @»PythonName«("my_function_2")
-@PythonCall("myFunction2()")
+@PythonMacro("myFunction2()")
 class MyClass()

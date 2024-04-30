@@ -1,5 +1,11 @@
 // $TEST$ target without_MySchema
 schema »MySchema« {}
 
-// $TEST$ target without_SchemaWithoutPackage
-schema »SchemaWithoutPackage« {}
+// $TEST$ target without_PublicSchemaWithoutPackage
+schema »PublicSchemaWithoutPackage« {}
+
+// $TEST$ target without_InternalSchemaInSamePackage
+internal schema »InternalSchemaInSamePackage« {}
+
+// $TEST$ target without_PrivateSchemaInSamePackage
+private schema »PrivateSchemaInSamePackage« {}
