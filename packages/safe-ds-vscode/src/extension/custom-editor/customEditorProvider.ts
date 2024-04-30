@@ -9,7 +9,7 @@ import { logOutput } from '../output.ts';
 /**
  * Provider for the Safe-DS custom visual editor.
  */
-export class SafeDSCustomTextEditorProvider implements vscode.CustomTextEditorProvider {
+export class SafeDSCustomEditorProvider implements vscode.CustomTextEditorProvider {
     private static readonly viewType = 'safe-ds.custom-editor';
     private static readonly options = {
         webviewOptions: {
@@ -25,12 +25,12 @@ export class SafeDSCustomTextEditorProvider implements vscode.CustomTextEditorPr
     ) {}
 
     public static registerProvider(context: vscode.ExtensionContext, client: LanguageClient): void {
-        const provider = new SafeDSCustomTextEditorProvider(context, client);
+        const provider = new SafeDSCustomEditorProvider(context, client);
         context.subscriptions.push(
             vscode.window.registerCustomEditorProvider(
-                SafeDSCustomTextEditorProvider.viewType,
+                SafeDSCustomEditorProvider.viewType,
                 provider,
-                SafeDSCustomTextEditorProvider.options,
+                SafeDSCustomEditorProvider.options,
             ),
         );
     }
@@ -49,7 +49,7 @@ export class SafeDSCustomTextEditorProvider implements vscode.CustomTextEditorPr
                     }
 
                     if (documentURI) {
-                        SafeDSCustomTextEditorProvider.openDiagram(documentURI);
+                        SafeDSCustomEditorProvider.openDiagram(documentURI);
                     }
                 },
             },
@@ -58,12 +58,12 @@ export class SafeDSCustomTextEditorProvider implements vscode.CustomTextEditorPr
         commands.forEach((command) => {
             context.subscriptions.push(
                 vscode.commands.registerCommand(
-                    `${SafeDSCustomTextEditorProvider.viewType}.${command.name}`,
+                    `${SafeDSCustomEditorProvider.viewType}.${command.name}`,
                     command.callback,
                 ),
             );
             logOutput(
-                `Registered ${command.name} | Full Command: ${SafeDSCustomTextEditorProvider.viewType}.${command.name}`,
+                `Registered ${command.name} | Full Command: ${SafeDSCustomEditorProvider.viewType}.${command.name}`,
             );
         });
     }
@@ -79,12 +79,12 @@ export class SafeDSCustomTextEditorProvider implements vscode.CustomTextEditorPr
         webviewPanel.webview.options = {
             enableScripts: true,
         };
-        const messageHandler = MessageHandler.getInstance(webviewPanel.webview, this.client);
+        const messageHandler = MessageHandler.getInstance(webviewPanel.webview, this.client, document.uri);
         this.context.subscriptions.push(messageHandler.webview.listenToMessages());
         webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview, document.fileName);
 
-        messageHandler.webview.sendMessageTest('Hi from Extension');
-        await messageHandler.languageServer.getAst(document.uri);
+        // messageHandler.webview.sendMessageTest('Hi from Extension');
+        // await messageHandler.languageServer.getAst_SAMPLE(document.uri);
     }
 
     /**
@@ -95,11 +95,11 @@ export class SafeDSCustomTextEditorProvider implements vscode.CustomTextEditorPr
 
         // Local path to static page elements
         const styleResetUri = webview.asWebviewUri(
-            vscode.Uri.joinPath(this.context.extensionUri, 'src', 'custom-editor', 'media', 'reset.css'),
+            vscode.Uri.joinPath(this.context.extensionUri, 'src', 'extension', 'custom-editor', 'media', 'reset.css'),
         );
 
         const styleVSCodeUri = webview.asWebviewUri(
-            vscode.Uri.joinPath(this.context.extensionUri, 'src', 'custom-editor', 'media', 'vscode.css'),
+            vscode.Uri.joinPath(this.context.extensionUri, 'src', 'extension', 'custom-editor', 'media', 'vscode.css'),
         );
 
         const scriptUri = webview.asWebviewUri(
@@ -157,7 +157,7 @@ export class SafeDSCustomTextEditorProvider implements vscode.CustomTextEditorPr
      * Open the custom editor for the given URI.
      */
     public static async openDiagram(uri: vscode.Uri): Promise<void> {
-        await vscode.commands.executeCommand('vscode.openWith', uri, SafeDSCustomTextEditorProvider.viewType);
+        await vscode.commands.executeCommand('vscode.openWith', uri, SafeDSCustomEditorProvider.viewType);
         return;
     }
 }

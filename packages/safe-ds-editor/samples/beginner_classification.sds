@@ -1,0 +1,77 @@
+package samples
+
+pipeline predictSpeed {
+// labeled_images = Table.from_csv_file('beginner_classification/train.csv')
+    val labeledImages = Table.fromCsvFile("beginner_classification/train.csv");
+
+// subset_images = labeled_images.slice_rows(0, 5000)
+    val subsetImages = labeledImages.sliceRows(0, 5000);
+
+// train, validate = subset_images.split_rows(0.8)
+    val train, val validate = subsetImages.splitRows(0.8);
+
+// train_tagged = train.tag_columns("label")
+    val trainTagged = train.tagColumns("label");
+
+// validate_tagged = validate.tag_columns("label")
+    val validateTagged = validate.tagColumns("label");
+
+// first_plot = train_tagged.plot_correlation_heatmap()
+    val firstPlot = trainTagged.plotCorrelationHeatmap();
+
+// # histogram = train_tagged.plot_histograms()
+// val histogram = trainTagged.plotHistograms()
+
+// model_unused_untrained = SupportVectorMachine()
+    val modelUnusedUntrained = SupportVectorMachineClassifier();
+
+// model_unused = model_unused_untrained.fit(train_tagged)
+    val modelUnused = modelUnusedUntrained.fit(trainTagged);
+
+// score_unused = model_unused.accuracy(validate_tagged)
+    val scoreUnused = modelUnused.accuracy(validateTagged);
+
+// print(score_unused)
+// print(scoreUnused);
+
+// train_tagged2 = train_tagged.transform_column("pixel0", lambda row: int(row["pixel0"] > 0))
+    val trainTagged2 = trainTagged.transformColumn("pixel0", (row: Row) -> row.getValue("pixel0") as Int > 0);
+
+// validate_tagged2 = validate_tagged.transform_column("pixel0", lambda row: int(row["pixel0"] > 0))
+    val validateTagged2 = validateTagged.transformColumn("pixel0", (row: Row) -> row.getValue("pixel0") as Int > 0);
+
+// second_plot = train_tagged2.plot_correlation_heatmap()
+    val secondPlot = trainTagged2.plotCorrelationHeatmap();
+
+// model_untrained = SupportVectorMachine()
+    val modelUntrained = SupportVectorMachineClassifier();
+
+// model = model_untrained.fit(train_tagged2)
+    val model = modelUntrained.fit(trainTagged2);
+
+// score = model.accuracy(validate_tagged2)
+    val score = model.accuracy(validateTagged2);
+
+// print(score)
+// print(score)
+
+// test = Table.from_csv_file('beginner_classification/test.csv')
+    val test = Table.fromCsvFile("beginner_classification/test.csv");
+
+// test_transformed = test.transform_column("pixel0", lambda row: int(row["pixel0"] > 0))
+    val testTransformed = test.transformColumn("pixel0", (row: Row) -> row.getValue("pixel0") as Int > 0);
+
+// results = model.predict(test_transformed)
+    val results = model.predict(testTransformed);
+
+// results_table = Table.from_columns([Column("ImageId", range(results.number_of_rows)), results.get_column("label")])
+    val resultsTable = Table.fromColumns(
+        [
+            results.getColumn("id"),
+            results.getColumn("label")
+        ]
+    );
+
+// results_table.to_csv_file("output/beginner_classification.csv")
+    resultsTable.toCsvFile("output/beginner_classification.csv");
+}

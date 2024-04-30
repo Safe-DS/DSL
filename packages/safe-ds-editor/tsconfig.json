@@ -9,8 +9,8 @@
         "allowJs": false,
         "checkJs": false,
         "paths": {
-            "$lib": ["src/lib"],
-            "$lib/*": ["src/lib/*"]
+            "$lib/*": ["src/lib/*"],
+            "$vscode/*": ["../safe-ds-vscode/src/extension/custom-editor/*"]
         }
     },
     "include": [

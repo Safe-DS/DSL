@@ -3,13 +3,38 @@ import '@xyflow/svelte/dist/style.css'; /* This is for svelte-flow and needs to 
 import './tailwind.css';
 import MessageHandler from './messaging/messageHandler';
 
-let targetElement = document.body;
+// MessageHandler.listenToMessages();
+// const { ast, error } = await MessageHandler.getAst();
 
-const app = new App({
-    target: targetElement,
-});
+// let targetElement = document.body;
+// const app = new App({
+//     target: targetElement,
+//     props: {
+//         criticalError: error,
+//         ast: ast ?? '',
+//     },
+// });
 
-MessageHandler.listenToMessages();
-MessageHandler.sendMessageTest('This is a Test Message from main.ts');
+// export default app;
 
-export default app;
+const initApp = async () => {
+    MessageHandler.setVscode();
+    MessageHandler.listenToMessages();
+    MessageHandler.sendMessageTest('THIS IS A TEST MESSAGE');
+    const { ast, error } = await MessageHandler.getAst();
+
+    let targetElement = document.body;
+    const app = new App({
+        target: targetElement,
+        props: {
+            criticalError: error,
+            ast: ast ?? '',
+        },
+    });
+
+    return app;
+};
+
+initApp().catch(console.error);
+
+export default initApp;

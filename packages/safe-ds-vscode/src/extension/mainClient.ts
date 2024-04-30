@@ -14,7 +14,7 @@ import { openDiagnosticsDumps } from './commands/openDiagnosticsDumps.js';
 import { isSdsPlaceholder, SdsPipeline } from '../../../safe-ds-lang/src/language/generated/ast.js';
 import { installRunner } from './commands/installRunner.js';
 import { updateRunner } from './commands/updateRunner.js';
-import { SafeDSCustomTextEditorProvider } from './custom-editor/customEditorProvider.ts';
+import { SafeDSCustomEditorProvider } from './custom-editor/customEditorProvider.ts';
 
 let client: LanguageClient;
 let services: SafeDsServices;
@@ -45,8 +45,8 @@ export const activate = async function (context: vscode.ExtensionContext) {
 
     registerVSCodeCommands(context);
 
-    SafeDSCustomTextEditorProvider.registerProvider(context, client);
-    SafeDSCustomTextEditorProvider.registerCommands(context);
+    SafeDSCustomEditorProvider.registerProvider(context, client);
+    SafeDSCustomEditorProvider.registerCommands(context);
 };
 
 const registerNotificationListeners = function (context: vscode.ExtensionContext) {

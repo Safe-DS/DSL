@@ -40,6 +40,7 @@
     },
     "dependencies": {
         "bits-ui": "^0.21.4",
+        "flatten": "^1.0.3",
         "svelte-radix": "^1.0.1"
     }
 }

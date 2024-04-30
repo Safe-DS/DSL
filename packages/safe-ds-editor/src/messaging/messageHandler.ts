@@ -1,9 +1,18 @@
+import type { AstInterface } from '$vscode/messaging/getAst';
 import type {
     ExtensionToWebview,
     WebviewToExtension,
-} from '../../../safe-ds-vscode/src/extension/custom-editor/messaging/message-types';
+} from '$vscode/messaging/message-types';
 
 export default class MessageHandler {
+    public static vsocde: {
+        postMessage: (message: any) => void;
+    };
+
+    public static setVscode() {
+        MessageHandler.vsocde = window.injVscode;
+    }
+
     public static listenToMessages() {
         window.addEventListener('message', (event) => {
             const message = event.data as ExtensionToWebview;
@@ -11,7 +20,8 @@ export default class MessageHandler {
             console.log(Date.now() + ': ' + message.command + ' called');
 
             switch (message.command) {
-                case 'update':
+                case 'SendAst':
+                    // This Message is handled somewhere else
                     break;
                 case 'test':
                     console.log(message.value);
@@ -26,6 +36,32 @@ export default class MessageHandler {
             command: 'test',
             value: message,
         };
-        window.injVscode.postMessage(messageObject);
+
+        MessageHandler.vsocde.postMessage(messageObject);
+    }
+
+    public static async getAst(): Promise<AstInterface.Response> {
+        const response = await new Promise<AstInterface.Response>((resolve) => {
+            const responseHandler = (event: any) => {
+                const message = event.data as ExtensionToWebview;
+                switch (message.command) {
+                    case 'SendAst':
+                        window.removeEventListener('message', responseHandler);
+                        resolve(message.value);
+                    default:
+                        return;
+                }
+            };
+
+            window.addEventListener('message', responseHandler);
+            const messageObject: WebviewToExtension = {
+                command: 'RequestAst',
+                value: '',
+            };
+            console.log('Now Posting request');
+            console.dir(messageObject, { depth: null });
+            MessageHandler.vsocde.postMessage(messageObject);
+        });
+        return response;
     }
 }

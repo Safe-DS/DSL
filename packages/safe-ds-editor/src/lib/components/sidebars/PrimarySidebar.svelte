@@ -20,9 +20,9 @@
         use:resize={{ sides: ['right'] }}
     >
         <div
-            class=" bg-background_mid flex h-full w-full flex-col gap-3 overflow-hidden px-2"
+            class=" flex h-full w-full flex-col gap-3 overflow-hidden bg-background_mid px-2"
         >
-            <h2 class="text-text_main text-2xl font-bold">Functions</h2>
+            <h2 class="text-2xl font-bold text-text_main">Functions</h2>
 
             <Tabs.Root value="nodes" class="w-full">
                 <Tabs.List class="w-full">
@@ -30,7 +30,7 @@
                         >Nodes</Tabs.Trigger
                     >
                     <Tabs.Trigger value="extension" class="flex-1 basis-1/2"
-                        >Extensions</Tabs.Trigger
+                        >Segments</Tabs.Trigger
                     >
                 </Tabs.List>
                 <Tabs.Content value="nodes">
@@ -38,12 +38,12 @@
                         <Input placeholder="Search..." class="shadow" />
                         <div class="flex flex-row gap-1">
                             <div
-                                class="bg-background_light flex-grow justify-center rounded-sm p-1 py-3 text-center shadow"
+                                class="flex-grow justify-center rounded-sm bg-background_light p-1 py-3 text-center shadow"
                             >
                                 Placeholder
                             </div>
                             <div
-                                class="bg-background_light flex-grow justify-center rounded-sm p-1 py-3 text-center shadow"
+                                class="flex-grow justify-center rounded-sm bg-background_light p-1 py-3 text-center shadow"
                             >
                                 Expression
                             </div>
@@ -52,7 +52,7 @@
                             {#each categories as category, index}
                                 <Accordion.Item value={index.toString()}>
                                     <Accordion.Trigger
-                                        class="text-text_main hover:bg-background_light gap-2 whitespace-nowrap pl-2 text-base font-bold hover:no-underline"
+                                        class="gap-2 whitespace-nowrap pl-2 text-base font-bold text-text_main hover:bg-background_light hover:no-underline"
                                     >
                                         <svelte:component
                                             this={category.icon}
@@ -60,12 +60,12 @@
                                         />
                                         {category.name}
                                         <span
-                                            class="text-text_secondary text-xs"
+                                            class="text-xs text-text_secondary"
                                             >(3)</span
                                         >
                                     </Accordion.Trigger>
                                     <Accordion.Content
-                                        class=" text-text_main py-2 pl-8"
+                                        class=" py-2 pl-8 text-text_main"
                                     >
                                         Item 1<br />
                                         Item 2<br />
@@ -79,20 +79,20 @@
                 <Tabs.Content value="extension">
                     <div class="grid gap-2">
                         <Button.Button
-                            class="text-text_main bg-background_mid hover:bg-background_light w-full rounded-lg border"
+                            class="w-full rounded-lg border bg-background_mid text-text_main hover:bg-background_light"
                             >+</Button.Button
                         >
                         <Card.Root>
                             <Card.Header>
-                                <Card.Title>textExtension</Card.Title>
+                                <Card.Title>textSegment</Card.Title>
                             </Card.Header>
                             <Card.Content class="text-text_secondary">
-                                Extension Documentation can go here.
+                                Segment Documentation can go here.
                             </Card.Content>
                             <Card.Footer>
                                 <div class="flex w-full flex-row gap-2">
                                     <Button.Button
-                                        class="bg-background_dark text-text_main hover:bg-background_dark/90 flex-grow shadow"
+                                        class="flex-grow bg-background_dark text-text_main shadow hover:bg-background_dark/90"
                                         >Open</Button.Button
                                     >
                                     <Button.Button variant="destructive">
@@ -106,15 +106,15 @@
                         </Card.Root>
                         <Card.Root>
                             <Card.Header>
-                                <Card.Title>AnotherExtension</Card.Title>
+                                <Card.Title>AnotherSegment</Card.Title>
                             </Card.Header>
                             <Card.Content class="text-text_secondary">
-                                Extension Documentation can go here.
+                                Segment Documentation can go here.
                             </Card.Content>
                             <Card.Footer>
                                 <div class="flex w-full flex-row gap-2">
                                     <Button.Button
-                                        class="bg-background_dark text-text_main hover:bg-background_dark/90 flex-grow shadow"
+                                        class="flex-grow bg-background_dark text-text_main shadow hover:bg-background_dark/90"
                                         >Open</Button.Button
                                     >
                                     <Button.Button variant="destructive">
