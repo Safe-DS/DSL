@@ -2,6 +2,8 @@
     import TableView from './components/TableView.svelte';
     import Sidebar from './components/Sidebar.svelte';
     import { throttle } from 'lodash';
+    import { currentTabIndex, currentState } from './webviewState';
+    import TabContent from './components/tabs/TabContent.svelte';
 
     let sidebarWidth = 307; // Initial width of the sidebar in pixels
 
@@ -41,8 +43,12 @@
         <Sidebar width={sidebarWidth} />
         <button class="resizer" on:mousedown={handleDrag}></button>
     </div>
-    <div class="tableWrapper">
-        <TableView {sidebarWidth} />
+    <div class="contentWrapper">
+        {#if $currentTabIndex === undefined}
+            <TableView {sidebarWidth} />
+        {:else if $currentState.tabs && $currentTabIndex !== undefined}
+            <TabContent tab={$currentState.tabs[$currentTabIndex]} {sidebarWidth} />
+        {/if}
     </div>
 </main>
 
@@ -59,15 +65,16 @@
         flex-shrink: 0;
         overflow: hidden;
         position: relative;
-        background-color: var(--bg-bright);
+        background-color: var(--bg-medium);
     }
 
     .white-bg {
         background-color: var(--bg-bright);
     }
 
-    .tableWrapper {
+    .contentWrapper {
         flex: 1;
+        width: 100%;
     }
 
     .resizer {

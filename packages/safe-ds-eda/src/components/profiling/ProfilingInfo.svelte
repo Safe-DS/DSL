@@ -1,8 +1,11 @@
 <script lang="ts">
-    import type { Profiling } from '../../../types/state.ts';
+    import type { Profiling } from '../../../types/state';
+    import { addAndDeployTabHistoryEntry } from '../../apis/historyApi.js';
+    import ZoomIcon from '../../icons/Zoom.svelte';
 
     export let profiling: Profiling;
     export let imageWidth: number = 200;
+    export let columnName: string;
 </script>
 
 <div class="wrapper">
@@ -28,6 +31,36 @@
                     <span class={profilingItem.interpretation}>{profilingItem.value}</span>
                 </div>
             {:else if profilingItem.type === 'image'}
+                <div
+                    role="none"
+                    class="zoomIconWrapper"
+                    on:click={() => {
+                        const randomId = Math.floor(Math.random() * 100);
+                        addAndDeployTabHistoryEntry(
+                            {
+                                action: 'histogram',
+                                alias: `View ${columnName} Histogram`,
+                                type: 'external-visualizing',
+                                columnName: columnName,
+                                id: randomId,
+                            },
+                            {
+                                type: 'histogram',
+                                tabComment: columnName,
+                                content: {
+                                    columnName: columnName,
+                                    encodedImage: profilingItem.value,
+                                    outdated: false,
+                                },
+                                initalHistoryEntryId: randomId,
+                                imageTab: true,
+                                columnNumber: 'one',
+                            },
+                        );
+                    }}
+                >
+                    <ZoomIcon />
+                </div>
                 <div class="profilingItem">
                     <img
                         style:width="{imageWidth}px"
@@ -53,6 +86,7 @@
         display: flex;
         justify-content: space-between;
         margin-bottom: 1px;
+        user-select: none;
     }
 
     .profilingItemKey {
@@ -66,6 +100,7 @@
 
     .profilingItemsBottom {
         width: 100%;
+        position: relative;
     }
 
     .profilingImage {
@@ -96,5 +131,20 @@
 
     .category {
         color: var(--font-light);
+    }
+
+    .zoomIconWrapper {
+        height: 17px;
+        width: 17px;
+        position: absolute;
+        top: 30px;
+        right: 15px;
+        cursor: pointer;
+        border-radius: 50%;
+    }
+
+    .zoomIconWrapper:hover {
+        height: 25px;
+        width: 25px;
     }
 </style>

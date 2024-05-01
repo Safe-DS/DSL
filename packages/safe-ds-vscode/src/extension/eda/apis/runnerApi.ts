@@ -1,5 +1,12 @@
-import { Base64Image, Column, Profiling, ProfilingDetailStatistical, Table } from '@safe-ds/eda/types/state.js';
-import { ast, CODEGEN_PREFIX, messages, SafeDsServices, getPlaceholderByName } from '@safe-ds/lang';
+import {
+    Base64Image,
+    Column,
+    ExternalHistoryEntry,
+    Profiling,
+    ProfilingDetailStatistical,
+    Table,
+} from '@safe-ds/eda/types/state.js';
+import { ast, CODEGEN_PREFIX, messages, SafeDsServices } from '@safe-ds/lang';
 import { LangiumDocument } from 'langium';
 import * as vscode from 'vscode';
 import crypto from 'crypto';
@@ -36,7 +43,11 @@ export class RunnerApi {
     }
 
     //#region Pipeline execution
-    private async addToAndExecutePipeline(pipelineExecutionId: string, addedLines: string): Promise<void> {
+    private async addToAndExecutePipeline(
+        pipelineExecutionId: string,
+        addedLines: string,
+        placeholderNames?: string[],
+    ): Promise<void> {
         return new Promise(async (resolve, reject) => {
             if (!this.baseDocument) {
                 reject('Document not found');
@@ -55,26 +66,9 @@ export class RunnerApi {
 
             this.services.shared.workspace.LangiumDocuments.deleteDocument(this.pipelinePath);
 
-            const placeholderNode = getPlaceholderByName(this.pipelineNode.body, this.tablePlaceholder);
-            if (!placeholderNode || !placeholderNode.$cstNode) {
-                // If placeholder not found, add to the end of the pipeline
-                const beforePipelineEnd = documentText.substring(0, endOfPipeline - 1);
-                const afterPipelineEnd = documentText.substring(endOfPipeline - 1);
-                newDocumentText = beforePipelineEnd + addedLines + afterPipelineEnd;
-            } else {
-                // If placeholder found, add after the placeholder and ignore the rest of the pipeline
-                const placeholderEnd = placeholderNode.$cstNode.end;
-
-                // Find next "\n" after placeholder
-                let nextNewline = documentText.indexOf('\n', placeholderEnd);
-                if (nextNewline === -1) {
-                    reject('Could not find newline after placeholder');
-                }
-
-                const beforePipelineEnd = documentText.substring(0, nextNewline);
-                const afterPipelineEnd = documentText.substring(endOfPipeline - 1);
-                newDocumentText = beforePipelineEnd + '\n' + addedLines + afterPipelineEnd;
-            }
+            const beforePipelineEnd = documentText.substring(0, endOfPipeline - 1);
+            const afterPipelineEnd = documentText.substring(endOfPipeline - 1);
+            newDocumentText = beforePipelineEnd + addedLines + afterPipelineEnd;
 
             const newDoc = this.services.shared.workspace.LangiumDocumentFactory.fromString(
                 newDocumentText,
@@ -82,8 +76,13 @@ export class RunnerApi {
             );
             await this.services.shared.workspace.DocumentBuilder.build([newDoc]);
 
-            safeDsLogger.info(`Executing pipeline ${this.pipelineName} with added lines`);
-            await this.services.runtime.Runner.executePipeline(pipelineExecutionId, newDoc, this.pipelineName);
+            safeDsLogger.debug(`Executing pipeline ${this.pipelineName} with added lines`);
+            await this.services.runtime.Runner.executePipeline(
+                pipelineExecutionId,
+                newDoc,
+                this.pipelineName,
+                placeholderNames,
+            );
 
             this.services.shared.workspace.LangiumDocuments.deleteDocument(this.pipelinePath);
             this.services.shared.workspace.LangiumDocuments.addDocument(this.baseDocument);
@@ -93,7 +92,7 @@ export class RunnerApi {
                     return;
                 }
                 if (message.data === 'done') {
-                    safeDsLogger.info(`Pipeline execution ${this.pipelineName} done`);
+                    safeDsLogger.debug(`Pipeline execution ${this.pipelineName} done`);
                     this.services.runtime.PythonServer.removeMessageCallback('runtime_progress', runtimeCallback);
                     this.services.runtime.PythonServer.removeMessageCallback('runtime_error', errorCallback);
                     resolve();
@@ -119,6 +118,20 @@ export class RunnerApi {
     //#endregion
 
     //#region SDS code generation
+    private sdsStringForHistoryEntry(historyEntry: ExternalHistoryEntry): string | undefined {
+        const newPlaceholderName = this.genPlaceholderName();
+        switch (historyEntry.action) {
+            case 'histogram':
+                return this.sdsStringForHistogramByColumnName(
+                    historyEntry.columnName,
+                    this.tablePlaceholder,
+                    newPlaceholderName,
+                );
+            default:
+                return undefined;
+        }
+    }
+
     private sdsStringForMissingValueRatioByColumnName(
         columnName: string,
         tablePlaceholder: string,
@@ -173,9 +186,6 @@ export class RunnerApi {
                 if (message.id !== pipelineExecutionId || message.data.name !== placeholder) {
                     return;
                 }
-                safeDsLogger.info(
-                    `Got ${message.data.name} of type ${message.data.type} value: ${JSON.stringify(message.data.value).substring(0, 200)}`,
-                );
                 this.services.runtime.PythonServer.removeMessageCallback('placeholder_value', placeholderValueCallback);
                 resolve(message.data.value);
             };
@@ -250,6 +260,8 @@ export class RunnerApi {
 
         let sdsStrings = '';
 
+        let placeholderNames: string[] = [];
+
         const columnNameToPlaceholderMVNameMap = new Map<string, string>(); // Mapping random placeholder name for missing value ratio back to column name
         const missingValueRatioMap = new Map<string, number>(); // Saved by random placeholder name
 
@@ -261,6 +273,7 @@ export class RunnerApi {
         // Generate SDS code to get missing value ratio for each column
         for (const column of columns) {
             const newMvPlaceholderName = this.genPlaceholderName(column[1].name + '_mv');
+            placeholderNames.push(newMvPlaceholderName);
             columnNameToPlaceholderMVNameMap.set(column[1].name, newMvPlaceholderName);
             sdsStrings += this.sdsStringForMissingValueRatioByColumnName(
                 column[1].name,
@@ -292,6 +305,7 @@ export class RunnerApi {
 
             // Histogram for numerical columns or categorical columns with 4-10 unique values
             const newHistogramPlaceholderName = this.genPlaceholderName(column[1].name + '_hist');
+            placeholderNames.push(newHistogramPlaceholderName);
             columnNameToPlaceholderHistogramNameMap.set(column[1].name, newHistogramPlaceholderName);
             sdsStrings += this.sdsStringForHistogramByColumnName(
                 column[1].name,
@@ -303,9 +317,8 @@ export class RunnerApi {
         // Execute with generated SDS code
         const pipelineExecutionId = crypto.randomUUID();
         try {
-            await this.addToAndExecutePipeline(pipelineExecutionId, sdsStrings);
+            await this.addToAndExecutePipeline(pipelineExecutionId, sdsStrings, placeholderNames);
         } catch (e) {
-            safeDsLogger.info('Error during pipeline execution: ' + e);
             throw e;
         }
 
@@ -476,6 +489,20 @@ export class RunnerApi {
 
         return profiling;
     }
+    //#endregion
+
+    //#region History
+    // public async executeHistoryAndReturnLastResult(history: ExternalHistoryEntry[]): Promise<Table | Tab> {
+    //     const toReturnEntry = history.pop();
+
+    //     let toReturnToStateLines = '';
+    //     for (const entry of history) {
+    //         const sdsString = this.sdsStringForHistoryEntry(entry);
+    //         if (sdsString) {
+    //             toReturnToStateLines += sdsString + '\n';
+    //         }
+    //     }
+    // }
     //#endregion
     //#endregion // Public API
 }

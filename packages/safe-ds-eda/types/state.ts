@@ -13,88 +13,98 @@ type ExternalVisualizingAction = TabType | 'refreshTab';
 type Action = InternalAction | ExternalManipulatingAction | ExternalVisualizingAction;
 
 interface HistoryEntryBase {
-    id: number;
     type: 'internal' | 'external-manipulating' | 'external-visualizing';
     alias: string;
     action: Action;
 }
 
-interface InternalHistoryEntry extends HistoryEntryBase {
+export interface InternalHistoryEntryBase extends HistoryEntryBase {
     type: 'internal';
     action: InternalAction;
 }
 
-interface ExternalManipulatingHistoryEntry extends HistoryEntryBase {
+interface ExternalManipulatingHistoryEntryBase extends HistoryEntryBase {
     type: 'external-manipulating';
     action: ExternalManipulatingAction;
 }
 
-interface ExternalVisualizingHistoryEntry extends HistoryEntryBase {
+interface ExternalVisualizingHistoryEntryBase extends HistoryEntryBase {
     type: 'external-visualizing';
     action: ExternalVisualizingAction;
 }
 
-export interface InternalColumnWithValueHistoryEntry extends InternalHistoryEntry {
+export interface InternalColumnWithValueHistoryEntry extends InternalHistoryEntryBase {
     action: 'reorderColumns' | 'resizeColumn';
     columnName: string;
     value: number;
 }
 
-export interface InternalColumnHistoryEntry extends InternalHistoryEntry {
+export interface InternalColumnHistoryEntry extends InternalHistoryEntryBase {
     action: 'hideColumn' | 'highlightColumn';
     columnName: string;
 }
 
-export interface ExternalManipulatingColumnFilterHistoryEntry extends ExternalManipulatingHistoryEntry {
+export interface ExternalManipulatingColumnFilterHistoryEntry extends ExternalManipulatingHistoryEntryBase {
     action: 'filterColumn';
     columnName: string;
     filter: NumericalFilter | CategoricalFilter;
 }
 
-export interface ExternalManipulatingTableFilterHistoryEntry extends ExternalManipulatingHistoryEntry {
+export interface ExternalManipulatingTableFilterHistoryEntry extends ExternalManipulatingHistoryEntryBase {
     action: TableFilterTypes;
 }
 
-export interface ExternalManipulatingColumnSortHistoryEntry extends ExternalManipulatingHistoryEntry {
+export interface ExternalManipulatingColumnSortHistoryEntry extends ExternalManipulatingHistoryEntryBase {
     action: 'sortColumn';
     columnName: string;
     sort: PossibleSorts;
 }
 
-export interface ExternalVisualizingNoColumnHistoryEntry extends ExternalVisualizingHistoryEntry {
+export interface ExternalVisualizingNoColumnHistoryEntry extends ExternalVisualizingHistoryEntryBase {
     action: NoColumnTabTypes;
 }
 
-export interface ExternalVisualizingOneColumnHistoryEntry extends ExternalVisualizingHistoryEntry {
+export interface ExternalVisualizingOneColumnHistoryEntry extends ExternalVisualizingHistoryEntryBase {
     action: OneColumnTabTypes;
     columnName: string;
 }
 
-export interface ExternalVisualizingTwoColumnHistoryEntry extends ExternalVisualizingHistoryEntry {
+export interface ExternalVisualizingTwoColumnHistoryEntry extends ExternalVisualizingHistoryEntryBase {
     action: TwoColumnTabTypes;
     xAxisColumnName: string;
     yAxisColumnName: string;
 }
 
-export interface ExternalVisualizingRefreshHistoryEntry extends ExternalVisualizingHistoryEntry {
+export interface ExternalVisualizingRefreshHistoryEntry extends ExternalVisualizingHistoryEntryBase {
     action: 'refreshTab';
     initalHistoryEntryId: number;
 }
 
-export type HistoryEntry =
-    | InternalColumnWithValueHistoryEntry
-    | InternalColumnHistoryEntry
-    | ExternalManipulatingColumnFilterHistoryEntry
-    | ExternalManipulatingTableFilterHistoryEntry
-    | ExternalManipulatingColumnSortHistoryEntry
+export type TabHistoryEntry =
     | ExternalVisualizingNoColumnHistoryEntry
     | ExternalVisualizingOneColumnHistoryEntry
     | ExternalVisualizingTwoColumnHistoryEntry;
+export type InternalHistoryEntry = InternalColumnWithValueHistoryEntry | InternalColumnHistoryEntry;
+export type ExternalManipulatingHistoryEntry =
+    | ExternalManipulatingColumnFilterHistoryEntry
+    | ExternalManipulatingTableFilterHistoryEntry
+    | ExternalManipulatingColumnSortHistoryEntry;
+export type ExternalVisualizingHistoryEntry =
+    | ExternalVisualizingNoColumnHistoryEntry
+    | ExternalVisualizingOneColumnHistoryEntry
+    | ExternalVisualizingTwoColumnHistoryEntry
+    | ExternalVisualizingRefreshHistoryEntry;
+
+export type ExternalHistoryEntry = ExternalManipulatingHistoryEntry | ExternalVisualizingHistoryEntry;
+
+export type HistoryEntry = (InternalHistoryEntry | ExternalHistoryEntry) & {
+    id: number;
+};
 
 // ------------------ Types for the Tabs ------------------
-type TwoColumnTabTypes = 'linePlot' | 'barPlot' | 'scatterPlot';
-type OneColumnTabTypes = 'histogram' | 'infoPanel';
-type NoColumnTabTypes = 'heatmap';
+export type TwoColumnTabTypes = 'linePlot' | 'barPlot' | 'scatterPlot';
+export type OneColumnTabTypes = 'histogram' | 'infoPanel';
+export type NoColumnTabTypes = 'heatmap';
 type TabType = TwoColumnTabTypes | OneColumnTabTypes | NoColumnTabTypes;
 
 interface TabObject {
@@ -102,45 +112,76 @@ interface TabObject {
     type: TabType;
     tabComment: string;
     content: Object;
+    imageTab: boolean;
 }
 
-export interface OneColumnTab extends TabObject {
-    type: Exclude<OneColumnTabTypes, 'infoPanel'>;
+interface ImageTabObject extends TabObject {
+    imageTab: true;
+    columnNumber: 'one' | 'two' | 'none';
     content: {
-        columnName: string;
         outdated: boolean;
-        encodedImage: string;
+        encodedImage: Base64Image;
     };
+}
+
+interface OneColumnTabContent {
+    columnName: string;
+    outdated: boolean;
+    encodedImage: Base64Image;
+}
+
+export interface OneColumnTab extends ImageTabObject {
+    type: Exclude<OneColumnTabTypes, 'infoPanel'>;
+    columnNumber: 'one';
+    content: OneColumnTabContent;
+}
+
+interface InfoPanelTabContent {
+    correlations: { columnName: string; correlation: number }[];
+    outdated: boolean;
+    statistics: { statName: string; statValue: number }[];
 }
 
 export interface InfoPanelTab extends TabObject {
+    imageTab: false;
     type: 'infoPanel';
-    content: {
-        correlations: { columnName: string; correlation: number }[];
-        outdated: boolean;
-        statistics: { statName: string; statValue: number }[];
-    };
+    content: InfoPanelTabContent;
 }
 
-export interface TwoColumnTab extends TabObject {
+interface TwoColumnTabContent {
+    xAxisColumnName: string;
+    yAxisColumnName: string;
+    outdated: boolean;
+    encodedImage: Base64Image;
+}
+
+export interface TwoColumnTab extends ImageTabObject {
     type: TwoColumnTabTypes;
-    content: {
-        xAxisColumnName: string;
-        yAxisColumnName: string;
-        outdated: boolean;
-        encodedImage: string;
-    };
+    columnNumber: 'two';
+    content: TwoColumnTabContent;
 }
 
-export interface NoColumnTab extends TabObject {
+interface NoColumnTabContent {
+    outdated: boolean;
+    encodedImage: Base64Image;
+}
+
+export interface NoColumnTab extends ImageTabObject {
     type: NoColumnTabTypes;
-    content: {
-        outdated: boolean;
-        encodedImage: string;
-    };
+    columnNumber: 'none';
+    content: NoColumnTabContent;
+}
+
+export interface EmptyTab {
+    initalHistoryEntryId: number;
+    type: 'empty';
+    tabComment?: string;
+    content?: Object;
+    imageTab?: boolean;
 }
 
 export type Tab = OneColumnTab | InfoPanelTab | TwoColumnTab | NoColumnTab;
+export type PlotTab = OneColumnTab | TwoColumnTab | NoColumnTab;
 
 // ------------------ Types for the Table ------------------
 export interface Table {

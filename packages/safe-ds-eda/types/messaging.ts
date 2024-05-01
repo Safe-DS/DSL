@@ -1,23 +1,13 @@
 import * as defaultTypes from './state.js';
 
 // To extension
-type ToExtensionCommand = 'setCurrentGlobalState' | 'resetGlobalState' | 'setInfo' | 'setError';
+type ToExtensionCommand = 'setCurrentGlobalState' | 'resetGlobalState' | 'setInfo' | 'setError' | 'executeRunner';
 
 interface ToExtensionCommandMessage {
     command: ToExtensionCommand;
     value: any;
 }
-interface ToExtensionSetStateMessage extends ToExtensionCommandMessage {
-    command: 'setCurrentGlobalState';
-    value: defaultTypes.State;
-}
 
-interface ToExtensionResetStateMessage extends ToExtensionCommandMessage {
-    command: 'resetGlobalState';
-    value: null;
-}
-
-// Just example
 interface ToExtensionSetInfoMessage extends ToExtensionCommandMessage {
     command: 'setInfo';
     value: string;
@@ -28,14 +18,18 @@ interface ToExtensionSetErrorMessage extends ToExtensionCommandMessage {
     value: string;
 }
 
+interface ToExtensionExecuteRunnerMessage extends ToExtensionCommandMessage {
+    command: 'executeRunner';
+    value: defaultTypes.HistoryEntry[];
+}
+
 export type ToExtensionMessage =
     | ToExtensionSetInfoMessage
-    | ToExtensionSetStateMessage
-    | ToExtensionResetStateMessage
-    | ToExtensionSetErrorMessage;
+    | ToExtensionSetErrorMessage
+    | ToExtensionExecuteRunnerMessage;
 
 // From extension
-type FromExtensionCommand = 'setWebviewState' | 'setProfiling';
+type FromExtensionCommand = 'setWebviewState' | 'setProfiling' | 'runnerExecutionResult';
 
 interface FromExtensionCommandMessage {
     command: FromExtensionCommand;
@@ -51,4 +45,32 @@ interface FromExtensionSetProfilingMessage extends FromExtensionCommandMessage {
     value: { columnName: string; profiling: defaultTypes.Profiling }[];
 }
 
-export type FromExtensionMessage = FromExtensionSetStateMessage | FromExtensionSetProfilingMessage;
+interface RunnerExecutionResultBase {
+    type: 'tab' | 'table' | 'profiling';
+    historyId: number;
+}
+
+interface RunnerExecutionResultTab extends RunnerExecutionResultBase {
+    type: 'tab';
+    content: defaultTypes.Tab;
+}
+
+interface RunnerExecutionResultTable extends RunnerExecutionResultBase {
+    type: 'table';
+    content: defaultTypes.Table;
+}
+
+interface RunnerExecutionResultProfiling extends RunnerExecutionResultBase {
+    type: 'profiling';
+    content: defaultTypes.Profiling;
+}
+
+export interface RunnerExecutionResultMessage extends FromExtensionCommandMessage {
+    command: 'runnerExecutionResult';
+    value: RunnerExecutionResultTab | RunnerExecutionResultTable | RunnerExecutionResultProfiling;
+}
+
+export type FromExtensionMessage =
+    | FromExtensionSetStateMessage
+    | FromExtensionSetProfilingMessage
+    | RunnerExecutionResultMessage;

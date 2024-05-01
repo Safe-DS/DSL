@@ -743,7 +743,11 @@
                                 {#if !column[1].profiling}
                                     <div>Loading ...</div>
                                 {:else}
-                                    <ProfilingInfo profiling={column[1].profiling} imageWidth={profilingImageWidth} />
+                                    <ProfilingInfo
+                                        profiling={column[1].profiling}
+                                        columnName={column[1].name}
+                                        imageWidth={profilingImageWidth}
+                                    />
                                 {/if}
                             </div>
                         </td>
@@ -880,8 +884,8 @@
 <style>
     .tableContainer {
         overflow-y: auto;
-        height: 100%; /* Adjust based on your layout */
-        position: relative; /* Needed for absolute positioning inside */
+        height: 100%;
+        position: relative;
     }
 
     .contentWrapper {

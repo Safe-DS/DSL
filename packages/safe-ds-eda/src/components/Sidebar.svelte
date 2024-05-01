@@ -4,7 +4,7 @@
     import HistoryIcon from '../icons/History.svelte';
     import UndoIcon from '../icons/Undo.svelte';
     import TableIcon from '../icons/Table.svelte';
-    import LinePlotTab from './tabs/LinePlotTab.svelte';
+    import SidebarTab from './tabs/SidebarTab.svelte';
 
     export let width: number;
 </script>
@@ -36,18 +36,16 @@
         {#if width > 50}
             <button
                 class="tab"
-                class:tabActive={$currentTabIndex === 0}
-                on:click={() => currentTabIndex.update((_cs) => 0)}
+                class:tabActive={$currentTabIndex === undefined}
+                on:click={() => currentTabIndex.update((_cs) => undefined)}
             >
                 <span class="icon tableIcon"><TableIcon /></span>{#if width > 109}Table{/if}
             </button>
             {#if $currentState.tabs}
                 {#each $currentState.tabs as tab, index}
-                    {#if tab.type === 'linePlot'}
-                        <button on:click={() => currentTabIndex.update((_cs) => index + 1)}>
-                            <LinePlotTab tabObject={tab} active={$currentTabIndex === index + 1} {width} />
-                        </button>
-                    {/if}
+                    <button class="sidebarButton" on:click={() => currentTabIndex.update((_cs) => index)}>
+                        <SidebarTab tabObject={tab} active={$currentTabIndex === index} {width} />
+                    </button>
                 {/each}
             {/if}
         {/if}
@@ -68,6 +66,11 @@
         height: 63px;
         padding: 0 20px 0 20px;
         margin-bottom: 10px;
+    }
+
+    .sidebarButton {
+        height: 50px;
+        padding: 0px;
     }
 
     .tableName {

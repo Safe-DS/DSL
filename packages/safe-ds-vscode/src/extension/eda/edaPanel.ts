@@ -80,26 +80,6 @@ export class EDAPanel {
                     vscode.window.showErrorMessage(data.value);
                     break;
                 }
-                case 'setCurrentGlobalState': {
-                    // if (!data.value) {
-                    //     return;
-                    // }
-                    // const existingStates = (EDAPanel.context.globalState.get('webviewState') ?? []) as State[];
-                    // const stateExists = existingStates.some((s) => s.tableIdentifier === data.value.tableIdentifier);
-
-                    // const newWebviewState = stateExists
-                    //     ? (existingStates.map((s) =>
-                    //           s.tableIdentifier === data.value.tableIdentifier ? data.value : s,
-                    //       ) as State[])
-                    //     : existingStates.concat(data.value);
-
-                    // EDAPanel.context.globalState.update('webviewState', newWebviewState);
-                    break;
-                }
-                case 'resetGlobalState': {
-                    EDAPanel.context.globalState.update('webviewState', []);
-                    break;
-                }
             }
         });
         this.disposables.push(this.webviewListener);
@@ -223,34 +203,10 @@ export class EDAPanel {
     //#endregion
 
     //#region State handling
-    // private findCurrentState(): State | undefined {
-    //     const existingStates = (EDAPanel.context.globalState.get('webviewState') ?? []) as [State, number][];
-    //     let foundState: State | undefined;
-    //     for (const state of existingStates) {
-    //         if (state[1] < Date.now() - 1000 * 60 * 60 * 24 * 7) {
-    //             // Remove state if older than 7 days
-    //             // TODO implement checking if placeholder is still in pipeline
-    //             existingStates.splice(existingStates.indexOf(state), 1);
-    //             // Save the updated state
-    //             EDAPanel.context.globalState.update('webviewState', existingStates);
-    //             printOutputMessage('Removed state older than 7 days.');
-    //         } else if (state[0].tableIdentifier === this.tableIdentifier) {
-    //             foundState = state[0];
-    //         }
-    //     }
-    //     return foundState;
-    // }
-
     private async constructCurrentState(): Promise<{ state: State; fromExisting: boolean }> {
-        // const existingCurrentState = this.findCurrentState();
-        // if (existingCurrentState) {
-        //     printOutputMessage('Found current State.');
-        //     return { state: existingCurrentState, fromExisting: true };
-        // }
-
         const panel = EDAPanel.panelsMap.get(this.tableIdentifier);
         if (!panel) {
-            throw new Error('RunnerApi panel not found.');
+            throw new Error('Panel not found.');
         } else {
             const table = await panel.runnerApi.getTableByPlaceholder(this.tableName, this.startPipelineExecutionId);
             if (!table) {
