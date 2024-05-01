@@ -33,7 +33,7 @@
 </script>
 
 {#if criticalError}
-    <div class=" flex h-full w-full flex-col items-center justify-center">
+    <div class=" flex h-full w-full flex-col items-center justify-center gap-4">
         <span class="text-xs text-red-600">Critical Error</span>
         <div class="flex w-1/2 flex-col gap-2 border-2 border-red-600 p-6">
             <div class=" whitespace-pre-wrap text-xl font-bold text-red-600">
@@ -43,6 +43,9 @@
                 {criticalError.message}
             </div>
         </div>
+        <button class=" w-20" on:click={() => {
+            criticalError = null
+        }}>Continue</button>
     </div>
 {:else}
     <div class="relative h-full w-full">
