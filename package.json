@@ -18,7 +18,7 @@
         "docs:api": "shx rm -rf dist docs/api && safe-ds document packages/safe-ds-lang/src/resources/builtins -o docs/api"
     },
     "devDependencies": {
-        "@lars-reimann/eslint-config-svelte": "^7.0.0",
+        "@lars-reimann/eslint-config-svelte": "^7.3.0",
         "@lars-reimann/prettier-config-svelte": "^5.2.1",
         "@semantic-release/changelog": "^6.0.3",
         "@semantic-release/exec": "^6.0.3",
