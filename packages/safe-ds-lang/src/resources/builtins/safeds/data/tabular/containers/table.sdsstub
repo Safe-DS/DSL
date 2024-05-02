@@ -440,7 +440,7 @@ class Table(
      * }
      */
     @Pure
-    @PythonName("group_rows_by")
+    @PythonName("group_rows")
     fun groupRows<T>(
         @PythonName("key_selector") keySelector: (row: Row) -> key: T
     ) -> tablesByKey: Map<T, Table>
