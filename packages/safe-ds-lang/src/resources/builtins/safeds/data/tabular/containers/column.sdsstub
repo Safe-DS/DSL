@@ -336,6 +336,27 @@ class Column<out T = Any?>(
     fun minimum() -> minimum: Float
 
     /**
+     * Return the number of missing values in the column.
+     *
+     * @result count The number of missing values.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("test", [1, 2, 3, 4]);
+     *     val missingValueCount = column.missingValueCount(); // 0
+     * }
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("test", [1, 2, 3, null]);
+     *     val missingValueCount = column.missingValueCount(); // 1
+     * }
+     */
+    @Pure
+    @PythonName("missing_value_count")
+    fun missingValueCount() -> count: Int
+
+    /**
      * Return the ratio of missing values to the total number of elements in the column.
      *
      * @result missinValueRatio The ratio of missing values to the total number of elements in the column.
