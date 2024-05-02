@@ -1,7 +1,8 @@
 package safeds.data.tabular.containers
 
+from safeds.data.labeled.containers import TabularDataset
 from safeds.data.image.containers import Image
-from safeds.data.tabular.containers import Column, Row, TaggedTable, TimeSeries
+from safeds.data.tabular.containers import Column, Row, TimeSeries
 from safeds.data.tabular.transformation import InvertibleTableTransformer, TableTransformer
 from safeds.data.tabular.typing import ColumnType, Schema
 

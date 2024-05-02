@@ -1,6 +1,7 @@
 package safeds.ml.classical.classification
 
-from safeds.data.tabular.containers import Table, TaggedTable
+from safeds.data.labeled.containers import TabularDataset
+from safeds.data.tabular.containers import Table
 
 /**
  * Abstract base class for all classifiers.
@@ -22,7 +23,7 @@ class Classifier {
      */
     @Pure
     fun fit(
-        @PythonName("training_set") trainingSet: TaggedTable
+        @PythonName("training_set") trainingSet: TabularDataset
     ) -> fittedClassifier: Classifier
 
     /**
@@ -35,7 +36,7 @@ class Classifier {
     @Pure
     fun predict(
         dataset: Table
-    ) -> prediction: TaggedTable
+    ) -> prediction: TabularDataset
 
     /**
      * Compute the accuracy of the classifier on the given data.
@@ -46,7 +47,7 @@ class Classifier {
      */
     @Pure
     fun accuracy(
-        @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable
+        @PythonName("validation_or_test_set") validationOrTestSet: TabularDataset
     ) -> accuracy: Float
 
     /**
@@ -60,7 +61,7 @@ class Classifier {
      */
     @Pure
     fun precision(
-        @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable,
+        @PythonName("validation_or_test_set") validationOrTestSet: TabularDataset,
         @PythonName("positive_class") positiveClass: Any
     ) -> precision: Float
 
@@ -75,7 +76,7 @@ class Classifier {
      */
     @Pure
     fun recall(
-        @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable,
+        @PythonName("validation_or_test_set") validationOrTestSet: TabularDataset,
         @PythonName("positive_class") positiveClass: Any
     ) -> recall: Float
 
@@ -91,7 +92,7 @@ class Classifier {
     @Pure
     @PythonName("f1_score")
     fun f1Score(
-        @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable,
+        @PythonName("validation_or_test_set") validationOrTestSet: TabularDataset,
         @PythonName("positive_class") positiveClass: Any
     ) -> f1Score: Float
 }

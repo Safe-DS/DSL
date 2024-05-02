@@ -1,6 +1,7 @@
 package safeds.ml.classical.classification
 
-from safeds.data.tabular.containers import Table, TaggedTable
+from safeds.data.labeled.containers import TabularDataset
+from safeds.data.tabular.containers import Table
 from safeds.ml.classical.classification import Classifier
 
 /**
@@ -37,6 +38,6 @@ class RandomForestClassifier(
      */
     @Pure
     fun fit(
-        @PythonName("training_set") trainingSet: TaggedTable
+        @PythonName("training_set") trainingSet: TabularDataset
     ) -> fittedClassifier: RandomForestClassifier
 }
