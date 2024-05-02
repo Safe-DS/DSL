@@ -102,6 +102,28 @@ export const cancelExecuteExternalHistoryEntry = function (id: number): void {
     }
 };
 
+export const setTabAsGenerating = function (tab: Tab): void {
+    // eslint-disable-next-line no-console
+    console.log('Setting tab as generating');
+    currentState.update((state) => {
+        const newTabs = state.tabs?.map((t) => {
+            if (t === tab) {
+                return {
+                    ...t,
+                    isInGeneration: true,
+                };
+            } else {
+                return t;
+            }
+        });
+
+        return {
+            ...state,
+            tabs: newTabs,
+        };
+    });
+};
+
 const deployResult = function (result: RunnerExecutionResultMessage) {
     if (result.value.type === 'tab') {
         const tab = result.value.content;

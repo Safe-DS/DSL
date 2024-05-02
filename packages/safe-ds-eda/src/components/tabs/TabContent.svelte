@@ -4,7 +4,7 @@
     import DropDownButton from '../utilities/DropDownButton.svelte';
     import { currentState } from '../../webviewState';
     import { imageWidthToHeightRatio } from '../../../consts.config';
-    import { executeExternalHistoryEntry } from '../../apis/historyApi';
+    import { executeExternalHistoryEntry, setTabAsGenerating } from '../../apis/historyApi';
 
     export let tab: Tab | EmptyTab;
     export let sidebarWidth: number;
@@ -44,6 +44,7 @@
     };
 
     const newTypeSelected = function (selected: string) {
+        if (!isInBuildingState && tab.type !== 'empty') setTabAsGenerating(tab);
         if (selected === 'Histogram') {
             buildATab.type = 'histogram';
             buildATab.columnNumber = 'one';
@@ -68,10 +69,12 @@
     };
 
     const newXAxisSelected = function (selected: string) {
+        if (!isInBuildingState && tab.type !== 'empty') setTabAsGenerating(tab);
         buildATab.xAxisColumnName = selected;
     };
 
     const newYAxisSelected = function (selected: string) {
+        if (!isInBuildingState && tab.type !== 'empty') setTabAsGenerating(tab);
         buildATab.yAxisColumnName = selected;
     };
 

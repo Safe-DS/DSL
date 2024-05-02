@@ -11,7 +11,9 @@
 <div class="wrapper" class:activeWrapper={active}>
     <div class="main">
         <span class="icon">
-            {#if tabObject.type === 'linePlot'}
+            {#if tabObject.isInGeneration}
+                <div></div>
+            {:else if tabObject.type === 'linePlot'}
                 <LinePlotIcon />
             {:else if tabObject.type === 'boxplot'}
                 <BarPlotIcon />
@@ -27,7 +29,9 @@
         </span>
         <span class="title"
             >{#if width > 109}
-                {#if tabObject.type === 'histogram'}
+                {#if tabObject.isInGeneration}
+                    Generating...
+                {:else if tabObject.type === 'histogram'}
                     Histogram
                 {:else if tabObject.type === 'boxplot'}
                     Boxplot
@@ -44,7 +48,7 @@
         >
     </div>
     <span class="comment"
-        >{#if width > 300}{tabObject.tabComment}{/if}</span
+        >{#if width > 300 && !tabObject.isInGeneration}{tabObject.tabComment}{/if}</span
     >
 </div>
 

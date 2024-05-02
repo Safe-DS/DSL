@@ -118,6 +118,7 @@ interface TabObject {
     content: Object;
     imageTab: boolean;
     columnNumber: 'one' | 'two' | 'none';
+    isInGeneration: boolean;
 }
 
 interface ImageTabObject extends TabObject {

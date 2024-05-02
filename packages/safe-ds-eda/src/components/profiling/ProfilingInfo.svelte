@@ -55,6 +55,7 @@
                                 initialHistoryEntryId: entryId,
                                 imageTab: true,
                                 columnNumber: 'one',
+                                isInGeneration: false,
                             },
                         );
                     }}
