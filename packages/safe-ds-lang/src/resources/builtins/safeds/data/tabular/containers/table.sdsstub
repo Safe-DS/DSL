@@ -1009,6 +1009,8 @@ class Table(
     /**
      * Plot a histogram for every column.
      *
+     * @param numberOfBins The number of bins to use in the histogram.
+     *
      * @result histograms The plot as an image.
      *
      * @example
@@ -1019,7 +1021,11 @@ class Table(
      */
     @Pure
     @PythonName("plot_histograms")
-    fun plotHistograms() -> histograms: Image
+    fun plotHistograms(
+        @PythonName("number_of_bins") const numberOfBins: Int = 10
+    ) -> histograms: Image where {
+        numberOfBins > 0
+    }
 
     /**
      * Write the data from the table into a CSV file.
