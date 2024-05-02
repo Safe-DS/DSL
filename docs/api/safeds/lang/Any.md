@@ -13,6 +13,23 @@ The common superclass of all classes.
     class Any {
 
         /**
+         * Return whether the object is truthy.
+         *
+         * @example
+         * pipeline example {
+         *     val boolean = 1.toBoolean(); // true
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val boolean = 0.toBoolean(); // false
+         * }
+         */
+        @Pure
+        @PythonMacro("bool($this)")
+        fun toBoolean() -> boolean: Boolean
+
+        /**
          * Return a string representation of the object.
          *
          * @example
@@ -24,6 +41,37 @@ The common superclass of all classes.
         @PythonMacro("str($this)")
         fun toString() -> string: String
     }
+    ```
+
+## `#!sds fun` toBoolean {#safeds.lang.Any.toBoolean data-toc-label='toBoolean'}
+
+Return whether the object is truthy.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `boolean` | [`Boolean`][safeds.lang.Boolean] | - |
+
+**Examples:**
+
+```sds hl_lines="2"
+pipeline example {
+    val boolean = 1.toBoolean(); // true
+}
+```
+```sds hl_lines="2"
+pipeline example {
+    val boolean = 0.toBoolean(); // false
+}
+```
+
+??? quote "Stub code in `coreClasses.sdsstub`"
+
+    ```sds linenums="21"
+    @Pure
+    @PythonMacro("bool($this)")
+    fun toBoolean() -> boolean: Boolean
     ```
 
 ## `#!sds fun` toString {#safeds.lang.Any.toString data-toc-label='toString'}
@@ -46,7 +94,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="16"
+    ```sds linenums="33"
     @Pure
     @PythonMacro("str($this)")
     fun toString() -> string: String

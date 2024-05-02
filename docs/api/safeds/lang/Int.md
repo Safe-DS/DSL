@@ -19,7 +19,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="54"
+    ```sds linenums="71"
     class Int sub Number {
 
         /**
@@ -56,7 +56,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="64"
+    ```sds linenums="81"
     @Pure
     @PythonMacro("float($this)")
     fun toFloat() -> float: Float

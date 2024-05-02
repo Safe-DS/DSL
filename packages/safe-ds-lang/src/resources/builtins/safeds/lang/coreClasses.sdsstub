@@ -6,6 +6,23 @@ package safeds.lang
 class Any {
 
     /**
+     * Return whether the object is truthy.
+     *
+     * @example
+     * pipeline example {
+     *     val boolean = 1.toBoolean(); // true
+     * }
+     *
+     * @example
+     * pipeline example {
+     *     val boolean = 0.toBoolean(); // false
+     * }
+     */
+    @Pure
+    @PythonMacro("bool($this)")
+    fun toBoolean() -> boolean: Boolean
+
+    /**
      * Return a string representation of the object.
      *
      * @example

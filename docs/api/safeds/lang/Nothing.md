@@ -9,6 +9,6 @@ The common subclass of all classes.
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="24"
+    ```sds linenums="41"
     class Nothing
     ```
