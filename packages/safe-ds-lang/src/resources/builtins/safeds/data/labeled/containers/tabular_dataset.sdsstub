@@ -21,7 +21,7 @@ package safeds.data.labeled.containers
  *         {"id": [1, 2, 3], "feature": [4, 5, 6], "target": [1, 2, 3]},
  *         targetName="target",
  *         extraNames=["id"]
- *     )
+ *     );
  * }
  */
 class TabularDataset(

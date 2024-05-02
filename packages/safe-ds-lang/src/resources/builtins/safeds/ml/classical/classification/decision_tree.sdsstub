@@ -9,8 +9,8 @@ from safeds.ml.classical.classification import Classifier
  *
  * @example
  * pipeline example {
- *     val training = Table.fromCsvFile("training.csv").tagColumns("target");
- *     val test = Table.fromCsvFile("test.csv").tagColumns("target");
+ *     val training = Table.fromCsvFile("training.csv").toTabularDataset("target");
+ *     val test = Table.fromCsvFile("test.csv").toTabularDataset("target");
  *     val classifier = DecisionTreeClassifier().fit(training);
  *     val accuracy = classifier.accuracy(test);
  * }
