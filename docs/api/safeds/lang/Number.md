@@ -14,6 +14,6 @@ A number.
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="44"
+    ```sds linenums="61"
     class Number
     ```
