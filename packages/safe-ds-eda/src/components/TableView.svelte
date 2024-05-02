@@ -53,6 +53,12 @@
                     }
                 }
             });
+
+            if (showProfiling) {
+                setTimeout(() => {
+                    fullHeadBackground.style.height = 2 * rowHeight + profilingInfo.clientHeight + 'px'; // To also update when profiling info is initially coming and profiling was already open
+                }, 700); // 700ms is the transition time of the profiling info opening/incresing in height
+            }
         }
     }
 

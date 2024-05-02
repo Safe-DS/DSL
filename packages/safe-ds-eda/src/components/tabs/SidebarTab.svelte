@@ -6,8 +6,6 @@
     export let tabObject: Tab;
     export let active: boolean;
     export let width: number;
-
-    $: console.log(active + ' ' + tabObject.tabComment);
 </script>
 
 <div class="wrapper" class:activeWrapper={active}>
@@ -15,7 +13,7 @@
         <span class="icon">
             {#if tabObject.type === 'linePlot'}
                 <LinePlotIcon />
-            {:else if tabObject.type === 'barPlot'}
+            {:else if tabObject.type === 'boxplot'}
                 <BarPlotIcon />
             {:else if tabObject.type === 'heatmap'}
                 <BarPlotIcon />
@@ -31,8 +29,8 @@
             >{#if width > 109}
                 {#if tabObject.type === 'histogram'}
                     Histogram
-                {:else if tabObject.type === 'barPlot'}
-                    Bar Plot
+                {:else if tabObject.type === 'boxplot'}
+                    Boxplot
                 {:else if tabObject.type === 'heatmap'}
                     Heatmap
                 {:else if tabObject.type === 'infoPanel'}

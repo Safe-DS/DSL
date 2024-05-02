@@ -9,6 +9,12 @@ const asyncQueue: (ExternalHistoryEntry & { id: number })[] = [];
 let messagesWaitingForTurn: RunnerExecutionResultMessage[] = [];
 let entryIdCounter = 0;
 
+export const getAndIncrementEntryId = function (): number {
+    // eslint-disable-next-line no-console
+    console.log('Incrementing entryIdCounter to: ', entryIdCounter + 1);
+    return entryIdCounter++;
+};
+
 window.addEventListener('message', (event) => {
     const message = event.data as FromExtensionMessage;
 

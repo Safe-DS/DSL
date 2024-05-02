@@ -1,7 +1,7 @@
 export interface State {
     tableIdentifier?: string;
     table?: Table;
-    tabs?: Tab[];
+    tabs: Tab[];
     defaultState?: boolean;
     history: HistoryEntry[];
     settings?: UserSettings;
@@ -77,7 +77,7 @@ export interface ExternalVisualizingTwoColumnHistoryEntry extends ExternalVisual
 
 export interface ExternalVisualizingRefreshHistoryEntry extends ExternalVisualizingHistoryEntryBase {
     action: 'refreshTab';
-    initalHistoryEntryId: number;
+    initialHistoryEntryId: number;
 }
 
 export type TabHistoryEntry =
@@ -102,22 +102,22 @@ export type HistoryEntry = (InternalHistoryEntry | ExternalHistoryEntry) & {
 };
 
 // ------------------ Types for the Tabs ------------------
-export type TwoColumnTabTypes = 'linePlot' | 'barPlot' | 'scatterPlot';
-export type OneColumnTabTypes = 'histogram' | 'infoPanel';
+export type TwoColumnTabTypes = 'linePlot' | 'scatterPlot';
+export type OneColumnTabTypes = 'histogram' | 'boxplot' | 'infoPanel';
 export type NoColumnTabTypes = 'heatmap';
 type TabType = TwoColumnTabTypes | OneColumnTabTypes | NoColumnTabTypes;
 
 interface TabObject {
-    initalHistoryEntryId: number;
+    initialHistoryEntryId: number;
     type: TabType;
     tabComment: string;
     content: Object;
     imageTab: boolean;
+    columnNumber: 'one' | 'two' | 'none';
 }
 
 interface ImageTabObject extends TabObject {
     imageTab: true;
-    columnNumber: 'one' | 'two' | 'none';
     content: {
         outdated: boolean;
         encodedImage: Base64Image;
@@ -145,6 +145,7 @@ interface InfoPanelTabContent {
 export interface InfoPanelTab extends TabObject {
     imageTab: false;
     type: 'infoPanel';
+    columnNumber: 'none';
     content: InfoPanelTabContent;
 }
 
@@ -173,11 +174,8 @@ export interface NoColumnTab extends ImageTabObject {
 }
 
 export interface EmptyTab {
-    initalHistoryEntryId: number;
     type: 'empty';
-    tabComment?: string;
-    content?: Object;
-    imageTab?: boolean;
+    initialHistoryEntryId: number;
 }
 
 export type Tab = OneColumnTab | InfoPanelTab | TwoColumnTab | NoColumnTab;

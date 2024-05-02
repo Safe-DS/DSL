@@ -7,7 +7,7 @@ let currentTabIndex = writable<number | undefined>(undefined);
 let preventClicks = writable<boolean>(false);
 
 // Define the stores, current state to default in case the extension never calls setWebviewState( Shouldn't happen)
-let currentState = writable<State>({ tableIdentifier: undefined, history: [], defaultState: true });
+const currentState = writable<State>({ tableIdentifier: undefined, history: [], defaultState: true, tabs: [] });
 
 window.addEventListener('message', (event) => {
     const message = event.data as FromExtensionMessage;

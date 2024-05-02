@@ -44,10 +44,15 @@
         <button class="resizer" on:mousedown={handleDrag}></button>
     </div>
     <div class="contentWrapper">
-        {#if $currentTabIndex === undefined}
+        <div class:hide={$currentTabIndex !== undefined}>
             <TableView {sidebarWidth} />
-        {:else if $currentState.tabs && $currentTabIndex !== undefined}
-            <TabContent tab={$currentState.tabs[$currentTabIndex]} {sidebarWidth} />
+        </div>
+        {#if $currentState.tabs}
+            {#each $currentState.tabs as tab, index}
+                <div class:hide={index !== $currentTabIndex}>
+                    <TabContent {tab} {sidebarWidth} />
+                </div>
+            {/each}
         {/if}
     </div>
 </main>
@@ -77,6 +82,11 @@
         width: 100%;
     }
 
+    .contentWrapper * {
+        height: 100%;
+        width: 100%;
+    }
+
     .resizer {
         width: 5px;
         height: 100%;
@@ -85,5 +95,9 @@
         top: 0;
         cursor: ew-resize;
         background-color: transparent;
+    }
+
+    .hide {
+        display: none;
     }
 </style>

@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { Profiling } from '../../../types/state';
-    import { addAndDeployTabHistoryEntry } from '../../apis/historyApi.js';
+    import { addAndDeployTabHistoryEntry, getAndIncrementEntryId } from '../../apis/historyApi.js';
     import ZoomIcon from '../../icons/Zoom.svelte';
 
     export let profiling: Profiling;
@@ -35,14 +35,14 @@
                     role="none"
                     class="zoomIconWrapper"
                     on:click={() => {
-                        const randomId = Math.floor(Math.random() * 100);
+                        const entryId = getAndIncrementEntryId();
                         addAndDeployTabHistoryEntry(
                             {
                                 action: 'histogram',
                                 alias: `View ${columnName} Histogram`,
                                 type: 'external-visualizing',
                                 columnName: columnName,
-                                id: randomId,
+                                id: entryId,
                             },
                             {
                                 type: 'histogram',
@@ -52,7 +52,7 @@
                                     encodedImage: profilingItem.value,
                                     outdated: false,
                                 },
-                                initalHistoryEntryId: randomId,
+                                initialHistoryEntryId: entryId,
                                 imageTab: true,
                                 columnNumber: 'one',
                             },
