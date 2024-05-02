@@ -1,3 +1,22 @@
+## [0.14.0](https://github.com/Safe-DS/DSL/compare/v0.13.0...v0.14.0) (2024-05-02)
+
+
+### Features
+
+* `this` expression ([#1111](https://github.com/Safe-DS/DSL/issues/1111)) ([c7bd0fa](https://github.com/Safe-DS/DSL/commit/c7bd0fa5c9e21833ec31237f2e897e4d41dced29)), closes [#1107](https://github.com/Safe-DS/DSL/issues/1107) [#1110](https://github.com/Safe-DS/DSL/issues/1110)
+* allow literal types as upper bounds of type parameters ([#1102](https://github.com/Safe-DS/DSL/issues/1102)) ([c14159b](https://github.com/Safe-DS/DSL/commit/c14159be1c003f552ac8b2b37578face9e5aab30)), closes [#1081](https://github.com/Safe-DS/DSL/issues/1081)
+* Check truthiness of value ([#1131](https://github.com/Safe-DS/DSL/issues/1131)) ([0b059a1](https://github.com/Safe-DS/DSL/commit/0b059a19198465acd672662d9027048026586286))
+* check usages of `@PythonName` and `@PythonCall` on overriding methods ([#1100](https://github.com/Safe-DS/DSL/issues/1100)) ([3021166](https://github.com/Safe-DS/DSL/commit/302116672fbe1781ad4932af52c0f53370964499))
+* partial code generation for multiple targets ([#1114](https://github.com/Safe-DS/DSL/issues/1114)) ([5461a1b](https://github.com/Safe-DS/DSL/commit/5461a1bc591a4197a159d5f2a4fb0207cbc474b5)), closes [#1079](https://github.com/Safe-DS/DSL/issues/1079)
+* Stubs for `safe-ds` version 0.22.1 ([#1130](https://github.com/Safe-DS/DSL/issues/1130)) ([6f7100d](https://github.com/Safe-DS/DSL/commit/6f7100d2c4ee0a7d59d21a93443aba5bdb474429))
+* various methods to work with strings ([#1112](https://github.com/Safe-DS/DSL/issues/1112)) ([b6d4f16](https://github.com/Safe-DS/DSL/commit/b6d4f16c586d7390473dea3478f2318f8130fd88)), closes [#1108](https://github.com/Safe-DS/DSL/issues/1108)
+* visibility modifiers for any module member ([#1104](https://github.com/Safe-DS/DSL/issues/1104)) ([3d43d38](https://github.com/Safe-DS/DSL/commit/3d43d38fd3db9f442d5f79d5fe8bd5ce7c9dd7cf)), closes [#1083](https://github.com/Safe-DS/DSL/issues/1083)
+
+
+### Bug Fixes
+
+* also handle literal types when computing upper bound ([#1103](https://github.com/Safe-DS/DSL/issues/1103)) ([3f1ab6f](https://github.com/Safe-DS/DSL/commit/3f1ab6fe008f767f67ad5a678600441c92d55596)), closes [#1081](https://github.com/Safe-DS/DSL/issues/1081)
+
 ## [0.13.0](https://github.com/Safe-DS/DSL/compare/v0.12.0...v0.13.0) (2024-04-24)
 
 
