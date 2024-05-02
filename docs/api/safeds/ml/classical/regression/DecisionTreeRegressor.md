@@ -8,8 +8,8 @@ Decision tree regression.
 
 ```sds hl_lines="4"
 pipeline example {
-    val training = Table.fromCsvFile("training.csv").tagColumns("target");
-    val test = Table.fromCsvFile("test.csv").tagColumns("target");
+    val training = Table.fromCsvFile("training.csv").toTabularDataset("target");
+    val test = Table.fromCsvFile("test.csv").toTabularDataset("target");
     val regressor = DecisionTreeRegressor().fit(training);
     val meanSquaredError = regressor.meanSquaredError(test);
 }
@@ -17,7 +17,7 @@ pipeline example {
 
 ??? quote "Stub code in `decision_tree.sdsstub`"
 
-    ```sds linenums="17"
+    ```sds linenums="18"
     class DecisionTreeRegressor() sub Regressor {
         /**
          * Create a copy of this regressor and fit it with the given training data.
@@ -30,10 +30,16 @@ pipeline example {
          */
         @Pure
         fun fit(
-            @PythonName("training_set") trainingSet: TaggedTable
+            @PythonName("training_set") trainingSet: TabularDataset
         ) -> fittedRegressor: DecisionTreeRegressor
     }
     ```
+
+## `#!sds attr` isFitted {#safeds.ml.classical.regression.DecisionTreeRegressor.isFitted data-toc-label='isFitted'}
+
+Whether the regressor is fitted.
+
+**Type:** [`Boolean`][safeds.lang.Boolean]
 
 ## `#!sds fun` fit {#safeds.ml.classical.regression.DecisionTreeRegressor.fit data-toc-label='fit'}
 
@@ -45,7 +51,7 @@ This regressor is not modified.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `trainingSet` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The training data containing the feature and target vectors. | - |
+| `trainingSet` | [`TabularDataset`][safeds.data.labeled.containers.TabularDataset] | The training data containing the feature and target vectors. | - |
 
 **Results:**
 
@@ -55,29 +61,11 @@ This regressor is not modified.
 
 ??? quote "Stub code in `decision_tree.sdsstub`"
 
-    ```sds linenums="27"
+    ```sds linenums="28"
     @Pure
     fun fit(
-        @PythonName("training_set") trainingSet: TaggedTable
+        @PythonName("training_set") trainingSet: TabularDataset
     ) -> fittedRegressor: DecisionTreeRegressor
-    ```
-
-## `#!sds fun` isFitted {#safeds.ml.classical.regression.DecisionTreeRegressor.isFitted data-toc-label='isFitted'}
-
-Check if the classifier is fitted.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `isFitted` | [`Boolean`][safeds.lang.Boolean] | Whether the regressor is fitted. |
-
-??? quote "Stub code in `regressor.sdsstub`"
-
-    ```sds linenums="40"
-    @Pure
-    @PythonName("is_fitted")
-    fun isFitted() -> isFitted: Boolean
     ```
 
 ## `#!sds fun` meanAbsoluteError {#safeds.ml.classical.regression.DecisionTreeRegressor.meanAbsoluteError data-toc-label='meanAbsoluteError'}
@@ -88,7 +76,7 @@ Compute the mean absolute error (MAE) of the regressor on the given data.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `validationOrTestSet` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The validation or test set. | - |
+| `validationOrTestSet` | [`TabularDataset`][safeds.data.labeled.containers.TabularDataset] | The validation or test set. | - |
 
 **Results:**
 
@@ -98,11 +86,11 @@ Compute the mean absolute error (MAE) of the regressor on the given data.
 
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="64"
+    ```sds linenums="61"
     @Pure
     @PythonName("mean_absolute_error")
     fun meanAbsoluteError(
-        @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable
+        @PythonName("validation_or_test_set") validationOrTestSet: TabularDataset
     ) -> meanAbsoluteError: Float
     ```
 
@@ -114,7 +102,7 @@ Compute the mean squared error (MSE) on the given data.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `validationOrTestSet` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The validation or test set. | - |
+| `validationOrTestSet` | [`TabularDataset`][safeds.data.labeled.containers.TabularDataset] | The validation or test set. | - |
 
 **Results:**
 
@@ -124,11 +112,11 @@ Compute the mean squared error (MSE) on the given data.
 
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="51"
+    ```sds linenums="48"
     @Pure
     @PythonName("mean_squared_error")
     fun meanSquaredError(
-        @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable
+        @PythonName("validation_or_test_set") validationOrTestSet: TabularDataset
     ) -> meanSquaredError: Float
     ```
 
@@ -146,13 +134,13 @@ Predict a target vector using a dataset containing feature vectors. The model ha
 
 | Name | Type | Description |
 |------|------|-------------|
-| `prediction` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A dataset containing the given feature vectors and the predicted target vector. |
+| `prediction` | [`TabularDataset`][safeds.data.labeled.containers.TabularDataset] | A dataset containing the given feature vectors and the predicted target vector. |
 
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="30"
+    ```sds linenums="36"
     @Pure
     fun predict(
         dataset: Table
-    ) -> prediction: TaggedTable
+    ) -> prediction: TabularDataset
     ```

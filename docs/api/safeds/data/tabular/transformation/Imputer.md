@@ -77,6 +77,12 @@ pipeline example {
     }
     ```
 
+## `#!sds attr` isFitted {#safeds.data.tabular.transformation.Imputer.isFitted data-toc-label='isFitted'}
+
+Whether the transformer is fitted.
+
+**Type:** [`Boolean`][safeds.lang.Boolean]
+
 ## `#!sds fun` fit {#safeds.data.tabular.transformation.Imputer.fit data-toc-label='fit'}
 
 Learn a transformation for a set of columns in a table.
@@ -127,7 +133,7 @@ The table is not modified. If you also need the fitted transformer, use `fit` an
 
 ??? quote "Stub code in `table_transformer.sdsstub`"
 
-    ```sds linenums="85"
+    ```sds linenums="81"
     @Pure
     @PythonName("fit_and_transform")
     fun fitAndTransform(
@@ -148,7 +154,7 @@ Get the names of all new columns that have been added by the transformer.
 
 ??? quote "Stub code in `table_transformer.sdsstub`"
 
-    ```sds linenums="44"
+    ```sds linenums="49"
     @Pure
     @PythonName("get_names_of_added_columns")
     fun getNamesOfAddedColumns() -> result1: List<String>
@@ -166,7 +172,7 @@ Get the names of all columns that have been changed by the transformer.
 
 ??? quote "Stub code in `table_transformer.sdsstub`"
 
-    ```sds linenums="53"
+    ```sds linenums="58"
     @Pure
     @PythonName("get_names_of_changed_columns")
     fun getNamesOfChangedColumns() -> result1: List<String>
@@ -184,28 +190,10 @@ Get the names of all columns that have been removed by the transformer.
 
 ??? quote "Stub code in `table_transformer.sdsstub`"
 
-    ```sds linenums="62"
+    ```sds linenums="67"
     @Pure
     @PythonName("get_names_of_removed_columns")
     fun getNamesOfRemovedColumns() -> result1: List<String>
-    ```
-
-## `#!sds fun` isFitted {#safeds.data.tabular.transformation.Imputer.isFitted data-toc-label='isFitted'}
-
-Check if the transformer is fitted.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`Boolean`][safeds.lang.Boolean] | Whether the transformer is fitted. |
-
-??? quote "Stub code in `table_transformer.sdsstub`"
-
-    ```sds linenums="71"
-    @Pure
-    @PythonName("is_fitted")
-    fun isFitted() -> result1: Boolean
     ```
 
 ## `#!sds fun` transform {#safeds.data.tabular.transformation.Imputer.transform data-toc-label='transform'}
@@ -228,7 +216,7 @@ The table is not modified.
 
 ??? quote "Stub code in `table_transformer.sdsstub`"
 
-    ```sds linenums="34"
+    ```sds linenums="39"
     @Pure
     fun transform(
         table: Table

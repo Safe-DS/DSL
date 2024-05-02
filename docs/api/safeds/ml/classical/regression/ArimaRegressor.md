@@ -15,6 +15,11 @@ pipeline example {
     ```sds linenums="13"
     class ArimaRegressor() {
         /**
+         * Whether the regressor is fitted.
+         */
+        @PythonName("is_fitted") attr isFitted: Boolean
+
+        /**
          * Create a copy of this ARIMA Model and fit it with the given training data.
          *
          * This ARIMA Model is not modified.
@@ -52,17 +57,14 @@ pipeline example {
         fun plotPredictions(
             @PythonName("test_series") testSeries: TimeSeries
         ) -> image: Image
-
-        /**
-         * Check if the classifier is fitted.
-         *
-         * @result isFitted Whether the regressor is fitted.
-         */
-        @Pure
-        @PythonName("is_fitted")
-        fun isFitted() -> isFitted: Boolean
     }
     ```
+
+## `#!sds attr` isFitted {#safeds.ml.classical.regression.ArimaRegressor.isFitted data-toc-label='isFitted'}
+
+Whether the regressor is fitted.
+
+**Type:** [`Boolean`][safeds.lang.Boolean]
 
 ## `#!sds fun` fit {#safeds.ml.classical.regression.ArimaRegressor.fit data-toc-label='fit'}
 
@@ -84,29 +86,11 @@ This ARIMA Model is not modified.
 
 ??? quote "Stub code in `arima.sdsstub`"
 
-    ```sds linenums="23"
+    ```sds linenums="28"
     @Pure
     fun fit(
         @PythonName("time_series") timeSeries: TimeSeries
     ) -> fittedArima: ArimaRegressor
-    ```
-
-## `#!sds fun` isFitted {#safeds.ml.classical.regression.ArimaRegressor.isFitted data-toc-label='isFitted'}
-
-Check if the classifier is fitted.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `isFitted` | [`Boolean`][safeds.lang.Boolean] | Whether the regressor is fitted. |
-
-??? quote "Stub code in `arima.sdsstub`"
-
-    ```sds linenums="58"
-    @Pure
-    @PythonName("is_fitted")
-    fun isFitted() -> isFitted: Boolean
     ```
 
 ## `#!sds fun` plotPredictions {#safeds.ml.classical.regression.ArimaRegressor.plotPredictions data-toc-label='plotPredictions'}
@@ -127,7 +111,7 @@ Plot the predictions of the trained model to the given target of the time series
 
 ??? quote "Stub code in `arima.sdsstub`"
 
-    ```sds linenums="47"
+    ```sds linenums="52"
     @Pure
     @PythonName("plot_predictions")
     fun plotPredictions(
@@ -153,7 +137,7 @@ Predict a target vector using a time series target column. The model has to be t
 
 ??? quote "Stub code in `arima.sdsstub`"
 
-    ```sds linenums="35"
+    ```sds linenums="40"
     @Pure
     fun predict(
         @PythonName("time_series") timeSeries: TimeSeries

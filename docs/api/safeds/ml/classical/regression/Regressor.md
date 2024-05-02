@@ -22,8 +22,13 @@ Abstract base class for all regressors.
 
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="8"
+    ```sds linenums="9"
     class Regressor {
+        /**
+         * Whether the regressor is fitted.
+         */
+        @PythonName("is_fitted") attr isFitted: Boolean
+
         /**
          * Create a copy of this regressor and fit it with the given training data.
          *
@@ -35,7 +40,7 @@ Abstract base class for all regressors.
          */
         @Pure
         fun fit(
-            @PythonName("training_set") trainingSet: TaggedTable
+            @PythonName("training_set") trainingSet: TabularDataset
         ) -> fittedRegressor: Regressor
 
         /**
@@ -48,16 +53,7 @@ Abstract base class for all regressors.
         @Pure
         fun predict(
             dataset: Table
-        ) -> prediction: TaggedTable
-
-        /**
-         * Check if the classifier is fitted.
-         *
-         * @result isFitted Whether the regressor is fitted.
-         */
-        @Pure
-        @PythonName("is_fitted")
-        fun isFitted() -> isFitted: Boolean
+        ) -> prediction: TabularDataset
 
         /**
          * Compute the mean squared error (MSE) on the given data.
@@ -69,7 +65,7 @@ Abstract base class for all regressors.
         @Pure
         @PythonName("mean_squared_error")
         fun meanSquaredError(
-            @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable
+            @PythonName("validation_or_test_set") validationOrTestSet: TabularDataset
         ) -> meanSquaredError: Float
 
         /**
@@ -82,10 +78,16 @@ Abstract base class for all regressors.
         @Pure
         @PythonName("mean_absolute_error")
         fun meanAbsoluteError(
-            @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable
+            @PythonName("validation_or_test_set") validationOrTestSet: TabularDataset
         ) -> meanAbsoluteError: Float
     }
     ```
+
+## `#!sds attr` isFitted {#safeds.ml.classical.regression.Regressor.isFitted data-toc-label='isFitted'}
+
+Whether the regressor is fitted.
+
+**Type:** [`Boolean`][safeds.lang.Boolean]
 
 ## `#!sds fun` fit {#safeds.ml.classical.regression.Regressor.fit data-toc-label='fit'}
 
@@ -97,7 +99,7 @@ This regressor is not modified.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `trainingSet` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The training data containing the feature and target vectors. | - |
+| `trainingSet` | [`TabularDataset`][safeds.data.labeled.containers.TabularDataset] | The training data containing the feature and target vectors. | - |
 
 **Results:**
 
@@ -107,29 +109,11 @@ This regressor is not modified.
 
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="18"
+    ```sds linenums="24"
     @Pure
     fun fit(
-        @PythonName("training_set") trainingSet: TaggedTable
+        @PythonName("training_set") trainingSet: TabularDataset
     ) -> fittedRegressor: Regressor
-    ```
-
-## `#!sds fun` isFitted {#safeds.ml.classical.regression.Regressor.isFitted data-toc-label='isFitted'}
-
-Check if the classifier is fitted.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `isFitted` | [`Boolean`][safeds.lang.Boolean] | Whether the regressor is fitted. |
-
-??? quote "Stub code in `regressor.sdsstub`"
-
-    ```sds linenums="40"
-    @Pure
-    @PythonName("is_fitted")
-    fun isFitted() -> isFitted: Boolean
     ```
 
 ## `#!sds fun` meanAbsoluteError {#safeds.ml.classical.regression.Regressor.meanAbsoluteError data-toc-label='meanAbsoluteError'}
@@ -140,7 +124,7 @@ Compute the mean absolute error (MAE) of the regressor on the given data.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `validationOrTestSet` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The validation or test set. | - |
+| `validationOrTestSet` | [`TabularDataset`][safeds.data.labeled.containers.TabularDataset] | The validation or test set. | - |
 
 **Results:**
 
@@ -150,11 +134,11 @@ Compute the mean absolute error (MAE) of the regressor on the given data.
 
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="64"
+    ```sds linenums="61"
     @Pure
     @PythonName("mean_absolute_error")
     fun meanAbsoluteError(
-        @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable
+        @PythonName("validation_or_test_set") validationOrTestSet: TabularDataset
     ) -> meanAbsoluteError: Float
     ```
 
@@ -166,7 +150,7 @@ Compute the mean squared error (MSE) on the given data.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `validationOrTestSet` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The validation or test set. | - |
+| `validationOrTestSet` | [`TabularDataset`][safeds.data.labeled.containers.TabularDataset] | The validation or test set. | - |
 
 **Results:**
 
@@ -176,11 +160,11 @@ Compute the mean squared error (MSE) on the given data.
 
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="51"
+    ```sds linenums="48"
     @Pure
     @PythonName("mean_squared_error")
     fun meanSquaredError(
-        @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable
+        @PythonName("validation_or_test_set") validationOrTestSet: TabularDataset
     ) -> meanSquaredError: Float
     ```
 
@@ -198,13 +182,13 @@ Predict a target vector using a dataset containing feature vectors. The model ha
 
 | Name | Type | Description |
 |------|------|-------------|
-| `prediction` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A dataset containing the given feature vectors and the predicted target vector. |
+| `prediction` | [`TabularDataset`][safeds.data.labeled.containers.TabularDataset] | A dataset containing the given feature vectors and the predicted target vector. |
 
 ??? quote "Stub code in `regressor.sdsstub`"
 
-    ```sds linenums="30"
+    ```sds linenums="36"
     @Pure
     fun predict(
         dataset: Table
-    ) -> prediction: TaggedTable
+    ) -> prediction: TabularDataset
     ```
