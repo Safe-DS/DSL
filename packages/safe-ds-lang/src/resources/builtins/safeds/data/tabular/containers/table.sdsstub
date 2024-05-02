@@ -816,46 +816,6 @@ class Table(
     ) -> (first: Table, second: Table)
 
     /**
-     * Return a new `TaggedTable` with columns marked as a target column or feature columns.
-     *
-     * The original table is not modified.
-     *
-     * @param targetName
-     * Name of the target column.
-     *
-     * @param featureNames
-     * Names of the feature columns. If None, all columns except the target column are used. Use this to hide columns
-     * during training but still keep them in the input, to easily link predictions back to the original data.
-     *
-     * @result taggedTable A new tagged table with the given target and feature names.
-     *
-     * @example
-     * pipeline example {
-     *     val table = Table({
-     *         "age":      [23, 16],
-     *         "survived": [ 0,  1],
-     *     });
-     *     val taggedTable = table.tagColumns("survived");
-     * }
-     *
-     * @example
-     * pipeline example {
-     *     val table = Table({
-     *         "id":       [ 1,  2],
-     *         "age":      [23, 16],
-     *         "survived": [ 0,  1],
-     *     });
-     *     val taggedTable = table.tagColumns("target", featureNames = ["age"]);
-     * }
-     */
-    @Pure
-    @PythonName("tag_columns")
-    fun tagColumns(
-        @PythonName("target_name") targetName: String,
-        @PythonName("feature_names") featureNames: List<String>? = null
-    ) -> taggedTable: TaggedTable
-
-    /**
      * Return a new `Table` with the provided column transformed by calling the provided transformer.
      *
      * The original table is not modified.
@@ -1151,4 +1111,44 @@ class Table(
     @Pure
     @PythonName("to_rows")
     fun toRows() -> rows: List<Row>
+
+    /**
+     * Return a new `TabularDataset` with columns marked as a target column or feature columns.
+     *
+     * The original table is not modified.
+     *
+     * @param targetName
+     * Name of the target column.
+     *
+     * @param extraNames
+     * Names of the columns that are neither features nor target. If None, no extra columns are used, i.e. all but the
+     * target column are used as features.
+     *
+     * @result dataset A new tabular dataset with the given target and extras.
+     *
+     * @example
+     * pipeline example {
+     *     val table = Table({
+     *         "age":      [23, 16],
+     *         "survived": [ 0,  1],
+     *     });
+     *     val dataset = table.toTabularDataset("survived");
+     * }
+     *
+     * @example
+     * pipeline example {
+     *     val table = Table({
+     *         "id":       [ 1,  2],
+     *         "age":      [23, 16],
+     *         "survived": [ 0,  1],
+     *     });
+     *     val dataset = table.toTabularDataset("target", extraNames = ["id"]);
+     * }
+     */
+    @Pure
+    @PythonName("to_tabular_dataset")
+    fun toTabularDataset(
+        @PythonName("target_name") targetName: String,
+        @PythonName("extra_names") extraNames: List<String> = []
+    ) -> dataset: TabularDataset
 }
