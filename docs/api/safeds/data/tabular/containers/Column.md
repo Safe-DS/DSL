@@ -348,6 +348,27 @@ pipeline example {
         fun minimum() -> minimum: Float
 
         /**
+         * Return the number of missing values in the column.
+         *
+         * @result count The number of missing values.
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("test", [1, 2, 3, 4]);
+         *     val missingValueCount = column.missingValueCount(); // 0
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("test", [1, 2, 3, null]);
+         *     val missingValueCount = column.missingValueCount(); // 1
+         * }
+         */
+        @Pure
+        @PythonName("missing_value_count")
+        fun missingValueCount() -> count: Int
+
+        /**
          * Return the ratio of missing values to the total number of elements in the column.
          *
          * @result missinValueRatio The ratio of missing values to the total number of elements in the column.
@@ -923,6 +944,39 @@ pipeline example {
     fun minimum() -> minimum: Float
     ```
 
+## `#!sds fun` missingValueCount {#safeds.data.tabular.containers.Column.missingValueCount data-toc-label='missingValueCount'}
+
+Return the number of missing values in the column.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `count` | [`Int`][safeds.lang.Int] | The number of missing values. |
+
+**Examples:**
+
+```sds hl_lines="3"
+pipeline example {
+    val column = Column("test", [1, 2, 3, 4]);
+    val missingValueCount = column.missingValueCount(); // 0
+}
+```
+```sds hl_lines="3"
+pipeline example {
+    val column = Column("test", [1, 2, 3, null]);
+    val missingValueCount = column.missingValueCount(); // 1
+}
+```
+
+??? quote "Stub code in `column.sdsstub`"
+
+    ```sds linenums="355"
+    @Pure
+    @PythonName("missing_value_count")
+    fun missingValueCount() -> count: Int
+    ```
+
 ## `#!sds fun` missingValueRatio {#safeds.data.tabular.containers.Column.missingValueRatio data-toc-label='missingValueRatio'}
 
 Return the ratio of missing values to the total number of elements in the column.
@@ -950,7 +1004,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="355"
+    ```sds linenums="376"
     @Pure
     @PythonName("missing_value_ratio")
     fun missingValueRatio() -> missinValueRatio: Float
@@ -983,7 +1037,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="376"
+    ```sds linenums="397"
     @Pure
     fun mode() -> mode: List<T>
     ```
@@ -1049,7 +1103,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="461"
+    ```sds linenums="482"
     @Pure
     @PythonName("plot_boxplot")
     fun plotBoxplot() -> boxplot: Image
@@ -1076,7 +1130,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="476"
+    ```sds linenums="497"
     @Pure
     @PythonName("plot_histogram")
     fun plotHistogram() -> histogram: Image
@@ -1153,7 +1207,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="404"
+    ```sds linenums="425"
     @Pure
     fun stability() -> stability: Float
     ```
@@ -1179,7 +1233,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="418"
+    ```sds linenums="439"
     @Pure
     @PythonName("standard_deviation")
     fun standardDeviation() -> standardDeviation: Float
@@ -1206,7 +1260,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="433"
+    ```sds linenums="454"
     @Pure
     fun sum() -> sum: Float
     ```
@@ -1232,7 +1286,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="491"
+    ```sds linenums="512"
     @Pure
     @PythonName("to_html")
     fun toHtml() -> html: String
@@ -1301,7 +1355,7 @@ pipeline example {
 
 ??? quote "Stub code in `column.sdsstub`"
 
-    ```sds linenums="447"
+    ```sds linenums="468"
     @Pure
     fun variance() -> variance: Float
     ```

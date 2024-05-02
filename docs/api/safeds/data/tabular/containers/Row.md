@@ -41,7 +41,7 @@ pipeline example {
          *     val numberOfColumns = row.numberOfColumns; // 2
          * }
          */
-        @PythonName("number_of_column") attr numberOfColumns: Int
+        @PythonName("number_of_columns") attr numberOfColumns: Int
         /**
          * Return the schema of the row.
          *
@@ -128,33 +128,41 @@ pipeline example {
             @PythonName("column_name") columnName: String
         ) -> type: ColumnType
 
-        // // TODO Safe-DS does not support tuple types.
-        // /**
-        //  * Sort the columns of a `Row` with the given comparator and return a new `Row`.
-        //  *
-        //  * The original row is not modified. The comparator is a function that takes two tuples of (ColumnName,
-        //  * Value) `col1` and `col2` and returns an integer:
-        //  *
-        //  * * If `col1` should be ordered before `col2`, the function should return a negative number.
-        //  * * If `col1` should be ordered after `col2`, the function should return a positive number.
-        //  * * If the original order of `col1` and `col2` should be kept, the function should return 0.
-        //  *
-        //  * If no comparator is given, the columns will be sorted alphabetically by their name.
-        //  *
-        //  * @param comparator The function used to compare two tuples of (ColumnName, Value).
-        //  *
-        //  * @result sortedRow A new row with sorted columns.
-        //  *
-        //  * @example
-        //  * pipeline example {
-        //  *     // TODO
-        //  * }
-        //  */
-        // @Pure
-        // @PythonName("sort_columns")
-        // fun sortColumns(
-        //     comparator: (param1: Tuple<Any>, param2: Tuple<Any>) -> param3: Int
-        // ) -> sortedRow: Row
+        /**
+         * Sort the columns of a `Row` with the given comparator and return a new `Row`.
+         *
+         * The original row is not modified. The comparator is a function with four parameters:
+         *
+         * * `name_1` is the name of the first column.
+         * * `value_1` is the value of the first column.
+         * * `name_2` is the name of the second column.
+         * * `value_2` is the value of the second column.
+         *
+         * It should return an integer, indicating the desired order of the columns:
+         *
+         * * If `col1` should be ordered before `col2`, the function should return a negative number.
+         * * If `col1` should be ordered after `col2`, the function should return a positive number.
+         * * If the original order of `col1` and `col2` should be kept, the function should return 0.
+         *
+         * If no comparator is given, the columns will be sorted alphabetically by their name.
+         *
+         * @param comparator The function used to compare two tuples of (ColumnName, Value).
+         *
+         * @result sortedRow A new row with sorted columns.
+         *
+         * @example
+         * pipeline example {
+         *     val row = Row({"b": 2, "a": 1});
+         *     val sortedRow = row.sortColumns((name1, value1, name2, value2) ->
+         *         (value1 as Int) - (value2 as Int)
+         *     );
+         * }
+         */
+        @Pure
+        @PythonName("sort_columns")
+        fun sortColumns(
+            comparator: (name1: String, value1: Any, name2: String, value2: Any) -> comparison: Int
+        ) -> sortedRow: Row
 
         /**
          * Return a map of column names to column values.
@@ -338,6 +346,58 @@ pipeline example {
     ) -> hasColumn: Boolean
     ```
 
+## `#!sds fun` sortColumns {#safeds.data.tabular.containers.Row.sortColumns data-toc-label='sortColumns'}
+
+Sort the columns of a `Row` with the given comparator and return a new `Row`.
+
+The original row is not modified. The comparator is a function with four parameters:
+
+* `name_1` is the name of the first column.
+* `value_1` is the value of the first column.
+* `name_2` is the name of the second column.
+* `value_2` is the value of the second column.
+
+It should return an integer, indicating the desired order of the columns:
+
+* If `col1` should be ordered before `col2`, the function should return a negative number.
+* If `col1` should be ordered after `col2`, the function should return a positive number.
+* If the original order of `col1` and `col2` should be kept, the function should return 0.
+
+If no comparator is given, the columns will be sorted alphabetically by their name.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `comparator` | `#!sds (name1: String, value1: Any, name2: String, value2: Any) -> (comparison: Int)` | The function used to compare two tuples of (ColumnName, Value). | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `sortedRow` | [`Row`][safeds.data.tabular.containers.Row] | A new row with sorted columns. |
+
+**Examples:**
+
+```sds hl_lines="3"
+pipeline example {
+    val row = Row({"b": 2, "a": 1});
+    val sortedRow = row.sortColumns((name1, value1, name2, value2) ->
+        (value1 as Int) - (value2 as Int)
+    );
+}
+```
+
+??? quote "Stub code in `row.sdsstub`"
+
+    ```sds linenums="155"
+    @Pure
+    @PythonName("sort_columns")
+    fun sortColumns(
+        comparator: (name1: String, value1: Any, name2: String, value2: Any) -> comparison: Int
+    ) -> sortedRow: Row
+    ```
+
 ## `#!sds fun` toHtml {#safeds.data.tabular.containers.Row.toHtml data-toc-label='toHtml'}
 
 Return an HTML representation of the row.
@@ -359,7 +419,7 @@ pipeline example {
 
 ??? quote "Stub code in `row.sdsstub`"
 
-    ```sds linenums="179"
+    ```sds linenums="187"
     @Pure
     @PythonName("to_html")
     fun toHtml() -> html: String
@@ -386,7 +446,7 @@ pipeline example {
 
 ??? quote "Stub code in `row.sdsstub`"
 
-    ```sds linenums="164"
+    ```sds linenums="172"
     @Pure
     @PythonName("to_dict")
     fun toMap() -> map: Map<String, Any>

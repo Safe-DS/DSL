@@ -1,6 +1,6 @@
 # :test_tube:{ title="Experimental" } `#!sds class` ForwardLayer {#safeds.ml.nn.ForwardLayer data-toc-label='ForwardLayer'}
 
-**Parent type:** [`Layer`][safeds.ml.nn.Layer]
+**Parent type:** `#!sds Layer`
 
 **Parameters:**
 

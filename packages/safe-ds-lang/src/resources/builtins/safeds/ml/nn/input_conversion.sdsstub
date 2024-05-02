@@ -1,0 +1,7 @@
+package safeds.ml.nn
+
+/**
+ * The input conversion for a neural network, defines the input parameters for the neural network.
+ */
+@Experimental
+class InputConversion<FitIn, PredictIn>

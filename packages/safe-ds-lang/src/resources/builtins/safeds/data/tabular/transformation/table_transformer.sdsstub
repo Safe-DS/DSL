@@ -7,6 +7,11 @@ from safeds.data.tabular.containers import Table
  */
 class TableTransformer {
     /**
+     * Whether the transformer is fitted.
+     */
+    @PythonName("is_fitted") attr isFitted: Boolean
+
+    /**
      * Learn a transformation for a set of columns in a table.
      *
      * This transformer is not modified.
@@ -62,15 +67,6 @@ class TableTransformer {
     @Pure
     @PythonName("get_names_of_removed_columns")
     fun getNamesOfRemovedColumns() -> result1: List<String>
-
-    /**
-     * Check if the transformer is fitted.
-     *
-     * @result result1 Whether the transformer is fitted.
-     */
-    @Pure
-    @PythonName("is_fitted")
-    fun isFitted() -> result1: Boolean
 
     /**
      * Learn a transformation for a set of columns in a table and apply the learned transformation to the same table.

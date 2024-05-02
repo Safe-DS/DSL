@@ -1,6 +1,7 @@
 package safeds.ml.classical.regression
 
-from safeds.data.tabular.containers import Table, TaggedTable
+from safeds.data.labeled.containers import TabularDataset
+from safeds.data.tabular.containers import Table
 from safeds.ml.classical.regression import Regressor
 
 /**
@@ -8,8 +9,8 @@ from safeds.ml.classical.regression import Regressor
  *
  * @example
  * pipeline example {
- *     val training = Table.fromCsvFile("training.csv").tagColumns("target");
- *     val test = Table.fromCsvFile("test.csv").tagColumns("target");
+ *     val training = Table.fromCsvFile("training.csv").toTabularDataset("target");
+ *     val test = Table.fromCsvFile("test.csv").toTabularDataset("target");
  *     val regressor = LinearRegressionRegressor().fit(training);
  *     val meanSquaredError = regressor.meanSquaredError(test);
  * }
@@ -26,6 +27,6 @@ class LinearRegressionRegressor() sub Regressor {
      */
     @Pure
     fun fit(
-        @PythonName("training_set") trainingSet: TaggedTable
+        @PythonName("training_set") trainingSet: TabularDataset
     ) -> fittedRegressor: LinearRegressionRegressor
 }

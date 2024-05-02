@@ -4,21 +4,28 @@
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
+| `inputConversion` | [`InputConversion<FitIn, PredictIn>`][safeds.ml.nn.InputConversion] | - | - |
 | `layers` | [`List<Layer>`][safeds.lang.List] | - | - |
+| `outputConversion` | [`OutputConversion<PredictIn, PredictOut>`][safeds.ml.nn.OutputConversion] | - | - |
+
+**Type parameters:**
+
+| Name | Upper Bound | Description | Default |
+|------|-------------|-------------|---------|
+| `FitIn` | [`Any?`][safeds.lang.Any] | - | - |
+| `PredictIn` | [`Any?`][safeds.lang.Any] | - | - |
+| `PredictOut` | [`Any?`][safeds.lang.Any] | - | - |
 
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="7"
-    class NeuralNetworkClassifier(
-        layers: List<Layer>
+    ```sds linenums="8"
+    class NeuralNetworkClassifier<FitIn, PredictIn, PredictOut>(
+        @PythonName("input_conversion") inputConversion: InputConversion<FitIn, PredictIn>,
+        layers: List<Layer>,
+        @PythonName("output_conversion") outputConversion: OutputConversion<PredictIn, PredictOut>
     ) {
         /**
-         * Check if the model is fitted.
-         *
-         * @example
-         * pipeline example {
-         *     // TODO
-         * }
+         * Whether the classifier is fitted.
          */
         @PythonName("is_fitted") attr isFitted: Boolean
 
@@ -43,13 +50,13 @@
          */
         @Pure
         fun fit(
-            @PythonName("train_data") trainData: TaggedTable,
+            @PythonName("train_data") trainData: FitIn,
             @PythonName("epoch_size") const epochSize: Int = 25,
             @PythonName("batch_size") const batchSize: Int = 1,
             @PythonName("learning_rate") learningRate: Float = 0.001,
             @PythonName("callback_on_batch_completion") callbackOnBatchCompletion: (param1: Int, param2: Float) -> () = (param1, param2) {},
             @PythonName("callback_on_epoch_completion") callbackOnEpochCompletion: (param1: Int, param2: Float) -> () = (param1, param2) {}
-        ) -> fittedClassifier: NeuralNetworkClassifier where {
+        ) -> fittedClassifier: NeuralNetworkClassifier<FitIn, PredictIn, PredictOut> where {
             epochSize >= 1,
             batchSize >= 1
         }
@@ -61,7 +68,7 @@
          *
          * @param testData The data the network should predict.
          *
-         * @result result1 The given test_data with an added "prediction" column at the end
+         * @result prediction The given test_data with an added "prediction" column at the end
          *
          * @example
          * pipeline example {
@@ -70,24 +77,16 @@
          */
         @Pure
         fun predict(
-            @PythonName("test_data") testData: Table
-        ) -> result1: TaggedTable
+            @PythonName("test_data") testData: PredictIn
+        ) -> prediction: PredictOut
     }
     ```
 
 ## `#!sds attr` isFitted {#safeds.ml.nn.NeuralNetworkClassifier.isFitted data-toc-label='isFitted'}
 
-Check if the model is fitted.
+Whether the classifier is fitted.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
-
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
 
 ## `#!sds fun` fit {#safeds.ml.nn.NeuralNetworkClassifier.fit data-toc-label='fit'}
 
@@ -99,7 +98,7 @@ The original model is not modified.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `trainData` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The data the network should be trained on. | - |
+| `trainData` | `#!sds FitIn` | The data the network should be trained on. | - |
 | `epochSize` | [`Int`][safeds.lang.Int] | The number of times the training cycle should be done. | `#!sds 25` |
 | `batchSize` | [`Int`][safeds.lang.Int] | The size of data batches that should be loaded at one time. | `#!sds 1` |
 | `learningRate` | [`Float`][safeds.lang.Float] | The learning rate of the neural network. | `#!sds 0.001` |
@@ -110,7 +109,7 @@ The original model is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `fittedClassifier` | [`NeuralNetworkClassifier`][safeds.ml.nn.NeuralNetworkClassifier] | The trained Model |
+| `fittedClassifier` | [`NeuralNetworkClassifier<FitIn, PredictIn, PredictOut>`][safeds.ml.nn.NeuralNetworkClassifier] | The trained Model |
 
 **Examples:**
 
@@ -122,16 +121,16 @@ pipeline example {
 
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="39"
+    ```sds linenums="37"
     @Pure
     fun fit(
-        @PythonName("train_data") trainData: TaggedTable,
+        @PythonName("train_data") trainData: FitIn,
         @PythonName("epoch_size") const epochSize: Int = 25,
         @PythonName("batch_size") const batchSize: Int = 1,
         @PythonName("learning_rate") learningRate: Float = 0.001,
         @PythonName("callback_on_batch_completion") callbackOnBatchCompletion: (param1: Int, param2: Float) -> () = (param1, param2) {},
         @PythonName("callback_on_epoch_completion") callbackOnEpochCompletion: (param1: Int, param2: Float) -> () = (param1, param2) {}
-    ) -> fittedClassifier: NeuralNetworkClassifier where {
+    ) -> fittedClassifier: NeuralNetworkClassifier<FitIn, PredictIn, PredictOut> where {
         epochSize >= 1,
         batchSize >= 1
     }
@@ -147,13 +146,13 @@ The original Model is not modified.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `testData` | [`Table`][safeds.data.tabular.containers.Table] | The data the network should predict. | - |
+| `testData` | `#!sds PredictIn` | The data the network should predict. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The given test_data with an added "prediction" column at the end |
+| `prediction` | `#!sds PredictOut` | The given test_data with an added "prediction" column at the end |
 
 **Examples:**
 
@@ -165,9 +164,9 @@ pipeline example {
 
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="66"
+    ```sds linenums="64"
     @Pure
     fun predict(
-        @PythonName("test_data") testData: Table
-    ) -> result1: TaggedTable
+        @PythonName("test_data") testData: PredictIn
+    ) -> prediction: PredictOut
     ```

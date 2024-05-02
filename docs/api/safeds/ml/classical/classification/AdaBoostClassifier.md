@@ -16,8 +16,8 @@ Ada Boost classification.
 
 ```sds hl_lines="4"
 pipeline example {
-    val training = Table.fromCsvFile("training.csv").tagColumns("target");
-    val test = Table.fromCsvFile("test.csv").tagColumns("target");
+    val training = Table.fromCsvFile("training.csv").toTabularDataset("target");
+    val test = Table.fromCsvFile("test.csv").toTabularDataset("target");
     val classifier = AdaBoostClassifier(maximumNumberOfLearners = 100).fit(training);
     val accuracy = classifier.accuracy(test);
 }
@@ -25,7 +25,7 @@ pipeline example {
 
 ??? quote "Stub code in `ada_boost.sdsstub`"
 
-    ```sds linenums="23"
+    ```sds linenums="24"
     class AdaBoostClassifier(
         learner: Classifier = DecisionTreeClassifier(),
         @PythonName("maximum_number_of_learners") const maximumNumberOfLearners: Int = 50,
@@ -58,10 +58,16 @@ pipeline example {
          */
         @Pure
         fun fit(
-            @PythonName("training_set") trainingSet: TaggedTable
+            @PythonName("training_set") trainingSet: TabularDataset
         ) -> fittedClassifier: AdaBoostClassifier
     }
     ```
+
+## `#!sds attr` isFitted {#safeds.ml.classical.classification.AdaBoostClassifier.isFitted data-toc-label='isFitted'}
+
+Whether the classifier is fitted.
+
+**Type:** [`Boolean`][safeds.lang.Boolean]
 
 ## `#!sds attr` learner {#safeds.ml.classical.classification.AdaBoostClassifier.learner data-toc-label='learner'}
 
@@ -89,7 +95,7 @@ Compute the accuracy of the classifier on the given data.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `validationOrTestSet` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The validation or test set. | - |
+| `validationOrTestSet` | [`TabularDataset`][safeds.data.labeled.containers.TabularDataset] | The validation or test set. | - |
 
 **Results:**
 
@@ -99,10 +105,10 @@ Compute the accuracy of the classifier on the given data.
 
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="51"
+    ```sds linenums="48"
     @Pure
     fun accuracy(
-        @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable
+        @PythonName("validation_or_test_set") validationOrTestSet: TabularDataset
     ) -> accuracy: Float
     ```
 
@@ -114,7 +120,7 @@ Compute the classifier's $F_1$-score on the given data.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `validationOrTestSet` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The validation or test set. | - |
+| `validationOrTestSet` | [`TabularDataset`][safeds.data.labeled.containers.TabularDataset] | The validation or test set. | - |
 | `positiveClass` | [`Any`][safeds.lang.Any] | The class to be considered positive. All other classes are considered negative. | - |
 
 **Results:**
@@ -125,11 +131,11 @@ Compute the classifier's $F_1$-score on the given data.
 
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="95"
+    ```sds linenums="92"
     @Pure
     @PythonName("f1_score")
     fun f1Score(
-        @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable,
+        @PythonName("validation_or_test_set") validationOrTestSet: TabularDataset,
         @PythonName("positive_class") positiveClass: Any
     ) -> f1Score: Float
     ```
@@ -144,7 +150,7 @@ This classifier is not modified.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `trainingSet` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The training data containing the feature and target vectors. | - |
+| `trainingSet` | [`TabularDataset`][safeds.data.labeled.containers.TabularDataset] | The training data containing the feature and target vectors. | - |
 
 **Results:**
 
@@ -154,29 +160,11 @@ This classifier is not modified.
 
 ??? quote "Stub code in `ada_boost.sdsstub`"
 
-    ```sds linenums="53"
+    ```sds linenums="54"
     @Pure
     fun fit(
-        @PythonName("training_set") trainingSet: TaggedTable
+        @PythonName("training_set") trainingSet: TabularDataset
     ) -> fittedClassifier: AdaBoostClassifier
-    ```
-
-## `#!sds fun` isFitted {#safeds.ml.classical.classification.AdaBoostClassifier.isFitted data-toc-label='isFitted'}
-
-Check if the classifier is fitted.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `isFitted` | [`Boolean`][safeds.lang.Boolean] | Whether the classifier is fitted. |
-
-??? quote "Stub code in `classifier.sdsstub`"
-
-    ```sds linenums="40"
-    @Pure
-    @PythonName("is_fitted")
-    fun isFitted() -> isFitted: Boolean
     ```
 
 ## `#!sds fun` precision {#safeds.ml.classical.classification.AdaBoostClassifier.precision data-toc-label='precision'}
@@ -187,7 +175,7 @@ Compute the classifier's precision on the given data.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `validationOrTestSet` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The validation or test set. | - |
+| `validationOrTestSet` | [`TabularDataset`][safeds.data.labeled.containers.TabularDataset] | The validation or test set. | - |
 | `positiveClass` | [`Any`][safeds.lang.Any] | The class to be considered positive. All other classes are considered negative. | - |
 
 **Results:**
@@ -198,10 +186,10 @@ Compute the classifier's precision on the given data.
 
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="65"
+    ```sds linenums="62"
     @Pure
     fun precision(
-        @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable,
+        @PythonName("validation_or_test_set") validationOrTestSet: TabularDataset,
         @PythonName("positive_class") positiveClass: Any
     ) -> precision: Float
     ```
@@ -220,15 +208,15 @@ Predict a target vector using a dataset containing feature vectors. The model ha
 
 | Name | Type | Description |
 |------|------|-------------|
-| `prediction` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A dataset containing the given feature vectors and the predicted target vector. |
+| `prediction` | [`TabularDataset`][safeds.data.labeled.containers.TabularDataset] | A dataset containing the given feature vectors and the predicted target vector. |
 
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="30"
+    ```sds linenums="36"
     @Pure
     fun predict(
         dataset: Table
-    ) -> prediction: TaggedTable
+    ) -> prediction: TabularDataset
     ```
 
 ## `#!sds fun` recall {#safeds.ml.classical.classification.AdaBoostClassifier.recall data-toc-label='recall'}
@@ -239,7 +227,7 @@ Compute the classifier's recall on the given data.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `validationOrTestSet` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | The validation or test set. | - |
+| `validationOrTestSet` | [`TabularDataset`][safeds.data.labeled.containers.TabularDataset] | The validation or test set. | - |
 | `positiveClass` | [`Any`][safeds.lang.Any] | The class to be considered positive. All other classes are considered negative. | - |
 
 **Results:**
@@ -250,10 +238,10 @@ Compute the classifier's recall on the given data.
 
 ??? quote "Stub code in `classifier.sdsstub`"
 
-    ```sds linenums="80"
+    ```sds linenums="77"
     @Pure
     fun recall(
-        @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable,
+        @PythonName("validation_or_test_set") validationOrTestSet: TabularDataset,
         @PythonName("positive_class") positiveClass: Any
     ) -> recall: Float
     ```

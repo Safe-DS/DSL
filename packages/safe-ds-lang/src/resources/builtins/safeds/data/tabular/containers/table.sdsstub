@@ -1,7 +1,8 @@
 package safeds.data.tabular.containers
 
+from safeds.data.labeled.containers import TabularDataset
 from safeds.data.image.containers import Image
-from safeds.data.tabular.containers import Column, Row, TaggedTable, TimeSeries
+from safeds.data.tabular.containers import Column, Row, TimeSeries
 from safeds.data.tabular.transformation import InvertibleTableTransformer, TableTransformer
 from safeds.data.tabular.typing import ColumnType, Schema
 
@@ -440,7 +441,7 @@ class Table(
      * }
      */
     @Pure
-    @PythonName("group_rows_by")
+    @PythonName("group_rows")
     fun groupRows<T>(
         @PythonName("key_selector") keySelector: (row: Row) -> key: T
     ) -> tablesByKey: Map<T, Table>
@@ -816,46 +817,6 @@ class Table(
     ) -> (first: Table, second: Table)
 
     /**
-     * Return a new `TaggedTable` with columns marked as a target column or feature columns.
-     *
-     * The original table is not modified.
-     *
-     * @param targetName
-     * Name of the target column.
-     *
-     * @param featureNames
-     * Names of the feature columns. If None, all columns except the target column are used. Use this to hide columns
-     * during training but still keep them in the input, to easily link predictions back to the original data.
-     *
-     * @result taggedTable A new tagged table with the given target and feature names.
-     *
-     * @example
-     * pipeline example {
-     *     val table = Table({
-     *         "age":      [23, 16],
-     *         "survived": [ 0,  1],
-     *     });
-     *     val taggedTable = table.tagColumns("survived");
-     * }
-     *
-     * @example
-     * pipeline example {
-     *     val table = Table({
-     *         "id":       [ 1,  2],
-     *         "age":      [23, 16],
-     *         "survived": [ 0,  1],
-     *     });
-     *     val taggedTable = table.tagColumns("target", featureNames = ["age"]);
-     * }
-     */
-    @Pure
-    @PythonName("tag_columns")
-    fun tagColumns(
-        @PythonName("target_name") targetName: String,
-        @PythonName("feature_names") featureNames: List<String>? = null
-    ) -> taggedTable: TaggedTable
-
-    /**
      * Return a new `Table` with the provided column transformed by calling the provided transformer.
      *
      * The original table is not modified.
@@ -1009,6 +970,8 @@ class Table(
     /**
      * Plot a histogram for every column.
      *
+     * @param numberOfBins The number of bins to use in the histogram.
+     *
      * @result histograms The plot as an image.
      *
      * @example
@@ -1019,7 +982,11 @@ class Table(
      */
     @Pure
     @PythonName("plot_histograms")
-    fun plotHistograms() -> histograms: Image
+    fun plotHistograms(
+        @PythonName("number_of_bins") const numberOfBins: Int = 10
+    ) -> histograms: Image where {
+        numberOfBins > 0
+    }
 
     /**
      * Write the data from the table into a CSV file.
@@ -1145,4 +1112,44 @@ class Table(
     @Pure
     @PythonName("to_rows")
     fun toRows() -> rows: List<Row>
+
+    /**
+     * Return a new `TabularDataset` with columns marked as a target column or feature columns.
+     *
+     * The original table is not modified.
+     *
+     * @param targetName
+     * Name of the target column.
+     *
+     * @param extraNames
+     * Names of the columns that are neither features nor target. If None, no extra columns are used, i.e. all but the
+     * target column are used as features.
+     *
+     * @result dataset A new tabular dataset with the given target and extras.
+     *
+     * @example
+     * pipeline example {
+     *     val table = Table({
+     *         "age":      [23, 16],
+     *         "survived": [ 0,  1],
+     *     });
+     *     val dataset = table.toTabularDataset("survived");
+     * }
+     *
+     * @example
+     * pipeline example {
+     *     val table = Table({
+     *         "id":       [ 1,  2],
+     *         "age":      [23, 16],
+     *         "survived": [ 0,  1],
+     *     });
+     *     val dataset = table.toTabularDataset("target", extraNames = ["id"]);
+     * }
+     */
+    @Pure
+    @PythonName("to_tabular_dataset")
+    fun toTabularDataset(
+        @PythonName("target_name") targetName: String,
+        @PythonName("extra_names") extraNames: List<String> = []
+    ) -> dataset: TabularDataset
 }

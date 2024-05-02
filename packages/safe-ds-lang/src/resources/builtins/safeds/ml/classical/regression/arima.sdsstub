@@ -12,6 +12,11 @@ package safeds.ml.classical.regression
 @PythonName("ArimaModelRegressor")
 class ArimaRegressor() {
     /**
+     * Whether the regressor is fitted.
+     */
+    @PythonName("is_fitted") attr isFitted: Boolean
+
+    /**
      * Create a copy of this ARIMA Model and fit it with the given training data.
      *
      * This ARIMA Model is not modified.
@@ -49,13 +54,4 @@ class ArimaRegressor() {
     fun plotPredictions(
         @PythonName("test_series") testSeries: TimeSeries
     ) -> image: Image
-
-    /**
-     * Check if the classifier is fitted.
-     *
-     * @result isFitted Whether the regressor is fitted.
-     */
-    @Pure
-    @PythonName("is_fitted")
-    fun isFitted() -> isFitted: Boolean
 }
