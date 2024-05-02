@@ -5,13 +5,16 @@
     export let possibleOptions: string[];
     export let fontSize: string = '1.5em';
     export let height: string = '50px';
-    export let width: string = '150px';
+    export let width: string = '180px';
+    export let changesDisabled: boolean = false;
     export let onSelect: (selected: string) => void; // Function prop to notify parent of changes
 
     let isDropdownOpen = false;
     let dropdownRef: HTMLElement;
 
     function toggleDropdown() {
+        if (changesDisabled) return;
+
         isDropdownOpen = !isDropdownOpen;
 
         if (isDropdownOpen) {
@@ -39,9 +42,16 @@
 <div
     bind:this={dropdownRef}
     class="wrapperDropdownButton"
+    class:disabledWrapper={changesDisabled}
     style="font-size: {fontSize}; width: {width}; height: {height};"
 >
-    <div role="none" class="dropdownButton" class:dropdownButtonActive={isDropdownOpen} on:click={toggleDropdown}>
+    <div
+        role="none"
+        class="dropdownButton"
+        class:dropdownButtonActive={isDropdownOpen}
+        class:disabledButton={changesDisabled}
+        on:click={toggleDropdown}
+    >
         <div class="buttonText">
             {initialOption}
         </div>
@@ -65,6 +75,11 @@
     .wrapperDropdownButton {
         position: relative;
         display: inline-block;
+        z-index: 1;
+    }
+
+    .disabledWrapper {
+        filter: opacity(0.5);
     }
 
     .dropdownButton {
@@ -78,6 +93,10 @@
         cursor: pointer;
         user-select: none;
         justify-content: space-between;
+    }
+
+    .disabledButton {
+        cursor: not-allowed;
     }
 
     .dropdownButton .buttonText {
@@ -111,6 +130,10 @@
 
     .dropdownButton:hover {
         background-color: #e0e0e0;
+    }
+
+    .disabledButton:hover {
+        background-color: var(--bg-dark) !important;
     }
 
     .dropdownMenu {

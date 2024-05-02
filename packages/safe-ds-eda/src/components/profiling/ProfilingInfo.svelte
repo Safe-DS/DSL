@@ -87,6 +87,7 @@
         justify-content: space-between;
         margin-bottom: 1px;
         user-select: none;
+        line-height: 15px;
     }
 
     .profilingItemKey {

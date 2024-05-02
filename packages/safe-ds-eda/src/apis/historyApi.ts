@@ -41,7 +41,7 @@ export const addInternalToHistory = function (entry: InternalHistoryEntry): void
     currentState.update((state) => {
         const entryWithId: HistoryEntry = {
             ...entry,
-            id: entryIdCounter++,
+            id: getAndIncrementEntryId(),
         };
         const newHistory = [...state.history, entryWithId];
         return {
@@ -57,7 +57,7 @@ export const executeExternalHistoryEntry = function (entry: ExternalHistoryEntry
     currentState.update((state) => {
         const entryWithId: HistoryEntry = {
             ...entry,
-            id: entryIdCounter++,
+            id: getAndIncrementEntryId(),
         };
         const newHistory = [...state.history, entryWithId];
 

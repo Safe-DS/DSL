@@ -15,6 +15,7 @@
     import ProfilingInfo from './profiling/ProfilingInfo.svelte';
     import { derived, writable, get } from 'svelte/store';
     import ColumnFilters from './columnFilters/ColumnFilters.svelte';
+    import { imageWidthToHeightRatio } from '../../consts.config';
 
     export let sidebarWidth: number;
 
@@ -574,7 +575,7 @@
     const calcProfilingItemValue = function (profilingItem: ProfilingDetail): number {
         // To edit when Profiling type scales/changes
         if (profilingItem.type === 'image') {
-            return 9; // Bigger than normal text line, should be set to 3x line height
+            return Math.floor(profilingImageWidth / imageWidthToHeightRatio / 15); // imageHeight / 15 which is the set line height in profilingInfo
         } else {
             return 1;
         }

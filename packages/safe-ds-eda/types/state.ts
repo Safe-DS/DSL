@@ -95,6 +95,10 @@ export type ExternalVisualizingHistoryEntry =
     | ExternalVisualizingTwoColumnHistoryEntry
     | ExternalVisualizingRefreshHistoryEntry;
 
+export type ExternalVisualizingRebuildHistoryEntry = ExternalVisualizingHistoryEntry & {
+    initialHistoryEntryId: number;
+};
+
 export type ExternalHistoryEntry = ExternalManipulatingHistoryEntry | ExternalVisualizingHistoryEntry;
 
 export type HistoryEntry = (InternalHistoryEntry | ExternalHistoryEntry) & {
