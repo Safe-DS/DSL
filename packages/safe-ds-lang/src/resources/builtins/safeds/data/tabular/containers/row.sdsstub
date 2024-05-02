@@ -35,7 +35,7 @@ class Row(
      *     val numberOfColumns = row.numberOfColumns; // 2
      * }
      */
-    @PythonName("number_of_column") attr numberOfColumns: Int
+    @PythonName("number_of_columns") attr numberOfColumns: Int
     /**
      * Return the schema of the row.
      *
