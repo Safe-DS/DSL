@@ -7,6 +7,11 @@ from safeds.data.tabular.containers import Table, TaggedTable
  */
 class Regressor {
     /**
+     * Whether the regressor is fitted.
+     */
+    @PythonName("is_fitted") attr isFitted: Boolean
+
+    /**
      * Create a copy of this regressor and fit it with the given training data.
      *
      * This regressor is not modified.
@@ -31,15 +36,6 @@ class Regressor {
     fun predict(
         dataset: Table
     ) -> prediction: TaggedTable
-
-    /**
-     * Check if the classifier is fitted.
-     *
-     * @result isFitted Whether the regressor is fitted.
-     */
-    @Pure
-    @PythonName("is_fitted")
-    fun isFitted() -> isFitted: Boolean
 
     /**
      * Compute the mean squared error (MSE) on the given data.

@@ -10,12 +10,7 @@ class NeuralNetworkRegressor<FitIn, PredictIn, PredictOut>(
     @PythonName("output_conversion") outputConversion: OutputConversion<PredictIn, PredictOut>
 ) {
     /**
-     * Whether the model is fitted.
-     *
-     * @example
-     * pipeline example {
-     *     // TODO
-     * }
+     * Whether the regressor is fitted.
      */
     @PythonName("is_fitted") attr isFitted: Boolean
 

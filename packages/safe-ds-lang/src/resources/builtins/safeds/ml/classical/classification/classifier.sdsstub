@@ -7,6 +7,11 @@ from safeds.data.tabular.containers import Table, TaggedTable
  */
 class Classifier {
     /**
+     * Whether the classifier is fitted.
+     */
+    @PythonName("is_fitted") attr isFitted: Boolean
+
+    /**
      * Create a copy of this classifier and fit it with the given training data.
      *
      * This classifier is not modified.
@@ -31,15 +36,6 @@ class Classifier {
     fun predict(
         dataset: Table
     ) -> prediction: TaggedTable
-
-    /**
-     * Check if the classifier is fitted.
-     *
-     * @result isFitted Whether the classifier is fitted.
-     */
-    @Pure
-    @PythonName("is_fitted")
-    fun isFitted() -> isFitted: Boolean
 
     /**
      * Compute the accuracy of the classifier on the given data.
