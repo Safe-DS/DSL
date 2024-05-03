@@ -604,10 +604,12 @@ export class SafeDsPythonGenerator {
     private generateExpressionLambda(node: SdsExpressionLambda, frame: GenerationInfoFrame): Generated {
         const name = frame.getUniqueLambdaName(node);
         const parameters = this.generateParameters(node.parameterList, frame);
-        const result = this.generateExpression(node.result, frame);
+        const lambdaFrame = frame.newScope();
+        const result = this.generateExpression(node.result, lambdaFrame);
 
         const extraStatement = expandTracedToNode(node)`
             def ${name}(${parameters}):
+                ${joinToNode(lambdaFrame.getExtraStatements())}
                 return ${result}
         `;
         frame.addExtraStatement(node, extraStatement);
@@ -1204,8 +1206,9 @@ class GenerationInfoFrame {
         insidePipeline: boolean = false,
         targetPlaceholders: string[] | undefined = undefined,
         disableRunnerIntegration: boolean = false,
+        idManager: IdManager<SdsExpression> = new IdManager(),
     ) {
-        this.idManager = new IdManager();
+        this.idManager = idManager;
         this.importSet = importSet;
         this.utilitySet = utilitySet;
         this.typeVariableSet = typeVariableSet;
@@ -1261,6 +1264,18 @@ class GenerationInfoFrame {
 
     getUniqueReceiverName(receiver: SdsExpression): string {
         return `${RECEIVER_PREFIX}${this.idManager.assignId(receiver)}`;
+    }
+
+    newScope(): GenerationInfoFrame {
+        return new GenerationInfoFrame(
+            this.importSet,
+            this.utilitySet,
+            this.typeVariableSet,
+            this.isInsidePipeline,
+            this.targetPlaceholders,
+            this.disableRunnerIntegration,
+            this.idManager,
+        );
     }
 }
 
