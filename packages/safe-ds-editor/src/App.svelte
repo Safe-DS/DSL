@@ -2,11 +2,10 @@
     import { categorys } from './assets/categories/categories';
     import PrimarySidebar from './lib/components/sidebars/PrimarySidebar.svelte';
     import Grid from '$lib/components/main/flow.svelte';
-    import NodeExtension from '$lib/components/nodes/node-extension.svelte';
     import { node } from './assets/node/node';
     import type { Error } from 'types/error';
     import { setContext } from 'svelte';
-    import MessageHandler from './messaging/messageHandler';
+    import { ScrollArea } from '$lib/components/ui/scroll-area';
 
     const mainSidebarCategories: Category[] = [
         { name: 'Data Preparation', icon: categorys.preparation1 },
@@ -17,35 +16,46 @@
         { name: 'Segments', icon: node.extension },
     ];
 
-    export let criticalError: Error | null = null;
+    export let criticalErrorList: Error[] = [];
     export let ast: string;
 
-    function handleError(error: Error) {
-        switch (error.action) {
-            case 'block':
-                criticalError = error;
-            case 'notify':
-                // Todo: Use the Vs Code Notification instead
-                console.log(`[${error.source}] ${error.message}`);
-        }
+    function handleError(error: Error[]) {
+        error.forEach((error) => {
+            switch (error.action) {
+                case 'block':
+                    criticalErrorList.push(error);
+                case 'notify':
+                    // Todo: Use the Vs Code Notification instead
+                    console.log(`[${error.source}] ${error.message}`);
+            }
+        });
     }
     setContext('handleError', handleError);
 </script>
 
-{#if criticalError}
+{#if criticalErrorList.length > 0}
     <div class=" flex h-full w-full flex-col items-center justify-center gap-4">
         <span class="text-xs text-red-600">Critical Error</span>
-        <div class="flex w-1/2 flex-col gap-2 border-2 border-red-600 p-6">
-            <div class=" whitespace-pre-wrap text-xl font-bold text-red-600">
-                {criticalError.source}
+        <ScrollArea class="h-3/4 rounded-md border-2 border-red-600 p-6">
+            <div class="flex flex-col gap-2">
+                {#each criticalErrorList as error}
+                    <div
+                        class=" whitespace-pre-wrap text-xl font-bold text-red-600"
+                    >
+                        {error.source}
+                    </div>
+                    <div class="whitespace-pre-wrap text-sm text-gray-300">
+                        {error.message}
+                    </div>
+                {/each}
             </div>
-            <div class="whitespace-pre-wrap text-sm text-gray-300">
-                {criticalError.message}
-            </div>
-        </div>
-        <button class=" w-20" on:click={() => {
-            criticalError = null
-        }}>Continue</button>
+        </ScrollArea>
+        <button
+            class=" w-20"
+            on:click={() => {
+                criticalErrorList = [];
+            }}>Continue</button
+        >
     </div>
 {:else}
     <div class="relative h-full w-full">

@@ -16,9 +16,6 @@ export default class MessageHandler {
     public static listenToMessages() {
         window.addEventListener('message', (event) => {
             const message = event.data as ExtensionToWebview;
-
-            console.log(Date.now() + ': ' + message.command + ' called');
-
             switch (message.command) {
                 case 'SendAst':
                     // This Message is handled somewhere else
@@ -28,7 +25,6 @@ export default class MessageHandler {
                     break;
             }
         });
-        console.log('Registered Message Listener');
     }
 
     public static sendMessageTest(message: string) {
@@ -58,8 +54,6 @@ export default class MessageHandler {
                 command: 'RequestAst',
                 value: '',
             };
-            console.log('Now Posting request');
-            console.dir(messageObject, { depth: null });
             MessageHandler.vsocde.postMessage(messageObject);
         });
         return response;
