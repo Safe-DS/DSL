@@ -1,3 +1,10 @@
+## [0.14.1](https://github.com/Safe-DS/DSL/compare/v0.14.0...v0.14.1) (2024-05-03)
+
+
+### Bug Fixes
+
+* generation of extra statements for parameters of expression lambdas ([#1137](https://github.com/Safe-DS/DSL/issues/1137)) ([4add401](https://github.com/Safe-DS/DSL/commit/4add401389abbdeea8bab7ff90fccac524bd901c)), closes [#1136](https://github.com/Safe-DS/DSL/issues/1136)
+
 ## [0.14.0](https://github.com/Safe-DS/DSL/compare/v0.13.0...v0.14.0) (2024-05-02)
 
 
