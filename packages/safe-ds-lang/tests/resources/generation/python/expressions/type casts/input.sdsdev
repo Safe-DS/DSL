@@ -1,5 +1,5 @@
 package tests.generation.expressions.typeCasts
 
 segment mySegment(p: Int) {
-    val a = p as Int;
+    val a = p as (Int);
 }
