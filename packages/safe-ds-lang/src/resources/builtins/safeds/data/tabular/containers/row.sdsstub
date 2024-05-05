@@ -148,7 +148,7 @@ class Row(
      * pipeline example {
      *     val row = Row({"b": 2, "a": 1});
      *     val sortedRow = row.sortColumns((name1, value1, name2, value2) ->
-     *         (value1 as Int) - (value2 as Int)
+     *         value1 as (Int) - value2 as (Int)
      *     );
      * }
      */
