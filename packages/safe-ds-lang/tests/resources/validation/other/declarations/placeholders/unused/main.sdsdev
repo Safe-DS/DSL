@@ -3,42 +3,51 @@ package tests.validation.other.declarations.placeholders.unused
 fun f() -> (r1: Int, r2: Int)
 
 segment mySegment() {
-    // $TEST$ warning "This placeholder is unused and can be removed."
+    // $TEST$ warning "This placeholder is unused and can be removed. Prefix its name with an underscore to disable this warning."
     val »unused« = 1;
 
-    // $TEST$ no warning "This placeholder is unused and can be removed."
+    // $TEST$ no warning "This placeholder is unused and can be removed. Prefix its name with an underscore to disable this warning."
+    val »_unused« = 1;
+
+    // $TEST$ no warning "This placeholder is unused and can be removed. Prefix its name with an underscore to disable this warning."
     val »used« = 1;
     used;
 
-    // $TEST$ no warning "This placeholder is unused and can be removed."
-    // $TEST$ no warning "This placeholder is unused and can be removed."
+    // $TEST$ no warning "This placeholder is unused and can be removed. Prefix its name with an underscore to disable this warning."
+    // $TEST$ no warning "This placeholder is unused and can be removed. Prefix its name with an underscore to disable this warning."
     val »last1«, val »last2« = f();
 }
 
 pipeline myPipeline1 {
-    // $TEST$ warning "This placeholder is unused and can be removed."
+    // $TEST$ warning "This placeholder is unused and can be removed. Prefix its name with an underscore to disable this warning."
     val »unused« = 1;
 
-    // $TEST$ no warning "This placeholder is unused and can be removed."
+    // $TEST$ no warning "This placeholder is unused and can be removed. Prefix its name with an underscore to disable this warning."
+    val »_unused« = 1;
+
+    // $TEST$ no warning "This placeholder is unused and can be removed. Prefix its name with an underscore to disable this warning."
     val »used« = 1;
     used;
 
-    // $TEST$ no warning "This placeholder is unused and can be removed."
-    // $TEST$ no warning "This placeholder is unused and can be removed."
+    // $TEST$ no warning "This placeholder is unused and can be removed. Prefix its name with an underscore to disable this warning."
+    // $TEST$ no warning "This placeholder is unused and can be removed. Prefix its name with an underscore to disable this warning."
     val »last1«, val »last2« = f();
 }
 
 pipeline myPipeline2 {
     () {
-        // $TEST$ warning "This placeholder is unused and can be removed."
+        // $TEST$ warning "This placeholder is unused and can be removed. Prefix its name with an underscore to disable this warning."
         val »unused« = 1;
 
-        // $TEST$ no warning "This placeholder is unused and can be removed."
+        // $TEST$ no warning "This placeholder is unused and can be removed. Prefix its name with an underscore to disable this warning."
+        val »_unused« = 1;
+
+        // $TEST$ no warning "This placeholder is unused and can be removed. Prefix its name with an underscore to disable this warning."
         val »used« = 1;
         used;
 
-        // $TEST$ no warning "This placeholder is unused and can be removed."
-        // $TEST$ no warning "This placeholder is unused and can be removed."
+        // $TEST$ no warning "This placeholder is unused and can be removed. Prefix its name with an underscore to disable this warning."
+        // $TEST$ no warning "This placeholder is unused and can be removed. Prefix its name with an underscore to disable this warning."
         val »last1«, val »last2« = f();
     };
 }
