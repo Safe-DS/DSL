@@ -416,7 +416,7 @@ pipeline example {
          * pipeline example {
          *     val table = Table({"a": [1, 2], "b": [3, 4]});
          *     val filteredTable = table.filterRows((row) ->
-         *         row.getValue("a") as Int > 1
+         *         (row.getValue("a") as Int) > 1
          *     );
          *     // Table({"a": [2], "b": [4]})
          * }
@@ -440,7 +440,7 @@ pipeline example {
          * pipeline example {
          *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
          *     val tablesByKey = table.groupRows((row) ->
-         *         row.getValue("a") as Int <= 2
+         *         (row.getValue("a") as Int) <= 2
          *     );
          *     // {
          *     //     true: Table({"a": [1, 2], "b": [4, 5]}),
@@ -838,7 +838,7 @@ pipeline example {
          *         "price":   [    100,        2,        4],
          *     });
          *     val discountedPrices = prices.transformColumn("price", (row) ->
-         *         row.getValue("price") as Int * 0.5
+         *         (row.getValue("price") as Int) * 0.5
          *     );
          *     // Table({
          *     //     "product": ["apple", "banana", "cherry"],
@@ -1428,7 +1428,7 @@ The original table is not modified.
 pipeline example {
     val table = Table({"a": [1, 2], "b": [3, 4]});
     val filteredTable = table.filterRows((row) ->
-        row.getValue("a") as Int > 1
+        (row.getValue("a") as Int) > 1
     );
     // Table({"a": [2], "b": [4]})
 }
@@ -1579,7 +1579,7 @@ The original table is not modified.
 pipeline example {
     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
     val tablesByKey = table.groupRows((row) ->
-        row.getValue("a") as Int <= 2
+        (row.getValue("a") as Int) <= 2
     );
     // {
     //     true: Table({"a": [1, 2], "b": [4, 5]}),
@@ -2727,7 +2727,7 @@ pipeline example {
         "price":   [    100,        2,        4],
     });
     val discountedPrices = prices.transformColumn("price", (row) ->
-        row.getValue("price") as Int * 0.5
+        (row.getValue("price") as Int) * 0.5
     );
     // Table({
     //     "product": ["apple", "banana", "cherry"],

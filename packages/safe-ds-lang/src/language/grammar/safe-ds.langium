@@ -536,7 +536,7 @@ SdsExpressionStatement returns SdsExpressionStatement:
 interface SdsExpression extends SdsObject {}
 
 SdsExpression returns SdsExpression:
-    SdsLambda | SdsOrExpression
+    SdsLambda | SdsTypeCast
 ;
 
 interface SdsLambda extends SdsCallable, SdsExpression {}
@@ -581,15 +581,24 @@ SdsBlockLambdaAssignee returns SdsAssignee:
   | {SdsBlockLambdaResult} 'yield' name=ID
 ;
 
+interface SdsTypeCast extends SdsExpression {
+    expression: SdsExpression
+    ^type: SdsType
+}
+
+SdsTypeCast returns SdsExpression:
+    SdsOrExpression
+    (
+        {SdsTypeCast.expression=current}
+        'as'
+        ^type=SdsType
+    )?
+;
+
 interface SdsInfixOperation extends SdsExpression {
     leftOperand: SdsExpression
     operator: string
     rightOperand: SdsExpression
-}
-
-interface SdsPrefixOperation extends SdsExpression {
-    operand: SdsExpression
-    operator: string
 }
 
 SdsOrExpression returns SdsExpression:
@@ -609,6 +618,11 @@ SdsAndExpression returns SdsExpression:
         rightOperand=SdsNotExpression
     )*
 ;
+
+interface SdsPrefixOperation extends SdsExpression {
+    operand: SdsExpression
+    operator: string
+}
 
 SdsNotExpression returns SdsExpression:
     {SdsPrefixOperation} operator='not' operand=SdsNotExpression
@@ -668,25 +682,11 @@ SdsMultiplicativeOperator returns string:
 ;
 
 SdsElvisExpression returns SdsExpression:
-    SdsTypeCast
+    SdsUnaryOperation
     (
         {SdsInfixOperation.leftOperand=current}
         operator='?:'
-        rightOperand=SdsTypeCast
-    )*
-;
-
-interface SdsTypeCast extends SdsExpression {
-    expression: SdsExpression
-    ^type: SdsType
-}
-
-SdsTypeCast returns SdsExpression:
-    SdsUnaryOperation
-    (
-        {SdsTypeCast.expression=current}
-        'as'
-        ^type=SdsType
+        rightOperand=SdsUnaryOperation
     )*
 ;
 
