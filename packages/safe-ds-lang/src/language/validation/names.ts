@@ -144,7 +144,12 @@ export const nameShouldHaveCorrectCasing = (services: SafeDsServices) => {
             case SdsPipeline:
                 return nameShouldBeLowerCamelCase(node, 'pipelines', accept);
             case SdsPlaceholder:
-                return nameShouldBeLowerCamelCase(node, 'placeholders', accept);
+                const usages = services.helpers.NodeMapper.placeholderToReferences(node as SdsPlaceholder);
+                if (usages.isEmpty()) {
+                    return nameShouldBeLowerCamelCaseWithOptionalLeadingUnderscore(node, 'unused placeholders', accept);
+                } else {
+                    return nameShouldBeLowerCamelCase(node, 'used placeholders', accept);
+                }
             case SdsResult:
                 return nameShouldBeLowerCamelCase(node, 'results', accept);
             case SdsSchema:
@@ -167,6 +172,21 @@ const nameShouldBeLowerCamelCase = (node: SdsDeclaration, nodeName: string, acce
 
 const isLowerCamelCase = (name: string): boolean => {
     return /^[a-z][a-zA-Z0-9]*$/gu.test(name);
+};
+
+const nameShouldBeLowerCamelCaseWithOptionalLeadingUnderscore = (
+    node: SdsDeclaration,
+    nodeName: string,
+    accept: ValidationAcceptor,
+): void => {
+    const name = node.name ?? '';
+    if (!isLowerCamelCaseWithOptionalLeadingUnderscore(name)) {
+        acceptCasingWarning(node, nodeName, 'lowerCamelCase with an optional leading underscore', accept);
+    }
+};
+
+const isLowerCamelCaseWithOptionalLeadingUnderscore = (name: string): boolean => {
+    return /^_?[a-z][a-zA-Z0-9]*$/gu.test(name);
 };
 
 const nameShouldBeUpperCamelCase = (node: SdsDeclaration, nodeName: string, accept: ValidationAcceptor): void => {
