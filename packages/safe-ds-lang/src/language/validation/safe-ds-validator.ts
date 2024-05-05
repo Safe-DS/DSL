@@ -96,7 +96,7 @@ import {
     referenceTargetMustNotBeAnnotationPipelineOrSchema,
 } from './other/expressions/references.js';
 import { templateStringMustHaveExpressionBetweenTwoStringParts } from './other/expressions/templateStrings.js';
-import { importPackageMustExist, importPackageShouldNotBeEmpty } from './other/imports.js';
+import { importPackageMustNotBeEmpty } from './other/imports.js';
 import {
     moduleDeclarationsMustMatchFileKind,
     moduleWithDeclarationsMustStatePackage,
@@ -289,7 +289,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             pythonNameMustNotBeSetIfPythonMacroIsSet(services),
             overridingAndOverriddenMethodsMustNotHavePythonMacro(services),
         ],
-        SdsImport: [importPackageMustExist(services), importPackageShouldNotBeEmpty(services)],
+        SdsImport: [importPackageMustNotBeEmpty(services)],
         SdsImportedDeclaration: [importedDeclarationAliasShouldDifferFromDeclarationName(services)],
         SdsIndexedAccess: [
             indexedAccessIndexMustBeValid(services),
