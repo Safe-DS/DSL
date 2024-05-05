@@ -7,6 +7,7 @@ We all know that `#!sds 2 + 3 * 7` is `#!sds 23` and not `#!sds 35`. The reason 
 - `#!sds 1` ([integer literals][int-literals]), `#!sds 1.0` ([float literals][float-literals]), `#!sds "a"` ([string literals][string-literals]), `#!sds true`/`false` ([boolean literals][boolean-literals]), `#!sds null` ([null literal][null-literal]), `#!sds someName` ([references][references]), `#!sds "age: {{ age }}"` ([template strings][template-strings])
 - `#!sds ()` ([calls][calls]), `#!sds ?()` ([null-safe calls][null-safe-calls]), `#!sds .` ([member accesses][member-accesses]), `#!sds ?.` ([null-safe member accesses][null-safe-member-accesses]), `#!sds []` ([indexed accesses][indexed-accesses]), `#!sds ?[]` ([null-safe indexed accesses][null-safe-indexed-accesses])
 - `#!sds -` (unary, [arithmetic negations][operations-on-numbers])
+- `#!sds as` ([type casts][type-casts])
 - `#!sds ?:` ([Elvis operators][elvis-operator])
 - `#!sds *`, `#!sds /` ([multiplicative operators][operations-on-numbers])
 - `#!sds +`, `#!sds -` (binary, [additive operators][operations-on-numbers])
@@ -15,7 +16,7 @@ We all know that `#!sds 2 + 3 * 7` is `#!sds 23` and not `#!sds 35`. The reason 
 - `#!sds not` ([logical negations][logical-operations])
 - `#!sds and` ([conjunctions][logical-operations])
 - `#!sds or` ([disjunctions][logical-operations])
-- `#!sds () -> 1` ([expression lambdas][expression-lambdas]), `#!sds () {}` ([block lambdas][block-lambdas]), `#!sds as` ([type casts][type-casts])
+- `#!sds () -> 1` ([expression lambdas][expression-lambdas]), `#!sds () {}` ([block lambdas][block-lambdas])
 - **LOWER PRECEDENCE**
 
 If the default precedence of operators is not sufficient, parentheses can be used to force a part of an expression to be evaluated first.
