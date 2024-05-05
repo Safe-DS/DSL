@@ -32,7 +32,9 @@ This assignment to a placeholder has the following syntactic elements:
 
 ??? info "Name convention"
 
-    Use `#!sds lowerCamelCase` for the name of the placeholder.
+    Use `#!sds lowerCamelCase` for the name of the placeholder. You may prefix the name of an unused placeholder with an
+    underscore (`_`) to indicate that it is intentionally unused, e.g. to
+    [inspect its value](#inspecting-placeholder-values-in-vs-code). This disables the "unused" warning.
 
 ### References to Placeholder
 

@@ -1,14 +1,25 @@
 package tests.validation.names.casing
 
 pipeline myPipeline2 {
-    // $TEST$ warning "Names of placeholders should be lowerCamelCase."
-    val »PlaceholderUppercase« = 1;
-    // $TEST$ no warning "Names of placeholders should be lowerCamelCase."
-    val »placeholderLowercase1« = 1;
-    // $TEST$ no warning "Names of placeholders should be lowerCamelCase."
-    val »`placeholderLowercase2`« = 1;
-    // $TEST$ warning "Names of placeholders should be lowerCamelCase."
-    val »_placeholderUnderscore« = 1;
-    // $TEST$ warning "Names of placeholders should be lowerCamelCase."
-    val »placeholder_snake_case« = 1;
+    // $TEST$ warning "Names of used placeholders should be lowerCamelCase."
+    val »UsedPlaceholderUppercase« = 1;
+    // $TEST$ no warning "Names of used placeholders should be lowerCamelCase.""
+    val »usedPlaceholderLowercase1« = 1;
+    // $TEST$ no warning "Names of used placeholders should be lowerCamelCase.""
+    val »`usedPlaceholderLowercase2`« = 1;
+    // $TEST$ warning "Names of used placeholders should be lowerCamelCase."
+    val »_usedPlaceholderUnderscore« = 1;
+    // $TEST$ warning "Names of used placeholders should be lowerCamelCase."
+    val »used_placeholder_snake_case« = 1;
+
+    // $TEST$ warning "Names of unused placeholders should be lowerCamelCase with an optional leading underscore."
+    val »UnusedPlaceholderUppercase« = UsedPlaceholderUppercase + 1;
+    // $TEST$ no warning "Names of unused placeholders should be lowerCamelCase. with an optional leading underscore."
+    val »unusedPlaceholderLowercase1« = usedPlaceholderLowercase1 + 1;
+    // $TEST$ no warning "Names of unused placeholders should be lowerCamelCase. with an optional leading underscore."
+    val »`unusedPlaceholderLowercase2`« = usedPlaceholderLowercase2 + 1;
+    // $TEST$ no warning "Names of unused placeholders should be lowerCamelCase with an optional leading underscore."
+    val »_unusedPlaceholderUnderscore« = _usedPlaceholderUnderscore + 1;
+    // $TEST$ warning "Names of unused placeholders should be lowerCamelCase with an optional leading underscore."
+    val »unused_placeholder_snake_case« = used_placeholder_snake_case + 1;
 }
