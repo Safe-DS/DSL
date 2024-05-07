@@ -1,5 +1,5 @@
 // $TEST$ syntax_error
 
 pipeline myPipeline {
-    as Int;
+    as (Int);
 }

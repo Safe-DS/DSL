@@ -4,17 +4,17 @@ package tests.validation.other.statements.expressionStatements.hasNoEffect
 fun impureFunction()
 
 @Pure
-fun pureFunction() -> a: Int
+fun pureFunctionWithResults() -> a: Int
 
 class MyClass() {
     @Impure([ImpurityReason.Other])
     fun impureFunction()
 
-    @Pure fun pureFunction()
+    @Pure fun pureFunctionWithoutResults()
 }
 
 segment pureSegment() {
-    val a = pureFunction();
+    val a = pureFunctionWithResults();
 }
 
 segment impureSegment() {
@@ -30,12 +30,12 @@ segment recursiveB() {
 }
 
 segment mySegment() {
-    // $TEST$ warning "This statement does nothing."
+    // $TEST$ warning "This statement does nothing. Did you forget the assignment?"
     »1 + 2;«
+    // $TEST$ warning "This statement does nothing. Did you forget the assignment?"
+    »pureFunctionWithResults();«
     // $TEST$ warning "This statement does nothing."
-    »pureFunction();«
-    // $TEST$ warning "This statement does nothing."
-    »MyClass().pureFunction();«
+    »MyClass().pureFunctionWithoutResults();«
 
     // $TEST$ no warning "This statement does nothing."
     »impureFunction();«
@@ -43,12 +43,12 @@ segment mySegment() {
     »MyClass().impureFunction();«
 
     () {
-        // $TEST$ warning "This statement does nothing."
+        // $TEST$ warning "This statement does nothing. Did you forget the assignment?"
         »1 + 2;«
+        // $TEST$ warning "This statement does nothing. Did you forget the assignment?"
+        »pureFunctionWithResults();«
         // $TEST$ warning "This statement does nothing."
-        »pureFunction();«
-        // $TEST$ warning "This statement does nothing."
-        »MyClass().pureFunction();«
+        »MyClass().pureFunctionWithoutResults();«
 
         // $TEST$ no warning "This statement does nothing."
         »impureFunction();«
@@ -64,8 +64,8 @@ segment mySegment() {
 
     // $TEST$ warning "This statement does nothing."
     »(() {
-        pureFunction();
-        MyClass().pureFunction();
+        pureFunctionWithResults();
+        MyClass().pureFunctionWithoutResults();
     })();«
 
     // $TEST$ no warning "This statement does nothing."

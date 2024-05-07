@@ -9,12 +9,14 @@ search:
             - containers
                 - [Image](safeds/data/image/containers/Image.md)
                 - [ImageList](safeds/data/image/containers/ImageList.md)
+        - labeled
+            - containers
+                - [TabularDataset](safeds/data/labeled/containers/TabularDataset.md)
         - tabular
             - containers
                 - [Column](safeds/data/tabular/containers/Column.md)
                 - [Row](safeds/data/tabular/containers/Row.md)
                 - [Table](safeds/data/tabular/containers/Table.md)
-                - [TaggedTable](safeds/data/tabular/containers/TaggedTable.md)
                 - [TimeSeries](safeds/data/tabular/containers/TimeSeries.md)
             - transformation
                 - [Discretizer](safeds/data/tabular/transformation/Discretizer.md)
@@ -79,6 +81,10 @@ search:
                 - [SupportVectorMachineRegressor](safeds/ml/classical/regression/SupportVectorMachineRegressor.md)
         - nn
             - [ForwardLayer](safeds/ml/nn/ForwardLayer.md)
+            - [InputConversion](safeds/ml/nn/InputConversion.md)
+            - [InputConversionTable](safeds/ml/nn/InputConversionTable.md)
             - [Layer](safeds/ml/nn/Layer.md)
             - [NeuralNetworkClassifier](safeds/ml/nn/NeuralNetworkClassifier.md)
             - [NeuralNetworkRegressor](safeds/ml/nn/NeuralNetworkRegressor.md)
+            - [OutputConversion](safeds/ml/nn/OutputConversion.md)
+            - [OutputConversionTable](safeds/ml/nn/OutputConversionTable.md)

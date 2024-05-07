@@ -890,7 +890,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="202"
+    ```sds linenums="203"
     @Pure
     @PythonName("get_column")
     fun getColumn(
@@ -925,7 +925,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="240"
+    ```sds linenums="241"
     @Pure
     @PythonName("get_column_type")
     fun getColumnType(
@@ -960,7 +960,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="259"
+    ```sds linenums="260"
     @Pure
     @PythonName("get_row")
     fun getRow(
@@ -1009,9 +1009,9 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="442"
+    ```sds linenums="443"
     @Pure
-    @PythonName("group_rows_by")
+    @PythonName("group_rows")
     fun groupRows<T>(
         @PythonName("key_selector") keySelector: (row: Row) -> key: T
     ) -> tablesByKey: Map<T, Table>
@@ -1044,7 +1044,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="221"
+    ```sds linenums="222"
     @Pure
     @PythonName("has_column")
     fun hasColumn(
@@ -1084,7 +1084,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="928"
+    ```sds linenums="889"
     @Pure
     @PythonName("inverse_transform_table")
     fun inverseTransformTable(
@@ -1149,7 +1149,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="1005"
+    ```sds linenums="966"
     @Pure
     @PythonName("plot_boxplots")
     fun plotBoxplots() -> boxplots: Image
@@ -1176,7 +1176,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="945"
+    ```sds linenums="906"
     @Pure
     @PythonName("plot_correlation_heatmap")
     fun plotCorrelationHeatmap() -> correlationHeatmap: Image
@@ -1185,6 +1185,12 @@ pipeline example {
 ## `#!sds fun` plotHistograms {#safeds.data.tabular.containers.TimeSeries.plotHistograms data-toc-label='plotHistograms'}
 
 Plot a histogram for every column.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `numberOfBins` | [`Int`][safeds.lang.Int] | The number of bins to use in the histogram. | `#!sds 10` |
 
 **Results:**
 
@@ -1203,10 +1209,14 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="1020"
+    ```sds linenums="983"
     @Pure
     @PythonName("plot_histograms")
-    fun plotHistograms() -> histograms: Image
+    fun plotHistograms(
+        @PythonName("number_of_bins") const numberOfBins: Int = 10
+    ) -> histograms: Image where {
+        numberOfBins > 0
+    }
     ```
 
 ## `#!sds fun` plotLagplot {#safeds.data.tabular.containers.TimeSeries.plotLagplot data-toc-label='plotLagplot'}
@@ -1604,7 +1614,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="673"
+    ```sds linenums="674"
     @Pure
     @PythonName("shuffle_rows")
     fun shuffleRows() -> shuffledTable: Table
@@ -1739,7 +1749,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="785"
+    ```sds linenums="786"
     @Pure
     @PythonName("sort_rows")
     fun sortRows(
@@ -1780,7 +1790,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="812"
+    ```sds linenums="813"
     @Pure
     @PythonName("split_rows")
     fun splitRows(
@@ -1811,62 +1821,10 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="278"
+    ```sds linenums="279"
     @Pure
     @PythonName("summarize_statistics")
     fun summarizeStatistics() -> statistics: Table
-    ```
-
-## `#!sds fun` tagColumns {#safeds.data.tabular.containers.TimeSeries.tagColumns data-toc-label='tagColumns'}
-
-Return a new `TaggedTable` with columns marked as a target column or feature columns.
-
-The original table is not modified.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `targetName` | [`String`][safeds.lang.String] | Name of the target column. | - |
-| `featureNames` | [`List<String>?`][safeds.lang.List] | Names of the feature columns. If None, all columns except the target column are used. Use this to hide columns during training but still keep them in the input, to easily link predictions back to the original data. | `#!sds null` |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `taggedTable` | [`TaggedTable`][safeds.data.tabular.containers.TaggedTable] | A new tagged table with the given target and feature names. |
-
-**Examples:**
-
-```sds hl_lines="6"
-pipeline example {
-    val table = Table({
-        "age":      [23, 16],
-        "survived": [ 0,  1],
-    });
-    val taggedTable = table.tagColumns("survived");
-}
-```
-```sds hl_lines="7"
-pipeline example {
-    val table = Table({
-        "id":       [ 1,  2],
-        "age":      [23, 16],
-        "survived": [ 0,  1],
-    });
-    val taggedTable = table.tagColumns("target", featureNames = ["age"]);
-}
-```
-
-??? quote "Stub code in `table.sdsstub`"
-
-    ```sds linenums="851"
-    @Pure
-    @PythonName("tag_columns")
-    fun tagColumns(
-        @PythonName("target_name") targetName: String,
-        @PythonName("feature_names") featureNames: List<String>? = null
-    ) -> taggedTable: TaggedTable
     ```
 
 ## `#!sds fun` toColumns {#safeds.data.tabular.containers.TimeSeries.toColumns data-toc-label='toColumns'}
@@ -1891,7 +1849,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="1128"
+    ```sds linenums="1095"
     @Pure
     @PythonName("to_columns")
     fun toColumns() -> columns: List<Column>
@@ -1921,7 +1879,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="1038"
+    ```sds linenums="1005"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_csv_file")
     fun toCsvFile(
@@ -1954,7 +1912,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="1059"
+    ```sds linenums="1026"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_excel_file")
     fun toExcelFile(
@@ -1983,7 +1941,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="1112"
+    ```sds linenums="1079"
     @Pure
     @PythonName("to_html")
     fun toHtml() -> html: String
@@ -2013,7 +1971,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="1079"
+    ```sds linenums="1046"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_json_file")
     fun toJsonFile(
@@ -2043,7 +2001,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="1097"
+    ```sds linenums="1064"
     @Pure
     @PythonName("to_dict")
     fun toMap() -> map: Map<String, List<Any?>>
@@ -2071,11 +2029,63 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="1144"
+    ```sds linenums="1111"
     @Experimental
     @Pure
     @PythonName("to_rows")
     fun toRows() -> rows: List<Row>
+    ```
+
+## `#!sds fun` toTabularDataset {#safeds.data.tabular.containers.TimeSeries.toTabularDataset data-toc-label='toTabularDataset'}
+
+Return a new `TabularDataset` with columns marked as a target column or feature columns.
+
+The original table is not modified.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `targetName` | [`String`][safeds.lang.String] | Name of the target column. | - |
+| `extraNames` | [`List<String>`][safeds.lang.List] | Names of the columns that are neither features nor target. If None, no extra columns are used, i.e. all but the target column are used as features. | `#!sds []` |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `dataset` | [`TabularDataset`][safeds.data.labeled.containers.TabularDataset] | A new tabular dataset with the given target and extras. |
+
+**Examples:**
+
+```sds hl_lines="6"
+pipeline example {
+    val table = Table({
+        "age":      [23, 16],
+        "survived": [ 0,  1],
+    });
+    val dataset = table.toTabularDataset("survived");
+}
+```
+```sds hl_lines="7"
+pipeline example {
+    val table = Table({
+        "id":       [ 1,  2],
+        "age":      [23, 16],
+        "survived": [ 0,  1],
+    });
+    val dataset = table.toTabularDataset("target", extraNames = ["id"]);
+}
+```
+
+??? quote "Stub code in `table.sdsstub`"
+
+    ```sds linenums="1149"
+    @Pure
+    @PythonName("to_tabular_dataset")
+    fun toTabularDataset(
+        @PythonName("target_name") targetName: String,
+        @PythonName("extra_names") extraNames: List<String> = []
+    ) -> dataset: TabularDataset
     ```
 
 ## `#!sds fun` transformColumn {#safeds.data.tabular.containers.TimeSeries.transformColumn data-toc-label='transformColumn'}
@@ -2147,7 +2157,7 @@ pipeline example {
 
 ??? quote "Stub code in `table.sdsstub`"
 
-    ```sds linenums="904"
+    ```sds linenums="865"
     @Pure
     @PythonName("transform_table")
     fun transformTable(

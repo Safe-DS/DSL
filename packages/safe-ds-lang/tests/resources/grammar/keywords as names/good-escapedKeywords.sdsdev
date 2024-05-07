@@ -9,10 +9,12 @@ class `class`
 class `const`
 class `enum`
 class `false`
+class `from`
 class `fun`
 class `import`
 class `in`
 class `internal`
+class `literal`
 class `not`
 class `null`
 class `or`

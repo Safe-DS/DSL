@@ -1,0 +1,19 @@
+// Related to https://github.com/Safe-DS/DSL/issues/1136
+
+package tests.generation.python.runnerIntegration.expressionLambdas
+
+class MyClass {
+    @Pure
+    fun g() -> r: Int
+}
+
+@Pure
+fun f(
+    callback: (p: MyClass) -> (r: Int)
+) -> result: Any
+
+pipeline myPipeline {
+    val result = f(
+        (p) -> p.g()
+    );
+}

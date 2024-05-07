@@ -1,9 +1,9 @@
 pipeline myPipeline {
-    1  as  Int;
+    1  as  ( Int );
 }
 
 // -----------------------------------------------------------------------------
 
 pipeline myPipeline {
-    1 as Int;
+    1 as (Int);
 }

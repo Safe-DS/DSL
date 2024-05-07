@@ -808,6 +808,8 @@ export class SafeDsFormatter extends AbstractFormatter {
         const formatter = this.getNodeFormatter(node);
 
         formatter.keyword('as').surround(oneSpace());
+        formatter.keyword('(').append(noSpace());
+        formatter.keyword(')').prepend(noSpace());
     }
 
     /**

@@ -587,11 +587,6 @@ interface SdsInfixOperation extends SdsExpression {
     rightOperand: SdsExpression
 }
 
-interface SdsPrefixOperation extends SdsExpression {
-    operand: SdsExpression
-    operator: string
-}
-
 SdsOrExpression returns SdsExpression:
     SdsAndExpression
     (
@@ -609,6 +604,11 @@ SdsAndExpression returns SdsExpression:
         rightOperand=SdsNotExpression
     )*
 ;
+
+interface SdsPrefixOperation extends SdsExpression {
+    operand: SdsExpression
+    operator: string
+}
 
 SdsNotExpression returns SdsExpression:
     {SdsPrefixOperation} operator='not' operand=SdsNotExpression
@@ -685,8 +685,7 @@ SdsTypeCast returns SdsExpression:
     SdsUnaryOperation
     (
         {SdsTypeCast.expression=current}
-        'as'
-        ^type=SdsType
+        'as' '(' ^type=SdsType ')'
     )*
 ;
 

@@ -1,11 +1,17 @@
 package safeds.ml.classical.regression
 
-from safeds.data.tabular.containers import Table, TaggedTable
+from safeds.data.labeled.containers import TabularDataset
+from safeds.data.tabular.containers import Table
 
 /**
  * Abstract base class for all regressors.
  */
 class Regressor {
+    /**
+     * Whether the regressor is fitted.
+     */
+    @PythonName("is_fitted") attr isFitted: Boolean
+
     /**
      * Create a copy of this regressor and fit it with the given training data.
      *
@@ -17,7 +23,7 @@ class Regressor {
      */
     @Pure
     fun fit(
-        @PythonName("training_set") trainingSet: TaggedTable
+        @PythonName("training_set") trainingSet: TabularDataset
     ) -> fittedRegressor: Regressor
 
     /**
@@ -30,16 +36,7 @@ class Regressor {
     @Pure
     fun predict(
         dataset: Table
-    ) -> prediction: TaggedTable
-
-    /**
-     * Check if the classifier is fitted.
-     *
-     * @result isFitted Whether the regressor is fitted.
-     */
-    @Pure
-    @PythonName("is_fitted")
-    fun isFitted() -> isFitted: Boolean
+    ) -> prediction: TabularDataset
 
     /**
      * Compute the mean squared error (MSE) on the given data.
@@ -51,7 +48,7 @@ class Regressor {
     @Pure
     @PythonName("mean_squared_error")
     fun meanSquaredError(
-        @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable
+        @PythonName("validation_or_test_set") validationOrTestSet: TabularDataset
     ) -> meanSquaredError: Float
 
     /**
@@ -64,6 +61,6 @@ class Regressor {
     @Pure
     @PythonName("mean_absolute_error")
     fun meanAbsoluteError(
-        @PythonName("validation_or_test_set") validationOrTestSet: TaggedTable
+        @PythonName("validation_or_test_set") validationOrTestSet: TabularDataset
     ) -> meanAbsoluteError: Float
 }

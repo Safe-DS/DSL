@@ -9,16 +9,16 @@ search:
 
 - [`ForwardLayer`][safeds.ml.nn.ForwardLayer]
 
-??? quote "Stub code in `_layer.sdsstub`"
+??? quote "Stub code in `layer.sdsstub`"
 
     ```sds linenums="4"
     class Layer {
         /**
-         * Get the input_size of this layer.
+         * The input_size of this layer.
          */
         @PythonName("input_size") attr inputSize: Int
         /**
-         * Get the output_size of this layer.
+         * The output_size of this layer.
          */
         @PythonName("output_size") attr outputSize: Int
     }
@@ -26,12 +26,12 @@ search:
 
 ## `#!sds attr` inputSize {#safeds.ml.nn.Layer.inputSize data-toc-label='inputSize'}
 
-Get the input_size of this layer.
+The input_size of this layer.
 
 **Type:** [`Int`][safeds.lang.Int]
 
 ## `#!sds attr` outputSize {#safeds.ml.nn.Layer.outputSize data-toc-label='outputSize'}
 
-Get the output_size of this layer.
+The output_size of this layer.
 
 **Type:** [`Int`][safeds.lang.Int]

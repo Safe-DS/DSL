@@ -1,0 +1,6 @@
+package tests.generation.python.macros.strings
+
+pipeline myPipeline {
+    val toBoolean = "Hello, world!".toBoolean();
+    val toString = "Hello, world!".toString();
+}

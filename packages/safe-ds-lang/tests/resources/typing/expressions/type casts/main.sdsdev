@@ -4,11 +4,11 @@ package tests.typing.expressions.typeCasts
 
 pipeline myPipeline {
     // $TEST$ serialization Boolean
-    »1 as Boolean«; // Partial evaluator can handle expression
+    »1 as (Boolean)«; // Partial evaluator can handle expression
 
     // $TEST$ serialization Boolean
-    »r as Boolean«; // Partial evaluator cannot handle expression
+    »r as (Boolean)«; // Partial evaluator cannot handle expression
 
     // $TEST$ serialization Boolean
-    »unresolved as Boolean«; // Expression has unknown type
+    »unresolved as (Boolean)«; // Expression has unknown type
 }

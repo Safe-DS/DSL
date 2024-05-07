@@ -22,6 +22,6 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="39"
+    ```sds linenums="56"
     class Boolean
     ```

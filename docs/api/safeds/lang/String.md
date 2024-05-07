@@ -17,7 +17,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="221"
+    ```sds linenums="238"
     class String {
 
         /**
@@ -296,7 +296,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="243"
+    ```sds linenums="260"
     @Pure
     @PythonMacro("$substring in $this")
     fun contains(substring: String) -> contains: Boolean
@@ -328,7 +328,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="255"
+    ```sds linenums="272"
     @Pure
     @PythonMacro("$this.endswith($suffix)")
     fun endsWith(suffix: String) -> endsWith: Boolean
@@ -360,7 +360,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="294"
+    ```sds linenums="311"
     @Pure
     @PythonMacro("$this.find($substring)")
     fun indexOf(substring: String) -> index: Int
@@ -392,7 +392,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="306"
+    ```sds linenums="323"
     @Pure
     @PythonMacro("$this.rfind($substring)")
     fun lastIndexOf(substring: String) -> index: Int
@@ -418,7 +418,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="231"
+    ```sds linenums="248"
     @Pure
     @PythonMacro("len($this)")
     fun length() -> length: Int
@@ -450,7 +450,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="330"
+    ```sds linenums="347"
     @Pure
     @PythonMacro("$this * $n")
     fun repeat(n: Int) -> repeatedString: String
@@ -483,7 +483,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="318"
+    ```sds linenums="335"
     @Pure
     @PythonMacro("$this.replace($old, $new)")
     fun replace(old: String, new: String) -> replacedString: String
@@ -515,7 +515,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="342"
+    ```sds linenums="359"
     @Pure
     @PythonMacro("$this.split($separator)")
     fun split(separator: String) -> parts: List<String>
@@ -547,7 +547,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="267"
+    ```sds linenums="284"
     @Pure
     @PythonMacro("$this.startswith($prefix)")
     fun startsWith(prefix: String) -> startsWith: Boolean
@@ -580,7 +580,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="282"
+    ```sds linenums="299"
     @Pure
     @PythonMacro("$this[$start:$end]")
     fun substring(start: Int = 0, end: Int = this.length()) -> substring: String
@@ -614,7 +614,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="398"
+    ```sds linenums="415"
     @Pure
     @PythonMacro("$this.casefold()")
     fun toCasefolded() -> casefolded: String
@@ -640,7 +640,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="448"
+    ```sds linenums="465"
     @Pure
     @PythonMacro("float($this)")
     fun toFloat() -> float: Float
@@ -677,7 +677,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="467"
+    ```sds linenums="484"
     @Pure
     @PythonMacro("int($this, $base)")
     fun toInt(base: Int = 10) -> int: Int
@@ -710,7 +710,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="417"
+    ```sds linenums="434"
     @Pure
     @PythonMacro("$this.lower()")
     fun toLowercase() -> lowercase: String
@@ -743,7 +743,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="436"
+    ```sds linenums="453"
     @Pure
     @PythonMacro("$this.upper()")
     fun toUppercase() -> uppercase: String
@@ -769,7 +769,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="354"
+    ```sds linenums="371"
     @Pure
     @PythonMacro("$this.strip()")
     fun trim() -> trimmed: String
@@ -795,7 +795,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="378"
+    ```sds linenums="395"
     @Pure
     @PythonMacro("$this.rstrip()")
     fun trimEnd() -> trimmed: String
@@ -821,7 +821,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="366"
+    ```sds linenums="383"
     @Pure
     @PythonMacro("$this.lstrip()")
     fun trimStart() -> trimmed: String

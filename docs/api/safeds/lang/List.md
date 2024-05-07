@@ -23,7 +23,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="100"
+    ```sds linenums="117"
     class List<out E> {
 
         /**
@@ -103,7 +103,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="115"
+    ```sds linenums="132"
     @Pure
     @PythonMacro("$separator.join($this)")
     fun join(separator: String = ", ") -> string: String
@@ -129,7 +129,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="142"
+    ```sds linenums="159"
     @Pure
     @PythonMacro("len($this)")
     fun size() -> size: Int
@@ -162,7 +162,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="130"
+    ```sds linenums="147"
     @Pure
     @PythonMacro("$this[$start:$end]")
     fun slice(start: Int = 0, end: Int = this.size()) -> slice: List<E>
