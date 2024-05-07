@@ -80,6 +80,58 @@ export class EDAPanel {
                     vscode.window.showErrorMessage(data.value);
                     break;
                 }
+                case 'executeRunner': {
+                    if (!data.value) {
+                        return;
+                    }
+
+                    let alreadyComplete = false;
+
+                    // Execute the runner
+                    const resultPromise = this.runnerApi.executeHistoryAndReturnLastResult(
+                        data.value.pastEntries,
+                        data.value.newEntry,
+                    );
+
+                    // Check if execution takes longer than 1s to show progress indicator
+                    setTimeout(() => {
+                        if (!alreadyComplete) {
+                            vscode.window.withProgress(
+                                {
+                                    location: vscode.ProgressLocation.Notification,
+                                    title: 'Executing action ...',
+                                    cancellable: true,
+                                },
+                                async (progress, token) => {
+                                    token.onCancellationRequested(() => {
+                                        if (data.value.newEntry) {
+                                            safeDsLogger.info('User canceled execution.');
+                                            webviewApi.postMessage(this.panel.webview, {
+                                                command: 'cancelRunnerExecution',
+                                                value: data.value.newEntry,
+                                            });
+                                        } else {
+                                            throw new Error('No history entry to cancel');
+                                        }
+                                    });
+
+                                    // Wait for the result to finish in case it's still running
+                                    await resultPromise;
+                                    alreadyComplete = true; // Mark completion to prevent multiple indicators
+                                },
+                            );
+                        }
+                    }, 1000);
+
+                    const result = await resultPromise;
+                    alreadyComplete = true;
+
+                    webviewApi.postMessage(this.panel.webview, {
+                        command: 'runnerExecutionResult',
+                        value: result,
+                    });
+                    break;
+                }
             }
         });
         this.disposables.push(this.webviewListener);
@@ -218,6 +270,7 @@ export class EDAPanel {
                         history: [],
                         defaultState: false,
                         table,
+                        tabs: [],
                     },
                     fromExisting: false,
                 };

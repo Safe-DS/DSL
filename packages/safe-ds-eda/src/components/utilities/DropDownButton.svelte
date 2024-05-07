@@ -1,7 +1,7 @@
 <script lang="ts">
     import CaretIcon from '../../icons/Caret.svelte';
 
-    export let initialOption: string;
+    export let selectedOption: string;
     export let possibleOptions: string[];
     export let fontSize: string = '1.5em';
     export let height: string = '50px';
@@ -32,7 +32,6 @@
     }
 
     function selectOption(option: string) {
-        initialOption = option;
         isDropdownOpen = false;
         document.removeEventListener('click', handleClickOutside);
         onSelect(option);
@@ -53,7 +52,7 @@
         on:click={toggleDropdown}
     >
         <div class="buttonText">
-            {initialOption}
+            {selectedOption}
         </div>
         <div class="icon">
             <CaretIcon color="var(--bg-bright)" />
@@ -63,7 +62,7 @@
     {#if isDropdownOpen}
         <ul class="dropdownMenu" style:width style:top={height}>
             {#each possibleOptions as option}
-                {#if option != initialOption}
+                {#if option != selectedOption}
                     <li role="none" class="dropdownItem" on:click={() => selectOption(option)}>{option}</li>
                 {/if}
             {/each}
@@ -103,7 +102,12 @@
         color: var(--font-dark);
         font-size: inherit;
         font-family: sans-serif;
-        margin-right: 10px;
+        text-overflow: ellipsis;
+        flex-grow: 1;
+        flex-shrink: 1;
+        flex-basis: auto;
+        white-space: nowrap;
+        overflow: hidden;
     }
 
     .dropdownButton .icon {
@@ -117,6 +121,7 @@
         align-items: center;
         justify-content: center;
         margin-left: 10px;
+        flex: 0 0 30px;
     }
 
     .dropdownButtonActive {

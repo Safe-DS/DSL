@@ -20,7 +20,10 @@ interface ToExtensionSetErrorMessage extends ToExtensionCommandMessage {
 
 interface ToExtensionExecuteRunnerMessage extends ToExtensionCommandMessage {
     command: 'executeRunner';
-    value: defaultTypes.HistoryEntry[];
+    value: {
+        pastEntries: defaultTypes.HistoryEntry[];
+        newEntry: defaultTypes.HistoryEntry;
+    };
 }
 
 export type ToExtensionMessage =
@@ -29,7 +32,7 @@ export type ToExtensionMessage =
     | ToExtensionExecuteRunnerMessage;
 
 // From extension
-type FromExtensionCommand = 'setWebviewState' | 'setProfiling' | 'runnerExecutionResult';
+type FromExtensionCommand = 'setWebviewState' | 'setProfiling' | 'runnerExecutionResult' | 'cancelRunnerExecution';
 
 interface FromExtensionCommandMessage {
     command: FromExtensionCommand;
@@ -70,7 +73,13 @@ export interface RunnerExecutionResultMessage extends FromExtensionCommandMessag
     value: RunnerExecutionResultTab | RunnerExecutionResultTable | RunnerExecutionResultProfiling;
 }
 
+export interface CancelRunnerExecutionMessage extends FromExtensionCommandMessage {
+    command: 'cancelRunnerExecution';
+    value: defaultTypes.HistoryEntry;
+}
+
 export type FromExtensionMessage =
     | FromExtensionSetStateMessage
     | FromExtensionSetProfilingMessage
-    | RunnerExecutionResultMessage;
+    | RunnerExecutionResultMessage
+    | CancelRunnerExecutionMessage;

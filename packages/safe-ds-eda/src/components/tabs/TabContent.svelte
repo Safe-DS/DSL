@@ -1,10 +1,12 @@
 <script lang="ts">
-    import type { EmptyTab, ExternalVisualizingRebuildHistoryEntry, Tab } from '../../../types/state';
+    import type { EmptyTab, ExternalVisualizingHistoryEntry, Tab } from '../../../types/state';
     import ImageContent from './content/ImageContent.svelte';
     import DropDownButton from '../utilities/DropDownButton.svelte';
-    import { currentState } from '../../webviewState';
+    import { cancelTabIdsWaiting, currentState } from '../../webviewState';
     import { imageWidthToHeightRatio } from '../../../consts.config';
     import { executeExternalHistoryEntry, setTabAsGenerating } from '../../apis/historyApi';
+    import SwapIcon from '../../icons/Swap.svelte';
+    import { derived, writable } from 'svelte/store';
 
     export let tab: Tab | EmptyTab;
     export let sidebarWidth: number;
@@ -12,18 +14,40 @@
     const columnNames = $currentState.table?.columns.map((column) => column[1].name) || [];
     const possibleTableNames = ['Histogram', 'Boxplot', 'Heatmap', 'Line Plot', 'Scatter Plot', 'Info Panel'];
 
-    let buildATab: any = {};
     let isLoadingGeneratedTab = false;
     let previousTab: Tab | EmptyTab = tab;
     let changesDisabled = false;
 
-    $: isInBuildingState = Object.keys(buildATab).length > 0;
-    $: tabInfo = isInBuildingState ? buildATab : tab;
-    $: buildATabComplete = Object.keys(buildATab).length > 0 ? completeBuildATab() !== undefined : false;
+    const buildATab = writable<any>({}); // Assuming initial value as an empty object
+
+    // Derived store to check if there are keys in buildATab
+    const isInBuildingState = derived(buildATab, ($buildATab) => Object.keys($buildATab).length > 0);
+
+    // Derived store to decide between buildATab and tab based on isInBuildingState
+    const tabInfo = derived([isInBuildingState, buildATab], ([$isInBuildingState, $buildATab]) =>
+        $isInBuildingState ? $buildATab : tab,
+    );
+
+    // Derived store to check if the building is complete
+    const buildATabComplete = derived(
+        buildATab,
+        ($buildATab) => Object.keys($buildATab).length > 0 && completeBuildATab() !== undefined,
+    );
+
     $: if (tab !== previousTab) {
         previousTab = tab;
+        console.log('Tab changed!!!!!!!!!');
         resetLoadingState();
     }
+
+    $: $cancelTabIdsWaiting, handleNewCancelledTab();
+
+    const handleNewCancelledTab = function () {
+        if (tab.id && $cancelTabIdsWaiting.includes(tab.id)) {
+            resetLoadingState();
+            cancelTabIdsWaiting.update((ids) => ids.filter((id) => id !== tab.id));
+        }
+    };
 
     const getTabName = function (fromTab = tab) {
         if (!fromTab) return 'Select type';
@@ -44,67 +68,132 @@
     };
 
     const newTypeSelected = function (selected: string) {
-        if (!isInBuildingState && tab.type !== 'empty') setTabAsGenerating(tab);
+        if (!$isInBuildingState && tab.type !== 'empty') setTabAsGenerating(tab);
         if (selected === 'Histogram') {
-            buildATab.type = 'histogram';
-            buildATab.columnNumber = 'one';
+            buildATab.update((buildingTab) => {
+                buildingTab.type = 'histogram';
+                buildingTab.columnNumber = 'one';
+                return buildingTab;
+            });
         } else if (selected === 'Boxplot') {
-            buildATab.type = 'boxplot';
-            buildATab.columnNumber = 'one';
+            buildATab.update((buildingTab) => {
+                buildingTab.type = 'boxplot';
+                buildingTab.columnNumber = 'one';
+                return buildingTab;
+            });
         } else if (selected === 'Heatmap') {
-            buildATab.type = 'heatmap';
-            buildATab.columnNumber = 'none';
+            buildATab.update((buildingTab) => {
+                buildingTab.type = 'heatmap';
+                buildingTab.columnNumber = 'none';
+                return buildingTab;
+            });
         } else if (selected === 'Line Plot') {
-            buildATab.type = 'linePlot';
-            buildATab.columnNumber = 'two';
+            buildATab.update((buildingTab) => {
+                buildingTab.type = 'linePlot';
+                buildingTab.columnNumber = 'two';
+                return buildingTab;
+            });
         } else if (selected === 'Scatter Plot') {
-            buildATab.type = 'scatterPlot';
-            buildATab.columnNumber = 'two';
+            buildATab.update((buildingTab) => {
+                buildingTab.type = 'scatterPlot';
+                buildingTab.columnNumber = 'two';
+                return buildingTab;
+            });
         } else if (selected === 'Info Panel') {
-            buildATab.type = 'infoPanel';
-            buildATab.columnNumber = 'none';
+            buildATab.update((buildingTab) => {
+                buildingTab.type = 'infoPanel';
+                buildingTab.columnNumber = 'none';
+                return buildingTab;
+            });
         } else {
             throw new Error('Invalid tab type');
         }
     };
 
     const newXAxisSelected = function (selected: string) {
-        if (!isInBuildingState && tab.type !== 'empty') setTabAsGenerating(tab);
-        buildATab.xAxisColumnName = selected;
+        if (!$isInBuildingState && tab.type !== 'empty') {
+            setTabAsGenerating(tab);
+            buildATab.set({ type: tab.type, columnNumber: tab.columnNumber });
+            if (tab.columnNumber === 'two') {
+                buildATab.update((buildingTab) => {
+                    buildingTab.yAxisColumnName = tab.content.yAxisColumnName;
+                    return buildingTab;
+                });
+            }
+        }
+        buildATab.update((buildingTab) => {
+            buildingTab.xAxisColumnName = selected;
+            return buildingTab;
+        });
     };
 
     const newYAxisSelected = function (selected: string) {
-        if (!isInBuildingState && tab.type !== 'empty') setTabAsGenerating(tab);
-        buildATab.yAxisColumnName = selected;
+        if (!$isInBuildingState && tab.type !== 'empty') {
+            setTabAsGenerating(tab);
+            buildATab.set({ type: tab.type, columnNumber: tab.columnNumber });
+            if (tab.columnNumber === 'two') {
+                buildATab.update((buildingTab) => {
+                    buildingTab.xAxisColumnName = tab.content.xAxisColumnName;
+                    return buildingTab;
+                });
+            }
+        }
+        buildATab.update((buildingTab) => {
+            buildingTab.yAxisColumnName = selected;
+            return buildingTab;
+        });
     };
 
-    const completeBuildATab = function (): ExternalVisualizingRebuildHistoryEntry | undefined {
+    const switchColumns = function () {
+        if (!$isInBuildingState && tab.type !== 'empty') {
+            if (tab.columnNumber !== 'two') return;
+            setTabAsGenerating(tab);
+            buildATab.set({
+                type: tab.type,
+                columnNumber: tab.columnNumber,
+                xAxisColumnName: tab.content.yAxisColumnName,
+                yAxisColumnName: tab.content.xAxisColumnName,
+            });
+            return;
+        }
+        buildATab.update((buildingTab) => {
+            const temp = buildingTab.xAxisColumnName;
+            buildingTab.xAxisColumnName = buildingTab.yAxisColumnName;
+            buildingTab.yAxisColumnName = temp;
+            return buildingTab;
+        });
+    };
+
+    const completeBuildATab = function (): ExternalVisualizingHistoryEntry | undefined {
         if (Object.keys(buildATab).length === 0) return undefined;
-        if (buildATab.columnNumber === 'one') {
-            if (!buildATab.xAxisColumnName) return undefined;
+        if ($buildATab.columnNumber === 'one') {
+            if (!$buildATab.xAxisColumnName) return undefined;
             return {
-                action: buildATab.type,
-                initialHistoryEntryId: tab.initialHistoryEntryId,
-                alias: 'Generate ' + getTabName(buildATab),
+                existingTabId: tab.id,
+                action: $buildATab.type,
+                alias: 'Generate ' + getTabName($buildATab),
                 type: 'external-visualizing',
-                columnName: buildATab.xAxisColumnName,
+                columnName: $buildATab.xAxisColumnName,
+                columnNumber: 'one',
             };
-        } else if (buildATab.columnNumber === 'two') {
-            if (!buildATab.xAxisColumnName || !buildATab.yAxisColumnName) return undefined;
+        } else if ($buildATab.columnNumber === 'two') {
+            if (!$buildATab.xAxisColumnName || !$buildATab.yAxisColumnName) return undefined;
             return {
-                action: buildATab.type,
-                initialHistoryEntryId: tab.initialHistoryEntryId,
-                alias: 'Generate ' + getTabName(buildATab),
+                existingTabId: tab.id,
+                action: $buildATab.type,
+                alias: 'Generate ' + getTabName($buildATab),
                 type: 'external-visualizing',
-                xAxisColumnName: buildATab.xAxisColumnName,
-                yAxisColumnName: buildATab.yAxisColumnName,
+                xAxisColumnName: $buildATab.xAxisColumnName,
+                yAxisColumnName: $buildATab.yAxisColumnName,
+                columnNumber: 'two',
             };
         } else {
             return {
-                action: buildATab.type,
-                initialHistoryEntryId: tab.initialHistoryEntryId,
-                alias: 'Generate ' + getTabName(buildATab),
+                existingTabId: tab.id,
+                action: $buildATab.type,
+                alias: 'Generate ' + getTabName($buildATab),
                 type: 'external-visualizing',
+                columnNumber: 'none',
             };
         }
     };
@@ -121,7 +210,7 @@
     const resetLoadingState = function () {
         if (isLoadingGeneratedTab) {
             isLoadingGeneratedTab = false;
-            buildATab = {};
+            buildATab.set({});
             changesDisabled = false;
         }
     };
@@ -134,7 +223,7 @@
             <div class="leftInfo">
                 <div class="leftInfoRow">
                     <DropDownButton
-                        initialOption={getTabName()}
+                        selectedOption={getTabName($tabInfo)}
                         onSelect={newTypeSelected}
                         possibleOptions={possibleTableNames}
                         {changesDisabled}
@@ -147,18 +236,20 @@
                 </div>
             </div>
             <div class="rightInfo">
-                {#if tabInfo.type !== 'empty' && (tabInfo.columnNumber === 'one' || tabInfo.columnNumber === 'two')}
+                {#if $tabInfo.type !== 'empty' && ($tabInfo.columnNumber === 'one' || $tabInfo.columnNumber === 'two')}
                     <div class="axis">
-                        {#if tabInfo.columnNumber === 'one'}
+                        {#if $tabInfo.columnNumber === 'one'}
                             <span class="axisName">Column</span>
                             <div class="columnDropdown">
                                 <DropDownButton
-                                    initialOption={tabInfo.content?.columnName ?? tabInfo.xAxisColumnName ?? 'Select'}
+                                    selectedOption={$tabInfo.content?.columnName ??
+                                        $tabInfo.xAxisColumnName ??
+                                        'Select'}
                                     onSelect={newXAxisSelected}
                                     possibleOptions={columnNames}
                                     fontSize="1.1em"
                                     height="30px"
-                                    width="120px"
+                                    width="140px"
                                     {changesDisabled}
                                 />
                             </div>
@@ -166,31 +257,46 @@
                             <span class="axisName">X-Axis</span>
                             <div class="columnDropdown">
                                 <DropDownButton
-                                    initialOption={tabInfo.content?.xAxisColumnName ??
-                                        tabInfo.xAxisColumnName ??
+                                    selectedOption={$tabInfo.content?.xAxisColumnName ??
+                                        $tabInfo.xAxisColumnName ??
                                         'Select'}
                                     onSelect={newXAxisSelected}
                                     possibleOptions={columnNames}
                                     fontSize="1.1em"
                                     height="30px"
-                                    width="120px"
+                                    width="140px"
                                     {changesDisabled}
                                 />
                             </div>
                         {/if}
                     </div>
                 {/if}
-                {#if tabInfo.type !== 'empty' && tabInfo.columnNumber === 'two'}
-                    <div class="columnSwitchButton">--</div>
+                {#if $tabInfo.type !== 'empty' && $tabInfo.columnNumber === 'two'}
+                    <div
+                        role="none"
+                        class="columnSwitchButton"
+                        on:click={(
+                            $tabInfo.content
+                                ? !$tabInfo.content?.xAxisColumnName || !$tabInfo.content?.yAxisColumnName
+                                : !$tabInfo.xAxisColumnName || !$tabInfo.yAxisColumnName
+                        )
+                            ? undefined
+                            : switchColumns}
+                        class:inactive={$tabInfo.content
+                            ? !$tabInfo.content?.xAxisColumnName || !$tabInfo.content?.yAxisColumnName
+                            : !$tabInfo.xAxisColumnName || !$tabInfo.yAxisColumnName}
+                    >
+                        <SwapIcon />
+                    </div>
                     <div class="axis">
                         <span class="axisName">Y-Axis</span>
                         <DropDownButton
-                            initialOption={tabInfo.content?.yAxisColumnName ?? tabInfo.yAxisColumnName ?? 'Select'}
+                            selectedOption={$tabInfo.content?.yAxisColumnName ?? $tabInfo.yAxisColumnName ?? 'Select'}
                             onSelect={newYAxisSelected}
                             possibleOptions={columnNames}
                             fontSize="1.1em"
                             height="30px"
-                            width="120px"
+                            width="140px"
                             {changesDisabled}
                         />
                     </div>
@@ -199,10 +305,10 @@
         </div>
         <div class="content">
             {#if tab.type !== 'empty' && tab.imageTab}
-                <div style:visibility={isInBuildingState ? 'hidden' : 'visible'}>
+                <div style:visibility={$isInBuildingState ? 'hidden' : 'visible'}>
                     <ImageContent image={tab.content.encodedImage} />
                 </div>
-                {#if isInBuildingState}
+                {#if $isInBuildingState}
                     {#if isLoadingGeneratedTab}
                         <div class="loading" style="aspect-ratio: {imageWidthToHeightRatio};">
                             <p>Loading ...</p>
@@ -305,5 +411,18 @@
     .generateButton:hover {
         background-color: var(--primary-color-desaturated);
         color: var(--font-light);
+    }
+
+    .columnSwitchButton {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        height: 20px;
+        width: 20px;
+    }
+
+    .columnSwitchButton.inactive {
+        cursor: not-allowed;
     }
 </style>

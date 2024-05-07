@@ -43,6 +43,7 @@
                                 type: 'external-visualizing',
                                 columnName: columnName,
                                 id: entryId,
+                                columnNumber: 'one',
                             },
                             {
                                 type: 'histogram',
@@ -52,7 +53,7 @@
                                     encodedImage: profilingItem.value,
                                     outdated: false,
                                 },
-                                initialHistoryEntryId: entryId,
+                                id: crypto.randomUUID(),
                                 imageTab: true,
                                 columnNumber: 'one',
                                 isInGeneration: false,

@@ -2,6 +2,7 @@ import {
     Base64Image,
     Column,
     ExternalHistoryEntry,
+    HistoryEntry,
     Profiling,
     ProfilingDetailStatistical,
     Table,
@@ -12,6 +13,7 @@ import * as vscode from 'vscode';
 import crypto from 'crypto';
 import { getPipelineDocument } from '../../mainClient.ts';
 import { safeDsLogger } from '../../helpers/logging.js';
+import { RunnerExecutionResultMessage } from '@safe-ds/eda/types/messaging.ts';
 
 export class RunnerApi {
     services: SafeDsServices;
@@ -118,17 +120,57 @@ export class RunnerApi {
     //#endregion
 
     //#region SDS code generation
-    private sdsStringForHistoryEntry(historyEntry: ExternalHistoryEntry): string | undefined {
+    private sdsStringForHistoryEntry(historyEntry: ExternalHistoryEntry): {
+        sdsString: string;
+        placeholderNames: string[];
+    } {
         const newPlaceholderName = this.genPlaceholderName();
         switch (historyEntry.action) {
             case 'histogram':
-                return this.sdsStringForHistogramByColumnName(
-                    historyEntry.columnName,
-                    this.tablePlaceholder,
-                    newPlaceholderName,
-                );
+                return {
+                    sdsString: this.sdsStringForHistogramByColumnName(
+                        historyEntry.columnName,
+                        this.tablePlaceholder,
+                        newPlaceholderName,
+                    ),
+                    placeholderNames: [newPlaceholderName],
+                };
+            case 'boxplot':
+                return {
+                    sdsString: this.sdsStringForBoxplotByColumnName(
+                        historyEntry.columnName,
+                        this.tablePlaceholder,
+                        newPlaceholderName,
+                    ),
+                    placeholderNames: [newPlaceholderName],
+                };
+            case 'linePlot':
+                return {
+                    sdsString: this.sdsStringForLinePlotByColumnNames(
+                        historyEntry.xAxisColumnName,
+                        historyEntry.yAxisColumnName,
+                        this.tablePlaceholder,
+                        newPlaceholderName,
+                    ),
+                    placeholderNames: [newPlaceholderName],
+                };
+            case 'scatterPlot':
+                return {
+                    sdsString: this.sdsStringForScatterPlotByColumnNames(
+                        historyEntry.xAxisColumnName,
+                        historyEntry.yAxisColumnName,
+                        this.tablePlaceholder,
+                        newPlaceholderName,
+                    ),
+                    placeholderNames: [newPlaceholderName],
+                };
+            case 'heatmap':
+                return {
+                    sdsString: this.sdsStringForCorrelationHeatmap(this.tablePlaceholder, newPlaceholderName),
+                    placeholderNames: [newPlaceholderName],
+                };
             default:
-                return undefined;
+                throw new Error('Unknown history entry action: ' + historyEntry.action);
         }
     }
 
@@ -166,6 +208,60 @@ export class RunnerApi {
             columnName +
             '").plotHistogram(); \n'
         );
+    }
+
+    private sdsStringForBoxplotByColumnName(columnName: string, tablePlaceholder: string, newPlaceholderName: string) {
+        return (
+            'val ' +
+            newPlaceholderName +
+            ' = ' +
+            tablePlaceholder +
+            '.getColumn("' +
+            columnName +
+            '").plotBoxplot(); \n'
+        );
+    }
+
+    private sdsStringForLinePlotByColumnNames(
+        xAxisColumnName: string,
+        yAxisColumnName: string,
+        tablePlaceholder: string,
+        newPlaceholderName: string,
+    ) {
+        return (
+            'val ' +
+            newPlaceholderName +
+            ' = ' +
+            tablePlaceholder +
+            '.plotLineplot(xColumnName="' +
+            xAxisColumnName +
+            '", yColumnName="' +
+            yAxisColumnName +
+            '"); \n'
+        );
+    }
+
+    private sdsStringForScatterPlotByColumnNames(
+        xAxisColumnName: string,
+        yAxisColumnName: string,
+        tablePlaceholder: string,
+        newPlaceholderName: string,
+    ) {
+        return (
+            'val ' +
+            newPlaceholderName +
+            ' = ' +
+            tablePlaceholder +
+            '.plotScatterplot(xColumnName="' +
+            xAxisColumnName +
+            '", yColumnName="' +
+            yAxisColumnName +
+            '"); \n'
+        );
+    }
+
+    private sdsStringForCorrelationHeatmap(tablePlaceholder: string, newPlaceholderName: string) {
+        return 'val ' + newPlaceholderName + ' = ' + tablePlaceholder + '.plotCorrelationHeatmap(); \n';
     }
     //#endregion
 
@@ -492,17 +588,101 @@ export class RunnerApi {
     //#endregion
 
     //#region History
-    // public async executeHistoryAndReturnLastResult(history: ExternalHistoryEntry[]): Promise<Table | Tab> {
-    //     const toReturnEntry = history.pop();
+    public async executeHistoryAndReturnLastResult(
+        pastEntries: HistoryEntry[],
+        newEntry: HistoryEntry,
+    ): Promise<RunnerExecutionResultMessage['value']> {
+        let sdsLines = '';
+        let placeholderNames: string[] = [];
+        for (const entry of pastEntries) {
+            if (entry.type === 'external-manipulating') {
+                // Only manipulating actions have to be repeated before last entry that is of interest, others do not influence that end result
+                const sdsString = this.sdsStringForHistoryEntry(entry).sdsString;
+                if (sdsString) {
+                    sdsLines += sdsString + '\n';
+                }
+            }
+        }
 
-    //     let toReturnToStateLines = '';
-    //     for (const entry of history) {
-    //         const sdsString = this.sdsStringForHistoryEntry(entry);
-    //         if (sdsString) {
-    //             toReturnToStateLines += sdsString + '\n';
-    //         }
-    //     }
-    // }
+        if (newEntry.type === 'external-visualizing') {
+            if (newEntry.action === 'infoPanel' || newEntry.action === 'refreshTab') throw new Error('Not implemented');
+
+            const sdsStringObj = this.sdsStringForHistoryEntry(newEntry);
+            sdsLines += sdsStringObj.sdsString + '\n';
+            placeholderNames = sdsStringObj.placeholderNames;
+        } else if (newEntry.type === 'external-manipulating') {
+            throw new Error('Not implemented');
+        } else if (newEntry.type === 'internal') {
+            throw new Error('Cannot execute internal history entry in Runner');
+        }
+
+        const pipelineExecutionId = crypto.randomUUID();
+        try {
+            await this.addToAndExecutePipeline(pipelineExecutionId, sdsLines, placeholderNames);
+        } catch (e) {
+            throw e;
+        }
+
+        if (
+            newEntry.type === 'external-visualizing' &&
+            newEntry.action !== 'infoPanel' &&
+            placeholderNames.length > 0
+        ) {
+            const result = await this.getPlaceholderValue(placeholderNames[0]!, pipelineExecutionId);
+            const image = result as Base64Image;
+
+            if (newEntry.columnNumber === 'none') {
+                return {
+                    type: 'tab',
+                    historyId: newEntry.id,
+                    content: {
+                        tabComment: '',
+                        type: newEntry.action,
+                        columnNumber: newEntry.columnNumber,
+                        imageTab: true,
+                        isInGeneration: false,
+                        id: newEntry.existingTabId,
+                        content: { outdated: false, encodedImage: image },
+                    },
+                };
+            } else if (newEntry.columnNumber === 'two') {
+                return {
+                    type: 'tab',
+                    historyId: newEntry.id,
+                    content: {
+                        tabComment: newEntry.xAxisColumnName + ' x ' + newEntry.yAxisColumnName,
+                        type: newEntry.action,
+                        columnNumber: newEntry.columnNumber,
+                        imageTab: true,
+                        isInGeneration: false,
+                        id: newEntry.existingTabId,
+                        content: {
+                            outdated: false,
+                            encodedImage: image,
+                            xAxisColumnName: newEntry.xAxisColumnName,
+                            yAxisColumnName: newEntry.yAxisColumnName,
+                        },
+                    },
+                };
+            } else {
+                return {
+                    type: 'tab',
+                    historyId: newEntry.id,
+                    content: {
+                        tabComment: newEntry.columnName,
+                        type: newEntry.action,
+                        columnNumber: newEntry.columnNumber,
+                        imageTab: true,
+                        isInGeneration: false,
+                        id: newEntry.existingTabId,
+                        content: { outdated: false, encodedImage: image, columnName: newEntry.columnName },
+                    },
+                };
+            }
+        } else {
+            throw new Error('Not implemented');
+        }
+    }
     //#endregion
     //#endregion // Public API
 }

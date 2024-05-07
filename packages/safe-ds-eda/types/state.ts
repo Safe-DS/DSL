@@ -31,6 +31,8 @@ interface ExternalManipulatingHistoryEntryBase extends HistoryEntryBase {
 interface ExternalVisualizingHistoryEntryBase extends HistoryEntryBase {
     type: 'external-visualizing';
     action: ExternalVisualizingAction;
+    columnNumber: 'one' | 'two' | 'none';
+    existingTabId?: string;
 }
 
 export interface InternalColumnWithValueHistoryEntry extends InternalHistoryEntryBase {
@@ -62,22 +64,24 @@ export interface ExternalManipulatingColumnSortHistoryEntry extends ExternalMani
 
 export interface ExternalVisualizingNoColumnHistoryEntry extends ExternalVisualizingHistoryEntryBase {
     action: NoColumnTabTypes;
+    columnNumber: 'none';
 }
 
 export interface ExternalVisualizingOneColumnHistoryEntry extends ExternalVisualizingHistoryEntryBase {
     action: OneColumnTabTypes;
     columnName: string;
+    columnNumber: 'one';
 }
 
 export interface ExternalVisualizingTwoColumnHistoryEntry extends ExternalVisualizingHistoryEntryBase {
     action: TwoColumnTabTypes;
     xAxisColumnName: string;
     yAxisColumnName: string;
+    columnNumber: 'two';
 }
 
 export interface ExternalVisualizingRefreshHistoryEntry extends ExternalVisualizingHistoryEntryBase {
     action: 'refreshTab';
-    initialHistoryEntryId: number;
 }
 
 export type TabHistoryEntry =
@@ -95,10 +99,6 @@ export type ExternalVisualizingHistoryEntry =
     | ExternalVisualizingTwoColumnHistoryEntry
     | ExternalVisualizingRefreshHistoryEntry;
 
-export type ExternalVisualizingRebuildHistoryEntry = ExternalVisualizingHistoryEntry & {
-    initialHistoryEntryId: number;
-};
-
 export type ExternalHistoryEntry = ExternalManipulatingHistoryEntry | ExternalVisualizingHistoryEntry;
 
 export type HistoryEntry = (InternalHistoryEntry | ExternalHistoryEntry) & {
@@ -112,7 +112,7 @@ export type NoColumnTabTypes = 'heatmap';
 type TabType = TwoColumnTabTypes | OneColumnTabTypes | NoColumnTabTypes;
 
 interface TabObject {
-    initialHistoryEntryId: number;
+    id?: string;
     type: TabType;
     tabComment: string;
     content: Object;
@@ -180,7 +180,7 @@ export interface NoColumnTab extends ImageTabObject {
 
 export interface EmptyTab {
     type: 'empty';
-    initialHistoryEntryId: number;
+    id: string;
 }
 
 export type Tab = OneColumnTab | InfoPanelTab | TwoColumnTab | NoColumnTab;

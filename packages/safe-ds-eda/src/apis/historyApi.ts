@@ -1,7 +1,7 @@
 import { get } from 'svelte/store';
 import type { FromExtensionMessage, RunnerExecutionResultMessage } from '../../types/messaging';
 import type { ExternalHistoryEntry, HistoryEntry, InternalHistoryEntry, Tab, TabHistoryEntry } from '../../types/state';
-import { currentState, currentTabIndex } from '../webviewState';
+import { cancelTabIdsWaiting, currentState, currentTabIndex } from '../webviewState';
 import { executeRunner } from './extensionApi';
 
 // Wait for results to return from the server
@@ -34,6 +34,8 @@ window.addEventListener('message', (event) => {
         deployResult(message);
         asyncQueue.shift();
         evaluateMessagesWaitingForTurn();
+    } else if (message.command === 'cancelRunnerExecution') {
+        cancelExecuteExternalHistoryEntry(message.value);
     }
 });
 
@@ -62,7 +64,7 @@ export const executeExternalHistoryEntry = function (entry: ExternalHistoryEntry
         const newHistory = [...state.history, entryWithId];
 
         asyncQueue.push(entryWithId);
-        executeRunner(newHistory); // Is this good in here? Otherwise risk of empty array idk
+        executeRunner(state.history, entryWithId); // Is this good in here? Otherwise risk of empty array idk
 
         return {
             ...state,
@@ -74,7 +76,12 @@ export const executeExternalHistoryEntry = function (entry: ExternalHistoryEntry
 export const addAndDeployTabHistoryEntry = function (entry: TabHistoryEntry & { id: number }, tab: Tab): void {
     // Search if already exists and is up to date
     const existingTab = get(currentState).tabs?.find(
-        (et) => et.type === tab.type && et.tabComment === tab.tabComment && tab.type && !et.content.outdated,
+        (et) =>
+            et.type === tab.type &&
+            et.tabComment === tab.tabComment &&
+            tab.type &&
+            !et.content.outdated &&
+            !et.isInGeneration,
     );
     if (existingTab) {
         currentTabIndex.set(get(currentState).tabs!.indexOf(existingTab));
@@ -93,18 +100,22 @@ export const addAndDeployTabHistoryEntry = function (entry: TabHistoryEntry & { 
     currentTabIndex.set(get(currentState).tabs!.indexOf(tab));
 };
 
-export const cancelExecuteExternalHistoryEntry = function (id: number): void {
-    const index = asyncQueue.findIndex((entry) => entry.id === id);
+export const cancelExecuteExternalHistoryEntry = function (entry: HistoryEntry): void {
+    const index = asyncQueue.findIndex((queueEntry) => queueEntry.id === entry.id);
     if (index !== -1) {
         asyncQueue.splice(index, 1);
+        if (entry.type === 'external-visualizing' && entry.existingTabId) {
+            cancelTabIdsWaiting.update((ids) => {
+                return ids.concat([entry.existingTabId!]);
+            });
+            unsetTabAsGenerating(get(currentState).tabs!.find((t) => t.id === entry.existingTabId)!);
+        }
     } else {
         throw new Error('Entry already fully executed');
     }
 };
 
 export const setTabAsGenerating = function (tab: Tab): void {
-    // eslint-disable-next-line no-console
-    console.log('Setting tab as generating');
     currentState.update((state) => {
         const newTabs = state.tabs?.map((t) => {
             if (t === tab) {
@@ -124,9 +135,52 @@ export const setTabAsGenerating = function (tab: Tab): void {
     });
 };
 
+export const unsetTabAsGenerating = function (tab: Tab): void {
+    currentState.update((state) => {
+        const newTabs = state.tabs?.map((t) => {
+            if (t === tab) {
+                return {
+                    ...t,
+                    isInGeneration: false,
+                };
+            } else {
+                return t;
+            }
+        });
+
+        return {
+            ...state,
+            tabs: newTabs,
+        };
+    });
+};
+
 const deployResult = function (result: RunnerExecutionResultMessage) {
-    if (result.value.type === 'tab') {
-        const tab = result.value.content;
+    const resultContent = result.value;
+    if (resultContent.type === 'tab') {
+        if (resultContent.content.id) {
+            const existingTab = get(currentState).tabs?.find((et) => et.id === resultContent.content.id);
+            if (existingTab) {
+                const tabIndex = get(currentState).tabs!.indexOf(existingTab);
+                // eslint-disable-next-line no-console
+                console.log('Setting currentTabIndex to: ', tabIndex);
+                currentState.update((state) => {
+                    return {
+                        ...state,
+                        tabs: state.tabs?.map((t) => {
+                            if (t.id === resultContent.content.id) {
+                                return resultContent.content;
+                            } else {
+                                return t;
+                            }
+                        }),
+                    };
+                });
+                currentTabIndex.set(tabIndex);
+                return;
+            }
+        }
+        const tab = resultContent.content;
         currentState.update((state) => {
             return {
                 ...state,
