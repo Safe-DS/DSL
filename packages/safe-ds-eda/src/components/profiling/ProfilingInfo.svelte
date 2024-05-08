@@ -1,11 +1,40 @@
 <script lang="ts">
-    import type { Profiling } from '../../../types/state';
+    import type { Profiling, ProfilingDetailImage } from '../../../types/state';
     import { addAndDeployTabHistoryEntry, getAndIncrementEntryId } from '../../apis/historyApi.js';
     import ZoomIcon from '../../icons/Zoom.svelte';
 
     export let profiling: Profiling;
     export let imageWidth: number = 200;
     export let columnName: string;
+
+    let hoveringImage = false;
+
+    const zoomIntoImage = function (profilingItem: ProfilingDetailImage) {
+        const entryId = getAndIncrementEntryId();
+        addAndDeployTabHistoryEntry(
+            {
+                action: 'histogram',
+                alias: `View ${columnName} Histogram`,
+                type: 'external-visualizing',
+                columnName: columnName,
+                id: entryId,
+                columnNumber: 'one',
+            },
+            {
+                type: 'histogram',
+                tabComment: columnName,
+                content: {
+                    columnName: columnName,
+                    encodedImage: profilingItem.value,
+                    outdated: false,
+                },
+                id: crypto.randomUUID(),
+                imageTab: true,
+                columnNumber: 'one',
+                isInGeneration: false,
+            },
+        );
+    };
 </script>
 
 <div class="wrapper">
@@ -34,36 +63,19 @@
                 <div
                     role="none"
                     class="zoomIconWrapper"
-                    on:click={() => {
-                        const entryId = getAndIncrementEntryId();
-                        addAndDeployTabHistoryEntry(
-                            {
-                                action: 'histogram',
-                                alias: `View ${columnName} Histogram`,
-                                type: 'external-visualizing',
-                                columnName: columnName,
-                                id: entryId,
-                                columnNumber: 'one',
-                            },
-                            {
-                                type: 'histogram',
-                                tabComment: columnName,
-                                content: {
-                                    columnName: columnName,
-                                    encodedImage: profilingItem.value,
-                                    outdated: false,
-                                },
-                                id: crypto.randomUUID(),
-                                imageTab: true,
-                                columnNumber: 'one',
-                                isInGeneration: false,
-                            },
-                        );
-                    }}
+                    class:hoveringImage
+                    on:click={() => zoomIntoImage(profilingItem)}
                 >
                     <ZoomIcon />
                 </div>
-                <div class="profilingItem">
+                <div
+                    role="none"
+                    class="profilingItem"
+                    on:click={() => zoomIntoImage(profilingItem)}
+                    on:mouseover={() => (hoveringImage = true)}
+                    on:focus={() => (hoveringImage = true)}
+                    on:mouseleave={() => (hoveringImage = false)}
+                >
                     <img
                         style:width="{imageWidth}px"
                         class="profilingImage"
@@ -110,6 +122,7 @@
         height: 150px; /* default height, profiling height calculation works off this value */
         object-fit: cover;
         object-position: left;
+        cursor: pointer;
     }
 
     .good {
@@ -147,6 +160,11 @@
     }
 
     .zoomIconWrapper:hover {
+        height: 25px;
+        width: 25px;
+    }
+
+    .zoomIconWrapper.hoveringImage {
         height: 25px;
         width: 25px;
     }
