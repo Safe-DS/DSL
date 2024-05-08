@@ -181,6 +181,7 @@ const deployResult = function (result: RunnerExecutionResultMessage) {
             }
         }
         const tab = resultContent.content;
+        tab.id = crypto.randomUUID();
         currentState.update((state) => {
             return {
                 ...state,

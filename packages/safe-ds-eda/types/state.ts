@@ -107,7 +107,7 @@ export type HistoryEntry = (InternalHistoryEntry | ExternalHistoryEntry) & {
 
 // ------------------ Types for the Tabs ------------------
 export type TwoColumnTabTypes = 'linePlot' | 'scatterPlot';
-export type OneColumnTabTypes = 'histogram' | 'boxplot' | 'infoPanel';
+export type OneColumnTabTypes = 'histogram' | 'boxPlot' | 'infoPanel';
 export type NoColumnTabTypes = 'heatmap';
 type TabType = TwoColumnTabTypes | OneColumnTabTypes | NoColumnTabTypes;
 

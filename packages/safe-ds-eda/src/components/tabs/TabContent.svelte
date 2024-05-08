@@ -53,14 +53,14 @@
         if (!fromTab) return 'Select type';
         if (fromTab.type === 'histogram') {
             return 'Histogram';
-        } else if (fromTab.type === 'boxplot') {
+        } else if (fromTab.type === 'boxPlot') {
             return 'Boxplot';
         } else if (fromTab.type === 'heatmap') {
             return 'Heatmap';
         } else if (fromTab.type === 'linePlot') {
-            return 'Line Plot';
+            return 'Lineplot';
         } else if (fromTab.type === 'scatterPlot') {
-            return 'Scatter Plot';
+            return 'Scatterplot';
         } else if (fromTab.type === 'infoPanel') return 'Info Panel';
         else {
             throw new Error('Invalid tab type');

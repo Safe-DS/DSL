@@ -135,7 +135,7 @@ export class RunnerApi {
                     ),
                     placeholderNames: [newPlaceholderName],
                 };
-            case 'boxplot':
+            case 'boxPlot':
                 return {
                     sdsString: this.sdsStringForBoxplotByColumnName(
                         historyEntry.columnName,

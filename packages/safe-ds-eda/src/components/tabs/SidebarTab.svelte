@@ -15,7 +15,7 @@
                 <div></div>
             {:else if tabObject.type === 'linePlot'}
                 <LinePlotIcon />
-            {:else if tabObject.type === 'boxplot'}
+            {:else if tabObject.type === 'boxPlot'}
                 <BarPlotIcon />
             {:else if tabObject.type === 'heatmap'}
                 <BarPlotIcon />
@@ -33,16 +33,16 @@
                     Generating...
                 {:else if tabObject.type === 'histogram'}
                     Histogram
-                {:else if tabObject.type === 'boxplot'}
+                {:else if tabObject.type === 'boxPlot'}
                     Boxplot
                 {:else if tabObject.type === 'heatmap'}
                     Heatmap
                 {:else if tabObject.type === 'infoPanel'}
                     Info panel
                 {:else if tabObject.type === 'linePlot'}
-                    Line Plot
+                    Lineplot
                 {:else if tabObject.type === 'scatterPlot'}
-                    Scatter Plot
+                    Scatterplot
                 {/if}
             {/if}</span
         >

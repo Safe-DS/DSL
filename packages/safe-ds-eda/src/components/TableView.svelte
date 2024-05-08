@@ -7,15 +7,18 @@
     import FilterIcon from '../icons/Filter.svelte';
     import type {
         Column,
+        OneColumnTabTypes,
         PossibleColumnFilter,
         Profiling,
         ProfilingDetail,
         ProfilingDetailStatistical,
+        TwoColumnTabTypes,
     } from '../../types/state.js';
     import ProfilingInfo from './profiling/ProfilingInfo.svelte';
     import { derived, writable, get } from 'svelte/store';
     import ColumnFilters from './columnFilters/ColumnFilters.svelte';
     import { imageWidthToHeightRatio } from '../../consts.config';
+    import { executeExternalHistoryEntry } from '../apis/historyApi';
 
     export let sidebarWidth: number;
 
@@ -538,6 +541,45 @@
     };
     //#endregion // Right clicks
 
+    //#region Plotting
+    const generateTwoColumnTab = function (type: TwoColumnTabTypes) {
+        if (selectedColumnIndexes.length !== 2) {
+            throw new Error('Two columns must be selected to generate a two column plot');
+        }
+        const xAxisColumnName = $currentState.table!.columns[selectedColumnIndexes[0]][1].name;
+        const yAxisColumnName = $currentState.table!.columns[selectedColumnIndexes[1]][1].name;
+
+        executeExternalHistoryEntry({
+            action: type,
+            alias: `View ${type === 'linePlot' ? 'Lineplot' : 'Scatterplot'} of ${xAxisColumnName} x ${yAxisColumnName}`,
+            type: 'external-visualizing',
+            columnNumber: 'two',
+            xAxisColumnName: xAxisColumnName,
+            yAxisColumnName: yAxisColumnName,
+        });
+        return;
+    };
+
+    const generateOneColumnTab = function (type: OneColumnTabTypes) {
+        if (selectedColumnIndexes.length !== 1) {
+            throw new Error('One column must be selected to generate a one column plot');
+        }
+        if (type === 'infoPanel') {
+            throw new Error('Not implemented yet.');
+        }
+        const columnName = $currentState.table!.columns[selectedColumnIndexes[0]][1].name;
+
+        executeExternalHistoryEntry({
+            action: type,
+            alias: `View ${type === 'histogram' ? 'Histogram' : 'Boxplot'} of ${columnName}`,
+            type: 'external-visualizing',
+            columnNumber: 'one',
+            columnName: columnName,
+        });
+        return;
+    };
+    //#endregion // Plotting
+
     //#region Profiling ---
     let fullHeadBackground: HTMLElement;
     let profilingInfo: HTMLElement;
@@ -867,6 +909,21 @@
                     type="button"
                     on:click={() => removeColumnFromSelection(rightClickedColumnIndex)}>Deselect Column</button
                 >
+                {#if selectedColumnIndexes.length === 2}
+                    <button class="contextItem" type="button" on:click={() => generateTwoColumnTab('scatterPlot')}
+                        >Plot Scatterplot</button
+                    >
+                    <button class="contextItem" type="button" on:click={() => generateTwoColumnTab('linePlot')}
+                        >Plot Lineplot</button
+                    >
+                {:else if selectedColumnIndexes.length === 1}
+                    <button class="contextItem" type="button" on:click={() => generateOneColumnTab('histogram')}
+                        >Plot Histogram</button
+                    >
+                    <button class="contextItem" type="button" on:click={() => generateOneColumnTab('boxPlot')}>
+                        Plot Boxplot</button
+                    >
+                {/if}
             {:else}
                 {#if selectedColumnIndexes.length >= 1}
                     <button
@@ -874,6 +931,21 @@
                         type="button"
                         on:click={() => addColumnToSelection(rightClickedColumnIndex)}>Add To Selection</button
                     >
+                    {#if selectedColumnIndexes.length === 2}
+                        <button class="contextItem" type="button" on:click={() => generateTwoColumnTab('scatterPlot')}
+                            >Plot Scatterplot</button
+                        >
+                        <button class="contextItem" type="button" on:click={() => generateTwoColumnTab('linePlot')}
+                            >Plot Lineplot</button
+                        >
+                    {:else if selectedColumnIndexes.length === 1}
+                        <button class="contextItem" type="button" on:click={() => generateOneColumnTab('histogram')}
+                            >Plot Histogram</button
+                        >
+                        <button class="contextItem" type="button" on:click={() => generateOneColumnTab('boxPlot')}>
+                            Plot Boxplot</button
+                        >
+                    {/if}
                 {/if}
                 <button class="contextItem" type="button" on:click={() => setSelectionToColumn(rightClickedColumnIndex)}
                     >Select Column</button
