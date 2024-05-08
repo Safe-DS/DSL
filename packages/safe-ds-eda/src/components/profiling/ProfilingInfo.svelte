@@ -64,6 +64,7 @@
                     role="none"
                     class="zoomIconWrapper"
                     class:hoveringImage
+                    style:left={imageWidth - 37 + 'px'}
                     on:click={() => zoomIntoImage(profilingItem)}
                 >
                     <ZoomIcon />
@@ -154,7 +155,6 @@
         width: 17px;
         position: absolute;
         top: 30px;
-        right: 15px;
         cursor: pointer;
         border-radius: 50%;
     }
