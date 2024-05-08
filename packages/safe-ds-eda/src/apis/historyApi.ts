@@ -1,6 +1,15 @@
 import { get } from 'svelte/store';
 import type { FromExtensionMessage, RunnerExecutionResultMessage } from '../../types/messaging';
-import type { ExternalHistoryEntry, HistoryEntry, InternalHistoryEntry, Tab, TabHistoryEntry } from '../../types/state';
+import type {
+    EmptyTab,
+    ExternalHistoryEntry,
+    HistoryEntry,
+    InteralEmptyTabHistoryEntry,
+    InternalHistoryEntry,
+    RealTab,
+    Tab,
+    TabHistoryEntry,
+} from '../../types/state';
 import { cancelTabIdsWaiting, currentState, currentTabIndex } from '../webviewState';
 import { executeRunner } from './extensionApi';
 
@@ -77,6 +86,7 @@ export const addAndDeployTabHistoryEntry = function (entry: TabHistoryEntry & { 
     // Search if already exists and is up to date
     const existingTab = get(currentState).tabs?.find(
         (et) =>
+            et.type !== 'empty' &&
             et.type === tab.type &&
             et.tabComment === tab.tabComment &&
             tab.type &&
@@ -100,6 +110,31 @@ export const addAndDeployTabHistoryEntry = function (entry: TabHistoryEntry & { 
     currentTabIndex.set(get(currentState).tabs!.indexOf(tab));
 };
 
+export const addEmptyTabHistoryEntry = function (): void {
+    const entry: InteralEmptyTabHistoryEntry & { id: number } = {
+        action: 'emptyTab',
+        type: 'internal',
+        alias: 'New empty tab',
+        id: getAndIncrementEntryId(),
+    };
+    const tab: EmptyTab = {
+        type: 'empty',
+        id: crypto.randomUUID(),
+        isInGeneration: true,
+    };
+
+    currentState.update((state) => {
+        const newHistory = [...state.history, entry];
+
+        return {
+            ...state,
+            history: newHistory,
+            tabs: (state.tabs ?? []).concat([tab]),
+        };
+    });
+    currentTabIndex.set(get(currentState).tabs!.indexOf(tab));
+};
+
 export const cancelExecuteExternalHistoryEntry = function (entry: HistoryEntry): void {
     const index = asyncQueue.findIndex((queueEntry) => queueEntry.id === entry.id);
     if (index !== -1) {
@@ -108,14 +143,17 @@ export const cancelExecuteExternalHistoryEntry = function (entry: HistoryEntry):
             cancelTabIdsWaiting.update((ids) => {
                 return ids.concat([entry.existingTabId!]);
             });
-            unsetTabAsGenerating(get(currentState).tabs!.find((t) => t.id === entry.existingTabId)!);
+            const tab: RealTab = get(currentState).tabs!.find(
+                (t) => t.type !== 'empty' && t.id === entry.existingTabId,
+            )! as RealTab;
+            unsetTabAsGenerating(tab);
         }
     } else {
         throw new Error('Entry already fully executed');
     }
 };
 
-export const setTabAsGenerating = function (tab: Tab): void {
+export const setTabAsGenerating = function (tab: RealTab): void {
     currentState.update((state) => {
         const newTabs = state.tabs?.map((t) => {
             if (t === tab) {
@@ -135,7 +173,7 @@ export const setTabAsGenerating = function (tab: Tab): void {
     });
 };
 
-export const unsetTabAsGenerating = function (tab: Tab): void {
+export const unsetTabAsGenerating = function (tab: RealTab): void {
     currentState.update((state) => {
         const newTabs = state.tabs?.map((t) => {
             if (t === tab) {

@@ -16,9 +16,10 @@
     } from '../../types/state.js';
     import ProfilingInfo from './profiling/ProfilingInfo.svelte';
     import { derived, writable, get } from 'svelte/store';
-    import ColumnFilters from './columnFilters/ColumnFilters.svelte';
+    import ColumnFilters from './column-filters/ColumnFilters.svelte';
     import { imageWidthToHeightRatio } from '../../consts.config';
     import { executeExternalHistoryEntry } from '../apis/historyApi';
+    import { disableNonContextMenuEffects, restoreNonContextMenuEffects } from '../toggleNonContextMenuEffects';
 
     export let sidebarWidth: number;
 
@@ -490,54 +491,6 @@
             filterColumnIndex = -1;
             generalCleanup();
         }
-    };
-
-    const originalHoverStyles = new Map<CSSStyleRule, string>();
-    const originalCursorStyles = new Map<CSSStyleRule, string>();
-
-    const disableNonContextMenuEffects = function () {
-        const stylesheets = document.styleSheets;
-
-        for (let i = 0; i < stylesheets.length; i++) {
-            const rules = stylesheets[i].cssRules;
-            const ownerNode = stylesheets[i].ownerNode;
-            if (
-                !(ownerNode instanceof Element) ||
-                (ownerNode instanceof Element && ownerNode.id && !ownerNode.id.includes('svelte'))
-            ) {
-                // We only care for stylesheets that are svlete generated
-                continue;
-            }
-
-            for (let j = 0; j < rules.length; j++) {
-                // Remove all hover styles and cursor pointer styles from non context menu elements
-                const rule = rules[j] as CSSStyleRule;
-                if (rule.selectorText?.includes(':hover') && !rule.selectorText?.includes('contextMenu')) {
-                    // Store the original hover style
-                    originalHoverStyles.set(rule, rule.style.cssText);
-                    // Disable the hover style
-                    rule.style.cssText = '';
-                }
-                if (rule.style?.cursor === 'pointer' && !rule.selectorText?.includes('contextMenu')) {
-                    // Store the original pointer style
-                    originalCursorStyles.set(rule, rule.style.cssText);
-                    // Disable the cursor pointer
-                    rule.style.cursor = 'auto';
-                }
-            }
-        }
-    };
-
-    const restoreNonContextMenuEffects = function () {
-        originalHoverStyles.forEach((style, rule) => {
-            rule.style.cssText = style;
-        });
-        originalHoverStyles.clear();
-
-        originalCursorStyles.forEach((style, rule) => {
-            rule.style.cssText = style;
-        });
-        originalCursorStyles.clear();
     };
     //#endregion // Right clicks
 
@@ -1157,6 +1110,7 @@
         color: var(--font-dark);
         display: flex;
         flex-direction: column;
+        width: max-content;
     }
 
     .contextMenu button {
@@ -1165,6 +1119,7 @@
         background-color: var(--bg-bright);
         color: var(--font-dark);
         text-align: left;
+        width: 100%;
     }
 
     .contextMenu button:hover {

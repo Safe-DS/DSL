@@ -1,5 +1,6 @@
 <script lang="ts">
     import CaretIcon from '../../icons/Caret.svelte';
+    import { preventClicks } from '../../webviewState';
 
     export let selectedOption: string;
     export let possibleOptions: string[];
@@ -13,7 +14,7 @@
     let dropdownRef: HTMLElement;
 
     function toggleDropdown() {
-        if (changesDisabled) return;
+        if (changesDisabled || $preventClicks) return;
 
         isDropdownOpen = !isDropdownOpen;
 

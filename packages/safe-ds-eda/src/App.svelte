@@ -70,7 +70,7 @@
         flex-shrink: 0;
         overflow: hidden;
         position: relative;
-        background-color: var(--bg-medium);
+        background-color: var(--bg-dark);
     }
 
     .white-bg {

@@ -1,12 +1,19 @@
 <script lang="ts">
-    import { currentState, currentTabIndex } from '../webviewState';
+    import { currentState, currentTabIndex, preventClicks } from '../webviewState';
     import CaretIcon from '../icons/Caret.svelte';
     import HistoryIcon from '../icons/History.svelte';
     import UndoIcon from '../icons/Undo.svelte';
     import TableIcon from '../icons/Table.svelte';
     import SidebarTab from './tabs/SidebarTab.svelte';
+    import GuidedMenu from './GuidedMenu.svelte';
 
     export let width: number;
+
+    const changeTab = function (index?: number) {
+        if (!$preventClicks) {
+            currentTabIndex.update((_cs) => index);
+        }
+    };
 </script>
 
 <div class="sidebar">
@@ -34,21 +41,20 @@
     </div>
     <div class="tabs">
         {#if width > 50}
-            <button
-                class="tab"
-                class:tabActive={$currentTabIndex === undefined}
-                on:click={() => currentTabIndex.update((_cs) => undefined)}
-            >
+            <button class="tab" class:tabActive={$currentTabIndex === undefined} on:click={() => changeTab(undefined)}>
                 <span class="icon tableIcon"><TableIcon /></span>{#if width > 109}Table{/if}
             </button>
             {#if $currentState.tabs}
                 {#each $currentState.tabs as tab, index}
-                    <button class="sidebarButton" on:click={() => currentTabIndex.update((_cs) => index)}>
+                    <button class="sidebarButton" on:click={() => changeTab(index)}>
                         <SidebarTab tabObject={tab} active={$currentTabIndex === index} {width} />
                     </button>
                 {/each}
             {/if}
         {/if}
+    </div>
+    <div class="guidedMenu">
+        <GuidedMenu />
     </div>
 </div>
 
@@ -56,6 +62,8 @@
     .sidebar {
         background-color: var(--bg-dark);
         color: var(--font-dark);
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
     .titleBar {
@@ -145,6 +153,13 @@
         background-color: var(--bg-bright);
         font-size: 1.4rem;
         height: 50px;
+    }
+
+    .guidedMenu {
+        position: relative;
+        top: 20px;
+        left: 10px;
+        margin-bottom: 100px;
     }
 
     @media (max-width: 300px) {

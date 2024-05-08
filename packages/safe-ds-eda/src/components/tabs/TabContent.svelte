@@ -12,7 +12,7 @@
     export let sidebarWidth: number;
 
     const columnNames = $currentState.table?.columns.map((column) => column[1].name) || [];
-    const possibleTableNames = ['Histogram', 'Boxplot', 'Heatmap', 'Line Plot', 'Scatter Plot', 'Info Panel'];
+    const possibleTableNames = ['Histogram', 'Boxplot', 'Heatmap', 'Lineplot', 'Scatterplot'];
 
     let isLoadingGeneratedTab = false;
     let previousTab: Tab | EmptyTab = tab;
@@ -21,7 +21,10 @@
     const buildATab = writable<any>({}); // Assuming initial value as an empty object
 
     // Derived store to check if there are keys in buildATab
-    const isInBuildingState = derived(buildATab, ($buildATab) => Object.keys($buildATab).length > 0);
+    const isInBuildingState = derived(
+        buildATab,
+        ($buildATab) => Object.keys($buildATab).length > 0 || tab.type === 'empty',
+    );
 
     // Derived store to decide between buildATab and tab based on isInBuildingState
     const tabInfo = derived([isInBuildingState, buildATab], ([$isInBuildingState, $buildATab]) =>
@@ -50,7 +53,7 @@
     };
 
     const getTabName = function (fromTab = tab) {
-        if (!fromTab) return 'Select type';
+        if (!fromTab || Object.keys(fromTab).length === 0) return 'Select type';
         if (fromTab.type === 'histogram') {
             return 'Histogram';
         } else if (fromTab.type === 'boxPlot') {
@@ -77,7 +80,7 @@
             });
         } else if (selected === 'Boxplot') {
             buildATab.update((buildingTab) => {
-                buildingTab.type = 'boxplot';
+                buildingTab.type = 'boxPlot';
                 buildingTab.columnNumber = 'one';
                 return buildingTab;
             });
@@ -87,13 +90,13 @@
                 buildingTab.columnNumber = 'none';
                 return buildingTab;
             });
-        } else if (selected === 'Line Plot') {
+        } else if (selected === 'Lineplot') {
             buildATab.update((buildingTab) => {
                 buildingTab.type = 'linePlot';
                 buildingTab.columnNumber = 'two';
                 return buildingTab;
             });
-        } else if (selected === 'Scatter Plot') {
+        } else if (selected === 'Scatterplot') {
             buildATab.update((buildingTab) => {
                 buildingTab.type = 'scatterPlot';
                 buildingTab.columnNumber = 'two';
@@ -171,7 +174,7 @@
             return {
                 existingTabId: tab.id,
                 action: $buildATab.type,
-                alias: 'Generate ' + getTabName($buildATab),
+                alias: 'Generate ' + getTabName($buildATab) + ' in existing Tab',
                 type: 'external-visualizing',
                 columnName: $buildATab.xAxisColumnName,
                 columnNumber: 'one',
@@ -181,7 +184,7 @@
             return {
                 existingTabId: tab.id,
                 action: $buildATab.type,
-                alias: 'Generate ' + getTabName($buildATab),
+                alias: 'Generate ' + getTabName($buildATab) + ' in existing Tab',
                 type: 'external-visualizing',
                 xAxisColumnName: $buildATab.xAxisColumnName,
                 yAxisColumnName: $buildATab.yAxisColumnName,
@@ -191,7 +194,7 @@
             return {
                 existingTabId: tab.id,
                 action: $buildATab.type,
-                alias: 'Generate ' + getTabName($buildATab),
+                alias: 'Generate ' + getTabName($buildATab) + ' in existing Tab',
                 type: 'external-visualizing',
                 columnNumber: 'none',
             };
@@ -308,20 +311,20 @@
                 <div style:visibility={$isInBuildingState ? 'hidden' : 'visible'}>
                     <ImageContent image={tab.content.encodedImage} />
                 </div>
-                {#if $isInBuildingState}
-                    {#if isLoadingGeneratedTab}
-                        <div class="loading" style="aspect-ratio: {imageWidthToHeightRatio};">
-                            <p>Loading ...</p>
-                        </div>
-                    {:else if buildATabComplete}
-                        <div class="loading" style="aspect-ratio: {imageWidthToHeightRatio};">
-                            <button class="generateButton" on:click={generateTab}>Generate</button>
-                        </div>
-                    {:else}
-                        <div class="loading" style="aspect-ratio: {imageWidthToHeightRatio};">
-                            <p>Complete selections</p>
-                        </div>
-                    {/if}
+            {/if}
+            {#if (tab.type === 'empty' || tab.imageTab) && $isInBuildingState}
+                {#if isLoadingGeneratedTab}
+                    <div class="loading" style="aspect-ratio: {imageWidthToHeightRatio};">
+                        <p>Loading ...</p>
+                    </div>
+                {:else if $buildATabComplete}
+                    <div class="loading" style="aspect-ratio: {imageWidthToHeightRatio};">
+                        <button class="generateButton" on:click={generateTab}>Generate</button>
+                    </div>
+                {:else}
+                    <div class="loading" style="aspect-ratio: {imageWidthToHeightRatio};">
+                        <p>Complete selections</p>
+                    </div>
                 {/if}
             {/if}
         </div>
@@ -379,7 +382,7 @@
     }
 
     .loading {
-        min-width: 500px;
+        min-width: 540px;
         max-width: 800px;
         margin: 0 auto;
         background-color: var(--bg-medium);
@@ -396,6 +399,7 @@
     .content {
         position: relative;
         z-index: 0;
+        min-width: 540px;
     }
 
     .generateButton {

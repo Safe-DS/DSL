@@ -7,7 +7,7 @@ export interface State {
     settings?: UserSettings;
 }
 
-type InternalAction = 'reorderColumns' | 'resizeColumn' | 'hideColumn' | 'highlightColumn';
+type InternalAction = 'reorderColumns' | 'resizeColumn' | 'hideColumn' | 'highlightColumn' | 'emptyTab';
 type ExternalManipulatingAction = 'filterColumn' | 'sortColumn' | TableFilterTypes;
 type ExternalVisualizingAction = TabType | 'refreshTab';
 type Action = InternalAction | ExternalManipulatingAction | ExternalVisualizingAction;
@@ -44,6 +44,10 @@ export interface InternalColumnWithValueHistoryEntry extends InternalHistoryEntr
 export interface InternalColumnHistoryEntry extends InternalHistoryEntryBase {
     action: 'hideColumn' | 'highlightColumn';
     columnName: string;
+}
+
+export interface InteralEmptyTabHistoryEntry extends InternalHistoryEntryBase {
+    action: 'emptyTab';
 }
 
 export interface ExternalManipulatingColumnFilterHistoryEntry extends ExternalManipulatingHistoryEntryBase {
@@ -88,7 +92,10 @@ export type TabHistoryEntry =
     | ExternalVisualizingNoColumnHistoryEntry
     | ExternalVisualizingOneColumnHistoryEntry
     | ExternalVisualizingTwoColumnHistoryEntry;
-export type InternalHistoryEntry = InternalColumnWithValueHistoryEntry | InternalColumnHistoryEntry;
+export type InternalHistoryEntry =
+    | InternalColumnWithValueHistoryEntry
+    | InternalColumnHistoryEntry
+    | InteralEmptyTabHistoryEntry;
 export type ExternalManipulatingHistoryEntry =
     | ExternalManipulatingColumnFilterHistoryEntry
     | ExternalManipulatingTableFilterHistoryEntry
@@ -181,9 +188,11 @@ export interface NoColumnTab extends ImageTabObject {
 export interface EmptyTab {
     type: 'empty';
     id: string;
+    isInGeneration: true;
 }
 
-export type Tab = OneColumnTab | InfoPanelTab | TwoColumnTab | NoColumnTab;
+export type Tab = OneColumnTab | InfoPanelTab | TwoColumnTab | NoColumnTab | EmptyTab;
+export type RealTab = Exclude<Tab, EmptyTab>;
 export type PlotTab = OneColumnTab | TwoColumnTab | NoColumnTab;
 
 // ------------------ Types for the Table ------------------
