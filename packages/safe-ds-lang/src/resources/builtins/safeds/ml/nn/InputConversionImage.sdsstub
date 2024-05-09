@@ -1,0 +1,13 @@
+package safeds.ml.nn
+
+from safeds.data.image.typing import ImageSize
+
+/**
+ * The input conversion for a neural network, defines the input parameters for the neural network.
+ *
+ * @param imageSize the size of the input images
+ */
+@Experimental
+class InputConversionImage(
+    @PythonName("image_size") imageSize: ImageSize
+)

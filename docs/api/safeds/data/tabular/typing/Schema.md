@@ -15,7 +15,7 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `schema.sdsstub`"
+??? quote "Stub code in `Schema.sdsstub`"
 
     ```sds linenums="16"
     class Schema {
@@ -119,7 +119,7 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `schema.sdsstub`"
+??? quote "Stub code in `Schema.sdsstub`"
 
     ```sds linenums="57"
     @Pure
@@ -153,7 +153,7 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `schema.sdsstub`"
+??? quote "Stub code in `Schema.sdsstub`"
 
     ```sds linenums="39"
     @Pure
@@ -181,7 +181,7 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `schema.sdsstub`"
+??? quote "Stub code in `Schema.sdsstub`"
 
     ```sds linenums="73"
     @Pure

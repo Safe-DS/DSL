@@ -1,3 +1,15 @@
+## [0.15.0](https://github.com/Safe-DS/DSL/compare/v0.14.1...v0.15.0) (2024-05-09)
+
+
+### Features
+
+* adjust type cast syntax and restore old precedence ([#1158](https://github.com/Safe-DS/DSL/issues/1158)) ([07623fc](https://github.com/Safe-DS/DSL/commit/07623fc494a31e43c67b6d5808171c23cfe62d47)), closes [#1150](https://github.com/Safe-DS/DSL/issues/1150)
+* disable "unused" warning for placeholders whose name starts with an underscore ([#1155](https://github.com/Safe-DS/DSL/issues/1155)) ([25781a8](https://github.com/Safe-DS/DSL/commit/25781a87740cccd5bfe8bc64ea31e3b18413672b)), closes [#1154](https://github.com/Safe-DS/DSL/issues/1154)
+* give type casts the lowest precedence ([#1157](https://github.com/Safe-DS/DSL/issues/1157)) ([7549fa1](https://github.com/Safe-DS/DSL/commit/7549fa17974793b9d3af114d8b843150775b39ee)), closes [#1150](https://github.com/Safe-DS/DSL/issues/1150)
+* integrate version 0.24.0 of the `safe-ds` Python library ([#1162](https://github.com/Safe-DS/DSL/issues/1162)) ([1a24a18](https://github.com/Safe-DS/DSL/commit/1a24a18875a3ed80640581ad8292e893bec4467c))
+* remove warning that package is empty ([#1159](https://github.com/Safe-DS/DSL/issues/1159)) ([b13c5df](https://github.com/Safe-DS/DSL/commit/b13c5dfbe1b050620f561cde2a2cd35af0ddfc26)), closes [#1153](https://github.com/Safe-DS/DSL/issues/1153)
+* suggest adding assignment if statement does nothing ([#1156](https://github.com/Safe-DS/DSL/issues/1156)) ([11c81b3](https://github.com/Safe-DS/DSL/commit/11c81b32f8a279dcc59239150cdea3fe4f75cf42)), closes [#1142](https://github.com/Safe-DS/DSL/issues/1142)
+
 ## [0.14.1](https://github.com/Safe-DS/DSL/compare/v0.14.0...v0.14.1) (2024-05-03)
 
 

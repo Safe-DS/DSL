@@ -16,9 +16,12 @@ The output conversion for a neural network, defines the output parameters for th
 
 **Inheritors:**
 
+- [`OutputConversionImageToColumn`][safeds.ml.nn.OutputConversionImageToColumn]
+- [`OutputConversionImageToImage`][safeds.ml.nn.OutputConversionImageToImage]
+- [`OutputConversionImageToTable`][safeds.ml.nn.OutputConversionImageToTable]
 - [`OutputConversionTable`][safeds.ml.nn.OutputConversionTable]
 
-??? quote "Stub code in `output_conversion.sdsstub`"
+??? quote "Stub code in `OutputConversion.sdsstub`"
 
     ```sds linenums="7"
     class OutputConversion<PredictIn, PredictOut>

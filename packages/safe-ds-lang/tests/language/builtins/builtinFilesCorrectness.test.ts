@@ -14,6 +14,7 @@ import { loadDocuments } from '../../helpers/testResources.js';
 import { CODE_MODULE_MISSING_PACKAGE } from '../../../src/language/validation/other/modules.js';
 import { validationHelper } from 'langium/test';
 import { isSdsDeclaration } from '../../../src/language/generated/ast.js';
+import { CODE_DEPRECATED_LIBRARY_ELEMENT } from '../../../src/language/validation/builtins/deprecated.js';
 
 const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const documentProvider = services.documentation.DocumentationProvider;
@@ -21,6 +22,7 @@ const langiumDocuments = services.shared.workspace.LangiumDocuments;
 const builtinFiles = listBuiltinFiles();
 
 const ignoredWarnings: (number | string | undefined)[] = [
+    CODE_DEPRECATED_LIBRARY_ELEMENT,
     CODE_EXPERIMENTAL_LANGUAGE_FEATURE,
     CODE_EXPERIMENTAL_LIBRARY_ELEMENT,
 ];

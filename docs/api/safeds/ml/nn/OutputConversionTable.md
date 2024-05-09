@@ -10,7 +10,7 @@ The output conversion for a neural network defines the output parameters for the
 |------|------|-------------|---------|
 | `predictionName` | [`String`][safeds.lang.String] | The name of the new column where the prediction will be stored. | `#!sds "prediction"` |
 
-??? quote "Stub code in `output_conversion_table.sdsstub`"
+??? quote "Stub code in `OutputConversionTable.sdsstub`"
 
     ```sds linenums="9"
     class OutputConversionTable(

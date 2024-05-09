@@ -1,0 +1,70 @@
+package safeds.data.tabular.typing
+
+from safeds.data.tabular.typing import ExperimentalDataType
+
+/**
+ * The schema of a row or table.
+ */
+@Experimental
+class ExperimentalSchema {
+    /**
+     * Return a list of all column names contained in this schema.
+     */
+    @PythonName("column_names") attr columnNames: List<String>
+
+    /**
+     * Return the type of the given column.
+     *
+     * @param name The name of the column.
+     *
+     * @result type The type of the column.
+     *
+     * @example
+     * pipeline example {
+     *     // from safeds.data.tabular.containers import ExperimentalTable
+     *     // table = ExperimentalTable({"A": [1, 2, 3], "B": ["a", "b", "c"]})
+     *     // type_ = table.schema.get_column_type("A")
+     * }
+     */
+    @Pure
+    @PythonName("get_column_type")
+    fun getColumnType(
+        name: String
+    ) -> type: ExperimentalDataType
+
+    /**
+     * Return whether the schema contains a given column.
+     *
+     * @param name The name of the column.
+     *
+     * @result contains True if the schema contains the column.
+     *
+     * @example
+     * pipeline example {
+     *     // from safeds.data.tabular.containers import ExperimentalTable
+     *     // table = ExperimentalTable({"A": [1, 2, 3], "B": ["a", "b", "c"]})
+     *     // table.schema.has_column("A")
+     * }
+     */
+    @Pure
+    @PythonName("has_column")
+    fun hasColumn(
+        name: String
+    ) -> contains: Boolean
+
+    /**
+     * Return a dictionary that maps column names to column types.
+     *
+     * @result data Dictionary representation of the schema.
+     *
+     * @example
+     * pipeline example {
+     *     // from safeds.data.tabular.containers import ExperimentalTable
+     *     // table = ExperimentalTable({"A": [1, 2, 3], "B": ["a", "b", "c"]})
+     *     // dict_ = table.schema.to_dict()
+     * }
+     */
+    @Pure
+    @PythonName("to_dict")
+    fun toDict() -> data: Map<String, ExperimentalDataType>
+}
