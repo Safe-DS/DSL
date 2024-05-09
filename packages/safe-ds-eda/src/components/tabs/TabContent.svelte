@@ -39,7 +39,6 @@
 
     $: if (tab !== previousTab) {
         previousTab = tab;
-        console.log('Tab changed!!!!!!!!!');
         resetLoadingState();
     }
 

@@ -19,8 +19,6 @@ let messagesWaitingForTurn: RunnerExecutionResultMessage[] = [];
 let entryIdCounter = 0;
 
 export const getAndIncrementEntryId = function (): number {
-    // eslint-disable-next-line no-console
-    console.log('Incrementing entryIdCounter to: ', entryIdCounter + 1);
     return entryIdCounter++;
 };
 
@@ -63,8 +61,6 @@ export const addInternalToHistory = function (entry: InternalHistoryEntry): void
 };
 
 export const executeExternalHistoryEntry = function (entry: ExternalHistoryEntry): void {
-    // eslint-disable-next-line no-console
-    console.log(`Executing external history entry: ${entry}`);
     currentState.update((state) => {
         const entryWithId: HistoryEntry = {
             ...entry,
@@ -200,8 +196,6 @@ const deployResult = function (result: RunnerExecutionResultMessage) {
             const existingTab = get(currentState).tabs?.find((et) => et.id === resultContent.content.id);
             if (existingTab) {
                 const tabIndex = get(currentState).tabs!.indexOf(existingTab);
-                // eslint-disable-next-line no-console
-                console.log('Setting currentTabIndex to: ', tabIndex);
                 currentState.update((state) => {
                     return {
                         ...state,

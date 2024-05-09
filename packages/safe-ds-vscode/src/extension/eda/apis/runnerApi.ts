@@ -288,7 +288,7 @@ export class RunnerApi {
 
             this.services.runtime.PythonServer.addMessageCallback('placeholder_value', placeholderValueCallback);
 
-            safeDsLogger.info('Requesting placeholder: ' + placeholder);
+            safeDsLogger.debug('Requesting placeholder: ' + placeholder);
             this.services.runtime.PythonServer.sendMessageToPythonServer(
                 messages.createPlaceholderQueryMessage(pipelineExecutionId, placeholder),
             );
@@ -303,7 +303,7 @@ export class RunnerApi {
 
     //#region Table fetching
     public async getTableByPlaceholder(tableName: string, pipelineExecutionId: string): Promise<Table | undefined> {
-        safeDsLogger.info('Getting table by placeholder: ' + tableName);
+        safeDsLogger.debug('Getting table by placeholder: ' + tableName);
         const pythonTableColumns = await this.getPlaceholderValue(tableName, pipelineExecutionId);
         if (pythonTableColumns) {
             const table: Table = {
@@ -350,7 +350,7 @@ export class RunnerApi {
 
     //#region Profiling
     public async getProfiling(table: Table): Promise<{ columnName: string; profiling: Profiling }[]> {
-        safeDsLogger.info('Getting profiling for table: ' + table.name);
+        safeDsLogger.debug('Getting profiling for table: ' + table.name);
 
         const columns = table.columns;
 
@@ -588,7 +588,7 @@ export class RunnerApi {
     //#endregion
 
     //#region History
-    public async executeHistoryAndReturnLastResult(
+    public async executeHistoryAndReturnNewResult(
         pastEntries: HistoryEntry[],
         newEntry: HistoryEntry,
     ): Promise<RunnerExecutionResultMessage['value']> {
@@ -601,6 +601,7 @@ export class RunnerApi {
                 if (sdsString) {
                     sdsLines += sdsString + '\n';
                 }
+                safeDsLogger.debug(`Running old entry ${entry.id} with action ${entry.action}`);
             }
         }
 
@@ -610,6 +611,8 @@ export class RunnerApi {
             const sdsStringObj = this.sdsStringForHistoryEntry(newEntry);
             sdsLines += sdsStringObj.sdsString + '\n';
             placeholderNames = sdsStringObj.placeholderNames;
+
+            safeDsLogger.debug(`Running new entry ${newEntry.id} with action ${newEntry.action}`);
         } else if (newEntry.type === 'external-manipulating') {
             throw new Error('Not implemented');
         } else if (newEntry.type === 'internal') {

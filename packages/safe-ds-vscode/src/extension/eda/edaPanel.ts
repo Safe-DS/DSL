@@ -64,7 +64,7 @@ export class EDAPanel {
         // Handle messages from the webview
         const webview = this.panel.webview;
         this.webviewListener = webview.onDidReceiveMessage(async (data: ToExtensionMessage) => {
-            safeDsLogger.info(data.command + ' called');
+            safeDsLogger.debug(data.command + ' called');
             switch (data.command) {
                 case 'setInfo': {
                     if (!data.value) {
@@ -88,7 +88,7 @@ export class EDAPanel {
                     let alreadyComplete = false;
 
                     // Execute the runner
-                    const resultPromise = this.runnerApi.executeHistoryAndReturnLastResult(
+                    const resultPromise = this.runnerApi.executeHistoryAndReturnNewResult(
                         data.value.pastEntries,
                         data.value.newEntry,
                     );
