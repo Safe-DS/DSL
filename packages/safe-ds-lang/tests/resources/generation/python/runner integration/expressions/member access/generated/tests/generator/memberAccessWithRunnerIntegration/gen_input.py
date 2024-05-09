@@ -230,7 +230,7 @@ def test():
         __gen_receiver_12,
         "plot_histogram",
         [],
-        {},
+        {"number_of_bins": 10},
         []
     )
     safeds_runner.save_placeholder('d', __gen_d)
@@ -246,7 +246,7 @@ def test():
         __gen_receiver_14,
         "plot_histogram",
         [],
-        {},
+        {"number_of_bins": 10},
         []
     )
     safeds_runner.save_placeholder('p', __gen_p)
@@ -262,7 +262,7 @@ def test():
         __gen_receiver_16,
         "plot_histogram",
         [],
-        {},
+        {"number_of_bins": 10},
         []
     )
     __gen_r = safeds_runner.memoized_dynamic_call(
@@ -285,7 +285,7 @@ def test():
         __gen_receiver_19,
         "plot_histogram",
         [],
-        {},
+        {"number_of_bins": 10},
         []
     )
     __gen_receiver_21 = safeds_runner.memoized_dynamic_call(
