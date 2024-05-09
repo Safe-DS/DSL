@@ -483,7 +483,7 @@ class Table(
      */
     @Deprecated(
         alternative="None.",
-        reason="This interface cannot be implemented efficiently.",
+        reason="We'll provide a new solution with a more useful and efficient result.",
         sinceVersion="0.15.0",
         removalVersion="0.16.0"
     )

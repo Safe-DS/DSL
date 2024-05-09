@@ -4,18 +4,8 @@ The input conversion for a neural network defines the input parameters for the n
 
 **Parent type:** [`InputConversion<TabularDataset, Table>`][safeds.ml.nn.InputConversion]
 
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `featureNames` | [`List<String>`][safeds.lang.List] | The names of the features for the input table, used as features for the training. | - |
-| `targetName` | [`String`][safeds.lang.String] | The name of the target for the input table, used as target for the training. | - |
-
-??? quote "Stub code in `input_conversion_table.sdsstub`"
+??? quote "Stub code in `InputConversionTable.sdsstub`"
 
     ```sds linenums="10"
-    class InputConversionTable(
-        @PythonName("feature_names") featureNames: List<String>,
-        @PythonName("target_name") targetName: String
-    ) sub InputConversion<TabularDataset, Table>
+    class InputConversionTable() sub InputConversion<TabularDataset, Table>
     ```

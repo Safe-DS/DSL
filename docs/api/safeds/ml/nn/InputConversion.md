@@ -18,7 +18,7 @@ The input conversion for a neural network, defines the input parameters for the 
 
 - [`InputConversionTable`][safeds.ml.nn.InputConversionTable]
 
-??? quote "Stub code in `input_conversion.sdsstub`"
+??? quote "Stub code in `InputConversion.sdsstub`"
 
     ```sds linenums="7"
     class InputConversion<FitIn, PredictIn>

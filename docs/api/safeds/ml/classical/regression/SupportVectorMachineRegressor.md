@@ -24,7 +24,7 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `support_vector_machine.sdsstub`"
+??? quote "Stub code in `SupportVectorMachineRegressor.sdsstub`"
 
     ```sds linenums="23"
     class SupportVectorMachineRegressor(
@@ -80,7 +80,7 @@ pipeline example {
          */
         @Pure
         fun fit(
-            @PythonName("training_set") trainingSet: TabularDataset
+            @PythonName("training_set") trainingSet: union<ExperimentalTabularDataset, TabularDataset>
         ) -> fittedRegressor: SupportVectorMachineRegressor
     }
     ```
@@ -113,7 +113,7 @@ This regressor is not modified.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `trainingSet` | [`TabularDataset`][safeds.data.labeled.containers.TabularDataset] | The training data containing the feature and target vectors. | - |
+| `trainingSet` | `#!sds union<ExperimentalTabularDataset, TabularDataset>` | The training data containing the feature and target vectors. | - |
 
 **Results:**
 
@@ -121,12 +121,12 @@ This regressor is not modified.
 |------|------|-------------|
 | `fittedRegressor` | [`SupportVectorMachineRegressor`][safeds.ml.classical.regression.SupportVectorMachineRegressor] | The fitted regressor. |
 
-??? quote "Stub code in `support_vector_machine.sdsstub`"
+??? quote "Stub code in `SupportVectorMachineRegressor.sdsstub`"
 
     ```sds linenums="74"
     @Pure
     fun fit(
-        @PythonName("training_set") trainingSet: TabularDataset
+        @PythonName("training_set") trainingSet: union<ExperimentalTabularDataset, TabularDataset>
     ) -> fittedRegressor: SupportVectorMachineRegressor
     ```
 
@@ -138,7 +138,7 @@ Compute the mean absolute error (MAE) of the regressor on the given data.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `validationOrTestSet` | [`TabularDataset`][safeds.data.labeled.containers.TabularDataset] | The validation or test set. | - |
+| `validationOrTestSet` | `#!sds union<ExperimentalTabularDataset, TabularDataset>` | The validation or test set. | - |
 
 **Results:**
 
@@ -146,13 +146,13 @@ Compute the mean absolute error (MAE) of the regressor on the given data.
 |------|------|-------------|
 | `meanAbsoluteError` | [`Float`][safeds.lang.Float] | The calculated mean absolute error (the average of the distance of each individual row). |
 
-??? quote "Stub code in `regressor.sdsstub`"
+??? quote "Stub code in `Regressor.sdsstub`"
 
     ```sds linenums="61"
     @Pure
     @PythonName("mean_absolute_error")
     fun meanAbsoluteError(
-        @PythonName("validation_or_test_set") validationOrTestSet: TabularDataset
+        @PythonName("validation_or_test_set") validationOrTestSet: union<ExperimentalTabularDataset, TabularDataset>
     ) -> meanAbsoluteError: Float
     ```
 
@@ -164,7 +164,7 @@ Compute the mean squared error (MSE) on the given data.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `validationOrTestSet` | [`TabularDataset`][safeds.data.labeled.containers.TabularDataset] | The validation or test set. | - |
+| `validationOrTestSet` | `#!sds union<ExperimentalTabularDataset, TabularDataset>` | The validation or test set. | - |
 
 **Results:**
 
@@ -172,13 +172,13 @@ Compute the mean squared error (MSE) on the given data.
 |------|------|-------------|
 | `meanSquaredError` | [`Float`][safeds.lang.Float] | The calculated mean squared error (the average of the distance of each individual row squared). |
 
-??? quote "Stub code in `regressor.sdsstub`"
+??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="48"
+    ```sds linenums="74"
     @Pure
     @PythonName("mean_squared_error")
     fun meanSquaredError(
-        @PythonName("validation_or_test_set") validationOrTestSet: TabularDataset
+        @PythonName("validation_or_test_set") validationOrTestSet: union<ExperimentalTabularDataset, TabularDataset>
     ) -> meanSquaredError: Float
     ```
 
@@ -190,7 +190,7 @@ Predict a target vector using a dataset containing feature vectors. The model ha
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `dataset` | [`Table`][safeds.data.tabular.containers.Table] | The dataset containing the feature vectors. | - |
+| `dataset` | `#!sds union<ExperimentalTable, ExperimentalTabularDataset, Table>` | The dataset containing the feature vectors. | - |
 
 **Results:**
 
@@ -198,20 +198,46 @@ Predict a target vector using a dataset containing feature vectors. The model ha
 |------|------|-------------|
 | `prediction` | [`TabularDataset`][safeds.data.labeled.containers.TabularDataset] | A dataset containing the given feature vectors and the predicted target vector. |
 
-??? quote "Stub code in `regressor.sdsstub`"
+??? quote "Stub code in `Regressor.sdsstub`"
 
     ```sds linenums="36"
     @Pure
     fun predict(
-        dataset: Table
+        dataset: union<ExperimentalTable, ExperimentalTabularDataset, Table>
     ) -> prediction: TabularDataset
+    ```
+
+## `#!sds fun` summarizeMetrics {#safeds.ml.classical.regression.SupportVectorMachineRegressor.summarizeMetrics data-toc-label='summarizeMetrics'}
+
+Summarize the regressor's metrics on the given data.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `validationOrTestSet` | `#!sds union<ExperimentalTabularDataset, TabularDataset>` | The validation or test set. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `metrics` | [`Table`][safeds.data.tabular.containers.Table] | A table containing the regressor's metrics. |
+
+??? quote "Stub code in `Regressor.sdsstub`"
+
+    ```sds linenums="48"
+    @Pure
+    @PythonName("summarize_metrics")
+    fun summarizeMetrics(
+        @PythonName("validation_or_test_set") validationOrTestSet: union<ExperimentalTabularDataset, TabularDataset>
+    ) -> metrics: Table
     ```
 
 ## `#!sds enum` Kernel {#safeds.ml.classical.regression.SupportVectorMachineRegressor.Kernel data-toc-label='Kernel'}
 
 The kernel functions that can be used in the support vector machine.
 
-??? quote "Stub code in `support_vector_machine.sdsstub`"
+??? quote "Stub code in `SupportVectorMachineRegressor.sdsstub`"
 
     ```sds linenums="32"
     enum Kernel {

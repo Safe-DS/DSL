@@ -20,11 +20,6 @@ Note: When removing the last column of the table, the `number_of_columns` proper
 |------|------|-------------|---------|
 | `data` | [`Map<String, List<Any?>>?`][safeds.lang.Map] | The data. If None, an empty table is created. | `#!sds null` |
 
-**Inheritors:**
-
-- `#!sds TaggedTable`
-- [`TimeSeries`][safeds.data.tabular.containers.TimeSeries]
-
 **Examples:**
 
 ```sds hl_lines="2"
@@ -33,7 +28,7 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
     ```sds linenums="31"
     class Table(
@@ -112,6 +107,12 @@ pipeline example {
          *     val table = Table.fromExcelFile("path/to/file.xlsx");
          * }
          */
+        @Deprecated(
+            alternative="Table.fromCsvFile",
+            reason="Requires a heavy depencency just for two methods.",
+            sinceVersion="0.15.0",
+            removalVersion="0.16.0"
+        )
         @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
         @PythonName("from_excel_file")
         static fun fromExcelFile(
@@ -188,7 +189,12 @@ pipeline example {
          *     val table = Table.fromRows([row1, row2]);
          * }
          */
-        @Experimental
+        @Deprecated(
+            alternative="None.",
+            reason="This interface cannot be implemented efficiently.",
+            sinceVersion="0.15.0",
+            removalVersion="0.16.0"
+        )
         @Pure
         @PythonName("from_rows")
         static fun fromRows(
@@ -265,6 +271,12 @@ pipeline example {
          *     val row = table.getRow(0); // Row({"a": 1, "b": 3})
          * }
          */
+        @Deprecated(
+            alternative="None.",
+            reason="This interface cannot be implemented efficiently.",
+            sinceVersion="0.15.0",
+            removalVersion="0.16.0"
+        )
         @Pure
         @PythonName("get_row")
         fun getRow(
@@ -307,6 +319,12 @@ pipeline example {
          *     // })
          * }
          */
+        @Deprecated(
+            alternative="Table.addColumns",
+            reason="No need for two methods.",
+            sinceVersion="0.15.0",
+            removalVersion="0.16.0"
+        )
         @Pure
         @PythonName("add_column")
         fun addColumn(
@@ -367,6 +385,12 @@ pipeline example {
          *     // })
          * }
          */
+        @Deprecated(
+            alternative="None.",
+            reason="This interface cannot be implemented efficiently.",
+            sinceVersion="0.15.0",
+            removalVersion="0.16.0"
+        )
         @Pure
         @PythonName("add_row")
         fun addRow(
@@ -397,6 +421,12 @@ pipeline example {
          *     // })
          * }
          */
+        @Deprecated(
+            alternative="None.",
+            reason="This interface cannot be implemented efficiently.",
+            sinceVersion="0.15.0",
+            removalVersion="0.16.0"
+        )
         @Pure
         @PythonName("add_rows")
         fun addRows(
@@ -416,11 +446,17 @@ pipeline example {
          * pipeline example {
          *     val table = Table({"a": [1, 2], "b": [3, 4]});
          *     val filteredTable = table.filterRows((row) ->
-         *         (row.getValue("a") as Int) > 1
+         *         row.getValue("a") as (Int) > 1
          *     );
          *     // Table({"a": [2], "b": [4]})
          * }
          */
+        @Deprecated(
+            alternative="Try ExperimentalTable.removeRows",
+            reason="Users looked for a method with 'remove' in the name, so they missed this.",
+            sinceVersion="0.15.0",
+            removalVersion="0.16.0"
+        )
         @Pure
         @PythonName("filter_rows")
         fun filterRows(
@@ -440,7 +476,7 @@ pipeline example {
          * pipeline example {
          *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
          *     val tablesByKey = table.groupRows((row) ->
-         *         (row.getValue("a") as Int) <= 2
+         *         row.getValue("a") as (Int) <= 2
          *     );
          *     // {
          *     //     true: Table({"a": [1, 2], "b": [4, 5]}),
@@ -448,6 +484,12 @@ pipeline example {
          *     // }
          * }
          */
+        @Deprecated(
+            alternative="None.",
+            reason="We'll provide a new solution with a more useful and efficient result.",
+            sinceVersion="0.15.0",
+            removalVersion="0.16.0"
+        )
         @Pure
         @PythonName("group_rows")
         fun groupRows<T>(
@@ -472,6 +514,12 @@ pipeline example {
          *     // Table({"a": [1, 2]})
          * }
          */
+        @Deprecated(
+            alternative="Try ExperimentalTable.removeColumnsExcept",
+            reason="Users looked for a method with 'remove' in the name, so they missed this.",
+            sinceVersion="0.15.0",
+            removalVersion="0.16.0"
+        )
         @Pure
         @PythonName("keep_only_columns")
         fun keepOnlyColumns(
@@ -538,6 +586,12 @@ pipeline example {
          *     // Table({"b": [1, 2]})
          * }
          */
+        @Deprecated(
+            alternative="Try ExperimentalTable.removeNonNumericColumns",
+            reason="More concise name.",
+            sinceVersion="0.15.0",
+            removalVersion="0.16.0"
+        )
         @Pure
         @PythonName("remove_columns_with_non_numerical_values")
         fun removeColumnsWithNonNumericalValues() -> projectedTable: Table
@@ -755,6 +809,12 @@ pipeline example {
          *     // Table({"b": [3, 4], "a": [1, 2]})
          * }
          */
+        @Deprecated(
+            alternative="None.",
+            reason="No use case.",
+            sinceVersion="0.15.0",
+            removalVersion="0.16.0"
+        )
         @Pure
         @PythonName("sort_columns")
         fun sortColumns(
@@ -791,6 +851,12 @@ pipeline example {
          *     // Table({"a": [2, 1], "b": [4, 3]})
          * }
          */
+        @Deprecated(
+            alternative="Try ExperimentalTable.sortRows",
+            reason="Selecting a key is more ergonomic than a comparator.",
+            sinceVersion="0.15.0",
+            removalVersion="0.16.0"
+        )
         @Pure
         @PythonName("sort_rows")
         fun sortRows(
@@ -838,7 +904,7 @@ pipeline example {
          *         "price":   [    100,        2,        4],
          *     });
          *     val discountedPrices = prices.transformColumn("price", (row) ->
-         *         (row.getValue("price") as Int) * 0.5
+         *         row.getValue("price") as (Int) * 0.5
          *     );
          *     // Table({
          *     //     "product": ["apple", "banana", "cherry"],
@@ -911,6 +977,12 @@ pipeline example {
          *     val correlationHeatmap = table.plotCorrelationHeatmap();
          * }
          */
+        @Deprecated(
+            alternative="Try ExperimentalTable.plot.correlationHeatmap instead.",
+            reason="Groups all plotting methods in one place.",
+            sinceVersion="0.15.0",
+            removalVersion="0.16.0"
+        )
         @Pure
         @PythonName("plot_correlation_heatmap")
         fun plotCorrelationHeatmap() -> correlationHeatmap: Image
@@ -932,6 +1004,12 @@ pipeline example {
          *     val lineplot = table.plotLineplot("a", "b");
          * }
          */
+        @Deprecated(
+            alternative="Try ExperimentalTable.plot.lineplot instead.",
+            reason="Groups all plotting methods in one place.",
+            sinceVersion="0.15.0",
+            removalVersion="0.16.0"
+        )
         @Pure
         @PythonName("plot_lineplot")
         fun plotLineplot(
@@ -953,6 +1031,12 @@ pipeline example {
          *     val scatterplot = table.plotScatterplot("a", "b");
          * }
          */
+        @Deprecated(
+            alternative="Try ExperimentalTable.plot.scatterplot instead.",
+            reason="Groups all plotting methods in one place.",
+            sinceVersion="0.15.0",
+            removalVersion="0.16.0"
+        )
         @Pure
         @PythonName("plot_scatterplot")
         fun plotScatterplot(
@@ -971,6 +1055,12 @@ pipeline example {
          *     val boxplots = table.plotBoxplots();
          * }
          */
+        @Deprecated(
+            alternative="Try ExperimentalTable.plot.boxplots instead.",
+            reason="Groups all plotting methods in one place.",
+            sinceVersion="0.15.0",
+            removalVersion="0.16.0"
+        )
         @Pure
         @PythonName("plot_boxplots")
         fun plotBoxplots() -> boxplots: Image
@@ -988,6 +1078,12 @@ pipeline example {
          *     val histograms = table.plotHistograms();
          * }
          */
+        @Deprecated(
+            alternative="Try ExperimentalTable.plot.histograms instead.",
+            reason="Groups all plotting methods in one place.",
+            sinceVersion="0.15.0",
+            removalVersion="0.16.0"
+        )
         @Pure
         @PythonName("plot_histograms")
         fun plotHistograms(
@@ -1084,6 +1180,12 @@ pipeline example {
          *     val html = table.toHtml();
          * }
          */
+        @Deprecated(
+            alternative="None.",
+            reason="No use case.",
+            sinceVersion="0.15.0",
+            removalVersion="0.16.0"
+        )
         @Pure
         @PythonName("to_html")
         fun toHtml() -> html: String
@@ -1116,7 +1218,12 @@ pipeline example {
          *     // [Row({"a": 1, "b": 3}), Row({"a": 2, "b": 4})]
          * }
          */
-        @Experimental
+        @Deprecated(
+            alternative="None.",
+            reason="This interface cannot be implemented efficiently.",
+            sinceVersion="0.15.0",
+            removalVersion="0.16.0"
+        )
         @Pure
         @PythonName("to_rows")
         fun toRows() -> rows: List<Row>
@@ -1223,7 +1330,14 @@ pipeline example {
 }
 ```
 
-## `#!sds fun` addColumn {#safeds.data.tabular.containers.Table.addColumn data-toc-label='addColumn'}
+## :warning:{ title="Deprecated" } `#!sds fun` addColumn {#safeds.data.tabular.containers.Table.addColumn data-toc-label='addColumn'}
+
+!!! warning "Deprecated"
+
+    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+
+    - **Alternative:** Table.addColumns
+    - **Reason:** No need for two methods.
 
 Return a new table with the provided column attached at the end.
 
@@ -1256,9 +1370,15 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="302"
+    ```sds linenums="319"
+    @Deprecated(
+        alternative="Table.addColumns",
+        reason="No need for two methods.",
+        sinceVersion="0.15.0",
+        removalVersion="0.16.0"
+    )
     @Pure
     @PythonName("add_column")
     fun addColumn(
@@ -1301,9 +1421,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="331"
+    ```sds linenums="354"
     @Pure
     @PythonName("add_columns")
     fun addColumns(
@@ -1311,7 +1431,14 @@ pipeline example {
     ) -> newTable: Table
     ```
 
-## `#!sds fun` addRow {#safeds.data.tabular.containers.Table.addRow data-toc-label='addRow'}
+## :warning:{ title="Deprecated" } `#!sds fun` addRow {#safeds.data.tabular.containers.Table.addRow data-toc-label='addRow'}
+
+!!! warning "Deprecated"
+
+    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+
+    - **Alternative:** None.
+    - **Reason:** This interface cannot be implemented efficiently.
 
 Return a new `Table` with an added Row attached.
 
@@ -1348,9 +1475,15 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="362"
+    ```sds linenums="385"
+    @Deprecated(
+        alternative="None.",
+        reason="This interface cannot be implemented efficiently.",
+        sinceVersion="0.15.0",
+        removalVersion="0.16.0"
+    )
     @Pure
     @PythonName("add_row")
     fun addRow(
@@ -1358,7 +1491,14 @@ pipeline example {
     ) -> newTable: Table
     ```
 
-## `#!sds fun` addRows {#safeds.data.tabular.containers.Table.addRows data-toc-label='addRows'}
+## :warning:{ title="Deprecated" } `#!sds fun` addRows {#safeds.data.tabular.containers.Table.addRows data-toc-label='addRows'}
+
+!!! warning "Deprecated"
+
+    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+
+    - **Alternative:** None.
+    - **Reason:** This interface cannot be implemented efficiently.
 
 Return a new `Table` with multiple added Rows attached.
 
@@ -1394,9 +1534,15 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="392"
+    ```sds linenums="421"
+    @Deprecated(
+        alternative="None.",
+        reason="This interface cannot be implemented efficiently.",
+        sinceVersion="0.15.0",
+        removalVersion="0.16.0"
+    )
     @Pure
     @PythonName("add_rows")
     fun addRows(
@@ -1404,7 +1550,14 @@ pipeline example {
     ) -> newTable: Table
     ```
 
-## `#!sds fun` filterRows {#safeds.data.tabular.containers.Table.filterRows data-toc-label='filterRows'}
+## :warning:{ title="Deprecated" } `#!sds fun` filterRows {#safeds.data.tabular.containers.Table.filterRows data-toc-label='filterRows'}
+
+!!! warning "Deprecated"
+
+    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+
+    - **Alternative:** Try ExperimentalTable.removeRows
+    - **Reason:** Users looked for a method with 'remove' in the name, so they missed this.
 
 Return a new table with rows filtered by Callable (e.g. lambda function).
 
@@ -1428,15 +1581,21 @@ The original table is not modified.
 pipeline example {
     val table = Table({"a": [1, 2], "b": [3, 4]});
     val filteredTable = table.filterRows((row) ->
-        (row.getValue("a") as Int) > 1
+        row.getValue("a") as (Int) > 1
     );
     // Table({"a": [2], "b": [4]})
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="416"
+    ```sds linenums="451"
+    @Deprecated(
+        alternative="Try ExperimentalTable.removeRows",
+        reason="Users looked for a method with 'remove' in the name, so they missed this.",
+        sinceVersion="0.15.0",
+        removalVersion="0.16.0"
+    )
     @Pure
     @PythonName("filter_rows")
     fun filterRows(
@@ -1469,9 +1628,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="203"
+    ```sds linenums="214"
     @Pure
     @PythonName("get_column")
     fun getColumn(
@@ -1504,9 +1663,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="241"
+    ```sds linenums="252"
     @Pure
     @PythonName("get_column_type")
     fun getColumnType(
@@ -1514,7 +1673,14 @@ pipeline example {
     ) -> type: ColumnType
     ```
 
-## `#!sds fun` getRow {#safeds.data.tabular.containers.Table.getRow data-toc-label='getRow'}
+## :warning:{ title="Deprecated" } `#!sds fun` getRow {#safeds.data.tabular.containers.Table.getRow data-toc-label='getRow'}
+
+!!! warning "Deprecated"
+
+    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+
+    - **Alternative:** None.
+    - **Reason:** This interface cannot be implemented efficiently.
 
 Return the row at a specified index.
 
@@ -1539,9 +1705,15 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="260"
+    ```sds linenums="271"
+    @Deprecated(
+        alternative="None.",
+        reason="This interface cannot be implemented efficiently.",
+        sinceVersion="0.15.0",
+        removalVersion="0.16.0"
+    )
     @Pure
     @PythonName("get_row")
     fun getRow(
@@ -1549,7 +1721,14 @@ pipeline example {
     ) -> row: Row
     ```
 
-## `#!sds fun` groupRows {#safeds.data.tabular.containers.Table.groupRows data-toc-label='groupRows'}
+## :warning:{ title="Deprecated" } `#!sds fun` groupRows {#safeds.data.tabular.containers.Table.groupRows data-toc-label='groupRows'}
+
+!!! warning "Deprecated"
+
+    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+
+    - **Alternative:** None.
+    - **Reason:** We'll provide a new solution with a more useful and efficient result.
 
 Return a map with copies of the output tables as values and the keys from the key_selector.
 
@@ -1579,7 +1758,7 @@ The original table is not modified.
 pipeline example {
     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
     val tablesByKey = table.groupRows((row) ->
-        (row.getValue("a") as Int) <= 2
+        row.getValue("a") as (Int) <= 2
     );
     // {
     //     true: Table({"a": [1, 2], "b": [4, 5]}),
@@ -1588,9 +1767,15 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="443"
+    ```sds linenums="484"
+    @Deprecated(
+        alternative="None.",
+        reason="We'll provide a new solution with a more useful and efficient result.",
+        sinceVersion="0.15.0",
+        removalVersion="0.16.0"
+    )
     @Pure
     @PythonName("group_rows")
     fun groupRows<T>(
@@ -1623,9 +1808,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="222"
+    ```sds linenums="233"
     @Pure
     @PythonName("has_column")
     fun hasColumn(
@@ -1663,9 +1848,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="889"
+    ```sds linenums="960"
     @Pure
     @PythonName("inverse_transform_table")
     fun inverseTransformTable(
@@ -1673,7 +1858,14 @@ pipeline example {
     ) -> originalTable: Table
     ```
 
-## `#!sds fun` keepOnlyColumns {#safeds.data.tabular.containers.Table.keepOnlyColumns data-toc-label='keepOnlyColumns'}
+## :warning:{ title="Deprecated" } `#!sds fun` keepOnlyColumns {#safeds.data.tabular.containers.Table.keepOnlyColumns data-toc-label='keepOnlyColumns'}
+
+!!! warning "Deprecated"
+
+    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+
+    - **Alternative:** Try ExperimentalTable.removeColumnsExcept
+    - **Reason:** Users looked for a method with 'remove' in the name, so they missed this.
 
 Return a new table with only the given column(s).
 
@@ -1703,9 +1895,15 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="467"
+    ```sds linenums="514"
+    @Deprecated(
+        alternative="Try ExperimentalTable.removeColumnsExcept",
+        reason="Users looked for a method with 'remove' in the name, so they missed this.",
+        sinceVersion="0.15.0",
+        removalVersion="0.16.0"
+    )
     @Pure
     @PythonName("keep_only_columns")
     fun keepOnlyColumns(
@@ -1713,7 +1911,14 @@ pipeline example {
     ) -> projectedTable: Table
     ```
 
-## `#!sds fun` plotBoxplots {#safeds.data.tabular.containers.Table.plotBoxplots data-toc-label='plotBoxplots'}
+## :warning:{ title="Deprecated" } `#!sds fun` plotBoxplots {#safeds.data.tabular.containers.Table.plotBoxplots data-toc-label='plotBoxplots'}
+
+!!! warning "Deprecated"
+
+    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+
+    - **Alternative:** Try ExperimentalTable.plot.boxplots instead.
+    - **Reason:** Groups all plotting methods in one place.
 
 Plot a boxplot for every numerical column.
 
@@ -1732,15 +1937,28 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="966"
+    ```sds linenums="1055"
+    @Deprecated(
+        alternative="Try ExperimentalTable.plot.boxplots instead.",
+        reason="Groups all plotting methods in one place.",
+        sinceVersion="0.15.0",
+        removalVersion="0.16.0"
+    )
     @Pure
     @PythonName("plot_boxplots")
     fun plotBoxplots() -> boxplots: Image
     ```
 
-## `#!sds fun` plotCorrelationHeatmap {#safeds.data.tabular.containers.Table.plotCorrelationHeatmap data-toc-label='plotCorrelationHeatmap'}
+## :warning:{ title="Deprecated" } `#!sds fun` plotCorrelationHeatmap {#safeds.data.tabular.containers.Table.plotCorrelationHeatmap data-toc-label='plotCorrelationHeatmap'}
+
+!!! warning "Deprecated"
+
+    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+
+    - **Alternative:** Try ExperimentalTable.plot.correlationHeatmap instead.
+    - **Reason:** Groups all plotting methods in one place.
 
 Plot a correlation heatmap for all numerical columns of this `Table`.
 
@@ -1759,15 +1977,28 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="906"
+    ```sds linenums="977"
+    @Deprecated(
+        alternative="Try ExperimentalTable.plot.correlationHeatmap instead.",
+        reason="Groups all plotting methods in one place.",
+        sinceVersion="0.15.0",
+        removalVersion="0.16.0"
+    )
     @Pure
     @PythonName("plot_correlation_heatmap")
     fun plotCorrelationHeatmap() -> correlationHeatmap: Image
     ```
 
-## `#!sds fun` plotHistograms {#safeds.data.tabular.containers.Table.plotHistograms data-toc-label='plotHistograms'}
+## :warning:{ title="Deprecated" } `#!sds fun` plotHistograms {#safeds.data.tabular.containers.Table.plotHistograms data-toc-label='plotHistograms'}
+
+!!! warning "Deprecated"
+
+    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+
+    - **Alternative:** Try ExperimentalTable.plot.histograms instead.
+    - **Reason:** Groups all plotting methods in one place.
 
 Plot a histogram for every column.
 
@@ -1792,9 +2023,15 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="983"
+    ```sds linenums="1078"
+    @Deprecated(
+        alternative="Try ExperimentalTable.plot.histograms instead.",
+        reason="Groups all plotting methods in one place.",
+        sinceVersion="0.15.0",
+        removalVersion="0.16.0"
+    )
     @Pure
     @PythonName("plot_histograms")
     fun plotHistograms(
@@ -1804,7 +2041,14 @@ pipeline example {
     }
     ```
 
-## `#!sds fun` plotLineplot {#safeds.data.tabular.containers.Table.plotLineplot data-toc-label='plotLineplot'}
+## :warning:{ title="Deprecated" } `#!sds fun` plotLineplot {#safeds.data.tabular.containers.Table.plotLineplot data-toc-label='plotLineplot'}
+
+!!! warning "Deprecated"
+
+    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+
+    - **Alternative:** Try ExperimentalTable.plot.lineplot instead.
+    - **Reason:** Groups all plotting methods in one place.
 
 Plot two columns against each other in a lineplot.
 
@@ -1833,9 +2077,15 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="927"
+    ```sds linenums="1004"
+    @Deprecated(
+        alternative="Try ExperimentalTable.plot.lineplot instead.",
+        reason="Groups all plotting methods in one place.",
+        sinceVersion="0.15.0",
+        removalVersion="0.16.0"
+    )
     @Pure
     @PythonName("plot_lineplot")
     fun plotLineplot(
@@ -1844,7 +2094,14 @@ pipeline example {
     ) -> lineplot: Image
     ```
 
-## `#!sds fun` plotScatterplot {#safeds.data.tabular.containers.Table.plotScatterplot data-toc-label='plotScatterplot'}
+## :warning:{ title="Deprecated" } `#!sds fun` plotScatterplot {#safeds.data.tabular.containers.Table.plotScatterplot data-toc-label='plotScatterplot'}
+
+!!! warning "Deprecated"
+
+    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+
+    - **Alternative:** Try ExperimentalTable.plot.scatterplot instead.
+    - **Reason:** Groups all plotting methods in one place.
 
 Plot two columns against each other in a scatterplot.
 
@@ -1870,9 +2127,15 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="948"
+    ```sds linenums="1031"
+    @Deprecated(
+        alternative="Try ExperimentalTable.plot.scatterplot instead.",
+        reason="Groups all plotting methods in one place.",
+        sinceVersion="0.15.0",
+        removalVersion="0.16.0"
+    )
     @Pure
     @PythonName("plot_scatterplot")
     fun plotScatterplot(
@@ -1911,9 +2174,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="491"
+    ```sds linenums="544"
     @Pure
     @PythonName("remove_columns")
     fun removeColumns(
@@ -1945,15 +2208,22 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="513"
+    ```sds linenums="566"
     @Pure
     @PythonName("remove_columns_with_missing_values")
     fun removeColumnsWithMissingValues() -> projectedTable: Table
     ```
 
-## `#!sds fun` removeColumnsWithNonNumericalValues {#safeds.data.tabular.containers.Table.removeColumnsWithNonNumericalValues data-toc-label='removeColumnsWithNonNumericalValues'}
+## :warning:{ title="Deprecated" } `#!sds fun` removeColumnsWithNonNumericalValues {#safeds.data.tabular.containers.Table.removeColumnsWithNonNumericalValues data-toc-label='removeColumnsWithNonNumericalValues'}
+
+!!! warning "Deprecated"
+
+    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+
+    - **Alternative:** Try ExperimentalTable.removeNonNumericColumns
+    - **Reason:** More concise name.
 
 Return a new table without the columns that contain non-numerical values.
 
@@ -1977,9 +2247,15 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="533"
+    ```sds linenums="586"
+    @Deprecated(
+        alternative="Try ExperimentalTable.removeNonNumericColumns",
+        reason="More concise name.",
+        sinceVersion="0.15.0",
+        removalVersion="0.16.0"
+    )
     @Pure
     @PythonName("remove_columns_with_non_numerical_values")
     fun removeColumnsWithNonNumericalValues() -> projectedTable: Table
@@ -2007,9 +2283,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="551"
+    ```sds linenums="610"
     @Pure
     @PythonName("remove_duplicate_rows")
     fun removeDuplicateRows() -> filteredTable: Table
@@ -2037,9 +2313,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="569"
+    ```sds linenums="628"
     @Pure
     @PythonName("remove_rows_with_missing_values")
     fun removeRowsWithMissingValues() -> filteredTable: Table
@@ -2077,9 +2353,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="597"
+    ```sds linenums="656"
     @Pure
     @PythonName("remove_rows_with_outliers")
     fun removeRowsWithOutliers() -> filteredTable: Table
@@ -2114,9 +2390,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="618"
+    ```sds linenums="677"
     @Pure
     @PythonName("rename_column")
     fun renameColumn(
@@ -2166,9 +2442,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="654"
+    ```sds linenums="713"
     @Pure
     @PythonName("replace_column")
     fun replaceColumn(
@@ -2198,9 +2474,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="674"
+    ```sds linenums="733"
     @Pure
     @PythonName("shuffle_rows")
     fun shuffleRows() -> shuffledTable: Table
@@ -2250,9 +2526,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="710"
+    ```sds linenums="769"
     @Pure
     @PythonName("slice_rows")
     fun sliceRows(
@@ -2262,7 +2538,14 @@ pipeline example {
     ) -> slicedTable: Table
     ```
 
-## `#!sds fun` sortColumns {#safeds.data.tabular.containers.Table.sortColumns data-toc-label='sortColumns'}
+## :warning:{ title="Deprecated" } `#!sds fun` sortColumns {#safeds.data.tabular.containers.Table.sortColumns data-toc-label='sortColumns'}
+
+!!! warning "Deprecated"
+
+    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+
+    - **Alternative:** None.
+    - **Reason:** No use case.
 
 Sort the columns of a `Table` with the given comparator and return a new `Table`.
 
@@ -2306,9 +2589,15 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="750"
+    ```sds linenums="809"
+    @Deprecated(
+        alternative="None.",
+        reason="No use case.",
+        sinceVersion="0.15.0",
+        removalVersion="0.16.0"
+    )
     @Pure
     @PythonName("sort_columns")
     fun sortColumns(
@@ -2316,7 +2605,14 @@ pipeline example {
     ) -> sortedTable: Table
     ```
 
-## `#!sds fun` sortRows {#safeds.data.tabular.containers.Table.sortRows data-toc-label='sortRows'}
+## :warning:{ title="Deprecated" } `#!sds fun` sortRows {#safeds.data.tabular.containers.Table.sortRows data-toc-label='sortRows'}
+
+!!! warning "Deprecated"
+
+    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+
+    - **Alternative:** Try ExperimentalTable.sortRows
+    - **Reason:** Selecting a key is more ergonomic than a comparator.
 
 Sort the rows of a `Table` with the given comparator and return a new `Table`.
 
@@ -2358,9 +2654,15 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="786"
+    ```sds linenums="851"
+    @Deprecated(
+        alternative="Try ExperimentalTable.sortRows",
+        reason="Selecting a key is more ergonomic than a comparator.",
+        sinceVersion="0.15.0",
+        removalVersion="0.16.0"
+    )
     @Pure
     @PythonName("sort_rows")
     fun sortRows(
@@ -2399,9 +2701,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="813"
+    ```sds linenums="884"
     @Pure
     @PythonName("split_rows")
     fun splitRows(
@@ -2430,9 +2732,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="279"
+    ```sds linenums="296"
     @Pure
     @PythonName("summarize_statistics")
     fun summarizeStatistics() -> statistics: Table
@@ -2458,9 +2760,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="1095"
+    ```sds linenums="1202"
     @Pure
     @PythonName("to_columns")
     fun toColumns() -> columns: List<Column>
@@ -2488,9 +2790,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="1005"
+    ```sds linenums="1106"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_csv_file")
     fun toCsvFile(
@@ -2521,9 +2823,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="1026"
+    ```sds linenums="1127"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_excel_file")
     fun toExcelFile(
@@ -2531,7 +2833,14 @@ pipeline example {
     )
     ```
 
-## `#!sds fun` toHtml {#safeds.data.tabular.containers.Table.toHtml data-toc-label='toHtml'}
+## :warning:{ title="Deprecated" } `#!sds fun` toHtml {#safeds.data.tabular.containers.Table.toHtml data-toc-label='toHtml'}
+
+!!! warning "Deprecated"
+
+    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+
+    - **Alternative:** None.
+    - **Reason:** No use case.
 
 Return an HTML representation of the table.
 
@@ -2550,9 +2859,15 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="1079"
+    ```sds linenums="1180"
+    @Deprecated(
+        alternative="None.",
+        reason="No use case.",
+        sinceVersion="0.15.0",
+        removalVersion="0.16.0"
+    )
     @Pure
     @PythonName("to_html")
     fun toHtml() -> html: String
@@ -2580,9 +2895,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="1046"
+    ```sds linenums="1147"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_json_file")
     fun toJsonFile(
@@ -2610,15 +2925,22 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="1064"
+    ```sds linenums="1165"
     @Pure
     @PythonName("to_dict")
     fun toMap() -> map: Map<String, List<Any?>>
     ```
 
-## :test_tube:{ title="Experimental" } `#!sds fun` toRows {#safeds.data.tabular.containers.Table.toRows data-toc-label='toRows'}
+## :warning:{ title="Deprecated" } `#!sds fun` toRows {#safeds.data.tabular.containers.Table.toRows data-toc-label='toRows'}
+
+!!! warning "Deprecated"
+
+    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+
+    - **Alternative:** None.
+    - **Reason:** This interface cannot be implemented efficiently.
 
 Return a list of the rows.
 
@@ -2638,10 +2960,15 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="1111"
-    @Experimental
+    ```sds linenums="1218"
+    @Deprecated(
+        alternative="None.",
+        reason="This interface cannot be implemented efficiently.",
+        sinceVersion="0.15.0",
+        removalVersion="0.16.0"
+    )
     @Pure
     @PythonName("to_rows")
     fun toRows() -> rows: List<Row>
@@ -2688,9 +3015,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="1149"
+    ```sds linenums="1261"
     @Pure
     @PythonName("to_tabular_dataset")
     fun toTabularDataset(
@@ -2727,7 +3054,7 @@ pipeline example {
         "price":   [    100,        2,        4],
     });
     val discountedPrices = prices.transformColumn("price", (row) ->
-        (row.getValue("price") as Int) * 0.5
+        row.getValue("price") as (Int) * 0.5
     );
     // Table({
     //     "product": ["apple", "banana", "cherry"],
@@ -2736,9 +3063,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="841"
+    ```sds linenums="912"
     @Pure
     @PythonName("transform_column")
     fun transformColumn(
@@ -2776,9 +3103,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="865"
+    ```sds linenums="936"
     @Pure
     @PythonName("transform_table")
     fun transformTable(
@@ -2812,9 +3139,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="163"
+    ```sds linenums="169"
     @Pure
     @PythonName("from_columns")
     static fun fromColumns(
@@ -2846,7 +3173,7 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
     ```sds linenums="87"
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
@@ -2856,7 +3183,14 @@ pipeline example {
     ) -> table: Table
     ```
 
-## `#!sds static fun` fromExcelFile {#safeds.data.tabular.containers.Table.fromExcelFile data-toc-label='fromExcelFile'}
+## :warning:{ title="Deprecated" } `#!sds static fun` fromExcelFile {#safeds.data.tabular.containers.Table.fromExcelFile data-toc-label='fromExcelFile'}
+
+!!! warning "Deprecated"
+
+    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+
+    - **Alternative:** Table.fromCsvFile
+    - **Reason:** Requires a heavy depencency just for two methods.
 
 Read data from an Excel file into a table.
 
@@ -2882,9 +3216,15 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
     ```sds linenums="107"
+    @Deprecated(
+        alternative="Table.fromCsvFile",
+        reason="Requires a heavy depencency just for two methods.",
+        sinceVersion="0.15.0",
+        removalVersion="0.16.0"
+    )
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
     @PythonName("from_excel_file")
     static fun fromExcelFile(
@@ -2916,9 +3256,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="125"
+    ```sds linenums="131"
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
     @PythonName("from_json_file")
     static fun fromJsonFile(
@@ -2950,9 +3290,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="143"
+    ```sds linenums="149"
     @Pure
     @PythonName("from_dict")
     static fun fromMap(
@@ -2960,7 +3300,14 @@ pipeline example {
     ) -> table: Table
     ```
 
-## :test_tube:{ title="Experimental" } `#!sds static fun` fromRows {#safeds.data.tabular.containers.Table.fromRows data-toc-label='fromRows'}
+## :warning:{ title="Deprecated" } `#!sds static fun` fromRows {#safeds.data.tabular.containers.Table.fromRows data-toc-label='fromRows'}
+
+!!! warning "Deprecated"
+
+    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+
+    - **Alternative:** None.
+    - **Reason:** This interface cannot be implemented efficiently.
 
 Return a table created from a list of rows.
 
@@ -2986,10 +3333,15 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `table.sdsstub`"
+??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="183"
-    @Experimental
+    ```sds linenums="189"
+    @Deprecated(
+        alternative="None.",
+        reason="This interface cannot be implemented efficiently.",
+        sinceVersion="0.15.0",
+        removalVersion="0.16.0"
+    )
     @Pure
     @PythonName("from_rows")
     static fun fromRows(

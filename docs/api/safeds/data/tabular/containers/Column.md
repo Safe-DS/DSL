@@ -23,9 +23,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `column.sdsstub`"
+??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="17"
+    ```sds linenums="18"
     class Column<out T = Any?>(
         name: String,
         data: List<T> = []
@@ -78,6 +78,12 @@ pipeline example {
          *     val uniqueValues = column.getUniqueValues(); // [1, 2, 3, 4]
          * }
          */
+        @Deprecated(
+            alternative="Try ExperimentalColumn.getDistinctValues instead.",
+            reason="The word 'unique' could imply that only values that occur exactly once are returned.",
+            sinceVersion="0.15.0",
+            removalVersion="0.16.0"
+        )
         @Pure
         @PythonName("get_unique_values")
         fun getUniqueValues() -> result1: List<T>
@@ -190,6 +196,12 @@ pipeline example {
          *     val hasMissingValues = column.hasMissingValues(); // false
          * }
          */
+        @Deprecated(
+            alternative="Column.missingValueCount() > 0.",
+            reason="Barely saves any characters.",
+            sinceVersion="0.15.0",
+            removalVersion="0.16.0"
+        )
         @Pure
         @PythonName("has_missing_values")
         fun hasMissingValues() -> hasMissingValues: Boolean
@@ -233,6 +245,24 @@ pipeline example {
         fun transform<R>(
             transformer: (value: T) -> transformedValue: R
         ) -> transformedColumn: Column<R>
+
+        /**
+         * Return a table with a number of statistical key values.
+         *
+         * The original Column is not modified.
+         *
+         * @result statistics The table with statistics.
+         *
+         * @example
+         * pipeline example {
+         *     // from safeds.data.tabular.containers import Column
+         *     // column = Column("a", [1, 3])
+         *     // column.summarize_statistics()
+         * }
+         */
+        @Pure
+        @PythonName("summarize_statistics")
+        fun summarizeStatistics() -> statistics: Table
 
         /**
          * Calculate Pearson correlation between this and another column. Both columns have to be numerical.
@@ -296,6 +326,12 @@ pipeline example {
          *     val maximum = column.maximum(); // 3
          * }
          */
+        @Deprecated(
+            alternative="Try ExperimentalColumn.max instead.",
+            reason="More concise.",
+            sinceVersion="0.15.0",
+            removalVersion="0.16.0"
+        )
         @Pure
         fun maximum() -> maximum: Float
 
@@ -344,6 +380,12 @@ pipeline example {
          *     val minimum = column.minimum(); // 1
          * }
          */
+        @Deprecated(
+            alternative="Try ExperimentalColumn.min instead.",
+            reason="More concise.",
+            sinceVersion="0.15.0",
+            removalVersion="0.16.0"
+        )
         @Pure
         fun minimum() -> minimum: Float
 
@@ -463,6 +505,12 @@ pipeline example {
          *     val sum = column.sum(); // 6
          * }
          */
+        @Deprecated(
+            alternative="None.",
+            reason="No use case.",
+            sinceVersion="0.15.0",
+            removalVersion="0.16.0"
+        )
         @Pure
         fun sum() -> sum: Float
 
@@ -491,12 +539,20 @@ pipeline example {
          *     val plot = column.plotBoxplot();
          * }
          */
+        @Deprecated(
+            alternative="Try ExperimentalColumn.plot.boxPlot instead.",
+            reason="Groups all plotting methods in one place.",
+            sinceVersion="0.15.0",
+            removalVersion="0.16.0"
+        )
         @Pure
         @PythonName("plot_boxplot")
         fun plotBoxplot() -> boxplot: Image
 
         /**
          * Plot a column in a histogram.
+         *
+         * @param numberOfBins The number of bins to use in the histogram. Default is 10.
          *
          * @result histogram The plot as an image.
          *
@@ -506,9 +562,79 @@ pipeline example {
          *     val plot = column.plotHistogram();
          * }
          */
+        @Deprecated(
+            alternative="Try ExperimentalColumn.plot.histogram instead.",
+            reason="Groups all plotting methods in one place.",
+            sinceVersion="0.15.0",
+            removalVersion="0.16.0"
+        )
         @Pure
         @PythonName("plot_histogram")
-        fun plotHistogram() -> histogram: Image
+        fun plotHistogram(
+            @PythonName("number_of_bins") numberOfBins: Int = 10
+        ) -> plot: Image
+
+        /**
+         * Create a plot comparing the numerical values of columns using IDs as the x-axis.
+         *
+         * @param columnList A list of time columns to be plotted.
+         *
+         * @result plot A plot with all the Columns plotted by the ID on the x-axis.
+         *
+         * @example
+         * pipeline example {
+         *     // from safeds.data.tabular.containers import Column
+         *     // col1 =Column("target", [4, 5, 6, 7, 8, 9, 10, 11, 12, 13])
+         *     // col2 =Column("target", [42, 51, 63, 71, 83, 91, 10, 11, 12, 13])
+         *     // image = col1.plot_compare_columns([col2])
+         * }
+         */
+        @Deprecated(
+            alternative="We still decide where to move this.",
+            reason="Groups all plotting methods in one place.",
+            sinceVersion="0.15.0",
+            removalVersion="0.16.0"
+        )
+        @Pure
+        @PythonName("plot_compare_columns")
+        fun plotCompareColumns(
+            @PythonName("column_list") columnList: List<Column<Any>>
+        ) -> plot: Image
+
+        /**
+         * Plot a lagplot for the given column.
+         *
+         * @param lag The amount of lag used to plot
+         *
+         * @result plot The plot as an image.
+         *
+         * @example
+         * pipeline example {
+         *     // from safeds.data.tabular.containers import Table
+         *     // table = Column("values", [1,2,3,4,3,2])
+         *     // image = table.plot_lagplot(2)
+         * }
+         */
+        @Deprecated(
+            alternative="Try ExperimentalColumn.plot.lagPlot instead.",
+            reason="Groups all plotting methods in one place.",
+            sinceVersion="0.15.0",
+            removalVersion="0.16.0"
+        )
+        @Pure
+        @PythonName("plot_lagplot")
+        fun plotLagplot(
+            lag: Int
+        ) -> plot: Image
+
+        /**
+         * Create a table that contains only this column.
+         *
+         * @result table The table with this column.
+         */
+        @Pure
+        @PythonName("to_table")
+        fun toTable() -> table: Table
 
         /**
          * Return an HTML representation of the column.
@@ -609,9 +735,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `column.sdsstub`"
+??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="111"
+    ```sds linenums="118"
     @Pure
     fun all(
         predicate: (value: T) -> matches: Boolean
@@ -649,9 +775,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `column.sdsstub`"
+??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="135"
+    ```sds linenums="142"
     @Pure
     fun any(
         predicate: (value: T) -> matches: Boolean
@@ -691,9 +817,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `column.sdsstub`"
+??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="244"
+    ```sds linenums="275"
     @Pure
     @PythonName("correlation_with")
     fun correlationWith(
@@ -701,7 +827,14 @@ pipeline example {
     ) -> correlation: Float
     ```
 
-## `#!sds fun` getUniqueValues {#safeds.data.tabular.containers.Column.getUniqueValues data-toc-label='getUniqueValues'}
+## :warning:{ title="Deprecated" } `#!sds fun` getUniqueValues {#safeds.data.tabular.containers.Column.getUniqueValues data-toc-label='getUniqueValues'}
+
+!!! warning "Deprecated"
+
+    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+
+    - **Alternative:** Try ExperimentalColumn.getDistinctValues instead.
+    - **Reason:** The word 'unique' could imply that only values that occur exactly once are returned.
 
 Return a list of all unique values in the column.
 
@@ -720,9 +853,15 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `column.sdsstub`"
+??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="69"
+    ```sds linenums="70"
+    @Deprecated(
+        alternative="Try ExperimentalColumn.getDistinctValues instead.",
+        reason="The word 'unique' could imply that only values that occur exactly once are returned.",
+        sinceVersion="0.15.0",
+        removalVersion="0.16.0"
+    )
     @Pure
     @PythonName("get_unique_values")
     fun getUniqueValues() -> result1: List<T>
@@ -753,9 +892,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `column.sdsstub`"
+??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="86"
+    ```sds linenums="93"
     @Pure
     @PythonName("get_value")
     fun getValue(
@@ -763,7 +902,14 @@ pipeline example {
     ) -> result1: T
     ```
 
-## `#!sds fun` hasMissingValues {#safeds.data.tabular.containers.Column.hasMissingValues data-toc-label='hasMissingValues'}
+## :warning:{ title="Deprecated" } `#!sds fun` hasMissingValues {#safeds.data.tabular.containers.Column.hasMissingValues data-toc-label='hasMissingValues'}
+
+!!! warning "Deprecated"
+
+    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+
+    - **Alternative:** Column.missingValueCount() > 0.
+    - **Reason:** Barely saves any characters.
 
 Return whether the column has missing values.
 
@@ -788,9 +934,15 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `column.sdsstub`"
+??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="181"
+    ```sds linenums="188"
+    @Deprecated(
+        alternative="Column.missingValueCount() > 0.",
+        reason="Barely saves any characters.",
+        sinceVersion="0.15.0",
+        removalVersion="0.16.0"
+    )
     @Pure
     @PythonName("has_missing_values")
     fun hasMissingValues() -> hasMissingValues: Boolean
@@ -827,14 +979,21 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `column.sdsstub`"
+??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="273"
+    ```sds linenums="304"
     @Pure
     fun idness() -> idness: Float
     ```
 
-## `#!sds fun` maximum {#safeds.data.tabular.containers.Column.maximum data-toc-label='maximum'}
+## :warning:{ title="Deprecated" } `#!sds fun` maximum {#safeds.data.tabular.containers.Column.maximum data-toc-label='maximum'}
+
+!!! warning "Deprecated"
+
+    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+
+    - **Alternative:** Try ExperimentalColumn.max instead.
+    - **Reason:** More concise.
 
 Return the maximum value of the column. The column has to be numerical.
 
@@ -853,9 +1012,15 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `column.sdsstub`"
+??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="287"
+    ```sds linenums="318"
+    @Deprecated(
+        alternative="Try ExperimentalColumn.max instead.",
+        reason="More concise.",
+        sinceVersion="0.15.0",
+        removalVersion="0.16.0"
+    )
     @Pure
     fun maximum() -> maximum: Float
     ```
@@ -879,9 +1044,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `column.sdsstub`"
+??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="301"
+    ```sds linenums="338"
     @Pure
     fun mean() -> mean: Float
     ```
@@ -911,14 +1076,21 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `column.sdsstub`"
+??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="321"
+    ```sds linenums="358"
     @Pure
     fun median() -> median: Float
     ```
 
-## `#!sds fun` minimum {#safeds.data.tabular.containers.Column.minimum data-toc-label='minimum'}
+## :warning:{ title="Deprecated" } `#!sds fun` minimum {#safeds.data.tabular.containers.Column.minimum data-toc-label='minimum'}
+
+!!! warning "Deprecated"
+
+    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+
+    - **Alternative:** Try ExperimentalColumn.min instead.
+    - **Reason:** More concise.
 
 Return the minimum value of the column. The column has to be numerical.
 
@@ -937,9 +1109,15 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `column.sdsstub`"
+??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="335"
+    ```sds linenums="372"
+    @Deprecated(
+        alternative="Try ExperimentalColumn.min instead.",
+        reason="More concise.",
+        sinceVersion="0.15.0",
+        removalVersion="0.16.0"
+    )
     @Pure
     fun minimum() -> minimum: Float
     ```
@@ -969,9 +1147,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `column.sdsstub`"
+??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="355"
+    ```sds linenums="398"
     @Pure
     @PythonName("missing_value_count")
     fun missingValueCount() -> count: Int
@@ -1002,9 +1180,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `column.sdsstub`"
+??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="376"
+    ```sds linenums="419"
     @Pure
     @PythonName("missing_value_ratio")
     fun missingValueRatio() -> missinValueRatio: Float
@@ -1035,9 +1213,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `column.sdsstub`"
+??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="397"
+    ```sds linenums="440"
     @Pure
     fun mode() -> mode: List<T>
     ```
@@ -1073,16 +1251,23 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `column.sdsstub`"
+??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="159"
+    ```sds linenums="166"
     @Pure
     fun none(
         predicate: (value: T) -> matches: Boolean
     ) -> noneMatch: Boolean
     ```
 
-## `#!sds fun` plotBoxplot {#safeds.data.tabular.containers.Column.plotBoxplot data-toc-label='plotBoxplot'}
+## :warning:{ title="Deprecated" } `#!sds fun` plotBoxplot {#safeds.data.tabular.containers.Column.plotBoxplot data-toc-label='plotBoxplot'}
+
+!!! warning "Deprecated"
+
+    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+
+    - **Alternative:** Try ExperimentalColumn.plot.boxPlot instead.
+    - **Reason:** Groups all plotting methods in one place.
 
 Plot this column in a boxplot. This function can only plot real numerical data.
 
@@ -1101,23 +1286,92 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `column.sdsstub`"
+??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="482"
+    ```sds linenums="531"
+    @Deprecated(
+        alternative="Try ExperimentalColumn.plot.boxPlot instead.",
+        reason="Groups all plotting methods in one place.",
+        sinceVersion="0.15.0",
+        removalVersion="0.16.0"
+    )
     @Pure
     @PythonName("plot_boxplot")
     fun plotBoxplot() -> boxplot: Image
     ```
 
-## `#!sds fun` plotHistogram {#safeds.data.tabular.containers.Column.plotHistogram data-toc-label='plotHistogram'}
+## :warning:{ title="Deprecated" } `#!sds fun` plotCompareColumns {#safeds.data.tabular.containers.Column.plotCompareColumns data-toc-label='plotCompareColumns'}
 
-Plot a column in a histogram.
+!!! warning "Deprecated"
+
+    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+
+    - **Alternative:** We still decide where to move this.
+    - **Reason:** Groups all plotting methods in one place.
+
+Create a plot comparing the numerical values of columns using IDs as the x-axis.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `columnList` | [`List<Column<Any>>`][safeds.lang.List] | A list of time columns to be plotted. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `histogram` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
+| `plot` | [`Image`][safeds.data.image.containers.Image] | A plot with all the Columns plotted by the ID on the x-axis. |
+
+**Examples:**
+
+```sds
+pipeline example {
+    // from safeds.data.tabular.containers import Column
+    // col1 =Column("target", [4, 5, 6, 7, 8, 9, 10, 11, 12, 13])
+    // col2 =Column("target", [42, 51, 63, 71, 83, 91, 10, 11, 12, 13])
+    // image = col1.plot_compare_columns([col2])
+}
+```
+
+??? quote "Stub code in `Column.sdsstub`"
+
+    ```sds linenums="581"
+    @Deprecated(
+        alternative="We still decide where to move this.",
+        reason="Groups all plotting methods in one place.",
+        sinceVersion="0.15.0",
+        removalVersion="0.16.0"
+    )
+    @Pure
+    @PythonName("plot_compare_columns")
+    fun plotCompareColumns(
+        @PythonName("column_list") columnList: List<Column<Any>>
+    ) -> plot: Image
+    ```
+
+## :warning:{ title="Deprecated" } `#!sds fun` plotHistogram {#safeds.data.tabular.containers.Column.plotHistogram data-toc-label='plotHistogram'}
+
+!!! warning "Deprecated"
+
+    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+
+    - **Alternative:** Try ExperimentalColumn.plot.histogram instead.
+    - **Reason:** Groups all plotting methods in one place.
+
+Plot a column in a histogram.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `numberOfBins` | [`Int`][safeds.lang.Int] | The number of bins to use in the histogram. Default is 10. | `#!sds 10` |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `plot` | [`Image`][safeds.data.image.containers.Image] | - |
 
 **Examples:**
 
@@ -1128,12 +1382,69 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `column.sdsstub`"
+??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="497"
+    ```sds linenums="554"
+    @Deprecated(
+        alternative="Try ExperimentalColumn.plot.histogram instead.",
+        reason="Groups all plotting methods in one place.",
+        sinceVersion="0.15.0",
+        removalVersion="0.16.0"
+    )
     @Pure
     @PythonName("plot_histogram")
-    fun plotHistogram() -> histogram: Image
+    fun plotHistogram(
+        @PythonName("number_of_bins") numberOfBins: Int = 10
+    ) -> plot: Image
+    ```
+
+## :warning:{ title="Deprecated" } `#!sds fun` plotLagplot {#safeds.data.tabular.containers.Column.plotLagplot data-toc-label='plotLagplot'}
+
+!!! warning "Deprecated"
+
+    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+
+    - **Alternative:** Try ExperimentalColumn.plot.lagPlot instead.
+    - **Reason:** Groups all plotting methods in one place.
+
+Plot a lagplot for the given column.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `lag` | [`Int`][safeds.lang.Int] | The amount of lag used to plot | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `plot` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
+
+**Examples:**
+
+```sds
+pipeline example {
+    // from safeds.data.tabular.containers import Table
+    // table = Column("values", [1,2,3,4,3,2])
+    // image = table.plot_lagplot(2)
+}
+```
+
+??? quote "Stub code in `Column.sdsstub`"
+
+    ```sds linenums="607"
+    @Deprecated(
+        alternative="Try ExperimentalColumn.plot.lagPlot instead.",
+        reason="Groups all plotting methods in one place.",
+        sinceVersion="0.15.0",
+        removalVersion="0.16.0"
+    )
+    @Pure
+    @PythonName("plot_lagplot")
+    fun plotLagplot(
+        lag: Int
+    ) -> plot: Image
     ```
 
 ## `#!sds fun` rename {#safeds.data.tabular.containers.Column.rename data-toc-label='rename'}
@@ -1163,9 +1474,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `column.sdsstub`"
+??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="200"
+    ```sds linenums="213"
     @Pure
     fun rename(
         @PythonName("new_name") newName: String
@@ -1205,9 +1516,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `column.sdsstub`"
+??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="425"
+    ```sds linenums="468"
     @Pure
     fun stability() -> stability: Float
     ```
@@ -1231,15 +1542,22 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `column.sdsstub`"
+??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="439"
+    ```sds linenums="482"
     @Pure
     @PythonName("standard_deviation")
     fun standardDeviation() -> standardDeviation: Float
     ```
 
-## `#!sds fun` sum {#safeds.data.tabular.containers.Column.sum data-toc-label='sum'}
+## :warning:{ title="Deprecated" } `#!sds fun` sum {#safeds.data.tabular.containers.Column.sum data-toc-label='sum'}
+
+!!! warning "Deprecated"
+
+    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+
+    - **Alternative:** None.
+    - **Reason:** No use case.
 
 Return the sum of the column. The column has to be numerical.
 
@@ -1258,11 +1576,47 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `column.sdsstub`"
+??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="454"
+    ```sds linenums="497"
+    @Deprecated(
+        alternative="None.",
+        reason="No use case.",
+        sinceVersion="0.15.0",
+        removalVersion="0.16.0"
+    )
     @Pure
     fun sum() -> sum: Float
+    ```
+
+## `#!sds fun` summarizeStatistics {#safeds.data.tabular.containers.Column.summarizeStatistics data-toc-label='summarizeStatistics'}
+
+Return a table with a number of statistical key values.
+
+The original Column is not modified.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `statistics` | [`Table`][safeds.data.tabular.containers.Table] | The table with statistics. |
+
+**Examples:**
+
+```sds
+pipeline example {
+    // from safeds.data.tabular.containers import Column
+    // column = Column("a", [1, 3])
+    // column.summarize_statistics()
+}
+```
+
+??? quote "Stub code in `Column.sdsstub`"
+
+    ```sds linenums="252"
+    @Pure
+    @PythonName("summarize_statistics")
+    fun summarizeStatistics() -> statistics: Table
     ```
 
 ## `#!sds fun` toHtml {#safeds.data.tabular.containers.Column.toHtml data-toc-label='toHtml'}
@@ -1284,12 +1638,30 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `column.sdsstub`"
+??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="512"
+    ```sds linenums="639"
     @Pure
     @PythonName("to_html")
     fun toHtml() -> html: String
+    ```
+
+## `#!sds fun` toTable {#safeds.data.tabular.containers.Column.toTable data-toc-label='toTable'}
+
+Create a table that contains only this column.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `table` | [`Table`][safeds.data.tabular.containers.Table] | The table with this column. |
+
+??? quote "Stub code in `Column.sdsstub`"
+
+    ```sds linenums="624"
+    @Pure
+    @PythonName("to_table")
+    fun toTable() -> table: Table
     ```
 
 ## `#!sds fun` transform {#safeds.data.tabular.containers.Column.transform data-toc-label='transform'}
@@ -1325,9 +1697,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `column.sdsstub`"
+??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="220"
+    ```sds linenums="233"
     @Pure
     fun transform<R>(
         transformer: (value: T) -> transformedValue: R
@@ -1353,9 +1725,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `column.sdsstub`"
+??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="468"
+    ```sds linenums="517"
     @Pure
     fun variance() -> variance: Float
     ```

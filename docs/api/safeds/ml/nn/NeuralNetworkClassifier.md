@@ -1,12 +1,14 @@
 # :test_tube:{ title="Experimental" } `#!sds class` NeuralNetworkClassifier {#safeds.ml.nn.NeuralNetworkClassifier data-toc-label='NeuralNetworkClassifier'}
 
+A NeuralNetworkClassifier is a neural network that is used for classification tasks.
+
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `inputConversion` | [`InputConversion<FitIn, PredictIn>`][safeds.ml.nn.InputConversion] | - | - |
-| `layers` | [`List<Layer>`][safeds.lang.List] | - | - |
-| `outputConversion` | [`OutputConversion<PredictIn, PredictOut>`][safeds.ml.nn.OutputConversion] | - | - |
+| `inputConversion` | [`InputConversion<FitIn, PredictIn>`][safeds.ml.nn.InputConversion] | to convert the input data for the neural network | - |
+| `layers` | [`List<Layer>`][safeds.lang.List] | a list of layers for the neural network to learn | - |
+| `outputConversion` | [`OutputConversion<PredictIn, PredictOut>`][safeds.ml.nn.OutputConversion] | to convert the output data of the neural network back | - |
 
 **Type parameters:**
 
@@ -16,9 +18,9 @@
 | `PredictIn` | [`Any?`][safeds.lang.Any] | - | - |
 | `PredictOut` | [`Any?`][safeds.lang.Any] | - | - |
 
-??? quote "Stub code in `classifier.sdsstub`"
+??? quote "Stub code in `NeuralNetworkClassifier.sdsstub`"
 
-    ```sds linenums="8"
+    ```sds linenums="15"
     class NeuralNetworkClassifier<FitIn, PredictIn, PredictOut>(
         @PythonName("input_conversion") inputConversion: InputConversion<FitIn, PredictIn>,
         layers: List<Layer>,
@@ -119,9 +121,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `classifier.sdsstub`"
+??? quote "Stub code in `NeuralNetworkClassifier.sdsstub`"
 
-    ```sds linenums="37"
+    ```sds linenums="44"
     @Pure
     fun fit(
         @PythonName("train_data") trainData: FitIn,
@@ -162,9 +164,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `classifier.sdsstub`"
+??? quote "Stub code in `NeuralNetworkClassifier.sdsstub`"
 
-    ```sds linenums="64"
+    ```sds linenums="71"
     @Pure
     fun predict(
         @PythonName("test_data") testData: PredictIn

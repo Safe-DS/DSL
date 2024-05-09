@@ -14,13 +14,13 @@ from safeds.data.tabular.typing import ExperimentalSchema
  *
  * To create a `Table` call the constructor or use one of the following static methods:
  *
- * | Method                                                                                                      | Description                            |
- * | ----------------------------------------------------------------------------------------------------------- | -------------------------------------- |
- * | [from_csv_file][safeds.data.tabular.containers._experimental_table.ExperimentalTable.from_csv_file]         | Create a table from a CSV file.        |
- * | [from_json_file][safeds.data.tabular.containers._experimental_table.ExperimentalTable.from_json_file]       | Create a table from a JSON file.       |
- * | [from_parquet_file][safeds.data.tabular.containers._experimental_table.ExperimentalTable.from_parquet_file] | Create a table from a Parquet file.    |
- * | [from_columns][safeds.data.tabular.containers._experimental_table.ExperimentalTable.from_columns]           | Create a table from a list of columns. |
- * | [from_dict][safeds.data.tabular.containers._experimental_table.ExperimentalTable.from_dict]                 | Create a table from a dictionary.      |
+ * | Method                                                                              | Description                            |
+ * | ------------------------------------------------------------------------------------| -------------------------------------- |
+ * | [fromCsvFile][safeds.data.tabular.containers.ExperimentalTable.fromCsvFile]         | Create a table from a CSV file.        |
+ * | [fromJsonFile][safeds.data.tabular.containers.ExperimentalTable.fromJsonFile]       | Create a table from a JSON file.       |
+ * | [fromParquetFile][safeds.data.tabular.containers.ExperimentalTable.fromParquetFile] | Create a table from a Parquet file.    |
+ * | [fromColumns][safeds.data.tabular.containers.ExperimentalTable.fromColumns]         | Create a table from a list of columns. |
+ * | [fromMap][safeds.data.tabular.containers.ExperimentalTable.fromMap]                 | Create a table from a dictionary.      |
  *
  * @param data The data of the table. If None, an empty table is created.
  *

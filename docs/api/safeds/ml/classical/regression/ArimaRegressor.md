@@ -10,9 +10,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `arima.sdsstub`"
+??? quote "Stub code in `ArimaRegressor.sdsstub`"
 
-    ```sds linenums="13"
+    ```sds linenums="16"
     class ArimaRegressor() {
         /**
          * Whether the regressor is fitted.
@@ -30,7 +30,7 @@ pipeline example {
          */
         @Pure
         fun fit(
-            @PythonName("time_series") timeSeries: TimeSeries
+            @PythonName("time_series") timeSeries: TimeSeriesDataset
         ) -> fittedArima: ArimaRegressor
 
         /**
@@ -42,8 +42,8 @@ pipeline example {
          */
         @Pure
         fun predict(
-            @PythonName("time_series") timeSeries: TimeSeries
-        ) -> timeSeries: TimeSeries
+            @PythonName("time_series") timeSeries: TimeSeriesDataset
+        ) -> timeSeries: TimeSeriesDataset
 
         /**
          * Plot the predictions of the trained model to the given target of the time series. So you can see the predictions and the actual values in one plot.
@@ -55,7 +55,7 @@ pipeline example {
         @Pure
         @PythonName("plot_predictions")
         fun plotPredictions(
-            @PythonName("test_series") testSeries: TimeSeries
+            @PythonName("test_series") testSeries: TimeSeriesDataset
         ) -> image: Image
     }
     ```
@@ -76,7 +76,7 @@ This ARIMA Model is not modified.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `timeSeries` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | The time series containing the target column, which will be used. | - |
+| `timeSeries` | [`TimeSeriesDataset`][safeds.data.labeled.containers.TimeSeriesDataset] | The time series containing the target column, which will be used. | - |
 
 **Results:**
 
@@ -84,12 +84,12 @@ This ARIMA Model is not modified.
 |------|------|-------------|
 | `fittedArima` | [`ArimaRegressor`][safeds.ml.classical.regression.ArimaRegressor] | The fitted ARIMA Model. |
 
-??? quote "Stub code in `arima.sdsstub`"
+??? quote "Stub code in `ArimaRegressor.sdsstub`"
 
-    ```sds linenums="28"
+    ```sds linenums="31"
     @Pure
     fun fit(
-        @PythonName("time_series") timeSeries: TimeSeries
+        @PythonName("time_series") timeSeries: TimeSeriesDataset
     ) -> fittedArima: ArimaRegressor
     ```
 
@@ -101,7 +101,7 @@ Plot the predictions of the trained model to the given target of the time series
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `testSeries` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | The time series containing the target vector. | - |
+| `testSeries` | [`TimeSeriesDataset`][safeds.data.labeled.containers.TimeSeriesDataset] | The time series containing the target vector. | - |
 
 **Results:**
 
@@ -109,13 +109,13 @@ Plot the predictions of the trained model to the given target of the time series
 |------|------|-------------|
 | `image` | [`Image`][safeds.data.image.containers.Image] | Plots predictions of the given time series to the given target Column |
 
-??? quote "Stub code in `arima.sdsstub`"
+??? quote "Stub code in `ArimaRegressor.sdsstub`"
 
-    ```sds linenums="52"
+    ```sds linenums="55"
     @Pure
     @PythonName("plot_predictions")
     fun plotPredictions(
-        @PythonName("test_series") testSeries: TimeSeries
+        @PythonName("test_series") testSeries: TimeSeriesDataset
     ) -> image: Image
     ```
 
@@ -127,19 +127,19 @@ Predict a target vector using a time series target column. The model has to be t
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `timeSeries` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | The test dataset of the time series. | - |
+| `timeSeries` | [`TimeSeriesDataset`][safeds.data.labeled.containers.TimeSeriesDataset] | The test dataset of the time series. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `timeSeries` | [`TimeSeries`][safeds.data.tabular.containers.TimeSeries] | A timeseries containing the predicted target vector and a time dummy as time column. |
+| `timeSeries` | [`TimeSeriesDataset`][safeds.data.labeled.containers.TimeSeriesDataset] | A timeseries containing the predicted target vector and a time dummy as time column. |
 
-??? quote "Stub code in `arima.sdsstub`"
+??? quote "Stub code in `ArimaRegressor.sdsstub`"
 
-    ```sds linenums="40"
+    ```sds linenums="43"
     @Pure
     fun predict(
-        @PythonName("time_series") timeSeries: TimeSeries
-    ) -> timeSeries: TimeSeries
+        @PythonName("time_series") timeSeries: TimeSeriesDataset
+    ) -> timeSeries: TimeSeriesDataset
     ```
