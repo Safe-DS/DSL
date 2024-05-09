@@ -1,0 +1,43 @@
+package safeds.data.image.typing
+
+from safeds.data.image.containers import Image
+
+/**
+ * A container for image size data.
+ *
+ * @param width the width of the image
+ * @param height the height of the image
+ * @param channel the channel of the image
+ */
+class ImageSize(
+    width: Int,
+    height: Int,
+    channel: Int,
+    @PythonName("_ignore_invalid_channel") ignoreInvalidChannel: Boolean = false
+) {
+    /**
+     * Get the width of this `ImageSize` in pixels.
+     */
+    attr width: Int
+    /**
+     * Get the height of this `ImageSize` in pixels.
+     */
+    attr height: Int
+    /**
+     * Get the channel of this `ImageSize` in pixels.
+     */
+    attr channel: Int
+
+    /**
+     * Create a `ImageSize` of a given image.
+     *
+     * @param image the given image for the `ImageSize`
+     *
+     * @result imageSize the calculated `ImageSize`
+     */
+    @Pure
+    @PythonName("from_image")
+    static fun fromImage(
+        image: Image
+    ) -> imageSize: ImageSize
+}

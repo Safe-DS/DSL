@@ -1,0 +1,507 @@
+package safeds.data.tabular.containers
+
+from safeds.data.tabular.containers import ExperimentalTable
+from safeds.data.tabular.plotting import ExperimentalColumnPlotter
+from safeds.data.tabular.typing import ExperimentalDataType
+
+/**
+ * A named, one-dimensional collection of homogeneous values.
+ *
+ * @param name The name of the column.
+ * @param data The data of the column. If None, an empty column is created.
+ *
+ * @example
+ * pipeline example {
+ *     // from safeds.data.tabular.containers import ExperimentalColumn
+ *     // ExperimentalColumn("test", [1, 2, 3])
+ * }
+ */
+@Experimental
+class ExperimentalColumn<T>(
+    name: String,
+    data: List<T>? = null
+) {
+    /**
+     * Whether the column is numeric.
+     */
+    @PythonName("is_numeric") attr isNumeric: Boolean
+    /**
+     * Whether the column is temporal.
+     */
+    @PythonName("is_temporal") attr isTemporal: Boolean
+    /**
+     * The name of the column.
+     */
+    attr name: String
+    /**
+     * The number of rows in the column.
+     */
+    @PythonName("number_of_rows") attr numberOfRows: Int
+    /**
+     * The plotter for the column.
+     */
+    attr plot: ExperimentalColumnPlotter
+    /**
+     * The type of the column.
+     */
+    attr type: ExperimentalDataType
+
+    /**
+     * Return the distinct values in the column.
+     *
+     * @result distinctValues The distinct values in the column.
+     *
+     * @example
+     * pipeline example {
+     *     // from safeds.data.tabular.containers import ExperimentalColumn
+     *     // column = ExperimentalColumn("test", [1, 2, 3, 2])
+     *     // column.get_distinct_values()
+     * }
+     */
+    @Pure
+    @PythonName("get_distinct_values")
+    fun getDistinctValues() -> distinctValues: List<T>
+
+    /**
+     * Return the column value at specified index. Indexing starts at 0.
+     *
+     * @param index Index of requested value.
+     *
+     * @result value Value at index.
+     *
+     * @example
+     * pipeline example {
+     *     // from safeds.data.tabular.containers import ExperimentalColumn
+     *     // column = ExperimentalColumn("test", [1, 2, 3])
+     *     // column.get_value(1)
+     * }
+     */
+    @Pure
+    @PythonName("get_value")
+    fun getValue(
+        index: Int
+    ) -> value: T
+
+    /**
+     * Return whether all values in the column satisfy the predicate.
+     *
+     * @param predicate The predicate to apply to each value.
+     *
+     * @result allSatisfyPredicate Whether all values in the column satisfy the predicate.
+     *
+     * @example
+     * pipeline example {
+     *     // from safeds.data.tabular.containers import ExperimentalColumn
+     *     // column = ExperimentalColumn("test", [1, 2, 3])
+     *     // column.all(lambda cell: cell > 0)
+     * }
+     */
+    @Pure
+    fun all(
+        predicate: (param1: ExperimentalCell<T>) -> result1: ExperimentalCell<Boolean>
+    ) -> allSatisfyPredicate: Boolean
+
+    /**
+     * Return whether any value in the column satisfies the predicate.
+     *
+     * @param predicate The predicate to apply to each value.
+     *
+     * @result anySatisfyPredicate Whether any value in the column satisfies the predicate.
+     *
+     * @example
+     * pipeline example {
+     *     // from safeds.data.tabular.containers import ExperimentalColumn
+     *     // column = ExperimentalColumn("test", [1, 2, 3])
+     *     // column.any(lambda cell: cell > 2)
+     * }
+     */
+    @Pure
+    fun any(
+        predicate: (param1: ExperimentalCell<T>) -> result1: ExperimentalCell<Boolean>
+    ) -> anySatisfyPredicate: Boolean
+
+    /**
+     * Return how many values in the column satisfy the predicate.
+     *
+     * @param predicate The predicate to apply to each value.
+     *
+     * @result count The number of values in the column that satisfy the predicate.
+     *
+     * @example
+     * pipeline example {
+     *     // from safeds.data.tabular.containers import ExperimentalColumn
+     *     // column = ExperimentalColumn("test", [1, 2, 3])
+     *     // column.count(lambda cell: cell > 1)
+     * }
+     */
+    @Pure
+    fun count(
+        predicate: (param1: ExperimentalCell<T>) -> result1: ExperimentalCell<Boolean>
+    ) -> count: Int
+
+    /**
+     * Return whether no value in the column satisfies the predicate.
+     *
+     * @param predicate The predicate to apply to each value.
+     *
+     * @result noneSatisfyPredicate Whether no value in the column satisfies the predicate.
+     *
+     * @example
+     * pipeline example {
+     *     // from safeds.data.tabular.containers import ExperimentalColumn
+     *     // column = ExperimentalColumn("test", [1, 2, 3])
+     *     // column.none(lambda cell: cell < 0)
+     * }
+     */
+    @Pure
+    fun none(
+        predicate: (param1: ExperimentalCell<T>) -> result1: ExperimentalCell<Boolean>
+    ) -> noneSatisfyPredicate: Boolean
+
+    /**
+     * Return a new column with a new name.
+     *
+     * The original column is not modified.
+     *
+     * @param newName The new name of the column.
+     *
+     * @result renamedColumn A new column with the new name.
+     *
+     * @example
+     * pipeline example {
+     *     // from safeds.data.tabular.containers import ExperimentalColumn
+     *     // column = ExperimentalColumn("test", [1, 2, 3])
+     *     // column.rename("new_name")
+     * }
+     */
+    @Pure
+    fun rename(
+        @PythonName("new_name") newName: String
+    ) -> renamedColumn: ExperimentalColumn<T>
+
+    /**
+     * Return a new column with values transformed by the transformer.
+     *
+     * The original column is not modified.
+     *
+     * @param transformer The transformer to apply to each value.
+     *
+     * @result transformedColumn A new column with transformed values.
+     *
+     * @example
+     * pipeline example {
+     *     // from safeds.data.tabular.containers import ExperimentalColumn
+     *     // column = ExperimentalColumn("test", [1, 2, 3])
+     *     // column.transform(lambda cell: 2 * cell)
+     * }
+     */
+    @Pure
+    fun transform<R>(
+        transformer: (param1: ExperimentalCell<T>) -> result1: ExperimentalCell<R>
+    ) -> transformedColumn: ExperimentalColumn<R>
+
+    /**
+     * Return a table with important statistics about the column.
+     *
+     * @result statistics The table with statistics.
+     *
+     * @example
+     * pipeline example {
+     *     // from safeds.data.tabular.containers import ExperimentalColumn
+     *     // column = ExperimentalColumn("a", [1, 3])
+     *     // column.summarize_statistics()
+     * }
+     */
+    @Pure
+    @PythonName("summarize_statistics")
+    fun summarizeStatistics() -> statistics: ExperimentalTable
+
+    /**
+     * Calculate the Pearson correlation between this column and another column.
+     *
+     * The Pearson correlation is a value between -1 and 1 that indicates how much the two columns are linearly related:
+     * * A correlation of -1 indicates a perfect negative linear relationship.
+     * * A correlation of 0 indicates no linear relationship.
+     * * A correlation of 1 indicates a perfect positive linear relationship.
+     *
+     * @param other The other column to calculate the correlation with.
+     *
+     * @result correlation The Pearson correlation between the two columns.
+     *
+     * @example
+     * pipeline example {
+     *     // from safeds.data.tabular.containers import ExperimentalColumn
+     *     // column1 = ExperimentalColumn("test", [1, 2, 3])
+     *     // column2 = ExperimentalColumn("test", [2, 4, 6])
+     *     // column1.correlation_with(column2)
+     * }
+     */
+    @Pure
+    @PythonName("correlation_with")
+    fun correlationWith(
+        other: ExperimentalColumn<Any>
+    ) -> correlation: Float
+
+    /**
+     * Return the number of distinct values in the column.
+     *
+     * @result distinctValueCount The number of distinct values in the column.
+     *
+     * @example
+     * pipeline example {
+     *     // from safeds.data.tabular.containers import ExperimentalColumn
+     *     // column = ExperimentalColumn("test", [1, 2, 3, 2])
+     *     // column.distinct_value_count()
+     * }
+     */
+    @Pure
+    @PythonName("distinct_value_count")
+    fun distinctValueCount() -> distinctValueCount: Int
+
+    /**
+     * Calculate the idness of this column.
+     *
+     * We define the idness as the number of distinct values divided by the number of rows. If the column is empty,
+     * the idness is 1.0.
+     *
+     * A high idness indicates that the column most values in the column are unique. In this case, you must be careful
+     * when using the column for analysis, as a model may learn a mapping from this column to the target.
+     *
+     * @result idness The idness of the column.
+     *
+     * @example
+     * pipeline example {
+     *     // from safeds.data.tabular.containers import ExperimentalColumn
+     *     // column1 = ExperimentalColumn("test", [1, 2, 3])
+     *     // column1.idness()
+     * }
+     */
+    @Pure
+    fun idness() -> idness: Float
+
+    /**
+     * Return the maximum value in the column.
+     *
+     * @result max The maximum value in the column.
+     *
+     * @example
+     * pipeline example {
+     *     // from safeds.data.tabular.containers import ExperimentalColumn
+     *     // column = ExperimentalColumn("test", [1, 2, 3])
+     *     // column.max()
+     * }
+     */
+    @Pure
+    fun max() -> max: T
+
+    /**
+     * Return the mean of the values in the column.
+     *
+     * The mean is the sum of the values divided by the number of values.
+     *
+     * @result mean The mean of the values in the column.
+     *
+     * @example
+     * pipeline example {
+     *     // from safeds.data.tabular.containers import ExperimentalColumn
+     *     // column = ExperimentalColumn("test", [1, 2, 3])
+     *     // column.mean()
+     * }
+     */
+    @Pure
+    fun mean() -> mean: T
+
+    /**
+     * Return the median of the values in the column.
+     *
+     * The median is the value in the middle of the sorted list of values. If the number of values is even, the median
+     * is the mean of the two middle values.
+     *
+     * @result median The median of the values in the column.
+     *
+     * @example
+     * pipeline example {
+     *     // from safeds.data.tabular.containers import ExperimentalColumn
+     *     // column = ExperimentalColumn("test", [1, 2, 3])
+     *     // column.median()
+     * }
+     */
+    @Pure
+    fun median() -> median: T
+
+    /**
+     * Return the minimum value in the column.
+     *
+     * @result min The minimum value in the column.
+     *
+     * @example
+     * pipeline example {
+     *     // from safeds.data.tabular.containers import ExperimentalColumn
+     *     // column = ExperimentalColumn("test", [1, 2, 3])
+     *     // column.min()
+     * }
+     */
+    @Pure
+    fun min() -> min: T
+
+    /**
+     * Return the number of missing values in the column.
+     *
+     * @result missingValueCount The number of missing values in the column.
+     *
+     * @example
+     * pipeline example {
+     *     // from safeds.data.tabular.containers import ExperimentalColumn
+     *     // column = ExperimentalColumn("test", [1, None, 3])
+     *     // column.missing_value_count()
+     * }
+     */
+    @Pure
+    @PythonName("missing_value_count")
+    fun missingValueCount() -> missingValueCount: Int
+
+    /**
+     * Return the missing value ratio.
+     *
+     * We define the missing value ratio as the number of missing values in the column divided by the number of rows.
+     * If the column is empty, the missing value ratio is 1.0.
+     *
+     * A high missing value ratio indicates that the column is dominated by missing values. In this case, the column
+     * may not be useful for analysis.
+     *
+     * @result missingValueRatio The ratio of missing values in the column.
+     */
+    @Pure
+    @PythonName("missing_value_ratio")
+    fun missingValueRatio() -> missingValueRatio: Float
+
+    /**
+     * Return the mode of the values in the column.
+     *
+     * The mode is the value that appears most frequently in the column. If multiple values occur equally often, all
+     * of them are returned. The values are sorted in ascending order.
+     *
+     * @result mode The mode of the values in the column.
+     *
+     * @example
+     * pipeline example {
+     *     // from safeds.data.tabular.containers import ExperimentalColumn
+     *     // column = ExperimentalColumn("test", [3, 1, 2, 1, 3])
+     *     // column.mode()
+     * }
+     */
+    @Pure
+    fun mode() -> mode: ExperimentalColumn<T>
+
+    /**
+     * Return the stability of the column.
+     *
+     * We define the stability as the number of occurrences of the most common non-missing value divided by the total
+     * number of non-missing values. If the column is empty or all values are missing, the stability is 1.0.
+     *
+     * A high stability indicates that the column is dominated by a single value. In this case, the column may not be
+     * useful for analysis.
+     *
+     * @result stability The stability of the column.
+     *
+     * @example
+     * pipeline example {
+     *     // from safeds.data.tabular.containers import ExperimentalColumn
+     *     // column = ExperimentalColumn("test", [1, 1, 2, 3, None])
+     *     // column.stability()
+     * }
+     */
+    @Pure
+    fun stability() -> stability: Float
+
+    /**
+     * Return the standard deviation of the values in the column.
+     *
+     * The standard deviation is the square root of the variance.
+     *
+     * @result standardDeviation The standard deviation of the values in the column. If no standard deviation can be calculated due to the
+     * type of the column, None is returned.
+     *
+     * @example
+     * pipeline example {
+     *     // from safeds.data.tabular.containers import ExperimentalColumn
+     *     // column = ExperimentalColumn("test", [1, 2, 3])
+     *     // column.standard_deviation()
+     * }
+     */
+    @Pure
+    @PythonName("standard_deviation")
+    fun standardDeviation() -> standardDeviation: Float?
+
+    /**
+     * Return the variance of the values in the column.
+     *
+     * The variance is the average of the squared differences from the mean.
+     *
+     * @result variance The variance of the values in the column. If no variance can be calculated due to the type of the column,
+     * None is returned.
+     *
+     * @example
+     * pipeline example {
+     *     // from safeds.data.tabular.containers import ExperimentalColumn
+     *     // column = ExperimentalColumn("test", [1, 2, 3])
+     *     // column.variance()
+     * }
+     */
+    @Pure
+    fun variance() -> variance: Float?
+
+    /**
+     * Return the values of the column in a list.
+     *
+     * @result values The values of the column in a list.
+     *
+     * @example
+     * pipeline example {
+     *     // from safeds.data.tabular.containers import ExperimentalColumn
+     *     // column = ExperimentalColumn("test", [1, 2, 3])
+     *     // column.to_list()
+     * }
+     */
+    @Pure
+    @PythonName("to_list")
+    fun toList() -> values: List<T>
+
+    /**
+     * Create a table that contains only this column.
+     *
+     * @result table The table with this column.
+     *
+     * @example
+     * pipeline example {
+     *     // from safeds.data.tabular.containers import ExperimentalColumn
+     *     // column = ExperimentalColumn("test", [1, 2, 3])
+     *     // column.to_table()
+     * }
+     */
+    @Pure
+    @PythonName("to_table")
+    fun toTable() -> table: ExperimentalTable
+
+    /**
+     * Convert the column to the old column format. This method is temporary and will be removed in a later version.
+     *
+     * @result oldColumn The column in the old format.
+     *
+     * @example
+     * pipeline example {
+     *     // from safeds.data.tabular.containers import ExperimentalColumn
+     *     // column = ExperimentalColumn("a", [1, 2, 3])
+     *     // old_column = column.temporary_to_old_column()
+     * }
+     */
+    @Deprecated(
+        alternative="None.",
+        reason="Only a temporary solution until this implementation is stable.",
+        sinceVersion="0.15.0",
+        removalVersion="0.16.0"
+    )
+    @Pure
+    @PythonName("temporary_to_old_column")
+    fun temporaryToOldColumn() -> oldColumn: Column<Any>
+}

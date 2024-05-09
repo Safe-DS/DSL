@@ -1,0 +1,4 @@
+package safeds.ml.nn
+
+@Experimental
+class OutputConversionImageToColumn() sub OutputConversion<Image, Column>

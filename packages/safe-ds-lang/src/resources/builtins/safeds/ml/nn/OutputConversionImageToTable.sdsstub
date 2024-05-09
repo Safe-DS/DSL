@@ -1,0 +1,4 @@
+package safeds.ml.nn
+
+@Experimental
+class OutputConversionImageToTable() sub OutputConversion<Image, Table>
