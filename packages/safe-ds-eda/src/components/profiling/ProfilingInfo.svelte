@@ -16,7 +16,7 @@
                 action: 'histogram',
                 alias: `View ${columnName} Histogram`,
                 type: 'external-visualizing',
-                columnName: columnName,
+                columnName,
                 id: entryId,
                 columnNumber: 'one',
             },
@@ -24,7 +24,7 @@
                 type: 'histogram',
                 tabComment: columnName,
                 content: {
-                    columnName: columnName,
+                    columnName,
                     encodedImage: profilingItem.value,
                     outdated: false,
                 },

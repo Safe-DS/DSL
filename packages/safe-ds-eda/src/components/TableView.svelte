@@ -507,8 +507,8 @@
             alias: `View ${type === 'linePlot' ? 'Lineplot' : 'Scatterplot'} of ${xAxisColumnName} x ${yAxisColumnName}`,
             type: 'external-visualizing',
             columnNumber: 'two',
-            xAxisColumnName: xAxisColumnName,
-            yAxisColumnName: yAxisColumnName,
+            xAxisColumnName,
+            yAxisColumnName,
         });
         return;
     };
@@ -527,7 +527,7 @@
             alias: `View ${type === 'histogram' ? 'Histogram' : 'Boxplot'} of ${columnName}`,
             type: 'external-visualizing',
             columnNumber: 'one',
-            columnName: columnName,
+            columnName,
         });
         return;
     };
