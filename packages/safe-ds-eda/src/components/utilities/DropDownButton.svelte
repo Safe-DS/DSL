@@ -148,6 +148,9 @@
         border-radius: 0px 0px 5px 5px;
         list-style: none;
         padding: 0;
+        max-height: 400px;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
     .dropdownItem {
