@@ -13,7 +13,7 @@
     let isDropdownOpen = false;
     let dropdownRef: HTMLElement;
 
-    function toggleDropdown() {
+    const toggleDropdown = function () {
         if (changesDisabled || $preventClicks) return;
 
         isDropdownOpen = !isDropdownOpen;
@@ -23,20 +23,20 @@
         } else {
             document.removeEventListener('click', handleClickOutside);
         }
-    }
+    };
 
-    function handleClickOutside(event: MouseEvent) {
+    const handleClickOutside = function (event: MouseEvent) {
         if (dropdownRef && !dropdownRef.contains(event.target as Node)) {
             isDropdownOpen = false;
             document.removeEventListener('click', handleClickOutside);
         }
-    }
+    };
 
-    function selectOption(option: string) {
+    const selectOption = function (option: string) {
         isDropdownOpen = false;
         document.removeEventListener('click', handleClickOutside);
         onSelect(option);
-    }
+    };
 </script>
 
 <div
@@ -63,7 +63,7 @@
     {#if isDropdownOpen}
         <ul class="dropdownMenu" style:width style:top={height}>
             {#each possibleOptions as option}
-                {#if option != selectedOption}
+                {#if option !== selectedOption}
                     <li role="none" class="dropdownItem" on:click={() => selectOption(option)}>{option}</li>
                 {/if}
             {/each}
