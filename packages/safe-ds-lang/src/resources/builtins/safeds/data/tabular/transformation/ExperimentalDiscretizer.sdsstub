@@ -1,0 +1,30 @@
+package safeds.data.tabular.transformation
+
+from safeds.data.tabular.containers import ExperimentalTable
+from safeds.data.tabular.transformation import ExperimentalTableTransformer
+
+/**
+ * The Discretizer bins continuous data into intervals.
+ *
+ * @param numberOfBins The number of bins to be created.
+ */
+@Experimental
+class ExperimentalDiscretizer(
+    @PythonName("number_of_bins") numberOfBins: Int = 5
+) sub ExperimentalTableTransformer {
+    /**
+     * Learn a transformation for a set of columns in a table.
+     *
+     * This transformer is not modified.
+     *
+     * @param table The table used to fit the transformer.
+     * @param columnNames The list of columns from the table used to fit the transformer. If `None`, all columns are used.
+     *
+     * @result fittedTransformer The fitted transformer.
+     */
+    @Pure
+    fun fit(
+        table: ExperimentalTable,
+        @PythonName("column_names") columnNames: List<String>?
+    ) -> fittedTransformer: ExperimentalDiscretizer
+}

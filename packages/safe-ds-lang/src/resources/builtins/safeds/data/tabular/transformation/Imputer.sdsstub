@@ -1,0 +1,82 @@
+package safeds.data.tabular.transformation
+
+from safeds.data.tabular.containers import Table
+from safeds.data.tabular.transformation import TableTransformer
+
+/**
+ * Replace missing values with the given strategy.
+ *
+ * @param strategy The strategy used to impute missing values. Use the classes nested inside `Imputer.Strategy` to specify it.
+ *
+ * @example
+ * pipeline example {
+ *    val table = Table({"a": [1, null], "b": [3, 4]});
+ *    val imputer = Imputer(Imputer.Strategy.Mean).fit(table, ["a"]);
+ *    val transformedTable = imputer.transform(table);
+ *    // Table({"a": [1, 1], "b": [3, 4]})
+ * }
+ *
+* @example
+ * pipeline example {
+ *    val table = Table({"a": [1, null], "b": [3, 4]});
+ *    val imputer = Imputer(Imputer.Strategy.Constant(0)).fit(table, ["a"]);
+ *    val transformedTable = imputer.transform(table);
+ *    // Table({"a": [1, 0], "b": [3, 4]})
+ * }
+ */
+class Imputer(
+    strategy: Imputer.Strategy,
+    @PythonName("value_to_replace") valueToReplace: union<Float, String, Nothing?> = null
+) sub TableTransformer {
+    /**
+     * Various strategies to replace missing values.
+     */
+    enum Strategy {
+        /**
+         * Replace missing values with the given constant value.
+         *
+         * @param value The value to replace missing values.
+         */
+        Constant(value: Any)
+
+        /**
+         * Replace missing values with the mean of each column.
+         */
+        Mean
+
+        /**
+         * Replace missing values with the median of each column.
+         */
+        Median
+
+        /**
+         * Replace missing values with the mode of each column.
+         */
+        Mode
+    }
+
+    /**
+     * The strategy used to replace missing values.
+     */
+    attr strategy: Imputer.Strategy
+    /**
+     * The value that should be replaced.
+     */
+    @PythonName("value_to_replace") attr valueToReplace: Any
+
+    /**
+     * Learn a transformation for a set of columns in a table.
+     *
+     * This transformer is not modified.
+     *
+     * @param table The table used to fit the transformer.
+     * @param columnNames The list of columns from the table used to fit the transformer. If `None`, all columns are used.
+     *
+     * @result result1 The fitted transformer.
+     */
+    @Pure
+    fun fit(
+        table: Table,
+        @PythonName("column_names") columnNames: List<String>?
+    ) -> result1: Imputer
+}

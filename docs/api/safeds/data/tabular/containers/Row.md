@@ -1,4 +1,11 @@
-# :test_tube:{ title="Experimental" } `#!sds class` Row {#safeds.data.tabular.containers.Row data-toc-label='Row'}
+# :warning:{ title="Deprecated" } `#!sds class` Row {#safeds.data.tabular.containers.Row data-toc-label='Row'}
+
+!!! warning "Deprecated"
+
+    This class is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+
+    - **Alternative:** None.
+    - **Reason:** This interface cannot be implemented efficiently.
 
 A row is a collection of named values.
 
@@ -16,9 +23,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `row.sdsstub`"
+??? quote "Stub code in `Row.sdsstub`"
 
-    ```sds linenums="16"
+    ```sds linenums="21"
     class Row(
         data: Map<String, Any>? = null // TODO: update default value to empty map
     ) {
@@ -154,7 +161,7 @@ pipeline example {
          * pipeline example {
          *     val row = Row({"b": 2, "a": 1});
          *     val sortedRow = row.sortColumns((name1, value1, name2, value2) ->
-         *         (value1 as Int) - (value2 as Int)
+         *         value1 as (Int) - value2 as (Int)
          *     );
          * }
          */
@@ -266,9 +273,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `row.sdsstub`"
+??? quote "Stub code in `Row.sdsstub`"
 
-    ```sds linenums="119"
+    ```sds linenums="124"
     @Pure
     @PythonName("get_column_type")
     fun getColumnType(
@@ -301,9 +308,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `row.sdsstub`"
+??? quote "Stub code in `Row.sdsstub`"
 
-    ```sds linenums="81"
+    ```sds linenums="86"
     @Pure
     @PythonName("get_value")
     fun getValue(
@@ -336,9 +343,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `row.sdsstub`"
+??? quote "Stub code in `Row.sdsstub`"
 
-    ```sds linenums="100"
+    ```sds linenums="105"
     @Pure
     @PythonName("has_column")
     fun hasColumn(
@@ -383,14 +390,14 @@ If no comparator is given, the columns will be sorted alphabetically by their na
 pipeline example {
     val row = Row({"b": 2, "a": 1});
     val sortedRow = row.sortColumns((name1, value1, name2, value2) ->
-        (value1 as Int) - (value2 as Int)
+        value1 as (Int) - value2 as (Int)
     );
 }
 ```
 
-??? quote "Stub code in `row.sdsstub`"
+??? quote "Stub code in `Row.sdsstub`"
 
-    ```sds linenums="155"
+    ```sds linenums="160"
     @Pure
     @PythonName("sort_columns")
     fun sortColumns(
@@ -417,9 +424,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `row.sdsstub`"
+??? quote "Stub code in `Row.sdsstub`"
 
-    ```sds linenums="187"
+    ```sds linenums="192"
     @Pure
     @PythonName("to_html")
     fun toHtml() -> html: String
@@ -444,9 +451,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `row.sdsstub`"
+??? quote "Stub code in `Row.sdsstub`"
 
-    ```sds linenums="172"
+    ```sds linenums="177"
     @Pure
     @PythonName("to_dict")
     fun toMap() -> map: Map<String, Any>
@@ -476,9 +483,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `row.sdsstub`"
+??? quote "Stub code in `Row.sdsstub`"
 
-    ```sds linenums="62"
+    ```sds linenums="67"
     @Pure
     @PythonName("from_dict")
     static fun fromDict(

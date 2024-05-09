@@ -22,6 +22,7 @@ annotation Category(category: DataScienceCategory)
 /**
  * A step in the data science process.
  */
+@Experimental
 enum DataScienceCategory {
     /**
      * Load your data into the program.

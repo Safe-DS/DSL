@@ -15,7 +15,7 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `column_type.sdsstub`"
+??? quote "Stub code in `ColumnType.sdsstub`"
 
     ```sds linenums="14"
     class ColumnType {
@@ -67,7 +67,7 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `column_type.sdsstub`"
+??? quote "Stub code in `ColumnType.sdsstub`"
 
     ```sds linenums="25"
     @Pure
@@ -93,7 +93,7 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `column_type.sdsstub`"
+??? quote "Stub code in `ColumnType.sdsstub`"
 
     ```sds linenums="39"
     @Pure

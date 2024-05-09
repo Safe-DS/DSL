@@ -1,0 +1,25 @@
+package safeds.data.tabular.transformation
+
+from safeds.data.tabular.containers import ExperimentalTable
+from safeds.data.tabular.transformation import ExperimentalTableTransformer
+
+/**
+ * A `TableTransformer` that can also undo the learned transformation after it has been applied.
+ */
+@Experimental
+class ExperimentalInvertibleTableTransformer() sub ExperimentalTableTransformer {
+    /**
+     * Undo the learned transformation.
+     *
+     * The table is not modified.
+     *
+     * @param transformedTable The table to be transformed back to the original version.
+     *
+     * @result originalTable The original table.
+     */
+    @Pure
+    @PythonName("inverse_transform")
+    fun inverseTransform(
+        @PythonName("transformed_table") transformedTable: ExperimentalTable
+    ) -> originalTable: ExperimentalTable
+}

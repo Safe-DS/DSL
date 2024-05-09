@@ -9,6 +9,8 @@ Random forest regression.
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `numberOfTrees` | [`Int`][safeds.lang.Int] | The number of trees to be used in the random forest. Has to be greater than 0. | `#!sds 100` |
+| `maximumDepth` | [`Int?`][safeds.lang.Int] | The maximum depth of each tree. If None, the depth is not limited. Has to be greater than 0. | `#!sds null` |
+| `minimumNumberOfSamplesInLeaves` | [`Int`][safeds.lang.Int] | The minimum number of samples that must remain in the leaves of each tree. Has to be greater than 0. | `#!sds 1` |
 
 **Examples:**
 
@@ -21,18 +23,29 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `random_forest.sdsstub`"
+??? quote "Stub code in `RandomForestRegressor.sdsstub`"
 
-    ```sds linenums="20"
+    ```sds linenums="22"
     class RandomForestRegressor(
-        @PythonName("number_of_trees") const numberOfTrees: Int = 100
+        @PythonName("number_of_trees") const numberOfTrees: Int = 100,
+        @PythonName("maximum_depth") maximumDepth: Int? = null,
+        @PythonName("minimum_number_of_samples_in_leaves") const minimumNumberOfSamplesInLeaves: Int = 1,
     ) sub Regressor where {
-        numberOfTrees >= 1
+        numberOfTrees > 0,
+        minimumNumberOfSamplesInLeaves > 0,
     } {
         /**
          * Get the number of trees used in the random forest.
          */
         @PythonName("number_of_trees") attr numberOfTrees: Int
+        /**
+         * The maximum depth of each tree.
+         */
+        @PythonName("maximum_depth") attr maximumDepth: Int?
+        /**
+         * The minimum number of samples that must remain in the leaves of each tree.
+         */
+        @PythonName("minimum_number_of_samples_in_leaves") attr minimumNumberOfSamplesInLeaves: Int
 
         /**
          * Create a copy of this regressor and fit it with the given training data.
@@ -45,7 +58,7 @@ pipeline example {
          */
         @Pure
         fun fit(
-            @PythonName("training_set") trainingSet: TabularDataset
+            @PythonName("training_set") trainingSet: union<ExperimentalTabularDataset, TabularDataset>
         ) -> fittedRegressor: RandomForestRegressor
     }
     ```
@@ -55,6 +68,18 @@ pipeline example {
 Whether the regressor is fitted.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
+
+## `#!sds attr` maximumDepth {#safeds.ml.classical.regression.RandomForestRegressor.maximumDepth data-toc-label='maximumDepth'}
+
+The maximum depth of each tree.
+
+**Type:** [`Int?`][safeds.lang.Int]
+
+## `#!sds attr` minimumNumberOfSamplesInLeaves {#safeds.ml.classical.regression.RandomForestRegressor.minimumNumberOfSamplesInLeaves data-toc-label='minimumNumberOfSamplesInLeaves'}
+
+The minimum number of samples that must remain in the leaves of each tree.
+
+**Type:** [`Int`][safeds.lang.Int]
 
 ## `#!sds attr` numberOfTrees {#safeds.ml.classical.regression.RandomForestRegressor.numberOfTrees data-toc-label='numberOfTrees'}
 
@@ -72,7 +97,7 @@ This regressor is not modified.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `trainingSet` | [`TabularDataset`][safeds.data.labeled.containers.TabularDataset] | The training data containing the feature and target vectors. | - |
+| `trainingSet` | `#!sds union<ExperimentalTabularDataset, TabularDataset>` | The training data containing the feature and target vectors. | - |
 
 **Results:**
 
@@ -80,12 +105,12 @@ This regressor is not modified.
 |------|------|-------------|
 | `fittedRegressor` | [`RandomForestRegressor`][safeds.ml.classical.regression.RandomForestRegressor] | The fitted regressor. |
 
-??? quote "Stub code in `random_forest.sdsstub`"
+??? quote "Stub code in `RandomForestRegressor.sdsstub`"
 
-    ```sds linenums="39"
+    ```sds linenums="52"
     @Pure
     fun fit(
-        @PythonName("training_set") trainingSet: TabularDataset
+        @PythonName("training_set") trainingSet: union<ExperimentalTabularDataset, TabularDataset>
     ) -> fittedRegressor: RandomForestRegressor
     ```
 
@@ -97,7 +122,7 @@ Compute the mean absolute error (MAE) of the regressor on the given data.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `validationOrTestSet` | [`TabularDataset`][safeds.data.labeled.containers.TabularDataset] | The validation or test set. | - |
+| `validationOrTestSet` | `#!sds union<ExperimentalTabularDataset, TabularDataset>` | The validation or test set. | - |
 
 **Results:**
 
@@ -105,13 +130,13 @@ Compute the mean absolute error (MAE) of the regressor on the given data.
 |------|------|-------------|
 | `meanAbsoluteError` | [`Float`][safeds.lang.Float] | The calculated mean absolute error (the average of the distance of each individual row). |
 
-??? quote "Stub code in `regressor.sdsstub`"
+??? quote "Stub code in `Regressor.sdsstub`"
 
     ```sds linenums="61"
     @Pure
     @PythonName("mean_absolute_error")
     fun meanAbsoluteError(
-        @PythonName("validation_or_test_set") validationOrTestSet: TabularDataset
+        @PythonName("validation_or_test_set") validationOrTestSet: union<ExperimentalTabularDataset, TabularDataset>
     ) -> meanAbsoluteError: Float
     ```
 
@@ -123,7 +148,7 @@ Compute the mean squared error (MSE) on the given data.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `validationOrTestSet` | [`TabularDataset`][safeds.data.labeled.containers.TabularDataset] | The validation or test set. | - |
+| `validationOrTestSet` | `#!sds union<ExperimentalTabularDataset, TabularDataset>` | The validation or test set. | - |
 
 **Results:**
 
@@ -131,13 +156,13 @@ Compute the mean squared error (MSE) on the given data.
 |------|------|-------------|
 | `meanSquaredError` | [`Float`][safeds.lang.Float] | The calculated mean squared error (the average of the distance of each individual row squared). |
 
-??? quote "Stub code in `regressor.sdsstub`"
+??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="48"
+    ```sds linenums="74"
     @Pure
     @PythonName("mean_squared_error")
     fun meanSquaredError(
-        @PythonName("validation_or_test_set") validationOrTestSet: TabularDataset
+        @PythonName("validation_or_test_set") validationOrTestSet: union<ExperimentalTabularDataset, TabularDataset>
     ) -> meanSquaredError: Float
     ```
 
@@ -149,7 +174,7 @@ Predict a target vector using a dataset containing feature vectors. The model ha
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `dataset` | [`Table`][safeds.data.tabular.containers.Table] | The dataset containing the feature vectors. | - |
+| `dataset` | `#!sds union<ExperimentalTable, ExperimentalTabularDataset, Table>` | The dataset containing the feature vectors. | - |
 
 **Results:**
 
@@ -157,11 +182,37 @@ Predict a target vector using a dataset containing feature vectors. The model ha
 |------|------|-------------|
 | `prediction` | [`TabularDataset`][safeds.data.labeled.containers.TabularDataset] | A dataset containing the given feature vectors and the predicted target vector. |
 
-??? quote "Stub code in `regressor.sdsstub`"
+??? quote "Stub code in `Regressor.sdsstub`"
 
     ```sds linenums="36"
     @Pure
     fun predict(
-        dataset: Table
+        dataset: union<ExperimentalTable, ExperimentalTabularDataset, Table>
     ) -> prediction: TabularDataset
+    ```
+
+## `#!sds fun` summarizeMetrics {#safeds.ml.classical.regression.RandomForestRegressor.summarizeMetrics data-toc-label='summarizeMetrics'}
+
+Summarize the regressor's metrics on the given data.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `validationOrTestSet` | `#!sds union<ExperimentalTabularDataset, TabularDataset>` | The validation or test set. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `metrics` | [`Table`][safeds.data.tabular.containers.Table] | A table containing the regressor's metrics. |
+
+??? quote "Stub code in `Regressor.sdsstub`"
+
+    ```sds linenums="48"
+    @Pure
+    @PythonName("summarize_metrics")
+    fun summarizeMetrics(
+        @PythonName("validation_or_test_set") validationOrTestSet: union<ExperimentalTabularDataset, TabularDataset>
+    ) -> metrics: Table
     ```

@@ -9,6 +9,7 @@ Replace missing values with the given strategy.
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `strategy` | [`Strategy`][safeds.data.tabular.transformation.Imputer.Strategy] | The strategy used to impute missing values. Use the classes nested inside `Imputer.Strategy` to specify it. | - |
+| `valueToReplace` | `#!sds union<Float, String?>` | - | `#!sds null` |
 
 **Examples:**
 
@@ -29,35 +30,48 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `imputer.sdsstub`"
+??? quote "Stub code in `Imputer.sdsstub`"
 
     ```sds linenums="27"
     class Imputer(
-        strategy: Imputer.Strategy
+        strategy: Imputer.Strategy,
+        @PythonName("value_to_replace") valueToReplace: union<Float, String, Nothing?> = null
     ) sub TableTransformer {
+        /**
+         * Various strategies to replace missing values.
+         */
         enum Strategy {
             /**
-            * An imputation strategy for imputing missing data with given constant values.
-            *
-            * @param value The given value to impute missing values.
-            */
+             * Replace missing values with the given constant value.
+             *
+             * @param value The value to replace missing values.
+             */
             Constant(value: Any)
 
             /**
-            * An imputation strategy for imputing missing data with mean values.
-            */
+             * Replace missing values with the mean of each column.
+             */
             Mean
 
             /**
-            * An imputation strategy for imputing missing data with median values.
-            */
+             * Replace missing values with the median of each column.
+             */
             Median
 
             /**
-            * An imputation strategy for imputing missing data with mode values. The lowest value will be used if there are multiple values with the same highest count.
-            */
+             * Replace missing values with the mode of each column.
+             */
             Mode
         }
+
+        /**
+         * The strategy used to replace missing values.
+         */
+        attr strategy: Imputer.Strategy
+        /**
+         * The value that should be replaced.
+         */
+        @PythonName("value_to_replace") attr valueToReplace: Any
 
         /**
          * Learn a transformation for a set of columns in a table.
@@ -83,6 +97,18 @@ Whether the transformer is fitted.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
 
+## `#!sds attr` strategy {#safeds.data.tabular.transformation.Imputer.strategy data-toc-label='strategy'}
+
+The strategy used to replace missing values.
+
+**Type:** [`Strategy`][safeds.data.tabular.transformation.Imputer.Strategy]
+
+## `#!sds attr` valueToReplace {#safeds.data.tabular.transformation.Imputer.valueToReplace data-toc-label='valueToReplace'}
+
+The value that should be replaced.
+
+**Type:** [`Any`][safeds.lang.Any]
+
 ## `#!sds fun` fit {#safeds.data.tabular.transformation.Imputer.fit data-toc-label='fit'}
 
 Learn a transformation for a set of columns in a table.
@@ -102,9 +128,9 @@ This transformer is not modified.
 |------|------|-------------|
 | `result1` | [`Imputer`][safeds.data.tabular.transformation.Imputer] | The fitted transformer. |
 
-??? quote "Stub code in `imputer.sdsstub`"
+??? quote "Stub code in `Imputer.sdsstub`"
 
-    ```sds linenums="64"
+    ```sds linenums="77"
     @Pure
     fun fit(
         table: Table,
@@ -116,7 +142,7 @@ This transformer is not modified.
 
 Learn a transformation for a set of columns in a table and apply the learned transformation to the same table.
 
-The table is not modified. If you also need the fitted transformer, use `fit` and `transform` separately.
+Neither the transformer nor the table are modified.
 
 **Parameters:**
 
@@ -129,17 +155,18 @@ The table is not modified. If you also need the fitted transformer, use `fit` an
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Table`][safeds.data.tabular.containers.Table] | The transformed table. |
+| `fittedTransformer` | [`TableTransformer`][safeds.data.tabular.transformation.TableTransformer] | The fitted transformer. |
+| `transformedTable` | [`Table`][safeds.data.tabular.containers.Table] | The transformed table. |
 
-??? quote "Stub code in `table_transformer.sdsstub`"
+??? quote "Stub code in `TableTransformer.sdsstub`"
 
-    ```sds linenums="81"
+    ```sds linenums="82"
     @Pure
     @PythonName("fit_and_transform")
     fun fitAndTransform(
         table: Table,
         @PythonName("column_names") columnNames: List<String>? = null
-    ) -> result1: Table
+    ) -> (fittedTransformer: TableTransformer, transformedTable: Table)
     ```
 
 ## `#!sds fun` getNamesOfAddedColumns {#safeds.data.tabular.transformation.Imputer.getNamesOfAddedColumns data-toc-label='getNamesOfAddedColumns'}
@@ -152,7 +179,7 @@ Get the names of all new columns that have been added by the transformer.
 |------|------|-------------|
 | `result1` | [`List<String>`][safeds.lang.List] | A list of names of the added columns, ordered as they will appear in the table. |
 
-??? quote "Stub code in `table_transformer.sdsstub`"
+??? quote "Stub code in `TableTransformer.sdsstub`"
 
     ```sds linenums="49"
     @Pure
@@ -170,7 +197,7 @@ Get the names of all columns that have been changed by the transformer.
 |------|------|-------------|
 | `result1` | [`List<String>`][safeds.lang.List] | A list of names of changed columns, ordered as they appear in the table. |
 
-??? quote "Stub code in `table_transformer.sdsstub`"
+??? quote "Stub code in `TableTransformer.sdsstub`"
 
     ```sds linenums="58"
     @Pure
@@ -188,7 +215,7 @@ Get the names of all columns that have been removed by the transformer.
 |------|------|-------------|
 | `result1` | [`List<String>`][safeds.lang.List] | A list of names of the removed columns, ordered as they appear in the table the transformer was fitted on. |
 
-??? quote "Stub code in `table_transformer.sdsstub`"
+??? quote "Stub code in `TableTransformer.sdsstub`"
 
     ```sds linenums="67"
     @Pure
@@ -214,7 +241,7 @@ The table is not modified.
 |------|------|-------------|
 | `result1` | [`Table`][safeds.data.tabular.containers.Table] | The transformed table. |
 
-??? quote "Stub code in `table_transformer.sdsstub`"
+??? quote "Stub code in `TableTransformer.sdsstub`"
 
     ```sds linenums="39"
     @Pure
@@ -225,52 +252,54 @@ The table is not modified.
 
 ## `#!sds enum` Strategy {#safeds.data.tabular.transformation.Imputer.Strategy data-toc-label='Strategy'}
 
-??? quote "Stub code in `imputer.sdsstub`"
+Various strategies to replace missing values.
 
-    ```sds linenums="30"
+??? quote "Stub code in `Imputer.sdsstub`"
+
+    ```sds linenums="34"
     enum Strategy {
         /**
-        * An imputation strategy for imputing missing data with given constant values.
-        *
-        * @param value The given value to impute missing values.
-        */
+         * Replace missing values with the given constant value.
+         *
+         * @param value The value to replace missing values.
+         */
         Constant(value: Any)
 
         /**
-        * An imputation strategy for imputing missing data with mean values.
-        */
+         * Replace missing values with the mean of each column.
+         */
         Mean
 
         /**
-        * An imputation strategy for imputing missing data with median values.
-        */
+         * Replace missing values with the median of each column.
+         */
         Median
 
         /**
-        * An imputation strategy for imputing missing data with mode values. The lowest value will be used if there are multiple values with the same highest count.
-        */
+         * Replace missing values with the mode of each column.
+         */
         Mode
     }
     ```
 
 ### Constant {#safeds.data.tabular.transformation.Imputer.Strategy.Constant data-toc-label='Constant'}
 
-An imputation strategy for imputing missing data with given constant values.
+Replace missing values with the given constant value.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `value` | [`Any`][safeds.lang.Any] | The given value to impute missing values. | - |
+| `value` | [`Any`][safeds.lang.Any] | The value to replace missing values. | - |
 
 ### Mean {#safeds.data.tabular.transformation.Imputer.Strategy.Mean data-toc-label='Mean'}
 
-An imputation strategy for imputing missing data with mean values.
+Replace missing values with the mean of each column.
 
 ### Median {#safeds.data.tabular.transformation.Imputer.Strategy.Median data-toc-label='Median'}
 
-An imputation strategy for imputing missing data with median values.
+Replace missing values with the median of each column.
 
 ### Mode {#safeds.data.tabular.transformation.Imputer.Strategy.Mode data-toc-label='Mode'}
 
-An imputation strategy for imputing missing data with mode values. The lowest value will be used if there are multiple values with the same highest count.
+Replace missing values with the mode of each column.

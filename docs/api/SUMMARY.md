@@ -9,17 +9,36 @@ search:
             - containers
                 - [Image](safeds/data/image/containers/Image.md)
                 - [ImageList](safeds/data/image/containers/ImageList.md)
+            - typing
+                - [ImageSize](safeds/data/image/typing/ImageSize.md)
         - labeled
             - containers
+                - [ExperimentalTabularDataset](safeds/data/labeled/containers/ExperimentalTabularDataset.md)
+                - [ImageDataset](safeds/data/labeled/containers/ImageDataset.md)
                 - [TabularDataset](safeds/data/labeled/containers/TabularDataset.md)
+                - [TimeSeriesDataset](safeds/data/labeled/containers/TimeSeriesDataset.md)
         - tabular
             - containers
                 - [Column](safeds/data/tabular/containers/Column.md)
+                - [ExperimentalCell](safeds/data/tabular/containers/ExperimentalCell.md)
+                - [ExperimentalColumn](safeds/data/tabular/containers/ExperimentalColumn.md)
+                - [ExperimentalRow](safeds/data/tabular/containers/ExperimentalRow.md)
+                - [ExperimentalTable](safeds/data/tabular/containers/ExperimentalTable.md)
                 - [Row](safeds/data/tabular/containers/Row.md)
                 - [Table](safeds/data/tabular/containers/Table.md)
-                - [TimeSeries](safeds/data/tabular/containers/TimeSeries.md)
+            - plotting
+                - [ExperimentalColumnPlotter](safeds/data/tabular/plotting/ExperimentalColumnPlotter.md)
+                - [ExperimentalTablePlotter](safeds/data/tabular/plotting/ExperimentalTablePlotter.md)
             - transformation
                 - [Discretizer](safeds/data/tabular/transformation/Discretizer.md)
+                - [ExperimentalDiscretizer](safeds/data/tabular/transformation/ExperimentalDiscretizer.md)
+                - [ExperimentalInvertibleTableTransformer](safeds/data/tabular/transformation/ExperimentalInvertibleTableTransformer.md)
+                - [ExperimentalLabelEncoder](safeds/data/tabular/transformation/ExperimentalLabelEncoder.md)
+                - [ExperimentalOneHotEncoder](safeds/data/tabular/transformation/ExperimentalOneHotEncoder.md)
+                - [ExperimentalRangeScaler](safeds/data/tabular/transformation/ExperimentalRangeScaler.md)
+                - [ExperimentalSimpleImputer](safeds/data/tabular/transformation/ExperimentalSimpleImputer.md)
+                - [ExperimentalStandardScaler](safeds/data/tabular/transformation/ExperimentalStandardScaler.md)
+                - [ExperimentalTableTransformer](safeds/data/tabular/transformation/ExperimentalTableTransformer.md)
                 - [Imputer](safeds/data/tabular/transformation/Imputer.md)
                 - [InvertibleTableTransformer](safeds/data/tabular/transformation/InvertibleTableTransformer.md)
                 - [LabelEncoder](safeds/data/tabular/transformation/LabelEncoder.md)
@@ -29,6 +48,8 @@ search:
                 - [TableTransformer](safeds/data/tabular/transformation/TableTransformer.md)
             - typing
                 - [ColumnType](safeds/data/tabular/typing/ColumnType.md)
+                - [ExperimentalDataType](safeds/data/tabular/typing/ExperimentalDataType.md)
+                - [ExperimentalSchema](safeds/data/tabular/typing/ExperimentalSchema.md)
                 - [Schema](safeds/data/tabular/typing/Schema.md)
     - lang
         - [AnnotationTarget](safeds/lang/AnnotationTarget.md)
@@ -80,11 +101,23 @@ search:
                 - [RidgeRegressor](safeds/ml/classical/regression/RidgeRegressor.md)
                 - [SupportVectorMachineRegressor](safeds/ml/classical/regression/SupportVectorMachineRegressor.md)
         - nn
+            - [AvgPooling2DLayer](safeds/ml/nn/AvgPooling2DLayer.md)
+            - [Convolutional2DLayer](safeds/ml/nn/Convolutional2DLayer.md)
+            - [ConvolutionalTranspose2DLayer](safeds/ml/nn/ConvolutionalTranspose2DLayer.md)
+            - [FlattenLayer](safeds/ml/nn/FlattenLayer.md)
             - [ForwardLayer](safeds/ml/nn/ForwardLayer.md)
             - [InputConversion](safeds/ml/nn/InputConversion.md)
+            - [InputConversionImage](safeds/ml/nn/InputConversionImage.md)
             - [InputConversionTable](safeds/ml/nn/InputConversionTable.md)
+            - [InputConversionTimeSeries](safeds/ml/nn/InputConversionTimeSeries.md)
             - [Layer](safeds/ml/nn/Layer.md)
+            - [LSTMLayer](safeds/ml/nn/LSTMLayer.md)
+            - [MaxPooling2DLayer](safeds/ml/nn/MaxPooling2DLayer.md)
             - [NeuralNetworkClassifier](safeds/ml/nn/NeuralNetworkClassifier.md)
             - [NeuralNetworkRegressor](safeds/ml/nn/NeuralNetworkRegressor.md)
             - [OutputConversion](safeds/ml/nn/OutputConversion.md)
+            - [OutputConversionImageToColumn](safeds/ml/nn/OutputConversionImageToColumn.md)
+            - [OutputConversionImageToImage](safeds/ml/nn/OutputConversionImageToImage.md)
+            - [OutputConversionImageToTable](safeds/ml/nn/OutputConversionImageToTable.md)
             - [OutputConversionTable](safeds/ml/nn/OutputConversionTable.md)
+            - [OutputConversionTimeSeries](safeds/ml/nn/OutputConversionTimeSeries.md)

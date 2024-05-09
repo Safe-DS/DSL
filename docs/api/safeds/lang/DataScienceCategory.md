@@ -1,10 +1,10 @@
-# `#!sds enum` DataScienceCategory {#safeds.lang.DataScienceCategory data-toc-label='DataScienceCategory'}
+# :test_tube:{ title="Experimental" } `#!sds enum` DataScienceCategory {#safeds.lang.DataScienceCategory data-toc-label='DataScienceCategory'}
 
 A step in the data science process.
 
 ??? quote "Stub code in `ideIntegration.sdsstub`"
 
-    ```sds linenums="25"
+    ```sds linenums="26"
     enum DataScienceCategory {
         /**
          * Load your data into the program.

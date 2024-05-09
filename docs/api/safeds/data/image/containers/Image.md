@@ -1,4 +1,4 @@
-# `#!sds abstract class` Image {#safeds.data.image.containers.Image data-toc-label='Image'}
+# :test_tube:{ title="Experimental" } `#!sds abstract class` Image {#safeds.data.image.containers.Image data-toc-label='Image'}
 
 A container for image data.
 
@@ -10,9 +10,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `image.sdsstub`"
+??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="11"
+    ```sds linenums="14"
     class Image {
         /**
          * Get the width of the image in pixels.
@@ -41,14 +41,17 @@ pipeline example {
          * }
          */
         attr channel: Int
+        /**
+         * Get the `ImageSize` of the image.
+         */
+        attr size: ImageSize
 
         /**
          * Create an image from a file.
          *
          * @param path The path to the image file.
-         * @param device The device where the tensor will be saved on. Defaults to the default device
          *
-         * @result result1 The image.
+         * @result image The image.
          *
          * @example
          * pipeline example {
@@ -59,7 +62,7 @@ pipeline example {
         @PythonName("from_file")
         static fun fromFile(
             path: String
-        ) -> result1: Image
+        ) -> image: Image
 
         /**
          * Save the image as a JPEG file.
@@ -448,6 +451,12 @@ pipeline example {
 }
 ```
 
+## `#!sds attr` size {#safeds.data.image.containers.Image.size data-toc-label='size'}
+
+Get the `ImageSize` of the image.
+
+**Type:** [`ImageSize`][safeds.data.image.typing.ImageSize]
+
 ## `#!sds attr` width {#safeds.data.image.containers.Image.width data-toc-label='width'}
 
 Get the width of the image in pixels.
@@ -488,9 +497,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `image.sdsstub`"
+??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="248"
+    ```sds linenums="254"
     @Pure
     @PythonName("add_noise")
     fun addNoise(
@@ -526,9 +535,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `image.sdsstub`"
+??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="226"
+    ```sds linenums="232"
     @Pure
     @PythonName("adjust_brightness")
     fun adjustBrightness(
@@ -564,9 +573,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `image.sdsstub`"
+??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="298"
+    ```sds linenums="304"
     @Pure
     @PythonName("adjust_color_balance")
     fun adjustColorBalance(
@@ -602,9 +611,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `image.sdsstub`"
+??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="273"
+    ```sds linenums="279"
     @Pure
     @PythonName("adjust_contrast")
     fun adjustContrast(
@@ -640,9 +649,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `image.sdsstub`"
+??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="321"
+    ```sds linenums="327"
     @Pure
     fun blur(
         const radius: Int
@@ -669,9 +678,9 @@ The original image is not modified.
 |------|------|-------------|
 | `result1` | [`Image`][safeds.data.image.containers.Image] | The image with the given number of channels. |
 
-??? quote "Stub code in `image.sdsstub`"
+??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="100"
+    ```sds linenums="106"
     @Pure
     @PythonName("change_channel")
     fun changeChannel(
@@ -699,9 +708,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `image.sdsstub`"
+??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="142"
+    ```sds linenums="148"
     @Pure
     @PythonName("convert_to_grayscale")
     fun convertToGrayscale() -> result1: Image
@@ -736,9 +745,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `image.sdsstub`"
+??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="163"
+    ```sds linenums="169"
     @Pure
     fun crop(
         const x: Int,
@@ -773,9 +782,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `image.sdsstub`"
+??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="412"
+    ```sds linenums="418"
     @Pure
     @PythonName("find_edges")
     fun findEdges() -> result1: Image
@@ -801,9 +810,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `image.sdsstub`"
+??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="204"
+    ```sds linenums="210"
     @Pure
     @PythonName("flip_horizontally")
     fun flipHorizontally() -> result1: Image
@@ -829,9 +838,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `image.sdsstub`"
+??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="188"
+    ```sds linenums="194"
     @Pure
     @PythonName("flip_vertically")
     fun flipVertically() -> result1: Image
@@ -857,9 +866,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `image.sdsstub`"
+??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="364"
+    ```sds linenums="370"
     @Pure
     @PythonName("invert_colors")
     fun invertColors() -> result1: Image
@@ -892,9 +901,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `image.sdsstub`"
+??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="121"
+    ```sds linenums="127"
     @Pure
     fun resize(
         @PythonName("new_width") const newWidth: Int,
@@ -925,9 +934,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `image.sdsstub`"
+??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="396"
+    ```sds linenums="402"
     @Pure
     @PythonName("rotate_left")
     fun rotateLeft() -> result1: Image
@@ -953,9 +962,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `image.sdsstub`"
+??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="380"
+    ```sds linenums="386"
     @Pure
     @PythonName("rotate_right")
     fun rotateRight() -> result1: Image
@@ -987,9 +996,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `image.sdsstub`"
+??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="345"
+    ```sds linenums="351"
     @Pure
     fun sharpen(
         const factor: Float
@@ -1016,9 +1025,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `image.sdsstub`"
+??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="69"
+    ```sds linenums="75"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_jpeg_file")
     fun toJpegFile(
@@ -1044,9 +1053,9 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `image.sdsstub`"
+??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="85"
+    ```sds linenums="91"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_png_file")
     fun toPngFile(
@@ -1068,7 +1077,7 @@ Create an image from a file.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The image. |
+| `image` | [`Image`][safeds.data.image.containers.Image] | The image. |
 
 **Examples:**
 
@@ -1078,12 +1087,12 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `image.sdsstub`"
+??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="53"
+    ```sds linenums="59"
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
     @PythonName("from_file")
     static fun fromFile(
         path: String
-    ) -> result1: Image
+    ) -> image: Image
     ```

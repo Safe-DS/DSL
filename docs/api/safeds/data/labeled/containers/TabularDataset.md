@@ -24,7 +24,7 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `tabular_dataset.sdsstub`"
+??? quote "Stub code in `TabularDataset.sdsstub`"
 
     ```sds linenums="27"
     class TabularDataset(
@@ -92,7 +92,7 @@ The original `TabularDataset` is not modified.
 |------|------|-------------|
 | `table` | [`Table`][safeds.data.tabular.containers.Table] | A table containing the feature columns and the target column. |
 
-??? quote "Stub code in `tabular_dataset.sdsstub`"
+??? quote "Stub code in `TabularDataset.sdsstub`"
 
     ```sds linenums="54"
     @Pure

@@ -7,9 +7,14 @@ search:
 
 **Inheritors:**
 
+- [`AvgPooling2DLayer`][safeds.ml.nn.AvgPooling2DLayer]
+- [`Convolutional2DLayer`][safeds.ml.nn.Convolutional2DLayer]
+- [`FlattenLayer`][safeds.ml.nn.FlattenLayer]
 - [`ForwardLayer`][safeds.ml.nn.ForwardLayer]
+- [`LSTMLayer`][safeds.ml.nn.LSTMLayer]
+- [`MaxPooling2DLayer`][safeds.ml.nn.MaxPooling2DLayer]
 
-??? quote "Stub code in `layer.sdsstub`"
+??? quote "Stub code in `Layer.sdsstub`"
 
     ```sds linenums="4"
     class Layer {

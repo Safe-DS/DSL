@@ -1,6 +1,6 @@
 # :test_tube:{ title="Experimental" } `#!sds class` ForwardLayer {#safeds.ml.nn.ForwardLayer data-toc-label='ForwardLayer'}
 
-**Parent type:** `#!sds Layer`
+**Parent type:** [`Layer`][safeds.ml.nn.Layer]
 
 **Parameters:**
 
@@ -17,7 +17,7 @@ pipeline example {
 }
 ```
 
-??? quote "Stub code in `forward_layer.sdsstub`"
+??? quote "Stub code in `ForwardLayer.sdsstub`"
 
     ```sds linenums="13"
     class ForwardLayer(
@@ -28,12 +28,12 @@ pipeline example {
 
 ## `#!sds attr` inputSize {#safeds.ml.nn.ForwardLayer.inputSize data-toc-label='inputSize'}
 
-Get the input_size of this layer.
+The input_size of this layer.
 
 **Type:** [`Int`][safeds.lang.Int]
 
 ## `#!sds attr` outputSize {#safeds.ml.nn.ForwardLayer.outputSize data-toc-label='outputSize'}
 
-Get the output_size of this layer.
+The output_size of this layer.
 
 **Type:** [`Int`][safeds.lang.Int]
