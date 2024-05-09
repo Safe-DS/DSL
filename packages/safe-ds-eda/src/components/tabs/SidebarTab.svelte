@@ -1,7 +1,10 @@
 <script lang="ts">
     import type { Tab } from '../../../types/state.js';
     import BarPlotIcon from '../../icons/BarPlot.svelte';
+    import BoxPlotIcon from '../../icons/BoxPlot.svelte';
+    import HeatmapIcon from '../../icons/Heatmap.svelte';
     import LinePlotIcon from '../../icons/LinePlot.svelte';
+    import ScatterPlotIcon from '../../icons/ScatterPlot.svelte';
 
     export let tabObject: Tab;
     export let active: boolean;
@@ -10,25 +13,25 @@
 
 <div class="wrapper" class:activeWrapper={active}>
     <div class="main">
-        <span class="icon">
+        <div class="icon">
             {#if tabObject.isInGeneration}
                 <div></div>
             {:else if tabObject.type === 'linePlot'}
                 <LinePlotIcon />
             {:else if tabObject.type === 'boxPlot'}
-                <BarPlotIcon />
+                <BoxPlotIcon />
             {:else if tabObject.type === 'heatmap'}
-                <BarPlotIcon />
+                <HeatmapIcon />
             {:else if tabObject.type === 'infoPanel'}
                 <BarPlotIcon />
             {:else if tabObject.type === 'histogram'}
                 <BarPlotIcon />
             {:else if tabObject.type === 'scatterPlot'}
-                <BarPlotIcon />
+                <ScatterPlotIcon />
             {/if}
-        </span>
+        </div>
         <span class="title"
-            >{#if width > 109}
+            >{#if width > 300 || tabObject.isInGeneration || (tabObject.tabComment === '' && width > 109)}
                 {#if tabObject.isInGeneration}
                     Generating...
                 {:else if tabObject.type === 'histogram'}
@@ -48,7 +51,7 @@
         >
     </div>
     <span class="comment"
-        >{#if width > 300 && !tabObject.isInGeneration}{tabObject.tabComment}{/if}</span
+        >{#if width > 109 && !tabObject.isInGeneration}{tabObject.tabComment}{/if}</span
     >
 </div>
 
@@ -78,7 +81,7 @@
     }
 
     .icon {
-        margin-right: 7px;
+        margin-right: 10px;
         padding-top: 2px;
     }
 

@@ -39,7 +39,7 @@
 </script>
 
 <main>
-    <div class="sidebarWrapper" style:width="{sidebarWidth}px" class:white-bg={sidebarWidth < 100}>
+    <div class="sidebarWrapper" style:width="{sidebarWidth}px">
         <Sidebar width={sidebarWidth} />
         <button class="resizer" on:mousedown={handleDrag}></button>
     </div>
@@ -71,10 +71,6 @@
         overflow: hidden;
         position: relative;
         background-color: var(--bg-dark);
-    }
-
-    .white-bg {
-        background-color: var(--bg-bright);
     }
 
     .contentWrapper {

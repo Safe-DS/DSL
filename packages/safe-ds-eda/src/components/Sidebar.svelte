@@ -5,7 +5,7 @@
     import UndoIcon from '../icons/Undo.svelte';
     import TableIcon from '../icons/Table.svelte';
     import SidebarTab from './tabs/SidebarTab.svelte';
-    import GuidedMenu from './GuidedMenu.svelte';
+    import NewTabButton from './NewTabButton.svelte';
 
     export let width: number;
 
@@ -26,8 +26,8 @@
         {#if width > 70}
             <span class="rowCounts">{$currentState.table?.visibleRows}/{$currentState.table?.totalRows} Rows</span>{/if}
     </div>
-    <div class="historyBar" class:no-borders={width < 50}>
-        {#if width > 50}
+    {#if width > 50}
+        <div class="historyBar" class:no-borders={width < 50}>
             <span class="historyItem noSelect"
                 ><span class="icon historyIcon"><HistoryIcon /></span>{#if width > 200}History{/if}</span
             >
@@ -37,8 +37,8 @@
             <span class="historyItem noSelect"
                 ><span class="icon redoIcon"><UndoIcon /></span>{#if width > 200}Redo{/if}</span
             >
-        {/if}
-    </div>
+        </div>
+    {/if}
     <div class="tabs">
         {#if width > 50}
             <button class="tab" class:tabActive={$currentTabIndex === undefined} on:click={() => changeTab(undefined)}>
@@ -53,9 +53,11 @@
             {/if}
         {/if}
     </div>
-    <div class="guidedMenu">
-        <GuidedMenu />
-    </div>
+    {#if width > 50}
+        <div class="newTab">
+            <NewTabButton />
+        </div>
+    {/if}
 </div>
 
 <style>
@@ -71,7 +73,7 @@
         flex-direction: row;
         align-items: flex-end;
         justify-content: space-between;
-        height: 63px;
+        height: 64px;
         padding: 0 20px 0 20px;
         margin-bottom: 10px;
     }
@@ -79,6 +81,7 @@
     .sidebarButton {
         height: 50px;
         padding: 0px;
+        border-top: 2px solid var(--bg-bright);
     }
 
     .tableName {
@@ -119,12 +122,18 @@
         margin-right: 20px;
         margin-bottom: 20px;
     }
+
     .historyItem:last-of-type {
         margin-right: 0;
     }
+
     .icon {
         margin-right: 7px;
         padding-top: 2px;
+    }
+
+    .tableIcon {
+        margin-right: 10px;
     }
 
     .redoIcon {
@@ -155,7 +164,7 @@
         height: 50px;
     }
 
-    .guidedMenu {
+    .newTab {
         position: relative;
         top: 20px;
         left: 10px;
