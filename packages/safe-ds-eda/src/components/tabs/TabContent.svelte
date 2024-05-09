@@ -70,7 +70,12 @@
     };
 
     const newTypeSelected = function (selected: string) {
-        if (!$isInBuildingState && tab.type !== 'empty') setTabAsGenerating(tab);
+        let copyOverColumns = false;
+        if (!$isInBuildingState && tab.type !== 'empty') {
+            setTabAsGenerating(tab);
+            copyOverColumns = true;
+        }
+
         if (selected === 'Histogram') {
             buildATab.update((buildingTab) => {
                 buildingTab.type = 'histogram';
@@ -109,6 +114,21 @@
             });
         } else {
             throw new Error('Invalid tab type');
+        }
+
+        if (copyOverColumns && tab.type !== 'empty') {
+            if (tab.columnNumber === 'one') {
+                buildATab.update((buildingTab) => {
+                    buildingTab.xAxisColumnName = tab.content.columnName;
+                    return buildingTab;
+                });
+            } else if (tab.columnNumber === 'two') {
+                buildATab.update((buildingTab) => {
+                    buildingTab.xAxisColumnName = tab.content.xAxisColumnName;
+                    buildingTab.yAxisColumnName = tab.content.yAxisColumnName;
+                    return buildingTab;
+                });
+            }
         }
     };
 
