@@ -609,7 +609,7 @@ export class SafeDsPythonGenerator {
 
         const extraStatement = expandTracedToNode(node)`
             def ${name}(${parameters}):
-                ${joinToNode(lambdaFrame.getExtraStatements())}
+                ${joinToNode(lambdaFrame.getExtraStatements(), { separator: NL })}
                 return ${result}
         `;
         frame.addExtraStatement(node, extraStatement);
