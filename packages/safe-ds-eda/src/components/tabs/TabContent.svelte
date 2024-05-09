@@ -42,7 +42,7 @@
         resetLoadingState();
     }
 
-    $: $cancelTabIdsWaiting, handleNewCancelledTab();
+    $: if ($cancelTabIdsWaiting) handleNewCancelledTab();
 
     const handleNewCancelledTab = function () {
         if (tab.id && $cancelTabIdsWaiting.includes(tab.id)) {
