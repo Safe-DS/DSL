@@ -1,12 +1,19 @@
 <script lang="ts">
-    import { currentState, currentTabIndex } from '../webviewState';
+    import { currentState, currentTabIndex, preventClicks } from '../webviewState';
     import CaretIcon from '../icons/Caret.svelte';
     import HistoryIcon from '../icons/History.svelte';
     import UndoIcon from '../icons/Undo.svelte';
     import TableIcon from '../icons/Table.svelte';
-    import LinePlotTab from './tabs/LinePlotTab.svelte';
+    import SidebarTab from './tabs/SidebarTab.svelte';
+    import NewTabButton from './NewTabButton.svelte';
 
     export let width: number;
+
+    const changeTab = function (index?: number) {
+        if (!$preventClicks) {
+            currentTabIndex.update((_cs) => index);
+        }
+    };
 </script>
 
 <div class="sidebar">
@@ -19,8 +26,8 @@
         {#if width > 70}
             <span class="rowCounts">{$currentState.table?.visibleRows}/{$currentState.table?.totalRows} Rows</span>{/if}
     </div>
-    <div class="historyBar" class:no-borders={width < 50}>
-        {#if width > 50}
+    {#if width > 50}
+        <div class="historyBar" class:no-borders={width < 50}>
             <span class="historyItem noSelect"
                 ><span class="icon historyIcon"><HistoryIcon /></span>{#if width > 200}History{/if}</span
             >
@@ -30,34 +37,35 @@
             <span class="historyItem noSelect"
                 ><span class="icon redoIcon"><UndoIcon /></span>{#if width > 200}Redo{/if}</span
             >
-        {/if}
-    </div>
+        </div>
+    {/if}
     <div class="tabs">
         {#if width > 50}
-            <nav
-                class="tab"
-                class:tabActive={$currentTabIndex === 0}
-                on:click={() => currentTabIndex.update((_cs) => 0)}
-            >
+            <button class="tab" class:tabActive={$currentTabIndex === undefined} on:click={() => changeTab(undefined)}>
                 <span class="icon tableIcon"><TableIcon /></span>{#if width > 109}Table{/if}
-            </nav>
+            </button>
             {#if $currentState.tabs}
                 {#each $currentState.tabs as tab, index}
-                    {#if tab.type === 'linePlot'}
-                        <nav on:click={() => currentTabIndex.update((_cs) => index + 1)}>
-                            <LinePlotTab tabObject={tab} active={$currentTabIndex === index + 1} {width} />
-                        </nav>
-                    {/if}
+                    <button class="sidebarButton" on:click={() => changeTab(index)}>
+                        <SidebarTab tabObject={tab} active={$currentTabIndex === index} {width} />
+                    </button>
                 {/each}
             {/if}
         {/if}
     </div>
+    {#if width > 50}
+        <div class="newTab">
+            <NewTabButton />
+        </div>
+    {/if}
 </div>
 
 <style>
     .sidebar {
         background-color: var(--bg-dark);
         color: var(--font-dark);
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
     .titleBar {
@@ -65,9 +73,15 @@
         flex-direction: row;
         align-items: flex-end;
         justify-content: space-between;
-        height: 63px;
+        height: 64px;
         padding: 0 20px 0 20px;
         margin-bottom: 10px;
+    }
+
+    .sidebarButton {
+        height: 50px;
+        padding: 0px;
+        border-top: 2px solid var(--bg-bright);
     }
 
     .tableName {
@@ -108,12 +122,18 @@
         margin-right: 20px;
         margin-bottom: 20px;
     }
+
     .historyItem:last-of-type {
         margin-right: 0;
     }
+
     .icon {
         margin-right: 7px;
         padding-top: 2px;
+    }
+
+    .tableIcon {
+        margin-right: 10px;
     }
 
     .redoIcon {
@@ -142,6 +162,13 @@
         background-color: var(--bg-bright);
         font-size: 1.4rem;
         height: 50px;
+    }
+
+    .newTab {
+        position: relative;
+        top: 20px;
+        left: 10px;
+        margin-bottom: 100px;
     }
 
     @media (max-width: 300px) {

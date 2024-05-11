@@ -2,6 +2,8 @@
     import TableView from './components/TableView.svelte';
     import Sidebar from './components/Sidebar.svelte';
     import { throttle } from 'lodash';
+    import { currentTabIndex, currentState } from './webviewState';
+    import TabContent from './components/tabs/TabContent.svelte';
 
     let sidebarWidth = 307; // Initial width of the sidebar in pixels
 
@@ -37,12 +39,21 @@
 </script>
 
 <main>
-    <div class="sidebarWrapper" style:width="{sidebarWidth}px" class:white-bg={sidebarWidth < 100}>
+    <div class="sidebarWrapper" style:width="{sidebarWidth}px">
         <Sidebar width={sidebarWidth} />
         <button class="resizer" on:mousedown={handleDrag}></button>
     </div>
-    <div class="tableWrapper">
-        <TableView {sidebarWidth} />
+    <div class="contentWrapper">
+        <div class:hide={$currentTabIndex !== undefined}>
+            <TableView {sidebarWidth} />
+        </div>
+        {#if $currentState.tabs}
+            {#each $currentState.tabs as tab, index}
+                <div class:hide={index !== $currentTabIndex}>
+                    <TabContent {tab} {sidebarWidth} />
+                </div>
+            {/each}
+        {/if}
     </div>
 </main>
 
@@ -59,15 +70,17 @@
         flex-shrink: 0;
         overflow: hidden;
         position: relative;
-        background-color: var(--bg-bright);
+        background-color: var(--bg-dark);
     }
 
-    .white-bg {
-        background-color: var(--bg-bright);
-    }
-
-    .tableWrapper {
+    .contentWrapper {
         flex: 1;
+        width: 100%;
+    }
+
+    .contentWrapper * {
+        height: 100%;
+        width: 100%;
     }
 
     .resizer {
@@ -78,5 +91,9 @@
         top: 0;
         cursor: ew-resize;
         background-color: transparent;
+    }
+
+    .hide {
+        display: none;
     }
 </style>

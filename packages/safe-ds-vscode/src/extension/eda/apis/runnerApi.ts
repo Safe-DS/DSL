@@ -1,16 +1,26 @@
-import { Base64Image, Column, Profiling, ProfilingDetailStatistical, Table } from '@safe-ds/eda/types/state.js';
+import {
+    Base64Image,
+    Column,
+    ExternalHistoryEntry,
+    HistoryEntry,
+    Profiling,
+    ProfilingDetailStatistical,
+    Table,
+} from '@safe-ds/eda/types/state.js';
 import { ast, CODEGEN_PREFIX, messages, SafeDsServices } from '@safe-ds/lang';
 import { LangiumDocument } from 'langium';
 import * as vscode from 'vscode';
 import crypto from 'crypto';
 import { getPipelineDocument } from '../../mainClient.ts';
 import { safeDsLogger } from '../../helpers/logging.js';
+import { RunnerExecutionResultMessage } from '@safe-ds/eda/types/messaging.ts';
 
 export class RunnerApi {
     services: SafeDsServices;
     pipelinePath: vscode.Uri;
     pipelineName: string;
     pipelineNode: ast.SdsPipeline;
+    tablePlaceholder: string;
     baseDocument: LangiumDocument | undefined;
     placeholderCounter = 0;
 
@@ -19,11 +29,13 @@ export class RunnerApi {
         pipelinePath: vscode.Uri,
         pipelineName: string,
         pipelineNode: ast.SdsPipeline,
+        tablePlaceholder: string,
     ) {
         this.services = services;
         this.pipelinePath = pipelinePath;
         this.pipelineName = pipelineName;
         this.pipelineNode = pipelineNode;
+        this.tablePlaceholder = tablePlaceholder;
         getPipelineDocument(this.pipelinePath).then((doc) => {
             // Get here to avoid issues because of chanigng file
             // Make sure to create new instance of RunnerApi if pipeline execution of fresh pipeline is needed
@@ -32,7 +44,12 @@ export class RunnerApi {
         });
     }
 
-    private async addToAndExecutePipeline(pipelineExecutionId: string, addedLines: string): Promise<void> {
+    //#region Pipeline execution
+    private async addToAndExecutePipeline(
+        pipelineExecutionId: string,
+        addedLines: string,
+        placeholderNames?: string[],
+    ): Promise<void> {
         return new Promise(async (resolve, reject) => {
             if (!this.baseDocument) {
                 reject('Document not found');
@@ -47,18 +64,27 @@ export class RunnerApi {
                 return;
             }
 
-            const beforePipelineEnd = documentText.substring(0, endOfPipeline - 1);
-            const afterPipelineEnd = documentText.substring(endOfPipeline - 1);
-            const newDocumentText = beforePipelineEnd + addedLines + afterPipelineEnd;
+            let newDocumentText;
 
             this.services.shared.workspace.LangiumDocuments.deleteDocument(this.pipelinePath);
-            const newDoc = this.services.shared.workspace.LangiumDocuments.createDocument(
-                this.pipelinePath,
+
+            const beforePipelineEnd = documentText.substring(0, endOfPipeline - 1);
+            const afterPipelineEnd = documentText.substring(endOfPipeline - 1);
+            newDocumentText = beforePipelineEnd + addedLines + afterPipelineEnd;
+
+            const newDoc = this.services.shared.workspace.LangiumDocumentFactory.fromString(
                 newDocumentText,
+                this.pipelinePath,
             );
             await this.services.shared.workspace.DocumentBuilder.build([newDoc]);
 
-            await this.services.runtime.Runner.executePipeline(pipelineExecutionId, newDoc, this.pipelineName);
+            safeDsLogger.debug(`Executing pipeline ${this.pipelineName} with added lines`);
+            await this.services.runtime.Runner.executePipeline(
+                pipelineExecutionId,
+                newDoc,
+                this.pipelineName,
+                placeholderNames,
+            );
 
             this.services.shared.workspace.LangiumDocuments.deleteDocument(this.pipelinePath);
             this.services.shared.workspace.LangiumDocuments.addDocument(this.baseDocument);
@@ -68,6 +94,7 @@ export class RunnerApi {
                     return;
                 }
                 if (message.data === 'done') {
+                    safeDsLogger.debug(`Pipeline execution ${this.pipelineName} done`);
                     this.services.runtime.PythonServer.removeMessageCallback('runtime_progress', runtimeCallback);
                     this.services.runtime.PythonServer.removeMessageCallback('runtime_error', errorCallback);
                     resolve();
@@ -77,6 +104,7 @@ export class RunnerApi {
                 if (message.id !== pipelineExecutionId) {
                     return;
                 }
+                safeDsLogger.error(`Pipeline execution ${this.pipelineName} ran into error: ${message.data}`);
                 this.services.runtime.PythonServer.removeMessageCallback('runtime_progress', runtimeCallback);
                 this.services.runtime.PythonServer.removeMessageCallback('runtime_error', errorCallback);
                 reject(message.data);
@@ -89,8 +117,62 @@ export class RunnerApi {
             }, 3000000);
         });
     }
+    //#endregion
 
-    // --- SDS code generation ---
+    //#region SDS code generation
+    private sdsStringForHistoryEntry(historyEntry: ExternalHistoryEntry): {
+        sdsString: string;
+        placeholderNames: string[];
+    } {
+        const newPlaceholderName = this.genPlaceholderName();
+        switch (historyEntry.action) {
+            case 'histogram':
+                return {
+                    sdsString: this.sdsStringForHistogramByColumnName(
+                        historyEntry.columnName,
+                        this.tablePlaceholder,
+                        newPlaceholderName,
+                    ),
+                    placeholderNames: [newPlaceholderName],
+                };
+            case 'boxPlot':
+                return {
+                    sdsString: this.sdsStringForBoxplotByColumnName(
+                        historyEntry.columnName,
+                        this.tablePlaceholder,
+                        newPlaceholderName,
+                    ),
+                    placeholderNames: [newPlaceholderName],
+                };
+            case 'linePlot':
+                return {
+                    sdsString: this.sdsStringForLinePlotByColumnNames(
+                        historyEntry.xAxisColumnName,
+                        historyEntry.yAxisColumnName,
+                        this.tablePlaceholder,
+                        newPlaceholderName,
+                    ),
+                    placeholderNames: [newPlaceholderName],
+                };
+            case 'scatterPlot':
+                return {
+                    sdsString: this.sdsStringForScatterPlotByColumnNames(
+                        historyEntry.xAxisColumnName,
+                        historyEntry.yAxisColumnName,
+                        this.tablePlaceholder,
+                        newPlaceholderName,
+                    ),
+                    placeholderNames: [newPlaceholderName],
+                };
+            case 'heatmap':
+                return {
+                    sdsString: this.sdsStringForCorrelationHeatmap(this.tablePlaceholder, newPlaceholderName),
+                    placeholderNames: [newPlaceholderName],
+                };
+            default:
+                throw new Error('Unknown history entry action: ' + historyEntry.action);
+        }
+    }
 
     private sdsStringForMissingValueRatioByColumnName(
         columnName: string,
@@ -128,10 +210,66 @@ export class RunnerApi {
         );
     }
 
-    // --- Placeholder handling ---
+    private sdsStringForBoxplotByColumnName(columnName: string, tablePlaceholder: string, newPlaceholderName: string) {
+        return (
+            'val ' +
+            newPlaceholderName +
+            ' = ' +
+            tablePlaceholder +
+            '.getColumn("' +
+            columnName +
+            '").plotBoxplot(); \n'
+        );
+    }
 
-    private genPlaceholderName(): string {
-        return CODEGEN_PREFIX + this.placeholderCounter++;
+    private sdsStringForLinePlotByColumnNames(
+        xAxisColumnName: string,
+        yAxisColumnName: string,
+        tablePlaceholder: string,
+        newPlaceholderName: string,
+    ) {
+        return (
+            'val ' +
+            newPlaceholderName +
+            ' = ' +
+            tablePlaceholder +
+            '.plotLineplot(xColumnName="' +
+            xAxisColumnName +
+            '", yColumnName="' +
+            yAxisColumnName +
+            '"); \n'
+        );
+    }
+
+    private sdsStringForScatterPlotByColumnNames(
+        xAxisColumnName: string,
+        yAxisColumnName: string,
+        tablePlaceholder: string,
+        newPlaceholderName: string,
+    ) {
+        return (
+            'val ' +
+            newPlaceholderName +
+            ' = ' +
+            tablePlaceholder +
+            '.plotScatterplot(xColumnName="' +
+            xAxisColumnName +
+            '", yColumnName="' +
+            yAxisColumnName +
+            '"); \n'
+        );
+    }
+
+    private sdsStringForCorrelationHeatmap(tablePlaceholder: string, newPlaceholderName: string) {
+        return 'val ' + newPlaceholderName + ' = ' + tablePlaceholder + '.plotCorrelationHeatmap(); \n';
+    }
+    //#endregion
+
+    //#region Placeholder handling
+    private genPlaceholderName(suffix?: string): string {
+        // Filter out non-alphanumeric characters (allowing underscores), considering Unicode characters
+        const cleanedSuffix = suffix ? suffix.replace(/[^a-zA-Z0-9_]/gu, '') : undefined;
+        return CODEGEN_PREFIX + this.placeholderCounter++ + (cleanedSuffix ? '_' + cleanedSuffix : '');
     }
 
     private async getPlaceholderValue(placeholder: string, pipelineExecutionId: string): Promise<any | undefined> {
@@ -149,7 +287,8 @@ export class RunnerApi {
             };
 
             this.services.runtime.PythonServer.addMessageCallback('placeholder_value', placeholderValueCallback);
-            safeDsLogger.info('Getting placeholder from Runner ...');
+
+            safeDsLogger.debug('Requesting placeholder: ' + placeholder);
             this.services.runtime.PythonServer.sendMessageToPythonServer(
                 messages.createPlaceholderQueryMessage(pipelineExecutionId, placeholder),
             );
@@ -160,9 +299,11 @@ export class RunnerApi {
         });
     }
 
-    // --- Public API ---
+    //#region Public API
 
+    //#region Table fetching
     public async getTableByPlaceholder(tableName: string, pipelineExecutionId: string): Promise<Table | undefined> {
+        safeDsLogger.debug('Getting table by placeholder: ' + tableName);
         const pythonTableColumns = await this.getPlaceholderValue(tableName, pipelineExecutionId);
         if (pythonTableColumns) {
             const table: Table = {
@@ -205,24 +346,30 @@ export class RunnerApi {
             return undefined;
         }
     }
+    //#endregion
 
+    //#region Profiling
     public async getProfiling(table: Table): Promise<{ columnName: string; profiling: Profiling }[]> {
+        safeDsLogger.debug('Getting profiling for table: ' + table.name);
+
         const columns = table.columns;
 
         let sdsStrings = '';
 
+        let placeholderNames: string[] = [];
+
         const columnNameToPlaceholderMVNameMap = new Map<string, string>(); // Mapping random placeholder name for missing value ratio back to column name
         const missingValueRatioMap = new Map<string, number>(); // Saved by random placeholder name
-
-        const columnNameToPlaceholderIDnessNameMap = new Map<string, string>(); // Mapping random placeholder name for IDness back to column name
-        const idnessMap = new Map<string, number>(); // Saved by random placeholder name
 
         const columnNameToPlaceholderHistogramNameMap = new Map<string, string>(); // Mapping random placeholder name for histogram back to column name
         const histogramMap = new Map<string, Base64Image | undefined>(); // Saved by random placeholder name
 
+        const uniqueValuesMap = new Map<string, Set<any>>();
+
         // Generate SDS code to get missing value ratio for each column
-        outer: for (const column of columns) {
-            const newMvPlaceholderName = this.genPlaceholderName();
+        for (const column of columns) {
+            const newMvPlaceholderName = this.genPlaceholderName(column[1].name + '_mv');
+            placeholderNames.push(newMvPlaceholderName);
             columnNameToPlaceholderMVNameMap.set(column[1].name, newMvPlaceholderName);
             sdsStrings += this.sdsStringForMissingValueRatioByColumnName(
                 column[1].name,
@@ -230,29 +377,31 @@ export class RunnerApi {
                 newMvPlaceholderName,
             );
 
-            // Only need to check IDness for non-numerical columns
-            if (column[1].type !== 'numerical') {
-                const newIDnessPlaceholderName = this.genPlaceholderName();
-                columnNameToPlaceholderIDnessNameMap.set(column[1].name, newIDnessPlaceholderName);
-                sdsStrings += this.sdsStringForIDnessByColumnName(column[1].name, table.name, newIDnessPlaceholderName);
+            // Find unique values
+            // TODO reevaluate when image stuck problem fixed
+            let uniqueValues = new Set<any>();
+            for (let j = 0; j < column[1].values.length; j++) {
+                uniqueValues.add(column[1].values[j]);
+            }
+            uniqueValuesMap.set(column[1].name, uniqueValues);
 
-                // Find unique values
-                // TODO reevaluate when image stuck problem fixed
-                let uniqueValues = new Set();
-                for (let j = 0; j < column[1].values.length; j++) {
-                    uniqueValues.add(column[1].values[j]);
-                    if (uniqueValues.size > 10) {
-                        continue outer;
-                    }
-                }
+            // Different histogram conditions for numerical and categorical columns
+            if (column[1].type !== 'numerical') {
                 if (uniqueValues.size <= 3 || uniqueValues.size > 10) {
-                    // Must match conidtions below that choose to display histogram
+                    // Must match conidtions below that choose to display histogram for categorical columns
                     continue; // This historam only generated if between 4-10 categorigal uniques or numerical type
+                }
+            } else {
+                if (uniqueValues.size > column[1].values.length * 0.9) {
+                    // Must match conidtions below that choose to display histogram for numerical columns
+                    // If 90% of values are unique, it's not a good idea to display histogram
+                    continue;
                 }
             }
 
             // Histogram for numerical columns or categorical columns with 4-10 unique values
-            const newHistogramPlaceholderName = this.genPlaceholderName();
+            const newHistogramPlaceholderName = this.genPlaceholderName(column[1].name + '_hist');
+            placeholderNames.push(newHistogramPlaceholderName);
             columnNameToPlaceholderHistogramNameMap.set(column[1].name, newHistogramPlaceholderName);
             sdsStrings += this.sdsStringForHistogramByColumnName(
                 column[1].name,
@@ -264,9 +413,8 @@ export class RunnerApi {
         // Execute with generated SDS code
         const pipelineExecutionId = crypto.randomUUID();
         try {
-            await this.addToAndExecutePipeline(pipelineExecutionId, sdsStrings);
+            await this.addToAndExecutePipeline(pipelineExecutionId, sdsStrings, placeholderNames);
         } catch (e) {
-            safeDsLogger.info('Error during pipeline execution: ' + e);
             throw e;
         }
 
@@ -275,14 +423,6 @@ export class RunnerApi {
             const missingValueRatio = await this.getPlaceholderValue(placeholderName, pipelineExecutionId);
             if (missingValueRatio) {
                 missingValueRatioMap.set(placeholderName, missingValueRatio as number);
-            }
-        }
-
-        // Get IDness for each column
-        for (const [, placeholderName] of columnNameToPlaceholderIDnessNameMap) {
-            const idness = await this.getPlaceholderValue(placeholderName, pipelineExecutionId);
-            if (idness) {
-                idnessMap.set(placeholderName, idness as number);
             }
         }
 
@@ -315,17 +455,15 @@ export class RunnerApi {
                 interpretation: missingValuesRatio > 0 ? 'error' : 'default',
             };
 
+            const uniqueValues = uniqueValuesMap.get(column[1].name)!.size;
             // If not numerical, add proper profilings according to idness results
             if (column[1].type !== 'numerical') {
-                const idness = idnessMap.get(columnNameToPlaceholderIDnessNameMap.get(column[1].name)!)!;
-                const uniqueValues = idness * column[1].values.length;
-
                 if (uniqueValues <= 3) {
                     // Can display each separate percentages of unique values
                     // Find all unique values and count them
                     const uniqueValueCounts = new Map<string, number>();
                     for (let i = 0; i < column[1].values.length; i++) {
-                        if (column[1].values[i])
+                        if (column[1].values[i] !== undefined && column[1].values[i] !== null)
                             uniqueValueCounts.set(
                                 column[1].values[i],
                                 (uniqueValueCounts.get(column[1].values[i]) || 0) + 1,
@@ -399,23 +537,155 @@ export class RunnerApi {
                     });
                 }
             } else {
-                // Display histogram for numerical columns
-                const histogram = histogramMap.get(columnNameToPlaceholderHistogramNameMap.get(column[1].name)!)!;
+                if (uniqueValues > column[1].values.length * 0.9) {
+                    profiling.push({
+                        columnName: column[1].name,
+                        profiling: {
+                            validRatio,
+                            missingRatio,
+                            other: [
+                                { type: 'text', value: 'Categorical', interpretation: 'important' },
+                                {
+                                    type: 'text',
+                                    value: uniqueValues + ' Distincts',
+                                    interpretation: 'default',
+                                },
+                                {
+                                    type: 'text',
+                                    value:
+                                        Math.round(
+                                            column[1].values.length *
+                                                (1 -
+                                                    (missingValueRatioMap.get(
+                                                        columnNameToPlaceholderMVNameMap.get(column[1].name)!,
+                                                    ) || 0)),
+                                        ) + ' Total Valids',
+                                    interpretation: 'default',
+                                },
+                            ],
+                        },
+                    });
+                } else {
+                    const histogram = histogramMap.get(columnNameToPlaceholderHistogramNameMap.get(column[1].name)!)!;
 
-                profiling.push({
-                    columnName: column[1].name,
-                    profiling: {
-                        validRatio,
-                        missingRatio,
-                        other: [
-                            { type: 'text', value: 'Numerical', interpretation: 'important' },
-                            { type: 'image', value: histogram },
-                        ],
-                    },
-                });
+                    profiling.push({
+                        columnName: column[1].name,
+                        profiling: {
+                            validRatio,
+                            missingRatio,
+                            other: [
+                                { type: 'text', value: 'Numerical', interpretation: 'important' },
+                                { type: 'image', value: histogram },
+                            ],
+                        },
+                    });
+                }
             }
         }
 
         return profiling;
     }
+    //#endregion
+
+    //#region History
+    public async executeHistoryAndReturnNewResult(
+        pastEntries: HistoryEntry[],
+        newEntry: HistoryEntry,
+    ): Promise<RunnerExecutionResultMessage['value']> {
+        let sdsLines = '';
+        let placeholderNames: string[] = [];
+        for (const entry of pastEntries) {
+            if (entry.type === 'external-manipulating') {
+                // Only manipulating actions have to be repeated before last entry that is of interest, others do not influence that end result
+                const sdsString = this.sdsStringForHistoryEntry(entry).sdsString;
+                if (sdsString) {
+                    sdsLines += sdsString + '\n';
+                }
+                safeDsLogger.debug(`Running old entry ${entry.id} with action ${entry.action}`);
+            }
+        }
+
+        if (newEntry.type === 'external-visualizing') {
+            if (newEntry.action === 'infoPanel' || newEntry.action === 'refreshTab') throw new Error('Not implemented');
+
+            const sdsStringObj = this.sdsStringForHistoryEntry(newEntry);
+            sdsLines += sdsStringObj.sdsString + '\n';
+            placeholderNames = sdsStringObj.placeholderNames;
+
+            safeDsLogger.debug(`Running new entry ${newEntry.id} with action ${newEntry.action}`);
+        } else if (newEntry.type === 'external-manipulating') {
+            throw new Error('Not implemented');
+        } else if (newEntry.type === 'internal') {
+            throw new Error('Cannot execute internal history entry in Runner');
+        }
+
+        const pipelineExecutionId = crypto.randomUUID();
+        try {
+            await this.addToAndExecutePipeline(pipelineExecutionId, sdsLines, placeholderNames);
+        } catch (e) {
+            throw e;
+        }
+
+        if (
+            newEntry.type === 'external-visualizing' &&
+            newEntry.action !== 'infoPanel' &&
+            placeholderNames.length > 0
+        ) {
+            const result = await this.getPlaceholderValue(placeholderNames[0]!, pipelineExecutionId);
+            const image = result as Base64Image;
+
+            if (newEntry.columnNumber === 'none') {
+                return {
+                    type: 'tab',
+                    historyId: newEntry.id,
+                    content: {
+                        tabComment: '',
+                        type: newEntry.action,
+                        columnNumber: newEntry.columnNumber,
+                        imageTab: true,
+                        isInGeneration: false,
+                        id: newEntry.existingTabId,
+                        content: { outdated: false, encodedImage: image },
+                    },
+                };
+            } else if (newEntry.columnNumber === 'two') {
+                return {
+                    type: 'tab',
+                    historyId: newEntry.id,
+                    content: {
+                        tabComment: newEntry.xAxisColumnName + ' x ' + newEntry.yAxisColumnName,
+                        type: newEntry.action,
+                        columnNumber: newEntry.columnNumber,
+                        imageTab: true,
+                        isInGeneration: false,
+                        id: newEntry.existingTabId,
+                        content: {
+                            outdated: false,
+                            encodedImage: image,
+                            xAxisColumnName: newEntry.xAxisColumnName,
+                            yAxisColumnName: newEntry.yAxisColumnName,
+                        },
+                    },
+                };
+            } else {
+                return {
+                    type: 'tab',
+                    historyId: newEntry.id,
+                    content: {
+                        tabComment: newEntry.columnName,
+                        type: newEntry.action,
+                        columnNumber: newEntry.columnNumber,
+                        imageTab: true,
+                        isInGeneration: false,
+                        id: newEntry.existingTabId,
+                        content: { outdated: false, encodedImage: image, columnName: newEntry.columnName },
+                    },
+                };
+            }
+        } else {
+            throw new Error('Not implemented');
+        }
+    }
+    //#endregion
+    //#endregion // Public API
 }

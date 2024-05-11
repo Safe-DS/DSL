@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import { ToExtensionMessage } from '@safe-ds/eda/types/messaging.js';
 import * as webviewApi from './apis/webviewApi.ts';
-import { State } from '@safe-ds/eda/types/state.js';
-import { ast, SafeDsServices } from '@safe-ds/lang';
+import { State } from '@safe-ds/eda/types/state.ts';
+import { SafeDsServices, ast } from '@safe-ds/lang';
 import { RunnerApi } from './apis/runnerApi.ts';
 import { safeDsLogger } from '../helpers/logging.js';
 
@@ -26,6 +26,7 @@ export class EDAPanel {
     private startPipelineExecutionId: string;
     private runnerApi: RunnerApi;
 
+    //#region Creation
     private constructor(
         panel: vscode.WebviewPanel,
         extensionUri: vscode.Uri,
@@ -39,7 +40,7 @@ export class EDAPanel {
         this.panel = panel;
         this.extensionUri = extensionUri;
         this.startPipelineExecutionId = startPipelineExecutionId;
-        this.runnerApi = new RunnerApi(EDAPanel.services, pipelinePath, pipelineName, pipelineNode);
+        this.runnerApi = new RunnerApi(EDAPanel.services, pipelinePath, pipelineName, pipelineNode, tableName);
         this.tableName = tableName;
 
         // Set the webview's initial html content
@@ -56,13 +57,14 @@ export class EDAPanel {
             if (updatedPanel.visible) {
                 this.column = updatedPanel.viewColumn;
             }
+            // TODO handle floating panels if at some point possible
         });
         this.disposables.push(this.viewStateChangeListener);
 
         // Handle messages from the webview
         const webview = this.panel.webview;
         this.webviewListener = webview.onDidReceiveMessage(async (data: ToExtensionMessage) => {
-            safeDsLogger.info(data.command + ' called');
+            safeDsLogger.debug(data.command + ' called');
             switch (data.command) {
                 case 'setInfo': {
                     if (!data.value) {
@@ -78,24 +80,56 @@ export class EDAPanel {
                     vscode.window.showErrorMessage(data.value);
                     break;
                 }
-                case 'setCurrentGlobalState': {
-                    // if (!data.value) {
-                    //     return;
-                    // }
-                    // const existingStates = (EDAPanel.context.globalState.get('webviewState') ?? []) as State[];
-                    // const stateExists = existingStates.some((s) => s.tableIdentifier === data.value.tableIdentifier);
+                case 'executeRunner': {
+                    if (!data.value) {
+                        return;
+                    }
 
-                    // const newWebviewState = stateExists
-                    //     ? (existingStates.map((s) =>
-                    //           s.tableIdentifier === data.value.tableIdentifier ? data.value : s,
-                    //       ) as State[])
-                    //     : existingStates.concat(data.value);
+                    let alreadyComplete = false;
 
-                    // EDAPanel.context.globalState.update('webviewState', newWebviewState);
-                    break;
-                }
-                case 'resetGlobalState': {
-                    EDAPanel.context.globalState.update('webviewState', []);
+                    // Execute the runner
+                    const resultPromise = this.runnerApi.executeHistoryAndReturnNewResult(
+                        data.value.pastEntries,
+                        data.value.newEntry,
+                    );
+
+                    // Check if execution takes longer than 1s to show progress indicator
+                    setTimeout(() => {
+                        if (!alreadyComplete) {
+                            vscode.window.withProgress(
+                                {
+                                    location: vscode.ProgressLocation.Notification,
+                                    title: 'Executing action ...',
+                                    cancellable: true,
+                                },
+                                async (progress, token) => {
+                                    token.onCancellationRequested(() => {
+                                        if (data.value.newEntry) {
+                                            safeDsLogger.info('User canceled execution.');
+                                            webviewApi.postMessage(this.panel.webview, {
+                                                command: 'cancelRunnerExecution',
+                                                value: data.value.newEntry,
+                                            });
+                                        } else {
+                                            throw new Error('No history entry to cancel');
+                                        }
+                                    });
+
+                                    // Wait for the result to finish in case it's still running
+                                    await resultPromise;
+                                    alreadyComplete = true; // Mark completion to prevent multiple indicators
+                                },
+                            );
+                        }
+                    }, 1000);
+
+                    const result = await resultPromise;
+                    alreadyComplete = true;
+
+                    webviewApi.postMessage(this.panel.webview, {
+                        command: 'runnerExecutionResult',
+                        value: result,
+                    });
                     break;
                 }
             }
@@ -127,7 +161,7 @@ export class EDAPanel {
             panel.panel.reveal(panel.column);
             panel.tableIdentifier = tableIdentifier;
             panel.startPipelineExecutionId = startPipelineExecutionId;
-            panel.runnerApi = new RunnerApi(services, pipelinePath, pipelineName, pipelineNode);
+            panel.runnerApi = new RunnerApi(services, pipelinePath, pipelineName, pipelineNode, tableName);
             panel.tableName = tableName;
             EDAPanel.panelsMap.set(tableIdentifier, panel);
 
@@ -191,7 +225,9 @@ export class EDAPanel {
             }
         }
     }
+    //#endregion
 
+    //#region Disposal
     public static kill(tableIdentifier: string) {
         safeDsLogger.info('kill ' + tableIdentifier);
         let panel = EDAPanel.panelsMap.get(tableIdentifier);
@@ -202,6 +238,7 @@ export class EDAPanel {
     }
 
     public dispose() {
+        safeDsLogger.info('dispose ' + this.tableIdentifier);
         EDAPanel.panelsMap.delete(this.tableIdentifier);
 
         // Clean up our panel
@@ -215,7 +252,34 @@ export class EDAPanel {
             }
         }
     }
+    //#endregion
 
+    //#region State handling
+    private async constructCurrentState(): Promise<{ state: State; fromExisting: boolean }> {
+        const panel = EDAPanel.panelsMap.get(this.tableIdentifier);
+        if (!panel) {
+            throw new Error('Panel not found.');
+        } else {
+            const table = await panel.runnerApi.getTableByPlaceholder(this.tableName, this.startPipelineExecutionId);
+            if (!table) {
+                throw new Error('Timeout waiting for placeholder value');
+            } else {
+                return {
+                    state: {
+                        tableIdentifier: panel.tableIdentifier,
+                        history: [],
+                        defaultState: false,
+                        table,
+                        tabs: [],
+                    },
+                    fromExisting: false,
+                };
+            }
+        }
+    }
+    //#endregion
+
+    //#region Html updating
     private async _update() {
         const webview = this.panel.webview;
         this.panel.webview.html = await this._getHtmlForWebview(webview);
@@ -238,39 +302,6 @@ export class EDAPanel {
             check();
         });
     };
-
-    // private findCurrentState(): State | undefined {
-    //     const existingStates = (EDAPanel.context.globalState.get('webviewState') ?? []) as State[];
-    //     return existingStates.find((s) => s.tableIdentifier === this.tableIdentifier);
-    // }
-
-    private async constructCurrentState(): Promise<{ state: State; fromExisting: boolean }> {
-        // const existingCurrentState = this.findCurrentState();
-        // if (existingCurrentState) {
-        //     printOutputMessage('Found current State.');
-        //     return { state: existingCurrentState, fromExisting: true };
-        // }
-        //
-        const panel = EDAPanel.panelsMap.get(this.tableIdentifier);
-        if (!panel) {
-            throw new Error('RunnerApi panel not found.');
-        } else {
-            const table = await panel.runnerApi.getTableByPlaceholder(this.tableName, this.startPipelineExecutionId);
-            if (!table) {
-                throw new Error('Timeout waiting for placeholder value');
-            } else {
-                return {
-                    state: {
-                        tableIdentifier: panel.tableIdentifier,
-                        history: [],
-                        defaultState: false,
-                        table,
-                    },
-                    fromExisting: false,
-                };
-            }
-        }
-    }
 
     private async _getHtmlForWebview(webview: vscode.Webview) {
         // The uri we use to load this script in the webview
@@ -327,4 +358,5 @@ export class EDAPanel {
         }
         return text;
     }
+    //#endregion
 }

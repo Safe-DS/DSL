@@ -1,21 +1,15 @@
 import type { FromExtensionMessage } from '../types/messaging';
 import type { State } from '../types/state';
-import * as extensionApi from './apis/extensionApi';
 import { get, writable } from 'svelte/store';
 
-let currentTabIndex = writable<number>(0);
+let currentTabIndex = writable<number | undefined>(undefined);
 
 let preventClicks = writable<boolean>(false);
 
-// Define the stores, current state to default in case the extension never calls setWebviewState( Shouldn't happen)
-let currentState = writable<State>({ tableIdentifier: undefined, history: [], defaultState: true });
+let cancelTabIdsWaiting = writable<string[]>([]);
 
-// Set Global states whenever updatedAllStates changes
-currentState.subscribe(($currentState) => {
-    if (!$currentState.defaultState) {
-        extensionApi.setCurrentGlobalState($currentState);
-    }
-});
+// Define the stores, current state to default in case the extension never calls setWebviewState( Shouldn't happen)
+const currentState = writable<State>({ tableIdentifier: undefined, history: [], defaultState: true, tabs: [] });
 
 window.addEventListener('message', (event) => {
     const message = event.data as FromExtensionMessage;
@@ -55,4 +49,4 @@ window.addEventListener('message', (event) => {
     }
 });
 
-export { currentState, currentTabIndex, preventClicks };
+export { currentState, currentTabIndex, preventClicks, cancelTabIdsWaiting };
