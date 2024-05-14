@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { currentState, currentTabIndex, preventClicks } from '../webviewState';
+    import { table, currentTabIndex, preventClicks, tabs } from '../webviewState';
     import CaretIcon from '../icons/Caret.svelte';
     import HistoryIcon from '../icons/History.svelte';
     import UndoIcon from '../icons/Undo.svelte';
@@ -20,11 +20,11 @@
     <div class="titleBar">
         {#if width > 100}
             <span class="tableName"
-                >{$currentState.table?.name}
+                >{$table?.name ?? 'Loading ...'}
                 <span class="caret"><CaretIcon /></span>
             </span>{/if}
         {#if width > 70}
-            <span class="rowCounts">{$currentState.table?.visibleRows}/{$currentState.table?.totalRows} Rows</span>{/if}
+            <span class="rowCounts">{$table?.visibleRows ?? 0}/{$table?.totalRows ?? 0} Rows</span>{/if}
     </div>
     {#if width > 50}
         <div class="historyBar" class:no-borders={width < 50}>
@@ -44,8 +44,8 @@
             <button class="tab" class:tabActive={$currentTabIndex === undefined} on:click={() => changeTab(undefined)}>
                 <span class="icon tableIcon"><TableIcon /></span>{#if width > 109}Table{/if}
             </button>
-            {#if $currentState.tabs}
-                {#each $currentState.tabs as tab, index}
+            {#if $tabs}
+                {#each $tabs as tab, index}
                     <button class="sidebarButton" on:click={() => changeTab(index)}>
                         <SidebarTab tabObject={tab} active={$currentTabIndex === index} {width} />
                     </button>

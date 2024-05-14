@@ -10,7 +10,7 @@ import type {
     Tab,
     TabHistoryEntry,
 } from '../../types/state';
-import { cancelTabIdsWaiting, currentState, currentTabIndex } from '../webviewState';
+import { cancelTabIdsWaiting, tabs, history, currentTabIndex } from '../webviewState';
 import { executeRunner } from './extensionApi';
 
 // Wait for results to return from the server
@@ -47,40 +47,34 @@ window.addEventListener('message', (event) => {
 });
 
 export const addInternalToHistory = function (entry: InternalHistoryEntry): void {
-    currentState.update((state) => {
+    history.update((state) => {
         const entryWithId: HistoryEntry = {
             ...entry,
             id: getAndIncrementEntryId(),
         };
-        const newHistory = [...state.history, entryWithId];
-        return {
-            ...state,
-            history: newHistory,
-        };
+        const newHistory = [...state, entryWithId];
+        return newHistory;
     });
 };
 
 export const executeExternalHistoryEntry = function (entry: ExternalHistoryEntry): void {
-    currentState.update((state) => {
+    history.update((state) => {
         const entryWithId: HistoryEntry = {
             ...entry,
             id: getAndIncrementEntryId(),
         };
-        const newHistory = [...state.history, entryWithId];
+        const newHistory = [...state, entryWithId];
 
         asyncQueue.push(entryWithId);
-        executeRunner(state.history, entryWithId); // Is this good in here? Otherwise risk of empty array idk
+        executeRunner(state, entryWithId);
 
-        return {
-            ...state,
-            history: newHistory,
-        };
+        return newHistory;
     });
 };
 
 export const addAndDeployTabHistoryEntry = function (entry: TabHistoryEntry & { id: number }, tab: Tab): void {
     // Search if already exists and is up to date
-    const existingTab = get(currentState).tabs?.find(
+    const existingTab = get(tabs).find(
         (et) =>
             et.type !== 'empty' &&
             et.type === tab.type &&
@@ -90,20 +84,18 @@ export const addAndDeployTabHistoryEntry = function (entry: TabHistoryEntry & { 
             !et.isInGeneration,
     );
     if (existingTab) {
-        currentTabIndex.set(get(currentState).tabs!.indexOf(existingTab));
+        currentTabIndex.set(get(tabs).indexOf(existingTab));
         return;
     }
 
-    currentState.update((state) => {
-        const newHistory = [...state.history, entry];
-
-        return {
-            ...state,
-            history: newHistory,
-            tabs: (state.tabs ?? []).concat([tab]),
-        };
+    history.update((state) => {
+        return [...state, entry];
     });
-    currentTabIndex.set(get(currentState).tabs!.indexOf(tab));
+    tabs.update((state) => {
+        const newTabs = (state ?? []).concat(tab);
+        return newTabs;
+    });
+    currentTabIndex.set(get(tabs).indexOf(tab));
 };
 
 export const addEmptyTabHistoryEntry = function (): void {
@@ -119,16 +111,14 @@ export const addEmptyTabHistoryEntry = function (): void {
         isInGeneration: true,
     };
 
-    currentState.update((state) => {
-        const newHistory = [...state.history, entry];
-
-        return {
-            ...state,
-            history: newHistory,
-            tabs: (state.tabs ?? []).concat([tab]),
-        };
+    history.update((state) => {
+        return [...state, entry];
     });
-    currentTabIndex.set(get(currentState).tabs!.indexOf(tab));
+    tabs.update((state) => {
+        const newTabs = (state ?? []).concat(tab);
+        return newTabs;
+    });
+    currentTabIndex.set(get(tabs).indexOf(tab));
 };
 
 export const cancelExecuteExternalHistoryEntry = function (entry: HistoryEntry): void {
@@ -139,9 +129,7 @@ export const cancelExecuteExternalHistoryEntry = function (entry: HistoryEntry):
             cancelTabIdsWaiting.update((ids) => {
                 return ids.concat([entry.existingTabId!]);
             });
-            const tab: RealTab = get(currentState).tabs!.find(
-                (t) => t.type !== 'empty' && t.id === entry.existingTabId,
-            )! as RealTab;
+            const tab: RealTab = get(tabs).find((t) => t.type !== 'empty' && t.id === entry.existingTabId)! as RealTab;
             unsetTabAsGenerating(tab);
         }
     } else {
@@ -150,8 +138,8 @@ export const cancelExecuteExternalHistoryEntry = function (entry: HistoryEntry):
 };
 
 export const setTabAsGenerating = function (tab: RealTab): void {
-    currentState.update((state) => {
-        const newTabs = state.tabs?.map((t) => {
+    tabs.update((state) => {
+        const newTabs = state.map((t) => {
             if (t === tab) {
                 return {
                     ...t,
@@ -162,16 +150,13 @@ export const setTabAsGenerating = function (tab: RealTab): void {
             }
         });
 
-        return {
-            ...state,
-            tabs: newTabs,
-        };
+        return newTabs;
     });
 };
 
 export const unsetTabAsGenerating = function (tab: RealTab): void {
-    currentState.update((state) => {
-        const newTabs = state.tabs?.map((t) => {
+    tabs.update((state) => {
+        const newTabs = state.map((t) => {
             if (t === tab) {
                 return {
                     ...t,
@@ -193,34 +178,26 @@ const deployResult = function (result: RunnerExecutionResultMessage) {
     const resultContent = result.value;
     if (resultContent.type === 'tab') {
         if (resultContent.content.id) {
-            const existingTab = get(currentState).tabs?.find((et) => et.id === resultContent.content.id);
+            const existingTab = get(tabs).find((et) => et.id === resultContent.content.id);
             if (existingTab) {
-                const tabIndex = get(currentState).tabs!.indexOf(existingTab);
-                currentState.update((state) => {
-                    return {
-                        ...state,
-                        tabs: state.tabs?.map((t) => {
-                            if (t.id === resultContent.content.id) {
-                                return resultContent.content;
-                            } else {
-                                return t;
-                            }
-                        }),
-                    };
-                });
+                const tabIndex = get(tabs).indexOf(existingTab);
+                tabs.update((state) =>
+                    state.map((t) => {
+                        if (t.id === resultContent.content.id) {
+                            return resultContent.content;
+                        } else {
+                            return t;
+                        }
+                    }),
+                );
                 currentTabIndex.set(tabIndex);
                 return;
             }
         }
         const tab = resultContent.content;
         tab.id = crypto.randomUUID();
-        currentState.update((state) => {
-            return {
-                ...state,
-                tabs: (state.tabs ?? []).concat(tab),
-            };
-        });
-        currentTabIndex.set(get(currentState).tabs!.indexOf(tab));
+        tabs.update((state) => state.concat(tab));
+        currentTabIndex.set(get(tabs).indexOf(tab));
     }
 };
 

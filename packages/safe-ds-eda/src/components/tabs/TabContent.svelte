@@ -2,7 +2,7 @@
     import type { EmptyTab, ExternalVisualizingHistoryEntry, Tab } from '../../../types/state';
     import ImageContent from './content/ImageContent.svelte';
     import DropDownButton from '../utilities/DropDownButton.svelte';
-    import { cancelTabIdsWaiting, currentState } from '../../webviewState';
+    import { cancelTabIdsWaiting, table } from '../../webviewState';
     import { imageWidthToHeightRatio } from '../../../consts.config';
     import { executeExternalHistoryEntry, setTabAsGenerating } from '../../apis/historyApi';
     import SwapIcon from '../../icons/Swap.svelte';
@@ -11,7 +11,7 @@
     export let tab: Tab | EmptyTab;
     export let sidebarWidth: number;
 
-    const columnNames = $currentState.table?.columns.map((column) => column[1].name) || [];
+    const columnNames = $table?.columns.map((column) => column.name) || [];
     const possibleTableNames = ['Histogram', 'Boxplot', 'Heatmap', 'Lineplot', 'Scatterplot'];
 
     let isLoadingGeneratedTab = false;
