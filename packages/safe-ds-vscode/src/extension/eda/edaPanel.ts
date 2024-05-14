@@ -91,6 +91,7 @@ export class EDAPanel {
                     const resultPromise = this.runnerApi.executeHistoryAndReturnNewResult(
                         data.value.pastEntries,
                         data.value.newEntry,
+                        data.value.type === 'visualizing' ? data.value.hiddenColumns : undefined,
                     );
 
                     // Check if execution takes longer than 1s to show progress indicator

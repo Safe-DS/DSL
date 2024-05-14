@@ -18,18 +18,30 @@ interface ToExtensionSetErrorMessage extends ToExtensionCommandMessage {
     value: string;
 }
 
-interface ToExtensionExecuteRunnerMessage extends ToExtensionCommandMessage {
+interface ToExtensionExecuteManipulatingRunnerMessage extends ToExtensionCommandMessage {
     command: 'executeRunner';
     value: {
+        type: 'manipulating';
         pastEntries: defaultTypes.HistoryEntry[];
-        newEntry: defaultTypes.HistoryEntry;
+        newEntry: defaultTypes.ExternalManipulatingHistoryEntry & { id: number };
+    };
+}
+
+interface ToExtensionExecuteVisualizingRunnerMessage extends ToExtensionCommandMessage {
+    command: 'executeRunner';
+    value: {
+        type: 'visualizing';
+        pastEntries: defaultTypes.HistoryEntry[];
+        newEntry: defaultTypes.ExternalVisualizingHistoryEntry & { id: number };
+        hiddenColumns: string[];
     };
 }
 
 export type ToExtensionMessage =
     | ToExtensionSetInfoMessage
     | ToExtensionSetErrorMessage
-    | ToExtensionExecuteRunnerMessage;
+    | ToExtensionExecuteVisualizingRunnerMessage
+    | ToExtensionExecuteManipulatingRunnerMessage;
 
 // From extension
 type FromExtensionCommand = 'setInitialTable' | 'setProfiling' | 'runnerExecutionResult' | 'cancelRunnerExecution';
