@@ -496,7 +496,7 @@
                 ...$table!,
                 columns: $table!.columns.map((column, index) => {
                     if (index === columnIndex) {
-                        visible = !column.hidden;
+                        visible = column.hidden;
                         return {
                             ...column,
                             hidden: !column.hidden,

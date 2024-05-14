@@ -10,7 +10,7 @@ import type {
     Tab,
     TabHistoryEntry,
 } from '../../types/state';
-import { cancelTabIdsWaiting, tabs, history, currentTabIndex } from '../webviewState';
+import { cancelTabIdsWaiting, tabs, history, currentTabIndex, table } from '../webviewState';
 import { executeRunner } from './extensionApi';
 
 // Wait for results to return from the server
@@ -38,7 +38,7 @@ window.addEventListener('message', (event) => {
             return;
         }
 
-        deployResult(message);
+        deployResult(message, asyncQueue[0]);
         asyncQueue.shift();
         evaluateMessagesWaitingForTurn();
     } else if (message.command === 'cancelRunnerExecution') {
@@ -55,6 +55,8 @@ export const addInternalToHistory = function (entry: InternalHistoryEntry): void
         const newHistory = [...state, entryWithId];
         return newHistory;
     });
+
+    updateTabOutdated(entry);
 };
 
 export const executeExternalHistoryEntry = function (entry: ExternalHistoryEntry): void {
@@ -80,7 +82,7 @@ export const addAndDeployTabHistoryEntry = function (entry: TabHistoryEntry & { 
             et.type === tab.type &&
             et.tabComment === tab.tabComment &&
             tab.type &&
-            !et.content.outdated &&
+            !et.outdated &&
             !et.isInGeneration,
     );
     if (existingTab) {
@@ -174,7 +176,7 @@ export const unsetTabAsGenerating = function (tab: RealTab): void {
     });
 };
 
-const deployResult = function (result: RunnerExecutionResultMessage) {
+const deployResult = function (result: RunnerExecutionResultMessage, historyEntry: ExternalHistoryEntry) {
     const resultContent = result.value;
     if (resultContent.type === 'tab') {
         if (resultContent.content.id) {
@@ -198,6 +200,9 @@ const deployResult = function (result: RunnerExecutionResultMessage) {
         tab.id = crypto.randomUUID();
         tabs.update((state) => state.concat(tab));
         currentTabIndex.set(get(tabs).indexOf(tab));
+    } else if (resultContent.type === 'table') {
+        updateTabOutdated(historyEntry);
+        throw new Error('Not implemented');
     }
 };
 
@@ -209,7 +214,7 @@ const evaluateMessagesWaitingForTurn = function () {
         if (asyncQueue[0].id === entry.value.historyId) {
             // eslint-disable-next-line no-console
             console.log(`Deploying message from waiting queue: ${entry}`);
-            deployResult(entry);
+            deployResult(entry, asyncQueue[0]);
             asyncQueue.shift();
             firstItemQueueChanged = true;
         } else if (asyncQueue.findIndex((queueEntry) => queueEntry.id === entry.value.historyId) !== -1) {
@@ -219,4 +224,86 @@ const evaluateMessagesWaitingForTurn = function () {
 
     messagesWaitingForTurn = newMessagesWaitingForTurn;
     if (firstItemQueueChanged) evaluateMessagesWaitingForTurn(); // Only if first element was deployed we have to scan again, as this is only deployment condition
+};
+
+const updateTabOutdated = function (entry: ExternalHistoryEntry | InternalHistoryEntry): void {
+    if (entry.action === 'showColumn') {
+        tabs.update((state) => {
+            const newTabs = state.map((t) => {
+                if (t.type !== 'empty') {
+                    if (
+                        t.columnNumber === 'none' &&
+                        t.outdated &&
+                        get(table)?.columns.filter((c) => c.hidden && c.type === 'numerical').length === 0
+                    ) {
+                        // UPDATE the if in case there are none column tabs that do not depend on numerical columns
+                        return {
+                            ...t,
+                            outdated: false,
+                        };
+                    } else if (t.columnNumber === 'one' && t.outdated && t.content.columnName === entry.columnName) {
+                        return {
+                            ...t,
+                            outdated: false,
+                        };
+                    } else if (
+                        t.columnNumber === 'two' &&
+                        t.outdated &&
+                        !get(table)?.columns.find((c) => c.name === t.content.yAxisColumnName)?.hidden &&
+                        !get(table)?.columns.find((c) => c.name === t.content.xAxisColumnName)?.hidden
+                    ) {
+                        return {
+                            ...t,
+                            outdated: false,
+                        };
+                    } else {
+                        return t;
+                    }
+                } else {
+                    return t;
+                }
+            });
+
+            return newTabs;
+        });
+    } else if (entry.action === 'hideColumn') {
+        tabs.update((state) => {
+            const newTabs = state.map((t) => {
+                if (t.type !== 'empty') {
+                    if (
+                        t.columnNumber === 'none' &&
+                        !t.outdated &&
+                        get(table)?.columns.find((c) => c.name === entry.columnName)?.type === 'numerical'
+                    ) {
+                        // UPDATE the if in case there are none column tabs that do not depend on numerical columns
+                        return {
+                            ...t,
+                            outdated: true,
+                        };
+                    } else if (t.columnNumber === 'one' && !t.outdated && t.content.columnName === entry.columnName) {
+                        return {
+                            ...t,
+                            outdated: true,
+                        };
+                    } else if (
+                        t.columnNumber === 'two' &&
+                        !t.outdated &&
+                        (t.content.xAxisColumnName === entry.columnName ||
+                            t.content.yAxisColumnName === entry.columnName)
+                    ) {
+                        return {
+                            ...t,
+                            outdated: true,
+                        };
+                    } else {
+                        return t;
+                    }
+                } else {
+                    return t;
+                }
+            });
+
+            return newTabs;
+        });
+    }
 };

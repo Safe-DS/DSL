@@ -664,7 +664,8 @@ export class RunnerApi {
                         imageTab: true,
                         isInGeneration: false,
                         id: newEntry.existingTabId,
-                        content: { outdated: false, encodedImage: image },
+                        content: { encodedImage: image },
+                        outdated: false,
                     },
                 };
             } else if (newEntry.columnNumber === 'two') {
@@ -678,8 +679,8 @@ export class RunnerApi {
                         imageTab: true,
                         isInGeneration: false,
                         id: newEntry.existingTabId,
+                        outdated: false,
                         content: {
-                            outdated: false,
                             encodedImage: image,
                             xAxisColumnName: newEntry.xAxisColumnName,
                             yAxisColumnName: newEntry.yAxisColumnName,
@@ -697,7 +698,8 @@ export class RunnerApi {
                         imageTab: true,
                         isInGeneration: false,
                         id: newEntry.existingTabId,
-                        content: { outdated: false, encodedImage: image, columnName: newEntry.columnName },
+                        content: { encodedImage: image, columnName: newEntry.columnName },
+                        outdated: false,
                     },
                 };
             }

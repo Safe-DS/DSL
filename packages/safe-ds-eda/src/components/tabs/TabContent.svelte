@@ -11,7 +11,10 @@
     export let tab: Tab | EmptyTab;
     export let sidebarWidth: number;
 
-    const columnNames = $table?.columns.map((column) => column.name) || [];
+    const columnNames = derived(
+        table,
+        ($table) => $table?.columns.filter((column) => !column.hidden).map((column) => column.name) || [],
+    );
     const possibleTableNames = ['Histogram', 'Boxplot', 'Heatmap', 'Lineplot', 'Scatterplot'];
 
     let isLoadingGeneratedTab = false;
@@ -251,7 +254,7 @@
                         {changesDisabled}
                     />
                     <span class="outdated"
-                        >{#if tab.type !== 'empty' && tab.content.outdated}
+                        >{#if tab.type !== 'empty' && tab.outdated}
                             Outdated!
                         {/if}</span
                     >
@@ -268,7 +271,7 @@
                                         $tabInfo.xAxisColumnName ??
                                         'Select'}
                                     onSelect={newXAxisSelected}
-                                    possibleOptions={columnNames}
+                                    possibleOptions={$columnNames}
                                     fontSize="1.1em"
                                     height="30px"
                                     width="140px"
@@ -283,7 +286,7 @@
                                         $tabInfo.xAxisColumnName ??
                                         'Select'}
                                     onSelect={newXAxisSelected}
-                                    possibleOptions={columnNames}
+                                    possibleOptions={$columnNames}
                                     fontSize="1.1em"
                                     height="30px"
                                     width="140px"
@@ -315,7 +318,7 @@
                         <DropDownButton
                             selectedOption={$tabInfo.content?.yAxisColumnName ?? $tabInfo.yAxisColumnName ?? 'Select'}
                             onSelect={newYAxisSelected}
-                            possibleOptions={columnNames}
+                            possibleOptions={$columnNames}
                             fontSize="1.1em"
                             height="30px"
                             width="140px"
