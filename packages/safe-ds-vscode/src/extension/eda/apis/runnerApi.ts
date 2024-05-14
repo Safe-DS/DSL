@@ -271,7 +271,15 @@ export class RunnerApi {
     }
 
     private sdsStringForRemoveColumns(columnNames: string[], tablePlaceholder: string, newPlaceholderName: string) {
-        return 'val ' + newPlaceholderName + ' = ' + tablePlaceholder + '.removeColumns(' + columnNames + '); \n';
+        return (
+            'val ' +
+            newPlaceholderName +
+            ' = ' +
+            tablePlaceholder +
+            '.removeColumns(["' +
+            columnNames.join('","') +
+            '"]); \n'
+        );
     }
     //#endregion
 
@@ -610,13 +618,15 @@ export class RunnerApi {
             let overriddenTablePlaceholder;
             if (hiddenColumns && hiddenColumns.length > 0) {
                 overriddenTablePlaceholder = this.genPlaceholderName('hiddenColsOverride');
-                sdsLines +=
-                    this.sdsStringForRemoveColumns(hiddenColumns, this.tablePlaceholder, overriddenTablePlaceholder) +
-                    '\n';
+                sdsLines += this.sdsStringForRemoveColumns(
+                    hiddenColumns,
+                    this.tablePlaceholder,
+                    overriddenTablePlaceholder,
+                );
             }
 
             const sdsStringObj = this.sdsStringForHistoryEntry(newEntry, overriddenTablePlaceholder);
-            sdsLines += sdsStringObj.sdsString + '\n';
+            sdsLines += sdsStringObj.sdsString;
             placeholderNames = sdsStringObj.placeholderNames;
 
             safeDsLogger.debug(`Running new entry ${newEntry.id} with action ${newEntry.action}`);
@@ -628,6 +638,8 @@ export class RunnerApi {
 
         const pipelineExecutionId = crypto.randomUUID();
         try {
+            // eslint-disable-next-line no-console
+            console.log(sdsLines);
             await this.addToAndExecutePipeline(pipelineExecutionId, sdsLines, placeholderNames);
         } catch (e) {
             throw e;

@@ -18,7 +18,7 @@
     import { derived, writable, get } from 'svelte/store';
     import ColumnFilters from './column-filters/ColumnFilters.svelte';
     import { imageWidthToHeightRatio } from '../../consts.config';
-    import { executeExternalHistoryEntry } from '../apis/historyApi';
+    import { addInternalToHistory, executeExternalHistoryEntry } from '../apis/historyApi';
     import { disableNonContextMenuEffects, restoreNonContextMenuEffects } from '../toggleNonContextMenuEffects';
 
     export let sidebarWidth: number;
@@ -488,6 +488,34 @@
     };
     //#endregion // Right clicks
 
+    //#region Column hiding
+    const toggleHideColumn = function (columnIndex: number): void {
+        let visible = true;
+        table.update(($table) => {
+            return {
+                ...$table!,
+                columns: $table!.columns.map((column, index) => {
+                    if (index === columnIndex) {
+                        visible = !column.hidden;
+                        return {
+                            ...column,
+                            hidden: !column.hidden,
+                        };
+                    }
+                    return column;
+                }),
+            };
+        });
+
+        addInternalToHistory({
+            action: visible ? 'showColumn' : 'hideColumn',
+            alias: `${visible ? 'Show' : 'Hide'} column ${$table!.columns[columnIndex].name}`,
+            type: 'internal',
+            columnName: $table!.columns[columnIndex].name,
+        });
+    };
+    //#endregion
+
     //#region Plotting
     const generateTwoColumnTab = function (type: TwoColumnTabTypes) {
         if (selectedColumnIndexes.length !== 2) {
@@ -681,35 +709,46 @@
                             on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}>#</th
                         >
                         {#each $table.columns as column, index}
-                            <th
-                                bind:this={headerElements[index]}
-                                class:reorderHighlightedLeft={isReorderDragging && dragCurrentIndex === index}
-                                style="width: {$savedColumnWidths.get(
-                                    column.name,
-                                )}px; position: relative; {isReorderDragging && dragStartIndex === index
-                                    ? 'display: none;'
-                                    : ''}"
-                                on:mousedown={(event) => handleColumnInteractionStart(event, index)}
-                                on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
-                                >{column.name}
-                                <div
-                                    role="none"
-                                    class="filterIconWrapper"
-                                    on:mousedown={(event) => handleFilterContextMenu(event, index)}
-                                >
-                                    <FilterIcon />
-                                </div>
-                                <div class="sortIconsWrapper">
-                                    <div class="sortIconWrapper">
-                                        <CaretIcon color="var(--transparent)" />
+                            {#if !column.hidden}
+                                <th
+                                    bind:this={headerElements[index]}
+                                    class:reorderHighlightedLeft={isReorderDragging && dragCurrentIndex === index}
+                                    style="width: {$savedColumnWidths.get(
+                                        column.name,
+                                    )}px; position: relative; {isReorderDragging && dragStartIndex === index
+                                        ? 'display: none;'
+                                        : ''}"
+                                    on:mousedown={(event) => handleColumnInteractionStart(event, index)}
+                                    on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
+                                    >{column.name}
+                                    <div
+                                        role="none"
+                                        class="filterIconWrapper"
+                                        on:mousedown={(event) => handleFilterContextMenu(event, index)}
+                                    >
+                                        <FilterIcon />
                                     </div>
-                                    <div class="sortIconWrapper rotate">
-                                        <CaretIcon color="var(--transparent)" />
+                                    <div class="sortIconsWrapper">
+                                        <div class="sortIconWrapper">
+                                            <CaretIcon color="var(--transparent)" />
+                                        </div>
+                                        <div class="sortIconWrapper rotate">
+                                            <CaretIcon color="var(--transparent)" />
+                                        </div>
                                     </div>
-                                </div>
-                                <button class="resizeHandle" on:mousedown={(event) => startResizeDrag(event, index)}
-                                ></button>
-                            </th>
+                                    <button class="resizeHandle" on:mousedown={(event) => startResizeDrag(event, index)}
+                                    ></button>
+                                </th>
+                            {:else}
+                                <th
+                                    bind:this={headerElements[index]}
+                                    class:reorderHighlightedLeft={isReorderDragging && dragCurrentIndex === index}
+                                    class="hiddenColumnHeader"
+                                    on:mousedown={(event) => handleColumnInteractionStart(event, index)}
+                                    on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
+                                    >...
+                                </th>
+                            {/if}
                         {/each}
                         <th
                             class="borderColumn borderColumnHeader"
@@ -727,26 +766,37 @@
                         on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
                     ></td>
                     {#each $table.columns as column, index}
-                        <td
-                            class="profiling"
-                            class:expanded={showProfiling}
-                            style="height: {showProfiling && column.profiling
-                                ? getOptionalProfilingHeight(column.profiling)
-                                : ''}; {isReorderDragging && dragStartIndex === index ? 'display: none;' : ''}"
-                            on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
-                        >
-                            <div class="content" class:expanded={showProfiling}>
-                                {#if !column.profiling}
-                                    <div>Loading ...</div>
-                                {:else}
-                                    <ProfilingInfo
-                                        profiling={column.profiling}
-                                        columnName={column.name}
-                                        imageWidth={profilingImageWidth}
-                                    />
-                                {/if}
-                            </div>
-                        </td>
+                        {#if !column.hidden}
+                            <td
+                                class="profiling"
+                                class:expanded={showProfiling}
+                                style="height: {showProfiling && column.profiling
+                                    ? getOptionalProfilingHeight(column.profiling)
+                                    : ''}; {isReorderDragging && dragStartIndex === index ? 'display: none;' : ''}"
+                                on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
+                            >
+                                <div class="content" class:expanded={showProfiling}>
+                                    {#if !column.profiling}
+                                        <div>Loading ...</div>
+                                    {:else}
+                                        <ProfilingInfo
+                                            profiling={column.profiling}
+                                            columnName={column.name}
+                                            imageWidth={profilingImageWidth}
+                                        />
+                                    {/if}
+                                </div>
+                            </td>
+                        {:else}
+                            <td
+                                class="profiling"
+                                class:expanded={showProfiling}
+                                style="height: {showProfiling && column.profiling
+                                    ? getOptionalProfilingHeight(column.profiling)
+                                    : ''};"
+                                on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
+                            >
+                            </td>{/if}
                     {/each}
                     <td
                         class="borderColumn profiling"
@@ -805,17 +855,24 @@
                                 >{visibleStart + i}</td
                             >
                             {#each $table.columns as column, index}
-                                <td
-                                    style={isReorderDragging && dragStartIndex === index ? 'display: none;' : ''}
-                                    on:click={handleMainCellClick}
-                                    on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
-                                    class:selectedColumn={selectedColumnIndexes.includes(index) ||
-                                        selectedRowIndexes.includes(visibleStart + i)}
-                                    >{column.values[visibleStart + i] !== null &&
-                                    column.values[visibleStart + i] !== undefined
-                                        ? column.values[visibleStart + i]
-                                        : ''}</td
-                                >
+                                {#if !column.hidden}
+                                    <td
+                                        style={isReorderDragging && dragStartIndex === index ? 'display: none;' : ''}
+                                        on:click={handleMainCellClick}
+                                        on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
+                                        class:selectedColumn={selectedColumnIndexes.includes(index) ||
+                                            selectedRowIndexes.includes(visibleStart + i)}
+                                        >{column.values[visibleStart + i] !== null &&
+                                        column.values[visibleStart + i] !== undefined
+                                            ? column.values[visibleStart + i]
+                                            : ''}</td
+                                    >
+                                {:else}
+                                    <td
+                                        on:click={handleMainCellClick}
+                                        on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
+                                    >
+                                    </td>{/if}
                             {/each}
                             <td
                                 class="borderColumn borderColumnEndIndex cursorPointer"
@@ -848,7 +905,23 @@
     <!-- Context menus -->
     {#if showingColumnHeaderRightClickMenu}
         <div class="contextMenu" bind:this={rightClickColumnMenuElement}>
-            {#if selectedColumnIndexes.includes(rightClickedColumnIndex)}
+            {#if $table?.columns[rightClickedColumnIndex].hidden ?? false}
+                <button class="contextItem" type="button" on:click={() => toggleHideColumn(rightClickedColumnIndex)}
+                    >Show Column '{$table?.columns[rightClickedColumnIndex].name}'</button
+                >
+            {:else}
+                <button class="contextItem" type="button" on:click={() => toggleHideColumn(rightClickedColumnIndex)}
+                    >Hide Column</button
+                >
+            {/if}
+            {#if selectedColumnIndexes.length === 0 && !$table?.columns[rightClickedColumnIndex].hidden}
+                <button class="contextItem" type="button" on:click={() => generateOneColumnTab('histogram')}
+                    >Plot Histogram</button
+                >
+                <button class="contextItem" type="button" on:click={() => generateOneColumnTab('boxPlot')}>
+                    Plot Boxplot</button
+                >
+            {:else if selectedColumnIndexes.includes(rightClickedColumnIndex) && !$table?.columns[rightClickedColumnIndex].hidden}
                 <button
                     class="contextItem"
                     type="button"
@@ -870,7 +943,7 @@
                     >
                 {/if}
             {:else}
-                {#if selectedColumnIndexes.length >= 1}
+                {#if selectedColumnIndexes.length >= 1 && !$table?.columns[rightClickedColumnIndex].hidden}
                     <button
                         class="contextItem"
                         type="button"
@@ -892,9 +965,13 @@
                         >
                     {/if}
                 {/if}
-                <button class="contextItem" type="button" on:click={() => setSelectionToColumn(rightClickedColumnIndex)}
-                    >Select Column</button
-                >
+                {#if !$table?.columns[rightClickedColumnIndex].hidden}
+                    <button
+                        class="contextItem"
+                        type="button"
+                        on:click={() => setSelectionToColumn(rightClickedColumnIndex)}>Select Column</button
+                    >
+                {/if}
             {/if}
         </div>
     {/if}
@@ -1174,5 +1251,11 @@
 
     .profilingBanner:hover {
         cursor: pointer;
+    }
+
+    .hiddenColumnHeader {
+        background-color: var(--bg-dark);
+        width: 10px;
+        padding: 0px;
     }
 </style>

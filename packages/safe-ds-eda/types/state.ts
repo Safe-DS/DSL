@@ -1,4 +1,4 @@
-type InternalAction = 'reorderColumns' | 'resizeColumn' | 'hideColumn' | 'highlightColumn' | 'emptyTab';
+type InternalAction = 'reorderColumns' | 'resizeColumn' | 'hideColumn' | 'showColumn' | 'highlightColumn' | 'emptyTab';
 type ExternalManipulatingAction = 'filterColumn' | 'sortColumn' | TableFilterTypes;
 type ExternalVisualizingAction = TabType | 'refreshTab';
 type Action = InternalAction | ExternalManipulatingAction | ExternalVisualizingAction;
@@ -33,7 +33,7 @@ export interface InternalColumnWithValueHistoryEntry extends InternalHistoryEntr
 }
 
 export interface InternalColumnHistoryEntry extends InternalHistoryEntryBase {
-    action: 'hideColumn' | 'highlightColumn';
+    action: 'hideColumn' | 'highlightColumn' | 'showColumn';
     columnName: string;
 }
 
