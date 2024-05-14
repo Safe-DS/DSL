@@ -32,15 +32,15 @@ export type ToExtensionMessage =
     | ToExtensionExecuteRunnerMessage;
 
 // From extension
-type FromExtensionCommand = 'setWebviewState' | 'setProfiling' | 'runnerExecutionResult' | 'cancelRunnerExecution';
+type FromExtensionCommand = 'setInitialTable' | 'setProfiling' | 'runnerExecutionResult' | 'cancelRunnerExecution';
 
 interface FromExtensionCommandMessage {
     command: FromExtensionCommand;
     value: any;
 }
-interface FromExtensionSetStateMessage extends FromExtensionCommandMessage {
-    command: 'setWebviewState';
-    value: defaultTypes.State;
+interface FromExtensionSetInitialTableMessage extends FromExtensionCommandMessage {
+    command: 'setInitialTable';
+    value: defaultTypes.Table;
 }
 
 interface FromExtensionSetProfilingMessage extends FromExtensionCommandMessage {
@@ -79,7 +79,7 @@ export interface CancelRunnerExecutionMessage extends FromExtensionCommandMessag
 }
 
 export type FromExtensionMessage =
-    | FromExtensionSetStateMessage
+    | FromExtensionSetInitialTableMessage
     | FromExtensionSetProfilingMessage
     | RunnerExecutionResultMessage
     | CancelRunnerExecutionMessage;

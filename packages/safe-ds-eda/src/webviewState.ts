@@ -1,47 +1,48 @@
 import type { FromExtensionMessage } from '../types/messaging';
-import type { State } from '../types/state';
+import type { HistoryEntry, Tab, Table } from '../types/state';
 import { get, writable } from 'svelte/store';
 
-let currentTabIndex = writable<number | undefined>(undefined);
+const tabs = writable<Tab[]>([]);
 
-let preventClicks = writable<boolean>(false);
+const currentTabIndex = writable<number | undefined>(undefined);
 
-let cancelTabIdsWaiting = writable<string[]>([]);
+const preventClicks = writable<boolean>(false);
+
+const cancelTabIdsWaiting = writable<string[]>([]);
 
 // Define the stores, current state to default in case the extension never calls setWebviewState( Shouldn't happen)
-const currentState = writable<State>({ tableIdentifier: undefined, history: [], defaultState: true, tabs: [] });
+const table = writable<Table | undefined>();
+
+const history = writable<HistoryEntry[]>([]);
 
 window.addEventListener('message', (event) => {
     const message = event.data as FromExtensionMessage;
     // eslint-disable-next-line no-console
     console.log(Date.now() + ': ' + message.command + ' called');
     switch (message.command) {
-        case 'setWebviewState':
-            // This should be fired immediately whenever the panel is created or made visible again
-            currentState.set(message.value);
+        case 'setInitialTable':
+            if (!get(table)) {
+                table.set(message.value);
+            } else {
+                throw new Error('setInitialTable called more than once');
+            }
             break;
         case 'setProfiling':
-            if (get(currentState) && get(currentState).table) {
-                currentState.update((state) => {
+            if (get(table)) {
+                table.update((currentTable) => {
                     return {
-                        ...state,
-                        table: {
-                            ...state.table!,
-                            columns: state.table!.columns.map((column) => {
-                                const profiling = message.value.find((p) => p.columnName === column[1].name);
-                                if (profiling) {
-                                    return [
-                                        column[0],
-                                        {
-                                            ...column[1],
-                                            profiling: profiling.profiling,
-                                        },
-                                    ];
-                                } else {
-                                    return column;
-                                }
-                            }),
-                        },
+                        ...currentTable!,
+                        columns: currentTable!.columns.map((column) => {
+                            const profiling = message.value.find((p) => p.columnName === column.name);
+                            if (profiling) {
+                                return {
+                                    ...column,
+                                    profiling: profiling.profiling,
+                                };
+                            } else {
+                                return column;
+                            }
+                        }),
                     };
                 });
             }
@@ -49,4 +50,4 @@ window.addEventListener('message', (event) => {
     }
 });
 
-export { currentState, currentTabIndex, preventClicks, cancelTabIdsWaiting };
+export { history, tabs, table, currentTabIndex, preventClicks, cancelTabIdsWaiting };

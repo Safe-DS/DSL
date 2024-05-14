@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { throttle } from 'lodash';
-    import { currentState, preventClicks } from '../webviewState';
+    import { table, preventClicks } from '../webviewState';
     import CaretIcon from '../icons/Caret.svelte';
     import ErrorIcon from '../icons/Error.svelte';
     import FilterIcon from '../icons/Filter.svelte';
@@ -33,37 +33,35 @@
     let savedColumnWidths = writable(new Map<string, number>());
 
     //#region Startup
-    $: {
-        if ($currentState.table) {
-            minTableWidth = 0;
-            numRows = 0;
-            maxProfilingItemCount = 0;
-            $currentState.table.columns.forEach((column: [number, Column]) => {
-                if (column[1].values.length > numRows) {
-                    numRows = column[1].values.length;
-                }
-                minTableWidth += 100;
-
-                // Find which is the talles profiling type present in this table to adjust which profilings to give small height to, to have them adhere to good spacing
-                // (cannot give to tallest one, as then it will all be small)
-                if (column[1].profiling) {
-                    let profilingItemCount = 0;
-                    if (column[1].profiling.validRatio) profilingItemCount += 1;
-                    if (column[1].profiling.missingRatio) profilingItemCount += 1;
-                    for (const profilingItem of column[1].profiling.other) {
-                        profilingItemCount += calcProfilingItemValue(profilingItem);
-                    }
-                    if (profilingItemCount > maxProfilingItemCount) {
-                        maxProfilingItemCount = profilingItemCount;
-                    }
-                }
-            });
-
-            if (showProfiling) {
-                setTimeout(() => {
-                    fullHeadBackground.style.height = 2 * rowHeight + profilingInfo.clientHeight + 'px'; // To also update when profiling info is initially coming and profiling was already open
-                }, 700); // 700ms is the transition time of the profiling info opening/incresing in height
+    $: if ($table) {
+        minTableWidth = 0;
+        numRows = 0;
+        maxProfilingItemCount = 0;
+        $table.columns.forEach((column: Column) => {
+            if (column.values.length > numRows) {
+                numRows = column.values.length;
             }
+            minTableWidth += 100;
+
+            // Find which is the talles profiling type present in this table to adjust which profilings to give small height to, to have them adhere to good spacing
+            // (cannot give to tallest one, as then it will all be small)
+            if (column.profiling) {
+                let profilingItemCount = 0;
+                if (column.profiling.validRatio) profilingItemCount += 1;
+                if (column.profiling.missingRatio) profilingItemCount += 1;
+                for (const profilingItem of column.profiling.other) {
+                    profilingItemCount += calcProfilingItemValue(profilingItem);
+                }
+                if (profilingItemCount > maxProfilingItemCount) {
+                    maxProfilingItemCount = profilingItemCount;
+                }
+            }
+        });
+
+        if (showProfiling) {
+            setTimeout(() => {
+                fullHeadBackground.style.height = 2 * rowHeight + profilingInfo.clientHeight + 'px'; // To also update when profiling info is initially coming and profiling was already open
+            }, 700); // 700ms is the transition time of the profiling info opening/incresing in height
         }
     }
 
@@ -231,15 +229,11 @@
             if (dragCurrentIndex > dragStartIndex) {
                 dragCurrentIndex -= 1;
             }
-            currentState.update(($currentState) => {
-                const newColumns = [...$currentState.table!.columns];
+            table.update(($table) => {
+                const newColumns = [...$table!.columns];
                 const movedItem = newColumns.splice(dragStartIndex!, 1)[0];
                 newColumns.splice(dragCurrentIndex!, 0, movedItem);
-                // In newColumns also set the number of each column array to their new index
-                newColumns.forEach((column, index) => {
-                    column[0] = index;
-                });
-                return { ...$currentState, table: { ...$currentState.table!, columns: newColumns } };
+                return { ...$table!, columns: newColumns };
             });
             document.removeEventListener('mouseup', handleReorderDragEnd);
             isReorderDragging = false;
@@ -499,8 +493,8 @@
         if (selectedColumnIndexes.length !== 2) {
             throw new Error('Two columns must be selected to generate a two column plot');
         }
-        const xAxisColumnName = $currentState.table!.columns[selectedColumnIndexes[0]][1].name;
-        const yAxisColumnName = $currentState.table!.columns[selectedColumnIndexes[1]][1].name;
+        const xAxisColumnName = $table!.columns[selectedColumnIndexes[0]].name;
+        const yAxisColumnName = $table!.columns[selectedColumnIndexes[1]].name;
 
         executeExternalHistoryEntry({
             action: type,
@@ -520,7 +514,7 @@
         if (type === 'infoPanel') {
             throw new Error('Not implemented yet.');
         }
-        const columnName = $currentState.table!.columns[selectedColumnIndexes[0]][1].name;
+        const columnName = $table!.columns[selectedColumnIndexes[0]].name;
 
         executeExternalHistoryEntry({
             action: type,
@@ -577,17 +571,17 @@
     };
 
     // As store to update on profiling changes
-    const hasProfilingErrors = derived(currentState, ($currentState) => {
-        if (!$currentState.table) return false;
-        for (const column of $currentState.table!.columns) {
-            if (!column[1].profiling) return false;
+    const hasProfilingErrors = derived(table, ($table) => {
+        if (!$table) return false;
+        for (const column of $table.columns) {
+            if (!column.profiling) return false;
             if (
-                column[1].profiling.missingRatio?.interpretation === 'error' ||
-                column[1].profiling.validRatio?.interpretation === 'error'
+                column.profiling.missingRatio?.interpretation === 'error' ||
+                column.profiling.validRatio?.interpretation === 'error'
             ) {
                 return true;
             }
-            for (const profilingItem of column[1].profiling.other) {
+            for (const profilingItem of column.profiling.other) {
                 if (profilingItem.type === 'numerical' && profilingItem.interpretation === 'error') {
                     return true;
                 }
@@ -597,9 +591,9 @@
     });
 
     const getPosiibleColumnFilters = function (columnIndex: number): PossibleColumnFilter[] {
-        if (!$currentState.table) return [];
+        if (!$table) return [];
 
-        const column = $currentState.table.columns[columnIndex][1];
+        const column = $table.columns[columnIndex];
 
         if (!column.profiling) return [];
 
@@ -668,7 +662,7 @@
 </script>
 
 <div bind:this={tableContainer} class="tableContainer">
-    {#if !$currentState.table}
+    {#if !$table}
         <span>Loading ...</span>
     {:else}
         <div class="contentWrapper" style:height="{numRows * rowHeight}px">
@@ -686,18 +680,18 @@
                             class="borderColumn borderColumnHeader"
                             on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}>#</th
                         >
-                        {#each $currentState.table.columns as column, index}
+                        {#each $table.columns as column, index}
                             <th
                                 bind:this={headerElements[index]}
                                 class:reorderHighlightedLeft={isReorderDragging && dragCurrentIndex === index}
                                 style="width: {$savedColumnWidths.get(
-                                    column[1].name,
+                                    column.name,
                                 )}px; position: relative; {isReorderDragging && dragStartIndex === index
                                     ? 'display: none;'
                                     : ''}"
                                 on:mousedown={(event) => handleColumnInteractionStart(event, index)}
                                 on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
-                                >{column[1].name}
+                                >{column.name}
                                 <div
                                     role="none"
                                     class="filterIconWrapper"
@@ -720,9 +714,9 @@
                         <th
                             class="borderColumn borderColumnHeader"
                             class:reorderHighlightedLeft={isReorderDragging &&
-                                dragCurrentIndex === $currentState.table.columns.length}
-                            on:mousemove={(event) =>
-                                throttledHandleReorderDragOver(event, $currentState.table?.columns.length ?? 0)}>#</th
+                                dragCurrentIndex === $table.columns.length}
+                            on:mousemove={(event) => throttledHandleReorderDragOver(event, $table?.columns.length ?? 0)}
+                            >#</th
                         >
                     </tr>
                 </thead>
@@ -732,22 +726,22 @@
                         class="borderColumn borderRight profiling"
                         on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
                     ></td>
-                    {#each $currentState.table.columns as column, index}
+                    {#each $table.columns as column, index}
                         <td
                             class="profiling"
                             class:expanded={showProfiling}
-                            style="height: {showProfiling && column[1].profiling
-                                ? getOptionalProfilingHeight(column[1].profiling)
+                            style="height: {showProfiling && column.profiling
+                                ? getOptionalProfilingHeight(column.profiling)
                                 : ''}; {isReorderDragging && dragStartIndex === index ? 'display: none;' : ''}"
                             on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                         >
                             <div class="content" class:expanded={showProfiling}>
-                                {#if !column[1].profiling}
+                                {#if !column.profiling}
                                     <div>Loading ...</div>
                                 {:else}
                                     <ProfilingInfo
-                                        profiling={column[1].profiling}
-                                        columnName={column[1].name}
+                                        profiling={column.profiling}
+                                        columnName={column.name}
                                         imageWidth={profilingImageWidth}
                                     />
                                 {/if}
@@ -756,8 +750,7 @@
                     {/each}
                     <td
                         class="borderColumn profiling"
-                        on:mousemove={(event) =>
-                            throttledHandleReorderDragOver(event, $currentState.table?.columns.length ?? 0)}
+                        on:mousemove={(event) => throttledHandleReorderDragOver(event, $table?.columns.length ?? 0)}
                     ></td>
                 </tr>
                 <!-- Profiling banner, to toggle profiling info -->
@@ -784,8 +777,8 @@
                             </div>
                         </div>
                     </td>
-                    {#each $currentState.table.columns as _column, index}
-                        {#if index !== $currentState.table.columns.length - 1}
+                    {#each $table.columns as _column, index}
+                        {#if index !== $table.columns.length - 1}
                             <td
                                 style=" {isReorderDragging && dragStartIndex === index + 1 ? 'display: none;' : ''}"
                                 class="profilingBanner"
@@ -797,8 +790,7 @@
                     {/each}
                     <td
                         class="borderColumn profilingBanner"
-                        on:mousemove={(event) =>
-                            throttledHandleReorderDragOver(event, $currentState.table?.columns.length ?? 0)}
+                        on:mousemove={(event) => throttledHandleReorderDragOver(event, $table?.columns.length ?? 0)}
                     ></td>
                 </tr>
                 <!-- Table contents -->
@@ -812,23 +804,23 @@
                                 class:selectedColumn={selectedRowIndexes.includes(visibleStart + i)}
                                 >{visibleStart + i}</td
                             >
-                            {#each $currentState.table.columns as column, index}
+                            {#each $table.columns as column, index}
                                 <td
                                     style={isReorderDragging && dragStartIndex === index ? 'display: none;' : ''}
                                     on:click={handleMainCellClick}
                                     on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                                     class:selectedColumn={selectedColumnIndexes.includes(index) ||
                                         selectedRowIndexes.includes(visibleStart + i)}
-                                    >{column[1].values[visibleStart + i] !== null &&
-                                    column[1].values[visibleStart + i] !== undefined
-                                        ? column[1].values[visibleStart + i]
+                                    >{column.values[visibleStart + i] !== null &&
+                                    column.values[visibleStart + i] !== undefined
+                                        ? column.values[visibleStart + i]
                                         : ''}</td
                                 >
                             {/each}
                             <td
                                 class="borderColumn borderColumnEndIndex cursorPointer"
                                 on:mousemove={(event) =>
-                                    throttledHandleReorderDragOver(event, $currentState.table?.columns.length ?? 0)}
+                                    throttledHandleReorderDragOver(event, $table?.columns.length ?? 0)}
                                 on:click={(event) => handleRowClick(event, visibleStart + i)}
                                 class:selectedColumn={selectedRowIndexes.includes(visibleStart + i)}
                                 >{visibleStart + i}</td

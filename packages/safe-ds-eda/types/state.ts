@@ -1,12 +1,3 @@
-export interface State {
-    tableIdentifier?: string;
-    table?: Table;
-    tabs: Tab[];
-    defaultState?: boolean;
-    history: HistoryEntry[];
-    settings?: UserSettings;
-}
-
 type InternalAction = 'reorderColumns' | 'resizeColumn' | 'hideColumn' | 'highlightColumn' | 'emptyTab';
 type ExternalManipulatingAction = 'filterColumn' | 'sortColumn' | TableFilterTypes;
 type ExternalVisualizingAction = TabType | 'refreshTab';
@@ -197,11 +188,12 @@ export type PlotTab = OneColumnTab | TwoColumnTab | NoColumnTab;
 
 // ------------------ Types for the Table ------------------
 export interface Table {
-    columns: [number, Column][];
+    tableIdentifier?: string;
+    name: string;
+    columns: Column[];
     visibleRows?: number;
     totalRows: number;
-    name: string;
-    appliedFilters: TableFilter[];
+    appliedFilters: TableFilter;
 }
 
 // ------------ Types for the Profiling -----------
@@ -314,13 +306,14 @@ type TableFilterTypes =
     | 'hideDuplicateRows'
     | 'hideRowsWithOutliers';
 
-export interface TableFilter extends FilterBase {
-    type: TableFilterTypes;
-}
+export type TableFilter = {
+    [key in TableFilterTypes]?: boolean;
+};
 
 // ------------ Types for the Settings -----------
 export interface UserSettings {
     profiling: ProfilingSettings;
+    darkMode: boolean;
 }
 
 interface ProfilingSettingsBase {
