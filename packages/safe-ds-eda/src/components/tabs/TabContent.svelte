@@ -193,6 +193,7 @@
         if (Object.keys(buildATab).length === 0) return undefined;
         if ($buildATab.columnNumber === 'one') {
             if (!$buildATab.xAxisColumnName) return undefined;
+            if ($table?.columns.find((column) => column.name === $buildATab.xAxisColumnName)?.hidden) return undefined;
             return {
                 existingTabId: tab.id,
                 action: $buildATab.type,
@@ -203,6 +204,13 @@
             };
         } else if ($buildATab.columnNumber === 'two') {
             if (!$buildATab.xAxisColumnName || !$buildATab.yAxisColumnName) return undefined;
+            if (
+                $table?.columns.find(
+                    (column) =>
+                        column.name === $buildATab.xAxisColumnName || column.name === $buildATab.yAxisColumnName,
+                )?.hidden
+            )
+                return undefined;
             return {
                 existingTabId: tab.id,
                 action: $buildATab.type,
@@ -254,7 +262,7 @@
                         {changesDisabled}
                     />
                     <span class="outdated"
-                        >{#if tab.type !== 'empty' && tab.outdated}
+                        >{#if tab.type !== 'empty' && tab.outdated && !$isInBuildingState}
                             Outdated!
                         {/if}</span
                     >
@@ -271,10 +279,20 @@
                                         $tabInfo.xAxisColumnName ??
                                         'Select'}
                                     onSelect={newXAxisSelected}
-                                    possibleOptions={$columnNames}
+                                    possibleOptions={$tabInfo.type === 'boxPlot'
+                                        ? $table?.columns
+                                              .filter((column) => !column.hidden && column.type === 'numerical')
+                                              .map((column) => column.name) || []
+                                        : $columnNames}
                                     fontSize="1.1em"
                                     height="30px"
                                     width="140px"
+                                    error={tab.type !== 'empty' &&
+                                        $table?.columns.find(
+                                            (column) =>
+                                                column.name ===
+                                                ($tabInfo.content?.columnName ?? $tabInfo.xAxisColumnName),
+                                        )?.hidden}
                                     {changesDisabled}
                                 />
                             </div>
@@ -290,6 +308,12 @@
                                     fontSize="1.1em"
                                     height="30px"
                                     width="140px"
+                                    error={tab.type !== 'empty' &&
+                                        $table?.columns.find(
+                                            (column) =>
+                                                column.name ===
+                                                ($tabInfo.content?.xAxisColumnName ?? $tabInfo.xAxisColumnName),
+                                        )?.hidden}
                                     {changesDisabled}
                                 />
                             </div>
@@ -322,6 +346,11 @@
                             fontSize="1.1em"
                             height="30px"
                             width="140px"
+                            error={tab.type !== 'empty' &&
+                                $table?.columns.find(
+                                    (column) =>
+                                        column.name === ($tabInfo.content?.yAxisColumnName ?? $tabInfo.yAxisColumnName),
+                                )?.hidden}
                             {changesDisabled}
                         />
                     </div>
@@ -404,8 +433,7 @@
     }
 
     .loading {
-        min-width: 540px;
-        max-width: 800px;
+        min-width: 600px;
         margin: 0 auto;
         background-color: var(--bg-medium);
         position: absolute;
@@ -421,7 +449,7 @@
     .content {
         position: relative;
         z-index: 0;
-        min-width: 540px;
+        min-width: 600px;
     }
 
     .generateButton {

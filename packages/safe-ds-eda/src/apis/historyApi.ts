@@ -227,70 +227,15 @@ const evaluateMessagesWaitingForTurn = function () {
 };
 
 const updateTabOutdated = function (entry: ExternalHistoryEntry | InternalHistoryEntry): void {
-    if (entry.action === 'showColumn') {
+    if (entry.action === 'hideColumn' || entry.action === 'showColumn') {
         tabs.update((state) => {
             const newTabs = state.map((t) => {
                 if (t.type !== 'empty') {
                     if (
                         t.columnNumber === 'none' &&
-                        t.outdated &&
-                        get(table)?.columns.filter((c) => c.hidden && c.type === 'numerical').length === 0
-                    ) {
-                        // UPDATE the if in case there are none column tabs that do not depend on numerical columns
-                        return {
-                            ...t,
-                            outdated: false,
-                        };
-                    } else if (t.columnNumber === 'one' && t.outdated && t.content.columnName === entry.columnName) {
-                        return {
-                            ...t,
-                            outdated: false,
-                        };
-                    } else if (
-                        t.columnNumber === 'two' &&
-                        t.outdated &&
-                        !get(table)?.columns.find((c) => c.name === t.content.yAxisColumnName)?.hidden &&
-                        !get(table)?.columns.find((c) => c.name === t.content.xAxisColumnName)?.hidden
-                    ) {
-                        return {
-                            ...t,
-                            outdated: false,
-                        };
-                    } else {
-                        return t;
-                    }
-                } else {
-                    return t;
-                }
-            });
-
-            return newTabs;
-        });
-    } else if (entry.action === 'hideColumn') {
-        tabs.update((state) => {
-            const newTabs = state.map((t) => {
-                if (t.type !== 'empty') {
-                    if (
-                        t.columnNumber === 'none' &&
-                        !t.outdated &&
                         get(table)?.columns.find((c) => c.name === entry.columnName)?.type === 'numerical'
                     ) {
                         // UPDATE the if in case there are none column tabs that do not depend on numerical columns
-                        return {
-                            ...t,
-                            outdated: true,
-                        };
-                    } else if (t.columnNumber === 'one' && !t.outdated && t.content.columnName === entry.columnName) {
-                        return {
-                            ...t,
-                            outdated: true,
-                        };
-                    } else if (
-                        t.columnNumber === 'two' &&
-                        !t.outdated &&
-                        (t.content.xAxisColumnName === entry.columnName ||
-                            t.content.yAxisColumnName === entry.columnName)
-                    ) {
                         return {
                             ...t,
                             outdated: true,

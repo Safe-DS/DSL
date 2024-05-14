@@ -32,10 +32,10 @@
         </div>
         <span class="title"
             >{#if width > 300 || tabObject.isInGeneration || (tabObject.tabComment === '' && width > 109)}
-                {#if tabObject.type !== 'empty' && tabObject.outdated}
-                    Outdated
-                {:else if tabObject.isInGeneration}
+                {#if tabObject.isInGeneration}
                     Generating...
+                {:else if tabObject.outdated}
+                    Outdated
                 {:else if tabObject.type === 'histogram'}
                     Histogram
                 {:else if tabObject.type === 'boxPlot'}

@@ -4,10 +4,11 @@
 
     export let selectedOption: string;
     export let possibleOptions: string[];
-    export let fontSize: string = '1.5em';
-    export let height: string = '50px';
-    export let width: string = '180px';
+    export let fontSize: string = '1.4em';
+    export let height: string = '45px';
+    export let width: string = '160px';
     export let changesDisabled: boolean = false;
+    export let error: boolean = false;
     export let onSelect: (selected: string) => void; // Function prop to notify parent of changes
 
     let isDropdownOpen = false;
@@ -52,7 +53,7 @@
         class:disabledButton={changesDisabled}
         on:click={toggleDropdown}
     >
-        <div class="buttonText">
+        <div class="buttonText" class:error>
             {selectedOption}
         </div>
         <div class="icon">
@@ -165,5 +166,9 @@
 
     .dropdownItem:hover {
         background-color: #e0e0e0;
+    }
+
+    .error {
+        color: var(--error-color) !important;
     }
 </style>
