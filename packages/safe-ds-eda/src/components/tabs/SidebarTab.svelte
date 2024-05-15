@@ -72,7 +72,7 @@
 
     .activeWrapper {
         background-color: var(--bg-bright);
-        font-size: 1.4rem;
+        font-size: 1.2rem;
     }
 
     .main {
