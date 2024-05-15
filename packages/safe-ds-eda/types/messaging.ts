@@ -18,21 +18,21 @@ interface ToExtensionSetErrorMessage extends ToExtensionCommandMessage {
     value: string;
 }
 
-interface ToExtensionExecuteManipulatingRunnerMessage extends ToExtensionCommandMessage {
+interface ToExtensionExecuteRunnerMessage extends ToExtensionCommandMessage {
     command: 'executeRunner';
     value: {
-        type: 'manipulating';
+        type: 'default';
         pastEntries: defaultTypes.HistoryEntry[];
-        newEntry: defaultTypes.ExternalManipulatingHistoryEntry & { id: number };
+        newEntry: defaultTypes.HistoryEntry;
     };
 }
 
-interface ToExtensionExecuteVisualizingRunnerMessage extends ToExtensionCommandMessage {
+interface ToExtensionExecuteExcludingHiddenColumns extends ToExtensionCommandMessage {
     command: 'executeRunner';
     value: {
-        type: 'visualizing';
+        type: 'excludingHiddenColumns';
         pastEntries: defaultTypes.HistoryEntry[];
-        newEntry: defaultTypes.ExternalVisualizingHistoryEntry & { id: number };
+        newEntry: defaultTypes.HistoryEntry;
         hiddenColumns: string[];
     };
 }
@@ -40,8 +40,8 @@ interface ToExtensionExecuteVisualizingRunnerMessage extends ToExtensionCommandM
 export type ToExtensionMessage =
     | ToExtensionSetInfoMessage
     | ToExtensionSetErrorMessage
-    | ToExtensionExecuteVisualizingRunnerMessage
-    | ToExtensionExecuteManipulatingRunnerMessage;
+    | ToExtensionExecuteRunnerMessage
+    | ToExtensionExecuteExcludingHiddenColumns;
 
 // From extension
 type FromExtensionCommand = 'setInitialTable' | 'setProfiling' | 'runnerExecutionResult' | 'cancelRunnerExecution';

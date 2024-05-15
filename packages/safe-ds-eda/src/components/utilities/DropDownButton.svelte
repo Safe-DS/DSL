@@ -3,12 +3,11 @@
     import { preventClicks } from '../../webviewState';
 
     export let selectedOption: string;
-    export let possibleOptions: string[];
+    export let possibleOptions: { name: string; color?: string; comment?: string }[];
     export let fontSize: string = '1.4em';
     export let height: string = '45px';
     export let width: string = '160px';
     export let changesDisabled: boolean = false;
-    export let error: boolean = false;
     export let onSelect: (selected: string) => void; // Function prop to notify parent of changes
 
     let isDropdownOpen = false;
@@ -44,7 +43,7 @@
     bind:this={dropdownRef}
     class="wrapperDropdownButton"
     class:disabledWrapper={changesDisabled}
-    style="font-size: {fontSize}; width: {width}; height: {height};"
+    style="font-size: {fontSize}; width: {width}; height: {height}; min-height: 40px;"
 >
     <div
         role="none"
@@ -53,8 +52,11 @@
         class:disabledButton={changesDisabled}
         on:click={toggleDropdown}
     >
-        <div class="buttonText" class:error>
-            {selectedOption}
+        <div class="buttonText" style:color={possibleOptions.find((o) => o.name === selectedOption)?.color}>
+            <span>{selectedOption}</span>
+            {#if possibleOptions.find((o) => o.name === selectedOption)?.comment}
+                <span class="itemComment">{possibleOptions.find((o) => o.name === selectedOption)?.comment}</span>
+            {/if}
         </div>
         <div class="icon">
             <CaretIcon color="var(--bg-bright)" />
@@ -62,10 +64,20 @@
     </div>
 
     {#if isDropdownOpen}
-        <ul class="dropdownMenu" style:width style:top={height}>
+        <ul class="dropdownMenu" style="width: {width}; top: calc(max(40px, {height}));">
             {#each possibleOptions as option}
-                {#if option !== selectedOption}
-                    <li role="none" class="dropdownItem" on:click={() => selectOption(option)}>{option}</li>
+                {#if option.name !== selectedOption}
+                    <li
+                        role="none"
+                        class="dropdownItem"
+                        on:click={() => selectOption(option.name)}
+                        style:color={option.color}
+                    >
+                        <span>{option.name}</span>
+                        {#if option.comment}
+                            <span class="itemComment">{option.comment}</span>
+                        {/if}
+                    </li>
                 {/if}
             {/each}
         </ul>
@@ -110,6 +122,13 @@
         flex-basis: auto;
         white-space: nowrap;
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+
+    .buttonText * {
+        color: inherit;
     }
 
     .dropdownButton .icon {
@@ -162,13 +181,21 @@
         font-family: sans-serif;
         font-size: inherit;
         width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+
+    .dropdownItem * {
+        color: inherit;
+    }
+
+    .itemComment {
+        font-size: 0.7em;
+        color: var(--font-light);
     }
 
     .dropdownItem:hover {
         background-color: #e0e0e0;
-    }
-
-    .error {
-        color: var(--error-color) !important;
     }
 </style>

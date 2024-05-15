@@ -131,8 +131,10 @@ export const cancelExecuteExternalHistoryEntry = function (entry: HistoryEntry):
             cancelTabIdsWaiting.update((ids) => {
                 return ids.concat([entry.existingTabId!]);
             });
-            const tab: RealTab = get(tabs).find((t) => t.type !== 'empty' && t.id === entry.existingTabId)! as RealTab;
-            unsetTabAsGenerating(tab);
+            const tab: Tab = get(tabs).find((t) => t.id === entry.existingTabId)! as Tab;
+            if (tab.type !== 'empty') {
+                unsetTabAsGenerating(tab);
+            }
         }
     } else {
         throw new Error('Entry already fully executed');

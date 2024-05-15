@@ -13,7 +13,27 @@
 
     const columnNames = derived(
         table,
-        ($table) => $table?.columns.filter((column) => !column.hidden).map((column) => column.name) || [],
+        ($table) =>
+            $table?.columns.map((column) => {
+                return {
+                    name: column.name,
+                    color: column.hidden ? 'var(--error-color)' : undefined,
+                    comment: column.hidden ? 'hidden' : undefined,
+                };
+            }) || [],
+    );
+    const numericalColumnNames = derived(
+        table,
+        ($table) =>
+            $table?.columns
+                .filter((column) => column.type === 'numerical')
+                .map((column) => {
+                    return {
+                        name: column.name,
+                        color: column.hidden ? 'var(--error-color)' : undefined,
+                        comment: column.hidden ? 'hidden' : undefined,
+                    };
+                }) || [],
     );
     const possibleTableNames = ['Histogram', 'Boxplot', 'Heatmap', 'Lineplot', 'Scatterplot'];
 
@@ -193,7 +213,6 @@
         if (Object.keys(buildATab).length === 0) return undefined;
         if ($buildATab.columnNumber === 'one') {
             if (!$buildATab.xAxisColumnName) return undefined;
-            if ($table?.columns.find((column) => column.name === $buildATab.xAxisColumnName)?.hidden) return undefined;
             return {
                 existingTabId: tab.id,
                 action: $buildATab.type,
@@ -204,13 +223,6 @@
             };
         } else if ($buildATab.columnNumber === 'two') {
             if (!$buildATab.xAxisColumnName || !$buildATab.yAxisColumnName) return undefined;
-            if (
-                $table?.columns.find(
-                    (column) =>
-                        column.name === $buildATab.xAxisColumnName || column.name === $buildATab.yAxisColumnName,
-                )?.hidden
-            )
-                return undefined;
             return {
                 existingTabId: tab.id,
                 action: $buildATab.type,
@@ -258,7 +270,7 @@
                     <DropDownButton
                         selectedOption={getTabName($tabInfo)}
                         onSelect={newTypeSelected}
-                        possibleOptions={possibleTableNames}
+                        possibleOptions={possibleTableNames.map((name) => ({ name }))}
                         {changesDisabled}
                     />
                     <span class="outdated"
@@ -279,20 +291,10 @@
                                         $tabInfo.xAxisColumnName ??
                                         'Select'}
                                     onSelect={newXAxisSelected}
-                                    possibleOptions={$tabInfo.type === 'boxPlot'
-                                        ? $table?.columns
-                                              .filter((column) => !column.hidden && column.type === 'numerical')
-                                              .map((column) => column.name) || []
-                                        : $columnNames}
+                                    possibleOptions={$tabInfo.type === 'boxPlot' ? $numericalColumnNames : $columnNames}
                                     fontSize="1.1em"
-                                    height="30px"
+                                    height="40px"
                                     width="140px"
-                                    error={tab.type !== 'empty' &&
-                                        $table?.columns.find(
-                                            (column) =>
-                                                column.name ===
-                                                ($tabInfo.content?.columnName ?? $tabInfo.xAxisColumnName),
-                                        )?.hidden}
                                     {changesDisabled}
                                 />
                             </div>
@@ -306,14 +308,8 @@
                                     onSelect={newXAxisSelected}
                                     possibleOptions={$columnNames}
                                     fontSize="1.1em"
-                                    height="30px"
+                                    height="40px"
                                     width="140px"
-                                    error={tab.type !== 'empty' &&
-                                        $table?.columns.find(
-                                            (column) =>
-                                                column.name ===
-                                                ($tabInfo.content?.xAxisColumnName ?? $tabInfo.xAxisColumnName),
-                                        )?.hidden}
                                     {changesDisabled}
                                 />
                             </div>
@@ -344,13 +340,8 @@
                             onSelect={newYAxisSelected}
                             possibleOptions={$columnNames}
                             fontSize="1.1em"
-                            height="30px"
+                            height="40px"
                             width="140px"
-                            error={tab.type !== 'empty' &&
-                                $table?.columns.find(
-                                    (column) =>
-                                        column.name === ($tabInfo.content?.yAxisColumnName ?? $tabInfo.yAxisColumnName),
-                                )?.hidden}
                             {changesDisabled}
                         />
                     </div>

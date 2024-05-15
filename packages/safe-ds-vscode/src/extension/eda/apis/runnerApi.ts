@@ -638,8 +638,6 @@ export class RunnerApi {
 
         const pipelineExecutionId = crypto.randomUUID();
         try {
-            // eslint-disable-next-line no-console
-            console.log(sdsLines);
             await this.addToAndExecutePipeline(pipelineExecutionId, sdsLines, placeholderNames);
         } catch (e) {
             throw e;
