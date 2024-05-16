@@ -197,7 +197,7 @@ def test():
         "safeds.data.tabular.containers.Table.from_csv_file",
         Table.from_csv_file,
         [safeds_runner.absolute_path('abc.csv')],
-        {},
+        {"separator": ','},
         [safeds_runner.file_mtime('abc.csv')]
     )
     safeds_runner.save_placeholder('a', __gen_a)
@@ -205,7 +205,7 @@ def test():
         "safeds.data.tabular.containers.Table.from_csv_file",
         Table.from_csv_file,
         [safeds_runner.absolute_path('abc.csv')],
-        {},
+        {"separator": ','},
         [safeds_runner.file_mtime('abc.csv')]
     )
     __gen_a2 = safeds_runner.memoized_dynamic_call(
@@ -225,88 +225,6 @@ def test():
         []
     )
     safeds_runner.save_placeholder('v', __gen_v)
-    __gen_receiver_12 = __gen_v
-    __gen_d = safeds_runner.memoized_dynamic_call(
-        __gen_receiver_12,
-        "plot_histogram",
-        [],
-        {"number_of_bins": 10},
-        []
-    )
-    safeds_runner.save_placeholder('d', __gen_d)
-    __gen_receiver_13 = __gen_a
-    __gen_receiver_14 = safeds_runner.memoized_dynamic_call(
-        __gen_receiver_13,
-        "get_column",
-        ['b'],
-        {},
-        []
-    )
-    __gen_p = safeds_runner.memoized_dynamic_call(
-        __gen_receiver_14,
-        "plot_histogram",
-        [],
-        {"number_of_bins": 10},
-        []
-    )
-    safeds_runner.save_placeholder('p', __gen_p)
-    __gen_receiver_15 = __gen_a
-    __gen_receiver_16 = safeds_runner.memoized_dynamic_call(
-        __gen_receiver_15,
-        "get_column",
-        ['b'],
-        {},
-        []
-    )
-    __gen_receiver_17 = safeds_runner.memoized_dynamic_call(
-        __gen_receiver_16,
-        "plot_histogram",
-        [],
-        {"number_of_bins": 10},
-        []
-    )
-    __gen_r = safeds_runner.memoized_dynamic_call(
-        __gen_receiver_17,
-        "flip_vertically",
-        [],
-        {},
-        []
-    )
-    safeds_runner.save_placeholder('r', __gen_r)
-    __gen_receiver_18 = __gen_a
-    __gen_receiver_19 = safeds_runner.memoized_dynamic_call(
-        __gen_receiver_18,
-        "get_column",
-        ['b'],
-        {},
-        []
-    )
-    __gen_receiver_20 = safeds_runner.memoized_dynamic_call(
-        __gen_receiver_19,
-        "plot_histogram",
-        [],
-        {"number_of_bins": 10},
-        []
-    )
-    __gen_receiver_21 = safeds_runner.memoized_dynamic_call(
-        __gen_receiver_20,
-        "flip_vertically",
-        [],
-        {},
-        []
-    )
-    __gen_q = safeds_runner.memoized_dynamic_call(
-        __gen_receiver_21,
-        "adjust_contrast",
-        [1.2],
-        {},
-        []
-    )
-    safeds_runner.save_placeholder('q', __gen_q)
-    f(__gen_d)
-    f(__gen_p)
-    f(__gen_r)
-    f(__gen_q)
     f(safeds_runner.memoized_static_call(
         "tests.generator.memberAccessWithRunnerIntegration.Outer.Nested.f",
         Outer.Nested.f,
@@ -322,9 +240,9 @@ def test():
         []
     )
     safeds_runner.save_placeholder('nestedInstance', __gen_nestedInstance)
-    __gen_receiver_22 = __gen_nestedInstance
+    __gen_receiver_12 = __gen_nestedInstance
     __gen_nestedResult = safeds_runner.memoized_dynamic_call(
-        __gen_receiver_22,
+        __gen_receiver_12,
         "g",
         [],
         {},
@@ -332,24 +250,24 @@ def test():
     )
     safeds_runner.save_placeholder('nestedResult', __gen_nestedResult)
     f(__gen_nestedResult)
-    __gen_receiver_23 = safeds_runner.memoized_static_call(
+    __gen_receiver_13 = safeds_runner.memoized_static_call(
         "safeds.data.tabular.transformation.OneHotEncoder",
         OneHotEncoder,
         [],
-        {},
+        {"separator": '__'},
         []
     )
     __gen_encoder = safeds_runner.memoized_dynamic_call(
-        __gen_receiver_23,
+        __gen_receiver_13,
         "fit",
         [__gen_a, ['b']],
         {},
         []
     )
     safeds_runner.save_placeholder('encoder', __gen_encoder)
-    __gen_receiver_24 = __gen_encoder
+    __gen_receiver_14 = __gen_encoder
     __gen_transformedTable = safeds_runner.memoized_dynamic_call(
-        __gen_receiver_24,
+        __gen_receiver_14,
         "transform",
         [__gen_a],
         {},

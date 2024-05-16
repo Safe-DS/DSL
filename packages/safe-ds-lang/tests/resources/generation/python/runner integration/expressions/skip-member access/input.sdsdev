@@ -78,10 +78,10 @@ pipeline test {
     val a = Table.fromCsvFile("abc.csv");
     val a2 = Table.fromCsvFile("abc.csv").removeColumns(["u"]);
     val v = a.getColumn("b");
-    val d = v.plotHistogram();
-    val p = a.getColumn("b").plotHistogram();
-    val r = a.getColumn("b").plotHistogram().flipVertically();
-    val q = a.getColumn("b").plotHistogram().flipVertically().adjustContrast(1.2);
+    val d = v.plot.histogram();
+    val p = a.getColumn("b").plot.histogram();
+    val r = a.getColumn("b").plot.histogram().flipVertically();
+    val q = a.getColumn("b").plot.histogram().flipVertically().adjustContrast(1.2);
     f(d);
     f(p);
     f(r);
