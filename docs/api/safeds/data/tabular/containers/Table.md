@@ -10,7 +10,7 @@ To create a `Table` call the constructor or use one of the following static meth
 | [fromJsonFile][safeds.data.tabular.containers.Table.fromJsonFile]       | Create a table from a JSON file.       |
 | [fromParquetFile][safeds.data.tabular.containers.Table.fromParquetFile] | Create a table from a Parquet file.    |
 | [fromColumns][safeds.data.tabular.containers.Table.fromColumns]         | Create a table from a list of columns. |
-| [fromDict][safeds.data.tabular.containers.Table.fromDict]               | Create a table from a dictionary.      |
+| [fromMap][safeds.data.tabular.containers.Table.fromMap]                 | Create a table from a map.      |
 
 **Parameters:**
 
@@ -96,7 +96,7 @@ pipeline example {
         ) -> table: Table
 
         /**
-         * Create a table from a dictionary that maps column names to column values.
+         * Create a table from a map that maps column names to column values.
          *
          * @param data The data.
          *
@@ -831,9 +831,9 @@ pipeline example {
         )
 
         /**
-         * Return a dictionary that maps column names to column values.
+         * Return a map that maps column names to column values.
          *
-         * @result dict Dictionary representation of the table.
+         * @result map Map representation of the table.
          *
          * @example
          * pipeline example {
@@ -844,7 +844,7 @@ pipeline example {
          */
         @Pure
         @PythonName("to_dict")
-        fun toMap() -> dict: Map<String, List<Any>>
+        fun toMap() -> map: Map<String, List<Any>>
 
         /**
          * Write the table to a JSON file.
@@ -2065,13 +2065,13 @@ pipeline example {
 
 ## `#!sds fun` toMap {#safeds.data.tabular.containers.Table.toMap data-toc-label='toMap'}
 
-Return a dictionary that maps column names to column values.
+Return a map that maps column names to column values.
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `dict` | [`Map<String, List<Any>>`][safeds.lang.Map] | Dictionary representation of the table. |
+| `map` | [`Map<String, List<Any>>`][safeds.lang.Map] | Map representation of the table. |
 
 **Examples:**
 
@@ -2088,7 +2088,7 @@ pipeline example {
     ```sds linenums="845"
     @Pure
     @PythonName("to_dict")
-    fun toMap() -> dict: Map<String, List<Any>>
+    fun toMap() -> map: Map<String, List<Any>>
     ```
 
 ## `#!sds fun` toParquetFile {#safeds.data.tabular.containers.Table.toParquetFile data-toc-label='toParquetFile'}
@@ -2411,7 +2411,7 @@ pipeline example {
 
 ## `#!sds static fun` fromMap {#safeds.data.tabular.containers.Table.fromMap data-toc-label='fromMap'}
 
-Create a table from a dictionary that maps column names to column values.
+Create a table from a map that maps column names to column values.
 
 **Parameters:**
 

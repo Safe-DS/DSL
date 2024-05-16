@@ -20,7 +20,7 @@ from safeds.data.tabular.typing import Schema
  * | [fromJsonFile][safeds.data.tabular.containers.Table.fromJsonFile]       | Create a table from a JSON file.       |
  * | [fromParquetFile][safeds.data.tabular.containers.Table.fromParquetFile] | Create a table from a Parquet file.    |
  * | [fromColumns][safeds.data.tabular.containers.Table.fromColumns]         | Create a table from a list of columns. |
- * | [fromDict][safeds.data.tabular.containers.Table.fromDict]               | Create a table from a dictionary.      |
+ * | [fromMap][safeds.data.tabular.containers.Table.fromMap]                 | Create a table from a map.      |
  *
  * @param data The data of the table. If null, an empty table is created.
  *
@@ -96,7 +96,7 @@ class Table(
     ) -> table: Table
 
     /**
-     * Create a table from a dictionary that maps column names to column values.
+     * Create a table from a map that maps column names to column values.
      *
      * @param data The data.
      *
@@ -831,9 +831,9 @@ class Table(
     )
 
     /**
-     * Return a dictionary that maps column names to column values.
+     * Return a map that maps column names to column values.
      *
-     * @result dict Dictionary representation of the table.
+     * @result map Map representation of the table.
      *
      * @example
      * pipeline example {
@@ -844,7 +844,7 @@ class Table(
      */
     @Pure
     @PythonName("to_dict")
-    fun toMap() -> dict: Map<String, List<Any>>
+    fun toMap() -> map: Map<String, List<Any>>
 
     /**
      * Write the table to a JSON file.
