@@ -1,4 +1,4 @@
-package tests.partialValidation.recursiveCases.infixOperations.`or`
+package tests.partialValidation.recursiveCases.infixOperations.^or
 
 @Pure
 fun pureFunction() -> result: Boolean

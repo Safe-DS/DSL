@@ -1,4 +1,4 @@
-package tests.typing.expressions.`this`
+package tests.typing.expressions.^this
 
 // $TEST$ serialization unknown
 annotation MyAnnotation(p: Any? = »this«)

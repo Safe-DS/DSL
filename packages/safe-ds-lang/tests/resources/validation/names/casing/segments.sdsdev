@@ -5,7 +5,7 @@ segment »SegmentUppercase«() {}
 // $TEST$ no warning "Names of segments should be lowerCamelCase."
 segment »segmentLowercase1«() {}
 // $TEST$ no warning "Names of segments should be lowerCamelCase."
-segment »`segmentLowercase2`«() {}
+segment »^segmentLowercase2«() {}
 // $TEST$ warning "Names of segments should be lowerCamelCase."
 segment »_segmentUnderscore«() {}
 // $TEST$ warning "Names of segments should be lowerCamelCase."

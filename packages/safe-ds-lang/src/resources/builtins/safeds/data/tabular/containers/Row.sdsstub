@@ -47,10 +47,10 @@ class Row(
      * @example
      * pipeline example {
      *     val row = Row({"a": 1, "b": 2});
-     *     val `schema` = row.`schema`;
+     *     val ^schema = row.^schema;
      * }
      */
-    attr `schema`: Schema
+    attr ^schema: Schema
 
     /**
      * Create a row from a dictionary that maps column names to column values.

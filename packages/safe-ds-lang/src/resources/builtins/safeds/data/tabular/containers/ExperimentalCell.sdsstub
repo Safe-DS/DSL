@@ -19,7 +19,7 @@ class ExperimentalCell<T = Any?> {
      */
     @Pure
     @PythonName("not_")
-    fun `not`() -> result: ExperimentalCell<Boolean>
+    fun ^not() -> result: ExperimentalCell<Boolean>
 
     /**
      * Perform a boolean AND operation. This is equivalent to the `&` operator.
@@ -33,7 +33,7 @@ class ExperimentalCell<T = Any?> {
      */
     @Pure
     @PythonName("and_")
-    fun `and`(
+    fun ^and(
         other: union<Boolean, ExperimentalCell<Boolean>>
     ) -> result: ExperimentalCell<Boolean>
 
@@ -49,7 +49,7 @@ class ExperimentalCell<T = Any?> {
      */
     @Pure
     @PythonName("or_")
-    fun `or`(
+    fun ^or(
         other: union<Boolean, ExperimentalCell<Boolean>>
     ) -> result: ExperimentalCell<Boolean>
 
@@ -191,7 +191,7 @@ class ExperimentalCell<T = Any?> {
      * }
      */
     @Pure
-    fun `sub`(
+    fun ^sub(
         other: Any
     ) -> result: ExperimentalCell
 
