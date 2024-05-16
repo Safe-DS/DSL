@@ -5,7 +5,7 @@ pipeline »PipelineUppercase« {}
 // $TEST$ no warning "Names of pipelines should be lowerCamelCase."
 pipeline »pipelineLowercase1« {}
 // $TEST$ no warning "Names of pipelines should be lowerCamelCase."
-pipeline »`pipelineLowercase2`« {}
+pipeline »^pipelineLowercase2« {}
 // $TEST$ warning "Names of pipelines should be lowerCamelCase."
 pipeline »_pipelineUnderscore« {}
 // $TEST$ warning "Names of pipelines should be lowerCamelCase."

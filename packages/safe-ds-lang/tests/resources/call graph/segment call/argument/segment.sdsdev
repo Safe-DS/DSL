@@ -1,4 +1,4 @@
-package tests.callGraph.segmentCall.argument.`segment`
+package tests.callGraph.segmentCall.argument.^segment
 
 @Pure fun f()
 

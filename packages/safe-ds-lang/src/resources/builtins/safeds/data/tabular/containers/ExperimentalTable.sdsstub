@@ -55,7 +55,7 @@ class ExperimentalTable(
     /**
      * The schema of the table.
      */
-    attr `schema`: ExperimentalSchema
+    attr ^schema: ExperimentalSchema
 
     /**
      * Create a table from a list of columns.

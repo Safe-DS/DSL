@@ -6,7 +6,7 @@ pipeline myPipeline2 {
     // $TEST$ no warning "Names of used placeholders should be lowerCamelCase.""
     val »usedPlaceholderLowercase1« = 1;
     // $TEST$ no warning "Names of used placeholders should be lowerCamelCase.""
-    val »`usedPlaceholderLowercase2`« = 1;
+    val »^usedPlaceholderLowercase2« = 1;
     // $TEST$ warning "Names of used placeholders should be lowerCamelCase."
     val »_usedPlaceholderUnderscore« = 1;
     // $TEST$ warning "Names of used placeholders should be lowerCamelCase."
@@ -17,7 +17,7 @@ pipeline myPipeline2 {
     // $TEST$ no warning "Names of unused placeholders should be lowerCamelCase. with an optional leading underscore."
     val »unusedPlaceholderLowercase1« = usedPlaceholderLowercase1 + 1;
     // $TEST$ no warning "Names of unused placeholders should be lowerCamelCase. with an optional leading underscore."
-    val »`unusedPlaceholderLowercase2`« = usedPlaceholderLowercase2 + 1;
+    val »^unusedPlaceholderLowercase2« = usedPlaceholderLowercase2 + 1;
     // $TEST$ no warning "Names of unused placeholders should be lowerCamelCase with an optional leading underscore."
     val »_unusedPlaceholderUnderscore« = _usedPlaceholderUnderscore + 1;
     // $TEST$ warning "Names of unused placeholders should be lowerCamelCase with an optional leading underscore."
