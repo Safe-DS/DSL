@@ -40,7 +40,7 @@ export const placeholdersMustNotBeAnAlias = (node: SdsPlaceholder, accept: Valid
 export const placeholderShouldBeUsed =
     (services: SafeDsServices) => (node: SdsPlaceholder, accept: ValidationAcceptor) => {
         // Don't a warning if the placeholder's name starts with an underscore
-        if (node.name.startsWith('_')) {
+        if (!node.name || node.name.startsWith('_')) {
             return;
         }
 

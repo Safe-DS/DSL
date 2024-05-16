@@ -1,4 +1,4 @@
-package tests.callGraph.expressionLambdaCall.argument.`segment`
+package tests.callGraph.expressionLambdaCall.argument.^segment
 
 @Pure fun f()
 

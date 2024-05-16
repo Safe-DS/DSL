@@ -4,7 +4,7 @@ fun myFunction3<
     // $TEST$ no warning "Names of type parameters should be UpperCamelCase."
     »TypeParameterUppercase1«,
     // $TEST$ no warning "Names of type parameters should be UpperCamelCase."
-    »`TypeParameterUppercase2`«,
+    »^TypeParameterUppercase2«,
     // $TEST$ warning "Names of type parameters should be UpperCamelCase."
     »typeParameterLowercase«,
     // $TEST$ warning "Names of type parameters should be UpperCamelCase."

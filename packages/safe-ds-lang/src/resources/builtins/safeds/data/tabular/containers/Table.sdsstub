@@ -67,10 +67,10 @@ class Table(
      * @example
      * pipeline example {
      *     val table = Table({"a": [1, 2], "b": [3, 4]});
-     *     val `schema` = table.`schema`;
+     *     val ^schema = table.^schema;
      * }
      */
-    attr `schema`: Schema
+    attr ^schema: Schema
 
     /**
      * Read data from a CSV file into a table.

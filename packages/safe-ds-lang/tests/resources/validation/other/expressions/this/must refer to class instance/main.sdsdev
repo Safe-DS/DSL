@@ -1,4 +1,4 @@
-package tests.validation.other.expressions.`this`.mustReferToClassInstance
+package tests.validation.other.expressions.^this.mustReferToClassInstance
 
 // $TEST$ error "The keyword 'this' must refer to a class instance."
 annotation MyAnnotation(p: Any? = »this«)

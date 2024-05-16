@@ -1,4 +1,4 @@
-package tests.callGraph.callable.`segment`
+package tests.callGraph.callable.^segment
 
 @Pure fun f() -> r: Any
 @Pure fun g() -> r: Any

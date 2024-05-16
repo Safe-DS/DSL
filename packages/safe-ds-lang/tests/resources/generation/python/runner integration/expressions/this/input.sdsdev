@@ -1,4 +1,4 @@
-package tests.generator.runnerIntegration.expressions.`this`
+package tests.generator.runnerIntegration.expressions.^this
 
 class MyClass() {
     @Pure
