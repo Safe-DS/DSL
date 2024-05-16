@@ -297,22 +297,7 @@ export class SafeDsTypeComputer {
                 return UnknownType;
             }
 
-            const parameterType = this.computeType(parameter);
-            if (parameterType.isFullySubstituted) {
-                return parameterType;
-            }
-
-            // Compute substitutions for containing call
-            const containingCall = AstUtils.getContainerOfType(containerOfLambda, isSdsCall);
-            if (!containingCall) {
-                /* c8 ignore next 2 */
-                return parameterType;
-            }
-
-            // Prevent infinite recursion when computing the type of the lambda parameter
-            const substitutions = this.computeSubstitutionsForLambdaParameter(containingCall, containingCallable);
-
-            return parameterType.substituteTypeParameters(substitutions);
+            return this.computeType(parameter);
         }
 
         // Lambda passed as default value
@@ -454,6 +439,8 @@ export class SafeDsTypeComputer {
             .map((it) => new NamedTupleEntry(it, it.name, this.computeType(it)))
             .toArray();
 
+        // TODO: substitute type parameters
+
         return this.factory.createCallableType(
             node,
             undefined,
@@ -506,6 +493,8 @@ export class SafeDsTypeComputer {
         const resultEntries = [
             new NamedTupleEntry<SdsAbstractResult>(undefined, 'result', this.computeType(node.result)),
         ];
+
+        // TODO substitute type parameters
 
         return this.factory.createCallableType(
             node,
