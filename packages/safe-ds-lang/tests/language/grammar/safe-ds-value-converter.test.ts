@@ -17,18 +17,18 @@ const services = (await createSafeDsServices(EmptyFileSystem, { omitBuiltins: tr
 
 describe('runConverter', () => {
     describe('ID', () => {
-        it('should remove backticks (package)', async () => {
+        it('should remove hat (package)', async () => {
             const code = `
-                package \`foo\`.bar
+                package ^foo.bar
             `;
 
             const module = await getNodeOfType(services, code, isSdsModule);
             expect(module.name).toBe('foo.bar');
         });
 
-        it('should remove backticks (declaration)', async () => {
+        it('should remove hat (declaration)', async () => {
             const code = `
-                class \`MyClass\`
+                class ^MyClass
             `;
 
             const firstClass = await getNodeOfType(services, code, isSdsClass);

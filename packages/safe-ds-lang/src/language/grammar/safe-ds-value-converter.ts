@@ -4,7 +4,7 @@ export class SafeDsValueConverter extends DefaultValueConverter {
     protected override runConverter(rule: GrammarAST.AbstractRule, input: string, cstNode: CstNode): ValueType {
         switch (rule.name.toUpperCase()) {
             case 'ID':
-                return input.replaceAll('`', '');
+                return input.replace(/^\^/u, '');
             case 'INT':
                 return ValueConverter.convertBigint(input);
             case 'STRING':
