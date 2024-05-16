@@ -11,7 +11,7 @@ Create a time series dataset from a mapping of column names to their values.
 | `data` | `#!sds union<Map<String, List<Any>>, Table>` | The data. | - |
 | `targetName` | [`String`][safeds.lang.String] | Name of the target column. | - |
 | `timeName` | [`String`][safeds.lang.String] | Name of the time column. | - |
-| `extraNames` | [`List<String>?`][safeds.lang.List] | Names of the columns that are neither features nor target. If None, no extra columns are used, i.e. all but the target column are used as features. | `#!sds null` |
+| `extraNames` | [`List<String>?`][safeds.lang.List] | Names of the columns that are neither features nor target. If null, no extra columns are used, i.e. all but the target column are used as features. | `#!sds null` |
 
 **Examples:**
 
