@@ -1,0 +1,6 @@
+package safeds.data.labeled.containers
+
+/**
+ * A dataset is used as input to machine learning models.
+ */
+class Dataset

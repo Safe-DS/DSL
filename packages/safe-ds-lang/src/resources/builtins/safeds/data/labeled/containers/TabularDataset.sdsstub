@@ -1,34 +1,43 @@
 package safeds.data.labeled.containers
 
+from safeds.data.labeled.containers import Dataset
+from safeds.data.tabular.containers import Table
+
 /**
- * A tabular dataset maps feature columns to a target column.
+ * A dataset containing tabular data. It can be used to train machine learning models.
  *
- * Create a tabular dataset from a mapping of column names to their values.
+ * Columns in a tabular dataset are divided into three categories:
  *
- * @param data
- * The data.
+ * - The target column is the column that a model should predict.
+ * - Feature columns are columns that a model should use to make predictions.
+ * - Extra columns are columns that are neither feature nor target. They can be used to provide additional context,
+ *   like an ID column.
  *
- * @param targetName
- * Name of the target column.
+ * Feature columns are implicitly defined as all columns except the target and extra columns. If no extra columns
+ * are specified, all columns except the target column are used as features.
  *
- * @param extraNames
- * Names of the columns that are neither features nor target. If None, no extra columns are used, i.e. all but the
- * target column are used as features.
+ * @param data The data.
+ * @param targetName Name of the target column.
+ * @param extraNames Names of the columns that are neither features nor target. If null, no extra columns are used, i.e. all but
+ * the target column are used as features.
  *
  * @example
  * pipeline example {
- *     val dataset = TabularDataset(
- *         {"id": [1, 2, 3], "feature": [4, 5, 6], "target": [1, 2, 3]},
- *         targetName="target",
- *         extraNames=["id"]
+ *     val table = Table(
+ *         {
+ *             "id": [1, 2, 3],
+ *             "feature": [4, 5, 6],
+ *             "target": [1, 2, 3],
+ *         },
  *     );
+ *     val dataset = table.toTabularDataset(targetName="target", extraNames=["id"]);
  * }
  */
 class TabularDataset(
     data: union<Map<String, List<Any>>, Table>,
     @PythonName("target_name") targetName: String,
     @PythonName("extra_names") extraNames: List<String> = []
-) {
+) sub Dataset {
     /**
      * The feature columns of the tabular dataset.
      */
@@ -45,11 +54,9 @@ class TabularDataset(
     attr extras: Table
 
     /**
-     * Return a new `Table` containing the feature columns and the target column.
+     * Return a table containing all columns of the tabular dataset.
      *
-     * The original `TabularDataset` is not modified.
-     *
-     * @result table A table containing the feature columns and the target column.
+     * @result table A table containing all columns of the tabular dataset.
      */
     @Pure
     @PythonName("to_table")

@@ -2,7 +2,7 @@ package safeds.ml.nn
 
 from safeds.data.labeled.containers import TabularDataset
 from safeds.data.tabular.containers import Table
-from safeds.ml.nn import Layer
+from safeds.ml.nn.layers import Layer
 
 /**
  * A NeuralNetworkRegressor is a neural network that is used for regression tasks.

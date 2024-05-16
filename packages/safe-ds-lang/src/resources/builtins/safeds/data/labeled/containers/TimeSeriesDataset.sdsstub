@@ -10,7 +10,7 @@ from safeds.data.tabular.containers import Table
  * @param data The data.
  * @param targetName Name of the target column.
  * @param timeName Name of the time column.
- * @param extraNames Names of the columns that are neither features nor target. If None, no extra columns are used, i.e. all but
+ * @param extraNames Names of the columns that are neither features nor target. If null, no extra columns are used, i.e. all but
  * the target column are used as features.
  *
  * @example

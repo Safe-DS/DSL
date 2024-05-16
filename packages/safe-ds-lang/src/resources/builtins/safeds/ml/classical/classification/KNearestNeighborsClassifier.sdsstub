@@ -7,7 +7,7 @@ from safeds.ml.classical.classification import Classifier
 /**
  * K-nearest-neighbors classification.
  *
- * @param numberOfNeighbors The number of neighbors to use for interpolation. Has to be greater than 0 (validated in the constructor) and
+ * @param neighborCount The number of neighbors to use for interpolation. Has to be greater than 0 (validated in the constructor) and
  * less than or equal to the sample size (validated when calling `fit`).
  *
  * @example
@@ -19,14 +19,14 @@ from safeds.ml.classical.classification import Classifier
  * }
  */
 class KNearestNeighborsClassifier(
-    @PythonName("number_of_neighbors") const numberOfNeighbors: Int
+    @PythonName("number_of_neighbors") const neighborCount: Int
 ) sub Classifier where {
-    numberOfNeighbors >= 1
+    neighborCount >= 1
 } {
     /**
      * Get the number of neighbors used for interpolation.
      */
-    @PythonName("number_of_neighbors") attr numberOfNeighbors: Int
+    @PythonName("number_of_neighbors") attr neighborCount: Int
 
     /**
      * Create a copy of this classifier and fit it with the given training data.
@@ -39,6 +39,6 @@ class KNearestNeighborsClassifier(
      */
     @Pure
     fun fit(
-        @PythonName("training_set") trainingSet: union<ExperimentalTabularDataset, TabularDataset>
+        @PythonName("training_set") trainingSet: TabularDataset
     ) -> fittedClassifier: KNearestNeighborsClassifier
 }
