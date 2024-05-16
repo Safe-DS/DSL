@@ -439,14 +439,14 @@ export class SafeDsTypeComputer {
             .map((it) => new NamedTupleEntry(it, it.name, this.computeType(it)))
             .toArray();
 
-        // TODO: substitute type parameters
-
-        return this.factory.createCallableType(
+        const unsubstitutedType = this.factory.createCallableType(
             node,
             undefined,
             this.factory.createNamedTupleType(...parameterEntries),
             this.factory.createNamedTupleType(...resultEntries),
         );
+        const substitutions = this.computeSubstitutionsForLambda(node, unsubstitutedType);
+        return unsubstitutedType.substituteTypeParameters(substitutions);
     }
 
     private computeTypeOfCall(node: SdsCall): Type {
@@ -494,14 +494,14 @@ export class SafeDsTypeComputer {
             new NamedTupleEntry<SdsAbstractResult>(undefined, 'result', this.computeType(node.result)),
         ];
 
-        // TODO substitute type parameters
-
-        return this.factory.createCallableType(
+        const unsubstitutedType = this.factory.createCallableType(
             node,
             undefined,
             this.factory.createNamedTupleType(...parameterEntries),
             this.factory.createNamedTupleType(...resultEntries),
         );
+        const substitutions = this.computeSubstitutionsForLambda(node, unsubstitutedType);
+        return unsubstitutedType.substituteTypeParameters(substitutions);
     }
 
     private computeTypeOfIndexedAccess(node: SdsIndexedAccess): Type {
@@ -773,9 +773,19 @@ export class SafeDsTypeComputer {
     // Type parameter substitutions
     // -----------------------------------------------------------------------------------------------------------------
 
-    private computeSubstitutionsForLambdaParameter(
+    /**
+     * Computes substitutions for the type parameters of a callable in the context of a call.
+     *
+     * @param node The call to compute substitutions for.
+     * @returns The computed substitutions for the type parameters of the callable.
+     */
+    computeSubstitutionsForCall(node: SdsAbstractCall): TypeParameterSubstitutions {
+        return this.doComputeSubstitutionsForCall(node);
+    }
+
+    private doComputeSubstitutionsForCall(
         node: SdsAbstractCall,
-        lambda: SdsLambda,
+        precomputedArgumentTypes?: Map<AstNode | undefined, Type>,
     ): TypeParameterSubstitutions {
         // Compute substitutions for member access
         const substitutionsFromReceiver =
@@ -798,45 +808,10 @@ export class SafeDsTypeComputer {
             const argument = parametersToArguments.get(parameter);
             return [
                 this.computeType(parameter.type),
-                argument?.value !== lambda ? this.computeType(argument?.value ?? parameter.defaultValue) : UnknownType,
+                // Use precomputed argument types (lambdas) if available. This prevents infinite recursion.
+                precomputedArgumentTypes?.get(argument?.value) ??
+                    this.computeType(argument?.value ?? parameter.defaultValue),
             ];
-        });
-
-        const substitutionsFromArguments = this.computeSubstitutionsForArguments(
-            typeParameters,
-            parameterTypesToArgumentTypes,
-        );
-
-        return new Map([...substitutionsFromReceiver, ...substitutionsFromArguments]);
-    }
-
-    /**
-     * Computes substitutions for the type parameters of a callable in the context of a call.
-     *
-     * @param node The call to compute substitutions for.
-     * @returns The computed substitutions for the type parameters of the callable.
-     */
-    computeSubstitutionsForCall(node: SdsAbstractCall): TypeParameterSubstitutions {
-        // Compute substitutions for member access
-        const substitutionsFromReceiver =
-            isSdsCall(node) && isSdsMemberAccess(node.receiver)
-                ? this.computeSubstitutionsForMemberAccess(node.receiver)
-                : NO_SUBSTITUTIONS;
-
-        // Compute substitutions for arguments
-        const callable = this.nodeMapper.callToCallable(node);
-        const typeParameters = getTypeParameters(callable);
-        if (isEmpty(typeParameters)) {
-            return substitutionsFromReceiver;
-        }
-
-        const parameters = getParameters(callable);
-        const args = getArguments(node);
-
-        const parametersToArguments = this.nodeMapper.parametersToArguments(parameters, args);
-        const parameterTypesToArgumentTypes: [Type, Type][] = parameters.map((parameter) => {
-            const argument = parametersToArguments.get(parameter);
-            return [this.computeType(parameter.type), this.computeType(argument?.value ?? parameter.defaultValue)];
         });
 
         const substitutionsFromArguments = this.computeSubstitutionsForArguments(
@@ -874,6 +849,22 @@ export class SafeDsTypeComputer {
         }
 
         return this.computeSubstitutionsForArguments(ownTypeParameters, ownTypesToOverriddenTypes);
+    }
+
+    private computeSubstitutionsForLambda(node: SdsLambda, unsubstitutedType: Type): TypeParameterSubstitutions {
+        const containerOfLambda = node.$container;
+        if (!isSdsArgument(containerOfLambda)) {
+            return NO_SUBSTITUTIONS;
+        }
+
+        const containingCall = AstUtils.getContainerOfType(containerOfLambda, isSdsCall);
+        if (!containingCall) {
+            /* c8 ignore next 2 */
+            return NO_SUBSTITUTIONS;
+        }
+
+        const precomputedArgumentTypes = new Map([[node, unsubstitutedType]]);
+        return this.doComputeSubstitutionsForCall(containingCall, precomputedArgumentTypes);
     }
 
     private computeSubstitutionsForMemberAccess(node: SdsMemberAccess): TypeParameterSubstitutions {
