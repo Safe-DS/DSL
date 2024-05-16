@@ -1,0 +1,88 @@
+package safeds.ml.classical
+
+from safeds.data.labeled.containers import TabularDataset
+from safeds.data.tabular.containers import Table
+from safeds.data.tabular.typing import DataType
+from safeds.data.tabular.typing import Schema
+
+/**
+ * A model for supervised learning tasks.
+ */
+class SupervisedModel {
+    /**
+     * Whether the model is fitted.
+     */
+    @PythonName("is_fitted") attr isFitted: Boolean
+
+    /**
+     * Create a copy of this model and fit it with the given training data.
+     *
+     * **Note:** This model is not modified.
+     *
+     * @param trainingSet The training data containing the features and target.
+     *
+     * @result fittedModel The fitted model.
+     */
+    @Pure
+    fun fit(
+        @PythonName("training_set") trainingSet: TabularDataset
+    ) -> fittedModel: SupervisedModel
+
+    /**
+     * Predict the target values on the given dataset.
+     *
+     * **Note:** The model must be fitted.
+     *
+     * @param dataset The dataset containing at least the features.
+     *
+     * @result prediction The given dataset with an additional column for the predicted target values.
+     */
+    @Pure
+    fun predict(
+        dataset: union<Table, TabularDataset>
+    ) -> prediction: TabularDataset
+
+    /**
+     * Return the names of the feature columns.
+     *
+     * **Note:** The model must be fitted.
+     *
+     * @result featureNames The names of the feature columns.
+     */
+    @Pure
+    @PythonName("get_feature_names")
+    fun getFeatureNames() -> featureNames: List<String>
+
+    /**
+     * Return the schema of the feature columns.
+     *
+     * **Note:** The model must be fitted.
+     *
+     * @result featureSchema The schema of the feature columns.
+     */
+    @Pure
+    @PythonName("get_features_schema")
+    fun getFeaturesSchema() -> featureSchema: Schema
+
+    /**
+     * Return the name of the target column.
+     *
+     * **Note:** The model must be fitted.
+     *
+     * @result targetName The name of the target column.
+     */
+    @Pure
+    @PythonName("get_target_name")
+    fun getTargetName() -> targetName: String
+
+    /**
+     * Return the type of the target column.
+     *
+     * **Note:** The model must be fitted.
+     *
+     * @result targetType The type of the target column.
+     */
+    @Pure
+    @PythonName("get_target_type")
+    fun getTargetType() -> targetType: DataType
+}

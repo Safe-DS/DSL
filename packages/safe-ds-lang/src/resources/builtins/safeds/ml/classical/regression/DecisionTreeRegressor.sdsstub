@@ -7,8 +7,8 @@ from safeds.ml.classical.regression import Regressor
 /**
  * Decision tree regression.
  *
- * @param maximumDepth The maximum depth of each tree. If null, the depth is not limited. Has to be greater than 0.
- * @param minimumNumberOfSamplesInLeaves The minimum number of samples that must remain in the leaves of each tree. Has to be greater than 0.
+ * @param maxDepth The maximum depth of each tree. If null, the depth is not limited. Has to be greater than 0.
+ * @param minSampleCountInLeaves The minimum number of samples that must remain in the leaves of each tree. Has to be greater than 0.
  *
  * @example
  * pipeline example {
@@ -19,19 +19,19 @@ from safeds.ml.classical.regression import Regressor
  * }
  */
 class DecisionTreeRegressor(
-    @PythonName("maximum_depth") maximumDepth: Int? = null,
-    @PythonName("minimum_number_of_samples_in_leaves") const minimumNumberOfSamplesInLeaves: Int = 1
+    @PythonName("maximum_depth") maxDepth: Int? = null,
+    @PythonName("minimum_number_of_samples_in_leaves") const minSampleCountInLeaves: Int = 1
 ) sub Regressor where {
-    minimumNumberOfSamplesInLeaves > 0
+    minSampleCountInLeaves > 0
 } {
     /**
      * The maximum depth of the tree.
      */
-    @PythonName("maximum_depth") attr maximumDepth: Int?
+    @PythonName("maximum_depth") attr maxDepth: Int?
     /**
      * The minimum number of samples that must remain in the leaves of the tree.
      */
-    @PythonName("minimum_number_of_samples_in_leaves") attr minimumNumberOfSamplesInLeaves: Int
+    @PythonName("minimum_number_of_samples_in_leaves") attr minSampleCountInLeaves: Int
 
     /**
      * Create a copy of this regressor and fit it with the given training data.
@@ -44,6 +44,6 @@ class DecisionTreeRegressor(
      */
     @Pure
     fun fit(
-        @PythonName("training_set") trainingSet: union<ExperimentalTabularDataset, TabularDataset>
+        @PythonName("training_set") trainingSet: TabularDataset
     ) -> fittedRegressor: DecisionTreeRegressor
 }

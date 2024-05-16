@@ -1,0 +1,84 @@
+package safeds.ml.classical.classification
+
+from safeds.data.labeled.containers import TabularDataset
+from safeds.data.tabular.containers import Table
+from safeds.ml.classical.classification import Classifier
+
+/**
+ * Support vector machine for classification.
+ *
+ * @param c The strength of regularization. Must be greater than 0.
+ * @param kernel The type of kernel to be used. Defaults to a radial basis function kernel.
+ *
+ * @example
+ * pipeline example {
+ *     val training = Table.fromCsvFile("training.csv").toTabularDataset("target");
+ *     val test = Table.fromCsvFile("test.csv").toTabularDataset("target");
+ *     val classifier = SupportVectorClassifier(
+ *         kernel = SupportVectorClassifier.Kernel.Linear
+ *     ).fit(training);
+ *     val accuracy = classifier.accuracy(test);
+ * }
+ */
+class SupportVectorClassifier(
+    const c: Float = 1.0,
+    kernel: SupportVectorClassifier.Kernel = SupportVectorClassifier.Kernel.RadialBasisFunction
+) sub Classifier where {
+    c > 0.0
+} {
+    /**
+     * The kernel functions that can be used in the support vector machine.
+     */
+    enum Kernel {
+        /**
+         * A linear kernel.
+         */
+        @PythonName("linear")
+        Linear
+
+        /**
+         * A polynomial kernel.
+         *
+         * @param degree The degree of the polynomial.
+         */
+        @PythonName("polynomial")
+        Polynomial(const degree: Int) where {
+            degree > 0
+        }
+
+        /**
+         * A sigmoid kernel.
+         */
+        @PythonName("sigmoid")
+        Sigmoid
+
+        /**
+         * A radial basis function kernel.
+         */
+        @PythonName("radial_basis_function")
+        RadialBasisFunction
+    }
+
+    /**
+     * Get the regularization strength.
+     */
+    attr c: Float
+    /**
+     * Get the type of kernel used.
+     */
+    attr kernel: SupportVectorClassifier.Kernel
+
+    /**
+     * Create a copy of this classifier and fit it with the given training data.
+     *
+     * This classifier is not modified.
+     *
+     * @param trainingSet The training data containing the feature and target vectors.
+     *
+     * @result fittedClassifier The fitted classifier.
+     */
+    @Pure
+    fun fit(
+        @PythonName("training_set") trainingSet: TabularDataset
+    ) -> fittedClassifier: SupportVectorClassifier
+}

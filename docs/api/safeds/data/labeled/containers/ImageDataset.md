@@ -2,6 +2,8 @@
 
 A Dataset for ImageLists as input and ImageLists, Tables or Columns as output.
 
+**Parent type:** [`Dataset`][safeds.data.labeled.containers.Dataset]
+
 **Parameters:**
 
 | Name | Type | Description | Default |
@@ -19,13 +21,13 @@ A Dataset for ImageLists as input and ImageLists, Tables or Columns as output.
 
 ??? quote "Stub code in `ImageDataset.sdsstub`"
 
-    ```sds linenums="16"
+    ```sds linenums="17"
     class ImageDataset<T>(
         @PythonName("input_data") inputData: ImageList,
         @PythonName("output_data") outputData: T,
         @PythonName("batch_size") batchSize: Int = 1,
         shuffle: Boolean = false
-    ) {
+    ) sub Dataset {
         /**
          * Get the input `ImageSize` of this dataset.
          */
@@ -89,7 +91,7 @@ Get the input data of this dataset.
 
 ??? quote "Stub code in `ImageDataset.sdsstub`"
 
-    ```sds linenums="36"
+    ```sds linenums="37"
     @Pure
     @PythonName("get_input")
     fun getInput() -> input: ImageList
@@ -107,7 +109,7 @@ Get the output data of this dataset.
 
 ??? quote "Stub code in `ImageDataset.sdsstub`"
 
-    ```sds linenums="45"
+    ```sds linenums="46"
     @Pure
     @PythonName("get_output")
     fun getOutput() -> output: T
@@ -127,7 +129,7 @@ The original dataset list is not modified.
 
 ??? quote "Stub code in `ImageDataset.sdsstub`"
 
-    ```sds linenums="56"
+    ```sds linenums="57"
     @Pure
     fun shuffle() -> imageDataset: ImageDataset<T>
     ```

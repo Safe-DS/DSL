@@ -8,8 +8,8 @@ The RangeScaler transforms column values by scaling each value to a given range.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `minimum` | [`Float`][safeds.lang.Float] | The minimum of the new range after the transformation | `#!sds 0.0` |
-| `maximum` | [`Float`][safeds.lang.Float] | The maximum of the new range after the transformation | `#!sds 1.0` |
+| `min` | [`Float`][safeds.lang.Float] | The minimum of the new range after the transformation | `#!sds 0.0` |
+| `max` | [`Float`][safeds.lang.Float] | The maximum of the new range after the transformation | `#!sds 1.0` |
 
 **Examples:**
 
@@ -28,24 +28,51 @@ pipeline example {
 
     ```sds linenums="22"
     class RangeScaler(
-        const minimum: Float = 0.0,
-        const maximum: Float = 1.0
+        const min: Float = 0.0,
+        const max: Float = 1.0
     ) sub InvertibleTableTransformer {
+        /**
+         * The minimum of the new range after the transformation.
+         */
+        attr min: Float
+        /**
+         * The maximum of the new range after the transformation.
+         */
+        attr max: Float
+
         /**
          * Learn a transformation for a set of columns in a table.
          *
          * This transformer is not modified.
          *
          * @param table The table used to fit the transformer.
-         * @param columnNames The list of columns from the table used to fit the transformer. If `None`, all columns are used.
+         * @param columnNames The list of columns from the table used to fit the transformer. If `null`, all numeric columns are used.
          *
-         * @result result1 The fitted transformer.
+         * @result fittedTransformer The fitted transformer.
          */
         @Pure
         fun fit(
             table: Table,
             @PythonName("column_names") columnNames: List<String>?
-        ) -> result1: RangeScaler
+        ) -> fittedTransformer: RangeScaler
+
+        /**
+         * Learn a transformation for a set of columns in a table and apply the learned transformation to the same table.
+         *
+         * **Note:** Neither this transformer nor the given table are modified.
+         *
+         * @param table The table used to fit the transformer. The transformer is then applied to this table.
+         * @param columnNames The list of columns from the table used to fit the transformer. If `null`, all columns are used.
+         *
+         * @result fittedTransformer The fitted transformer.
+         * @result transformedTable The transformed table.
+         */
+        @Pure
+        @PythonName("fit_and_transform")
+        fun fitAndTransform(
+            table: Table,
+            @PythonName("column_names") columnNames: List<String>? = null
+        ) -> (fittedTransformer: RangeScaler, transformedTable: Table)
     }
     ```
 
@@ -54,6 +81,18 @@ pipeline example {
 Whether the transformer is fitted.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
+
+## `#!sds attr` max {#safeds.data.tabular.transformation.RangeScaler.max data-toc-label='max'}
+
+The maximum of the new range after the transformation.
+
+**Type:** [`Float`][safeds.lang.Float]
+
+## `#!sds attr` min {#safeds.data.tabular.transformation.RangeScaler.min data-toc-label='min'}
+
+The minimum of the new range after the transformation.
+
+**Type:** [`Float`][safeds.lang.Float]
 
 ## `#!sds fun` fit {#safeds.data.tabular.transformation.RangeScaler.fit data-toc-label='fit'}
 
@@ -66,114 +105,62 @@ This transformer is not modified.
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `table` | [`Table`][safeds.data.tabular.containers.Table] | The table used to fit the transformer. | - |
-| `columnNames` | [`List<String>?`][safeds.lang.List] | The list of columns from the table used to fit the transformer. If `None`, all columns are used. | - |
+| `columnNames` | [`List<String>?`][safeds.lang.List] | The list of columns from the table used to fit the transformer. If `null`, all numeric columns are used. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`RangeScaler`][safeds.data.tabular.transformation.RangeScaler] | The fitted transformer. |
+| `fittedTransformer` | [`RangeScaler`][safeds.data.tabular.transformation.RangeScaler] | The fitted transformer. |
 
 ??? quote "Stub code in `RangeScaler.sdsstub`"
 
-    ```sds linenums="36"
+    ```sds linenums="45"
     @Pure
     fun fit(
         table: Table,
         @PythonName("column_names") columnNames: List<String>?
-    ) -> result1: RangeScaler
+    ) -> fittedTransformer: RangeScaler
     ```
 
 ## `#!sds fun` fitAndTransform {#safeds.data.tabular.transformation.RangeScaler.fitAndTransform data-toc-label='fitAndTransform'}
 
 Learn a transformation for a set of columns in a table and apply the learned transformation to the same table.
 
-Neither the transformer nor the table are modified.
+**Note:** Neither this transformer nor the given table are modified.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `table` | [`Table`][safeds.data.tabular.containers.Table] | The table used to fit the transformer. The transformer is then applied to this table. | - |
-| `columnNames` | [`List<String>?`][safeds.lang.List] | The list of columns from the table used to fit the transformer. If `None`, all columns are used. | `#!sds null` |
+| `columnNames` | [`List<String>?`][safeds.lang.List] | The list of columns from the table used to fit the transformer. If `null`, all columns are used. | `#!sds null` |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `fittedTransformer` | [`TableTransformer`][safeds.data.tabular.transformation.TableTransformer] | The fitted transformer. |
+| `fittedTransformer` | [`RangeScaler`][safeds.data.tabular.transformation.RangeScaler] | The fitted transformer. |
 | `transformedTable` | [`Table`][safeds.data.tabular.containers.Table] | The transformed table. |
 
-??? quote "Stub code in `TableTransformer.sdsstub`"
+??? quote "Stub code in `RangeScaler.sdsstub`"
 
-    ```sds linenums="82"
+    ```sds linenums="62"
     @Pure
     @PythonName("fit_and_transform")
     fun fitAndTransform(
         table: Table,
         @PythonName("column_names") columnNames: List<String>? = null
-    ) -> (fittedTransformer: TableTransformer, transformedTable: Table)
-    ```
-
-## `#!sds fun` getNamesOfAddedColumns {#safeds.data.tabular.transformation.RangeScaler.getNamesOfAddedColumns data-toc-label='getNamesOfAddedColumns'}
-
-Get the names of all new columns that have been added by the transformer.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`List<String>`][safeds.lang.List] | A list of names of the added columns, ordered as they will appear in the table. |
-
-??? quote "Stub code in `TableTransformer.sdsstub`"
-
-    ```sds linenums="49"
-    @Pure
-    @PythonName("get_names_of_added_columns")
-    fun getNamesOfAddedColumns() -> result1: List<String>
-    ```
-
-## `#!sds fun` getNamesOfChangedColumns {#safeds.data.tabular.transformation.RangeScaler.getNamesOfChangedColumns data-toc-label='getNamesOfChangedColumns'}
-
-Get the names of all columns that have been changed by the transformer.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`List<String>`][safeds.lang.List] | A list of names of changed columns, ordered as they appear in the table. |
-
-??? quote "Stub code in `TableTransformer.sdsstub`"
-
-    ```sds linenums="58"
-    @Pure
-    @PythonName("get_names_of_changed_columns")
-    fun getNamesOfChangedColumns() -> result1: List<String>
-    ```
-
-## `#!sds fun` getNamesOfRemovedColumns {#safeds.data.tabular.transformation.RangeScaler.getNamesOfRemovedColumns data-toc-label='getNamesOfRemovedColumns'}
-
-Get the names of all columns that have been removed by the transformer.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`List<String>`][safeds.lang.List] | A list of names of the removed columns, ordered as they appear in the table the transformer was fitted on. |
-
-??? quote "Stub code in `TableTransformer.sdsstub`"
-
-    ```sds linenums="67"
-    @Pure
-    @PythonName("get_names_of_removed_columns")
-    fun getNamesOfRemovedColumns() -> result1: List<String>
+    ) -> (fittedTransformer: RangeScaler, transformedTable: Table)
     ```
 
 ## `#!sds fun` inverseTransform {#safeds.data.tabular.transformation.RangeScaler.inverseTransform data-toc-label='inverseTransform'}
 
-Undo the learned transformation.
+Undo the learned transformation as well as possible.
 
-The table is not modified.
+Column order and types may differ from the original table. Likewise, some values might not be restored.
+
+**Note:** The given table is not modified.
 
 **Parameters:**
 
@@ -185,23 +172,23 @@ The table is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Table`][safeds.data.tabular.containers.Table] | The original table. |
+| `originalTable` | [`Table`][safeds.data.tabular.containers.Table] | The original table. |
 
 ??? quote "Stub code in `InvertibleTableTransformer.sdsstub`"
 
-    ```sds linenums="32"
+    ```sds linenums="55"
     @Pure
     @PythonName("inverse_transform")
     fun inverseTransform(
         @PythonName("transformed_table") transformedTable: Table
-    ) -> result1: Table
+    ) -> originalTable: Table
     ```
 
 ## `#!sds fun` transform {#safeds.data.tabular.transformation.RangeScaler.transform data-toc-label='transform'}
 
 Apply the learned transformation to a table.
 
-The table is not modified.
+**Note:** The given table is not modified.
 
 **Parameters:**
 
@@ -213,7 +200,7 @@ The table is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Table`][safeds.data.tabular.containers.Table] | The transformed table. |
+| `transformedTable` | [`Table`][safeds.data.tabular.containers.Table] | The transformed table. |
 
 ??? quote "Stub code in `TableTransformer.sdsstub`"
 
@@ -221,5 +208,5 @@ The table is not modified.
     @Pure
     fun transform(
         table: Table
-    ) -> result1: Table
+    ) -> transformedTable: Table
     ```

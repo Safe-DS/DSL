@@ -18,7 +18,7 @@ class ImageList {
     /**
      * Return the number of images in this image list.
      */
-    @PythonName("number_of_images") attr numberOfImages: Int
+    @PythonName("number_of_images") attr imageCount: Int
     /**
      * Return a list of all widths in this image list.
      */
@@ -38,7 +38,7 @@ class ImageList {
     /**
      * Return the number of different sizes of images in this image list.
      */
-    @PythonName("number_of_sizes") attr numberOfSizes: Int
+    @PythonName("number_of_sizes") attr sizeCount: Int
 
     /**
      * Create an ImageList from a list of images.
@@ -133,7 +133,7 @@ class ImageList {
     /**
      * Return a list of all images in this image list.
      *
-     * @param indices a list of all indices to include in the output. If None, all indices will be included
+     * @param indices a list of all indices to include in the output. If null, all indices will be included
      *
      * @result images the list of all images
      */

@@ -16,7 +16,7 @@ To create an `ImageList` call one of the following static methods:
         /**
          * Return the number of images in this image list.
          */
-        @PythonName("number_of_images") attr numberOfImages: Int
+        @PythonName("number_of_images") attr imageCount: Int
         /**
          * Return a list of all widths in this image list.
          */
@@ -36,7 +36,7 @@ To create an `ImageList` call one of the following static methods:
         /**
          * Return the number of different sizes of images in this image list.
          */
-        @PythonName("number_of_sizes") attr numberOfSizes: Int
+        @PythonName("number_of_sizes") attr sizeCount: Int
 
         /**
          * Create an ImageList from a list of images.
@@ -131,7 +131,7 @@ To create an `ImageList` call one of the following static methods:
         /**
          * Return a list of all images in this image list.
          *
-         * @param indices a list of all indices to include in the output. If None, all indices will be included
+         * @param indices a list of all indices to include in the output. If null, all indices will be included
          *
          * @result images the list of all images
          */
@@ -525,13 +525,13 @@ Return a list of all heights in this image list.
 
 **Type:** [`List<Int>`][safeds.lang.List]
 
-## `#!sds attr` numberOfImages {#safeds.data.image.containers.ImageList.numberOfImages data-toc-label='numberOfImages'}
+## `#!sds attr` imageCount {#safeds.data.image.containers.ImageList.imageCount data-toc-label='imageCount'}
 
 Return the number of images in this image list.
 
 **Type:** [`Int`][safeds.lang.Int]
 
-## `#!sds attr` numberOfSizes {#safeds.data.image.containers.ImageList.numberOfSizes data-toc-label='numberOfSizes'}
+## `#!sds attr` sizeCount {#safeds.data.image.containers.ImageList.sizeCount data-toc-label='sizeCount'}
 
 Return the number of different sizes of images in this image list.
 
@@ -1268,7 +1268,7 @@ Return a list of all images in this image list.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `indices` | [`List<Int>?`][safeds.lang.List] | a list of all indices to include in the output. If None, all indices will be included | `#!sds null` |
+| `indices` | [`List<Int>?`][safeds.lang.List] | a list of all indices to include in the output. If null, all indices will be included | `#!sds null` |
 
 **Results:**
 

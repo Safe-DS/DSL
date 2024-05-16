@@ -1,0 +1,100 @@
+package safeds.ml.metrics
+
+from safeds.data.labeled.containers import TabularDataset
+from safeds.data.tabular.containers import Table
+
+/**
+ * A collection of classification metrics.
+ */
+class ClassificationMetrics {
+    /**
+     * Summarize classification metrics on the given data.
+     *
+     * @param predicted The predicted target values produced by the classifier.
+     * @param expected The expected target values.
+     * @param positiveClass The class to be considered positive. All other classes are considered negative.
+     *
+     * @result metrics A table containing the classification metrics.
+     */
+    @Pure
+    static fun summarize(
+        predicted: union<Column<Any>, TabularDataset>,
+        expected: union<Column<Any>, TabularDataset>,
+        @PythonName("positive_class") positiveClass: Any
+    ) -> metrics: Table
+
+    /**
+     * Compute the accuracy on the given data.
+     *
+     * The accuracy is the proportion of predicted target values that were correct. The **higher** the accuracy, the
+     * better. Results range from 0.0 to 1.0.
+     *
+     * @param predicted The predicted target values produced by the classifier.
+     * @param expected The expected target values.
+     *
+     * @result accuracy The calculated accuracy.
+     */
+    @Pure
+    static fun accuracy(
+        predicted: union<Column<Any>, TabularDataset>,
+        expected: union<Column<Any>, TabularDataset>
+    ) -> accuracy: Float
+
+    /**
+     * Compute the F₁ score on the given data.
+     *
+     * The F₁ score is the harmonic mean of precision and recall. The **higher** the F₁ score, the better the
+     * classifier. Results range from 0.0 to 1.0.
+     *
+     * @param predicted The predicted target values produced by the classifier.
+     * @param expected The expected target values.
+     * @param positiveClass The class to be considered positive. All other classes are considered negative.
+     *
+     * @result f1Score The calculated F₁ score.
+     */
+    @Pure
+    @PythonName("f1_score")
+    static fun f1Score(
+        predicted: union<Column<Any>, TabularDataset>,
+        expected: union<Column<Any>, TabularDataset>,
+        @PythonName("positive_class") positiveClass: Any
+    ) -> f1Score: Float
+
+    /**
+     * Compute the precision on the given data.
+     *
+     * The precision is the proportion of positive predictions that were correct. The **higher** the precision, the
+     * better the classifier. Results range from 0.0 to 1.0.
+     *
+     * @param predicted The predicted target values produced by the classifier.
+     * @param expected The expected target values.
+     * @param positiveClass The class to be considered positive. All other classes are considered negative.
+     *
+     * @result precision The calculated precision.
+     */
+    @Pure
+    static fun precision(
+        predicted: union<Column<Any>, TabularDataset>,
+        expected: union<Column<Any>, TabularDataset>,
+        @PythonName("positive_class") positiveClass: Any
+    ) -> precision: Float
+
+    /**
+     * Compute the recall on the given data.
+     *
+     * The recall is the proportion of actual positives that were predicted correctly. The **higher** the recall, the
+     * better the classifier. Results range from 0.0 to 1.0.
+     *
+     * @param predicted The predicted target values produced by the classifier.
+     * @param expected The expected target values.
+     * @param positiveClass The class to be considered positive. All other classes are considered negative.
+     *
+     * @result recall The calculated recall.
+     */
+    @Pure
+    static fun recall(
+        predicted: union<Column<Any>, TabularDataset>,
+        expected: union<Column<Any>, TabularDataset>,
+        @PythonName("positive_class") positiveClass: Any
+    ) -> recall: Float
+}

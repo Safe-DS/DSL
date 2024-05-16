@@ -1,0 +1,13 @@
+package safeds.ml.nn.converters
+
+/**
+ * The input conversion for a neural network, defines the input parameters for the neural network.
+ *
+ * @param windowSize The size of the created windows
+ * @param forecastHorizon The forecast horizon defines the future lag of the predicted values
+ */
+@Experimental
+class InputConversionTimeSeries(
+    @PythonName("window_size") windowSize: Int,
+    @PythonName("forecast_horizon") forecastHorizon: Int
+)

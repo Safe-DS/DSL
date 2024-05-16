@@ -5,7 +5,9 @@ search:
 
 # `#!sds abstract class` Classifier {#safeds.ml.classical.classification.Classifier data-toc-label='Classifier'}
 
-Abstract base class for all classifiers.
+A model for classification tasks.
+
+**Parent type:** [`SupervisedModel`][safeds.ml.classical.SupervisedModel]
 
 **Inheritors:**
 
@@ -13,47 +15,20 @@ Abstract base class for all classifiers.
 - [`DecisionTreeClassifier`][safeds.ml.classical.classification.DecisionTreeClassifier]
 - [`GradientBoostingClassifier`][safeds.ml.classical.classification.GradientBoostingClassifier]
 - [`KNearestNeighborsClassifier`][safeds.ml.classical.classification.KNearestNeighborsClassifier]
-- [`LogisticRegressionClassifier`][safeds.ml.classical.classification.LogisticRegressionClassifier]
+- [`LogisticClassifier`][safeds.ml.classical.classification.LogisticClassifier]
+- `#!sds LogisticRegressionClassifier`
 - [`RandomForestClassifier`][safeds.ml.classical.classification.RandomForestClassifier]
-- [`SupportVectorMachineClassifier`][safeds.ml.classical.classification.SupportVectorMachineClassifier]
+- [`SupportVectorClassifier`][safeds.ml.classical.classification.SupportVectorClassifier]
+- `#!sds SupportVectorMachineClassifier`
 
 ??? quote "Stub code in `Classifier.sdsstub`"
 
-    ```sds linenums="9"
-    class Classifier {
-        /**
-         * Whether the classifier is fitted.
-         */
-        @PythonName("is_fitted") attr isFitted: Boolean
-
-        /**
-         * Create a copy of this classifier and fit it with the given training data.
-         *
-         * This classifier is not modified.
-         *
-         * @param trainingSet The training data containing the feature and target vectors.
-         *
-         * @result fittedClassifier The fitted classifier.
-         */
-        @Pure
-        fun fit(
-            @PythonName("training_set") trainingSet: union<ExperimentalTabularDataset, TabularDataset>
-        ) -> fittedClassifier: Classifier
-
-        /**
-         * Predict a target vector using a dataset containing feature vectors. The model has to be trained first.
-         *
-         * @param dataset The dataset containing the feature vectors.
-         *
-         * @result prediction A dataset containing the given feature vectors and the predicted target vector.
-         */
-        @Pure
-        fun predict(
-            dataset: union<ExperimentalTable, ExperimentalTabularDataset, Table>
-        ) -> prediction: TabularDataset
-
+    ```sds linenums="10"
+    class Classifier sub SupervisedModel {
         /**
          * Summarize the classifier's metrics on the given data.
+         *
+         * **Note:** The model must be fitted.
          *
          * @param validationOrTestSet The validation or test set.
          * @param positiveClass The class to be considered positive. All other classes are considered negative.
@@ -63,73 +38,90 @@ Abstract base class for all classifiers.
         @Pure
         @PythonName("summarize_metrics")
         fun summarizeMetrics(
-            @PythonName("validation_or_test_set") validationOrTestSet: union<ExperimentalTabularDataset, TabularDataset>,
+            @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>,
             @PythonName("positive_class") positiveClass: Any
         ) -> metrics: Table
 
         /**
          * Compute the accuracy of the classifier on the given data.
          *
+         * The accuracy is the proportion of predicted target values that were correct. The **higher** the accuracy, the
+         * better. Results range from 0.0 to 1.0.
+         *
+         * **Note:** The model must be fitted.
+         *
          * @param validationOrTestSet The validation or test set.
          *
-         * @result accuracy The calculated accuracy score, i.e. the percentage of equal data.
+         * @result accuracy The classifier's accuracy.
          */
         @Pure
         fun accuracy(
-            @PythonName("validation_or_test_set") validationOrTestSet: union<ExperimentalTabularDataset, TabularDataset>
+            @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
         ) -> accuracy: Float
 
         /**
-         * Compute the classifier's precision on the given data.
+         * Compute the classifier's F₁ score on the given data.
+         *
+         * The F₁ score is the harmonic mean of precision and recall. The **higher** the F₁ score, the better the
+         * classifier. Results range from 0.0 to 1.0.
+         *
+         * **Note:** The model must be fitted.
          *
          * @param validationOrTestSet The validation or test set.
          * @param positiveClass The class to be considered positive. All other classes are considered negative.
          *
-         * @result precision The calculated precision score, i.e. the ratio of correctly predicted positives to all predicted positives.
-         * Return 1 if no positive predictions are made.
+         * @result f1Score The classifier's F₁ score.
+         */
+        @Pure
+        @PythonName("f1_score")
+        fun f1Score(
+            @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>,
+            @PythonName("positive_class") positiveClass: Any
+        ) -> f1Score: Float
+
+        /**
+         * Compute the classifier's precision on the given data.
+         *
+         * The precision is the proportion of positive predictions that were correct. The **higher** the precision, the
+         * better the classifier. Results range from 0.0 to 1.0.
+         *
+         * **Note:** The model must be fitted.
+         *
+         * @param validationOrTestSet The validation or test set.
+         * @param positiveClass The class to be considered positive. All other classes are considered negative.
+         *
+         * @result precision The classifier's precision.
          */
         @Pure
         fun precision(
-            @PythonName("validation_or_test_set") validationOrTestSet: union<ExperimentalTabularDataset, TabularDataset>,
+            @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>,
             @PythonName("positive_class") positiveClass: Any
         ) -> precision: Float
 
         /**
          * Compute the classifier's recall on the given data.
          *
+         * The recall is the proportion of actual positives that were predicted correctly. The **higher** the recall, the
+         * better the classifier. Results range from 0.0 to 1.0.
+         *
+         * **Note:** The model must be fitted.
+         *
          * @param validationOrTestSet The validation or test set.
          * @param positiveClass The class to be considered positive. All other classes are considered negative.
          *
-         * @result recall The calculated recall score, i.e. the ratio of correctly predicted positives to all expected positives.
-         * Return 1 if there are no positive expectations.
+         * @result recall The classifier's recall.
          */
         @Pure
         fun recall(
-            @PythonName("validation_or_test_set") validationOrTestSet: union<ExperimentalTabularDataset, TabularDataset>,
+            @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>,
             @PythonName("positive_class") positiveClass: Any
         ) -> recall: Float
-
-        /**
-         * Compute the classifier's $F_1$-score on the given data.
-         *
-         * @param validationOrTestSet The validation or test set.
-         * @param positiveClass The class to be considered positive. All other classes are considered negative.
-         *
-         * @result f1Score The calculated $F_1$-score, i.e. the harmonic mean between precision and recall.
-         * Return 1 if there are no positive expectations and predictions.
-         */
-        @Pure
-        @PythonName("f1_score")
-        fun f1Score(
-            @PythonName("validation_or_test_set") validationOrTestSet: union<ExperimentalTabularDataset, TabularDataset>,
-            @PythonName("positive_class") positiveClass: Any
-        ) -> f1Score: Float
     }
     ```
 
 ## `#!sds attr` isFitted {#safeds.ml.classical.classification.Classifier.isFitted data-toc-label='isFitted'}
 
-Whether the classifier is fitted.
+Whether the model is fitted.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
 
@@ -137,131 +129,228 @@ Whether the classifier is fitted.
 
 Compute the accuracy of the classifier on the given data.
 
+The accuracy is the proportion of predicted target values that were correct. The **higher** the accuracy, the
+better. Results range from 0.0 to 1.0.
+
+**Note:** The model must be fitted.
+
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `validationOrTestSet` | `#!sds union<ExperimentalTabularDataset, TabularDataset>` | The validation or test set. | - |
+| `validationOrTestSet` | `#!sds union<Table, TabularDataset>` | The validation or test set. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `accuracy` | [`Float`][safeds.lang.Float] | The calculated accuracy score, i.e. the percentage of equal data. |
+| `accuracy` | [`Float`][safeds.lang.Float] | The classifier's accuracy. |
 
 ??? quote "Stub code in `Classifier.sdsstub`"
 
-    ```sds linenums="63"
+    ```sds linenums="40"
     @Pure
     fun accuracy(
-        @PythonName("validation_or_test_set") validationOrTestSet: union<ExperimentalTabularDataset, TabularDataset>
+        @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
     ) -> accuracy: Float
     ```
 
 ## `#!sds fun` f1Score {#safeds.ml.classical.classification.Classifier.f1Score data-toc-label='f1Score'}
 
-Compute the classifier's $F_1$-score on the given data.
+Compute the classifier's F₁ score on the given data.
+
+The F₁ score is the harmonic mean of precision and recall. The **higher** the F₁ score, the better the
+classifier. Results range from 0.0 to 1.0.
+
+**Note:** The model must be fitted.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `validationOrTestSet` | `#!sds union<ExperimentalTabularDataset, TabularDataset>` | The validation or test set. | - |
+| `validationOrTestSet` | `#!sds union<Table, TabularDataset>` | The validation or test set. | - |
 | `positiveClass` | [`Any`][safeds.lang.Any] | The class to be considered positive. All other classes are considered negative. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `f1Score` | [`Float`][safeds.lang.Float] | The calculated $F_1$-score, i.e. the harmonic mean between precision and recall. Return 1 if there are no positive expectations and predictions. |
+| `f1Score` | [`Float`][safeds.lang.Float] | The classifier's F₁ score. |
 
 ??? quote "Stub code in `Classifier.sdsstub`"
 
-    ```sds linenums="107"
+    ```sds linenums="58"
     @Pure
     @PythonName("f1_score")
     fun f1Score(
-        @PythonName("validation_or_test_set") validationOrTestSet: union<ExperimentalTabularDataset, TabularDataset>,
+        @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>,
         @PythonName("positive_class") positiveClass: Any
     ) -> f1Score: Float
     ```
 
 ## `#!sds fun` fit {#safeds.ml.classical.classification.Classifier.fit data-toc-label='fit'}
 
-Create a copy of this classifier and fit it with the given training data.
+Create a copy of this model and fit it with the given training data.
 
-This classifier is not modified.
+**Note:** This model is not modified.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `trainingSet` | `#!sds union<ExperimentalTabularDataset, TabularDataset>` | The training data containing the feature and target vectors. | - |
+| `trainingSet` | [`TabularDataset`][safeds.data.labeled.containers.TabularDataset] | The training data containing the features and target. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `fittedClassifier` | [`Classifier`][safeds.ml.classical.classification.Classifier] | The fitted classifier. |
+| `fittedModel` | [`SupervisedModel`][safeds.ml.classical.SupervisedModel] | The fitted model. |
 
-??? quote "Stub code in `Classifier.sdsstub`"
+??? quote "Stub code in `SupervisedModel.sdsstub`"
 
-    ```sds linenums="24"
+    ```sds linenums="26"
     @Pure
     fun fit(
-        @PythonName("training_set") trainingSet: union<ExperimentalTabularDataset, TabularDataset>
-    ) -> fittedClassifier: Classifier
+        @PythonName("training_set") trainingSet: TabularDataset
+    ) -> fittedModel: SupervisedModel
+    ```
+
+## `#!sds fun` getFeatureNames {#safeds.ml.classical.classification.Classifier.getFeatureNames data-toc-label='getFeatureNames'}
+
+Return the names of the feature columns.
+
+**Note:** The model must be fitted.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `featureNames` | [`List<String>`][safeds.lang.List] | The names of the feature columns. |
+
+??? quote "Stub code in `SupervisedModel.sdsstub`"
+
+    ```sds linenums="52"
+    @Pure
+    @PythonName("get_feature_names")
+    fun getFeatureNames() -> featureNames: List<String>
+    ```
+
+## `#!sds fun` getFeaturesSchema {#safeds.ml.classical.classification.Classifier.getFeaturesSchema data-toc-label='getFeaturesSchema'}
+
+Return the schema of the feature columns.
+
+**Note:** The model must be fitted.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `featureSchema` | [`Schema`][safeds.data.tabular.typing.Schema] | The schema of the feature columns. |
+
+??? quote "Stub code in `SupervisedModel.sdsstub`"
+
+    ```sds linenums="63"
+    @Pure
+    @PythonName("get_features_schema")
+    fun getFeaturesSchema() -> featureSchema: Schema
+    ```
+
+## `#!sds fun` getTargetName {#safeds.ml.classical.classification.Classifier.getTargetName data-toc-label='getTargetName'}
+
+Return the name of the target column.
+
+**Note:** The model must be fitted.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `targetName` | [`String`][safeds.lang.String] | The name of the target column. |
+
+??? quote "Stub code in `SupervisedModel.sdsstub`"
+
+    ```sds linenums="74"
+    @Pure
+    @PythonName("get_target_name")
+    fun getTargetName() -> targetName: String
+    ```
+
+## `#!sds fun` getTargetType {#safeds.ml.classical.classification.Classifier.getTargetType data-toc-label='getTargetType'}
+
+Return the type of the target column.
+
+**Note:** The model must be fitted.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `targetType` | [`DataType`][safeds.data.tabular.typing.DataType] | The type of the target column. |
+
+??? quote "Stub code in `SupervisedModel.sdsstub`"
+
+    ```sds linenums="85"
+    @Pure
+    @PythonName("get_target_type")
+    fun getTargetType() -> targetType: DataType
     ```
 
 ## `#!sds fun` precision {#safeds.ml.classical.classification.Classifier.precision data-toc-label='precision'}
 
 Compute the classifier's precision on the given data.
 
+The precision is the proportion of positive predictions that were correct. The **higher** the precision, the
+better the classifier. Results range from 0.0 to 1.0.
+
+**Note:** The model must be fitted.
+
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `validationOrTestSet` | `#!sds union<ExperimentalTabularDataset, TabularDataset>` | The validation or test set. | - |
+| `validationOrTestSet` | `#!sds union<Table, TabularDataset>` | The validation or test set. | - |
 | `positiveClass` | [`Any`][safeds.lang.Any] | The class to be considered positive. All other classes are considered negative. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `precision` | [`Float`][safeds.lang.Float] | The calculated precision score, i.e. the ratio of correctly predicted positives to all predicted positives. Return 1 if no positive predictions are made. |
+| `precision` | [`Float`][safeds.lang.Float] | The classifier's precision. |
 
 ??? quote "Stub code in `Classifier.sdsstub`"
 
-    ```sds linenums="77"
+    ```sds linenums="78"
     @Pure
     fun precision(
-        @PythonName("validation_or_test_set") validationOrTestSet: union<ExperimentalTabularDataset, TabularDataset>,
+        @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>,
         @PythonName("positive_class") positiveClass: Any
     ) -> precision: Float
     ```
 
 ## `#!sds fun` predict {#safeds.ml.classical.classification.Classifier.predict data-toc-label='predict'}
 
-Predict a target vector using a dataset containing feature vectors. The model has to be trained first.
+Predict the target values on the given dataset.
+
+**Note:** The model must be fitted.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `dataset` | `#!sds union<ExperimentalTable, ExperimentalTabularDataset, Table>` | The dataset containing the feature vectors. | - |
+| `dataset` | `#!sds union<Table, TabularDataset>` | The dataset containing at least the features. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `prediction` | [`TabularDataset`][safeds.data.labeled.containers.TabularDataset] | A dataset containing the given feature vectors and the predicted target vector. |
+| `prediction` | [`TabularDataset`][safeds.data.labeled.containers.TabularDataset] | The given dataset with an additional column for the predicted target values. |
 
-??? quote "Stub code in `Classifier.sdsstub`"
+??? quote "Stub code in `SupervisedModel.sdsstub`"
 
-    ```sds linenums="36"
+    ```sds linenums="40"
     @Pure
     fun predict(
-        dataset: union<ExperimentalTable, ExperimentalTabularDataset, Table>
+        dataset: union<Table, TabularDataset>
     ) -> prediction: TabularDataset
     ```
 
@@ -269,25 +358,30 @@ Predict a target vector using a dataset containing feature vectors. The model ha
 
 Compute the classifier's recall on the given data.
 
+The recall is the proportion of actual positives that were predicted correctly. The **higher** the recall, the
+better the classifier. Results range from 0.0 to 1.0.
+
+**Note:** The model must be fitted.
+
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `validationOrTestSet` | `#!sds union<ExperimentalTabularDataset, TabularDataset>` | The validation or test set. | - |
+| `validationOrTestSet` | `#!sds union<Table, TabularDataset>` | The validation or test set. | - |
 | `positiveClass` | [`Any`][safeds.lang.Any] | The class to be considered positive. All other classes are considered negative. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `recall` | [`Float`][safeds.lang.Float] | The calculated recall score, i.e. the ratio of correctly predicted positives to all expected positives. Return 1 if there are no positive expectations. |
+| `recall` | [`Float`][safeds.lang.Float] | The classifier's recall. |
 
 ??? quote "Stub code in `Classifier.sdsstub`"
 
-    ```sds linenums="92"
+    ```sds linenums="97"
     @Pure
     fun recall(
-        @PythonName("validation_or_test_set") validationOrTestSet: union<ExperimentalTabularDataset, TabularDataset>,
+        @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>,
         @PythonName("positive_class") positiveClass: Any
     ) -> recall: Float
     ```
@@ -296,11 +390,13 @@ Compute the classifier's recall on the given data.
 
 Summarize the classifier's metrics on the given data.
 
+**Note:** The model must be fitted.
+
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `validationOrTestSet` | `#!sds union<ExperimentalTabularDataset, TabularDataset>` | The validation or test set. | - |
+| `validationOrTestSet` | `#!sds union<Table, TabularDataset>` | The validation or test set. | - |
 | `positiveClass` | [`Any`][safeds.lang.Any] | The class to be considered positive. All other classes are considered negative. | - |
 
 **Results:**
@@ -311,11 +407,11 @@ Summarize the classifier's metrics on the given data.
 
 ??? quote "Stub code in `Classifier.sdsstub`"
 
-    ```sds linenums="49"
+    ```sds linenums="21"
     @Pure
     @PythonName("summarize_metrics")
     fun summarizeMetrics(
-        @PythonName("validation_or_test_set") validationOrTestSet: union<ExperimentalTabularDataset, TabularDataset>,
+        @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>,
         @PythonName("positive_class") positiveClass: Any
     ) -> metrics: Table
     ```

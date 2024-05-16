@@ -6,9 +6,9 @@ A NeuralNetworkClassifier is a neural network that is used for classification ta
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `inputConversion` | [`InputConversion<FitIn, PredictIn>`][safeds.ml.nn.InputConversion] | to convert the input data for the neural network | - |
+| `inputConversion` | `#!sds InputConversion<FitIn, PredictIn>` | to convert the input data for the neural network | - |
 | `layers` | [`List<Layer>`][safeds.lang.List] | a list of layers for the neural network to learn | - |
-| `outputConversion` | [`OutputConversion<PredictIn, PredictOut>`][safeds.ml.nn.OutputConversion] | to convert the output data of the neural network back | - |
+| `outputConversion` | `#!sds OutputConversion<PredictIn, PredictOut>` | to convert the output data of the neural network back | - |
 
 **Type parameters:**
 
