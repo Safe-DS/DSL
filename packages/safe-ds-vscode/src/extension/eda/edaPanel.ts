@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { ToExtensionMessage } from '@safe-ds/eda/types/messaging.js';
 import * as webviewApi from './apis/webviewApi.ts';
-import { State } from '@safe-ds/eda/types/state.ts';
+import { Table } from '@safe-ds/eda/types/state.ts';
 import { SafeDsServices, ast } from '@safe-ds/lang';
 import { RunnerApi } from './apis/runnerApi.ts';
 import { safeDsLogger } from '../helpers/logging.js';
@@ -201,28 +201,18 @@ export class EDAPanel {
                 dark: vscode.Uri.joinPath(edaPanel.extensionUri, 'img', 'binoculars-solid.png'),
             };
             await edaPanel.waitForUpdateHtmlDone(10000);
-            const stateInfo = await edaPanel.constructCurrentState();
+            const table = await edaPanel.getBaseTable();
             webviewApi.postMessage(edaPanel!.panel.webview, {
-                command: 'setWebviewState',
-                value: stateInfo.state,
+                command: 'setInitialTable',
+                value: table,
             });
 
-            // TODO: if from existing state, show disclaimer that updated data is loading and execute pipeline + history + profiling and send
+            const profiling = await EDAPanel.panelsMap.get(tableIdentifier)!.runnerApi.getProfiling(table);
 
-            if (
-                !stateInfo.fromExisting ||
-                !stateInfo.state.table ||
-                !stateInfo.state.table!.columns.find((c) => c[1].profiling)
-            ) {
-                const profiling = await EDAPanel.panelsMap
-                    .get(tableIdentifier)!
-                    .runnerApi.getProfiling(stateInfo.state.table!);
-
-                webviewApi.postMessage(edaPanel!.panel.webview, {
-                    command: 'setProfiling',
-                    value: profiling,
-                });
-            }
+            webviewApi.postMessage(edaPanel!.panel.webview, {
+                command: 'setProfiling',
+                value: profiling,
+            });
         }
     }
     //#endregion
@@ -255,7 +245,7 @@ export class EDAPanel {
     //#endregion
 
     //#region State handling
-    private async constructCurrentState(): Promise<{ state: State; fromExisting: boolean }> {
+    private async getBaseTable(): Promise<Table> {
         const panel = EDAPanel.panelsMap.get(this.tableIdentifier);
         if (!panel) {
             throw new Error('Panel not found.');
@@ -264,16 +254,7 @@ export class EDAPanel {
             if (!table) {
                 throw new Error('Timeout waiting for placeholder value');
             } else {
-                return {
-                    state: {
-                        tableIdentifier: panel.tableIdentifier,
-                        history: [],
-                        defaultState: false,
-                        table,
-                        tabs: [],
-                    },
-                    fromExisting: false,
-                };
+                return table;
             }
         }
     }
