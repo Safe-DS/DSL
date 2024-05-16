@@ -1,3 +1,17 @@
+## [0.16.0](https://github.com/Safe-DS/DSL/compare/v0.15.0...v0.16.0) (2024-05-16)
+
+
+### Features
+
+* eda plot view ([#1161](https://github.com/Safe-DS/DSL/issues/1161)) ([a216743](https://github.com/Safe-DS/DSL/commit/a216743b8f0d8b70f9ceae647ae46698e1a7dfad)), closes [#955](https://github.com/Safe-DS/DSL/issues/955) [#986](https://github.com/Safe-DS/DSL/issues/986)
+* integrate version 0.25.0 of the `safe-ds` Python library ([#1174](https://github.com/Safe-DS/DSL/issues/1174)) ([f357c38](https://github.com/Safe-DS/DSL/commit/f357c38c28cc8eb941fa945cf5df39fedfc79683))
+* prefix keywords with `^` to treat them as identifiers ([#1172](https://github.com/Safe-DS/DSL/issues/1172)) ([90bd47c](https://github.com/Safe-DS/DSL/commit/90bd47c9f51b14427bf74610fd09225b773c168f))
+
+
+### Bug Fixes
+
+* potential stack overflow when computing types of lambda parameters ([#1173](https://github.com/Safe-DS/DSL/issues/1173)) ([d89511e](https://github.com/Safe-DS/DSL/commit/d89511eb112f24ec5ae70219d6c9d683cad02c57))
+
 ## [0.15.0](https://github.com/Safe-DS/DSL/compare/v0.14.1...v0.15.0) (2024-05-09)
 
 
