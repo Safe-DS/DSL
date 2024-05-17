@@ -363,7 +363,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.jpeg");
+         *     image.sharpen(factor=5.0);
          * }
          */
         @Pure
@@ -382,7 +383,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.jpeg");
+         *     image.invertColors();
          * }
          */
         @Pure
@@ -398,7 +400,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.jpeg");
+         *     image.rotateRight();
          * }
          */
         @Pure
@@ -414,7 +417,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.jpeg");
+         *     image.rotateLeft();
          * }
          */
         @Pure
@@ -430,7 +434,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.jpeg");
+         *     image.findEdges();
          * }
          */
         @Pure
@@ -449,7 +454,8 @@ Get the number of channels of the image.
 
 ```sds
 pipeline example {
-    // TODO
+    val image = Image.fromFile("example.png");
+    val width = image.width;
 }
 ```
 

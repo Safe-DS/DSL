@@ -7,7 +7,7 @@ from safeds.data.image.typing import ImageSize
  *
  * @example
  * pipeline example {
- *     // TODO
+ *     val image = Image.fromFile("example.png");
  * }
  */
 @Experimental
@@ -17,7 +17,8 @@ class Image {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val image = Image.fromFile("example.png");
+     *     val width = image.width;
      * }
      */
     attr width: Int
@@ -26,7 +27,8 @@ class Image {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val image = Image.fromFile("example.png");
+     *     val height = image.height;
      * }
      */
     attr height: Int
@@ -35,7 +37,8 @@ class Image {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val image = Image.fromFile("example.png");
+     *     val imageChannel = image.channel;
      * }
      */
     attr channel: Int
@@ -53,7 +56,7 @@ class Image {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val image = Image.fromFile("example.png");
      * }
      */
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
@@ -69,7 +72,8 @@ class Image {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val image = Image.fromFile("pngExample.png");
+     *     image.toJpegFile("jpegExample.jpeg");
      * }
      */
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
@@ -85,7 +89,8 @@ class Image {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val image = Image.fromFile("jpgExample.jpg");
+     *     image.toPngFile("pngExample.png");
      * }
      */
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
@@ -121,7 +126,8 @@ class Image {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val image = Image.fromFile("example.png");
+     *     val newImage = image.resize(newWidht=100, newHeight=50);
      * }
      */
     @Pure
@@ -142,7 +148,8 @@ class Image {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val image = Image.fromFile("example.png");
+     *     val grayImage = image.convertToGrayscale();
      * }
      */
     @Pure
@@ -163,7 +170,8 @@ class Image {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val image = Image.fromFile("example.png");
+     *     val croppedImage = image.crop(20, 20, 80, 40);
      * }
      */
     @Pure
@@ -188,7 +196,8 @@ class Image {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val image = Image.fromFile("example.png");
+     *     val flippedImage = image.flipVertically();
      * }
      */
     @Pure
@@ -204,7 +213,8 @@ class Image {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val image = Image.fromFile("example.png");
+     *     val flippedImage = image.flipHorizontally();
      * }
      */
     @Pure
@@ -226,7 +236,8 @@ class Image {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val image = Image.fromFile("example.png");
+     *     val adjustedImage = image.adjustBrightness(factor=2);
      * }
      */
     @Pure
@@ -248,7 +259,8 @@ class Image {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val image = Image.fromFile("example.png");
+     *     val noisyImage = image.addNoise(standartDeviation = 1.0);
      * }
      */
     @Pure
@@ -273,7 +285,8 @@ class Image {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val image = Image.fromFile("example.jpeg");
+     *     val adjustedImage = image.adjustContrast(factor=2.0);
      * }
      */
     @Pure
@@ -298,7 +311,8 @@ class Image {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val image = Image.fromFile("example.png");
+     *     val adjustedImage = image.adjustColorBalance(factor=2.0);
      * }
      */
     @Pure
@@ -321,7 +335,8 @@ class Image {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val image = Image.fromFile("example.png");
+     *     val blurredImage = image.blur(radius=50);
      * }
      */
     @Pure
@@ -345,7 +360,8 @@ class Image {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val image = Image.fromFile("example.png");
+     *     val sharpenedImage = image.sharpen(factor=5.0);
      * }
      */
     @Pure
@@ -364,7 +380,8 @@ class Image {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val image = Image.fromFile("example.png");
+     *     val invertedImage = image.invertColors();
      * }
      */
     @Pure
@@ -380,7 +397,8 @@ class Image {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val image = Image.fromFile("example.jpeg");
+     *     val RotatedImage = image.rotateRight();
      * }
      */
     @Pure
@@ -396,7 +414,8 @@ class Image {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val image = Image.fromFile("example.jpeg");
+     *     val rotatedImage = image.rotateLeft();
      * }
      */
     @Pure
@@ -412,7 +431,8 @@ class Image {
      *
      * @example
      * pipeline example {
-     *     // TODO
+     *     val image = Image.fromFile("example.png");
+     *     val egdes = image.findEdges();
      * }
      */
     @Pure
