@@ -9,6 +9,20 @@ from safeds.ml.classical import SupervisedModel
  */
 class Regressor sub SupervisedModel {
     /**
+     * Create a copy of this model and fit it with the given training data.
+     *
+     * **Note:** This model is not modified.
+     *
+     * @param trainingSet The training data containing the features and target.
+     *
+     * @result fittedModel The fitted model.
+     */
+    @Pure
+    fun fit(
+        @PythonName("training_set") trainingSet: TabularDataset
+    ) -> fittedModel: Regressor
+
+    /**
      * Summarize the regressor's metrics on the given data.
      *
      * @param validationOrTestSet The validation or test set.
