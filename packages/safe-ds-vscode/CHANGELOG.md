@@ -1,3 +1,10 @@
+## [0.16.1](https://github.com/Safe-DS/DSL/compare/v0.16.0...v0.16.1) (2024-05-17)
+
+
+### Bug Fixes
+
+* override `fit` in `Classifier` and `Regressor` ([#1176](https://github.com/Safe-DS/DSL/issues/1176)) ([7d79314](https://github.com/Safe-DS/DSL/commit/7d79314cb2004706eb70402f5bd981d7d24aec16))
+
 ## [0.16.0](https://github.com/Safe-DS/DSL/compare/v0.15.0...v0.16.0) (2024-05-16)
 
 
