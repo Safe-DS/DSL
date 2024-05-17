@@ -16,15 +16,27 @@ A model for classification tasks.
 - [`GradientBoostingClassifier`][safeds.ml.classical.classification.GradientBoostingClassifier]
 - [`KNearestNeighborsClassifier`][safeds.ml.classical.classification.KNearestNeighborsClassifier]
 - [`LogisticClassifier`][safeds.ml.classical.classification.LogisticClassifier]
-- `#!sds LogisticRegressionClassifier`
 - [`RandomForestClassifier`][safeds.ml.classical.classification.RandomForestClassifier]
 - [`SupportVectorClassifier`][safeds.ml.classical.classification.SupportVectorClassifier]
-- `#!sds SupportVectorMachineClassifier`
 
 ??? quote "Stub code in `Classifier.sdsstub`"
 
     ```sds linenums="10"
     class Classifier sub SupervisedModel {
+        /**
+         * Create a copy of this model and fit it with the given training data.
+         *
+         * **Note:** This model is not modified.
+         *
+         * @param trainingSet The training data containing the features and target.
+         *
+         * @result fittedModel The fitted model.
+         */
+        @Pure
+        fun fit(
+            @PythonName("training_set") trainingSet: TabularDataset
+        ) -> fittedModel: Classifier
+
         /**
          * Summarize the classifier's metrics on the given data.
          *
@@ -148,7 +160,7 @@ better. Results range from 0.0 to 1.0.
 
 ??? quote "Stub code in `Classifier.sdsstub`"
 
-    ```sds linenums="40"
+    ```sds linenums="54"
     @Pure
     fun accuracy(
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
@@ -179,7 +191,7 @@ classifier. Results range from 0.0 to 1.0.
 
 ??? quote "Stub code in `Classifier.sdsstub`"
 
-    ```sds linenums="58"
+    ```sds linenums="72"
     @Pure
     @PythonName("f1_score")
     fun f1Score(
@@ -204,15 +216,15 @@ Create a copy of this model and fit it with the given training data.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `fittedModel` | [`SupervisedModel`][safeds.ml.classical.SupervisedModel] | The fitted model. |
+| `fittedModel` | [`Classifier`][safeds.ml.classical.classification.Classifier] | The fitted model. |
 
-??? quote "Stub code in `SupervisedModel.sdsstub`"
+??? quote "Stub code in `Classifier.sdsstub`"
 
-    ```sds linenums="26"
+    ```sds linenums="20"
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TabularDataset
-    ) -> fittedModel: SupervisedModel
+    ) -> fittedModel: Classifier
     ```
 
 ## `#!sds fun` getFeatureNames {#safeds.ml.classical.classification.Classifier.getFeatureNames data-toc-label='getFeatureNames'}
@@ -319,7 +331,7 @@ better the classifier. Results range from 0.0 to 1.0.
 
 ??? quote "Stub code in `Classifier.sdsstub`"
 
-    ```sds linenums="78"
+    ```sds linenums="92"
     @Pure
     fun precision(
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>,
@@ -378,7 +390,7 @@ better the classifier. Results range from 0.0 to 1.0.
 
 ??? quote "Stub code in `Classifier.sdsstub`"
 
-    ```sds linenums="97"
+    ```sds linenums="111"
     @Pure
     fun recall(
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>,
@@ -407,7 +419,7 @@ Summarize the classifier's metrics on the given data.
 
 ??? quote "Stub code in `Classifier.sdsstub`"
 
-    ```sds linenums="21"
+    ```sds linenums="35"
     @Pure
     @PythonName("summarize_metrics")
     fun summarizeMetrics(

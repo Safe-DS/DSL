@@ -17,17 +17,29 @@ A model for regression tasks.
 - [`GradientBoostingRegressor`][safeds.ml.classical.regression.GradientBoostingRegressor]
 - [`KNearestNeighborsRegressor`][safeds.ml.classical.regression.KNearestNeighborsRegressor]
 - [`LassoRegressor`][safeds.ml.classical.regression.LassoRegressor]
-- `#!sds LinearRegressionRegressor`
 - [`LinearRegressor`][safeds.ml.classical.regression.LinearRegressor]
 - [`RandomForestRegressor`][safeds.ml.classical.regression.RandomForestRegressor]
 - [`RidgeRegressor`][safeds.ml.classical.regression.RidgeRegressor]
-- `#!sds SupportVectorMachineRegressor`
 - [`SupportVectorRegressor`][safeds.ml.classical.regression.SupportVectorRegressor]
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
     ```sds linenums="10"
     class Regressor sub SupervisedModel {
+        /**
+         * Create a copy of this model and fit it with the given training data.
+         *
+         * **Note:** This model is not modified.
+         *
+         * @param trainingSet The training data containing the features and target.
+         *
+         * @result fittedModel The fitted model.
+         */
+        @Pure
+        fun fit(
+            @PythonName("training_set") trainingSet: TabularDataset
+        ) -> fittedModel: Regressor
+
         /**
          * Summarize the regressor's metrics on the given data.
          *
@@ -184,7 +196,7 @@ to 1.0. You can interpret the coefficient of determination as follows:
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="46"
+    ```sds linenums="60"
     @Pure
     @PythonName("coefficient_of_determination")
     fun coefficientOfDetermination(
@@ -208,15 +220,15 @@ Create a copy of this model and fit it with the given training data.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `fittedModel` | [`SupervisedModel`][safeds.ml.classical.SupervisedModel] | The fitted model. |
+| `fittedModel` | [`Regressor`][safeds.ml.classical.regression.Regressor] | The fitted model. |
 
-??? quote "Stub code in `SupervisedModel.sdsstub`"
+??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="26"
+    ```sds linenums="20"
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TabularDataset
-    ) -> fittedModel: SupervisedModel
+    ) -> fittedModel: Regressor
     ```
 
 ## `#!sds fun` getFeatureNames {#safeds.ml.classical.regression.Regressor.getFeatureNames data-toc-label='getFeatureNames'}
@@ -321,7 +333,7 @@ infinity.
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="63"
+    ```sds linenums="77"
     @Pure
     @PythonName("mean_absolute_error")
     fun meanAbsoluteError(
@@ -355,7 +367,7 @@ for other types of data. Because of this, it is not included in the `summarize_m
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="84"
+    ```sds linenums="98"
     @Pure
     @PythonName("mean_directional_accuracy")
     fun meanDirectionalAccuracy(
@@ -387,7 +399,7 @@ infinity.
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="103"
+    ```sds linenums="117"
     @Pure
     @PythonName("mean_squared_error")
     fun meanSquaredError(
@@ -417,7 +429,7 @@ positive infinity.
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="120"
+    ```sds linenums="134"
     @Pure
     @PythonName("median_absolute_deviation")
     fun medianAbsoluteDeviation(
@@ -470,7 +482,7 @@ Summarize the regressor's metrics on the given data.
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="18"
+    ```sds linenums="32"
     @Pure
     @PythonName("summarize_metrics")
     fun summarizeMetrics(

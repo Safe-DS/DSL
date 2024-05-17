@@ -10,7 +10,6 @@ Learn a transformation for a set of columns in a `Table` and transform another `
 **Inheritors:**
 
 - [`Discretizer`][safeds.data.tabular.transformation.Discretizer]
-- `#!sds Imputer`
 - [`InvertibleTableTransformer`][safeds.data.tabular.transformation.InvertibleTableTransformer]
 - [`SimpleImputer`][safeds.data.tabular.transformation.SimpleImputer]
 

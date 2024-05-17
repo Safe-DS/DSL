@@ -108,7 +108,7 @@ to 1.0. You can interpret the coefficient of determination as follows:
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="46"
+    ```sds linenums="60"
     @Pure
     @PythonName("coefficient_of_determination")
     fun coefficientOfDetermination(
@@ -245,7 +245,7 @@ infinity.
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="63"
+    ```sds linenums="77"
     @Pure
     @PythonName("mean_absolute_error")
     fun meanAbsoluteError(
@@ -279,7 +279,7 @@ for other types of data. Because of this, it is not included in the `summarize_m
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="84"
+    ```sds linenums="98"
     @Pure
     @PythonName("mean_directional_accuracy")
     fun meanDirectionalAccuracy(
@@ -311,7 +311,7 @@ infinity.
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="103"
+    ```sds linenums="117"
     @Pure
     @PythonName("mean_squared_error")
     fun meanSquaredError(
@@ -341,7 +341,7 @@ positive infinity.
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="120"
+    ```sds linenums="134"
     @Pure
     @PythonName("median_absolute_deviation")
     fun medianAbsoluteDeviation(
@@ -394,7 +394,7 @@ Summarize the regressor's metrics on the given data.
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="18"
+    ```sds linenums="32"
     @Pure
     @PythonName("summarize_metrics")
     fun summarizeMetrics(

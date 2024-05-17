@@ -9,6 +9,20 @@ from safeds.ml.classical import SupervisedModel
  */
 class Classifier sub SupervisedModel {
     /**
+     * Create a copy of this model and fit it with the given training data.
+     *
+     * **Note:** This model is not modified.
+     *
+     * @param trainingSet The training data containing the features and target.
+     *
+     * @result fittedModel The fitted model.
+     */
+    @Pure
+    fun fit(
+        @PythonName("training_set") trainingSet: TabularDataset
+    ) -> fittedModel: Classifier
+
+    /**
      * Summarize the classifier's metrics on the given data.
      *
      * **Note:** The model must be fitted.

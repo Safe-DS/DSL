@@ -98,7 +98,7 @@ better. Results range from 0.0 to 1.0.
 
 ??? quote "Stub code in `Classifier.sdsstub`"
 
-    ```sds linenums="40"
+    ```sds linenums="54"
     @Pure
     fun accuracy(
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
@@ -129,7 +129,7 @@ classifier. Results range from 0.0 to 1.0.
 
 ??? quote "Stub code in `Classifier.sdsstub`"
 
-    ```sds linenums="58"
+    ```sds linenums="72"
     @Pure
     @PythonName("f1_score")
     fun f1Score(
@@ -269,7 +269,7 @@ better the classifier. Results range from 0.0 to 1.0.
 
 ??? quote "Stub code in `Classifier.sdsstub`"
 
-    ```sds linenums="78"
+    ```sds linenums="92"
     @Pure
     fun precision(
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>,
@@ -328,7 +328,7 @@ better the classifier. Results range from 0.0 to 1.0.
 
 ??? quote "Stub code in `Classifier.sdsstub`"
 
-    ```sds linenums="97"
+    ```sds linenums="111"
     @Pure
     fun recall(
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>,
@@ -357,7 +357,7 @@ Summarize the classifier's metrics on the given data.
 
 ??? quote "Stub code in `Classifier.sdsstub`"
 
-    ```sds linenums="21"
+    ```sds linenums="35"
     @Pure
     @PythonName("summarize_metrics")
     fun summarizeMetrics(
