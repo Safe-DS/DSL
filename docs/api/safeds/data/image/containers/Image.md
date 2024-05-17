@@ -6,7 +6,7 @@ A container for image data.
 
 ```sds
 pipeline example {
-    // TODO
+    val image = Image.fromFile("example.png");
 }
 ```
 
@@ -19,7 +19,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.png");
+         *     val width = image.width;
          * }
          */
         attr width: Int
@@ -28,7 +29,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.png");
+         *     val height = image.height;
          * }
          */
         attr height: Int
@@ -37,7 +39,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.png");
+         *     val imageChannel = image.channel;
          * }
          */
         attr channel: Int
@@ -55,7 +58,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.png");
+         *     size = image.size;
          * }
          */
         @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
@@ -71,7 +75,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.png");
+         *     image.toJpegFile("example.jpeg");
          * }
          */
         @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
@@ -87,7 +92,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.jpeg");
+         *     image.toPngFile("example.png");
          * }
          */
         @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
@@ -123,7 +129,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.jpeg");
+         *     image.resize(newWidht=100, newHeight=50);
          * }
          */
         @Pure
@@ -144,7 +151,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.jpeg");
+         *     image.convertToGrayscale();
          * }
          */
         @Pure
@@ -165,7 +173,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.jpeg");
+         *     image.crop(20, 20, 80, 40);
          * }
          */
         @Pure
@@ -190,7 +199,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.jpeg");
+         *     image.flipVertically();
          * }
          */
         @Pure
@@ -206,7 +216,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.jpeg");
+         *     image.flipHorizontally();
          * }
          */
         @Pure
@@ -228,7 +239,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.jpeg");
+         *     image.adjustBrightness(factor=2);
          * }
          */
         @Pure
@@ -250,7 +262,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.jpeg");
+         *     image.addNoise(standartDeviation = 1.0);
          * }
          */
         @Pure
@@ -275,7 +288,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.jpeg");
+         *     image.adjustContrast(factor=2.0);
          * }
          */
         @Pure
@@ -300,7 +314,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.jpeg");
+         *     image.adjustColorBalance(factor=2.0);
          * }
          */
         @Pure
@@ -323,7 +338,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.jpeg");
+         *     image.flipVertically;
          * }
          */
         @Pure
