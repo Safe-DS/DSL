@@ -38,7 +38,6 @@ import {
     getQualifiedName,
     getResults,
     getTypeParameters,
-    isInternal,
     isPrivate,
     isStatic,
 } from '../helpers/nodeProperties.js';
@@ -205,8 +204,8 @@ export class SafeDsMarkdownGenerator {
     }
 
     private describeAttribute(node: SdsAttribute, state: DetailsState): string {
-        const keyword = isStatic(node) ? 'static attr' : 'attr';
-        let result = this.renderPreamble(node, state, 'attribute', keyword);
+        const tag = isStatic(node) ? 'static-attribute' : 'attribute';
+        let result = this.renderPreamble(node, state, tag);
 
         // Type
         const type = this.typeComputer.computeType(node.type);
@@ -222,8 +221,7 @@ export class SafeDsMarkdownGenerator {
     }
 
     private describeClass(node: SdsClass, state: DetailsState): string {
-        const keyword = node.parameterList ? 'class' : 'abstract class';
-        let result = this.renderPreamble(node, state, 'class', keyword);
+        let result = this.renderPreamble(node, state, 'class');
 
         // Parent type
         const parentTypes = getParentTypes(node);
@@ -375,7 +373,7 @@ export class SafeDsMarkdownGenerator {
     }
 
     private describeEnumVariant(node: SdsEnumVariant, state: DetailsState): string {
-        let result = this.renderPreamble(node, state, 'enum variant', '');
+        let result = this.renderPreamble(node, state, 'variant');
 
         // Parameters
         const parameters = this.renderParameters(getParameters(node), state.knownPaths);
@@ -393,8 +391,8 @@ export class SafeDsMarkdownGenerator {
     }
 
     private describeFunction(node: SdsFunction, state: DetailsState): string {
-        const keyword = isStatic(node) ? 'static fun' : 'fun';
-        let result = this.renderPreamble(node, state, 'function', keyword);
+        const tag = isStatic(node) ? 'static-function' : 'function';
+        let result = this.renderPreamble(node, state, tag);
 
         // Parameters
         const parameters = this.renderParameters(getParameters(node), state.knownPaths);
@@ -463,8 +461,7 @@ export class SafeDsMarkdownGenerator {
     }
 
     private describeSegment(node: SdsSegment, state: DetailsState): string {
-        const keyword = isInternal(node) ? 'internal segment' : 'segment';
-        let result = this.renderPreamble(node, state, 'segment', keyword);
+        let result = this.renderPreamble(node, state, 'segment');
 
         // Parameters
         const parameters = this.renderParameters(getParameters(node), state.knownPaths);
@@ -493,12 +490,12 @@ export class SafeDsMarkdownGenerator {
         return result;
     }
 
-    private renderPreamble(node: SdsDeclaration, state: DetailsState, kind: string, keyword: string = kind): string {
+    private renderPreamble(node: SdsDeclaration, state: DetailsState, tag?: Tag): string {
         let result = this.renderFrontMatter(node);
 
-        result += this.renderHeading(node, state, keyword) + '\n';
+        result += this.renderHeading(node, state, tag) + '\n';
 
-        const deprecationWarning = this.renderDeprecationWarning(node, kind);
+        const deprecationWarning = this.renderDeprecationWarning(node);
         if (deprecationWarning) {
             result += `\n${deprecationWarning}\n`;
         }
@@ -518,22 +515,22 @@ export class SafeDsMarkdownGenerator {
         return '';
     }
 
-    private renderHeading(node: SdsDeclaration, state: DetailsState, keyword: string): string {
+    private renderHeading(node: SdsDeclaration, state: DetailsState, tag?: Tag): string {
         let result = '#'.repeat(Math.min(state.level, 6));
         result += this.renderMaturity(node);
 
-        if (keyword) {
-            result += ` \`#!sds ${keyword}\``;
+        if (tag) {
+            result += ` <code class="doc-symbol doc-symbol-${tag}"></code>`;
         }
 
         result += ` \`${node.name}\``;
-        result += ` {#${this.getId(node, state)} data-toc-label='${this.createTocLabel(node, keyword)}'}`;
+        result += ` {#${this.getId(node, state)} data-toc-label='${this.createTocLabel(node, tag)}'}`;
         return result;
     }
 
-    private createTocLabel(node: SdsDeclaration, keyword: string): string {
-        if (keyword) {
-            return `[${keyword}] ${node.name}`;
+    private createTocLabel(node: SdsDeclaration, tag?: Tag): string {
+        if (tag) {
+            return `[${tag}] ${node.name}`;
         } else {
             return node.name;
         }
@@ -557,14 +554,14 @@ export class SafeDsMarkdownGenerator {
         }
     }
 
-    private renderDeprecationWarning(node: SdsDeclaration, keyword: string): string {
+    private renderDeprecationWarning(node: SdsDeclaration): string {
         const deprecationInfo = this.builtinAnnotations.getDeprecationInfo(node);
         if (!deprecationInfo) {
             return '';
         }
 
         let result = '!!! warning "Deprecated"\n\n';
-        result += `    This ${keyword} is deprecated`;
+        result += `    This declaration is deprecated`;
 
         if (deprecationInfo.sinceVersion) {
             result += ` since version **${deprecationInfo.sinceVersion}**`;
@@ -839,3 +836,15 @@ interface Summary {
 const indent = (text: string): string => {
     return addLinePrefix(text, INDENTATION);
 };
+
+type Tag =
+    | 'annotation'
+    | 'attribute'
+    | 'static-attribute'
+    | 'class'
+    | 'enum'
+    | 'function'
+    | 'static-function'
+    | 'schema'
+    | 'segment'
+    | 'variant';

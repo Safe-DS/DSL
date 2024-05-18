@@ -1,4 +1,4 @@
-# :test_tube:{ title="Experimental" } `#!sds class` `ImageDataset` {#safeds.data.labeled.containers.ImageDataset data-toc-label='[class] ImageDataset'}
+# :test_tube:{ title="Experimental" } <code class="doc-symbol doc-symbol-class"></code> `ImageDataset` {#safeds.data.labeled.containers.ImageDataset data-toc-label='[class] ImageDataset'}
 
 A Dataset for ImageLists as input and ImageLists, Tables or Columns as output.
 
@@ -67,19 +67,19 @@ A Dataset for ImageLists as input and ImageLists, Tables or Columns as output.
     }
     ```
 
-## `#!sds attr` `inputSize` {#safeds.data.labeled.containers.ImageDataset.inputSize data-toc-label='[attr] inputSize'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `inputSize` {#safeds.data.labeled.containers.ImageDataset.inputSize data-toc-label='[attribute] inputSize'}
 
 Get the input `ImageSize` of this dataset.
 
 **Type:** [`ImageSize`][safeds.data.image.typing.ImageSize]
 
-## `#!sds attr` `outputSize` {#safeds.data.labeled.containers.ImageDataset.outputSize data-toc-label='[attr] outputSize'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `outputSize` {#safeds.data.labeled.containers.ImageDataset.outputSize data-toc-label='[attribute] outputSize'}
 
 Get the output size of this dataset.
 
 **Type:** [`ImageSize`][safeds.data.image.typing.ImageSize]
 
-## `#!sds fun` `getInput` {#safeds.data.labeled.containers.ImageDataset.getInput data-toc-label='[fun] getInput'}
+## <code class="doc-symbol doc-symbol-function"></code> `getInput` {#safeds.data.labeled.containers.ImageDataset.getInput data-toc-label='[function] getInput'}
 
 Get the input data of this dataset.
 
@@ -97,7 +97,7 @@ Get the input data of this dataset.
     fun getInput() -> input: ImageList
     ```
 
-## `#!sds fun` `getOutput` {#safeds.data.labeled.containers.ImageDataset.getOutput data-toc-label='[fun] getOutput'}
+## <code class="doc-symbol doc-symbol-function"></code> `getOutput` {#safeds.data.labeled.containers.ImageDataset.getOutput data-toc-label='[function] getOutput'}
 
 Get the output data of this dataset.
 
@@ -115,7 +115,7 @@ Get the output data of this dataset.
     fun getOutput() -> output: T
     ```
 
-## `#!sds fun` `shuffle` {#safeds.data.labeled.containers.ImageDataset.shuffle data-toc-label='[fun] shuffle'}
+## <code class="doc-symbol doc-symbol-function"></code> `shuffle` {#safeds.data.labeled.containers.ImageDataset.shuffle data-toc-label='[function] shuffle'}
 
 Return a new `ImageDataset` with shuffled data.
 

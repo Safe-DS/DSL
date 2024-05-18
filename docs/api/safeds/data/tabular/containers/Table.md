@@ -1,4 +1,4 @@
-# `#!sds class` `Table` {#safeds.data.tabular.containers.Table data-toc-label='[class] Table'}
+# <code class="doc-symbol doc-symbol-class"></code> `Table` {#safeds.data.tabular.containers.Table data-toc-label='[class] Table'}
 
 A two-dimensional collection of data. It can either be seen as a list of rows or as a list of columns.
 
@@ -962,25 +962,25 @@ pipeline example {
     }
     ```
 
-## `#!sds attr` `columnCount` {#safeds.data.tabular.containers.Table.columnCount data-toc-label='[attr] columnCount'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `columnCount` {#safeds.data.tabular.containers.Table.columnCount data-toc-label='[attribute] columnCount'}
 
 The number of columns in the table.
 
 **Type:** [`Int`][safeds.lang.Int]
 
-## `#!sds attr` `columnNames` {#safeds.data.tabular.containers.Table.columnNames data-toc-label='[attr] columnNames'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `columnNames` {#safeds.data.tabular.containers.Table.columnNames data-toc-label='[attribute] columnNames'}
 
 The names of the columns in the table.
 
 **Type:** [`List<String>`][safeds.lang.List]
 
-## `#!sds attr` `plot` {#safeds.data.tabular.containers.Table.plot data-toc-label='[attr] plot'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `plot` {#safeds.data.tabular.containers.Table.plot data-toc-label='[attribute] plot'}
 
 The plotter for the table.
 
 **Type:** [`TablePlotter`][safeds.data.tabular.plotting.TablePlotter]
 
-## `#!sds attr` `rowCount` {#safeds.data.tabular.containers.Table.rowCount data-toc-label='[attr] rowCount'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `rowCount` {#safeds.data.tabular.containers.Table.rowCount data-toc-label='[attribute] rowCount'}
 
 The number of rows in the table.
 
@@ -988,13 +988,13 @@ The number of rows in the table.
 
 **Type:** [`Int`][safeds.lang.Int]
 
-## `#!sds attr` `schema` {#safeds.data.tabular.containers.Table.schema data-toc-label='[attr] schema'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `schema` {#safeds.data.tabular.containers.Table.schema data-toc-label='[attribute] schema'}
 
 The schema of the table.
 
 **Type:** [`Schema`][safeds.data.tabular.typing.Schema]
 
-## `#!sds fun` `addColumns` {#safeds.data.tabular.containers.Table.addColumns data-toc-label='[fun] addColumns'}
+## <code class="doc-symbol doc-symbol-function"></code> `addColumns` {#safeds.data.tabular.containers.Table.addColumns data-toc-label='[function] addColumns'}
 
 Return a new table with additional columns.
 
@@ -1035,7 +1035,7 @@ pipeline example {
     ) -> newTable: Table
     ```
 
-## `#!sds fun` `addComputedColumn` {#safeds.data.tabular.containers.Table.addComputedColumn data-toc-label='[fun] addComputedColumn'}
+## <code class="doc-symbol doc-symbol-function"></code> `addComputedColumn` {#safeds.data.tabular.containers.Table.addComputedColumn data-toc-label='[function] addComputedColumn'}
 
 Return a new table with an additional computed column.
 
@@ -1074,7 +1074,7 @@ pipeline example {
     ) -> newTable: Table
     ```
 
-## `#!sds fun` `addTableAsColumns` {#safeds.data.tabular.containers.Table.addTableAsColumns data-toc-label='[fun] addTableAsColumns'}
+## <code class="doc-symbol doc-symbol-function"></code> `addTableAsColumns` {#safeds.data.tabular.containers.Table.addTableAsColumns data-toc-label='[function] addTableAsColumns'}
 
 Return a new table with the columns of another table added.
 
@@ -1116,7 +1116,7 @@ pipeline example {
     ) -> newTable: Table
     ```
 
-## `#!sds fun` `addTableAsRows` {#safeds.data.tabular.containers.Table.addTableAsRows data-toc-label='[fun] addTableAsRows'}
+## <code class="doc-symbol doc-symbol-function"></code> `addTableAsRows` {#safeds.data.tabular.containers.Table.addTableAsRows data-toc-label='[function] addTableAsRows'}
 
 Return a new table with the rows of another table added.
 
@@ -1158,7 +1158,7 @@ pipeline example {
     ) -> newTable: Table
     ```
 
-## `#!sds fun` `getColumn` {#safeds.data.tabular.containers.Table.getColumn data-toc-label='[fun] getColumn'}
+## <code class="doc-symbol doc-symbol-function"></code> `getColumn` {#safeds.data.tabular.containers.Table.getColumn data-toc-label='[function] getColumn'}
 
 Get a column from the table.
 
@@ -1196,7 +1196,7 @@ pipeline example {
     ) -> column: Column
     ```
 
-## `#!sds fun` `getColumnType` {#safeds.data.tabular.containers.Table.getColumnType data-toc-label='[fun] getColumnType'}
+## <code class="doc-symbol doc-symbol-function"></code> `getColumnType` {#safeds.data.tabular.containers.Table.getColumnType data-toc-label='[function] getColumnType'}
 
 Get the data type of a column.
 
@@ -1231,7 +1231,7 @@ pipeline example {
     ) -> type: DataType
     ```
 
-## `#!sds fun` `hasColumn` {#safeds.data.tabular.containers.Table.hasColumn data-toc-label='[fun] hasColumn'}
+## <code class="doc-symbol doc-symbol-function"></code> `hasColumn` {#safeds.data.tabular.containers.Table.hasColumn data-toc-label='[function] hasColumn'}
 
 Check if the table has a column with a specific name.
 
@@ -1266,7 +1266,7 @@ pipeline example {
     ) -> hasColumn: Boolean
     ```
 
-## `#!sds fun` `inverseTransformTable` {#safeds.data.tabular.containers.Table.inverseTransformTable data-toc-label='[fun] inverseTransformTable'}
+## <code class="doc-symbol doc-symbol-function"></code> `inverseTransformTable` {#safeds.data.tabular.containers.Table.inverseTransformTable data-toc-label='[function] inverseTransformTable'}
 
 Return a new table inverse-transformed by a **fitted, invertible** transformer.
 
@@ -1308,7 +1308,7 @@ pipeline example {
     ) -> newTable: Table
     ```
 
-## `#!sds fun` `removeColumns` {#safeds.data.tabular.containers.Table.removeColumns data-toc-label='[fun] removeColumns'}
+## <code class="doc-symbol doc-symbol-function"></code> `removeColumns` {#safeds.data.tabular.containers.Table.removeColumns data-toc-label='[function] removeColumns'}
 
 Return a new table without the specified columns.
 
@@ -1357,7 +1357,7 @@ pipeline example {
     ) -> newTable: Table
     ```
 
-## `#!sds fun` `removeColumnsExcept` {#safeds.data.tabular.containers.Table.removeColumnsExcept data-toc-label='[fun] removeColumnsExcept'}
+## <code class="doc-symbol doc-symbol-function"></code> `removeColumnsExcept` {#safeds.data.tabular.containers.Table.removeColumnsExcept data-toc-label='[function] removeColumnsExcept'}
 
 Return a new table with only the specified columns.
 
@@ -1393,7 +1393,7 @@ pipeline example {
     ) -> newTable: Table
     ```
 
-## `#!sds fun` `removeColumnsWithMissingValues` {#safeds.data.tabular.containers.Table.removeColumnsWithMissingValues data-toc-label='[fun] removeColumnsWithMissingValues'}
+## <code class="doc-symbol doc-symbol-function"></code> `removeColumnsWithMissingValues` {#safeds.data.tabular.containers.Table.removeColumnsWithMissingValues data-toc-label='[function] removeColumnsWithMissingValues'}
 
 Return a new table without columns that contain missing values.
 
@@ -1426,7 +1426,7 @@ pipeline example {
     fun removeColumnsWithMissingValues() -> newTable: Table
     ```
 
-## `#!sds fun` `removeDuplicateRows` {#safeds.data.tabular.containers.Table.removeDuplicateRows data-toc-label='[fun] removeDuplicateRows'}
+## <code class="doc-symbol doc-symbol-function"></code> `removeDuplicateRows` {#safeds.data.tabular.containers.Table.removeDuplicateRows data-toc-label='[function] removeDuplicateRows'}
 
 Return a new table without duplicate rows.
 
@@ -1456,7 +1456,7 @@ pipeline example {
     fun removeDuplicateRows() -> newTable: Table
     ```
 
-## `#!sds fun` `removeNonNumericColumns` {#safeds.data.tabular.containers.Table.removeNonNumericColumns data-toc-label='[fun] removeNonNumericColumns'}
+## <code class="doc-symbol doc-symbol-function"></code> `removeNonNumericColumns` {#safeds.data.tabular.containers.Table.removeNonNumericColumns data-toc-label='[function] removeNonNumericColumns'}
 
 Return a new table without non-numeric columns.
 
@@ -1486,7 +1486,7 @@ pipeline example {
     fun removeNonNumericColumns() -> newTable: Table
     ```
 
-## `#!sds fun` `removeRows` {#safeds.data.tabular.containers.Table.removeRows data-toc-label='[fun] removeRows'}
+## <code class="doc-symbol doc-symbol-function"></code> `removeRows` {#safeds.data.tabular.containers.Table.removeRows data-toc-label='[function] removeRows'}
 
 Return a new table without rows that satisfy a condition.
 
@@ -1524,7 +1524,7 @@ pipeline example {
     ) -> newTable: Table
     ```
 
-## `#!sds fun` `removeRowsByColumn` {#safeds.data.tabular.containers.Table.removeRowsByColumn data-toc-label='[fun] removeRowsByColumn'}
+## <code class="doc-symbol doc-symbol-function"></code> `removeRowsByColumn` {#safeds.data.tabular.containers.Table.removeRowsByColumn data-toc-label='[function] removeRowsByColumn'}
 
 Return a new table without rows that satisfy a condition on a specific column.
 
@@ -1564,7 +1564,7 @@ pipeline example {
     ) -> newTable: Table
     ```
 
-## `#!sds fun` `removeRowsWithMissingValues` {#safeds.data.tabular.containers.Table.removeRowsWithMissingValues data-toc-label='[fun] removeRowsWithMissingValues'}
+## <code class="doc-symbol doc-symbol-function"></code> `removeRowsWithMissingValues` {#safeds.data.tabular.containers.Table.removeRowsWithMissingValues data-toc-label='[function] removeRowsWithMissingValues'}
 
 Return a new table without rows containing missing values in the specified columns.
 
@@ -1602,7 +1602,7 @@ pipeline example {
     ) -> newTable: Table
     ```
 
-## `#!sds fun` `removeRowsWithOutliers` {#safeds.data.tabular.containers.Table.removeRowsWithOutliers data-toc-label='[fun] removeRowsWithOutliers'}
+## <code class="doc-symbol doc-symbol-function"></code> `removeRowsWithOutliers` {#safeds.data.tabular.containers.Table.removeRowsWithOutliers data-toc-label='[function] removeRowsWithOutliers'}
 
 Return a new table without rows containing outliers in the specified columns.
 
@@ -1658,7 +1658,7 @@ pipeline example {
     ) -> newTable: Table
     ```
 
-## `#!sds fun` `renameColumn` {#safeds.data.tabular.containers.Table.renameColumn data-toc-label='[fun] renameColumn'}
+## <code class="doc-symbol doc-symbol-function"></code> `renameColumn` {#safeds.data.tabular.containers.Table.renameColumn data-toc-label='[function] renameColumn'}
 
 Return a new table with a column renamed.
 
@@ -1698,7 +1698,7 @@ pipeline example {
     ) -> newTable: Table
     ```
 
-## `#!sds fun` `replaceColumn` {#safeds.data.tabular.containers.Table.replaceColumn data-toc-label='[fun] replaceColumn'}
+## <code class="doc-symbol doc-symbol-function"></code> `replaceColumn` {#safeds.data.tabular.containers.Table.replaceColumn data-toc-label='[function] replaceColumn'}
 
 Return a new table with a column replaced by zero or more columns.
 
@@ -1738,7 +1738,7 @@ pipeline example {
     ) -> newTable: Table
     ```
 
-## `#!sds fun` `shuffleRows` {#safeds.data.tabular.containers.Table.shuffleRows data-toc-label='[fun] shuffleRows'}
+## <code class="doc-symbol doc-symbol-function"></code> `shuffleRows` {#safeds.data.tabular.containers.Table.shuffleRows data-toc-label='[function] shuffleRows'}
 
 Return a new table with the rows shuffled.
 
@@ -1768,7 +1768,7 @@ pipeline example {
     fun shuffleRows() -> newTable: Table
     ```
 
-## `#!sds fun` `sliceRows` {#safeds.data.tabular.containers.Table.sliceRows data-toc-label='[fun] sliceRows'}
+## <code class="doc-symbol doc-symbol-function"></code> `sliceRows` {#safeds.data.tabular.containers.Table.sliceRows data-toc-label='[function] sliceRows'}
 
 Return a new table with a slice of rows.
 
@@ -1815,7 +1815,7 @@ pipeline example {
     ) -> newTable: Table
     ```
 
-## `#!sds fun` `sortRows` {#safeds.data.tabular.containers.Table.sortRows data-toc-label='[fun] sortRows'}
+## <code class="doc-symbol doc-symbol-function"></code> `sortRows` {#safeds.data.tabular.containers.Table.sortRows data-toc-label='[function] sortRows'}
 
 Return a new table with the rows sorted.
 
@@ -1855,7 +1855,7 @@ pipeline example {
     ) -> newTable: Table
     ```
 
-## `#!sds fun` `sortRowsByColumn` {#safeds.data.tabular.containers.Table.sortRowsByColumn data-toc-label='[fun] sortRowsByColumn'}
+## <code class="doc-symbol doc-symbol-function"></code> `sortRowsByColumn` {#safeds.data.tabular.containers.Table.sortRowsByColumn data-toc-label='[function] sortRowsByColumn'}
 
 Return a new table with the rows sorted by a specific column.
 
@@ -1895,7 +1895,7 @@ pipeline example {
     ) -> newTable: Table
     ```
 
-## `#!sds fun` `splitRows` {#safeds.data.tabular.containers.Table.splitRows data-toc-label='[fun] splitRows'}
+## <code class="doc-symbol doc-symbol-function"></code> `splitRows` {#safeds.data.tabular.containers.Table.splitRows data-toc-label='[function] splitRows'}
 
 Create two tables by splitting the rows of the current table.
 
@@ -1941,7 +1941,7 @@ pipeline example {
     ) -> (firstTable: Table, secondTable: Table)
     ```
 
-## `#!sds fun` `summarizeStatistics` {#safeds.data.tabular.containers.Table.summarizeStatistics data-toc-label='[fun] summarizeStatistics'}
+## <code class="doc-symbol doc-symbol-function"></code> `summarizeStatistics` {#safeds.data.tabular.containers.Table.summarizeStatistics data-toc-label='[function] summarizeStatistics'}
 
 Return a table with important statistics about this table.
 
@@ -1968,7 +1968,7 @@ pipeline example {
     fun summarizeStatistics() -> statistics: Table
     ```
 
-## `#!sds fun` `toColumns` {#safeds.data.tabular.containers.Table.toColumns data-toc-label='[fun] toColumns'}
+## <code class="doc-symbol doc-symbol-function"></code> `toColumns` {#safeds.data.tabular.containers.Table.toColumns data-toc-label='[function] toColumns'}
 
 Return the data of the table as a list of columns.
 
@@ -1995,7 +1995,7 @@ pipeline example {
     fun toColumns() -> columns: List<Column>
     ```
 
-## `#!sds fun` `toCsvFile` {#safeds.data.tabular.containers.Table.toCsvFile data-toc-label='[fun] toCsvFile'}
+## <code class="doc-symbol doc-symbol-function"></code> `toCsvFile` {#safeds.data.tabular.containers.Table.toCsvFile data-toc-label='[function] toCsvFile'}
 
 Write the table to a CSV file.
 
@@ -2027,7 +2027,7 @@ pipeline example {
     )
     ```
 
-## `#!sds fun` `toJsonFile` {#safeds.data.tabular.containers.Table.toJsonFile data-toc-label='[fun] toJsonFile'}
+## <code class="doc-symbol doc-symbol-function"></code> `toJsonFile` {#safeds.data.tabular.containers.Table.toJsonFile data-toc-label='[function] toJsonFile'}
 
 Write the table to a JSON file.
 
@@ -2063,7 +2063,7 @@ pipeline example {
     )
     ```
 
-## `#!sds fun` `toMap` {#safeds.data.tabular.containers.Table.toMap data-toc-label='[fun] toMap'}
+## <code class="doc-symbol doc-symbol-function"></code> `toMap` {#safeds.data.tabular.containers.Table.toMap data-toc-label='[function] toMap'}
 
 Return a map that maps column names to column values.
 
@@ -2091,7 +2091,7 @@ pipeline example {
     fun toMap() -> map: Map<String, List<Any>>
     ```
 
-## `#!sds fun` `toParquetFile` {#safeds.data.tabular.containers.Table.toParquetFile data-toc-label='[fun] toParquetFile'}
+## <code class="doc-symbol doc-symbol-function"></code> `toParquetFile` {#safeds.data.tabular.containers.Table.toParquetFile data-toc-label='[function] toParquetFile'}
 
 Write the table to a Parquet file.
 
@@ -2123,7 +2123,7 @@ pipeline example {
     )
     ```
 
-## `#!sds fun` `toTabularDataset` {#safeds.data.tabular.containers.Table.toTabularDataset data-toc-label='[fun] toTabularDataset'}
+## <code class="doc-symbol doc-symbol-function"></code> `toTabularDataset` {#safeds.data.tabular.containers.Table.toTabularDataset data-toc-label='[function] toTabularDataset'}
 
 Return a new `TabularDataset` with columns marked as a target, feature, or extra.
 
@@ -2174,7 +2174,7 @@ pipeline example {
     ) -> dataset: TabularDataset
     ```
 
-## `#!sds fun` `toTimeSeriesDataset` {#safeds.data.tabular.containers.Table.toTimeSeriesDataset data-toc-label='[fun] toTimeSeriesDataset'}
+## <code class="doc-symbol doc-symbol-function"></code> `toTimeSeriesDataset` {#safeds.data.tabular.containers.Table.toTimeSeriesDataset data-toc-label='[function] toTimeSeriesDataset'}
 
 Return a new `TimeSeriesDataset` with columns marked as a target column, time or feature columns.
 
@@ -2221,7 +2221,7 @@ pipeline example {
     ) -> dataset: TimeSeriesDataset
     ```
 
-## `#!sds fun` `transformColumn` {#safeds.data.tabular.containers.Table.transformColumn data-toc-label='[fun] transformColumn'}
+## <code class="doc-symbol doc-symbol-function"></code> `transformColumn` {#safeds.data.tabular.containers.Table.transformColumn data-toc-label='[function] transformColumn'}
 
 Return a new table with a column transformed.
 
@@ -2261,7 +2261,7 @@ pipeline example {
     ) -> newTable: Table
     ```
 
-## `#!sds fun` `transformTable` {#safeds.data.tabular.containers.Table.transformTable data-toc-label='[fun] transformTable'}
+## <code class="doc-symbol doc-symbol-function"></code> `transformTable` {#safeds.data.tabular.containers.Table.transformTable data-toc-label='[function] transformTable'}
 
 Return a new table transformed by a **fitted** transformer.
 
@@ -2303,7 +2303,7 @@ pipeline example {
     ) -> newTable: Table
     ```
 
-## `#!sds static fun` `fromColumns` {#safeds.data.tabular.containers.Table.fromColumns data-toc-label='[static fun] fromColumns'}
+## <code class="doc-symbol doc-symbol-static-function"></code> `fromColumns` {#safeds.data.tabular.containers.Table.fromColumns data-toc-label='[static-function] fromColumns'}
 
 Create a table from a list of columns.
 
@@ -2339,7 +2339,7 @@ pipeline example {
     ) -> table: Table
     ```
 
-## `#!sds static fun` `fromCsvFile` {#safeds.data.tabular.containers.Table.fromCsvFile data-toc-label='[static fun] fromCsvFile'}
+## <code class="doc-symbol doc-symbol-static-function"></code> `fromCsvFile` {#safeds.data.tabular.containers.Table.fromCsvFile data-toc-label='[static-function] fromCsvFile'}
 
 Create a table from a CSV file.
 
@@ -2375,7 +2375,7 @@ pipeline example {
     ) -> table: Table
     ```
 
-## `#!sds static fun` `fromJsonFile` {#safeds.data.tabular.containers.Table.fromJsonFile data-toc-label='[static fun] fromJsonFile'}
+## <code class="doc-symbol doc-symbol-static-function"></code> `fromJsonFile` {#safeds.data.tabular.containers.Table.fromJsonFile data-toc-label='[static-function] fromJsonFile'}
 
 Create a table from a JSON file.
 
@@ -2409,7 +2409,7 @@ pipeline example {
     ) -> table: Table
     ```
 
-## `#!sds static fun` `fromMap` {#safeds.data.tabular.containers.Table.fromMap data-toc-label='[static fun] fromMap'}
+## <code class="doc-symbol doc-symbol-static-function"></code> `fromMap` {#safeds.data.tabular.containers.Table.fromMap data-toc-label='[static-function] fromMap'}
 
 Create a table from a map that maps column names to column values.
 
@@ -2444,7 +2444,7 @@ pipeline example {
     ) -> table: Table
     ```
 
-## `#!sds static fun` `fromParquetFile` {#safeds.data.tabular.containers.Table.fromParquetFile data-toc-label='[static fun] fromParquetFile'}
+## <code class="doc-symbol doc-symbol-static-function"></code> `fromParquetFile` {#safeds.data.tabular.containers.Table.fromParquetFile data-toc-label='[static-function] fromParquetFile'}
 
 Create a table from a Parquet file.
 

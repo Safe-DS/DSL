@@ -1,4 +1,4 @@
-# :test_tube:{ title="Experimental" } `#!sds annotation` `PythonMacro` {#safeds.lang.PythonMacro data-toc-label='[annotation] PythonMacro'}
+# :test_tube:{ title="Experimental" } <code class="doc-symbol doc-symbol-annotation"></code> `PythonMacro` {#safeds.lang.PythonMacro data-toc-label='[annotation] PythonMacro'}
 
 The specification of the corresponding Python code. By default, the function is called as specified in the stubs.
 

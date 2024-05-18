@@ -1,4 +1,4 @@
-# `#!sds annotation` `Experimental` {#safeds.lang.Experimental data-toc-label='[annotation] Experimental'}
+# <code class="doc-symbol doc-symbol-annotation"></code> `Experimental` {#safeds.lang.Experimental data-toc-label='[annotation] Experimental'}
 
 The declaration might change without a major version bump.
 

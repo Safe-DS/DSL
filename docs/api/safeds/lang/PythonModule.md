@@ -1,4 +1,4 @@
-# `#!sds annotation` `PythonModule` {#safeds.lang.PythonModule data-toc-label='[annotation] PythonModule'}
+# <code class="doc-symbol doc-symbol-annotation"></code> `PythonModule` {#safeds.lang.PythonModule data-toc-label='[annotation] PythonModule'}
 
 The qualified name of the corresponding Python module. By default, this is the qualified name of the package in the
 stubs.

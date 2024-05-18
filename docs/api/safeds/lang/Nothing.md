@@ -3,7 +3,7 @@ search:
   boost: 0.5
 ---
 
-# `#!sds abstract class` `Nothing` {#safeds.lang.Nothing data-toc-label='[abstract class] Nothing'}
+# <code class="doc-symbol doc-symbol-class"></code> `Nothing` {#safeds.lang.Nothing data-toc-label='[class] Nothing'}
 
 The common subclass of all classes.
 

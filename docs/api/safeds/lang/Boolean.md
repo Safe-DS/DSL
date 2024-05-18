@@ -3,7 +3,7 @@ search:
   boost: 0.5
 ---
 
-# `#!sds abstract class` `Boolean` {#safeds.lang.Boolean data-toc-label='[abstract class] Boolean'}
+# <code class="doc-symbol doc-symbol-class"></code> `Boolean` {#safeds.lang.Boolean data-toc-label='[class] Boolean'}
 
 A truth value.
 

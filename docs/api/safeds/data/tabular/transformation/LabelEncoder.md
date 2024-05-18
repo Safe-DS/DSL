@@ -1,4 +1,4 @@
-# `#!sds class` `LabelEncoder` {#safeds.data.tabular.transformation.LabelEncoder data-toc-label='[class] LabelEncoder'}
+# <code class="doc-symbol doc-symbol-class"></code> `LabelEncoder` {#safeds.data.tabular.transformation.LabelEncoder data-toc-label='[class] LabelEncoder'}
 
 The LabelEncoder encodes one or more given columns into labels.
 
@@ -65,13 +65,13 @@ pipeline example {
     }
     ```
 
-## `#!sds attr` `isFitted` {#safeds.data.tabular.transformation.LabelEncoder.isFitted data-toc-label='[attr] isFitted'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `isFitted` {#safeds.data.tabular.transformation.LabelEncoder.isFitted data-toc-label='[attribute] isFitted'}
 
 Whether the transformer is fitted.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
 
-## `#!sds fun` `fit` {#safeds.data.tabular.transformation.LabelEncoder.fit data-toc-label='[fun] fit'}
+## <code class="doc-symbol doc-symbol-function"></code> `fit` {#safeds.data.tabular.transformation.LabelEncoder.fit data-toc-label='[function] fit'}
 
 Learn a transformation for a set of columns in a table.
 
@@ -100,7 +100,7 @@ This transformer is not modified.
     ) -> fittedTransformer: LabelEncoder
     ```
 
-## `#!sds fun` `fitAndTransform` {#safeds.data.tabular.transformation.LabelEncoder.fitAndTransform data-toc-label='[fun] fitAndTransform'}
+## <code class="doc-symbol doc-symbol-function"></code> `fitAndTransform` {#safeds.data.tabular.transformation.LabelEncoder.fitAndTransform data-toc-label='[function] fitAndTransform'}
 
 Learn a transformation for a set of columns in a table and apply the learned transformation to the same table.
 
@@ -131,7 +131,7 @@ Learn a transformation for a set of columns in a table and apply the learned tra
     ) -> (fittedTransformer: LabelEncoder, transformedTable: Table)
     ```
 
-## `#!sds fun` `inverseTransform` {#safeds.data.tabular.transformation.LabelEncoder.inverseTransform data-toc-label='[fun] inverseTransform'}
+## <code class="doc-symbol doc-symbol-function"></code> `inverseTransform` {#safeds.data.tabular.transformation.LabelEncoder.inverseTransform data-toc-label='[function] inverseTransform'}
 
 Undo the learned transformation as well as possible.
 
@@ -161,7 +161,7 @@ Column order and types may differ from the original table. Likewise, some values
     ) -> originalTable: Table
     ```
 
-## `#!sds fun` `transform` {#safeds.data.tabular.transformation.LabelEncoder.transform data-toc-label='[fun] transform'}
+## <code class="doc-symbol doc-symbol-function"></code> `transform` {#safeds.data.tabular.transformation.LabelEncoder.transform data-toc-label='[function] transform'}
 
 Apply the learned transformation to a table.
 

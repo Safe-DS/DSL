@@ -1,4 +1,4 @@
-# :test_tube:{ title="Experimental" } `#!sds abstract class` `ImageList` {#safeds.data.image.containers.ImageList data-toc-label='[abstract class] ImageList'}
+# :test_tube:{ title="Experimental" } <code class="doc-symbol doc-symbol-class"></code> `ImageList` {#safeds.data.image.containers.ImageList data-toc-label='[class] ImageList'}
 
 An ImageList is a list of different images. It can hold different sizes of Images. The channel of all images is the same.
 
@@ -513,43 +513,43 @@ To create an `ImageList` call one of the following static methods:
     }
     ```
 
-## `#!sds attr` `channel` {#safeds.data.image.containers.ImageList.channel data-toc-label='[attr] channel'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `channel` {#safeds.data.image.containers.ImageList.channel data-toc-label='[attribute] channel'}
 
 Return the channel of all images.
 
 **Type:** [`Int`][safeds.lang.Int]
 
-## `#!sds attr` `heights` {#safeds.data.image.containers.ImageList.heights data-toc-label='[attr] heights'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `heights` {#safeds.data.image.containers.ImageList.heights data-toc-label='[attribute] heights'}
 
 Return a list of all heights in this image list.
 
 **Type:** [`List<Int>`][safeds.lang.List]
 
-## `#!sds attr` `imageCount` {#safeds.data.image.containers.ImageList.imageCount data-toc-label='[attr] imageCount'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `imageCount` {#safeds.data.image.containers.ImageList.imageCount data-toc-label='[attribute] imageCount'}
 
 Return the number of images in this image list.
 
 **Type:** [`Int`][safeds.lang.Int]
 
-## `#!sds attr` `sizeCount` {#safeds.data.image.containers.ImageList.sizeCount data-toc-label='[attr] sizeCount'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `sizeCount` {#safeds.data.image.containers.ImageList.sizeCount data-toc-label='[attribute] sizeCount'}
 
 Return the number of different sizes of images in this image list.
 
 **Type:** [`Int`][safeds.lang.Int]
 
-## `#!sds attr` `sizes` {#safeds.data.image.containers.ImageList.sizes data-toc-label='[attr] sizes'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `sizes` {#safeds.data.image.containers.ImageList.sizes data-toc-label='[attribute] sizes'}
 
 Return the sizes of all images.
 
 **Type:** [`List<ImageSize>`][safeds.lang.List]
 
-## `#!sds attr` `widths` {#safeds.data.image.containers.ImageList.widths data-toc-label='[attr] widths'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `widths` {#safeds.data.image.containers.ImageList.widths data-toc-label='[attribute] widths'}
 
 Return a list of all widths in this image list.
 
 **Type:** [`List<Int>`][safeds.lang.List]
 
-## `#!sds fun` `addImage` {#safeds.data.image.containers.ImageList.addImage data-toc-label='[fun] addImage'}
+## <code class="doc-symbol doc-symbol-function"></code> `addImage` {#safeds.data.image.containers.ImageList.addImage data-toc-label='[function] addImage'}
 
 Return a new `ImageList` with the given image added to the image list.
 
@@ -577,7 +577,7 @@ The original image list is not modified.
     ) -> imageList: ImageList
     ```
 
-## `#!sds fun` `addImages` {#safeds.data.image.containers.ImageList.addImages data-toc-label='[fun] addImages'}
+## <code class="doc-symbol doc-symbol-function"></code> `addImages` {#safeds.data.image.containers.ImageList.addImages data-toc-label='[function] addImages'}
 
 Return a new `ImageList` with the given images added to the image list.
 
@@ -605,7 +605,7 @@ The original image list is not modified.
     ) -> imageList: ImageList
     ```
 
-## `#!sds fun` `addNoise` {#safeds.data.image.containers.ImageList.addNoise data-toc-label='[fun] addNoise'}
+## <code class="doc-symbol doc-symbol-function"></code> `addNoise` {#safeds.data.image.containers.ImageList.addNoise data-toc-label='[function] addNoise'}
 
 Return a new `ImageList` with noise added to all images.
 
@@ -635,7 +635,7 @@ The original image list is not modified.
     }
     ```
 
-## `#!sds fun` `adjustBrightness` {#safeds.data.image.containers.ImageList.adjustBrightness data-toc-label='[fun] adjustBrightness'}
+## <code class="doc-symbol doc-symbol-function"></code> `adjustBrightness` {#safeds.data.image.containers.ImageList.adjustBrightness data-toc-label='[function] adjustBrightness'}
 
 Return a new `ImageList` where all images have the adjusted brightness.
 
@@ -665,7 +665,7 @@ The original image list is not modified.
     }
     ```
 
-## `#!sds fun` `adjustColorBalance` {#safeds.data.image.containers.ImageList.adjustColorBalance data-toc-label='[fun] adjustColorBalance'}
+## <code class="doc-symbol doc-symbol-function"></code> `adjustColorBalance` {#safeds.data.image.containers.ImageList.adjustColorBalance data-toc-label='[function] adjustColorBalance'}
 
 Return a new `ImageList` where all images have the adjusted color balance.
 
@@ -695,7 +695,7 @@ The original image list is not modified.
     }
     ```
 
-## `#!sds fun` `adjustContrast` {#safeds.data.image.containers.ImageList.adjustContrast data-toc-label='[fun] adjustContrast'}
+## <code class="doc-symbol doc-symbol-function"></code> `adjustContrast` {#safeds.data.image.containers.ImageList.adjustContrast data-toc-label='[function] adjustContrast'}
 
 Return a new `ImageList` where all images have the adjusted contrast.
 
@@ -725,7 +725,7 @@ The original image list is not modified.
     }
     ```
 
-## `#!sds fun` `blur` {#safeds.data.image.containers.ImageList.blur data-toc-label='[fun] blur'}
+## <code class="doc-symbol doc-symbol-function"></code> `blur` {#safeds.data.image.containers.ImageList.blur data-toc-label='[function] blur'}
 
 Return a new `ImageList` where all images have been blurred.
 
@@ -754,7 +754,7 @@ The original image list is not modified.
     }
     ```
 
-## `#!sds fun` `changeChannel` {#safeds.data.image.containers.ImageList.changeChannel data-toc-label='[fun] changeChannel'}
+## <code class="doc-symbol doc-symbol-function"></code> `changeChannel` {#safeds.data.image.containers.ImageList.changeChannel data-toc-label='[function] changeChannel'}
 
 Return a new `ImageList` that has the given number of channels.
 
@@ -782,7 +782,7 @@ The original image list is not modified.
     ) -> imageList: ImageList
     ```
 
-## `#!sds fun` `convertToGrayscale` {#safeds.data.image.containers.ImageList.convertToGrayscale data-toc-label='[fun] convertToGrayscale'}
+## <code class="doc-symbol doc-symbol-function"></code> `convertToGrayscale` {#safeds.data.image.containers.ImageList.convertToGrayscale data-toc-label='[function] convertToGrayscale'}
 
 Return a new `ImageList` with all images converted to grayscale.
 
@@ -802,7 +802,7 @@ The original image list is not modified.
     fun convertToGrayscale() -> imageList: ImageList
     ```
 
-## `#!sds fun` `crop` {#safeds.data.image.containers.ImageList.crop data-toc-label='[fun] crop'}
+## <code class="doc-symbol doc-symbol-function"></code> `crop` {#safeds.data.image.containers.ImageList.crop data-toc-label='[function] crop'}
 
 Return a new `ImageList` with all images cropped to a given bounding rectangle.
 
@@ -840,7 +840,7 @@ The original image list is not modified.
     }
     ```
 
-## `#!sds fun` `findEdges` {#safeds.data.image.containers.ImageList.findEdges data-toc-label='[fun] findEdges'}
+## <code class="doc-symbol doc-symbol-function"></code> `findEdges` {#safeds.data.image.containers.ImageList.findEdges data-toc-label='[function] findEdges'}
 
 Return a new `ImageList` with grayscale versions of the images with the edges highlighted.
 
@@ -860,7 +860,7 @@ The original image list is not modified.
     fun findEdges() -> imageList: ImageList
     ```
 
-## `#!sds fun` `flipHorizontally` {#safeds.data.image.containers.ImageList.flipHorizontally data-toc-label='[fun] flipHorizontally'}
+## <code class="doc-symbol doc-symbol-function"></code> `flipHorizontally` {#safeds.data.image.containers.ImageList.flipHorizontally data-toc-label='[function] flipHorizontally'}
 
 Return a new `ImageList` with all images flipped horizontally (vertical axis, flips left-right and vice versa).
 
@@ -880,7 +880,7 @@ The original image list is not modified.
     fun flipHorizontally() -> imageList: ImageList
     ```
 
-## `#!sds fun` `flipVertically` {#safeds.data.image.containers.ImageList.flipVertically data-toc-label='[fun] flipVertically'}
+## <code class="doc-symbol doc-symbol-function"></code> `flipVertically` {#safeds.data.image.containers.ImageList.flipVertically data-toc-label='[function] flipVertically'}
 
 Return a new `ImageList` with all images flipped vertically (horizontal axis, flips up-down and vice versa).
 
@@ -900,7 +900,7 @@ The original image list is not modified.
     fun flipVertically() -> imageList: ImageList
     ```
 
-## `#!sds fun` `getImage` {#safeds.data.image.containers.ImageList.getImage data-toc-label='[fun] getImage'}
+## <code class="doc-symbol doc-symbol-function"></code> `getImage` {#safeds.data.image.containers.ImageList.getImage data-toc-label='[function] getImage'}
 
 Return the image at the given index.
 
@@ -926,7 +926,7 @@ Return the image at the given index.
     ) -> image: Image
     ```
 
-## `#!sds fun` `hasImage` {#safeds.data.image.containers.ImageList.hasImage data-toc-label='[fun] hasImage'}
+## <code class="doc-symbol doc-symbol-function"></code> `hasImage` {#safeds.data.image.containers.ImageList.hasImage data-toc-label='[function] hasImage'}
 
 Return whether the given image is in this image list.
 
@@ -952,7 +952,7 @@ Return whether the given image is in this image list.
     ) -> hasImage: Boolean
     ```
 
-## `#!sds fun` `index` {#safeds.data.image.containers.ImageList.index data-toc-label='[fun] index'}
+## <code class="doc-symbol doc-symbol-function"></code> `index` {#safeds.data.image.containers.ImageList.index data-toc-label='[function] index'}
 
 Return a list of indexes of the given image.
 
@@ -979,7 +979,7 @@ If the image has multiple occurrences, all indices will be returned
     ) -> indices: List<Int>
     ```
 
-## `#!sds fun` `invertColors` {#safeds.data.image.containers.ImageList.invertColors data-toc-label='[fun] invertColors'}
+## <code class="doc-symbol doc-symbol-function"></code> `invertColors` {#safeds.data.image.containers.ImageList.invertColors data-toc-label='[function] invertColors'}
 
 Return a new `ImageList` where all images have their colors inverted.
 
@@ -999,7 +999,7 @@ The original image list is not modified.
     fun invertColors() -> imageList: ImageList
     ```
 
-## `#!sds fun` `removeDuplicateImages` {#safeds.data.image.containers.ImageList.removeDuplicateImages data-toc-label='[fun] removeDuplicateImages'}
+## <code class="doc-symbol doc-symbol-function"></code> `removeDuplicateImages` {#safeds.data.image.containers.ImageList.removeDuplicateImages data-toc-label='[function] removeDuplicateImages'}
 
 Return a new `ImageList` with all duplicate images removed.
 
@@ -1021,7 +1021,7 @@ The original image list is not modified.
     fun removeDuplicateImages() -> imageList: ImageList
     ```
 
-## `#!sds fun` `removeImage` {#safeds.data.image.containers.ImageList.removeImage data-toc-label='[fun] removeImage'}
+## <code class="doc-symbol doc-symbol-function"></code> `removeImage` {#safeds.data.image.containers.ImageList.removeImage data-toc-label='[function] removeImage'}
 
 Return a new `ImageList` with the given image removed from the image list.
 
@@ -1051,7 +1051,7 @@ The original image list is not modified.
     ) -> imageList: ImageList
     ```
 
-## `#!sds fun` `removeImageByIndex` {#safeds.data.image.containers.ImageList.removeImageByIndex data-toc-label='[fun] removeImageByIndex'}
+## <code class="doc-symbol doc-symbol-function"></code> `removeImageByIndex` {#safeds.data.image.containers.ImageList.removeImageByIndex data-toc-label='[function] removeImageByIndex'}
 
 Return a new `ImageList` with the given indices removed from the image list.
 
@@ -1079,7 +1079,7 @@ The original image list is not modified.
     ) -> imageList: ImageList
     ```
 
-## `#!sds fun` `removeImages` {#safeds.data.image.containers.ImageList.removeImages data-toc-label='[fun] removeImages'}
+## <code class="doc-symbol doc-symbol-function"></code> `removeImages` {#safeds.data.image.containers.ImageList.removeImages data-toc-label='[function] removeImages'}
 
 Return a new `ImageList` with the given images removed from the image list.
 
@@ -1109,7 +1109,7 @@ The original image list is not modified.
     ) -> imageList: ImageList
     ```
 
-## `#!sds fun` `removeImagesWithSize` {#safeds.data.image.containers.ImageList.removeImagesWithSize data-toc-label='[fun] removeImagesWithSize'}
+## <code class="doc-symbol doc-symbol-function"></code> `removeImagesWithSize` {#safeds.data.image.containers.ImageList.removeImagesWithSize data-toc-label='[function] removeImagesWithSize'}
 
 Return a new `ImageList` with the all images of the given size removed.
 
@@ -1139,7 +1139,7 @@ The original image list is not modified.
     ) -> imageList: ImageList
     ```
 
-## `#!sds fun` `resize` {#safeds.data.image.containers.ImageList.resize data-toc-label='[fun] resize'}
+## <code class="doc-symbol doc-symbol-function"></code> `resize` {#safeds.data.image.containers.ImageList.resize data-toc-label='[function] resize'}
 
 Return a new `ImageList` with all images resized to a given size.
 
@@ -1171,7 +1171,7 @@ The original image list is not modified.
     }
     ```
 
-## `#!sds fun` `rotateLeft` {#safeds.data.image.containers.ImageList.rotateLeft data-toc-label='[fun] rotateLeft'}
+## <code class="doc-symbol doc-symbol-function"></code> `rotateLeft` {#safeds.data.image.containers.ImageList.rotateLeft data-toc-label='[function] rotateLeft'}
 
 Return a new `ImageList` where all images have been rotated 90 degrees counter-clockwise.
 
@@ -1191,7 +1191,7 @@ The original image list is not modified.
     fun rotateLeft() -> imageList: ImageList
     ```
 
-## `#!sds fun` `rotateRight` {#safeds.data.image.containers.ImageList.rotateRight data-toc-label='[fun] rotateRight'}
+## <code class="doc-symbol doc-symbol-function"></code> `rotateRight` {#safeds.data.image.containers.ImageList.rotateRight data-toc-label='[function] rotateRight'}
 
 Return a new `ImageList` where all images have been rotated 90 degrees clockwise.
 
@@ -1211,7 +1211,7 @@ The original image list is not modified.
     fun rotateRight() -> imageList: ImageList
     ```
 
-## `#!sds fun` `sharpen` {#safeds.data.image.containers.ImageList.sharpen data-toc-label='[fun] sharpen'}
+## <code class="doc-symbol doc-symbol-function"></code> `sharpen` {#safeds.data.image.containers.ImageList.sharpen data-toc-label='[function] sharpen'}
 
 Return a new `ImageList` where all images have been sharpened.
 
@@ -1240,7 +1240,7 @@ The original image list is not modified.
     }
     ```
 
-## `#!sds fun` `shuffleImages` {#safeds.data.image.containers.ImageList.shuffleImages data-toc-label='[fun] shuffleImages'}
+## <code class="doc-symbol doc-symbol-function"></code> `shuffleImages` {#safeds.data.image.containers.ImageList.shuffleImages data-toc-label='[function] shuffleImages'}
 
 Return a new `ImageList` with all images shuffled.
 
@@ -1260,7 +1260,7 @@ The original image list is not modified.
     fun shuffleImages() -> imageList: ImageList
     ```
 
-## `#!sds fun` `toImages` {#safeds.data.image.containers.ImageList.toImages data-toc-label='[fun] toImages'}
+## <code class="doc-symbol doc-symbol-function"></code> `toImages` {#safeds.data.image.containers.ImageList.toImages data-toc-label='[function] toImages'}
 
 Return a list of all images in this image list.
 
@@ -1286,7 +1286,7 @@ Return a list of all images in this image list.
     ) -> images: List<Image>
     ```
 
-## `#!sds fun` `toJpegFiles` {#safeds.data.image.containers.ImageList.toJpegFiles data-toc-label='[fun] toJpegFiles'}
+## <code class="doc-symbol doc-symbol-function"></code> `toJpegFiles` {#safeds.data.image.containers.ImageList.toJpegFiles data-toc-label='[function] toJpegFiles'}
 
 Save all images as jpeg files.
 
@@ -1306,7 +1306,7 @@ Save all images as jpeg files.
     )
     ```
 
-## `#!sds fun` `toPngFiles` {#safeds.data.image.containers.ImageList.toPngFiles data-toc-label='[fun] toPngFiles'}
+## <code class="doc-symbol doc-symbol-function"></code> `toPngFiles` {#safeds.data.image.containers.ImageList.toPngFiles data-toc-label='[function] toPngFiles'}
 
 Save all images as png files.
 
@@ -1326,7 +1326,7 @@ Save all images as png files.
     )
     ```
 
-## `#!sds static fun` `fromFiles` {#safeds.data.image.containers.ImageList.fromFiles data-toc-label='[static fun] fromFiles'}
+## <code class="doc-symbol doc-symbol-static-function"></code> `fromFiles` {#safeds.data.image.containers.ImageList.fromFiles data-toc-label='[static-function] fromFiles'}
 
 Create an ImageList from a directory or a list of files.
 
@@ -1354,7 +1354,7 @@ If you provide a path to a directory the images will be sorted alphabetically wh
     ) -> imageList: ImageList
     ```
 
-## `#!sds static fun` `fromImages` {#safeds.data.image.containers.ImageList.fromImages data-toc-label='[static fun] fromImages'}
+## <code class="doc-symbol doc-symbol-static-function"></code> `fromImages` {#safeds.data.image.containers.ImageList.fromImages data-toc-label='[static-function] fromImages'}
 
 Create an ImageList from a list of images.
 

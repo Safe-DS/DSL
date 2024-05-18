@@ -1,4 +1,4 @@
-# `#!sds class` `GradientBoostingRegressor` {#safeds.ml.classical.regression.GradientBoostingRegressor data-toc-label='[class] GradientBoostingRegressor'}
+# <code class="doc-symbol doc-symbol-class"></code> `GradientBoostingRegressor` {#safeds.ml.classical.regression.GradientBoostingRegressor data-toc-label='[class] GradientBoostingRegressor'}
 
 Gradient boosting regression.
 
@@ -57,25 +57,25 @@ pipeline example {
     }
     ```
 
-## `#!sds attr` `isFitted` {#safeds.ml.classical.regression.GradientBoostingRegressor.isFitted data-toc-label='[attr] isFitted'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `isFitted` {#safeds.ml.classical.regression.GradientBoostingRegressor.isFitted data-toc-label='[attribute] isFitted'}
 
 Whether the model is fitted.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
 
-## `#!sds attr` `learningRate` {#safeds.ml.classical.regression.GradientBoostingRegressor.learningRate data-toc-label='[attr] learningRate'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `learningRate` {#safeds.ml.classical.regression.GradientBoostingRegressor.learningRate data-toc-label='[attribute] learningRate'}
 
 Get the learning rate.
 
 **Type:** [`Float`][safeds.lang.Float]
 
-## `#!sds attr` `treeCount` {#safeds.ml.classical.regression.GradientBoostingRegressor.treeCount data-toc-label='[attr] treeCount'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `treeCount` {#safeds.ml.classical.regression.GradientBoostingRegressor.treeCount data-toc-label='[attribute] treeCount'}
 
 Get the number of trees (estimators) in the ensemble.
 
 **Type:** [`Int`][safeds.lang.Int]
 
-## `#!sds fun` `coefficientOfDetermination` {#safeds.ml.classical.regression.GradientBoostingRegressor.coefficientOfDetermination data-toc-label='[fun] coefficientOfDetermination'}
+## <code class="doc-symbol doc-symbol-function"></code> `coefficientOfDetermination` {#safeds.ml.classical.regression.GradientBoostingRegressor.coefficientOfDetermination data-toc-label='[function] coefficientOfDetermination'}
 
 Compute the coefficient of determination (R²) of the regressor on the given data.
 
@@ -116,7 +116,7 @@ to 1.0. You can interpret the coefficient of determination as follows:
     ) -> coefficientOfDetermination: Float
     ```
 
-## `#!sds fun` `fit` {#safeds.ml.classical.regression.GradientBoostingRegressor.fit data-toc-label='[fun] fit'}
+## <code class="doc-symbol doc-symbol-function"></code> `fit` {#safeds.ml.classical.regression.GradientBoostingRegressor.fit data-toc-label='[function] fit'}
 
 Create a copy of this regressor and fit it with the given training data.
 
@@ -143,7 +143,7 @@ This regressor is not modified.
     ) -> fittedRegressor: GradientBoostingRegressor
     ```
 
-## `#!sds fun` `getFeatureNames` {#safeds.ml.classical.regression.GradientBoostingRegressor.getFeatureNames data-toc-label='[fun] getFeatureNames'}
+## <code class="doc-symbol doc-symbol-function"></code> `getFeatureNames` {#safeds.ml.classical.regression.GradientBoostingRegressor.getFeatureNames data-toc-label='[function] getFeatureNames'}
 
 Return the names of the feature columns.
 
@@ -163,7 +163,7 @@ Return the names of the feature columns.
     fun getFeatureNames() -> featureNames: List<String>
     ```
 
-## `#!sds fun` `getFeaturesSchema` {#safeds.ml.classical.regression.GradientBoostingRegressor.getFeaturesSchema data-toc-label='[fun] getFeaturesSchema'}
+## <code class="doc-symbol doc-symbol-function"></code> `getFeaturesSchema` {#safeds.ml.classical.regression.GradientBoostingRegressor.getFeaturesSchema data-toc-label='[function] getFeaturesSchema'}
 
 Return the schema of the feature columns.
 
@@ -183,7 +183,7 @@ Return the schema of the feature columns.
     fun getFeaturesSchema() -> featureSchema: Schema
     ```
 
-## `#!sds fun` `getTargetName` {#safeds.ml.classical.regression.GradientBoostingRegressor.getTargetName data-toc-label='[fun] getTargetName'}
+## <code class="doc-symbol doc-symbol-function"></code> `getTargetName` {#safeds.ml.classical.regression.GradientBoostingRegressor.getTargetName data-toc-label='[function] getTargetName'}
 
 Return the name of the target column.
 
@@ -203,7 +203,7 @@ Return the name of the target column.
     fun getTargetName() -> targetName: String
     ```
 
-## `#!sds fun` `getTargetType` {#safeds.ml.classical.regression.GradientBoostingRegressor.getTargetType data-toc-label='[fun] getTargetType'}
+## <code class="doc-symbol doc-symbol-function"></code> `getTargetType` {#safeds.ml.classical.regression.GradientBoostingRegressor.getTargetType data-toc-label='[function] getTargetType'}
 
 Return the type of the target column.
 
@@ -223,7 +223,7 @@ Return the type of the target column.
     fun getTargetType() -> targetType: DataType
     ```
 
-## `#!sds fun` `meanAbsoluteError` {#safeds.ml.classical.regression.GradientBoostingRegressor.meanAbsoluteError data-toc-label='[fun] meanAbsoluteError'}
+## <code class="doc-symbol doc-symbol-function"></code> `meanAbsoluteError` {#safeds.ml.classical.regression.GradientBoostingRegressor.meanAbsoluteError data-toc-label='[function] meanAbsoluteError'}
 
 Compute the mean absolute error (MAE) of the regressor on the given data.
 
@@ -253,7 +253,7 @@ infinity.
     ) -> meanAbsoluteError: Float
     ```
 
-## `#!sds fun` `meanDirectionalAccuracy` {#safeds.ml.classical.regression.GradientBoostingRegressor.meanDirectionalAccuracy data-toc-label='[fun] meanDirectionalAccuracy'}
+## <code class="doc-symbol doc-symbol-function"></code> `meanDirectionalAccuracy` {#safeds.ml.classical.regression.GradientBoostingRegressor.meanDirectionalAccuracy data-toc-label='[function] meanDirectionalAccuracy'}
 
 Compute the mean directional accuracy (MDA) of the regressor on the given data.
 
@@ -287,7 +287,7 @@ for other types of data. Because of this, it is not included in the `summarize_m
     ) -> meanDirectionalAccuracy: Float
     ```
 
-## `#!sds fun` `meanSquaredError` {#safeds.ml.classical.regression.GradientBoostingRegressor.meanSquaredError data-toc-label='[fun] meanSquaredError'}
+## <code class="doc-symbol doc-symbol-function"></code> `meanSquaredError` {#safeds.ml.classical.regression.GradientBoostingRegressor.meanSquaredError data-toc-label='[function] meanSquaredError'}
 
 Compute the mean squared error (MSE) of the regressor on the given data.
 
@@ -319,7 +319,7 @@ infinity.
     ) -> meanSquaredError: Float
     ```
 
-## `#!sds fun` `medianAbsoluteDeviation` {#safeds.ml.classical.regression.GradientBoostingRegressor.medianAbsoluteDeviation data-toc-label='[fun] medianAbsoluteDeviation'}
+## <code class="doc-symbol doc-symbol-function"></code> `medianAbsoluteDeviation` {#safeds.ml.classical.regression.GradientBoostingRegressor.medianAbsoluteDeviation data-toc-label='[function] medianAbsoluteDeviation'}
 
 Compute the median absolute deviation (MAD) of the regressor on the given data.
 
@@ -349,7 +349,7 @@ positive infinity.
     ) -> medianAbsoluteDeviation: Float
     ```
 
-## `#!sds fun` `predict` {#safeds.ml.classical.regression.GradientBoostingRegressor.predict data-toc-label='[fun] predict'}
+## <code class="doc-symbol doc-symbol-function"></code> `predict` {#safeds.ml.classical.regression.GradientBoostingRegressor.predict data-toc-label='[function] predict'}
 
 Predict the target values on the given dataset.
 
@@ -376,7 +376,7 @@ Predict the target values on the given dataset.
     ) -> prediction: TabularDataset
     ```
 
-## `#!sds fun` `summarizeMetrics` {#safeds.ml.classical.regression.GradientBoostingRegressor.summarizeMetrics data-toc-label='[fun] summarizeMetrics'}
+## <code class="doc-symbol doc-symbol-function"></code> `summarizeMetrics` {#safeds.ml.classical.regression.GradientBoostingRegressor.summarizeMetrics data-toc-label='[function] summarizeMetrics'}
 
 Summarize the regressor's metrics on the given data.
 

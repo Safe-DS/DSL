@@ -3,14 +3,13 @@ search:
   boost: 0.5
 ---
 
-# `#!sds abstract class` `TableTransformer` {#safeds.data.tabular.transformation.TableTransformer data-toc-label='[abstract class] TableTransformer'}
+# <code class="doc-symbol doc-symbol-class"></code> `TableTransformer` {#safeds.data.tabular.transformation.TableTransformer data-toc-label='[class] TableTransformer'}
 
 Learn a transformation for a set of columns in a `Table` and transform another `Table` with the same columns.
 
 **Inheritors:**
 
 - [`Discretizer`][safeds.data.tabular.transformation.Discretizer]
-- `#!sds Imputer`
 - [`InvertibleTableTransformer`][safeds.data.tabular.transformation.InvertibleTableTransformer]
 - [`SimpleImputer`][safeds.data.tabular.transformation.SimpleImputer]
 
@@ -73,13 +72,13 @@ Learn a transformation for a set of columns in a `Table` and transform another `
     }
     ```
 
-## `#!sds attr` `isFitted` {#safeds.data.tabular.transformation.TableTransformer.isFitted data-toc-label='[attr] isFitted'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `isFitted` {#safeds.data.tabular.transformation.TableTransformer.isFitted data-toc-label='[attribute] isFitted'}
 
 Whether the transformer is fitted.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
 
-## `#!sds fun` `fit` {#safeds.data.tabular.transformation.TableTransformer.fit data-toc-label='[fun] fit'}
+## <code class="doc-symbol doc-symbol-function"></code> `fit` {#safeds.data.tabular.transformation.TableTransformer.fit data-toc-label='[function] fit'}
 
 Learn a transformation for a set of columns in a table.
 
@@ -108,7 +107,7 @@ Learn a transformation for a set of columns in a table.
     ) -> fittedTransformer: TableTransformer
     ```
 
-## `#!sds fun` `fitAndTransform` {#safeds.data.tabular.transformation.TableTransformer.fitAndTransform data-toc-label='[fun] fitAndTransform'}
+## <code class="doc-symbol doc-symbol-function"></code> `fitAndTransform` {#safeds.data.tabular.transformation.TableTransformer.fitAndTransform data-toc-label='[function] fitAndTransform'}
 
 Learn a transformation for a set of columns in a table and apply the learned transformation to the same table.
 
@@ -139,7 +138,7 @@ Learn a transformation for a set of columns in a table and apply the learned tra
     ) -> (fittedTransformer: TableTransformer, transformedTable: Table)
     ```
 
-## `#!sds fun` `transform` {#safeds.data.tabular.transformation.TableTransformer.transform data-toc-label='[fun] transform'}
+## <code class="doc-symbol doc-symbol-function"></code> `transform` {#safeds.data.tabular.transformation.TableTransformer.transform data-toc-label='[function] transform'}
 
 Apply the learned transformation to a table.
 

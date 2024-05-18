@@ -3,7 +3,7 @@ search:
   boost: 0.5
 ---
 
-# `#!sds abstract class` `DataType` {#safeds.data.tabular.typing.DataType data-toc-label='[abstract class] DataType'}
+# <code class="doc-symbol doc-symbol-class"></code> `DataType` {#safeds.data.tabular.typing.DataType data-toc-label='[class] DataType'}
 
 The type of a column or cell in a table.
 
@@ -22,13 +22,13 @@ The type of a column or cell in a table.
     }
     ```
 
-## `#!sds attr` `isNumeric` {#safeds.data.tabular.typing.DataType.isNumeric data-toc-label='[attr] isNumeric'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `isNumeric` {#safeds.data.tabular.typing.DataType.isNumeric data-toc-label='[attribute] isNumeric'}
 
 Whether the column type is numeric.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
 
-## `#!sds attr` `isTemporal` {#safeds.data.tabular.typing.DataType.isTemporal data-toc-label='[attr] isTemporal'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `isTemporal` {#safeds.data.tabular.typing.DataType.isTemporal data-toc-label='[attribute] isTemporal'}
 
 Whether the column type is temporal.
 

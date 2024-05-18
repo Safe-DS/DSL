@@ -14,27 +14,43 @@
 
 :root,
 [data-md-color-scheme="default"] {
+    --doc-symbol-annotation-fg-color: #95002d;
     --doc-symbol-attribute-fg-color: #953800;
     --doc-symbol-class-fg-color: #0550ae;
     --doc-symbol-enum-fg-color: #5cad0f;
+    --doc-symbol-variant-fg-color: #5cad0f;
     --doc-symbol-function-fg-color: #8250df;
+    --doc-symbol-segment-fg-color: #8250df;
+    --doc-symbol-schema-fg-color: #3ead9d;
 
+    --doc-symbol-annotation-bg-color: #95002d1a;
     --doc-symbol-attribute-bg-color: #9538001a;
     --doc-symbol-class-bg-color: #0550ae1a;
     --doc-symbol-enum-bg-color: #5cad0f1a;
+    --doc-symbol-variant-bg-color: #5cad0f1a;
     --doc-symbol-function-bg-color: #8250df1a;
+    --doc-symbol-segment-bg-color: #8250df1a;
+    --doc-symbol-schema-bg-color: #3ead9d1a;
 }
 
 [data-md-color-scheme="slate"] {
+    --doc-symbol-annotation-fg-color: #ff004d;
     --doc-symbol-attribute-fg-color: #ffa657;
     --doc-symbol-class-fg-color: #79c0ff;
     --doc-symbol-enum-fg-color: #baff79;
+    --doc-symbol-variant-fg-color: #baff79;
     --doc-symbol-function-fg-color: #d2a8ff;
+    --doc-symbol-segment-fg-color: #d2a8ff;
+    --doc-symbol-schema-fg-color: #5cffe7;
 
+    --doc-symbol-annotation-bg-color: #ff004d1a;
     --doc-symbol-attribute-bg-color: #ffa6571a;
     --doc-symbol-class-bg-color: #79c0ff1a;
     --doc-symbol-enum-bg-color: #baff791a;
+    --doc-symbol-variant-bg-color: #baff791a;
     --doc-symbol-function-bg-color: #d2a8ff1a;
+    --doc-symbol-segment-bg-color: #d2a8ff1a;
+    --doc-symbol-schema-bg-color: #5cffe71a;
 }
 
 code.doc-symbol {
@@ -42,6 +58,15 @@ code.doc-symbol {
     font-size: .85em;
     padding: 0 .3em;
     font-weight: bold;
+}
+
+code.doc-symbol-annotation {
+    color: var(--doc-symbol-annotation-fg-color);
+    background-color: var(--doc-symbol-annotation-bg-color);
+}
+
+code.doc-symbol-annotation::after {
+    content: "annotation";
 }
 
 code.doc-symbol-attribute,
@@ -55,7 +80,7 @@ code.doc-symbol-attribute::after {
 }
 
 code.doc-symbol-static-attribute::after {
-    content: "static attr";
+    content: "static\00a0 attr";
 }
 
 code.doc-symbol-class {
@@ -76,6 +101,15 @@ code.doc-symbol-enum::after {
     content: "enum";
 }
 
+code.doc-symbol-variant {
+    color: var(--doc-symbol-variant-fg-color);
+    background-color: var(--doc-symbol-variant-bg-color);
+}
+
+code.doc-symbol-variant::after {
+    content: "variant";
+}
+
 code.doc-symbol-function,
 code.doc-symbol-static-function {
     color: var(--doc-symbol-function-fg-color);
@@ -87,5 +121,23 @@ code.doc-symbol-function::after {
 }
 
 code.doc-symbol-static-function::after {
-    content: "static fun";
+    content: "static\00a0 fun";
+}
+
+code.doc-symbol-segment {
+    color: var(--doc-symbol-segment-fg-color);
+    background-color: var(--doc-symbol-segment-bg-color);
+}
+
+code.doc-symbol-segment::after {
+    content: "segment";
+}
+
+code.doc-symbol-schema {
+    color: var(--doc-symbol-schema-fg-color);
+    background-color: var(--doc-symbol-schema-bg-color);
+}
+
+code.doc-symbol-schema::after {
+    content: "schema";
 }

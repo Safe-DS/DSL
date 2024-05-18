@@ -1,4 +1,4 @@
-# `#!sds class` `InvertibleTableTransformer` {#safeds.data.tabular.transformation.InvertibleTableTransformer data-toc-label='[class] InvertibleTableTransformer'}
+# <code class="doc-symbol doc-symbol-class"></code> `InvertibleTableTransformer` {#safeds.data.tabular.transformation.InvertibleTableTransformer data-toc-label='[class] InvertibleTableTransformer'}
 
 A `TableTransformer` that can also undo the learned transformation after it has been applied.
 
@@ -68,13 +68,13 @@ A `TableTransformer` that can also undo the learned transformation after it has 
     }
     ```
 
-## `#!sds attr` `isFitted` {#safeds.data.tabular.transformation.InvertibleTableTransformer.isFitted data-toc-label='[attr] isFitted'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `isFitted` {#safeds.data.tabular.transformation.InvertibleTableTransformer.isFitted data-toc-label='[attribute] isFitted'}
 
 Whether the transformer is fitted.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
 
-## `#!sds fun` `fit` {#safeds.data.tabular.transformation.InvertibleTableTransformer.fit data-toc-label='[fun] fit'}
+## <code class="doc-symbol doc-symbol-function"></code> `fit` {#safeds.data.tabular.transformation.InvertibleTableTransformer.fit data-toc-label='[function] fit'}
 
 Learn a transformation for a set of columns in a table.
 
@@ -103,7 +103,7 @@ Learn a transformation for a set of columns in a table.
     ) -> fittedTransformer: InvertibleTableTransformer
     ```
 
-## `#!sds fun` `fitAndTransform` {#safeds.data.tabular.transformation.InvertibleTableTransformer.fitAndTransform data-toc-label='[fun] fitAndTransform'}
+## <code class="doc-symbol doc-symbol-function"></code> `fitAndTransform` {#safeds.data.tabular.transformation.InvertibleTableTransformer.fitAndTransform data-toc-label='[function] fitAndTransform'}
 
 Learn a transformation for a set of columns in a table and apply the learned transformation to the same table.
 
@@ -134,7 +134,7 @@ Learn a transformation for a set of columns in a table and apply the learned tra
     ) -> (fittedTransformer: InvertibleTableTransformer, transformedTable: Table)
     ```
 
-## `#!sds fun` `inverseTransform` {#safeds.data.tabular.transformation.InvertibleTableTransformer.inverseTransform data-toc-label='[fun] inverseTransform'}
+## <code class="doc-symbol doc-symbol-function"></code> `inverseTransform` {#safeds.data.tabular.transformation.InvertibleTableTransformer.inverseTransform data-toc-label='[function] inverseTransform'}
 
 Undo the learned transformation as well as possible.
 
@@ -164,7 +164,7 @@ Column order and types may differ from the original table. Likewise, some values
     ) -> originalTable: Table
     ```
 
-## `#!sds fun` `transform` {#safeds.data.tabular.transformation.InvertibleTableTransformer.transform data-toc-label='[fun] transform'}
+## <code class="doc-symbol doc-symbol-function"></code> `transform` {#safeds.data.tabular.transformation.InvertibleTableTransformer.transform data-toc-label='[function] transform'}
 
 Apply the learned transformation to a table.
 

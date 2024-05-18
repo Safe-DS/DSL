@@ -1,4 +1,4 @@
-# `#!sds annotation` `Deprecated` {#safeds.lang.Deprecated data-toc-label='[annotation] Deprecated'}
+# <code class="doc-symbol doc-symbol-annotation"></code> `Deprecated` {#safeds.lang.Deprecated data-toc-label='[annotation] Deprecated'}
 
 The declaration should no longer be used.
 

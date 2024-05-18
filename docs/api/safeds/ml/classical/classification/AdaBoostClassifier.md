@@ -1,4 +1,4 @@
-# `#!sds class` `AdaBoostClassifier` {#safeds.ml.classical.classification.AdaBoostClassifier data-toc-label='[class] AdaBoostClassifier'}
+# <code class="doc-symbol doc-symbol-class"></code> `AdaBoostClassifier` {#safeds.ml.classical.classification.AdaBoostClassifier data-toc-label='[class] AdaBoostClassifier'}
 
 Ada Boost classification.
 
@@ -63,31 +63,31 @@ pipeline example {
     }
     ```
 
-## `#!sds attr` `isFitted` {#safeds.ml.classical.classification.AdaBoostClassifier.isFitted data-toc-label='[attr] isFitted'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `isFitted` {#safeds.ml.classical.classification.AdaBoostClassifier.isFitted data-toc-label='[attribute] isFitted'}
 
 Whether the model is fitted.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
 
-## `#!sds attr` `learner` {#safeds.ml.classical.classification.AdaBoostClassifier.learner data-toc-label='[attr] learner'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `learner` {#safeds.ml.classical.classification.AdaBoostClassifier.learner data-toc-label='[attribute] learner'}
 
 Get the base learner used for training the ensemble.
 
 **Type:** [`Classifier`][safeds.ml.classical.classification.Classifier]
 
-## `#!sds attr` `learningRate` {#safeds.ml.classical.classification.AdaBoostClassifier.learningRate data-toc-label='[attr] learningRate'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `learningRate` {#safeds.ml.classical.classification.AdaBoostClassifier.learningRate data-toc-label='[attribute] learningRate'}
 
 Get the learning rate.
 
 **Type:** [`Float`][safeds.lang.Float]
 
-## `#!sds attr` `maxLearnerCount` {#safeds.ml.classical.classification.AdaBoostClassifier.maxLearnerCount data-toc-label='[attr] maxLearnerCount'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `maxLearnerCount` {#safeds.ml.classical.classification.AdaBoostClassifier.maxLearnerCount data-toc-label='[attribute] maxLearnerCount'}
 
 Get the maximum number of learners in the ensemble.
 
 **Type:** [`Int`][safeds.lang.Int]
 
-## `#!sds fun` `accuracy` {#safeds.ml.classical.classification.AdaBoostClassifier.accuracy data-toc-label='[fun] accuracy'}
+## <code class="doc-symbol doc-symbol-function"></code> `accuracy` {#safeds.ml.classical.classification.AdaBoostClassifier.accuracy data-toc-label='[function] accuracy'}
 
 Compute the accuracy of the classifier on the given data.
 
@@ -117,7 +117,7 @@ better. Results range from 0.0 to 1.0.
     ) -> accuracy: Float
     ```
 
-## `#!sds fun` `f1Score` {#safeds.ml.classical.classification.AdaBoostClassifier.f1Score data-toc-label='[fun] f1Score'}
+## <code class="doc-symbol doc-symbol-function"></code> `f1Score` {#safeds.ml.classical.classification.AdaBoostClassifier.f1Score data-toc-label='[function] f1Score'}
 
 Compute the classifier's F₁ score on the given data.
 
@@ -150,7 +150,7 @@ classifier. Results range from 0.0 to 1.0.
     ) -> f1Score: Float
     ```
 
-## `#!sds fun` `fit` {#safeds.ml.classical.classification.AdaBoostClassifier.fit data-toc-label='[fun] fit'}
+## <code class="doc-symbol doc-symbol-function"></code> `fit` {#safeds.ml.classical.classification.AdaBoostClassifier.fit data-toc-label='[function] fit'}
 
 Create a copy of this classifier and fit it with the given training data.
 
@@ -177,7 +177,7 @@ This classifier is not modified.
     ) -> fittedClassifier: AdaBoostClassifier
     ```
 
-## `#!sds fun` `getFeatureNames` {#safeds.ml.classical.classification.AdaBoostClassifier.getFeatureNames data-toc-label='[fun] getFeatureNames'}
+## <code class="doc-symbol doc-symbol-function"></code> `getFeatureNames` {#safeds.ml.classical.classification.AdaBoostClassifier.getFeatureNames data-toc-label='[function] getFeatureNames'}
 
 Return the names of the feature columns.
 
@@ -197,7 +197,7 @@ Return the names of the feature columns.
     fun getFeatureNames() -> featureNames: List<String>
     ```
 
-## `#!sds fun` `getFeaturesSchema` {#safeds.ml.classical.classification.AdaBoostClassifier.getFeaturesSchema data-toc-label='[fun] getFeaturesSchema'}
+## <code class="doc-symbol doc-symbol-function"></code> `getFeaturesSchema` {#safeds.ml.classical.classification.AdaBoostClassifier.getFeaturesSchema data-toc-label='[function] getFeaturesSchema'}
 
 Return the schema of the feature columns.
 
@@ -217,7 +217,7 @@ Return the schema of the feature columns.
     fun getFeaturesSchema() -> featureSchema: Schema
     ```
 
-## `#!sds fun` `getTargetName` {#safeds.ml.classical.classification.AdaBoostClassifier.getTargetName data-toc-label='[fun] getTargetName'}
+## <code class="doc-symbol doc-symbol-function"></code> `getTargetName` {#safeds.ml.classical.classification.AdaBoostClassifier.getTargetName data-toc-label='[function] getTargetName'}
 
 Return the name of the target column.
 
@@ -237,7 +237,7 @@ Return the name of the target column.
     fun getTargetName() -> targetName: String
     ```
 
-## `#!sds fun` `getTargetType` {#safeds.ml.classical.classification.AdaBoostClassifier.getTargetType data-toc-label='[fun] getTargetType'}
+## <code class="doc-symbol doc-symbol-function"></code> `getTargetType` {#safeds.ml.classical.classification.AdaBoostClassifier.getTargetType data-toc-label='[function] getTargetType'}
 
 Return the type of the target column.
 
@@ -257,7 +257,7 @@ Return the type of the target column.
     fun getTargetType() -> targetType: DataType
     ```
 
-## `#!sds fun` `precision` {#safeds.ml.classical.classification.AdaBoostClassifier.precision data-toc-label='[fun] precision'}
+## <code class="doc-symbol doc-symbol-function"></code> `precision` {#safeds.ml.classical.classification.AdaBoostClassifier.precision data-toc-label='[function] precision'}
 
 Compute the classifier's precision on the given data.
 
@@ -289,7 +289,7 @@ better the classifier. Results range from 0.0 to 1.0.
     ) -> precision: Float
     ```
 
-## `#!sds fun` `predict` {#safeds.ml.classical.classification.AdaBoostClassifier.predict data-toc-label='[fun] predict'}
+## <code class="doc-symbol doc-symbol-function"></code> `predict` {#safeds.ml.classical.classification.AdaBoostClassifier.predict data-toc-label='[function] predict'}
 
 Predict the target values on the given dataset.
 
@@ -316,7 +316,7 @@ Predict the target values on the given dataset.
     ) -> prediction: TabularDataset
     ```
 
-## `#!sds fun` `recall` {#safeds.ml.classical.classification.AdaBoostClassifier.recall data-toc-label='[fun] recall'}
+## <code class="doc-symbol doc-symbol-function"></code> `recall` {#safeds.ml.classical.classification.AdaBoostClassifier.recall data-toc-label='[function] recall'}
 
 Compute the classifier's recall on the given data.
 
@@ -348,7 +348,7 @@ better the classifier. Results range from 0.0 to 1.0.
     ) -> recall: Float
     ```
 
-## `#!sds fun` `summarizeMetrics` {#safeds.ml.classical.classification.AdaBoostClassifier.summarizeMetrics data-toc-label='[fun] summarizeMetrics'}
+## <code class="doc-symbol doc-symbol-function"></code> `summarizeMetrics` {#safeds.ml.classical.classification.AdaBoostClassifier.summarizeMetrics data-toc-label='[function] summarizeMetrics'}
 
 Summarize the classifier's metrics on the given data.
 

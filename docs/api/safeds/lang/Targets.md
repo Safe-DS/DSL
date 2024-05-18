@@ -1,4 +1,4 @@
-# `#!sds annotation` `Targets` {#safeds.lang.Targets data-toc-label='[annotation] Targets'}
+# <code class="doc-symbol doc-symbol-annotation"></code> `Targets` {#safeds.lang.Targets data-toc-label='[annotation] Targets'}
 
 The annotation must target only the specified declaration types. By default, any declaration type can be targeted.
 

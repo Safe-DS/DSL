@@ -1,4 +1,4 @@
-# :test_tube:{ title="Experimental" } `#!sds class` `OutputConversionImageToColumn` {#safeds.ml.nn.converters.OutputConversionImageToColumn data-toc-label='[class] OutputConversionImageToColumn'}
+# :test_tube:{ title="Experimental" } <code class="doc-symbol doc-symbol-class"></code> `OutputConversionImageToColumn` {#safeds.ml.nn.converters.OutputConversionImageToColumn data-toc-label='[class] OutputConversionImageToColumn'}
 
 **Parent type:** [`OutputConversion<Image, Column<Any?>>`][safeds.ml.nn.converters.OutputConversion]
 

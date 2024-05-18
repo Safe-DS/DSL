@@ -1,4 +1,4 @@
-# `#!sds class` `TablePlotter` {#safeds.data.tabular.plotting.TablePlotter data-toc-label='[class] TablePlotter'}
+# <code class="doc-symbol doc-symbol-class"></code> `TablePlotter` {#safeds.data.tabular.plotting.TablePlotter data-toc-label='[class] TablePlotter'}
 
 A class that contains plotting methods for a table.
 
@@ -127,7 +127,7 @@ pipeline example {
     }
     ```
 
-## `#!sds fun` `boxPlots` {#safeds.data.tabular.plotting.TablePlotter.boxPlots data-toc-label='[fun] boxPlots'}
+## <code class="doc-symbol doc-symbol-function"></code> `boxPlots` {#safeds.data.tabular.plotting.TablePlotter.boxPlots data-toc-label='[function] boxPlots'}
 
 Plot a boxplot for every numerical column.
 
@@ -154,7 +154,7 @@ pipeline example {
     fun boxPlots() -> plot: Image
     ```
 
-## `#!sds fun` `correlationHeatmap` {#safeds.data.tabular.plotting.TablePlotter.correlationHeatmap data-toc-label='[fun] correlationHeatmap'}
+## <code class="doc-symbol doc-symbol-function"></code> `correlationHeatmap` {#safeds.data.tabular.plotting.TablePlotter.correlationHeatmap data-toc-label='[function] correlationHeatmap'}
 
 Plot a correlation heatmap for all numerical columns of this `Table`.
 
@@ -181,7 +181,7 @@ pipeline example {
     fun correlationHeatmap() -> plot: Image
     ```
 
-## `#!sds fun` `histograms` {#safeds.data.tabular.plotting.TablePlotter.histograms data-toc-label='[fun] histograms'}
+## <code class="doc-symbol doc-symbol-function"></code> `histograms` {#safeds.data.tabular.plotting.TablePlotter.histograms data-toc-label='[function] histograms'}
 
 Plot a histogram for every column.
 
@@ -217,7 +217,7 @@ pipeline example {
     }
     ```
 
-## `#!sds fun` `linePlot` {#safeds.data.tabular.plotting.TablePlotter.linePlot data-toc-label='[fun] linePlot'}
+## <code class="doc-symbol doc-symbol-function"></code> `linePlot` {#safeds.data.tabular.plotting.TablePlotter.linePlot data-toc-label='[function] linePlot'}
 
 Create a line plot for two columns in the table.
 
@@ -259,7 +259,7 @@ pipeline example {
     ) -> plot: Image
     ```
 
-## `#!sds fun` `scatterPlot` {#safeds.data.tabular.plotting.TablePlotter.scatterPlot data-toc-label='[fun] scatterPlot'}
+## <code class="doc-symbol doc-symbol-function"></code> `scatterPlot` {#safeds.data.tabular.plotting.TablePlotter.scatterPlot data-toc-label='[function] scatterPlot'}
 
 Create a scatter plot for two columns in the table.
 

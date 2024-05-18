@@ -2,18 +2,20 @@
 <li class="md-nav__item">
     <a href="{{ toc_item.url }}" class="md-nav__link">
         <span class="md-ellipsis">
-            {% if toc_item.title.startswith("[attr] ") %}
-                <code class="doc-symbol doc-symbol-attribute"></code>&nbsp;{{ toc_item.title | replace("[attr] ", "") }}
-            {% elif toc_item.title.startswith("[static attr] ") %}
-                <code class="doc-symbol doc-symbol-static-attribute"></code>&nbsp;{{ toc_item.title | replace("[static attr] ", "") }}
+            {% if toc_item.title.startswith("[attribute] ") %}
+                <code class="doc-symbol doc-symbol-attribute"></code>&nbsp;{{ toc_item.title | replace("[attribute] ", "") }}
+            {% elif toc_item.title.startswith("[static-attribute] ") %}
+                <code class="doc-symbol doc-symbol-static-attribute"></code>&nbsp;{{ toc_item.title | replace("[static-attribute] ", "") }}
             {% elif toc_item.title.startswith("[class] ") %}
                 <code class="doc-symbol doc-symbol-class"></code>&nbsp;{{ toc_item.title | replace("[class] ", "") }}
             {% elif toc_item.title.startswith("[enum] ") %}
                 <code class="doc-symbol doc-symbol-enum"></code>&nbsp;{{ toc_item.title | replace("[enum] ", "") }}
-            {% elif toc_item.title.startswith("[fun] ") %}
-                <code class="doc-symbol doc-symbol-function"></code>&nbsp;{{ toc_item.title | replace("[fun] ", "") }}
-            {% elif toc_item.title.startswith("[static fun] ") %}
-                <code class="doc-symbol doc-symbol-static-function"></code>&nbsp;{{ toc_item.title | replace("[static fun] ", "") }}
+            {% elif toc_item.title.startswith("[variant] ") %}
+                <code class="doc-symbol doc-symbol-variant"></code>&nbsp;{{ toc_item.title | replace("[variant] ", "") }}
+            {% elif toc_item.title.startswith("[function] ") %}
+                <code class="doc-symbol doc-symbol-function"></code>&nbsp;{{ toc_item.title | replace("[function] ", "") }}
+            {% elif toc_item.title.startswith("[static-function] ") %}
+                <code class="doc-symbol doc-symbol-static-function"></code>&nbsp;{{ toc_item.title | replace("[static-function] ", "") }}
             {% else %}
                 {{ toc_item.title }}
             {% endif %}

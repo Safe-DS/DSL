@@ -1,4 +1,4 @@
-# :test_tube:{ title="Experimental" } `#!sds class` `InputConversionImage` {#safeds.ml.nn.converters.InputConversionImage data-toc-label='[class] InputConversionImage'}
+# :test_tube:{ title="Experimental" } <code class="doc-symbol doc-symbol-class"></code> `InputConversionImage` {#safeds.ml.nn.converters.InputConversionImage data-toc-label='[class] InputConversionImage'}
 
 The input conversion for a neural network, defines the input parameters for the neural network.
 
