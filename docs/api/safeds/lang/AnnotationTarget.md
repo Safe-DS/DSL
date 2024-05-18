@@ -1,4 +1,4 @@
-# `#!sds enum` AnnotationTarget {#safeds.lang.AnnotationTarget data-toc-label='AnnotationTarget'}
+# `#!sds enum` AnnotationTarget {#safeds.lang.AnnotationTarget data-toc-label='[enum] AnnotationTarget'}
 
 The declaration types that can be targeted by annotations.
 

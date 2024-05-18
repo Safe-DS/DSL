@@ -1,4 +1,4 @@
-# :test_tube:{ title="Experimental" } `#!sds abstract class` Image {#safeds.data.image.containers.Image data-toc-label='Image'}
+# :test_tube:{ title="Experimental" } `#!sds abstract class` Image {#safeds.data.image.containers.Image data-toc-label='[abstract class] Image'}
 
 A container for image data.
 
@@ -423,7 +423,7 @@ pipeline example {
     }
     ```
 
-## `#!sds attr` channel {#safeds.data.image.containers.Image.channel data-toc-label='channel'}
+## `#!sds attr` channel {#safeds.data.image.containers.Image.channel data-toc-label='[attr] channel'}
 
 Get the number of channels of the image.
 
@@ -437,7 +437,7 @@ pipeline example {
 }
 ```
 
-## `#!sds attr` height {#safeds.data.image.containers.Image.height data-toc-label='height'}
+## `#!sds attr` height {#safeds.data.image.containers.Image.height data-toc-label='[attr] height'}
 
 Get the height of the image in pixels.
 
@@ -451,13 +451,13 @@ pipeline example {
 }
 ```
 
-## `#!sds attr` size {#safeds.data.image.containers.Image.size data-toc-label='size'}
+## `#!sds attr` size {#safeds.data.image.containers.Image.size data-toc-label='[attr] size'}
 
 Get the `ImageSize` of the image.
 
 **Type:** [`ImageSize`][safeds.data.image.typing.ImageSize]
 
-## `#!sds attr` width {#safeds.data.image.containers.Image.width data-toc-label='width'}
+## `#!sds attr` width {#safeds.data.image.containers.Image.width data-toc-label='[attr] width'}
 
 Get the width of the image in pixels.
 
@@ -471,7 +471,7 @@ pipeline example {
 }
 ```
 
-## `#!sds fun` addNoise {#safeds.data.image.containers.Image.addNoise data-toc-label='addNoise'}
+## `#!sds fun` addNoise {#safeds.data.image.containers.Image.addNoise data-toc-label='[fun] addNoise'}
 
 Return a new `Image` with noise added to the image.
 
@@ -509,7 +509,7 @@ pipeline example {
     }
     ```
 
-## `#!sds fun` adjustBrightness {#safeds.data.image.containers.Image.adjustBrightness data-toc-label='adjustBrightness'}
+## `#!sds fun` adjustBrightness {#safeds.data.image.containers.Image.adjustBrightness data-toc-label='[fun] adjustBrightness'}
 
 Return a new `Image` with an adjusted brightness.
 
@@ -547,7 +547,7 @@ pipeline example {
     }
     ```
 
-## `#!sds fun` adjustColorBalance {#safeds.data.image.containers.Image.adjustColorBalance data-toc-label='adjustColorBalance'}
+## `#!sds fun` adjustColorBalance {#safeds.data.image.containers.Image.adjustColorBalance data-toc-label='[fun] adjustColorBalance'}
 
 Return a new `Image` with adjusted color balance.
 
@@ -585,7 +585,7 @@ pipeline example {
     }
     ```
 
-## `#!sds fun` adjustContrast {#safeds.data.image.containers.Image.adjustContrast data-toc-label='adjustContrast'}
+## `#!sds fun` adjustContrast {#safeds.data.image.containers.Image.adjustContrast data-toc-label='[fun] adjustContrast'}
 
 Return a new `Image` with adjusted contrast.
 
@@ -623,7 +623,7 @@ pipeline example {
     }
     ```
 
-## `#!sds fun` blur {#safeds.data.image.containers.Image.blur data-toc-label='blur'}
+## `#!sds fun` blur {#safeds.data.image.containers.Image.blur data-toc-label='[fun] blur'}
 
 Return a blurred version of the image.
 
@@ -660,7 +660,7 @@ pipeline example {
     }
     ```
 
-## `#!sds fun` changeChannel {#safeds.data.image.containers.Image.changeChannel data-toc-label='changeChannel'}
+## `#!sds fun` changeChannel {#safeds.data.image.containers.Image.changeChannel data-toc-label='[fun] changeChannel'}
 
 Return a new `Image` that has the given number of channels.
 
@@ -688,7 +688,7 @@ The original image is not modified.
     ) -> result1: Image
     ```
 
-## `#!sds fun` convertToGrayscale {#safeds.data.image.containers.Image.convertToGrayscale data-toc-label='convertToGrayscale'}
+## `#!sds fun` convertToGrayscale {#safeds.data.image.containers.Image.convertToGrayscale data-toc-label='[fun] convertToGrayscale'}
 
 Return a new `Image` that is converted to grayscale.
 
@@ -716,7 +716,7 @@ pipeline example {
     fun convertToGrayscale() -> result1: Image
     ```
 
-## `#!sds fun` crop {#safeds.data.image.containers.Image.crop data-toc-label='crop'}
+## `#!sds fun` crop {#safeds.data.image.containers.Image.crop data-toc-label='[fun] crop'}
 
 Return a new `Image` that has been cropped to a given bounding rectangle.
 
@@ -762,7 +762,7 @@ pipeline example {
     }
     ```
 
-## `#!sds fun` findEdges {#safeds.data.image.containers.Image.findEdges data-toc-label='findEdges'}
+## `#!sds fun` findEdges {#safeds.data.image.containers.Image.findEdges data-toc-label='[fun] findEdges'}
 
 Return a grayscale version of the image with the edges highlighted.
 
@@ -790,7 +790,7 @@ pipeline example {
     fun findEdges() -> result1: Image
     ```
 
-## `#!sds fun` flipHorizontally {#safeds.data.image.containers.Image.flipHorizontally data-toc-label='flipHorizontally'}
+## `#!sds fun` flipHorizontally {#safeds.data.image.containers.Image.flipHorizontally data-toc-label='[fun] flipHorizontally'}
 
 Return a new `Image` that is flipped horizontally (vertical axis, flips left-right and vice versa).
 
@@ -818,7 +818,7 @@ pipeline example {
     fun flipHorizontally() -> result1: Image
     ```
 
-## `#!sds fun` flipVertically {#safeds.data.image.containers.Image.flipVertically data-toc-label='flipVertically'}
+## `#!sds fun` flipVertically {#safeds.data.image.containers.Image.flipVertically data-toc-label='[fun] flipVertically'}
 
 Return a new `Image` that is flipped vertically (horizontal axis, flips up-down and vice versa).
 
@@ -846,7 +846,7 @@ pipeline example {
     fun flipVertically() -> result1: Image
     ```
 
-## `#!sds fun` invertColors {#safeds.data.image.containers.Image.invertColors data-toc-label='invertColors'}
+## `#!sds fun` invertColors {#safeds.data.image.containers.Image.invertColors data-toc-label='[fun] invertColors'}
 
 Return a new `Image` with colors inverted.
 
@@ -874,7 +874,7 @@ pipeline example {
     fun invertColors() -> result1: Image
     ```
 
-## `#!sds fun` resize {#safeds.data.image.containers.Image.resize data-toc-label='resize'}
+## `#!sds fun` resize {#safeds.data.image.containers.Image.resize data-toc-label='[fun] resize'}
 
 Return a new `Image` that has been resized to a given size.
 
@@ -914,7 +914,7 @@ pipeline example {
     }
     ```
 
-## `#!sds fun` rotateLeft {#safeds.data.image.containers.Image.rotateLeft data-toc-label='rotateLeft'}
+## `#!sds fun` rotateLeft {#safeds.data.image.containers.Image.rotateLeft data-toc-label='[fun] rotateLeft'}
 
 Return a new `Image` that is rotated 90 degrees counter-clockwise.
 
@@ -942,7 +942,7 @@ pipeline example {
     fun rotateLeft() -> result1: Image
     ```
 
-## `#!sds fun` rotateRight {#safeds.data.image.containers.Image.rotateRight data-toc-label='rotateRight'}
+## `#!sds fun` rotateRight {#safeds.data.image.containers.Image.rotateRight data-toc-label='[fun] rotateRight'}
 
 Return a new `Image` that is rotated 90 degrees clockwise.
 
@@ -970,7 +970,7 @@ pipeline example {
     fun rotateRight() -> result1: Image
     ```
 
-## `#!sds fun` sharpen {#safeds.data.image.containers.Image.sharpen data-toc-label='sharpen'}
+## `#!sds fun` sharpen {#safeds.data.image.containers.Image.sharpen data-toc-label='[fun] sharpen'}
 
 Return a sharpened version of the image.
 
@@ -1007,7 +1007,7 @@ pipeline example {
     }
     ```
 
-## `#!sds fun` toJpegFile {#safeds.data.image.containers.Image.toJpegFile data-toc-label='toJpegFile'}
+## `#!sds fun` toJpegFile {#safeds.data.image.containers.Image.toJpegFile data-toc-label='[fun] toJpegFile'}
 
 Save the image as a JPEG file.
 
@@ -1035,7 +1035,7 @@ pipeline example {
     )
     ```
 
-## `#!sds fun` toPngFile {#safeds.data.image.containers.Image.toPngFile data-toc-label='toPngFile'}
+## `#!sds fun` toPngFile {#safeds.data.image.containers.Image.toPngFile data-toc-label='[fun] toPngFile'}
 
 Save the image as a PNG file.
 
@@ -1063,7 +1063,7 @@ pipeline example {
     )
     ```
 
-## `#!sds static fun` fromFile {#safeds.data.image.containers.Image.fromFile data-toc-label='fromFile'}
+## `#!sds static fun` fromFile {#safeds.data.image.containers.Image.fromFile data-toc-label='[static fun] fromFile'}
 
 Create an image from a file.
 

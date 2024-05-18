@@ -1,4 +1,4 @@
-# `#!sds abstract class` ClassificationMetrics {#safeds.ml.metrics.ClassificationMetrics data-toc-label='ClassificationMetrics'}
+# `#!sds abstract class` ClassificationMetrics {#safeds.ml.metrics.ClassificationMetrics data-toc-label='[abstract class] ClassificationMetrics'}
 
 A collection of classification metrics.
 
@@ -99,7 +99,7 @@ A collection of classification metrics.
     }
     ```
 
-## `#!sds static fun` accuracy {#safeds.ml.metrics.ClassificationMetrics.accuracy data-toc-label='accuracy'}
+## `#!sds static fun` accuracy {#safeds.ml.metrics.ClassificationMetrics.accuracy data-toc-label='[static fun] accuracy'}
 
 Compute the accuracy on the given data.
 
@@ -129,7 +129,7 @@ better. Results range from 0.0 to 1.0.
     ) -> accuracy: Float
     ```
 
-## `#!sds static fun` f1Score {#safeds.ml.metrics.ClassificationMetrics.f1Score data-toc-label='f1Score'}
+## `#!sds static fun` f1Score {#safeds.ml.metrics.ClassificationMetrics.f1Score data-toc-label='[static fun] f1Score'}
 
 Compute the F₁ score on the given data.
 
@@ -162,7 +162,7 @@ classifier. Results range from 0.0 to 1.0.
     ) -> f1Score: Float
     ```
 
-## `#!sds static fun` precision {#safeds.ml.metrics.ClassificationMetrics.precision data-toc-label='precision'}
+## `#!sds static fun` precision {#safeds.ml.metrics.ClassificationMetrics.precision data-toc-label='[static fun] precision'}
 
 Compute the precision on the given data.
 
@@ -194,7 +194,7 @@ better the classifier. Results range from 0.0 to 1.0.
     ) -> precision: Float
     ```
 
-## `#!sds static fun` recall {#safeds.ml.metrics.ClassificationMetrics.recall data-toc-label='recall'}
+## `#!sds static fun` recall {#safeds.ml.metrics.ClassificationMetrics.recall data-toc-label='[static fun] recall'}
 
 Compute the recall on the given data.
 
@@ -226,7 +226,7 @@ better the classifier. Results range from 0.0 to 1.0.
     ) -> recall: Float
     ```
 
-## `#!sds static fun` summarize {#safeds.ml.metrics.ClassificationMetrics.summarize data-toc-label='summarize'}
+## `#!sds static fun` summarize {#safeds.ml.metrics.ClassificationMetrics.summarize data-toc-label='[static fun] summarize'}
 
 Summarize classification metrics on the given data.
 

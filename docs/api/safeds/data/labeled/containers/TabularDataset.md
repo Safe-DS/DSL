@@ -1,4 +1,4 @@
-# `#!sds class` TabularDataset {#safeds.data.labeled.containers.TabularDataset data-toc-label='TabularDataset'}
+# `#!sds class` TabularDataset {#safeds.data.labeled.containers.TabularDataset data-toc-label='[class] TabularDataset'}
 
 A dataset containing tabular data. It can be used to train machine learning models.
 
@@ -71,7 +71,7 @@ pipeline example {
     }
     ```
 
-## `#!sds attr` extras {#safeds.data.labeled.containers.TabularDataset.extras data-toc-label='extras'}
+## `#!sds attr` extras {#safeds.data.labeled.containers.TabularDataset.extras data-toc-label='[attr] extras'}
 
 Additional columns of the tabular dataset that are neither features nor target.
 
@@ -79,19 +79,19 @@ These can be used to store additional information about instances, such as IDs.
 
 **Type:** [`Table`][safeds.data.tabular.containers.Table]
 
-## `#!sds attr` features {#safeds.data.labeled.containers.TabularDataset.features data-toc-label='features'}
+## `#!sds attr` features {#safeds.data.labeled.containers.TabularDataset.features data-toc-label='[attr] features'}
 
 The feature columns of the tabular dataset.
 
 **Type:** [`Table`][safeds.data.tabular.containers.Table]
 
-## `#!sds attr` target {#safeds.data.labeled.containers.TabularDataset.target data-toc-label='target'}
+## `#!sds attr` target {#safeds.data.labeled.containers.TabularDataset.target data-toc-label='[attr] target'}
 
 The target column of the tabular dataset.
 
 **Type:** [`Column<Any?>`][safeds.data.tabular.containers.Column]
 
-## `#!sds fun` toTable {#safeds.data.labeled.containers.TabularDataset.toTable data-toc-label='toTable'}
+## `#!sds fun` toTable {#safeds.data.labeled.containers.TabularDataset.toTable data-toc-label='[fun] toTable'}
 
 Return a table containing all columns of the tabular dataset.
 

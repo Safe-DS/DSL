@@ -1,0 +1,34 @@
+<!-- Table of contents item -->
+<li class="md-nav__item">
+    <a href="{{ toc_item.url }}" class="md-nav__link">
+        <span class="md-ellipsis">
+            {% if toc_item.title.startswith("[attr] ") %}
+                <code class="doc-symbol doc-symbol-attribute"></code>&nbsp;{{ toc_item.title | replace("[attr] ", "") }}
+            {% elif toc_item.title.startswith("[static attr] ") %}
+                <code class="doc-symbol doc-symbol-static-attribute"></code>&nbsp;{{ toc_item.title | replace("[static attr] ", "") }}
+            {% elif toc_item.title.startswith("[class] ") %}
+                <code class="doc-symbol doc-symbol-class"></code>&nbsp;{{ toc_item.title | replace("[class] ", "") }}
+            {% elif toc_item.title.startswith("[enum] ") %}
+                <code class="doc-symbol doc-symbol-enum"></code>&nbsp;{{ toc_item.title | replace("[enum] ", "") }}
+            {% elif toc_item.title.startswith("[fun] ") %}
+                <code class="doc-symbol doc-symbol-function"></code>&nbsp;{{ toc_item.title | replace("[fun] ", "") }}
+            {% elif toc_item.title.startswith("[static fun] ") %}
+                <code class="doc-symbol doc-symbol-static-function"></code>&nbsp;{{ toc_item.title | replace("[static fun] ", "") }}
+            {% else %}
+                {{ toc_item.title }}
+            {% endif %}
+
+        </span>
+    </a>
+
+    <!-- Table of contents list -->
+    {% if toc_item.children %}
+    <nav class="md-nav" aria-label="{{ toc_item.title | striptags }}">
+        <ul class="md-nav__list">
+            {% for toc_item in toc_item.children %}
+            {% include "partials/toc-item.html" %}
+            {% endfor %}
+        </ul>
+    </nav>
+    {% endif %}
+</li>

@@ -1,4 +1,4 @@
-# :test_tube:{ title="Experimental" } `#!sds class` ImageDataset {#safeds.data.labeled.containers.ImageDataset data-toc-label='ImageDataset'}
+# :test_tube:{ title="Experimental" } `#!sds class` ImageDataset {#safeds.data.labeled.containers.ImageDataset data-toc-label='[class] ImageDataset'}
 
 A Dataset for ImageLists as input and ImageLists, Tables or Columns as output.
 
@@ -67,19 +67,19 @@ A Dataset for ImageLists as input and ImageLists, Tables or Columns as output.
     }
     ```
 
-## `#!sds attr` inputSize {#safeds.data.labeled.containers.ImageDataset.inputSize data-toc-label='inputSize'}
+## `#!sds attr` inputSize {#safeds.data.labeled.containers.ImageDataset.inputSize data-toc-label='[attr] inputSize'}
 
 Get the input `ImageSize` of this dataset.
 
 **Type:** [`ImageSize`][safeds.data.image.typing.ImageSize]
 
-## `#!sds attr` outputSize {#safeds.data.labeled.containers.ImageDataset.outputSize data-toc-label='outputSize'}
+## `#!sds attr` outputSize {#safeds.data.labeled.containers.ImageDataset.outputSize data-toc-label='[attr] outputSize'}
 
 Get the output size of this dataset.
 
 **Type:** [`ImageSize`][safeds.data.image.typing.ImageSize]
 
-## `#!sds fun` getInput {#safeds.data.labeled.containers.ImageDataset.getInput data-toc-label='getInput'}
+## `#!sds fun` getInput {#safeds.data.labeled.containers.ImageDataset.getInput data-toc-label='[fun] getInput'}
 
 Get the input data of this dataset.
 
@@ -97,7 +97,7 @@ Get the input data of this dataset.
     fun getInput() -> input: ImageList
     ```
 
-## `#!sds fun` getOutput {#safeds.data.labeled.containers.ImageDataset.getOutput data-toc-label='getOutput'}
+## `#!sds fun` getOutput {#safeds.data.labeled.containers.ImageDataset.getOutput data-toc-label='[fun] getOutput'}
 
 Get the output data of this dataset.
 
@@ -115,7 +115,7 @@ Get the output data of this dataset.
     fun getOutput() -> output: T
     ```
 
-## `#!sds fun` shuffle {#safeds.data.labeled.containers.ImageDataset.shuffle data-toc-label='shuffle'}
+## `#!sds fun` shuffle {#safeds.data.labeled.containers.ImageDataset.shuffle data-toc-label='[fun] shuffle'}
 
 Return a new `ImageDataset` with shuffled data.
 

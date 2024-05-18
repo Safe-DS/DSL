@@ -1,4 +1,4 @@
-# :test_tube:{ title="Experimental" } `#!sds enum` DataScienceCategory {#safeds.lang.DataScienceCategory data-toc-label='DataScienceCategory'}
+# :test_tube:{ title="Experimental" } `#!sds enum` DataScienceCategory {#safeds.lang.DataScienceCategory data-toc-label='[enum] DataScienceCategory'}
 
 A step in the data science process.
 

@@ -1,4 +1,4 @@
-# `#!sds enum` ImpurityReason {#safeds.lang.ImpurityReason data-toc-label='ImpurityReason'}
+# `#!sds enum` ImpurityReason {#safeds.lang.ImpurityReason data-toc-label='[enum] ImpurityReason'}
 
 A reason why a function is impure.
 

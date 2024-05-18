@@ -1,4 +1,4 @@
-# `#!sds class` ColumnPlotter {#safeds.data.tabular.plotting.ColumnPlotter data-toc-label='ColumnPlotter'}
+# `#!sds class` ColumnPlotter {#safeds.data.tabular.plotting.ColumnPlotter data-toc-label='[class] ColumnPlotter'}
 
 A class that contains plotting methods for a column.
 
@@ -79,7 +79,7 @@ pipeline example {
     }
     ```
 
-## `#!sds fun` boxPlot {#safeds.data.tabular.plotting.ColumnPlotter.boxPlot data-toc-label='boxPlot'}
+## `#!sds fun` boxPlot {#safeds.data.tabular.plotting.ColumnPlotter.boxPlot data-toc-label='[fun] boxPlot'}
 
 Create a box plot for the values in the column. This is only possible for numeric columns.
 
@@ -106,7 +106,7 @@ pipeline example {
     fun boxPlot() -> plot: Image
     ```
 
-## `#!sds fun` histogram {#safeds.data.tabular.plotting.ColumnPlotter.histogram data-toc-label='histogram'}
+## `#!sds fun` histogram {#safeds.data.tabular.plotting.ColumnPlotter.histogram data-toc-label='[fun] histogram'}
 
 Create a histogram for the values in the column.
 
@@ -142,7 +142,7 @@ pipeline example {
     }
     ```
 
-## `#!sds fun` lagPlot {#safeds.data.tabular.plotting.ColumnPlotter.lagPlot data-toc-label='lagPlot'}
+## `#!sds fun` lagPlot {#safeds.data.tabular.plotting.ColumnPlotter.lagPlot data-toc-label='[fun] lagPlot'}
 
 Create a lag plot for the values in the column.
 

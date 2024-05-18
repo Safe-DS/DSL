@@ -1,4 +1,4 @@
-# :test_tube:{ title="Experimental" } `#!sds class` NeuralNetworkRegressor {#safeds.ml.nn.NeuralNetworkRegressor data-toc-label='NeuralNetworkRegressor'}
+# :test_tube:{ title="Experimental" } `#!sds class` NeuralNetworkRegressor {#safeds.ml.nn.NeuralNetworkRegressor data-toc-label='[class] NeuralNetworkRegressor'}
 
 A NeuralNetworkRegressor is a neural network that is used for regression tasks.
 
@@ -6,9 +6,9 @@ A NeuralNetworkRegressor is a neural network that is used for regression tasks.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `inputConversion` | [`InputConversion<FitIn, PredictIn>`][safeds.ml.nn.converters.InputConversion] | to convert the input data for the neural network | - |
+| `inputConversion` | `#!sds InputConversion<FitIn, PredictIn>` | to convert the input data for the neural network | - |
 | `layers` | [`List<Layer>`][safeds.lang.List] | a list of layers for the neural network to learn | - |
-| `outputConversion` | [`OutputConversion<PredictIn, PredictOut>`][safeds.ml.nn.converters.OutputConversion] | to convert the output data of the neural network back | - |
+| `outputConversion` | `#!sds OutputConversion<PredictIn, PredictOut>` | to convert the output data of the neural network back | - |
 
 **Type parameters:**
 
@@ -84,13 +84,13 @@ A NeuralNetworkRegressor is a neural network that is used for regression tasks.
     }
     ```
 
-## `#!sds attr` isFitted {#safeds.ml.nn.NeuralNetworkRegressor.isFitted data-toc-label='isFitted'}
+## `#!sds attr` isFitted {#safeds.ml.nn.NeuralNetworkRegressor.isFitted data-toc-label='[attr] isFitted'}
 
 Whether the regressor is fitted.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
 
-## `#!sds fun` fit {#safeds.ml.nn.NeuralNetworkRegressor.fit data-toc-label='fit'}
+## `#!sds fun` fit {#safeds.ml.nn.NeuralNetworkRegressor.fit data-toc-label='[fun] fit'}
 
 Train the neural network with given training data.
 
@@ -138,7 +138,7 @@ pipeline example {
     }
     ```
 
-## `#!sds fun` predict {#safeds.ml.nn.NeuralNetworkRegressor.predict data-toc-label='predict'}
+## `#!sds fun` predict {#safeds.ml.nn.NeuralNetworkRegressor.predict data-toc-label='[fun] predict'}
 
 Make a prediction for the given test data.
 

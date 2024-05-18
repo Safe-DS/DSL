@@ -1,4 +1,4 @@
-# :test_tube:{ title="Experimental" } `#!sds annotation` Impure {#safeds.lang.Impure data-toc-label='Impure'}
+# :test_tube:{ title="Experimental" } `#!sds annotation` Impure {#safeds.lang.Impure data-toc-label='[annotation] Impure'}
 
 The function has side effects and/or does not always return the same results given the same arguments.
 

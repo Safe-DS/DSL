@@ -3,7 +3,7 @@ search:
   boost: 0.5
 ---
 
-# `#!sds abstract class` SupervisedModel {#safeds.ml.classical.SupervisedModel data-toc-label='SupervisedModel'}
+# `#!sds abstract class` SupervisedModel {#safeds.ml.classical.SupervisedModel data-toc-label='[abstract class] SupervisedModel'}
 
 A model for supervised learning tasks.
 
@@ -95,13 +95,13 @@ A model for supervised learning tasks.
     }
     ```
 
-## `#!sds attr` isFitted {#safeds.ml.classical.SupervisedModel.isFitted data-toc-label='isFitted'}
+## `#!sds attr` isFitted {#safeds.ml.classical.SupervisedModel.isFitted data-toc-label='[attr] isFitted'}
 
 Whether the model is fitted.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
 
-## `#!sds fun` fit {#safeds.ml.classical.SupervisedModel.fit data-toc-label='fit'}
+## `#!sds fun` fit {#safeds.ml.classical.SupervisedModel.fit data-toc-label='[fun] fit'}
 
 Create a copy of this model and fit it with the given training data.
 
@@ -128,7 +128,7 @@ Create a copy of this model and fit it with the given training data.
     ) -> fittedModel: SupervisedModel
     ```
 
-## `#!sds fun` getFeatureNames {#safeds.ml.classical.SupervisedModel.getFeatureNames data-toc-label='getFeatureNames'}
+## `#!sds fun` getFeatureNames {#safeds.ml.classical.SupervisedModel.getFeatureNames data-toc-label='[fun] getFeatureNames'}
 
 Return the names of the feature columns.
 
@@ -148,7 +148,7 @@ Return the names of the feature columns.
     fun getFeatureNames() -> featureNames: List<String>
     ```
 
-## `#!sds fun` getFeaturesSchema {#safeds.ml.classical.SupervisedModel.getFeaturesSchema data-toc-label='getFeaturesSchema'}
+## `#!sds fun` getFeaturesSchema {#safeds.ml.classical.SupervisedModel.getFeaturesSchema data-toc-label='[fun] getFeaturesSchema'}
 
 Return the schema of the feature columns.
 
@@ -168,7 +168,7 @@ Return the schema of the feature columns.
     fun getFeaturesSchema() -> featureSchema: Schema
     ```
 
-## `#!sds fun` getTargetName {#safeds.ml.classical.SupervisedModel.getTargetName data-toc-label='getTargetName'}
+## `#!sds fun` getTargetName {#safeds.ml.classical.SupervisedModel.getTargetName data-toc-label='[fun] getTargetName'}
 
 Return the name of the target column.
 
@@ -188,7 +188,7 @@ Return the name of the target column.
     fun getTargetName() -> targetName: String
     ```
 
-## `#!sds fun` getTargetType {#safeds.ml.classical.SupervisedModel.getTargetType data-toc-label='getTargetType'}
+## `#!sds fun` getTargetType {#safeds.ml.classical.SupervisedModel.getTargetType data-toc-label='[fun] getTargetType'}
 
 Return the type of the target column.
 
@@ -208,7 +208,7 @@ Return the type of the target column.
     fun getTargetType() -> targetType: DataType
     ```
 
-## `#!sds fun` predict {#safeds.ml.classical.SupervisedModel.predict data-toc-label='predict'}
+## `#!sds fun` predict {#safeds.ml.classical.SupervisedModel.predict data-toc-label='[fun] predict'}
 
 Predict the target values on the given dataset.
 

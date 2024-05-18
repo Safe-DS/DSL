@@ -1,4 +1,4 @@
-# :test_tube:{ title="Experimental" } `#!sds annotation` Expert {#safeds.lang.Expert data-toc-label='Expert'}
+# :test_tube:{ title="Experimental" } `#!sds annotation` Expert {#safeds.lang.Expert data-toc-label='[annotation] Expert'}
 
 This parameter should only be used by expert users.
 

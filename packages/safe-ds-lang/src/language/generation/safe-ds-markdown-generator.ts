@@ -527,8 +527,16 @@ export class SafeDsMarkdownGenerator {
         }
 
         result += ` ${node.name}`;
-        result += ` {#${this.getId(node, state)} data-toc-label='${node.name}'}`;
+        result += ` {#${this.getId(node, state)} data-toc-label='${this.createTocLabel(node, keyword)}'}`;
         return result;
+    }
+
+    private createTocLabel(node: SdsDeclaration, keyword: string): string {
+        if (keyword) {
+            return `[${keyword}] ${node.name}`;
+        } else {
+            return node.name;
+        }
     }
 
     private getId(node: SdsDeclaration, state: DetailsState): string {

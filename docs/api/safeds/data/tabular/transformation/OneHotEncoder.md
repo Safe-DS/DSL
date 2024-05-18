@@ -1,4 +1,4 @@
-# `#!sds class` OneHotEncoder {#safeds.data.tabular.transformation.OneHotEncoder data-toc-label='OneHotEncoder'}
+# `#!sds class` OneHotEncoder {#safeds.data.tabular.transformation.OneHotEncoder data-toc-label='[class] OneHotEncoder'}
 
 A way to deal with categorical features that is particularly useful for unordered (i.e. nominal) data.
 
@@ -88,13 +88,13 @@ pipeline example {
     }
     ```
 
-## `#!sds attr` isFitted {#safeds.data.tabular.transformation.OneHotEncoder.isFitted data-toc-label='isFitted'}
+## `#!sds attr` isFitted {#safeds.data.tabular.transformation.OneHotEncoder.isFitted data-toc-label='[attr] isFitted'}
 
 Whether the transformer is fitted.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
 
-## `#!sds fun` fit {#safeds.data.tabular.transformation.OneHotEncoder.fit data-toc-label='fit'}
+## `#!sds fun` fit {#safeds.data.tabular.transformation.OneHotEncoder.fit data-toc-label='[fun] fit'}
 
 Learn a transformation for a set of columns in a table.
 
@@ -123,7 +123,7 @@ This transformer is not modified.
     ) -> fittedTransformer: OneHotEncoder
     ```
 
-## `#!sds fun` fitAndTransform {#safeds.data.tabular.transformation.OneHotEncoder.fitAndTransform data-toc-label='fitAndTransform'}
+## `#!sds fun` fitAndTransform {#safeds.data.tabular.transformation.OneHotEncoder.fitAndTransform data-toc-label='[fun] fitAndTransform'}
 
 Learn a transformation for a set of columns in a table and apply the learned transformation to the same table.
 
@@ -154,7 +154,7 @@ Learn a transformation for a set of columns in a table and apply the learned tra
     ) -> (fittedTransformer: OneHotEncoder, transformedTable: Table)
     ```
 
-## `#!sds fun` inverseTransform {#safeds.data.tabular.transformation.OneHotEncoder.inverseTransform data-toc-label='inverseTransform'}
+## `#!sds fun` inverseTransform {#safeds.data.tabular.transformation.OneHotEncoder.inverseTransform data-toc-label='[fun] inverseTransform'}
 
 Undo the learned transformation as well as possible.
 
@@ -184,7 +184,7 @@ Column order and types may differ from the original table. Likewise, some values
     ) -> originalTable: Table
     ```
 
-## `#!sds fun` transform {#safeds.data.tabular.transformation.OneHotEncoder.transform data-toc-label='transform'}
+## `#!sds fun` transform {#safeds.data.tabular.transformation.OneHotEncoder.transform data-toc-label='[fun] transform'}
 
 Apply the learned transformation to a table.
 

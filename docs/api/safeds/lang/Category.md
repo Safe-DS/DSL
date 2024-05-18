@@ -1,4 +1,4 @@
-# :test_tube:{ title="Experimental" } `#!sds annotation` Category {#safeds.lang.Category data-toc-label='Category'}
+# :test_tube:{ title="Experimental" } `#!sds annotation` Category {#safeds.lang.Category data-toc-label='[annotation] Category'}
 
 The category of a declaration. It can be used for grouping.
 
