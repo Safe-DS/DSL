@@ -1,4 +1,4 @@
-# `#!sds enum` MyEnum3 {#tests.generation.markdown.enums.documented.MyEnum3 data-toc-label='MyEnum3'}
+# <code class="doc-symbol doc-symbol-enum"></code> `MyEnum3` {#tests.generation.markdown.enums.documented.MyEnum3 data-toc-label='[enum] MyEnum3'}
 
 Description of MyEnum3.
 

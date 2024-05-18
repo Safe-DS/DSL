@@ -1,8 +1,8 @@
-# :warning:{ title="Deprecated" } `#!sds annotation` MyAnnotation1 {#tests.generation.markdown.annotations.deprecated.MyAnnotation1 data-toc-label='MyAnnotation1'}
+# :warning:{ title="Deprecated" } <code class="doc-symbol doc-symbol-annotation"></code> `MyAnnotation1` {#tests.generation.markdown.annotations.deprecated.MyAnnotation1 data-toc-label='[annotation] MyAnnotation1'}
 
 !!! warning "Deprecated"
 
-    This annotation is deprecated.
+    This declaration is deprecated.
 
 **Targets:**
 

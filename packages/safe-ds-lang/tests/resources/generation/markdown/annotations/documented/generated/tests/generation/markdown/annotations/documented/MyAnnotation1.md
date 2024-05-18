@@ -1,4 +1,4 @@
-# `#!sds annotation` MyAnnotation1 {#tests.generation.markdown.annotations.documented.MyAnnotation1 data-toc-label='MyAnnotation1'}
+# <code class="doc-symbol doc-symbol-annotation"></code> `MyAnnotation1` {#tests.generation.markdown.annotations.documented.MyAnnotation1 data-toc-label='[annotation] MyAnnotation1'}
 
 Description of MyAnnotation1.
 

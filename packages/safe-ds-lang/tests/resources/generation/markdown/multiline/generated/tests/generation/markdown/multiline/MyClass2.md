@@ -1,4 +1,4 @@
-# `#!sds class` MyClass2 {#tests.generation.markdown.multiline.MyClass2 data-toc-label='MyClass2'}
+# <code class="doc-symbol doc-symbol-class"></code> `MyClass2` {#tests.generation.markdown.multiline.MyClass2 data-toc-label='[class] MyClass2'}
 
 Description of MyClass2.
 

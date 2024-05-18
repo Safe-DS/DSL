@@ -3,7 +3,7 @@ search:
   boost: 0.5
 ---
 
-# `#!sds abstract class` MyClass {#tests.generation.markdown.schemas.documented.MyClass data-toc-label='MyClass'}
+# <code class="doc-symbol doc-symbol-class"></code> `MyClass` {#tests.generation.markdown.schemas.documented.MyClass data-toc-label='[class] MyClass'}
 
 ??? quote "Stub code in `main.sdsstub`"
 
