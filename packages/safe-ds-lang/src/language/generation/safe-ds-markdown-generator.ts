@@ -532,6 +532,7 @@ export class SafeDsMarkdownGenerator {
         if (tag) {
             return `[${tag}] ${node.name}`;
         } else {
+            /* c8 ignore next 2 */
             return node.name;
         }
     }
