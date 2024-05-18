@@ -1,4 +1,4 @@
-# :test_tube:{ title="Experimental" } `#!sds class` TimeSeriesDataset {#safeds.data.labeled.containers.TimeSeriesDataset data-toc-label='[class] TimeSeriesDataset'}
+# :test_tube:{ title="Experimental" } `#!sds class` `TimeSeriesDataset` {#safeds.data.labeled.containers.TimeSeriesDataset data-toc-label='[class] TimeSeriesDataset'}
 
 A time series dataset maps feature and time columns to a target column. Not like the TabularDataset a TimeSeries needs to contain one target and one time column, but can have empty features.
 
@@ -68,7 +68,7 @@ pipeline example {
     }
     ```
 
-## `#!sds attr` extras {#safeds.data.labeled.containers.TimeSeriesDataset.extras data-toc-label='[attr] extras'}
+## `#!sds attr` `extras` {#safeds.data.labeled.containers.TimeSeriesDataset.extras data-toc-label='[attr] extras'}
 
 Additional columns of the time series dataset that are neither features, target nor time.
 
@@ -76,25 +76,25 @@ These can be used to store additional information about instances, such as IDs.
 
 **Type:** [`Table`][safeds.data.tabular.containers.Table]
 
-## `#!sds attr` features {#safeds.data.labeled.containers.TimeSeriesDataset.features data-toc-label='[attr] features'}
+## `#!sds attr` `features` {#safeds.data.labeled.containers.TimeSeriesDataset.features data-toc-label='[attr] features'}
 
 The feature columns of the time series dataset.
 
 **Type:** [`Table`][safeds.data.tabular.containers.Table]
 
-## `#!sds attr` target {#safeds.data.labeled.containers.TimeSeriesDataset.target data-toc-label='[attr] target'}
+## `#!sds attr` `target` {#safeds.data.labeled.containers.TimeSeriesDataset.target data-toc-label='[attr] target'}
 
 The target column of the time series dataset.
 
 **Type:** [`Column<Any>`][safeds.data.tabular.containers.Column]
 
-## `#!sds attr` time {#safeds.data.labeled.containers.TimeSeriesDataset.time data-toc-label='[attr] time'}
+## `#!sds attr` `time` {#safeds.data.labeled.containers.TimeSeriesDataset.time data-toc-label='[attr] time'}
 
 The time column of the time series dataset.
 
 **Type:** [`Column<Any>`][safeds.data.tabular.containers.Column]
 
-## `#!sds fun` toTable {#safeds.data.labeled.containers.TimeSeriesDataset.toTable data-toc-label='[fun] toTable'}
+## `#!sds fun` `toTable` {#safeds.data.labeled.containers.TimeSeriesDataset.toTable data-toc-label='[fun] toTable'}
 
 Return a new `Table` containing the feature columns, the target column, the time column and the extra columns.
 

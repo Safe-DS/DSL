@@ -1,4 +1,4 @@
-# `#!sds class` StandardScaler {#safeds.data.tabular.transformation.StandardScaler data-toc-label='[class] StandardScaler'}
+# `#!sds class` `StandardScaler` {#safeds.data.tabular.transformation.StandardScaler data-toc-label='[class] StandardScaler'}
 
 The StandardScaler transforms column values to a range by removing the mean and scaling to unit variance.
 
@@ -57,13 +57,13 @@ pipeline example {
     }
     ```
 
-## `#!sds attr` isFitted {#safeds.data.tabular.transformation.StandardScaler.isFitted data-toc-label='[attr] isFitted'}
+## `#!sds attr` `isFitted` {#safeds.data.tabular.transformation.StandardScaler.isFitted data-toc-label='[attr] isFitted'}
 
 Whether the transformer is fitted.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
 
-## `#!sds fun` fit {#safeds.data.tabular.transformation.StandardScaler.fit data-toc-label='[fun] fit'}
+## `#!sds fun` `fit` {#safeds.data.tabular.transformation.StandardScaler.fit data-toc-label='[fun] fit'}
 
 Learn a transformation for a set of columns in a table.
 
@@ -92,7 +92,7 @@ This transformer is not modified.
     ) -> fittedTransformer: StandardScaler
     ```
 
-## `#!sds fun` fitAndTransform {#safeds.data.tabular.transformation.StandardScaler.fitAndTransform data-toc-label='[fun] fitAndTransform'}
+## `#!sds fun` `fitAndTransform` {#safeds.data.tabular.transformation.StandardScaler.fitAndTransform data-toc-label='[fun] fitAndTransform'}
 
 Learn a transformation for a set of columns in a table and apply the learned transformation to the same table.
 
@@ -123,7 +123,7 @@ Learn a transformation for a set of columns in a table and apply the learned tra
     ) -> (fittedTransformer: StandardScaler, transformedTable: Table)
     ```
 
-## `#!sds fun` inverseTransform {#safeds.data.tabular.transformation.StandardScaler.inverseTransform data-toc-label='[fun] inverseTransform'}
+## `#!sds fun` `inverseTransform` {#safeds.data.tabular.transformation.StandardScaler.inverseTransform data-toc-label='[fun] inverseTransform'}
 
 Undo the learned transformation as well as possible.
 
@@ -153,7 +153,7 @@ Column order and types may differ from the original table. Likewise, some values
     ) -> originalTable: Table
     ```
 
-## `#!sds fun` transform {#safeds.data.tabular.transformation.StandardScaler.transform data-toc-label='[fun] transform'}
+## `#!sds fun` `transform` {#safeds.data.tabular.transformation.StandardScaler.transform data-toc-label='[fun] transform'}
 
 Apply the learned transformation to a table.
 

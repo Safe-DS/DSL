@@ -1,4 +1,4 @@
-# `#!sds class` ImageSize {#safeds.data.image.typing.ImageSize data-toc-label='[class] ImageSize'}
+# `#!sds class` `ImageSize` {#safeds.data.image.typing.ImageSize data-toc-label='[class] ImageSize'}
 
 A container for image size data.
 
@@ -48,25 +48,25 @@ A container for image size data.
     }
     ```
 
-## `#!sds attr` channel {#safeds.data.image.typing.ImageSize.channel data-toc-label='[attr] channel'}
+## `#!sds attr` `channel` {#safeds.data.image.typing.ImageSize.channel data-toc-label='[attr] channel'}
 
 Get the channel of this `ImageSize` in pixels.
 
 **Type:** [`Int`][safeds.lang.Int]
 
-## `#!sds attr` height {#safeds.data.image.typing.ImageSize.height data-toc-label='[attr] height'}
+## `#!sds attr` `height` {#safeds.data.image.typing.ImageSize.height data-toc-label='[attr] height'}
 
 Get the height of this `ImageSize` in pixels.
 
 **Type:** [`Int`][safeds.lang.Int]
 
-## `#!sds attr` width {#safeds.data.image.typing.ImageSize.width data-toc-label='[attr] width'}
+## `#!sds attr` `width` {#safeds.data.image.typing.ImageSize.width data-toc-label='[attr] width'}
 
 Get the width of this `ImageSize` in pixels.
 
 **Type:** [`Int`][safeds.lang.Int]
 
-## `#!sds static fun` fromImage {#safeds.data.image.typing.ImageSize.fromImage data-toc-label='[static fun] fromImage'}
+## `#!sds static fun` `fromImage` {#safeds.data.image.typing.ImageSize.fromImage data-toc-label='[static fun] fromImage'}
 
 Create a `ImageSize` of a given image.
 

@@ -1,4 +1,4 @@
-# :test_tube:{ title="Experimental" } `#!sds class` Convolutional2DLayer {#safeds.ml.nn.layers.Convolutional2DLayer data-toc-label='[class] Convolutional2DLayer'}
+# :test_tube:{ title="Experimental" } `#!sds class` `Convolutional2DLayer` {#safeds.ml.nn.layers.Convolutional2DLayer data-toc-label='[class] Convolutional2DLayer'}
 
 **Parent type:** [`Layer`][safeds.ml.nn.layers.Layer]
 
@@ -35,13 +35,13 @@
     }
     ```
 
-## `#!sds attr` inputSize {#safeds.ml.nn.layers.Convolutional2DLayer.inputSize data-toc-label='[attr] inputSize'}
+## `#!sds attr` `inputSize` {#safeds.ml.nn.layers.Convolutional2DLayer.inputSize data-toc-label='[attr] inputSize'}
 
 Get the input_size of this layer.
 
 **Type:** [`ImageSize`][safeds.data.image.typing.ImageSize]
 
-## `#!sds attr` outputSize {#safeds.ml.nn.layers.Convolutional2DLayer.outputSize data-toc-label='[attr] outputSize'}
+## `#!sds attr` `outputSize` {#safeds.ml.nn.layers.Convolutional2DLayer.outputSize data-toc-label='[attr] outputSize'}
 
 Get the output_size of this layer.
 

@@ -3,7 +3,7 @@ search:
   boost: 0.5
 ---
 
-# `#!sds abstract class` String {#safeds.lang.String data-toc-label='[abstract class] String'}
+# `#!sds abstract class` `String` {#safeds.lang.String data-toc-label='[abstract class] String'}
 
 Some text.
 
@@ -270,7 +270,7 @@ pipeline example {
     }
     ```
 
-## `#!sds fun` contains {#safeds.lang.String.contains data-toc-label='[fun] contains'}
+## `#!sds fun` `contains` {#safeds.lang.String.contains data-toc-label='[fun] contains'}
 
 Check if the string contains the substring.
 
@@ -302,7 +302,7 @@ pipeline example {
     fun contains(substring: String) -> contains: Boolean
     ```
 
-## `#!sds fun` endsWith {#safeds.lang.String.endsWith data-toc-label='[fun] endsWith'}
+## `#!sds fun` `endsWith` {#safeds.lang.String.endsWith data-toc-label='[fun] endsWith'}
 
 Check if the string ends with the suffix.
 
@@ -334,7 +334,7 @@ pipeline example {
     fun endsWith(suffix: String) -> endsWith: Boolean
     ```
 
-## `#!sds fun` indexOf {#safeds.lang.String.indexOf data-toc-label='[fun] indexOf'}
+## `#!sds fun` `indexOf` {#safeds.lang.String.indexOf data-toc-label='[fun] indexOf'}
 
 Return the index of the first occurrence of the substring in the string or -1 if the substring is not found.
 
@@ -366,7 +366,7 @@ pipeline example {
     fun indexOf(substring: String) -> index: Int
     ```
 
-## `#!sds fun` lastIndexOf {#safeds.lang.String.lastIndexOf data-toc-label='[fun] lastIndexOf'}
+## `#!sds fun` `lastIndexOf` {#safeds.lang.String.lastIndexOf data-toc-label='[fun] lastIndexOf'}
 
 Return the index of the last occurrence of the substring in the string or -1 if the substring is not found.
 
@@ -398,7 +398,7 @@ pipeline example {
     fun lastIndexOf(substring: String) -> index: Int
     ```
 
-## `#!sds fun` length {#safeds.lang.String.length data-toc-label='[fun] length'}
+## `#!sds fun` `length` {#safeds.lang.String.length data-toc-label='[fun] length'}
 
 Return the number of characters in the string.
 
@@ -424,7 +424,7 @@ pipeline example {
     fun length() -> length: Int
     ```
 
-## `#!sds fun` repeat {#safeds.lang.String.repeat data-toc-label='[fun] repeat'}
+## `#!sds fun` `repeat` {#safeds.lang.String.repeat data-toc-label='[fun] repeat'}
 
 Repeat the string n times.
 
@@ -456,7 +456,7 @@ pipeline example {
     fun repeat(n: Int) -> repeatedString: String
     ```
 
-## `#!sds fun` replace {#safeds.lang.String.replace data-toc-label='[fun] replace'}
+## `#!sds fun` `replace` {#safeds.lang.String.replace data-toc-label='[fun] replace'}
 
 Replace all occurrences of the old substring with the new substring.
 
@@ -489,7 +489,7 @@ pipeline example {
     fun replace(old: String, new: String) -> replacedString: String
     ```
 
-## `#!sds fun` split {#safeds.lang.String.split data-toc-label='[fun] split'}
+## `#!sds fun` `split` {#safeds.lang.String.split data-toc-label='[fun] split'}
 
 Split the string into parts using the separator.
 
@@ -521,7 +521,7 @@ pipeline example {
     fun split(separator: String) -> parts: List<String>
     ```
 
-## `#!sds fun` startsWith {#safeds.lang.String.startsWith data-toc-label='[fun] startsWith'}
+## `#!sds fun` `startsWith` {#safeds.lang.String.startsWith data-toc-label='[fun] startsWith'}
 
 Check if the string starts with the prefix.
 
@@ -553,7 +553,7 @@ pipeline example {
     fun startsWith(prefix: String) -> startsWith: Boolean
     ```
 
-## `#!sds fun` substring {#safeds.lang.String.substring data-toc-label='[fun] substring'}
+## `#!sds fun` `substring` {#safeds.lang.String.substring data-toc-label='[fun] substring'}
 
 Return the substring of the string starting at the start index up to but excluding the end index.
 
@@ -586,7 +586,7 @@ pipeline example {
     fun substring(start: Int = 0, end: Int = this.length()) -> substring: String
     ```
 
-## `#!sds fun` toCasefolded {#safeds.lang.String.toCasefolded data-toc-label='[fun] toCasefolded'}
+## `#!sds fun` `toCasefolded` {#safeds.lang.String.toCasefolded data-toc-label='[fun] toCasefolded'}
 
 Normalize the casing of a string to make it suitable for case-insensitive matching. This is essentially a more
 aggressive form of lowercasing. For example, the German lowercase letter "ß" gets converted to "ss".
@@ -620,7 +620,7 @@ pipeline example {
     fun toCasefolded() -> casefolded: String
     ```
 
-## `#!sds fun` toFloat {#safeds.lang.String.toFloat data-toc-label='[fun] toFloat'}
+## `#!sds fun` `toFloat` {#safeds.lang.String.toFloat data-toc-label='[fun] toFloat'}
 
 Parse the string to a floating-point number.
 
@@ -646,7 +646,7 @@ pipeline example {
     fun toFloat() -> float: Float
     ```
 
-## `#!sds fun` toInt {#safeds.lang.String.toInt data-toc-label='[fun] toInt'}
+## `#!sds fun` `toInt` {#safeds.lang.String.toInt data-toc-label='[fun] toInt'}
 
 Parse the string to an integer.
 
@@ -683,7 +683,7 @@ pipeline example {
     fun toInt(base: Int = 10) -> int: Int
     ```
 
-## `#!sds fun` toLowercase {#safeds.lang.String.toLowercase data-toc-label='[fun] toLowercase'}
+## `#!sds fun` `toLowercase` {#safeds.lang.String.toLowercase data-toc-label='[fun] toLowercase'}
 
 Convert the string to lowercase. Prefer [String.toCasefolded][safeds.lang.String.toCasefolded] for case-insensitive matching.
 
@@ -716,7 +716,7 @@ pipeline example {
     fun toLowercase() -> lowercase: String
     ```
 
-## `#!sds fun` toUppercase {#safeds.lang.String.toUppercase data-toc-label='[fun] toUppercase'}
+## `#!sds fun` `toUppercase` {#safeds.lang.String.toUppercase data-toc-label='[fun] toUppercase'}
 
 Convert the string to uppercase. Prefer [String.toCasefolded][safeds.lang.String.toCasefolded] for case-insensitive matching.
 
@@ -749,7 +749,7 @@ pipeline example {
     fun toUppercase() -> uppercase: String
     ```
 
-## `#!sds fun` trim {#safeds.lang.String.trim data-toc-label='[fun] trim'}
+## `#!sds fun` `trim` {#safeds.lang.String.trim data-toc-label='[fun] trim'}
 
 Trim leading and trailing whitespace from the string.
 
@@ -775,7 +775,7 @@ pipeline example {
     fun trim() -> trimmed: String
     ```
 
-## `#!sds fun` trimEnd {#safeds.lang.String.trimEnd data-toc-label='[fun] trimEnd'}
+## `#!sds fun` `trimEnd` {#safeds.lang.String.trimEnd data-toc-label='[fun] trimEnd'}
 
 Trim trailing whitespace from the string.
 
@@ -801,7 +801,7 @@ pipeline example {
     fun trimEnd() -> trimmed: String
     ```
 
-## `#!sds fun` trimStart {#safeds.lang.String.trimStart data-toc-label='[fun] trimStart'}
+## `#!sds fun` `trimStart` {#safeds.lang.String.trimStart data-toc-label='[fun] trimStart'}
 
 Trim leading whitespace from the string.
 

@@ -1,4 +1,4 @@
-# :test_tube:{ title="Experimental" } `#!sds class` ArimaRegressor {#safeds.ml.classical.regression.ArimaRegressor data-toc-label='[class] ArimaRegressor'}
+# :test_tube:{ title="Experimental" } `#!sds class` `ArimaRegressor` {#safeds.ml.classical.regression.ArimaRegressor data-toc-label='[class] ArimaRegressor'}
 
 Auto Regressive Integrated Moving Average Model.
 
@@ -60,13 +60,13 @@ pipeline example {
     }
     ```
 
-## `#!sds attr` isFitted {#safeds.ml.classical.regression.ArimaRegressor.isFitted data-toc-label='[attr] isFitted'}
+## `#!sds attr` `isFitted` {#safeds.ml.classical.regression.ArimaRegressor.isFitted data-toc-label='[attr] isFitted'}
 
 Whether the regressor is fitted.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
 
-## `#!sds fun` fit {#safeds.ml.classical.regression.ArimaRegressor.fit data-toc-label='[fun] fit'}
+## `#!sds fun` `fit` {#safeds.ml.classical.regression.ArimaRegressor.fit data-toc-label='[fun] fit'}
 
 Create a copy of this ARIMA Model and fit it with the given training data.
 
@@ -93,7 +93,7 @@ This ARIMA Model is not modified.
     ) -> fittedArima: ArimaRegressor
     ```
 
-## `#!sds fun` plotPredictions {#safeds.ml.classical.regression.ArimaRegressor.plotPredictions data-toc-label='[fun] plotPredictions'}
+## `#!sds fun` `plotPredictions` {#safeds.ml.classical.regression.ArimaRegressor.plotPredictions data-toc-label='[fun] plotPredictions'}
 
 Plot the predictions of the trained model to the given target of the time series. So you can see the predictions and the actual values in one plot.
 
@@ -119,7 +119,7 @@ Plot the predictions of the trained model to the given target of the time series
     ) -> image: Image
     ```
 
-## `#!sds fun` predict {#safeds.ml.classical.regression.ArimaRegressor.predict data-toc-label='[fun] predict'}
+## `#!sds fun` `predict` {#safeds.ml.classical.regression.ArimaRegressor.predict data-toc-label='[fun] predict'}
 
 Predict a target vector using a time series target column. The model has to be trained first.
 

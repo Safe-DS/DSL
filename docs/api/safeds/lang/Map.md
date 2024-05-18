@@ -3,7 +3,7 @@ search:
   boost: 0.5
 ---
 
-# `#!sds abstract class` Map {#safeds.lang.Map data-toc-label='[abstract class] Map'}
+# `#!sds abstract class` `Map` {#safeds.lang.Map data-toc-label='[abstract class] Map'}
 
 A map of keys to values.
 
@@ -84,7 +84,7 @@ pipeline example {
     }
     ```
 
-## `#!sds fun` keys {#safeds.lang.Map.keys data-toc-label='[fun] keys'}
+## `#!sds fun` `keys` {#safeds.lang.Map.keys data-toc-label='[fun] keys'}
 
 Return the keys of the map.
 
@@ -115,7 +115,7 @@ pipeline example {
     fun keys() -> keys: List<K>
     ```
 
-## `#!sds fun` size {#safeds.lang.Map.size data-toc-label='[fun] size'}
+## `#!sds fun` `size` {#safeds.lang.Map.size data-toc-label='[fun] size'}
 
 Return the number of entries in the map.
 
@@ -146,7 +146,7 @@ pipeline example {
     fun size() -> size: Int
     ```
 
-## `#!sds fun` values {#safeds.lang.Map.values data-toc-label='[fun] values'}
+## `#!sds fun` `values` {#safeds.lang.Map.values data-toc-label='[fun] values'}
 
 Return the values of the map.
 

@@ -1,4 +1,4 @@
-# `#!sds enum` ImpurityReason {#safeds.lang.ImpurityReason data-toc-label='[enum] ImpurityReason'}
+# `#!sds enum` `ImpurityReason` {#safeds.lang.ImpurityReason data-toc-label='[enum] ImpurityReason'}
 
 A reason why a function is impure.
 
@@ -49,7 +49,7 @@ A reason why a function is impure.
     }
     ```
 
-## FileReadFromConstantPath {#safeds.lang.ImpurityReason.FileReadFromConstantPath data-toc-label='FileReadFromConstantPath'}
+## `FileReadFromConstantPath` {#safeds.lang.ImpurityReason.FileReadFromConstantPath data-toc-label='FileReadFromConstantPath'}
 
 The function reads from a file and the file path is a constant.
 
@@ -59,7 +59,7 @@ The function reads from a file and the file path is a constant.
 |------|------|-------------|---------|
 | `path` | [`String`][safeds.lang.String] | The path of the file. | - |
 
-## FileReadFromParameterizedPath {#safeds.lang.ImpurityReason.FileReadFromParameterizedPath data-toc-label='FileReadFromParameterizedPath'}
+## `FileReadFromParameterizedPath` {#safeds.lang.ImpurityReason.FileReadFromParameterizedPath data-toc-label='FileReadFromParameterizedPath'}
 
 The function reads from a file and the file path is given by a parameter.
 
@@ -69,7 +69,7 @@ The function reads from a file and the file path is given by a parameter.
 |------|------|-------------|---------|
 | `parameterName` | [`String`][safeds.lang.String] | The name of the parameter that specifies the file path. | - |
 
-## FileWriteToConstantPath {#safeds.lang.ImpurityReason.FileWriteToConstantPath data-toc-label='FileWriteToConstantPath'}
+## `FileWriteToConstantPath` {#safeds.lang.ImpurityReason.FileWriteToConstantPath data-toc-label='FileWriteToConstantPath'}
 
 The function writes to a file and the file path is a constant.
 
@@ -79,7 +79,7 @@ The function writes to a file and the file path is a constant.
 |------|------|-------------|---------|
 | `path` | [`String`][safeds.lang.String] | The path of the file. | - |
 
-## FileWriteToParameterizedPath {#safeds.lang.ImpurityReason.FileWriteToParameterizedPath data-toc-label='FileWriteToParameterizedPath'}
+## `FileWriteToParameterizedPath` {#safeds.lang.ImpurityReason.FileWriteToParameterizedPath data-toc-label='FileWriteToParameterizedPath'}
 
 The function writes to a file and the file path is given by a parameter.
 
@@ -89,11 +89,11 @@ The function writes to a file and the file path is given by a parameter.
 |------|------|-------------|---------|
 | `parameterName` | [`String`][safeds.lang.String] | The name of the parameter that specifies the file path. | - |
 
-## Other {#safeds.lang.ImpurityReason.Other data-toc-label='Other'}
+## `Other` {#safeds.lang.ImpurityReason.Other data-toc-label='Other'}
 
 The function is impure for some other reason. If possible, use a more specific reason.
 
-## PotentiallyImpureParameterCall {#safeds.lang.ImpurityReason.PotentiallyImpureParameterCall data-toc-label='PotentiallyImpureParameterCall'}
+## `PotentiallyImpureParameterCall` {#safeds.lang.ImpurityReason.PotentiallyImpureParameterCall data-toc-label='PotentiallyImpureParameterCall'}
 
 The function calls another, potentially impure function that gets passed as a parameter.
 

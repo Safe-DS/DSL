@@ -1,4 +1,4 @@
-# `#!sds annotation` PythonName {#safeds.lang.PythonName data-toc-label='[annotation] PythonName'}
+# `#!sds annotation` `PythonName` {#safeds.lang.PythonName data-toc-label='[annotation] PythonName'}
 
 The name of the corresponding API element in Python. By default, this is the name of the declaration in the stubs.
 

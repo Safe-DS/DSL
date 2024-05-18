@@ -1,4 +1,4 @@
-# `#!sds class` RidgeRegressor {#safeds.ml.classical.regression.RidgeRegressor data-toc-label='[class] RidgeRegressor'}
+# `#!sds class` `RidgeRegressor` {#safeds.ml.classical.regression.RidgeRegressor data-toc-label='[class] RidgeRegressor'}
 
 Ridge regression.
 
@@ -50,19 +50,19 @@ pipeline example {
     }
     ```
 
-## `#!sds attr` alpha {#safeds.ml.classical.regression.RidgeRegressor.alpha data-toc-label='[attr] alpha'}
+## `#!sds attr` `alpha` {#safeds.ml.classical.regression.RidgeRegressor.alpha data-toc-label='[attr] alpha'}
 
 Get the regularization of the model.
 
 **Type:** [`Float`][safeds.lang.Float]
 
-## `#!sds attr` isFitted {#safeds.ml.classical.regression.RidgeRegressor.isFitted data-toc-label='[attr] isFitted'}
+## `#!sds attr` `isFitted` {#safeds.ml.classical.regression.RidgeRegressor.isFitted data-toc-label='[attr] isFitted'}
 
 Whether the model is fitted.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
 
-## `#!sds fun` coefficientOfDetermination {#safeds.ml.classical.regression.RidgeRegressor.coefficientOfDetermination data-toc-label='[fun] coefficientOfDetermination'}
+## `#!sds fun` `coefficientOfDetermination` {#safeds.ml.classical.regression.RidgeRegressor.coefficientOfDetermination data-toc-label='[fun] coefficientOfDetermination'}
 
 Compute the coefficient of determination (R²) of the regressor on the given data.
 
@@ -103,7 +103,7 @@ to 1.0. You can interpret the coefficient of determination as follows:
     ) -> coefficientOfDetermination: Float
     ```
 
-## `#!sds fun` fit {#safeds.ml.classical.regression.RidgeRegressor.fit data-toc-label='[fun] fit'}
+## `#!sds fun` `fit` {#safeds.ml.classical.regression.RidgeRegressor.fit data-toc-label='[fun] fit'}
 
 Create a copy of this regressor and fit it with the given training data.
 
@@ -130,7 +130,7 @@ This regressor is not modified.
     ) -> fittedRegressor: RidgeRegressor
     ```
 
-## `#!sds fun` getFeatureNames {#safeds.ml.classical.regression.RidgeRegressor.getFeatureNames data-toc-label='[fun] getFeatureNames'}
+## `#!sds fun` `getFeatureNames` {#safeds.ml.classical.regression.RidgeRegressor.getFeatureNames data-toc-label='[fun] getFeatureNames'}
 
 Return the names of the feature columns.
 
@@ -150,7 +150,7 @@ Return the names of the feature columns.
     fun getFeatureNames() -> featureNames: List<String>
     ```
 
-## `#!sds fun` getFeaturesSchema {#safeds.ml.classical.regression.RidgeRegressor.getFeaturesSchema data-toc-label='[fun] getFeaturesSchema'}
+## `#!sds fun` `getFeaturesSchema` {#safeds.ml.classical.regression.RidgeRegressor.getFeaturesSchema data-toc-label='[fun] getFeaturesSchema'}
 
 Return the schema of the feature columns.
 
@@ -170,7 +170,7 @@ Return the schema of the feature columns.
     fun getFeaturesSchema() -> featureSchema: Schema
     ```
 
-## `#!sds fun` getTargetName {#safeds.ml.classical.regression.RidgeRegressor.getTargetName data-toc-label='[fun] getTargetName'}
+## `#!sds fun` `getTargetName` {#safeds.ml.classical.regression.RidgeRegressor.getTargetName data-toc-label='[fun] getTargetName'}
 
 Return the name of the target column.
 
@@ -190,7 +190,7 @@ Return the name of the target column.
     fun getTargetName() -> targetName: String
     ```
 
-## `#!sds fun` getTargetType {#safeds.ml.classical.regression.RidgeRegressor.getTargetType data-toc-label='[fun] getTargetType'}
+## `#!sds fun` `getTargetType` {#safeds.ml.classical.regression.RidgeRegressor.getTargetType data-toc-label='[fun] getTargetType'}
 
 Return the type of the target column.
 
@@ -210,7 +210,7 @@ Return the type of the target column.
     fun getTargetType() -> targetType: DataType
     ```
 
-## `#!sds fun` meanAbsoluteError {#safeds.ml.classical.regression.RidgeRegressor.meanAbsoluteError data-toc-label='[fun] meanAbsoluteError'}
+## `#!sds fun` `meanAbsoluteError` {#safeds.ml.classical.regression.RidgeRegressor.meanAbsoluteError data-toc-label='[fun] meanAbsoluteError'}
 
 Compute the mean absolute error (MAE) of the regressor on the given data.
 
@@ -240,7 +240,7 @@ infinity.
     ) -> meanAbsoluteError: Float
     ```
 
-## `#!sds fun` meanDirectionalAccuracy {#safeds.ml.classical.regression.RidgeRegressor.meanDirectionalAccuracy data-toc-label='[fun] meanDirectionalAccuracy'}
+## `#!sds fun` `meanDirectionalAccuracy` {#safeds.ml.classical.regression.RidgeRegressor.meanDirectionalAccuracy data-toc-label='[fun] meanDirectionalAccuracy'}
 
 Compute the mean directional accuracy (MDA) of the regressor on the given data.
 
@@ -274,7 +274,7 @@ for other types of data. Because of this, it is not included in the `summarize_m
     ) -> meanDirectionalAccuracy: Float
     ```
 
-## `#!sds fun` meanSquaredError {#safeds.ml.classical.regression.RidgeRegressor.meanSquaredError data-toc-label='[fun] meanSquaredError'}
+## `#!sds fun` `meanSquaredError` {#safeds.ml.classical.regression.RidgeRegressor.meanSquaredError data-toc-label='[fun] meanSquaredError'}
 
 Compute the mean squared error (MSE) of the regressor on the given data.
 
@@ -306,7 +306,7 @@ infinity.
     ) -> meanSquaredError: Float
     ```
 
-## `#!sds fun` medianAbsoluteDeviation {#safeds.ml.classical.regression.RidgeRegressor.medianAbsoluteDeviation data-toc-label='[fun] medianAbsoluteDeviation'}
+## `#!sds fun` `medianAbsoluteDeviation` {#safeds.ml.classical.regression.RidgeRegressor.medianAbsoluteDeviation data-toc-label='[fun] medianAbsoluteDeviation'}
 
 Compute the median absolute deviation (MAD) of the regressor on the given data.
 
@@ -336,7 +336,7 @@ positive infinity.
     ) -> medianAbsoluteDeviation: Float
     ```
 
-## `#!sds fun` predict {#safeds.ml.classical.regression.RidgeRegressor.predict data-toc-label='[fun] predict'}
+## `#!sds fun` `predict` {#safeds.ml.classical.regression.RidgeRegressor.predict data-toc-label='[fun] predict'}
 
 Predict the target values on the given dataset.
 
@@ -363,7 +363,7 @@ Predict the target values on the given dataset.
     ) -> prediction: TabularDataset
     ```
 
-## `#!sds fun` summarizeMetrics {#safeds.ml.classical.regression.RidgeRegressor.summarizeMetrics data-toc-label='[fun] summarizeMetrics'}
+## `#!sds fun` `summarizeMetrics` {#safeds.ml.classical.regression.RidgeRegressor.summarizeMetrics data-toc-label='[fun] summarizeMetrics'}
 
 Summarize the regressor's metrics on the given data.
 

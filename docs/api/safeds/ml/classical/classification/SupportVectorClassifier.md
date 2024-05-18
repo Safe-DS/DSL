@@ -1,4 +1,4 @@
-# `#!sds class` SupportVectorClassifier {#safeds.ml.classical.classification.SupportVectorClassifier data-toc-label='[class] SupportVectorClassifier'}
+# `#!sds class` `SupportVectorClassifier` {#safeds.ml.classical.classification.SupportVectorClassifier data-toc-label='[class] SupportVectorClassifier'}
 
 Support vector machine for classification.
 
@@ -91,25 +91,25 @@ pipeline example {
     }
     ```
 
-## `#!sds attr` c {#safeds.ml.classical.classification.SupportVectorClassifier.c data-toc-label='[attr] c'}
+## `#!sds attr` `c` {#safeds.ml.classical.classification.SupportVectorClassifier.c data-toc-label='[attr] c'}
 
 Get the regularization strength.
 
 **Type:** [`Float`][safeds.lang.Float]
 
-## `#!sds attr` isFitted {#safeds.ml.classical.classification.SupportVectorClassifier.isFitted data-toc-label='[attr] isFitted'}
+## `#!sds attr` `isFitted` {#safeds.ml.classical.classification.SupportVectorClassifier.isFitted data-toc-label='[attr] isFitted'}
 
 Whether the model is fitted.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
 
-## `#!sds attr` kernel {#safeds.ml.classical.classification.SupportVectorClassifier.kernel data-toc-label='[attr] kernel'}
+## `#!sds attr` `kernel` {#safeds.ml.classical.classification.SupportVectorClassifier.kernel data-toc-label='[attr] kernel'}
 
 Get the type of kernel used.
 
 **Type:** [`Kernel`][safeds.ml.classical.classification.SupportVectorClassifier.Kernel]
 
-## `#!sds fun` accuracy {#safeds.ml.classical.classification.SupportVectorClassifier.accuracy data-toc-label='[fun] accuracy'}
+## `#!sds fun` `accuracy` {#safeds.ml.classical.classification.SupportVectorClassifier.accuracy data-toc-label='[fun] accuracy'}
 
 Compute the accuracy of the classifier on the given data.
 
@@ -139,7 +139,7 @@ better. Results range from 0.0 to 1.0.
     ) -> accuracy: Float
     ```
 
-## `#!sds fun` f1Score {#safeds.ml.classical.classification.SupportVectorClassifier.f1Score data-toc-label='[fun] f1Score'}
+## `#!sds fun` `f1Score` {#safeds.ml.classical.classification.SupportVectorClassifier.f1Score data-toc-label='[fun] f1Score'}
 
 Compute the classifier's F₁ score on the given data.
 
@@ -172,7 +172,7 @@ classifier. Results range from 0.0 to 1.0.
     ) -> f1Score: Float
     ```
 
-## `#!sds fun` fit {#safeds.ml.classical.classification.SupportVectorClassifier.fit data-toc-label='[fun] fit'}
+## `#!sds fun` `fit` {#safeds.ml.classical.classification.SupportVectorClassifier.fit data-toc-label='[fun] fit'}
 
 Create a copy of this classifier and fit it with the given training data.
 
@@ -199,7 +199,7 @@ This classifier is not modified.
     ) -> fittedClassifier: SupportVectorClassifier
     ```
 
-## `#!sds fun` getFeatureNames {#safeds.ml.classical.classification.SupportVectorClassifier.getFeatureNames data-toc-label='[fun] getFeatureNames'}
+## `#!sds fun` `getFeatureNames` {#safeds.ml.classical.classification.SupportVectorClassifier.getFeatureNames data-toc-label='[fun] getFeatureNames'}
 
 Return the names of the feature columns.
 
@@ -219,7 +219,7 @@ Return the names of the feature columns.
     fun getFeatureNames() -> featureNames: List<String>
     ```
 
-## `#!sds fun` getFeaturesSchema {#safeds.ml.classical.classification.SupportVectorClassifier.getFeaturesSchema data-toc-label='[fun] getFeaturesSchema'}
+## `#!sds fun` `getFeaturesSchema` {#safeds.ml.classical.classification.SupportVectorClassifier.getFeaturesSchema data-toc-label='[fun] getFeaturesSchema'}
 
 Return the schema of the feature columns.
 
@@ -239,7 +239,7 @@ Return the schema of the feature columns.
     fun getFeaturesSchema() -> featureSchema: Schema
     ```
 
-## `#!sds fun` getTargetName {#safeds.ml.classical.classification.SupportVectorClassifier.getTargetName data-toc-label='[fun] getTargetName'}
+## `#!sds fun` `getTargetName` {#safeds.ml.classical.classification.SupportVectorClassifier.getTargetName data-toc-label='[fun] getTargetName'}
 
 Return the name of the target column.
 
@@ -259,7 +259,7 @@ Return the name of the target column.
     fun getTargetName() -> targetName: String
     ```
 
-## `#!sds fun` getTargetType {#safeds.ml.classical.classification.SupportVectorClassifier.getTargetType data-toc-label='[fun] getTargetType'}
+## `#!sds fun` `getTargetType` {#safeds.ml.classical.classification.SupportVectorClassifier.getTargetType data-toc-label='[fun] getTargetType'}
 
 Return the type of the target column.
 
@@ -279,7 +279,7 @@ Return the type of the target column.
     fun getTargetType() -> targetType: DataType
     ```
 
-## `#!sds fun` precision {#safeds.ml.classical.classification.SupportVectorClassifier.precision data-toc-label='[fun] precision'}
+## `#!sds fun` `precision` {#safeds.ml.classical.classification.SupportVectorClassifier.precision data-toc-label='[fun] precision'}
 
 Compute the classifier's precision on the given data.
 
@@ -311,7 +311,7 @@ better the classifier. Results range from 0.0 to 1.0.
     ) -> precision: Float
     ```
 
-## `#!sds fun` predict {#safeds.ml.classical.classification.SupportVectorClassifier.predict data-toc-label='[fun] predict'}
+## `#!sds fun` `predict` {#safeds.ml.classical.classification.SupportVectorClassifier.predict data-toc-label='[fun] predict'}
 
 Predict the target values on the given dataset.
 
@@ -338,7 +338,7 @@ Predict the target values on the given dataset.
     ) -> prediction: TabularDataset
     ```
 
-## `#!sds fun` recall {#safeds.ml.classical.classification.SupportVectorClassifier.recall data-toc-label='[fun] recall'}
+## `#!sds fun` `recall` {#safeds.ml.classical.classification.SupportVectorClassifier.recall data-toc-label='[fun] recall'}
 
 Compute the classifier's recall on the given data.
 
@@ -370,7 +370,7 @@ better the classifier. Results range from 0.0 to 1.0.
     ) -> recall: Float
     ```
 
-## `#!sds fun` summarizeMetrics {#safeds.ml.classical.classification.SupportVectorClassifier.summarizeMetrics data-toc-label='[fun] summarizeMetrics'}
+## `#!sds fun` `summarizeMetrics` {#safeds.ml.classical.classification.SupportVectorClassifier.summarizeMetrics data-toc-label='[fun] summarizeMetrics'}
 
 Summarize the classifier's metrics on the given data.
 
@@ -400,7 +400,7 @@ Summarize the classifier's metrics on the given data.
     ) -> metrics: Table
     ```
 
-## `#!sds enum` Kernel {#safeds.ml.classical.classification.SupportVectorClassifier.Kernel data-toc-label='[enum] Kernel'}
+## `#!sds enum` `Kernel` {#safeds.ml.classical.classification.SupportVectorClassifier.Kernel data-toc-label='[enum] Kernel'}
 
 The kernel functions that can be used in the support vector machine.
 
@@ -438,11 +438,11 @@ The kernel functions that can be used in the support vector machine.
     }
     ```
 
-### Linear {#safeds.ml.classical.classification.SupportVectorClassifier.Kernel.Linear data-toc-label='Linear'}
+### `Linear` {#safeds.ml.classical.classification.SupportVectorClassifier.Kernel.Linear data-toc-label='Linear'}
 
 A linear kernel.
 
-### Polynomial {#safeds.ml.classical.classification.SupportVectorClassifier.Kernel.Polynomial data-toc-label='Polynomial'}
+### `Polynomial` {#safeds.ml.classical.classification.SupportVectorClassifier.Kernel.Polynomial data-toc-label='Polynomial'}
 
 A polynomial kernel.
 
@@ -452,10 +452,10 @@ A polynomial kernel.
 |------|------|-------------|---------|
 | `degree` | [`Int`][safeds.lang.Int] | The degree of the polynomial. | - |
 
-### RadialBasisFunction {#safeds.ml.classical.classification.SupportVectorClassifier.Kernel.RadialBasisFunction data-toc-label='RadialBasisFunction'}
+### `RadialBasisFunction` {#safeds.ml.classical.classification.SupportVectorClassifier.Kernel.RadialBasisFunction data-toc-label='RadialBasisFunction'}
 
 A radial basis function kernel.
 
-### Sigmoid {#safeds.ml.classical.classification.SupportVectorClassifier.Kernel.Sigmoid data-toc-label='Sigmoid'}
+### `Sigmoid` {#safeds.ml.classical.classification.SupportVectorClassifier.Kernel.Sigmoid data-toc-label='Sigmoid'}
 
 A sigmoid kernel.

@@ -1,4 +1,4 @@
-# `#!sds class` TablePlotter {#safeds.data.tabular.plotting.TablePlotter data-toc-label='[class] TablePlotter'}
+# `#!sds class` `TablePlotter` {#safeds.data.tabular.plotting.TablePlotter data-toc-label='[class] TablePlotter'}
 
 A class that contains plotting methods for a table.
 
@@ -127,7 +127,7 @@ pipeline example {
     }
     ```
 
-## `#!sds fun` boxPlots {#safeds.data.tabular.plotting.TablePlotter.boxPlots data-toc-label='[fun] boxPlots'}
+## `#!sds fun` `boxPlots` {#safeds.data.tabular.plotting.TablePlotter.boxPlots data-toc-label='[fun] boxPlots'}
 
 Plot a boxplot for every numerical column.
 
@@ -154,7 +154,7 @@ pipeline example {
     fun boxPlots() -> plot: Image
     ```
 
-## `#!sds fun` correlationHeatmap {#safeds.data.tabular.plotting.TablePlotter.correlationHeatmap data-toc-label='[fun] correlationHeatmap'}
+## `#!sds fun` `correlationHeatmap` {#safeds.data.tabular.plotting.TablePlotter.correlationHeatmap data-toc-label='[fun] correlationHeatmap'}
 
 Plot a correlation heatmap for all numerical columns of this `Table`.
 
@@ -181,7 +181,7 @@ pipeline example {
     fun correlationHeatmap() -> plot: Image
     ```
 
-## `#!sds fun` histograms {#safeds.data.tabular.plotting.TablePlotter.histograms data-toc-label='[fun] histograms'}
+## `#!sds fun` `histograms` {#safeds.data.tabular.plotting.TablePlotter.histograms data-toc-label='[fun] histograms'}
 
 Plot a histogram for every column.
 
@@ -217,7 +217,7 @@ pipeline example {
     }
     ```
 
-## `#!sds fun` linePlot {#safeds.data.tabular.plotting.TablePlotter.linePlot data-toc-label='[fun] linePlot'}
+## `#!sds fun` `linePlot` {#safeds.data.tabular.plotting.TablePlotter.linePlot data-toc-label='[fun] linePlot'}
 
 Create a line plot for two columns in the table.
 
@@ -259,7 +259,7 @@ pipeline example {
     ) -> plot: Image
     ```
 
-## `#!sds fun` scatterPlot {#safeds.data.tabular.plotting.TablePlotter.scatterPlot data-toc-label='[fun] scatterPlot'}
+## `#!sds fun` `scatterPlot` {#safeds.data.tabular.plotting.TablePlotter.scatterPlot data-toc-label='[fun] scatterPlot'}
 
 Create a scatter plot for two columns in the table.
 

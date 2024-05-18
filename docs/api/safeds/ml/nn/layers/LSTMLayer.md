@@ -1,4 +1,4 @@
-# :test_tube:{ title="Experimental" } `#!sds class` LSTMLayer {#safeds.ml.nn.layers.LSTMLayer data-toc-label='[class] LSTMLayer'}
+# :test_tube:{ title="Experimental" } `#!sds class` `LSTMLayer` {#safeds.ml.nn.layers.LSTMLayer data-toc-label='[class] LSTMLayer'}
 
 **Parent type:** [`Layer`][safeds.ml.nn.layers.Layer]
 
@@ -27,13 +27,13 @@
     }
     ```
 
-## `#!sds attr` inputSize {#safeds.ml.nn.layers.LSTMLayer.inputSize data-toc-label='[attr] inputSize'}
+## `#!sds attr` `inputSize` {#safeds.ml.nn.layers.LSTMLayer.inputSize data-toc-label='[attr] inputSize'}
 
 Get the input_size of this layer.
 
 **Type:** [`Int`][safeds.lang.Int]
 
-## `#!sds attr` outputSize {#safeds.ml.nn.layers.LSTMLayer.outputSize data-toc-label='[attr] outputSize'}
+## `#!sds attr` `outputSize` {#safeds.ml.nn.layers.LSTMLayer.outputSize data-toc-label='[attr] outputSize'}
 
 Get the output_size of this layer.
 

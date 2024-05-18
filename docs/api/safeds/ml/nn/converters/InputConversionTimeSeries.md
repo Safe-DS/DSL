@@ -1,4 +1,4 @@
-# :test_tube:{ title="Experimental" } `#!sds class` InputConversionTimeSeries {#safeds.ml.nn.converters.InputConversionTimeSeries data-toc-label='[class] InputConversionTimeSeries'}
+# :test_tube:{ title="Experimental" } `#!sds class` `InputConversionTimeSeries` {#safeds.ml.nn.converters.InputConversionTimeSeries data-toc-label='[class] InputConversionTimeSeries'}
 
 The input conversion for a neural network, defines the input parameters for the neural network.
 

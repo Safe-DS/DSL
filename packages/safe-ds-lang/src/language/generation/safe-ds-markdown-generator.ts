@@ -526,7 +526,7 @@ export class SafeDsMarkdownGenerator {
             result += ` \`#!sds ${keyword}\``;
         }
 
-        result += ` ${node.name}`;
+        result += ` \`${node.name}\``;
         result += ` {#${this.getId(node, state)} data-toc-label='${this.createTocLabel(node, keyword)}'}`;
         return result;
     }

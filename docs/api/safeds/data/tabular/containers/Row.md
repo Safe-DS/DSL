@@ -3,7 +3,7 @@ search:
   boost: 0.5
 ---
 
-# `#!sds abstract class` Row {#safeds.data.tabular.containers.Row data-toc-label='[abstract class] Row'}
+# `#!sds abstract class` `Row` {#safeds.data.tabular.containers.Row data-toc-label='[abstract class] Row'}
 
 A one-dimensional collection of named, heterogeneous values.
 
@@ -67,25 +67,25 @@ This class cannot be instantiated directly. It is only used for arguments of cal
     }
     ```
 
-## `#!sds attr` columnCount {#safeds.data.tabular.containers.Row.columnCount data-toc-label='[attr] columnCount'}
+## `#!sds attr` `columnCount` {#safeds.data.tabular.containers.Row.columnCount data-toc-label='[attr] columnCount'}
 
 The number of columns in the row.
 
 **Type:** [`Int`][safeds.lang.Int]
 
-## `#!sds attr` columnNames {#safeds.data.tabular.containers.Row.columnNames data-toc-label='[attr] columnNames'}
+## `#!sds attr` `columnNames` {#safeds.data.tabular.containers.Row.columnNames data-toc-label='[attr] columnNames'}
 
 The names of the columns in the row.
 
 **Type:** [`List<String>`][safeds.lang.List]
 
-## `#!sds attr` schema {#safeds.data.tabular.containers.Row.schema data-toc-label='[attr] schema'}
+## `#!sds attr` `schema` {#safeds.data.tabular.containers.Row.schema data-toc-label='[attr] schema'}
 
 The schema of the row.
 
 **Type:** [`Schema`][safeds.data.tabular.typing.Schema]
 
-## `#!sds fun` getColumnType {#safeds.data.tabular.containers.Row.getColumnType data-toc-label='[fun] getColumnType'}
+## `#!sds fun` `getColumnType` {#safeds.data.tabular.containers.Row.getColumnType data-toc-label='[fun] getColumnType'}
 
 Get the type of the specified column.
 
@@ -111,7 +111,7 @@ Get the type of the specified column.
     ) -> type: DataType
     ```
 
-## `#!sds fun` getValue {#safeds.data.tabular.containers.Row.getValue data-toc-label='[fun] getValue'}
+## `#!sds fun` `getValue` {#safeds.data.tabular.containers.Row.getValue data-toc-label='[fun] getValue'}
 
 Get the value of the specified column.
 
@@ -137,7 +137,7 @@ Get the value of the specified column.
     ) -> value: Cell<Any>
     ```
 
-## `#!sds fun` hasColumn {#safeds.data.tabular.containers.Row.hasColumn data-toc-label='[fun] hasColumn'}
+## `#!sds fun` `hasColumn` {#safeds.data.tabular.containers.Row.hasColumn data-toc-label='[fun] hasColumn'}
 
 Check if the row has a column with the specified name.
 

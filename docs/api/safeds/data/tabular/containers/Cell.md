@@ -3,7 +3,7 @@ search:
   boost: 0.5
 ---
 
-# `#!sds abstract class` Cell {#safeds.data.tabular.containers.Cell data-toc-label='[abstract class] Cell'}
+# `#!sds abstract class` `Cell` {#safeds.data.tabular.containers.Cell data-toc-label='[abstract class] Cell'}
 
 A single value in a table.
 
@@ -299,7 +299,7 @@ This class cannot be instantiated directly. It is only used for arguments of cal
     }
     ```
 
-## `#!sds fun` abs {#safeds.data.tabular.containers.Cell.abs data-toc-label='[fun] abs'}
+## `#!sds fun` `abs` {#safeds.data.tabular.containers.Cell.abs data-toc-label='[fun] abs'}
 
 Get the absolute value.
 
@@ -326,7 +326,7 @@ pipeline example {
     fun abs() -> result: Cell
     ```
 
-## `#!sds fun` add {#safeds.data.tabular.containers.Cell.add data-toc-label='[fun] add'}
+## `#!sds fun` `add` {#safeds.data.tabular.containers.Cell.add data-toc-label='[fun] add'}
 
 Add a value. This WILL LATER BE equivalent to the `+` operator.
 
@@ -361,7 +361,7 @@ pipeline example {
     ) -> result: Cell
     ```
 
-## `#!sds fun` and {#safeds.data.tabular.containers.Cell.and data-toc-label='[fun] and'}
+## `#!sds fun` `and` {#safeds.data.tabular.containers.Cell.and data-toc-label='[fun] and'}
 
 Perform a boolean AND operation. This WILL LATER BE equivalent to the ^and operator.
 
@@ -397,7 +397,7 @@ pipeline example {
     ) -> result: Cell<Boolean>
     ```
 
-## `#!sds fun` ceil {#safeds.data.tabular.containers.Cell.ceil data-toc-label='[fun] ceil'}
+## `#!sds fun` `ceil` {#safeds.data.tabular.containers.Cell.ceil data-toc-label='[fun] ceil'}
 
 Round up to the nearest integer.
 
@@ -424,7 +424,7 @@ pipeline example {
     fun ceil() -> result: Cell
     ```
 
-## `#!sds fun` div {#safeds.data.tabular.containers.Cell.div data-toc-label='[fun] div'}
+## `#!sds fun` `div` {#safeds.data.tabular.containers.Cell.div data-toc-label='[fun] div'}
 
 Divide by a value. This WILL LATER BE equivalent to the `/` operator.
 
@@ -459,7 +459,7 @@ pipeline example {
     ) -> result: Cell
     ```
 
-## `#!sds fun` eq {#safeds.data.tabular.containers.Cell.eq data-toc-label='[fun] eq'}
+## `#!sds fun` `eq` {#safeds.data.tabular.containers.Cell.eq data-toc-label='[fun] eq'}
 
 Check if equal to a value. This WILL LATER BE equivalent to the `==` operator.
 
@@ -494,7 +494,7 @@ pipeline example {
     ) -> result: Cell<Boolean>
     ```
 
-## `#!sds fun` floor {#safeds.data.tabular.containers.Cell.floor data-toc-label='[fun] floor'}
+## `#!sds fun` `floor` {#safeds.data.tabular.containers.Cell.floor data-toc-label='[fun] floor'}
 
 Round down to the nearest integer.
 
@@ -521,7 +521,7 @@ pipeline example {
     fun floor() -> result: Cell
     ```
 
-## `#!sds fun` ge {#safeds.data.tabular.containers.Cell.ge data-toc-label='[fun] ge'}
+## `#!sds fun` `ge` {#safeds.data.tabular.containers.Cell.ge data-toc-label='[fun] ge'}
 
 Check if greater than or equal to a value. This WILL LATER BE equivalent to the `>=` operator.
 
@@ -556,7 +556,7 @@ pipeline example {
     ) -> result: Cell<Boolean>
     ```
 
-## `#!sds fun` gt {#safeds.data.tabular.containers.Cell.gt data-toc-label='[fun] gt'}
+## `#!sds fun` `gt` {#safeds.data.tabular.containers.Cell.gt data-toc-label='[fun] gt'}
 
 Check if greater than a value. This WILL LATER BE equivalent to the `>` operator.
 
@@ -591,7 +591,7 @@ pipeline example {
     ) -> result: Cell<Boolean>
     ```
 
-## `#!sds fun` le {#safeds.data.tabular.containers.Cell.le data-toc-label='[fun] le'}
+## `#!sds fun` `le` {#safeds.data.tabular.containers.Cell.le data-toc-label='[fun] le'}
 
 Check if less than or equal to a value. This WILL LATER BE equivalent to the `<=` operator.
 
@@ -626,7 +626,7 @@ pipeline example {
     ) -> result: Cell<Boolean>
     ```
 
-## `#!sds fun` lt {#safeds.data.tabular.containers.Cell.lt data-toc-label='[fun] lt'}
+## `#!sds fun` `lt` {#safeds.data.tabular.containers.Cell.lt data-toc-label='[fun] lt'}
 
 Check if less than a value. This WILL LATER BE equivalent to the `<` operator.
 
@@ -661,7 +661,7 @@ pipeline example {
     ) -> result: Cell<Boolean>
     ```
 
-## `#!sds fun` mod {#safeds.data.tabular.containers.Cell.mod data-toc-label='[fun] mod'}
+## `#!sds fun` `mod` {#safeds.data.tabular.containers.Cell.mod data-toc-label='[fun] mod'}
 
 Perform a modulo operation.
 
@@ -696,7 +696,7 @@ pipeline example {
     ) -> result: Cell
     ```
 
-## `#!sds fun` mul {#safeds.data.tabular.containers.Cell.mul data-toc-label='[fun] mul'}
+## `#!sds fun` `mul` {#safeds.data.tabular.containers.Cell.mul data-toc-label='[fun] mul'}
 
 Multiply by a value. This WILL LATER BE equivalent to the `*` operator.
 
@@ -731,7 +731,7 @@ pipeline example {
     ) -> result: Cell
     ```
 
-## `#!sds fun` neg {#safeds.data.tabular.containers.Cell.neg data-toc-label='[fun] neg'}
+## `#!sds fun` `neg` {#safeds.data.tabular.containers.Cell.neg data-toc-label='[fun] neg'}
 
 Negate the value.
 
@@ -758,7 +758,7 @@ pipeline example {
     fun neg() -> result: Cell
     ```
 
-## `#!sds fun` not {#safeds.data.tabular.containers.Cell.not data-toc-label='[fun] not'}
+## `#!sds fun` `not` {#safeds.data.tabular.containers.Cell.not data-toc-label='[fun] not'}
 
 Negate a boolean. This WILL LATER BE equivalent to the ^not operator.
 
@@ -786,7 +786,7 @@ pipeline example {
     fun ^not() -> result: Cell<Boolean>
     ```
 
-## `#!sds fun` or {#safeds.data.tabular.containers.Cell.or data-toc-label='[fun] or'}
+## `#!sds fun` `or` {#safeds.data.tabular.containers.Cell.or data-toc-label='[fun] or'}
 
 Perform a boolean OR operation. This WILL LATER BE equivalent to the ^or operator.
 
@@ -822,7 +822,7 @@ pipeline example {
     ) -> result: Cell<Boolean>
     ```
 
-## `#!sds fun` pow {#safeds.data.tabular.containers.Cell.pow data-toc-label='[fun] pow'}
+## `#!sds fun` `pow` {#safeds.data.tabular.containers.Cell.pow data-toc-label='[fun] pow'}
 
 Raise to a power.
 
@@ -857,7 +857,7 @@ pipeline example {
     ) -> result: Cell
     ```
 
-## `#!sds fun` sub {#safeds.data.tabular.containers.Cell.sub data-toc-label='[fun] sub'}
+## `#!sds fun` `sub` {#safeds.data.tabular.containers.Cell.sub data-toc-label='[fun] sub'}
 
 Subtract a value. This WILL LATER BE equivalent to the `-` operator.
 
@@ -892,7 +892,7 @@ pipeline example {
     ) -> result: Cell
     ```
 
-## `#!sds fun` xor {#safeds.data.tabular.containers.Cell.xor data-toc-label='[fun] xor'}
+## `#!sds fun` `xor` {#safeds.data.tabular.containers.Cell.xor data-toc-label='[fun] xor'}
 
 Perform a boolean XOR operation.
 

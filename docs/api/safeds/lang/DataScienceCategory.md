@@ -1,4 +1,4 @@
-# :test_tube:{ title="Experimental" } `#!sds enum` DataScienceCategory {#safeds.lang.DataScienceCategory data-toc-label='[enum] DataScienceCategory'}
+# :test_tube:{ title="Experimental" } `#!sds enum` `DataScienceCategory` {#safeds.lang.DataScienceCategory data-toc-label='[enum] DataScienceCategory'}
 
 A step in the data science process.
 
@@ -38,26 +38,26 @@ A step in the data science process.
     }
     ```
 
-## DataExploration {#safeds.lang.DataScienceCategory.DataExploration data-toc-label='DataExploration'}
+## `DataExploration` {#safeds.lang.DataScienceCategory.DataExploration data-toc-label='DataExploration'}
 
 Explore your data.
 
-## DataExport {#safeds.lang.DataScienceCategory.DataExport data-toc-label='DataExport'}
+## `DataExport` {#safeds.lang.DataScienceCategory.DataExport data-toc-label='DataExport'}
 
 Save your data for later use.
 
-## DataImport {#safeds.lang.DataScienceCategory.DataImport data-toc-label='DataImport'}
+## `DataImport` {#safeds.lang.DataScienceCategory.DataImport data-toc-label='DataImport'}
 
 Load your data into the program.
 
-## DataPreparation {#safeds.lang.DataScienceCategory.DataPreparation data-toc-label='DataPreparation'}
+## `DataPreparation` {#safeds.lang.DataScienceCategory.DataPreparation data-toc-label='DataPreparation'}
 
 Prepare your data for analysis.
 
-## ModelEvaluation {#safeds.lang.DataScienceCategory.ModelEvaluation data-toc-label='ModelEvaluation'}
+## `ModelEvaluation` {#safeds.lang.DataScienceCategory.ModelEvaluation data-toc-label='ModelEvaluation'}
 
 Evaluate the performance of your model.
 
-## Modeling {#safeds.lang.DataScienceCategory.Modeling data-toc-label='Modeling'}
+## `Modeling` {#safeds.lang.DataScienceCategory.Modeling data-toc-label='Modeling'}
 
 Configure a model and train it on your data.

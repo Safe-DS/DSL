@@ -1,4 +1,4 @@
-# `#!sds enum` AnnotationTarget {#safeds.lang.AnnotationTarget data-toc-label='[enum] AnnotationTarget'}
+# `#!sds enum` `AnnotationTarget` {#safeds.lang.AnnotationTarget data-toc-label='[enum] AnnotationTarget'}
 
 The declaration types that can be targeted by annotations.
 
@@ -74,54 +74,54 @@ The declaration types that can be targeted by annotations.
     }
     ```
 
-## Annotation {#safeds.lang.AnnotationTarget.Annotation data-toc-label='Annotation'}
+## `Annotation` {#safeds.lang.AnnotationTarget.Annotation data-toc-label='Annotation'}
 
 The annotation can be called on annotations.
 
-## Attribute {#safeds.lang.AnnotationTarget.Attribute data-toc-label='Attribute'}
+## `Attribute` {#safeds.lang.AnnotationTarget.Attribute data-toc-label='Attribute'}
 
 The annotation can be called on attributes.
 
-## Class {#safeds.lang.AnnotationTarget.Class data-toc-label='Class'}
+## `Class` {#safeds.lang.AnnotationTarget.Class data-toc-label='Class'}
 
 The annotation can be called on classes.
 
-## Enum {#safeds.lang.AnnotationTarget.Enum data-toc-label='Enum'}
+## `Enum` {#safeds.lang.AnnotationTarget.Enum data-toc-label='Enum'}
 
 The annotation can be called on enums.
 
-## EnumVariant {#safeds.lang.AnnotationTarget.EnumVariant data-toc-label='EnumVariant'}
+## `EnumVariant` {#safeds.lang.AnnotationTarget.EnumVariant data-toc-label='EnumVariant'}
 
 The annotation can be called on enum variants.
 
-## Function {#safeds.lang.AnnotationTarget.Function data-toc-label='Function'}
+## `Function` {#safeds.lang.AnnotationTarget.Function data-toc-label='Function'}
 
 The annotation can be called on functions.
 
-## Module {#safeds.lang.AnnotationTarget.Module data-toc-label='Module'}
+## `Module` {#safeds.lang.AnnotationTarget.Module data-toc-label='Module'}
 
 The annotation can be called on modules (i.e. files).
 
-## Parameter {#safeds.lang.AnnotationTarget.Parameter data-toc-label='Parameter'}
+## `Parameter` {#safeds.lang.AnnotationTarget.Parameter data-toc-label='Parameter'}
 
 The annotation can be called on parameters.
 
-## Pipeline {#safeds.lang.AnnotationTarget.Pipeline data-toc-label='Pipeline'}
+## `Pipeline` {#safeds.lang.AnnotationTarget.Pipeline data-toc-label='Pipeline'}
 
 The annotation can be called on pipelines.
 
-## Result {#safeds.lang.AnnotationTarget.Result data-toc-label='Result'}
+## `Result` {#safeds.lang.AnnotationTarget.Result data-toc-label='Result'}
 
 The annotation can be called on results.
 
-## Schema {#safeds.lang.AnnotationTarget.Schema data-toc-label='Schema'}
+## `Schema` {#safeds.lang.AnnotationTarget.Schema data-toc-label='Schema'}
 
 The annotation can be called on schemas.
 
-## Segment {#safeds.lang.AnnotationTarget.Segment data-toc-label='Segment'}
+## `Segment` {#safeds.lang.AnnotationTarget.Segment data-toc-label='Segment'}
 
 The annotation can be called on segments.
 
-## TypeParameter {#safeds.lang.AnnotationTarget.TypeParameter data-toc-label='TypeParameter'}
+## `TypeParameter` {#safeds.lang.AnnotationTarget.TypeParameter data-toc-label='TypeParameter'}
 
 The annotation can be called on type parameters.

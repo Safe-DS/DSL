@@ -1,4 +1,4 @@
-# `#!sds annotation` Repeatable {#safeds.lang.Repeatable data-toc-label='[annotation] Repeatable'}
+# `#!sds annotation` `Repeatable` {#safeds.lang.Repeatable data-toc-label='[annotation] Repeatable'}
 
 The annotation can be called multiple times for the same declaration.
 

@@ -1,4 +1,4 @@
-# `#!sds class` RandomForestRegressor {#safeds.ml.classical.regression.RandomForestRegressor data-toc-label='[class] RandomForestRegressor'}
+# `#!sds class` `RandomForestRegressor` {#safeds.ml.classical.regression.RandomForestRegressor data-toc-label='[class] RandomForestRegressor'}
 
 Random forest regression.
 
@@ -63,31 +63,31 @@ pipeline example {
     }
     ```
 
-## `#!sds attr` isFitted {#safeds.ml.classical.regression.RandomForestRegressor.isFitted data-toc-label='[attr] isFitted'}
+## `#!sds attr` `isFitted` {#safeds.ml.classical.regression.RandomForestRegressor.isFitted data-toc-label='[attr] isFitted'}
 
 Whether the model is fitted.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
 
-## `#!sds attr` maxDepth {#safeds.ml.classical.regression.RandomForestRegressor.maxDepth data-toc-label='[attr] maxDepth'}
+## `#!sds attr` `maxDepth` {#safeds.ml.classical.regression.RandomForestRegressor.maxDepth data-toc-label='[attr] maxDepth'}
 
 The maximum depth of each tree.
 
 **Type:** [`Int?`][safeds.lang.Int]
 
-## `#!sds attr` minSampleCountInLeaves {#safeds.ml.classical.regression.RandomForestRegressor.minSampleCountInLeaves data-toc-label='[attr] minSampleCountInLeaves'}
+## `#!sds attr` `minSampleCountInLeaves` {#safeds.ml.classical.regression.RandomForestRegressor.minSampleCountInLeaves data-toc-label='[attr] minSampleCountInLeaves'}
 
 The minimum number of samples that must remain in the leaves of each tree.
 
 **Type:** [`Int`][safeds.lang.Int]
 
-## `#!sds attr` treeCount {#safeds.ml.classical.regression.RandomForestRegressor.treeCount data-toc-label='[attr] treeCount'}
+## `#!sds attr` `treeCount` {#safeds.ml.classical.regression.RandomForestRegressor.treeCount data-toc-label='[attr] treeCount'}
 
 Get the number of trees used in the random forest.
 
 **Type:** [`Int`][safeds.lang.Int]
 
-## `#!sds fun` coefficientOfDetermination {#safeds.ml.classical.regression.RandomForestRegressor.coefficientOfDetermination data-toc-label='[fun] coefficientOfDetermination'}
+## `#!sds fun` `coefficientOfDetermination` {#safeds.ml.classical.regression.RandomForestRegressor.coefficientOfDetermination data-toc-label='[fun] coefficientOfDetermination'}
 
 Compute the coefficient of determination (R²) of the regressor on the given data.
 
@@ -128,7 +128,7 @@ to 1.0. You can interpret the coefficient of determination as follows:
     ) -> coefficientOfDetermination: Float
     ```
 
-## `#!sds fun` fit {#safeds.ml.classical.regression.RandomForestRegressor.fit data-toc-label='[fun] fit'}
+## `#!sds fun` `fit` {#safeds.ml.classical.regression.RandomForestRegressor.fit data-toc-label='[fun] fit'}
 
 Create a copy of this regressor and fit it with the given training data.
 
@@ -155,7 +155,7 @@ This regressor is not modified.
     ) -> fittedRegressor: RandomForestRegressor
     ```
 
-## `#!sds fun` getFeatureNames {#safeds.ml.classical.regression.RandomForestRegressor.getFeatureNames data-toc-label='[fun] getFeatureNames'}
+## `#!sds fun` `getFeatureNames` {#safeds.ml.classical.regression.RandomForestRegressor.getFeatureNames data-toc-label='[fun] getFeatureNames'}
 
 Return the names of the feature columns.
 
@@ -175,7 +175,7 @@ Return the names of the feature columns.
     fun getFeatureNames() -> featureNames: List<String>
     ```
 
-## `#!sds fun` getFeaturesSchema {#safeds.ml.classical.regression.RandomForestRegressor.getFeaturesSchema data-toc-label='[fun] getFeaturesSchema'}
+## `#!sds fun` `getFeaturesSchema` {#safeds.ml.classical.regression.RandomForestRegressor.getFeaturesSchema data-toc-label='[fun] getFeaturesSchema'}
 
 Return the schema of the feature columns.
 
@@ -195,7 +195,7 @@ Return the schema of the feature columns.
     fun getFeaturesSchema() -> featureSchema: Schema
     ```
 
-## `#!sds fun` getTargetName {#safeds.ml.classical.regression.RandomForestRegressor.getTargetName data-toc-label='[fun] getTargetName'}
+## `#!sds fun` `getTargetName` {#safeds.ml.classical.regression.RandomForestRegressor.getTargetName data-toc-label='[fun] getTargetName'}
 
 Return the name of the target column.
 
@@ -215,7 +215,7 @@ Return the name of the target column.
     fun getTargetName() -> targetName: String
     ```
 
-## `#!sds fun` getTargetType {#safeds.ml.classical.regression.RandomForestRegressor.getTargetType data-toc-label='[fun] getTargetType'}
+## `#!sds fun` `getTargetType` {#safeds.ml.classical.regression.RandomForestRegressor.getTargetType data-toc-label='[fun] getTargetType'}
 
 Return the type of the target column.
 
@@ -235,7 +235,7 @@ Return the type of the target column.
     fun getTargetType() -> targetType: DataType
     ```
 
-## `#!sds fun` meanAbsoluteError {#safeds.ml.classical.regression.RandomForestRegressor.meanAbsoluteError data-toc-label='[fun] meanAbsoluteError'}
+## `#!sds fun` `meanAbsoluteError` {#safeds.ml.classical.regression.RandomForestRegressor.meanAbsoluteError data-toc-label='[fun] meanAbsoluteError'}
 
 Compute the mean absolute error (MAE) of the regressor on the given data.
 
@@ -265,7 +265,7 @@ infinity.
     ) -> meanAbsoluteError: Float
     ```
 
-## `#!sds fun` meanDirectionalAccuracy {#safeds.ml.classical.regression.RandomForestRegressor.meanDirectionalAccuracy data-toc-label='[fun] meanDirectionalAccuracy'}
+## `#!sds fun` `meanDirectionalAccuracy` {#safeds.ml.classical.regression.RandomForestRegressor.meanDirectionalAccuracy data-toc-label='[fun] meanDirectionalAccuracy'}
 
 Compute the mean directional accuracy (MDA) of the regressor on the given data.
 
@@ -299,7 +299,7 @@ for other types of data. Because of this, it is not included in the `summarize_m
     ) -> meanDirectionalAccuracy: Float
     ```
 
-## `#!sds fun` meanSquaredError {#safeds.ml.classical.regression.RandomForestRegressor.meanSquaredError data-toc-label='[fun] meanSquaredError'}
+## `#!sds fun` `meanSquaredError` {#safeds.ml.classical.regression.RandomForestRegressor.meanSquaredError data-toc-label='[fun] meanSquaredError'}
 
 Compute the mean squared error (MSE) of the regressor on the given data.
 
@@ -331,7 +331,7 @@ infinity.
     ) -> meanSquaredError: Float
     ```
 
-## `#!sds fun` medianAbsoluteDeviation {#safeds.ml.classical.regression.RandomForestRegressor.medianAbsoluteDeviation data-toc-label='[fun] medianAbsoluteDeviation'}
+## `#!sds fun` `medianAbsoluteDeviation` {#safeds.ml.classical.regression.RandomForestRegressor.medianAbsoluteDeviation data-toc-label='[fun] medianAbsoluteDeviation'}
 
 Compute the median absolute deviation (MAD) of the regressor on the given data.
 
@@ -361,7 +361,7 @@ positive infinity.
     ) -> medianAbsoluteDeviation: Float
     ```
 
-## `#!sds fun` predict {#safeds.ml.classical.regression.RandomForestRegressor.predict data-toc-label='[fun] predict'}
+## `#!sds fun` `predict` {#safeds.ml.classical.regression.RandomForestRegressor.predict data-toc-label='[fun] predict'}
 
 Predict the target values on the given dataset.
 
@@ -388,7 +388,7 @@ Predict the target values on the given dataset.
     ) -> prediction: TabularDataset
     ```
 
-## `#!sds fun` summarizeMetrics {#safeds.ml.classical.regression.RandomForestRegressor.summarizeMetrics data-toc-label='[fun] summarizeMetrics'}
+## `#!sds fun` `summarizeMetrics` {#safeds.ml.classical.regression.RandomForestRegressor.summarizeMetrics data-toc-label='[fun] summarizeMetrics'}
 
 Summarize the regressor's metrics on the given data.
 
