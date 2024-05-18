@@ -3,7 +3,7 @@ search:
   boost: 0.5
 ---
 
-# `#!sds abstract class` Schema {#safeds.data.tabular.typing.Schema data-toc-label='Schema'}
+# <code class="doc-symbol doc-symbol-class"></code> `Schema` {#safeds.data.tabular.typing.Schema data-toc-label='[class] Schema'}
 
 The schema of a row or table.
 
@@ -71,13 +71,13 @@ The schema of a row or table.
     }
     ```
 
-## `#!sds attr` columnNames {#safeds.data.tabular.typing.Schema.columnNames data-toc-label='columnNames'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `columnNames` {#safeds.data.tabular.typing.Schema.columnNames data-toc-label='[attribute] columnNames'}
 
 Return a list of all column names contained in this schema.
 
 **Type:** [`List<String>`][safeds.lang.List]
 
-## `#!sds fun` getColumnType {#safeds.data.tabular.typing.Schema.getColumnType data-toc-label='getColumnType'}
+## <code class="doc-symbol doc-symbol-function"></code> `getColumnType` {#safeds.data.tabular.typing.Schema.getColumnType data-toc-label='[function] getColumnType'}
 
 Return the type of the given column.
 
@@ -112,7 +112,7 @@ pipeline example {
     ) -> type: DataType
     ```
 
-## `#!sds fun` hasColumn {#safeds.data.tabular.typing.Schema.hasColumn data-toc-label='hasColumn'}
+## <code class="doc-symbol doc-symbol-function"></code> `hasColumn` {#safeds.data.tabular.typing.Schema.hasColumn data-toc-label='[function] hasColumn'}
 
 Return whether the schema contains a given column.
 
@@ -147,7 +147,7 @@ pipeline example {
     ) -> contains: Boolean
     ```
 
-## `#!sds fun` toMap {#safeds.data.tabular.typing.Schema.toMap data-toc-label='toMap'}
+## <code class="doc-symbol doc-symbol-function"></code> `toMap` {#safeds.data.tabular.typing.Schema.toMap data-toc-label='[function] toMap'}
 
 Return a dictionary that maps column names to column types.
 

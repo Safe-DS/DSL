@@ -3,7 +3,7 @@ search:
   boost: 0.5
 ---
 
-# :test_tube:{ title="Experimental" } `#!sds abstract class` InputConversion {#safeds.ml.nn.converters.InputConversion data-toc-label='InputConversion'}
+# :test_tube:{ title="Experimental" } <code class="doc-symbol doc-symbol-class"></code> `InputConversion` {#safeds.ml.nn.converters.InputConversion data-toc-label='[class] InputConversion'}
 
 The input conversion for a neural network, defines the input parameters for the neural network.
 

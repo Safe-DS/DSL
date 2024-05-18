@@ -1,4 +1,4 @@
-# :test_tube:{ title="Experimental" } `#!sds class` OutputConversionTable {#safeds.ml.nn.converters.OutputConversionTable data-toc-label='OutputConversionTable'}
+# :test_tube:{ title="Experimental" } <code class="doc-symbol doc-symbol-class"></code> `OutputConversionTable` {#safeds.ml.nn.converters.OutputConversionTable data-toc-label='[class] OutputConversionTable'}
 
 The output conversion for a neural network defines the output parameters for the neural network.
 

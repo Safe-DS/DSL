@@ -1,8 +1,8 @@
-# :warning:{ title="Deprecated" } `#!sds fun` myFunction1 {#tests.generation.markdown.functions.deprecated.myFunction1 data-toc-label='myFunction1'}
+# :warning:{ title="Deprecated" } <code class="doc-symbol doc-symbol-function"></code> `myFunction1` {#tests.generation.markdown.functions.deprecated.myFunction1 data-toc-label='[function] myFunction1'}
 
 !!! warning "Deprecated"
 
-    This function is deprecated.
+    This declaration is deprecated.
 
 ??? quote "Stub code in `main.sdsstub`"
 

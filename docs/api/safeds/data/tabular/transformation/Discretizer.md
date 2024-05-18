@@ -1,4 +1,4 @@
-# `#!sds class` Discretizer {#safeds.data.tabular.transformation.Discretizer data-toc-label='Discretizer'}
+# <code class="doc-symbol doc-symbol-class"></code> `Discretizer` {#safeds.data.tabular.transformation.Discretizer data-toc-label='[class] Discretizer'}
 
 The Discretizer bins continuous data into intervals.
 
@@ -70,19 +70,19 @@ pipeline example {
     }
     ```
 
-## `#!sds attr` binCount {#safeds.data.tabular.transformation.Discretizer.binCount data-toc-label='binCount'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `binCount` {#safeds.data.tabular.transformation.Discretizer.binCount data-toc-label='[attribute] binCount'}
 
 The number of bins to be created.
 
 **Type:** [`Int`][safeds.lang.Int]
 
-## `#!sds attr` isFitted {#safeds.data.tabular.transformation.Discretizer.isFitted data-toc-label='isFitted'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `isFitted` {#safeds.data.tabular.transformation.Discretizer.isFitted data-toc-label='[attribute] isFitted'}
 
 Whether the transformer is fitted.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
 
-## `#!sds fun` fit {#safeds.data.tabular.transformation.Discretizer.fit data-toc-label='fit'}
+## <code class="doc-symbol doc-symbol-function"></code> `fit` {#safeds.data.tabular.transformation.Discretizer.fit data-toc-label='[function] fit'}
 
 Learn a transformation for a set of columns in a table.
 
@@ -111,7 +111,7 @@ This transformer is not modified.
     ) -> fittedTransformer: Discretizer
     ```
 
-## `#!sds fun` fitAndTransform {#safeds.data.tabular.transformation.Discretizer.fitAndTransform data-toc-label='fitAndTransform'}
+## <code class="doc-symbol doc-symbol-function"></code> `fitAndTransform` {#safeds.data.tabular.transformation.Discretizer.fitAndTransform data-toc-label='[function] fitAndTransform'}
 
 Learn a transformation for a set of columns in a table and apply the learned transformation to the same table.
 
@@ -142,7 +142,7 @@ Learn a transformation for a set of columns in a table and apply the learned tra
     ) -> (fittedTransformer: Discretizer, transformedTable: Table)
     ```
 
-## `#!sds fun` transform {#safeds.data.tabular.transformation.Discretizer.transform data-toc-label='transform'}
+## <code class="doc-symbol doc-symbol-function"></code> `transform` {#safeds.data.tabular.transformation.Discretizer.transform data-toc-label='[function] transform'}
 
 Apply the learned transformation to a table.
 

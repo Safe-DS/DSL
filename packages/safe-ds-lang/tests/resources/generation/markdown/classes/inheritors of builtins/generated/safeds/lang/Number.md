@@ -3,7 +3,7 @@ search:
   boost: 0.5
 ---
 
-# `#!sds abstract class` Number {#safeds.lang.Number data-toc-label='Number'}
+# <code class="doc-symbol doc-symbol-class"></code> `Number` {#safeds.lang.Number data-toc-label='[class] Number'}
 
 **Inheritors:**
 

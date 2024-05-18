@@ -1,4 +1,4 @@
-# `#!sds class` SimpleImputer {#safeds.data.tabular.transformation.SimpleImputer data-toc-label='SimpleImputer'}
+# <code class="doc-symbol doc-symbol-class"></code> `SimpleImputer` {#safeds.data.tabular.transformation.SimpleImputer data-toc-label='[class] SimpleImputer'}
 
 Replace missing values with the given strategy.
 
@@ -113,25 +113,25 @@ pipeline example {
     }
     ```
 
-## `#!sds attr` isFitted {#safeds.data.tabular.transformation.SimpleImputer.isFitted data-toc-label='isFitted'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `isFitted` {#safeds.data.tabular.transformation.SimpleImputer.isFitted data-toc-label='[attribute] isFitted'}
 
 Whether the transformer is fitted.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
 
-## `#!sds attr` strategy {#safeds.data.tabular.transformation.SimpleImputer.strategy data-toc-label='strategy'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `strategy` {#safeds.data.tabular.transformation.SimpleImputer.strategy data-toc-label='[attribute] strategy'}
 
 The strategy used to replace missing values.
 
 **Type:** [`Strategy`][safeds.data.tabular.transformation.SimpleImputer.Strategy]
 
-## `#!sds attr` valueToReplace {#safeds.data.tabular.transformation.SimpleImputer.valueToReplace data-toc-label='valueToReplace'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `valueToReplace` {#safeds.data.tabular.transformation.SimpleImputer.valueToReplace data-toc-label='[attribute] valueToReplace'}
 
 The value that should be replaced.
 
 **Type:** [`Any`][safeds.lang.Any]
 
-## `#!sds fun` fit {#safeds.data.tabular.transformation.SimpleImputer.fit data-toc-label='fit'}
+## <code class="doc-symbol doc-symbol-function"></code> `fit` {#safeds.data.tabular.transformation.SimpleImputer.fit data-toc-label='[function] fit'}
 
 Learn a transformation for a set of columns in a table.
 
@@ -160,7 +160,7 @@ This transformer is not modified.
     ) -> fittedTransformer: SimpleImputer
     ```
 
-## `#!sds fun` fitAndTransform {#safeds.data.tabular.transformation.SimpleImputer.fitAndTransform data-toc-label='fitAndTransform'}
+## <code class="doc-symbol doc-symbol-function"></code> `fitAndTransform` {#safeds.data.tabular.transformation.SimpleImputer.fitAndTransform data-toc-label='[function] fitAndTransform'}
 
 Learn a transformation for a set of columns in a table and apply the learned transformation to the same table.
 
@@ -191,7 +191,7 @@ Learn a transformation for a set of columns in a table and apply the learned tra
     ) -> (fittedTransformer: SimpleImputer, transformedTable: Table)
     ```
 
-## `#!sds fun` transform {#safeds.data.tabular.transformation.SimpleImputer.transform data-toc-label='transform'}
+## <code class="doc-symbol doc-symbol-function"></code> `transform` {#safeds.data.tabular.transformation.SimpleImputer.transform data-toc-label='[function] transform'}
 
 Apply the learned transformation to a table.
 
@@ -218,7 +218,7 @@ Apply the learned transformation to a table.
     ) -> transformedTable: Table
     ```
 
-## `#!sds enum` Strategy {#safeds.data.tabular.transformation.SimpleImputer.Strategy data-toc-label='Strategy'}
+## <code class="doc-symbol doc-symbol-enum"></code> `Strategy` {#safeds.data.tabular.transformation.SimpleImputer.Strategy data-toc-label='[enum] Strategy'}
 
 Various strategies to replace missing values.
 
@@ -254,7 +254,7 @@ Various strategies to replace missing values.
     }
     ```
 
-### Constant {#safeds.data.tabular.transformation.SimpleImputer.Strategy.Constant data-toc-label='Constant'}
+### <code class="doc-symbol doc-symbol-variant"></code> `Constant` {#safeds.data.tabular.transformation.SimpleImputer.Strategy.Constant data-toc-label='[variant] Constant'}
 
 Replace missing values with the given constant value.
 
@@ -264,14 +264,14 @@ Replace missing values with the given constant value.
 |------|------|-------------|---------|
 | `value` | [`Any`][safeds.lang.Any] | The value to replace missing values. | - |
 
-### Mean {#safeds.data.tabular.transformation.SimpleImputer.Strategy.Mean data-toc-label='Mean'}
+### <code class="doc-symbol doc-symbol-variant"></code> `Mean` {#safeds.data.tabular.transformation.SimpleImputer.Strategy.Mean data-toc-label='[variant] Mean'}
 
 Replace missing values with the mean of each column.
 
-### Median {#safeds.data.tabular.transformation.SimpleImputer.Strategy.Median data-toc-label='Median'}
+### <code class="doc-symbol doc-symbol-variant"></code> `Median` {#safeds.data.tabular.transformation.SimpleImputer.Strategy.Median data-toc-label='[variant] Median'}
 
 Replace missing values with the median of each column.
 
-### Mode {#safeds.data.tabular.transformation.SimpleImputer.Strategy.Mode data-toc-label='Mode'}
+### <code class="doc-symbol doc-symbol-variant"></code> `Mode` {#safeds.data.tabular.transformation.SimpleImputer.Strategy.Mode data-toc-label='[variant] Mode'}
 
 Replace missing values with the mode of each column.

@@ -3,7 +3,7 @@ search:
   boost: 0.5
 ---
 
-# `#!sds abstract class` MyClass3 {#tests.generation.markdown.classes.documented.MyClass3 data-toc-label='MyClass3'}
+# <code class="doc-symbol doc-symbol-class"></code> `MyClass3` {#tests.generation.markdown.classes.documented.MyClass3 data-toc-label='[class] MyClass3'}
 
 Description of MyClass3.
 

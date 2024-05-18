@@ -1,4 +1,4 @@
-# :test_tube:{ title="Experimental" } `#!sds class` NeuralNetworkRegressor {#safeds.ml.nn.NeuralNetworkRegressor data-toc-label='NeuralNetworkRegressor'}
+# :test_tube:{ title="Experimental" } <code class="doc-symbol doc-symbol-class"></code> `NeuralNetworkRegressor` {#safeds.ml.nn.NeuralNetworkRegressor data-toc-label='[class] NeuralNetworkRegressor'}
 
 A NeuralNetworkRegressor is a neural network that is used for regression tasks.
 
@@ -84,13 +84,13 @@ A NeuralNetworkRegressor is a neural network that is used for regression tasks.
     }
     ```
 
-## `#!sds attr` isFitted {#safeds.ml.nn.NeuralNetworkRegressor.isFitted data-toc-label='isFitted'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `isFitted` {#safeds.ml.nn.NeuralNetworkRegressor.isFitted data-toc-label='[attribute] isFitted'}
 
 Whether the regressor is fitted.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
 
-## `#!sds fun` fit {#safeds.ml.nn.NeuralNetworkRegressor.fit data-toc-label='fit'}
+## <code class="doc-symbol doc-symbol-function"></code> `fit` {#safeds.ml.nn.NeuralNetworkRegressor.fit data-toc-label='[function] fit'}
 
 Train the neural network with given training data.
 
@@ -138,7 +138,7 @@ pipeline example {
     }
     ```
 
-## `#!sds fun` predict {#safeds.ml.nn.NeuralNetworkRegressor.predict data-toc-label='predict'}
+## <code class="doc-symbol doc-symbol-function"></code> `predict` {#safeds.ml.nn.NeuralNetworkRegressor.predict data-toc-label='[function] predict'}
 
 Make a prediction for the given test data.
 

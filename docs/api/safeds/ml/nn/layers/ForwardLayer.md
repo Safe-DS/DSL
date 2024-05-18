@@ -1,4 +1,4 @@
-# :test_tube:{ title="Experimental" } `#!sds class` ForwardLayer {#safeds.ml.nn.layers.ForwardLayer data-toc-label='ForwardLayer'}
+# :test_tube:{ title="Experimental" } <code class="doc-symbol doc-symbol-class"></code> `ForwardLayer` {#safeds.ml.nn.layers.ForwardLayer data-toc-label='[class] ForwardLayer'}
 
 **Parent type:** [`Layer`][safeds.ml.nn.layers.Layer]
 
@@ -27,13 +27,13 @@
     }
     ```
 
-## `#!sds attr` inputSize {#safeds.ml.nn.layers.ForwardLayer.inputSize data-toc-label='inputSize'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `inputSize` {#safeds.ml.nn.layers.ForwardLayer.inputSize data-toc-label='[attribute] inputSize'}
 
 Get the input_size of this layer.
 
 **Type:** [`Int`][safeds.lang.Int]
 
-## `#!sds attr` outputSize {#safeds.ml.nn.layers.ForwardLayer.outputSize data-toc-label='outputSize'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `outputSize` {#safeds.ml.nn.layers.ForwardLayer.outputSize data-toc-label='[attribute] outputSize'}
 
 Get the output_size of this layer.
 

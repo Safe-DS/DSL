@@ -1,4 +1,4 @@
-# :test_tube:{ title="Experimental" } `#!sds class` FlattenLayer {#safeds.ml.nn.layers.FlattenLayer data-toc-label='FlattenLayer'}
+# :test_tube:{ title="Experimental" } <code class="doc-symbol doc-symbol-class"></code> `FlattenLayer` {#safeds.ml.nn.layers.FlattenLayer data-toc-label='[class] FlattenLayer'}
 
 **Parent type:** [`Layer`][safeds.ml.nn.layers.Layer]
 
@@ -17,13 +17,13 @@
     }
     ```
 
-## `#!sds attr` inputSize {#safeds.ml.nn.layers.FlattenLayer.inputSize data-toc-label='inputSize'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `inputSize` {#safeds.ml.nn.layers.FlattenLayer.inputSize data-toc-label='[attribute] inputSize'}
 
 Get the input_size of this layer.
 
 **Type:** [`ImageSize`][safeds.data.image.typing.ImageSize]
 
-## `#!sds attr` outputSize {#safeds.ml.nn.layers.FlattenLayer.outputSize data-toc-label='outputSize'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `outputSize` {#safeds.ml.nn.layers.FlattenLayer.outputSize data-toc-label='[attribute] outputSize'}
 
 Get the output_size of this layer.
 

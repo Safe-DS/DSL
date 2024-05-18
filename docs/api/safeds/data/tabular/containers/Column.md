@@ -1,4 +1,4 @@
-# `#!sds class` Column {#safeds.data.tabular.containers.Column data-toc-label='Column'}
+# <code class="doc-symbol doc-symbol-class"></code> `Column` {#safeds.data.tabular.containers.Column data-toc-label='[class] Column'}
 
 A named, one-dimensional collection of homogeneous values.
 
@@ -398,43 +398,43 @@ pipeline example {
     }
     ```
 
-## `#!sds attr` isNumeric {#safeds.data.tabular.containers.Column.isNumeric data-toc-label='isNumeric'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `isNumeric` {#safeds.data.tabular.containers.Column.isNumeric data-toc-label='[attribute] isNumeric'}
 
 Whether the column is numeric.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
 
-## `#!sds attr` isTemporal {#safeds.data.tabular.containers.Column.isTemporal data-toc-label='isTemporal'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `isTemporal` {#safeds.data.tabular.containers.Column.isTemporal data-toc-label='[attribute] isTemporal'}
 
 Whether the column is temporal.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
 
-## `#!sds attr` name {#safeds.data.tabular.containers.Column.name data-toc-label='name'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `name` {#safeds.data.tabular.containers.Column.name data-toc-label='[attribute] name'}
 
 The name of the column.
 
 **Type:** [`String`][safeds.lang.String]
 
-## `#!sds attr` plot {#safeds.data.tabular.containers.Column.plot data-toc-label='plot'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `plot` {#safeds.data.tabular.containers.Column.plot data-toc-label='[attribute] plot'}
 
 The plotter for the column.
 
 **Type:** [`ColumnPlotter`][safeds.data.tabular.plotting.ColumnPlotter]
 
-## `#!sds attr` rowCount {#safeds.data.tabular.containers.Column.rowCount data-toc-label='rowCount'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `rowCount` {#safeds.data.tabular.containers.Column.rowCount data-toc-label='[attribute] rowCount'}
 
 The number of rows in the column.
 
 **Type:** [`Int`][safeds.lang.Int]
 
-## `#!sds attr` type {#safeds.data.tabular.containers.Column.type data-toc-label='type'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `type` {#safeds.data.tabular.containers.Column.type data-toc-label='[attribute] type'}
 
 The type of the column.
 
 **Type:** [`DataType`][safeds.data.tabular.typing.DataType]
 
-## `#!sds fun` correlationWith {#safeds.data.tabular.containers.Column.correlationWith data-toc-label='correlationWith'}
+## <code class="doc-symbol doc-symbol-function"></code> `correlationWith` {#safeds.data.tabular.containers.Column.correlationWith data-toc-label='[function] correlationWith'}
 
 Calculate the Pearson correlation between this column and another column.
 
@@ -484,7 +484,7 @@ pipeline example {
     ) -> correlation: Float
     ```
 
-## `#!sds fun` distinctValueCount {#safeds.data.tabular.containers.Column.distinctValueCount data-toc-label='distinctValueCount'}
+## <code class="doc-symbol doc-symbol-function"></code> `distinctValueCount` {#safeds.data.tabular.containers.Column.distinctValueCount data-toc-label='[function] distinctValueCount'}
 
 Return the number of distinct values in the column.
 
@@ -519,7 +519,7 @@ pipeline example {
     ) -> distinctValueCount: Int
     ```
 
-## `#!sds fun` getValue {#safeds.data.tabular.containers.Column.getValue data-toc-label='getValue'}
+## <code class="doc-symbol doc-symbol-function"></code> `getValue` {#safeds.data.tabular.containers.Column.getValue data-toc-label='[function] getValue'}
 
 Return the column value at specified index.
 
@@ -557,7 +557,7 @@ pipeline example {
     ) -> value: T
     ```
 
-## `#!sds fun` idness {#safeds.data.tabular.containers.Column.idness data-toc-label='idness'}
+## <code class="doc-symbol doc-symbol-function"></code> `idness` {#safeds.data.tabular.containers.Column.idness data-toc-label='[function] idness'}
 
 Calculate the idness of this column.
 
@@ -595,7 +595,7 @@ pipeline example {
     fun idness() -> idness: Float
     ```
 
-## `#!sds fun` max {#safeds.data.tabular.containers.Column.max data-toc-label='max'}
+## <code class="doc-symbol doc-symbol-function"></code> `max` {#safeds.data.tabular.containers.Column.max data-toc-label='[function] max'}
 
 Return the maximum value in the column.
 
@@ -621,7 +621,7 @@ pipeline example {
     fun max() -> max: T?
     ```
 
-## `#!sds fun` mean {#safeds.data.tabular.containers.Column.mean data-toc-label='mean'}
+## <code class="doc-symbol doc-symbol-function"></code> `mean` {#safeds.data.tabular.containers.Column.mean data-toc-label='[function] mean'}
 
 Return the mean of the values in the column.
 
@@ -649,7 +649,7 @@ pipeline example {
     fun mean() -> mean: T
     ```
 
-## `#!sds fun` median {#safeds.data.tabular.containers.Column.median data-toc-label='median'}
+## <code class="doc-symbol doc-symbol-function"></code> `median` {#safeds.data.tabular.containers.Column.median data-toc-label='[function] median'}
 
 Return the median of the values in the column.
 
@@ -678,7 +678,7 @@ pipeline example {
     fun median() -> median: T
     ```
 
-## `#!sds fun` min {#safeds.data.tabular.containers.Column.min data-toc-label='min'}
+## <code class="doc-symbol doc-symbol-function"></code> `min` {#safeds.data.tabular.containers.Column.min data-toc-label='[function] min'}
 
 Return the minimum value in the column.
 
@@ -704,7 +704,7 @@ pipeline example {
     fun min() -> min: T?
     ```
 
-## `#!sds fun` missingValueCount {#safeds.data.tabular.containers.Column.missingValueCount data-toc-label='missingValueCount'}
+## <code class="doc-symbol doc-symbol-function"></code> `missingValueCount` {#safeds.data.tabular.containers.Column.missingValueCount data-toc-label='[function] missingValueCount'}
 
 Return the number of missing values in the column.
 
@@ -731,7 +731,7 @@ pipeline example {
     fun missingValueCount() -> missingValueCount: Int
     ```
 
-## `#!sds fun` missingValueRatio {#safeds.data.tabular.containers.Column.missingValueRatio data-toc-label='missingValueRatio'}
+## <code class="doc-symbol doc-symbol-function"></code> `missingValueRatio` {#safeds.data.tabular.containers.Column.missingValueRatio data-toc-label='[function] missingValueRatio'}
 
 Return the missing value ratio.
 
@@ -764,7 +764,7 @@ pipeline example {
     fun missingValueRatio() -> missingValueRatio: Float
     ```
 
-## `#!sds fun` rename {#safeds.data.tabular.containers.Column.rename data-toc-label='rename'}
+## <code class="doc-symbol doc-symbol-function"></code> `rename` {#safeds.data.tabular.containers.Column.rename data-toc-label='[function] rename'}
 
 Return a new column with a new name.
 
@@ -801,7 +801,7 @@ pipeline example {
     ) -> renamedColumn: Column<T>
     ```
 
-## `#!sds fun` stability {#safeds.data.tabular.containers.Column.stability data-toc-label='stability'}
+## <code class="doc-symbol doc-symbol-function"></code> `stability` {#safeds.data.tabular.containers.Column.stability data-toc-label='[function] stability'}
 
 Return the stability of the column.
 
@@ -833,7 +833,7 @@ pipeline example {
     fun stability() -> stability: Float
     ```
 
-## `#!sds fun` standardDeviation {#safeds.data.tabular.containers.Column.standardDeviation data-toc-label='standardDeviation'}
+## <code class="doc-symbol doc-symbol-function"></code> `standardDeviation` {#safeds.data.tabular.containers.Column.standardDeviation data-toc-label='[function] standardDeviation'}
 
 Return the standard deviation of the values in the column.
 
@@ -862,7 +862,7 @@ pipeline example {
     fun standardDeviation() -> standardDeviation: Float
     ```
 
-## `#!sds fun` summarizeStatistics {#safeds.data.tabular.containers.Column.summarizeStatistics data-toc-label='summarizeStatistics'}
+## <code class="doc-symbol doc-symbol-function"></code> `summarizeStatistics` {#safeds.data.tabular.containers.Column.summarizeStatistics data-toc-label='[function] summarizeStatistics'}
 
 Return a table with important statistics about the column.
 
@@ -889,7 +889,7 @@ pipeline example {
     fun summarizeStatistics() -> statistics: Table
     ```
 
-## `#!sds fun` toList {#safeds.data.tabular.containers.Column.toList data-toc-label='toList'}
+## <code class="doc-symbol doc-symbol-function"></code> `toList` {#safeds.data.tabular.containers.Column.toList data-toc-label='[function] toList'}
 
 Return the values of the column in a list.
 
@@ -916,7 +916,7 @@ pipeline example {
     fun toList() -> values: List<T>
     ```
 
-## `#!sds fun` toTable {#safeds.data.tabular.containers.Column.toTable data-toc-label='toTable'}
+## <code class="doc-symbol doc-symbol-function"></code> `toTable` {#safeds.data.tabular.containers.Column.toTable data-toc-label='[function] toTable'}
 
 Create a table that contains only this column.
 
@@ -944,7 +944,7 @@ pipeline example {
     fun toTable() -> table: Table
     ```
 
-## `#!sds fun` transform {#safeds.data.tabular.containers.Column.transform data-toc-label='transform'}
+## <code class="doc-symbol doc-symbol-function"></code> `transform` {#safeds.data.tabular.containers.Column.transform data-toc-label='[function] transform'}
 
 Return a new column with values transformed by the transformer.
 
@@ -987,7 +987,7 @@ pipeline example {
     ) -> transformedColumn: Column<R>
     ```
 
-## `#!sds fun` variance {#safeds.data.tabular.containers.Column.variance data-toc-label='variance'}
+## <code class="doc-symbol doc-symbol-function"></code> `variance` {#safeds.data.tabular.containers.Column.variance data-toc-label='[function] variance'}
 
 Return the variance of the values in the column.
 

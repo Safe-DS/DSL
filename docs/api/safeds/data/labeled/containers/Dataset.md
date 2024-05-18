@@ -3,7 +3,7 @@ search:
   boost: 0.5
 ---
 
-# `#!sds abstract class` Dataset {#safeds.data.labeled.containers.Dataset data-toc-label='Dataset'}
+# <code class="doc-symbol doc-symbol-class"></code> `Dataset` {#safeds.data.labeled.containers.Dataset data-toc-label='[class] Dataset'}
 
 A dataset is used as input to machine learning models.
 

@@ -1,4 +1,4 @@
-# :test_tube:{ title="Experimental" } `#!sds class` OutputConversionImageToTable {#safeds.ml.nn.converters.OutputConversionImageToTable data-toc-label='OutputConversionImageToTable'}
+# :test_tube:{ title="Experimental" } <code class="doc-symbol doc-symbol-class"></code> `OutputConversionImageToTable` {#safeds.ml.nn.converters.OutputConversionImageToTable data-toc-label='[class] OutputConversionImageToTable'}
 
 **Parent type:** [`OutputConversion<Image, Table>`][safeds.ml.nn.converters.OutputConversion]
 

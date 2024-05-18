@@ -3,7 +3,7 @@ search:
   boost: 0.5
 ---
 
-# `#!sds abstract class` MyClass7 {#tests.generation.markdown.classes.undocumented.MyClass7 data-toc-label='MyClass7'}
+# <code class="doc-symbol doc-symbol-class"></code> `MyClass7` {#tests.generation.markdown.classes.undocumented.MyClass7 data-toc-label='[class] MyClass7'}
 
 Description of MyClass7.
 
@@ -17,11 +17,11 @@ Description of MyClass7.
     }
     ```
 
-## `#!sds attr` myAttribute1 {#tests.generation.markdown.classes.undocumented.MyClass7.myAttribute1 data-toc-label='myAttribute1'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `myAttribute1` {#tests.generation.markdown.classes.undocumented.MyClass7.myAttribute1 data-toc-label='[attribute] myAttribute1'}
 
 **Type:** `#!sds Int`
 
-## `#!sds fun` myFunction1 {#tests.generation.markdown.classes.undocumented.MyClass7.myFunction1 data-toc-label='myFunction1'}
+## <code class="doc-symbol doc-symbol-function"></code> `myFunction1` {#tests.generation.markdown.classes.undocumented.MyClass7.myFunction1 data-toc-label='[function] myFunction1'}
 
 ??? quote "Stub code in `main.sdsstub`"
 

@@ -3,7 +3,7 @@ search:
   boost: 0.5
 ---
 
-# :test_tube:{ title="Experimental" } `#!sds abstract class` Layer {#safeds.ml.nn.layers.Layer data-toc-label='Layer'}
+# :test_tube:{ title="Experimental" } <code class="doc-symbol doc-symbol-class"></code> `Layer` {#safeds.ml.nn.layers.Layer data-toc-label='[class] Layer'}
 
 **Inheritors:**
 

@@ -1,4 +1,4 @@
-# `#!sds abstract class` MyClass6 {#tests.generation.markdown.classes.undocumented.MyClass6 data-toc-label='MyClass6'}
+# <code class="doc-symbol doc-symbol-class"></code> `MyClass6` {#tests.generation.markdown.classes.undocumented.MyClass6 data-toc-label='[class] MyClass6'}
 
 **Inheritors:**
 
@@ -21,11 +21,11 @@
     }
     ```
 
-## `#!sds attr` myAttribute1 {#tests.generation.markdown.classes.undocumented.MyClass6.myAttribute1 data-toc-label='myAttribute1'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `myAttribute1` {#tests.generation.markdown.classes.undocumented.MyClass6.myAttribute1 data-toc-label='[attribute] myAttribute1'}
 
 **Type:** `#!sds Int`
 
-## `#!sds fun` myFunction1 {#tests.generation.markdown.classes.undocumented.MyClass6.myFunction1 data-toc-label='myFunction1'}
+## <code class="doc-symbol doc-symbol-function"></code> `myFunction1` {#tests.generation.markdown.classes.undocumented.MyClass6.myFunction1 data-toc-label='[function] myFunction1'}
 
 ??? quote "Stub code in `main.sdsstub`"
 
@@ -33,11 +33,11 @@
     @Pure fun myFunction1()
     ```
 
-## `#!sds static attr` myAttribute2 {#tests.generation.markdown.classes.undocumented.MyClass6.myAttribute2 data-toc-label='myAttribute2'}
+## <code class="doc-symbol doc-symbol-static-attribute"></code> `myAttribute2` {#tests.generation.markdown.classes.undocumented.MyClass6.myAttribute2 data-toc-label='[static-attribute] myAttribute2'}
 
 **Type:** `#!sds Float`
 
-## `#!sds static fun` myFunction2 {#tests.generation.markdown.classes.undocumented.MyClass6.myFunction2 data-toc-label='myFunction2'}
+## <code class="doc-symbol doc-symbol-static-function"></code> `myFunction2` {#tests.generation.markdown.classes.undocumented.MyClass6.myFunction2 data-toc-label='[static-function] myFunction2'}
 
 ??? quote "Stub code in `main.sdsstub`"
 
@@ -50,7 +50,7 @@ search:
   boost: 0.5
 ---
 
-## `#!sds abstract class` MyClass7 {#tests.generation.markdown.classes.undocumented.MyClass6.MyClass7 data-toc-label='MyClass7'}
+## <code class="doc-symbol doc-symbol-class"></code> `MyClass7` {#tests.generation.markdown.classes.undocumented.MyClass6.MyClass7 data-toc-label='[class] MyClass7'}
 
 ??? quote "Stub code in `main.sdsstub`"
 
@@ -58,7 +58,7 @@ search:
     class MyClass7
     ```
 
-## `#!sds enum` MyEnum1 {#tests.generation.markdown.classes.undocumented.MyClass6.MyEnum1 data-toc-label='MyEnum1'}
+## <code class="doc-symbol doc-symbol-enum"></code> `MyEnum1` {#tests.generation.markdown.classes.undocumented.MyClass6.MyEnum1 data-toc-label='[enum] MyEnum1'}
 
 ??? quote "Stub code in `main.sdsstub`"
 
@@ -68,4 +68,4 @@ search:
     }
     ```
 
-### MyVariant1 {#tests.generation.markdown.classes.undocumented.MyClass6.MyEnum1.MyVariant1 data-toc-label='MyVariant1'}
+### <code class="doc-symbol doc-symbol-variant"></code> `MyVariant1` {#tests.generation.markdown.classes.undocumented.MyClass6.MyEnum1.MyVariant1 data-toc-label='[variant] MyVariant1'}

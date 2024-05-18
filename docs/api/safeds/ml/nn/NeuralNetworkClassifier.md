@@ -1,4 +1,4 @@
-# :test_tube:{ title="Experimental" } `#!sds class` NeuralNetworkClassifier {#safeds.ml.nn.NeuralNetworkClassifier data-toc-label='NeuralNetworkClassifier'}
+# :test_tube:{ title="Experimental" } <code class="doc-symbol doc-symbol-class"></code> `NeuralNetworkClassifier` {#safeds.ml.nn.NeuralNetworkClassifier data-toc-label='[class] NeuralNetworkClassifier'}
 
 A NeuralNetworkClassifier is a neural network that is used for classification tasks.
 
@@ -84,13 +84,13 @@ A NeuralNetworkClassifier is a neural network that is used for classification ta
     }
     ```
 
-## `#!sds attr` isFitted {#safeds.ml.nn.NeuralNetworkClassifier.isFitted data-toc-label='isFitted'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `isFitted` {#safeds.ml.nn.NeuralNetworkClassifier.isFitted data-toc-label='[attribute] isFitted'}
 
 Whether the classifier is fitted.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
 
-## `#!sds fun` fit {#safeds.ml.nn.NeuralNetworkClassifier.fit data-toc-label='fit'}
+## <code class="doc-symbol doc-symbol-function"></code> `fit` {#safeds.ml.nn.NeuralNetworkClassifier.fit data-toc-label='[function] fit'}
 
 Train the neural network with given training data.
 
@@ -138,7 +138,7 @@ pipeline example {
     }
     ```
 
-## `#!sds fun` predict {#safeds.ml.nn.NeuralNetworkClassifier.predict data-toc-label='predict'}
+## <code class="doc-symbol doc-symbol-function"></code> `predict` {#safeds.ml.nn.NeuralNetworkClassifier.predict data-toc-label='[function] predict'}
 
 Make a prediction for the given test data.
 

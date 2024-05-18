@@ -1,4 +1,4 @@
-# `#!sds class` RangeScaler {#safeds.data.tabular.transformation.RangeScaler data-toc-label='RangeScaler'}
+# <code class="doc-symbol doc-symbol-class"></code> `RangeScaler` {#safeds.data.tabular.transformation.RangeScaler data-toc-label='[class] RangeScaler'}
 
 The RangeScaler transforms column values by scaling each value to a given range.
 
@@ -76,25 +76,25 @@ pipeline example {
     }
     ```
 
-## `#!sds attr` isFitted {#safeds.data.tabular.transformation.RangeScaler.isFitted data-toc-label='isFitted'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `isFitted` {#safeds.data.tabular.transformation.RangeScaler.isFitted data-toc-label='[attribute] isFitted'}
 
 Whether the transformer is fitted.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
 
-## `#!sds attr` max {#safeds.data.tabular.transformation.RangeScaler.max data-toc-label='max'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `max` {#safeds.data.tabular.transformation.RangeScaler.max data-toc-label='[attribute] max'}
 
 The maximum of the new range after the transformation.
 
 **Type:** [`Float`][safeds.lang.Float]
 
-## `#!sds attr` min {#safeds.data.tabular.transformation.RangeScaler.min data-toc-label='min'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `min` {#safeds.data.tabular.transformation.RangeScaler.min data-toc-label='[attribute] min'}
 
 The minimum of the new range after the transformation.
 
 **Type:** [`Float`][safeds.lang.Float]
 
-## `#!sds fun` fit {#safeds.data.tabular.transformation.RangeScaler.fit data-toc-label='fit'}
+## <code class="doc-symbol doc-symbol-function"></code> `fit` {#safeds.data.tabular.transformation.RangeScaler.fit data-toc-label='[function] fit'}
 
 Learn a transformation for a set of columns in a table.
 
@@ -123,7 +123,7 @@ This transformer is not modified.
     ) -> fittedTransformer: RangeScaler
     ```
 
-## `#!sds fun` fitAndTransform {#safeds.data.tabular.transformation.RangeScaler.fitAndTransform data-toc-label='fitAndTransform'}
+## <code class="doc-symbol doc-symbol-function"></code> `fitAndTransform` {#safeds.data.tabular.transformation.RangeScaler.fitAndTransform data-toc-label='[function] fitAndTransform'}
 
 Learn a transformation for a set of columns in a table and apply the learned transformation to the same table.
 
@@ -154,7 +154,7 @@ Learn a transformation for a set of columns in a table and apply the learned tra
     ) -> (fittedTransformer: RangeScaler, transformedTable: Table)
     ```
 
-## `#!sds fun` inverseTransform {#safeds.data.tabular.transformation.RangeScaler.inverseTransform data-toc-label='inverseTransform'}
+## <code class="doc-symbol doc-symbol-function"></code> `inverseTransform` {#safeds.data.tabular.transformation.RangeScaler.inverseTransform data-toc-label='[function] inverseTransform'}
 
 Undo the learned transformation as well as possible.
 
@@ -184,7 +184,7 @@ Column order and types may differ from the original table. Likewise, some values
     ) -> originalTable: Table
     ```
 
-## `#!sds fun` transform {#safeds.data.tabular.transformation.RangeScaler.transform data-toc-label='transform'}
+## <code class="doc-symbol doc-symbol-function"></code> `transform` {#safeds.data.tabular.transformation.RangeScaler.transform data-toc-label='[function] transform'}
 
 Apply the learned transformation to a table.
 
