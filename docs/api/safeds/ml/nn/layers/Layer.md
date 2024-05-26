@@ -1,0 +1,21 @@
+---
+search:
+  boost: 0.5
+---
+
+# :test_tube:{ title="Experimental" } <code class="doc-symbol doc-symbol-class"></code> `Layer` {#safeds.ml.nn.layers.Layer data-toc-label='[class] Layer'}
+
+**Inheritors:**
+
+- [`AveragePooling2DLayer`][safeds.ml.nn.layers.AveragePooling2DLayer]
+- [`Convolutional2DLayer`][safeds.ml.nn.layers.Convolutional2DLayer]
+- [`FlattenLayer`][safeds.ml.nn.layers.FlattenLayer]
+- [`ForwardLayer`][safeds.ml.nn.layers.ForwardLayer]
+- [`LSTMLayer`][safeds.ml.nn.layers.LSTMLayer]
+- [`MaxPooling2DLayer`][safeds.ml.nn.layers.MaxPooling2DLayer]
+
+??? quote "Stub code in `Layer.sdsstub`"
+
+    ```sds linenums="6"
+    class Layer
+    ```

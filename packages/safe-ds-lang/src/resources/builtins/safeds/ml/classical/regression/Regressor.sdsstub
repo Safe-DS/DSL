@@ -2,41 +2,25 @@ package safeds.ml.classical.regression
 
 from safeds.data.labeled.containers import TabularDataset
 from safeds.data.tabular.containers import Table
+from safeds.ml.classical import SupervisedModel
 
 /**
- * Abstract base class for all regressors.
+ * A model for regression tasks.
  */
-class Regressor {
+class Regressor sub SupervisedModel {
     /**
-     * Whether the regressor is fitted.
-     */
-    @PythonName("is_fitted") attr isFitted: Boolean
-
-    /**
-     * Create a copy of this regressor and fit it with the given training data.
+     * Create a copy of this model and fit it with the given training data.
      *
-     * This regressor is not modified.
+     * **Note:** This model is not modified.
      *
-     * @param trainingSet The training data containing the feature and target vectors.
+     * @param trainingSet The training data containing the features and target.
      *
-     * @result fittedRegressor The fitted regressor.
+     * @result fittedModel The fitted model.
      */
     @Pure
     fun fit(
-        @PythonName("training_set") trainingSet: union<ExperimentalTabularDataset, TabularDataset>
-    ) -> fittedRegressor: Regressor
-
-    /**
-     * Predict a target vector using a dataset containing feature vectors. The model has to be trained first.
-     *
-     * @param dataset The dataset containing the feature vectors.
-     *
-     * @result prediction A dataset containing the given feature vectors and the predicted target vector.
-     */
-    @Pure
-    fun predict(
-        dataset: union<ExperimentalTable, ExperimentalTabularDataset, Table>
-    ) -> prediction: TabularDataset
+        @PythonName("training_set") trainingSet: TabularDataset
+    ) -> fittedModel: Regressor
 
     /**
      * Summarize the regressor's metrics on the given data.
@@ -48,32 +32,108 @@ class Regressor {
     @Pure
     @PythonName("summarize_metrics")
     fun summarizeMetrics(
-        @PythonName("validation_or_test_set") validationOrTestSet: union<ExperimentalTabularDataset, TabularDataset>
+        @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
     ) -> metrics: Table
+
+    /**
+     * Compute the coefficient of determination (R²) of the regressor on the given data.
+     *
+     * The coefficient of determination compares the regressor's predictions to another model that always predicts the
+     * mean of the target values. It is a measure of how well the regressor explains the variance in the target values.
+     *
+     * The **higher** the coefficient of determination, the better the regressor. Results range from negative infinity
+     * to 1.0. You can interpret the coefficient of determination as follows:
+     *
+     * | R²         | Interpretation                                                                             |
+     * | ---------- | ------------------------------------------------------------------------------------------ |
+     * | 1.0        | The model perfectly predicts the target values. Did you overfit?                           |
+     * | (0.0, 1.0) | The model is better than predicting the mean of the target values. You should be here.     |
+     * | 0.0        | The model is as good as predicting the mean of the target values. Try something else.      |
+     * | (-∞, 0.0)  | The model is worse than predicting the mean of the target values. Something is very wrong. |
+     *
+     * **Note:** Some other libraries call this metric `r2_score`.
+     *
+     * @param validationOrTestSet The validation or test set.
+     *
+     * @result coefficientOfDetermination The coefficient of determination of the regressor.
+     */
+    @Pure
+    @PythonName("coefficient_of_determination")
+    fun coefficientOfDetermination(
+        @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
+    ) -> coefficientOfDetermination: Float
 
     /**
      * Compute the mean absolute error (MAE) of the regressor on the given data.
      *
+     * The mean absolute error is the average of the absolute differences between the predicted and expected target
+     * values. The **lower** the mean absolute error, the better the regressor. Results range from 0.0 to positive
+     * infinity.
+     *
      * @param validationOrTestSet The validation or test set.
      *
-     * @result meanAbsoluteError The calculated mean absolute error (the average of the distance of each individual row).
+     * @result meanAbsoluteError The mean absolute error of the regressor.
      */
     @Pure
     @PythonName("mean_absolute_error")
     fun meanAbsoluteError(
-        @PythonName("validation_or_test_set") validationOrTestSet: union<ExperimentalTabularDataset, TabularDataset>
+        @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
     ) -> meanAbsoluteError: Float
 
     /**
-     * Compute the mean squared error (MSE) on the given data.
+     * Compute the mean directional accuracy (MDA) of the regressor on the given data.
+     *
+     * This metric compares two consecutive target values and checks if the predicted direction (down/unchanged/up)
+     * matches the expected direction. The mean directional accuracy is the proportion of correctly predicted
+     * directions. The **higher** the mean directional accuracy, the better the regressor. Results range from 0.0 to
+     * 1.0.
+     *
+     * This metric is useful for time series data, where the order of the target values has a meaning. It is not useful
+     * for other types of data. Because of this, it is not included in the `summarize_metrics` method.
      *
      * @param validationOrTestSet The validation or test set.
      *
-     * @result meanSquaredError The calculated mean squared error (the average of the distance of each individual row squared).
+     * @result meanDirectionalAccuracy The mean directional accuracy of the regressor.
+     */
+    @Pure
+    @PythonName("mean_directional_accuracy")
+    fun meanDirectionalAccuracy(
+        @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
+    ) -> meanDirectionalAccuracy: Float
+
+    /**
+     * Compute the mean squared error (MSE) of the regressor on the given data.
+     *
+     * The mean squared error is the average of the squared differences between the predicted and expected target
+     * values. The **lower** the mean squared error, the better the regressor. Results range from 0.0 to positive
+     * infinity.
+     *
+     * **Note:** To get the root mean squared error (RMSE), take the square root of the result.
+     *
+     * @param validationOrTestSet The validation or test set.
+     *
+     * @result meanSquaredError The mean squared error of the regressor.
      */
     @Pure
     @PythonName("mean_squared_error")
     fun meanSquaredError(
-        @PythonName("validation_or_test_set") validationOrTestSet: union<ExperimentalTabularDataset, TabularDataset>
+        @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
     ) -> meanSquaredError: Float
+
+    /**
+     * Compute the median absolute deviation (MAD) of the regressor on the given data.
+     *
+     * The median absolute deviation is the median of the absolute differences between the predicted and expected
+     * target values. The **lower** the median absolute deviation, the better the regressor. Results range from 0.0 to
+     * positive infinity.
+     *
+     * @param validationOrTestSet The validation or test set.
+     *
+     * @result medianAbsoluteDeviation The median absolute deviation of the regressor.
+     */
+    @Pure
+    @PythonName("median_absolute_deviation")
+    fun medianAbsoluteDeviation(
+        @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
+    ) -> medianAbsoluteDeviation: Float
 }

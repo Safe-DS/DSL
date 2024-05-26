@@ -1,7 +1,0 @@
-package safeds.ml.nn
-
-from safeds.data.image.typing import ImageSize
-from safeds.ml.nn import Layer
-
-@Experimental
-class FlattenLayer() sub Layer

@@ -37,8 +37,8 @@
                 },
                 {
                     "name": "meta.safe-ds",
-                    "begin": "\\`",
-                    "end": "\\`"
+                    "begin": "\\^",
+                    "end": "\\b"
                 },
                 {
                     "name": "string.interpolated.safe-ds",

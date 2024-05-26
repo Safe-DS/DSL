@@ -1,4 +1,4 @@
-# :test_tube:{ title="Experimental" } `#!sds class` TimeSeriesDataset {#safeds.data.labeled.containers.TimeSeriesDataset data-toc-label='TimeSeriesDataset'}
+# :test_tube:{ title="Experimental" } <code class="doc-symbol doc-symbol-class"></code> `TimeSeriesDataset` {#safeds.data.labeled.containers.TimeSeriesDataset data-toc-label='[class] TimeSeriesDataset'}
 
 A time series dataset maps feature and time columns to a target column. Not like the TabularDataset a TimeSeries needs to contain one target and one time column, but can have empty features.
 
@@ -11,7 +11,7 @@ Create a time series dataset from a mapping of column names to their values.
 | `data` | `#!sds union<Map<String, List<Any>>, Table>` | The data. | - |
 | `targetName` | [`String`][safeds.lang.String] | Name of the target column. | - |
 | `timeName` | [`String`][safeds.lang.String] | Name of the time column. | - |
-| `extraNames` | [`List<String>?`][safeds.lang.List] | Names of the columns that are neither features nor target. If None, no extra columns are used, i.e. all but the target column are used as features. | `#!sds null` |
+| `extraNames` | [`List<String>?`][safeds.lang.List] | Names of the columns that are neither features nor target. If null, no extra columns are used, i.e. all but the target column are used as features. | `#!sds null` |
 
 **Examples:**
 
@@ -68,7 +68,7 @@ pipeline example {
     }
     ```
 
-## `#!sds attr` extras {#safeds.data.labeled.containers.TimeSeriesDataset.extras data-toc-label='extras'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `extras` {#safeds.data.labeled.containers.TimeSeriesDataset.extras data-toc-label='[attribute] extras'}
 
 Additional columns of the time series dataset that are neither features, target nor time.
 
@@ -76,25 +76,25 @@ These can be used to store additional information about instances, such as IDs.
 
 **Type:** [`Table`][safeds.data.tabular.containers.Table]
 
-## `#!sds attr` features {#safeds.data.labeled.containers.TimeSeriesDataset.features data-toc-label='features'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `features` {#safeds.data.labeled.containers.TimeSeriesDataset.features data-toc-label='[attribute] features'}
 
 The feature columns of the time series dataset.
 
 **Type:** [`Table`][safeds.data.tabular.containers.Table]
 
-## `#!sds attr` target {#safeds.data.labeled.containers.TimeSeriesDataset.target data-toc-label='target'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `target` {#safeds.data.labeled.containers.TimeSeriesDataset.target data-toc-label='[attribute] target'}
 
 The target column of the time series dataset.
 
 **Type:** [`Column<Any>`][safeds.data.tabular.containers.Column]
 
-## `#!sds attr` time {#safeds.data.labeled.containers.TimeSeriesDataset.time data-toc-label='time'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `time` {#safeds.data.labeled.containers.TimeSeriesDataset.time data-toc-label='[attribute] time'}
 
 The time column of the time series dataset.
 
 **Type:** [`Column<Any>`][safeds.data.tabular.containers.Column]
 
-## `#!sds fun` toTable {#safeds.data.labeled.containers.TimeSeriesDataset.toTable data-toc-label='toTable'}
+## <code class="doc-symbol doc-symbol-function"></code> `toTable` {#safeds.data.labeled.containers.TimeSeriesDataset.toTable data-toc-label='[function] toTable'}
 
 Return a new `Table` containing the feature columns, the target column, the time column and the extra columns.
 

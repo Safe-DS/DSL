@@ -1,13 +1,13 @@
-# `#!sds class` Column {#safeds.data.tabular.containers.Column data-toc-label='Column'}
+# <code class="doc-symbol doc-symbol-class"></code> `Column` {#safeds.data.tabular.containers.Column data-toc-label='[class] Column'}
 
-A column is a named collection of values.
+A named, one-dimensional collection of homogeneous values.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `name` | [`String`][safeds.lang.String] | The name of the column. | - |
-| `data` | [`List<T>`][safeds.lang.List] | The data. | `#!sds []` |
+| `data` | [`List<T>?`][safeds.lang.List] | The data of the column. If null, an empty column is created. | `#!sds null` |
 
 **Type parameters:**
 
@@ -28,183 +28,54 @@ pipeline example {
     ```sds linenums="18"
     class Column<out T = Any?>(
         name: String,
-        data: List<T> = []
+        data: List<T>? = null
     ) {
         /**
-         * Return the name of the column.
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val name = column.name; // "test"
-         * }
+         * Whether the column is numeric.
+         */
+        @PythonName("is_numeric") attr isNumeric: Boolean
+        /**
+         * Whether the column is temporal.
+         */
+        @PythonName("is_temporal") attr isTemporal: Boolean
+        /**
+         * The name of the column.
          */
         attr name: String
         /**
-         * Return the number of elements in the column.
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val numberOfRows = column.numberOfRows; // 3
-         * }
+         * The number of rows in the column.
          */
-        @PythonName("number_of_rows") attr numberOfRows: Int
+        @PythonName("number_of_rows") attr rowCount: Int
         /**
-         * Return the type of the column.
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val type = column.type; // Integer
-         * }
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("test", ["a", "b", "c"]);
-         *     val type = column.type; // String
-         * }
+         * The plotter for the column.
          */
-        attr type: ColumnType
+        attr plot: ColumnPlotter
+        /**
+         * The type of the column.
+         */
+        attr type: DataType
 
         /**
-         * Return a list of all unique values in the column.
+         * Return the column value at specified index.
          *
-         * @result result1 List of unique values in the column.
+         * Nonnegative indices are counted from the beginning (starting at 0), negative indices from the end (starting at
+         * -1).
          *
-         * @example
-         * pipeline example {
-         *     val column = Column("test", [1, 2, 3, 2, 4, 3]);
-         *     val uniqueValues = column.getUniqueValues(); // [1, 2, 3, 4]
-         * }
-         */
-        @Deprecated(
-            alternative="Try ExperimentalColumn.getDistinctValues instead.",
-            reason="The word 'unique' could imply that only values that occur exactly once are returned.",
-            sinceVersion="0.15.0",
-            removalVersion="0.16.0"
-        )
-        @Pure
-        @PythonName("get_unique_values")
-        fun getUniqueValues() -> result1: List<T>
-
-        /**
-         * Return column value at specified index, starting at 0.
+         * @param index Index of requested value.
          *
-         * @param index Index of requested element.
-         *
-         * @result result1 Value at index in column.
+         * @result value Value at index.
          *
          * @example
          * pipeline example {
          *     val column = Column("test", [1, 2, 3]);
-         *     val value = column.getValue(1); // 2
+         *     val result = column.getValue(1); // 2
          * }
          */
         @Pure
         @PythonName("get_value")
         fun getValue(
             index: Int
-        ) -> result1: T
-
-        /**
-         * Check if all values have a given property.
-         *
-         * @param predicate Callable that is used to find matches.
-         *
-         * @result allMatch True if all match.
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val allMatch = column.all((value) -> value < 4); // true
-         * }
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val allMatch = column.all((value) -> value < 2); // false
-         * }
-         */
-        @Pure
-        fun all(
-            predicate: (value: T) -> matches: Boolean
-        ) -> allMatch: Boolean
-
-        /**
-         * Check if any value has a given property.
-         *
-         * @param predicate Callable that is used to find matches.
-         *
-         * @result anyMatch True if any match.
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val anyMatch = column.any((value) -> value < 2); // true
-         * }
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val anyMatch = column.any((value) -> value < 1); // false
-         * }
-         */
-        @Pure
-        fun any(
-            predicate: (value: T) -> matches: Boolean
-        ) -> anyMatch: Boolean
-
-        /**
-         * Check if no values has a given property.
-         *
-         * @param predicate Callable that is used to find matches.
-         *
-         * @result noneMatch True if none match.
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val noneMatch = column.none((value) -> value < 1); // true
-         * }
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val noneMatch = column.none((value) -> value > 1); // false
-         * }
-         */
-        @Pure
-        fun none(
-            predicate: (value: T) -> matches: Boolean
-        ) -> noneMatch: Boolean
-
-        /**
-         * Return whether the column has missing values.
-         *
-         * @result hasMissingValues True if missing values exist.
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("test", [1, 2, 3, null]);
-         *     val hasMissingValues = column.hasMissingValues(); // true
-         * }
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val hasMissingValues = column.hasMissingValues(); // false
-         * }
-         */
-        @Deprecated(
-            alternative="Column.missingValueCount() > 0.",
-            reason="Barely saves any characters.",
-            sinceVersion="0.15.0",
-            removalVersion="0.16.0"
-        )
-        @Pure
-        @PythonName("has_missing_values")
-        fun hasMissingValues() -> hasMissingValues: Boolean
+        ) -> value: T
 
         /**
          * Return a new column with a new name.
@@ -218,46 +89,45 @@ pipeline example {
          * @example
          * pipeline example {
          *     val column = Column("test", [1, 2, 3]);
-         *     val renamedColumn = column.rename("new_name");
+         *     val result = column.rename("new_name");
+         *     // Column("new_name", [1, 2, 3])
          * }
          */
         @Pure
         fun rename(
             @PythonName("new_name") newName: String
-        ) -> renamedColumn: Column
+        ) -> renamedColumn: Column<T>
 
         /**
-         * Apply a transform method to every data point.
+         * Return a new column with values transformed by the transformer.
          *
          * The original column is not modified.
          *
-         * @param transformer Function that will be applied to all data points.
+         * @param transformer The transformer to apply to each value.
          *
-         * @result transformedColumn The transformed column.
+         * @result transformedColumn A new column with transformed values.
          *
          * @example
          * pipeline example {
-         *     val price = Column("price", [4.99, 5.99, 2.49]);
-         *     val discountedPrice = price.transform((value) -> value * 0.75);
+         *     val column = Column("test", [1, 2, 3]);
+         *     val result = column.transform((cell) -> cell.mul(2));
+         *     // Column("test", [2, 4, 6])
          * }
          */
         @Pure
         fun transform<R>(
-            transformer: (value: T) -> transformedValue: R
+            transformer: (cell: Cell<T>) -> transformedCell: Cell<R>
         ) -> transformedColumn: Column<R>
 
         /**
-         * Return a table with a number of statistical key values.
-         *
-         * The original Column is not modified.
+         * Return a table with important statistics about the column.
          *
          * @result statistics The table with statistics.
          *
          * @example
          * pipeline example {
-         *     // from safeds.data.tabular.containers import Column
-         *     // column = Column("a", [1, 3])
-         *     // column.summarize_statistics()
+         *     val column = Column("a", [1, 3]);
+         *     val result = column.summarizeStatistics();
          * }
          */
         @Pure
@@ -265,229 +135,213 @@ pipeline example {
         fun summarizeStatistics() -> statistics: Table
 
         /**
-         * Calculate Pearson correlation between this and another column. Both columns have to be numerical.
+         * Calculate the Pearson correlation between this column and another column.
          *
-         * @result correlation Correlation between the two columns.
+         * The Pearson correlation is a value between -1 and 1 that indicates how much the two columns are linearly
+         * related:
+         *
+         * - A correlation of -1 indicates a perfect negative linear relationship.
+         * - A correlation of 0 indicates no linear relationship.
+         * - A correlation of 1 indicates a perfect positive linear relationship.
+         *
+         * @param other The other column to calculate the correlation with.
+         *
+         * @result correlation The Pearson correlation between the two columns.
          *
          * @example
          * pipeline example {
-         *     val column1 = Column("test1", [1, 2, 3]);
-         *     val column2 = Column("test2", [2, 4, 6]);
-         *     val correlation = column1.correlationWith(column2); // 1.0
+         *     val column1 = Column("test", [1, 2, 3]);
+         *     val column2 = Column("test", [2, 4, 6]);
+         *     val result = column1.correlationWith(column2);
          * }
          *
          * @example
          * pipeline example {
-         *     val column1 = Column("test1", [1, 2, 3]);
-         *     val column2 = Column("test2", [3, 2, 1]);
-         *     val correlation = column1.correlationWith(column2); // -1.0
+         *     val column1 = Column("test", [1, 2, 3]);
+         *     val column2 = Column("test", [3, 2, 1]);
+         *     val result = column1.correlationWith(column2);
          * }
          */
         @Pure
         @PythonName("correlation_with")
         fun correlationWith(
-            @PythonName("other_column") otherColumn: Column
+            other: Column<Any>
         ) -> correlation: Float
+
+        /**
+         * Return the number of distinct values in the column.
+         *
+         * @param ignoreMissingValues Whether to ignore missing values when counting distinct values.
+         *
+         * @result distinctValueCount The number of distinct values in the column.
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("test", [1, 2, 3, 2]);
+         *     val result = column.distinctValueCount(); // 3
+         * }
+         */
+        @Pure
+        @PythonName("distinct_value_count")
+        fun distinctValueCount(
+            @PythonName("ignore_missing_values") ignoreMissingValues: Boolean = true
+        ) -> distinctValueCount: Int
 
         /**
          * Calculate the idness of this column.
          *
-         * We define the idness as follows:
+         * We define the idness as the number of distinct values (including missing values) divided by the number of rows.
+         * If the column is empty, the idness is 1.0.
          *
-         * $$
-         * \frac{\text{number of different values}}{\text{number of rows}}
-         * $$
+         * A high idness indicates that the column most values in the column are unique. In this case, you must be careful
+         * when using the column for analysis, as a model may learn a mapping from this column to the target.
          *
          * @result idness The idness of the column.
          *
          * @example
          * pipeline example {
          *     val column = Column("test", [1, 2, 3]);
-         *     val idness = column.idness(); // 1.0
+         *     val result = column.idness(); // 1.0
          * }
          *
          * @example
          * pipeline example {
-         *     val column = Column("test", [1, 2, 2, 3]);
-         *     val idness = column.idness(); // 0.75
+         *     val column = Column("test", [1, 2, 3, 2]);
+         *     val result = column.idness(); // 0.75
          * }
          */
         @Pure
         fun idness() -> idness: Float
 
         /**
-         * Return the maximum value of the column. The column has to be numerical.
+         * Return the maximum value in the column.
          *
-         * @result maximum The maximum value.
+         * @result max The maximum value in the column.
          *
          * @example
          * pipeline example {
          *     val column = Column("test", [1, 2, 3]);
-         *     val maximum = column.maximum(); // 3
+         *     val result = column.max(); // 3
          * }
          */
-        @Deprecated(
-            alternative="Try ExperimentalColumn.max instead.",
-            reason="More concise.",
-            sinceVersion="0.15.0",
-            removalVersion="0.16.0"
-        )
         @Pure
-        fun maximum() -> maximum: Float
+        fun max() -> max: T?
 
         /**
-         * Return the mean value of the column. The column has to be numerical.
+         * Return the mean of the values in the column.
          *
-         * @result mean The mean value.
+         * The mean is the sum of the values divided by the number of values.
+         *
+         * @result mean The mean of the values in the column.
          *
          * @example
          * pipeline example {
          *     val column = Column("test", [1, 2, 3]);
-         *     val mean = column.mean(); // 2.0
+         *     val result = column.mean(); // 2.0
          * }
          */
         @Pure
-        fun mean() -> mean: Float
+        fun mean() -> mean: T
 
         /**
-         * Return the median value of the column. The column has to be numerical.
+         * Return the median of the values in the column.
          *
-         * @result median The median value.
+         * The median is the value in the middle of the sorted list of values. If the number of values is even, the median
+         * is the mean of the two middle values.
+         *
+         * @result median The median of the values in the column.
          *
          * @example
          * pipeline example {
          *     val column = Column("test", [1, 2, 3]);
-         *     val median = column.median(); // 2.0
-         * }
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("test", [1, 2, 3, 4]);
-         *     val median = column.median(); // 2.5
+         *     val result = column.median(); // 2.0
          * }
          */
         @Pure
-        fun median() -> median: Float
+        fun median() -> median: T
 
         /**
-         * Return the minimum value of the column. The column has to be numerical.
+         * Return the minimum value in the column.
          *
-         * @result minimum The minimum value.
+         * @result min The minimum value in the column.
          *
          * @example
          * pipeline example {
          *     val column = Column("test", [1, 2, 3]);
-         *     val minimum = column.minimum(); // 1
+         *     val result = column.min(); // 1
          * }
          */
-        @Deprecated(
-            alternative="Try ExperimentalColumn.min instead.",
-            reason="More concise.",
-            sinceVersion="0.15.0",
-            removalVersion="0.16.0"
-        )
         @Pure
-        fun minimum() -> minimum: Float
+        fun min() -> min: T?
 
         /**
          * Return the number of missing values in the column.
          *
-         * @result count The number of missing values.
+         * @result missingValueCount The number of missing values in the column.
          *
          * @example
          * pipeline example {
-         *     val column = Column("test", [1, 2, 3, 4]);
-         *     val missingValueCount = column.missingValueCount(); // 0
-         * }
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("test", [1, 2, 3, null]);
-         *     val missingValueCount = column.missingValueCount(); // 1
+         *     val column = Column("test", [1, null, 3]);
+         *     val result = column.missingValueCount(); // 1
          * }
          */
         @Pure
         @PythonName("missing_value_count")
-        fun missingValueCount() -> count: Int
+        fun missingValueCount() -> missingValueCount: Int
 
         /**
-         * Return the ratio of missing values to the total number of elements in the column.
+         * Return the missing value ratio.
          *
-         * @result missinValueRatio The ratio of missing values to the total number of elements in the column.
+         * We define the missing value ratio as the number of missing values in the column divided by the number of rows.
+         * If the column is empty, the missing value ratio is 1.0.
+         *
+         * A high missing value ratio indicates that the column is dominated by missing values. In this case, the column
+         * may not be useful for analysis.
+         *
+         * @result missingValueRatio The ratio of missing values in the column.
          *
          * @example
          * pipeline example {
-         *     val column = Column("test", [1, 2, 3, 4]);
-         *     val missingValueRatio = column.missingValueRatio(); // 0.0
-         * }
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("test", [1, 2, 3, null]);
-         *     val missingValueRatio = column.missingValueRatio(); // 0.25
+         *     val column = Column("test", [1, null, 3, null]);
+         *     val result = column.missingValueRatio(); // 0.5
          * }
          */
         @Pure
         @PythonName("missing_value_ratio")
-        fun missingValueRatio() -> missinValueRatio: Float
+        fun missingValueRatio() -> missingValueRatio: Float
 
         /**
-         * Return the mode of the column.
+         * Return the stability of the column.
          *
-         * @result mode Returns a list with the most common values.
+         * We define the stability as the number of occurrences of the most common non-missing value divided by the total
+         * number of non-missing values. If the column is empty or all values are missing, the stability is 1.0.
          *
-         * @example
-         * pipeline example {
-         *     val column = Column("test", [1, 2, 2, 3]);
-         *     val mode = column.mode(); // [2]
-         * }
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("test", [1, 2, 2, 3, 3]);
-         *     val mode = column.mode(); // [2, 3]
-         * }
-         */
-        @Pure
-        fun mode() -> mode: List<T>
-
-        /**
-         * Calculate the stability of this column.
-         *
-         * We define the stability as follows:
-         *
-         * $$
-         * \frac{\text{number of occurrences of most common non-null value}}{\text{number of non-null values}}
-         * $$
-         *
-         * The stability is not defined for a column with only null values.
+         * A high stability indicates that the column is dominated by a single value. In this case, the column may not be
+         * useful for analysis.
          *
          * @result stability The stability of the column.
          *
          * @example
          * pipeline example {
-         *     val column = Column("test", [1, 2, 2, 3]);
-         *     val stability = column.stability(); // 0.5
-         * }
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("test", [1, 2, 2, 3, null]);
-         *     val stability = column.stability(); // 0.5
+         *     val column = Column("test", [1, 1, 2, 3, null]);
+         *     val result = column.stability(); // 0.5
          * }
          */
         @Pure
         fun stability() -> stability: Float
 
         /**
-         * Return the standard deviation of the column. The column has to be numerical.
+         * Return the standard deviation of the values in the column.
          *
-         * @result standardDeviation The standard deviation of all values.
+         * The standard deviation is the square root of the variance.
+         *
+         * @result standardDeviation The standard deviation of the values in the column. If no standard deviation can be calculated due to the
+         * type of the column, null is returned.
          *
          * @example
          * pipeline example {
          *     val column = Column("test", [1, 2, 3]);
-         *     val standardDeviation = column.standardDeviation(); // 1.0
+         *     val result = column.standardDeviation(); // 1.0
          * }
          */
         @Pure
@@ -495,468 +349,223 @@ pipeline example {
         fun standardDeviation() -> standardDeviation: Float
 
         /**
-         * Return the sum of the column. The column has to be numerical.
+         * Return the variance of the values in the column.
          *
-         * @result sum The sum of all values.
+         * The variance is the average of the squared differences from the mean.
          *
-         * @example
-         * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val sum = column.sum(); // 6
-         * }
-         */
-        @Deprecated(
-            alternative="None.",
-            reason="No use case.",
-            sinceVersion="0.15.0",
-            removalVersion="0.16.0"
-        )
-        @Pure
-        fun sum() -> sum: Float
-
-        /**
-         * Return the variance of the column. The column has to be numerical.
-         *
-         * @result variance The variance of all values.
+         * @result variance The variance of the values in the column. If no variance can be calculated due to the type of the column,
+         * null is returned.
          *
          * @example
          * pipeline example {
          *     val column = Column("test", [1, 2, 3]);
-         *     val variance = column.variance(); // 1.0
+         *     val result = column.variance(); // 1.0
          * }
          */
         @Pure
         fun variance() -> variance: Float
 
         /**
-         * Plot this column in a boxplot. This function can only plot real numerical data.
+         * Return the values of the column in a list.
          *
-         * @result boxplot The plot as an image.
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val plot = column.plotBoxplot();
-         * }
-         */
-        @Deprecated(
-            alternative="Try ExperimentalColumn.plot.boxPlot instead.",
-            reason="Groups all plotting methods in one place.",
-            sinceVersion="0.15.0",
-            removalVersion="0.16.0"
-        )
-        @Pure
-        @PythonName("plot_boxplot")
-        fun plotBoxplot() -> boxplot: Image
-
-        /**
-         * Plot a column in a histogram.
-         *
-         * @param numberOfBins The number of bins to use in the histogram. Default is 10.
-         *
-         * @result histogram The plot as an image.
+         * @result values The values of the column in a list.
          *
          * @example
          * pipeline example {
          *     val column = Column("test", [1, 2, 3]);
-         *     val plot = column.plotHistogram();
+         *     val result = column.toList(); // [1, 2, 3]
          * }
          */
-        @Deprecated(
-            alternative="Try ExperimentalColumn.plot.histogram instead.",
-            reason="Groups all plotting methods in one place.",
-            sinceVersion="0.15.0",
-            removalVersion="0.16.0"
-        )
         @Pure
-        @PythonName("plot_histogram")
-        fun plotHistogram(
-            @PythonName("number_of_bins") numberOfBins: Int = 10
-        ) -> plot: Image
-
-        /**
-         * Create a plot comparing the numerical values of columns using IDs as the x-axis.
-         *
-         * @param columnList A list of time columns to be plotted.
-         *
-         * @result plot A plot with all the Columns plotted by the ID on the x-axis.
-         *
-         * @example
-         * pipeline example {
-         *     // from safeds.data.tabular.containers import Column
-         *     // col1 =Column("target", [4, 5, 6, 7, 8, 9, 10, 11, 12, 13])
-         *     // col2 =Column("target", [42, 51, 63, 71, 83, 91, 10, 11, 12, 13])
-         *     // image = col1.plot_compare_columns([col2])
-         * }
-         */
-        @Deprecated(
-            alternative="We still decide where to move this.",
-            reason="Groups all plotting methods in one place.",
-            sinceVersion="0.15.0",
-            removalVersion="0.16.0"
-        )
-        @Pure
-        @PythonName("plot_compare_columns")
-        fun plotCompareColumns(
-            @PythonName("column_list") columnList: List<Column<Any>>
-        ) -> plot: Image
-
-        /**
-         * Plot a lagplot for the given column.
-         *
-         * @param lag The amount of lag used to plot
-         *
-         * @result plot The plot as an image.
-         *
-         * @example
-         * pipeline example {
-         *     // from safeds.data.tabular.containers import Table
-         *     // table = Column("values", [1,2,3,4,3,2])
-         *     // image = table.plot_lagplot(2)
-         * }
-         */
-        @Deprecated(
-            alternative="Try ExperimentalColumn.plot.lagPlot instead.",
-            reason="Groups all plotting methods in one place.",
-            sinceVersion="0.15.0",
-            removalVersion="0.16.0"
-        )
-        @Pure
-        @PythonName("plot_lagplot")
-        fun plotLagplot(
-            lag: Int
-        ) -> plot: Image
+        @PythonName("to_list")
+        fun toList() -> values: List<T>
 
         /**
          * Create a table that contains only this column.
          *
          * @result table The table with this column.
-         */
-        @Pure
-        @PythonName("to_table")
-        fun toTable() -> table: Table
-
-        /**
-         * Return an HTML representation of the column.
-         *
-         * @result html The generated HTML.
          *
          * @example
          * pipeline example {
          *     val column = Column("test", [1, 2, 3]);
-         *     val html = column.toHtml();
+         *     val result = column.toTable();
+         *     // Table({"test": [1, 2, 3]})
          * }
          */
         @Pure
-        @PythonName("to_html")
-        fun toHtml() -> html: String
+        @PythonName("to_table")
+        fun toTable() -> table: Table
     }
     ```
 
-## `#!sds attr` name {#safeds.data.tabular.containers.Column.name data-toc-label='name'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `isNumeric` {#safeds.data.tabular.containers.Column.isNumeric data-toc-label='[attribute] isNumeric'}
 
-Return the name of the column.
+Whether the column is numeric.
+
+**Type:** [`Boolean`][safeds.lang.Boolean]
+
+## <code class="doc-symbol doc-symbol-attribute"></code> `isTemporal` {#safeds.data.tabular.containers.Column.isTemporal data-toc-label='[attribute] isTemporal'}
+
+Whether the column is temporal.
+
+**Type:** [`Boolean`][safeds.lang.Boolean]
+
+## <code class="doc-symbol doc-symbol-attribute"></code> `name` {#safeds.data.tabular.containers.Column.name data-toc-label='[attribute] name'}
+
+The name of the column.
 
 **Type:** [`String`][safeds.lang.String]
 
-**Examples:**
+## <code class="doc-symbol doc-symbol-attribute"></code> `plot` {#safeds.data.tabular.containers.Column.plot data-toc-label='[attribute] plot'}
 
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val name = column.name; // "test"
-}
-```
+The plotter for the column.
 
-## `#!sds attr` numberOfRows {#safeds.data.tabular.containers.Column.numberOfRows data-toc-label='numberOfRows'}
+**Type:** [`ColumnPlotter`][safeds.data.tabular.plotting.ColumnPlotter]
 
-Return the number of elements in the column.
+## <code class="doc-symbol doc-symbol-attribute"></code> `rowCount` {#safeds.data.tabular.containers.Column.rowCount data-toc-label='[attribute] rowCount'}
+
+The number of rows in the column.
 
 **Type:** [`Int`][safeds.lang.Int]
 
-**Examples:**
+## <code class="doc-symbol doc-symbol-attribute"></code> `type` {#safeds.data.tabular.containers.Column.type data-toc-label='[attribute] type'}
 
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val numberOfRows = column.numberOfRows; // 3
-}
-```
+The type of the column.
 
-## `#!sds attr` type {#safeds.data.tabular.containers.Column.type data-toc-label='type'}
+**Type:** [`DataType`][safeds.data.tabular.typing.DataType]
 
-Return the type of the column.
+## <code class="doc-symbol doc-symbol-function"></code> `correlationWith` {#safeds.data.tabular.containers.Column.correlationWith data-toc-label='[function] correlationWith'}
 
-**Type:** [`ColumnType`][safeds.data.tabular.typing.ColumnType]
+Calculate the Pearson correlation between this column and another column.
 
-**Examples:**
+The Pearson correlation is a value between -1 and 1 that indicates how much the two columns are linearly
+related:
 
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val type = column.type; // Integer
-}
-```
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("test", ["a", "b", "c"]);
-    val type = column.type; // String
-}
-```
-
-## `#!sds fun` all {#safeds.data.tabular.containers.Column.all data-toc-label='all'}
-
-Check if all values have a given property.
+- A correlation of -1 indicates a perfect negative linear relationship.
+- A correlation of 0 indicates no linear relationship.
+- A correlation of 1 indicates a perfect positive linear relationship.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `predicate` | `#!sds (value: T) -> (matches: Boolean)` | Callable that is used to find matches. | - |
+| `other` | [`Column<Any>`][safeds.data.tabular.containers.Column] | The other column to calculate the correlation with. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `allMatch` | [`Boolean`][safeds.lang.Boolean] | True if all match. |
-
-**Examples:**
-
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val allMatch = column.all((value) -> value < 4); // true
-}
-```
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val allMatch = column.all((value) -> value < 2); // false
-}
-```
-
-??? quote "Stub code in `Column.sdsstub`"
-
-    ```sds linenums="118"
-    @Pure
-    fun all(
-        predicate: (value: T) -> matches: Boolean
-    ) -> allMatch: Boolean
-    ```
-
-## `#!sds fun` any {#safeds.data.tabular.containers.Column.any data-toc-label='any'}
-
-Check if any value has a given property.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `predicate` | `#!sds (value: T) -> (matches: Boolean)` | Callable that is used to find matches. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `anyMatch` | [`Boolean`][safeds.lang.Boolean] | True if any match. |
-
-**Examples:**
-
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val anyMatch = column.any((value) -> value < 2); // true
-}
-```
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val anyMatch = column.any((value) -> value < 1); // false
-}
-```
-
-??? quote "Stub code in `Column.sdsstub`"
-
-    ```sds linenums="142"
-    @Pure
-    fun any(
-        predicate: (value: T) -> matches: Boolean
-    ) -> anyMatch: Boolean
-    ```
-
-## `#!sds fun` correlationWith {#safeds.data.tabular.containers.Column.correlationWith data-toc-label='correlationWith'}
-
-Calculate Pearson correlation between this and another column. Both columns have to be numerical.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `otherColumn` | [`Column<Any?>`][safeds.data.tabular.containers.Column] | - | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `correlation` | [`Float`][safeds.lang.Float] | Correlation between the two columns. |
+| `correlation` | [`Float`][safeds.lang.Float] | The Pearson correlation between the two columns. |
 
 **Examples:**
 
 ```sds hl_lines="4"
 pipeline example {
-    val column1 = Column("test1", [1, 2, 3]);
-    val column2 = Column("test2", [2, 4, 6]);
-    val correlation = column1.correlationWith(column2); // 1.0
+    val column1 = Column("test", [1, 2, 3]);
+    val column2 = Column("test", [2, 4, 6]);
+    val result = column1.correlationWith(column2);
 }
 ```
 ```sds hl_lines="4"
 pipeline example {
-    val column1 = Column("test1", [1, 2, 3]);
-    val column2 = Column("test2", [3, 2, 1]);
-    val correlation = column1.correlationWith(column2); // -1.0
+    val column1 = Column("test", [1, 2, 3]);
+    val column2 = Column("test", [3, 2, 1]);
+    val result = column1.correlationWith(column2);
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="275"
+    ```sds linenums="154"
     @Pure
     @PythonName("correlation_with")
     fun correlationWith(
-        @PythonName("other_column") otherColumn: Column
+        other: Column<Any>
     ) -> correlation: Float
     ```
 
-## :warning:{ title="Deprecated" } `#!sds fun` getUniqueValues {#safeds.data.tabular.containers.Column.getUniqueValues data-toc-label='getUniqueValues'}
+## <code class="doc-symbol doc-symbol-function"></code> `distinctValueCount` {#safeds.data.tabular.containers.Column.distinctValueCount data-toc-label='[function] distinctValueCount'}
 
-!!! warning "Deprecated"
-
-    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
-
-    - **Alternative:** Try ExperimentalColumn.getDistinctValues instead.
-    - **Reason:** The word 'unique' could imply that only values that occur exactly once are returned.
-
-Return a list of all unique values in the column.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result1` | [`List<T>`][safeds.lang.List] | List of unique values in the column. |
-
-**Examples:**
-
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("test", [1, 2, 3, 2, 4, 3]);
-    val uniqueValues = column.getUniqueValues(); // [1, 2, 3, 4]
-}
-```
-
-??? quote "Stub code in `Column.sdsstub`"
-
-    ```sds linenums="70"
-    @Deprecated(
-        alternative="Try ExperimentalColumn.getDistinctValues instead.",
-        reason="The word 'unique' could imply that only values that occur exactly once are returned.",
-        sinceVersion="0.15.0",
-        removalVersion="0.16.0"
-    )
-    @Pure
-    @PythonName("get_unique_values")
-    fun getUniqueValues() -> result1: List<T>
-    ```
-
-## `#!sds fun` getValue {#safeds.data.tabular.containers.Column.getValue data-toc-label='getValue'}
-
-Return column value at specified index, starting at 0.
+Return the number of distinct values in the column.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `index` | [`Int`][safeds.lang.Int] | Index of requested element. | - |
+| `ignoreMissingValues` | [`Boolean`][safeds.lang.Boolean] | Whether to ignore missing values when counting distinct values. | `#!sds true` |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | `#!sds T` | Value at index in column. |
+| `distinctValueCount` | [`Int`][safeds.lang.Int] | The number of distinct values in the column. |
+
+**Examples:**
+
+```sds hl_lines="3"
+pipeline example {
+    val column = Column("test", [1, 2, 3, 2]);
+    val result = column.distinctValueCount(); // 3
+}
+```
+
+??? quote "Stub code in `Column.sdsstub`"
+
+    ```sds linenums="173"
+    @Pure
+    @PythonName("distinct_value_count")
+    fun distinctValueCount(
+        @PythonName("ignore_missing_values") ignoreMissingValues: Boolean = true
+    ) -> distinctValueCount: Int
+    ```
+
+## <code class="doc-symbol doc-symbol-function"></code> `getValue` {#safeds.data.tabular.containers.Column.getValue data-toc-label='[function] getValue'}
+
+Return the column value at specified index.
+
+Nonnegative indices are counted from the beginning (starting at 0), negative indices from the end (starting at
+-1).
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `index` | [`Int`][safeds.lang.Int] | Index of requested value. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `value` | `#!sds T` | Value at index. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
-    val value = column.getValue(1); // 2
+    val result = column.getValue(1); // 2
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="93"
+    ```sds linenums="63"
     @Pure
     @PythonName("get_value")
     fun getValue(
         index: Int
-    ) -> result1: T
+    ) -> value: T
     ```
 
-## :warning:{ title="Deprecated" } `#!sds fun` hasMissingValues {#safeds.data.tabular.containers.Column.hasMissingValues data-toc-label='hasMissingValues'}
-
-!!! warning "Deprecated"
-
-    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
-
-    - **Alternative:** Column.missingValueCount() > 0.
-    - **Reason:** Barely saves any characters.
-
-Return whether the column has missing values.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `hasMissingValues` | [`Boolean`][safeds.lang.Boolean] | True if missing values exist. |
-
-**Examples:**
-
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("test", [1, 2, 3, null]);
-    val hasMissingValues = column.hasMissingValues(); // true
-}
-```
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val hasMissingValues = column.hasMissingValues(); // false
-}
-```
-
-??? quote "Stub code in `Column.sdsstub`"
-
-    ```sds linenums="188"
-    @Deprecated(
-        alternative="Column.missingValueCount() > 0.",
-        reason="Barely saves any characters.",
-        sinceVersion="0.15.0",
-        removalVersion="0.16.0"
-    )
-    @Pure
-    @PythonName("has_missing_values")
-    fun hasMissingValues() -> hasMissingValues: Boolean
-    ```
-
-## `#!sds fun` idness {#safeds.data.tabular.containers.Column.idness data-toc-label='idness'}
+## <code class="doc-symbol doc-symbol-function"></code> `idness` {#safeds.data.tabular.containers.Column.idness data-toc-label='[function] idness'}
 
 Calculate the idness of this column.
 
-We define the idness as follows:
+We define the idness as the number of distinct values (including missing values) divided by the number of rows.
+If the column is empty, the idness is 1.0.
 
-$$
-\frac{\text{number of different values}}{\text{number of rows}}
-$$
+A high idness indicates that the column most values in the column are unique. In this case, you must be careful
+when using the column for analysis, as a model may learn a mapping from this column to the target.
 
 **Results:**
 
@@ -969,160 +578,133 @@ $$
 ```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
-    val idness = column.idness(); // 1.0
+    val result = column.idness(); // 1.0
 }
 ```
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("test", [1, 2, 2, 3]);
-    val idness = column.idness(); // 0.75
+    val column = Column("test", [1, 2, 3, 2]);
+    val result = column.idness(); // 0.75
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="304"
+    ```sds linenums="202"
     @Pure
     fun idness() -> idness: Float
     ```
 
-## :warning:{ title="Deprecated" } `#!sds fun` maximum {#safeds.data.tabular.containers.Column.maximum data-toc-label='maximum'}
+## <code class="doc-symbol doc-symbol-function"></code> `max` {#safeds.data.tabular.containers.Column.max data-toc-label='[function] max'}
 
-!!! warning "Deprecated"
-
-    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
-
-    - **Alternative:** Try ExperimentalColumn.max instead.
-    - **Reason:** More concise.
-
-Return the maximum value of the column. The column has to be numerical.
+Return the maximum value in the column.
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `maximum` | [`Float`][safeds.lang.Float] | The maximum value. |
+| `max` | `#!sds T?` | The maximum value in the column. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
-    val maximum = column.maximum(); // 3
+    val result = column.max(); // 3
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="318"
-    @Deprecated(
-        alternative="Try ExperimentalColumn.max instead.",
-        reason="More concise.",
-        sinceVersion="0.15.0",
-        removalVersion="0.16.0"
-    )
+    ```sds linenums="216"
     @Pure
-    fun maximum() -> maximum: Float
+    fun max() -> max: T?
     ```
 
-## `#!sds fun` mean {#safeds.data.tabular.containers.Column.mean data-toc-label='mean'}
+## <code class="doc-symbol doc-symbol-function"></code> `mean` {#safeds.data.tabular.containers.Column.mean data-toc-label='[function] mean'}
 
-Return the mean value of the column. The column has to be numerical.
+Return the mean of the values in the column.
+
+The mean is the sum of the values divided by the number of values.
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `mean` | [`Float`][safeds.lang.Float] | The mean value. |
+| `mean` | `#!sds T` | The mean of the values in the column. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
-    val mean = column.mean(); // 2.0
+    val result = column.mean(); // 2.0
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="338"
+    ```sds linenums="232"
     @Pure
-    fun mean() -> mean: Float
+    fun mean() -> mean: T
     ```
 
-## `#!sds fun` median {#safeds.data.tabular.containers.Column.median data-toc-label='median'}
+## <code class="doc-symbol doc-symbol-function"></code> `median` {#safeds.data.tabular.containers.Column.median data-toc-label='[function] median'}
 
-Return the median value of the column. The column has to be numerical.
+Return the median of the values in the column.
+
+The median is the value in the middle of the sorted list of values. If the number of values is even, the median
+is the mean of the two middle values.
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `median` | [`Float`][safeds.lang.Float] | The median value. |
+| `median` | `#!sds T` | The median of the values in the column. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
-    val median = column.median(); // 2.0
-}
-```
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("test", [1, 2, 3, 4]);
-    val median = column.median(); // 2.5
+    val result = column.median(); // 2.0
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="358"
+    ```sds linenums="249"
     @Pure
-    fun median() -> median: Float
+    fun median() -> median: T
     ```
 
-## :warning:{ title="Deprecated" } `#!sds fun` minimum {#safeds.data.tabular.containers.Column.minimum data-toc-label='minimum'}
+## <code class="doc-symbol doc-symbol-function"></code> `min` {#safeds.data.tabular.containers.Column.min data-toc-label='[function] min'}
 
-!!! warning "Deprecated"
-
-    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
-
-    - **Alternative:** Try ExperimentalColumn.min instead.
-    - **Reason:** More concise.
-
-Return the minimum value of the column. The column has to be numerical.
+Return the minimum value in the column.
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `minimum` | [`Float`][safeds.lang.Float] | The minimum value. |
+| `min` | `#!sds T?` | The minimum value in the column. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
-    val minimum = column.minimum(); // 1
+    val result = column.min(); // 1
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="372"
-    @Deprecated(
-        alternative="Try ExperimentalColumn.min instead.",
-        reason="More concise.",
-        sinceVersion="0.15.0",
-        removalVersion="0.16.0"
-    )
+    ```sds linenums="263"
     @Pure
-    fun minimum() -> minimum: Float
+    fun min() -> min: T?
     ```
 
-## `#!sds fun` missingValueCount {#safeds.data.tabular.containers.Column.missingValueCount data-toc-label='missingValueCount'}
+## <code class="doc-symbol doc-symbol-function"></code> `missingValueCount` {#safeds.data.tabular.containers.Column.missingValueCount data-toc-label='[function] missingValueCount'}
 
 Return the number of missing values in the column.
 
@@ -1130,324 +712,59 @@ Return the number of missing values in the column.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `count` | [`Int`][safeds.lang.Int] | The number of missing values. |
+| `missingValueCount` | [`Int`][safeds.lang.Int] | The number of missing values in the column. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("test", [1, 2, 3, 4]);
-    val missingValueCount = column.missingValueCount(); // 0
-}
-```
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("test", [1, 2, 3, null]);
-    val missingValueCount = column.missingValueCount(); // 1
+    val column = Column("test", [1, null, 3]);
+    val result = column.missingValueCount(); // 1
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="398"
+    ```sds linenums="277"
     @Pure
     @PythonName("missing_value_count")
-    fun missingValueCount() -> count: Int
+    fun missingValueCount() -> missingValueCount: Int
     ```
 
-## `#!sds fun` missingValueRatio {#safeds.data.tabular.containers.Column.missingValueRatio data-toc-label='missingValueRatio'}
+## <code class="doc-symbol doc-symbol-function"></code> `missingValueRatio` {#safeds.data.tabular.containers.Column.missingValueRatio data-toc-label='[function] missingValueRatio'}
 
-Return the ratio of missing values to the total number of elements in the column.
+Return the missing value ratio.
+
+We define the missing value ratio as the number of missing values in the column divided by the number of rows.
+If the column is empty, the missing value ratio is 1.0.
+
+A high missing value ratio indicates that the column is dominated by missing values. In this case, the column
+may not be useful for analysis.
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `missinValueRatio` | [`Float`][safeds.lang.Float] | The ratio of missing values to the total number of elements in the column. |
+| `missingValueRatio` | [`Float`][safeds.lang.Float] | The ratio of missing values in the column. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("test", [1, 2, 3, 4]);
-    val missingValueRatio = column.missingValueRatio(); // 0.0
-}
-```
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("test", [1, 2, 3, null]);
-    val missingValueRatio = column.missingValueRatio(); // 0.25
+    val column = Column("test", [1, null, 3, null]);
+    val result = column.missingValueRatio(); // 0.5
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="419"
+    ```sds linenums="298"
     @Pure
     @PythonName("missing_value_ratio")
-    fun missingValueRatio() -> missinValueRatio: Float
+    fun missingValueRatio() -> missingValueRatio: Float
     ```
 
-## `#!sds fun` mode {#safeds.data.tabular.containers.Column.mode data-toc-label='mode'}
-
-Return the mode of the column.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `mode` | [`List<T>`][safeds.lang.List] | Returns a list with the most common values. |
-
-**Examples:**
-
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("test", [1, 2, 2, 3]);
-    val mode = column.mode(); // [2]
-}
-```
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("test", [1, 2, 2, 3, 3]);
-    val mode = column.mode(); // [2, 3]
-}
-```
-
-??? quote "Stub code in `Column.sdsstub`"
-
-    ```sds linenums="440"
-    @Pure
-    fun mode() -> mode: List<T>
-    ```
-
-## `#!sds fun` none {#safeds.data.tabular.containers.Column.none data-toc-label='none'}
-
-Check if no values has a given property.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `predicate` | `#!sds (value: T) -> (matches: Boolean)` | Callable that is used to find matches. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `noneMatch` | [`Boolean`][safeds.lang.Boolean] | True if none match. |
-
-**Examples:**
-
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val noneMatch = column.none((value) -> value < 1); // true
-}
-```
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val noneMatch = column.none((value) -> value > 1); // false
-}
-```
-
-??? quote "Stub code in `Column.sdsstub`"
-
-    ```sds linenums="166"
-    @Pure
-    fun none(
-        predicate: (value: T) -> matches: Boolean
-    ) -> noneMatch: Boolean
-    ```
-
-## :warning:{ title="Deprecated" } `#!sds fun` plotBoxplot {#safeds.data.tabular.containers.Column.plotBoxplot data-toc-label='plotBoxplot'}
-
-!!! warning "Deprecated"
-
-    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
-
-    - **Alternative:** Try ExperimentalColumn.plot.boxPlot instead.
-    - **Reason:** Groups all plotting methods in one place.
-
-Plot this column in a boxplot. This function can only plot real numerical data.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `boxplot` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
-
-**Examples:**
-
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val plot = column.plotBoxplot();
-}
-```
-
-??? quote "Stub code in `Column.sdsstub`"
-
-    ```sds linenums="531"
-    @Deprecated(
-        alternative="Try ExperimentalColumn.plot.boxPlot instead.",
-        reason="Groups all plotting methods in one place.",
-        sinceVersion="0.15.0",
-        removalVersion="0.16.0"
-    )
-    @Pure
-    @PythonName("plot_boxplot")
-    fun plotBoxplot() -> boxplot: Image
-    ```
-
-## :warning:{ title="Deprecated" } `#!sds fun` plotCompareColumns {#safeds.data.tabular.containers.Column.plotCompareColumns data-toc-label='plotCompareColumns'}
-
-!!! warning "Deprecated"
-
-    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
-
-    - **Alternative:** We still decide where to move this.
-    - **Reason:** Groups all plotting methods in one place.
-
-Create a plot comparing the numerical values of columns using IDs as the x-axis.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `columnList` | [`List<Column<Any>>`][safeds.lang.List] | A list of time columns to be plotted. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `plot` | [`Image`][safeds.data.image.containers.Image] | A plot with all the Columns plotted by the ID on the x-axis. |
-
-**Examples:**
-
-```sds
-pipeline example {
-    // from safeds.data.tabular.containers import Column
-    // col1 =Column("target", [4, 5, 6, 7, 8, 9, 10, 11, 12, 13])
-    // col2 =Column("target", [42, 51, 63, 71, 83, 91, 10, 11, 12, 13])
-    // image = col1.plot_compare_columns([col2])
-}
-```
-
-??? quote "Stub code in `Column.sdsstub`"
-
-    ```sds linenums="581"
-    @Deprecated(
-        alternative="We still decide where to move this.",
-        reason="Groups all plotting methods in one place.",
-        sinceVersion="0.15.0",
-        removalVersion="0.16.0"
-    )
-    @Pure
-    @PythonName("plot_compare_columns")
-    fun plotCompareColumns(
-        @PythonName("column_list") columnList: List<Column<Any>>
-    ) -> plot: Image
-    ```
-
-## :warning:{ title="Deprecated" } `#!sds fun` plotHistogram {#safeds.data.tabular.containers.Column.plotHistogram data-toc-label='plotHistogram'}
-
-!!! warning "Deprecated"
-
-    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
-
-    - **Alternative:** Try ExperimentalColumn.plot.histogram instead.
-    - **Reason:** Groups all plotting methods in one place.
-
-Plot a column in a histogram.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `numberOfBins` | [`Int`][safeds.lang.Int] | The number of bins to use in the histogram. Default is 10. | `#!sds 10` |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `plot` | [`Image`][safeds.data.image.containers.Image] | - |
-
-**Examples:**
-
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val plot = column.plotHistogram();
-}
-```
-
-??? quote "Stub code in `Column.sdsstub`"
-
-    ```sds linenums="554"
-    @Deprecated(
-        alternative="Try ExperimentalColumn.plot.histogram instead.",
-        reason="Groups all plotting methods in one place.",
-        sinceVersion="0.15.0",
-        removalVersion="0.16.0"
-    )
-    @Pure
-    @PythonName("plot_histogram")
-    fun plotHistogram(
-        @PythonName("number_of_bins") numberOfBins: Int = 10
-    ) -> plot: Image
-    ```
-
-## :warning:{ title="Deprecated" } `#!sds fun` plotLagplot {#safeds.data.tabular.containers.Column.plotLagplot data-toc-label='plotLagplot'}
-
-!!! warning "Deprecated"
-
-    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
-
-    - **Alternative:** Try ExperimentalColumn.plot.lagPlot instead.
-    - **Reason:** Groups all plotting methods in one place.
-
-Plot a lagplot for the given column.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `lag` | [`Int`][safeds.lang.Int] | The amount of lag used to plot | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `plot` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
-
-**Examples:**
-
-```sds
-pipeline example {
-    // from safeds.data.tabular.containers import Table
-    // table = Column("values", [1,2,3,4,3,2])
-    // image = table.plot_lagplot(2)
-}
-```
-
-??? quote "Stub code in `Column.sdsstub`"
-
-    ```sds linenums="607"
-    @Deprecated(
-        alternative="Try ExperimentalColumn.plot.lagPlot instead.",
-        reason="Groups all plotting methods in one place.",
-        sinceVersion="0.15.0",
-        removalVersion="0.16.0"
-    )
-    @Pure
-    @PythonName("plot_lagplot")
-    fun plotLagplot(
-        lag: Int
-    ) -> plot: Image
-    ```
-
-## `#!sds fun` rename {#safeds.data.tabular.containers.Column.rename data-toc-label='rename'}
+## <code class="doc-symbol doc-symbol-function"></code> `rename` {#safeds.data.tabular.containers.Column.rename data-toc-label='[function] rename'}
 
 Return a new column with a new name.
 
@@ -1463,37 +780,36 @@ The original column is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `renamedColumn` | [`Column<Any?>`][safeds.data.tabular.containers.Column] | A new column with the new name. |
+| `renamedColumn` | [`Column<T>`][safeds.data.tabular.containers.Column] | A new column with the new name. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
-    val renamedColumn = column.rename("new_name");
+    val result = column.rename("new_name");
+    // Column("new_name", [1, 2, 3])
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="213"
+    ```sds linenums="85"
     @Pure
     fun rename(
         @PythonName("new_name") newName: String
-    ) -> renamedColumn: Column
+    ) -> renamedColumn: Column<T>
     ```
 
-## `#!sds fun` stability {#safeds.data.tabular.containers.Column.stability data-toc-label='stability'}
+## <code class="doc-symbol doc-symbol-function"></code> `stability` {#safeds.data.tabular.containers.Column.stability data-toc-label='[function] stability'}
 
-Calculate the stability of this column.
+Return the stability of the column.
 
-We define the stability as follows:
+We define the stability as the number of occurrences of the most common non-missing value divided by the total
+number of non-missing values. If the column is empty or all values are missing, the stability is 1.0.
 
-$$
-\frac{\text{number of occurrences of most common non-null value}}{\text{number of non-null values}}
-$$
-
-The stability is not defined for a column with only null values.
+A high stability indicates that the column is dominated by a single value. In this case, the column may not be
+useful for analysis.
 
 **Results:**
 
@@ -1505,95 +821,50 @@ The stability is not defined for a column with only null values.
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("test", [1, 2, 2, 3]);
-    val stability = column.stability(); // 0.5
-}
-```
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("test", [1, 2, 2, 3, null]);
-    val stability = column.stability(); // 0.5
+    val column = Column("test", [1, 1, 2, 3, null]);
+    val result = column.stability(); // 0.5
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="468"
+    ```sds linenums="319"
     @Pure
     fun stability() -> stability: Float
     ```
 
-## `#!sds fun` standardDeviation {#safeds.data.tabular.containers.Column.standardDeviation data-toc-label='standardDeviation'}
+## <code class="doc-symbol doc-symbol-function"></code> `standardDeviation` {#safeds.data.tabular.containers.Column.standardDeviation data-toc-label='[function] standardDeviation'}
 
-Return the standard deviation of the column. The column has to be numerical.
+Return the standard deviation of the values in the column.
+
+The standard deviation is the square root of the variance.
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `standardDeviation` | [`Float`][safeds.lang.Float] | The standard deviation of all values. |
+| `standardDeviation` | [`Float`][safeds.lang.Float] | The standard deviation of the values in the column. If no standard deviation can be calculated due to the type of the column, null is returned. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
-    val standardDeviation = column.standardDeviation(); // 1.0
+    val result = column.standardDeviation(); // 1.0
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="482"
+    ```sds linenums="336"
     @Pure
     @PythonName("standard_deviation")
     fun standardDeviation() -> standardDeviation: Float
     ```
 
-## :warning:{ title="Deprecated" } `#!sds fun` sum {#safeds.data.tabular.containers.Column.sum data-toc-label='sum'}
+## <code class="doc-symbol doc-symbol-function"></code> `summarizeStatistics` {#safeds.data.tabular.containers.Column.summarizeStatistics data-toc-label='[function] summarizeStatistics'}
 
-!!! warning "Deprecated"
-
-    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
-
-    - **Alternative:** None.
-    - **Reason:** No use case.
-
-Return the sum of the column. The column has to be numerical.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `sum` | [`Float`][safeds.lang.Float] | The sum of all values. |
-
-**Examples:**
-
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val sum = column.sum(); // 6
-}
-```
-
-??? quote "Stub code in `Column.sdsstub`"
-
-    ```sds linenums="497"
-    @Deprecated(
-        alternative="None.",
-        reason="No use case.",
-        sinceVersion="0.15.0",
-        removalVersion="0.16.0"
-    )
-    @Pure
-    fun sum() -> sum: Float
-    ```
-
-## `#!sds fun` summarizeStatistics {#safeds.data.tabular.containers.Column.summarizeStatistics data-toc-label='summarizeStatistics'}
-
-Return a table with a number of statistical key values.
-
-The original Column is not modified.
+Return a table with important statistics about the column.
 
 **Results:**
 
@@ -1603,50 +874,49 @@ The original Column is not modified.
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // from safeds.data.tabular.containers import Column
-    // column = Column("a", [1, 3])
-    // column.summarize_statistics()
+    val column = Column("a", [1, 3]);
+    val result = column.summarizeStatistics();
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="252"
+    ```sds linenums="122"
     @Pure
     @PythonName("summarize_statistics")
     fun summarizeStatistics() -> statistics: Table
     ```
 
-## `#!sds fun` toHtml {#safeds.data.tabular.containers.Column.toHtml data-toc-label='toHtml'}
+## <code class="doc-symbol doc-symbol-function"></code> `toList` {#safeds.data.tabular.containers.Column.toList data-toc-label='[function] toList'}
 
-Return an HTML representation of the column.
+Return the values of the column in a list.
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `html` | [`String`][safeds.lang.String] | The generated HTML. |
+| `values` | [`List<T>`][safeds.lang.List] | The values of the column in a list. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
-    val html = column.toHtml();
+    val result = column.toList(); // [1, 2, 3]
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="639"
+    ```sds linenums="368"
     @Pure
-    @PythonName("to_html")
-    fun toHtml() -> html: String
+    @PythonName("to_list")
+    fun toList() -> values: List<T>
     ```
 
-## `#!sds fun` toTable {#safeds.data.tabular.containers.Column.toTable data-toc-label='toTable'}
+## <code class="doc-symbol doc-symbol-function"></code> `toTable` {#safeds.data.tabular.containers.Column.toTable data-toc-label='[function] toTable'}
 
 Create a table that contains only this column.
 
@@ -1656,17 +926,27 @@ Create a table that contains only this column.
 |------|------|-------------|
 | `table` | [`Table`][safeds.data.tabular.containers.Table] | The table with this column. |
 
+**Examples:**
+
+```sds hl_lines="3"
+pipeline example {
+    val column = Column("test", [1, 2, 3]);
+    val result = column.toTable();
+    // Table({"test": [1, 2, 3]})
+}
+```
+
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="624"
+    ```sds linenums="384"
     @Pure
     @PythonName("to_table")
     fun toTable() -> table: Table
     ```
 
-## `#!sds fun` transform {#safeds.data.tabular.containers.Column.transform data-toc-label='transform'}
+## <code class="doc-symbol doc-symbol-function"></code> `transform` {#safeds.data.tabular.containers.Column.transform data-toc-label='[function] transform'}
 
-Apply a transform method to every data point.
+Return a new column with values transformed by the transformer.
 
 The original column is not modified.
 
@@ -1674,13 +954,13 @@ The original column is not modified.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `transformer` | `#!sds (value: T) -> (transformedValue: R)` | Function that will be applied to all data points. | - |
+| `transformer` | `#!sds (cell: Cell<T>) -> (transformedCell: Cell<R>)` | The transformer to apply to each value. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `transformedColumn` | [`Column<R>`][safeds.data.tabular.containers.Column] | The transformed column. |
+| `transformedColumn` | [`Column<R>`][safeds.data.tabular.containers.Column] | A new column with transformed values. |
 
 **Type parameters:**
 
@@ -1692,42 +972,45 @@ The original column is not modified.
 
 ```sds hl_lines="3"
 pipeline example {
-    val price = Column("price", [4.99, 5.99, 2.49]);
-    val discountedPrice = price.transform((value) -> value * 0.75);
+    val column = Column("test", [1, 2, 3]);
+    val result = column.transform((cell) -> cell.mul(2));
+    // Column("test", [2, 4, 6])
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="233"
+    ```sds linenums="106"
     @Pure
     fun transform<R>(
-        transformer: (value: T) -> transformedValue: R
+        transformer: (cell: Cell<T>) -> transformedCell: Cell<R>
     ) -> transformedColumn: Column<R>
     ```
 
-## `#!sds fun` variance {#safeds.data.tabular.containers.Column.variance data-toc-label='variance'}
+## <code class="doc-symbol doc-symbol-function"></code> `variance` {#safeds.data.tabular.containers.Column.variance data-toc-label='[function] variance'}
 
-Return the variance of the column. The column has to be numerical.
+Return the variance of the values in the column.
+
+The variance is the average of the squared differences from the mean.
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `variance` | [`Float`][safeds.lang.Float] | The variance of all values. |
+| `variance` | [`Float`][safeds.lang.Float] | The variance of the values in the column. If no variance can be calculated due to the type of the column, null is returned. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
-    val variance = column.variance(); // 1.0
+    val result = column.variance(); // 1.0
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="517"
+    ```sds linenums="354"
     @Pure
     fun variance() -> variance: Float
     ```

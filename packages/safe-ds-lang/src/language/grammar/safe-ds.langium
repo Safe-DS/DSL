@@ -1097,7 +1097,7 @@ SdsColumn returns SdsColumn:
 // Terminals
 // -----------------------------------------------------------------------------
 
-terminal ID returns string: IDENTIFIER | '`' IDENTIFIER '`';
+terminal ID returns string: IDENTIFIER | '^' IDENTIFIER;
 terminal fragment IDENTIFIER: /[_a-zA-Z][_a-zA-Z0-9]*/;
 
 terminal FLOAT returns number

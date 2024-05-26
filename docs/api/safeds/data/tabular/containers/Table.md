@@ -1,134 +1,129 @@
-# `#!sds class` Table {#safeds.data.tabular.containers.Table data-toc-label='Table'}
+# <code class="doc-symbol doc-symbol-class"></code> `Table` {#safeds.data.tabular.containers.Table data-toc-label='[class] Table'}
 
-A table is a two-dimensional collection of data. It can either be seen as a list of rows or as a list of columns.
+A two-dimensional collection of data. It can either be seen as a list of rows or as a list of columns.
 
 To create a `Table` call the constructor or use one of the following static methods:
 
-| Method                     | Description                            |
-| -------------------------- | -------------------------------------- |
-| [Table.fromCsvFile][safeds.data.tabular.containers.Table.fromCsvFile]  | Create a table from a CSV file.        |
-| [Table.fromJsonFile][safeds.data.tabular.containers.Table.fromJsonFile] | Create a table from a JSON file.       |
-| [Table.fromMap][safeds.data.tabular.containers.Table.fromMap]      | Create a table from a map.             |
-| [Table.fromColumns][safeds.data.tabular.containers.Table.fromColumns]  | Create a table from a list of columns. |
-| [Table.fromRows][safeds.data.tabular.containers.Table.fromRows]     | Create a table from a list of rows.    |
-
-Note: When removing the last column of the table, the `number_of_columns` property will be set to 0.
+| Method                                                                  | Description                            |
+| ----------------------------------------------------------------------- | -------------------------------------- |
+| [fromCsvFile][safeds.data.tabular.containers.Table.fromCsvFile]         | Create a table from a CSV file.        |
+| [fromJsonFile][safeds.data.tabular.containers.Table.fromJsonFile]       | Create a table from a JSON file.       |
+| [fromParquetFile][safeds.data.tabular.containers.Table.fromParquetFile] | Create a table from a Parquet file.    |
+| [fromColumns][safeds.data.tabular.containers.Table.fromColumns]         | Create a table from a list of columns. |
+| [fromMap][safeds.data.tabular.containers.Table.fromMap]                 | Create a table from a map.      |
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `data` | [`Map<String, List<Any?>>?`][safeds.lang.Map] | The data. If None, an empty table is created. | `#!sds null` |
+| `data` | [`Map<String, List<Any?>>?`][safeds.lang.Map] | The data of the table. If null, an empty table is created. | `#!sds null` |
 
 **Examples:**
 
 ```sds hl_lines="2"
 pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
+    val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="31"
+    ```sds linenums="32"
     class Table(
-        data: Map<String, List<Any?>>? = null // TODO: update default value to empty map
+        data: Map<String, List<Any?>>? = null
     ) {
         /**
-         * Return a list of all column names in this table.
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val columnNames = table.columnNames; // ["a", "b"]
-         * }
+         * The names of the columns in the table.
          */
         @PythonName("column_names") attr columnNames: List<String>
         /**
-         * Return the number of columns.
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val numberOfColumns = table.numberOfColumns; // 2
-         * }
+         * The number of columns in the table.
          */
-        @PythonName("number_of_columns") attr numberOfColumns: Int
+        @PythonName("number_of_columns") attr columnCount: Int
         /**
-         * Return the number of rows.
+         * The number of rows in the table.
          *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val numberOfRows = table.numberOfRows; // 2
-         * }
+         * **Note:** This operation must fully load the data into memory, which can be expensive.
          */
-        @PythonName("number_of_rows") attr numberOfRows: Int
+        @PythonName("number_of_rows") attr rowCount: Int
         /**
-         * Return the schema of the table.
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val `schema` = table.`schema`;
-         * }
+         * The plotter for the table.
          */
-        attr `schema`: Schema
+        attr plot: TablePlotter
+        /**
+         * The schema of the table.
+         */
+        attr ^schema: Schema
 
         /**
-         * Read data from a CSV file into a table.
+         * Create a table from a list of columns.
          *
-         * @param path The path to the CSV file.
+         * @param columns The columns.
          *
-         * @result table The table created from the CSV file.
+         * @result table The created table.
          *
          * @example
          * pipeline example {
-         *     val table = Table.fromCsvFile("path/to/file.csv");
+         *     val a = Column("a", [1, 2, 3]);
+         *     val b = Column("b", [4, 5, 6]);
+         *     val result = Table.fromColumns([a, b]);
+         * }
+         */
+        @Pure
+        @PythonName("from_columns")
+        static fun fromColumns(
+            columns: union<Column, List<Column>>
+        ) -> table: Table
+
+        /**
+         * Create a table from a CSV file.
+         *
+         * @param path The path to the CSV file. If the file extension is omitted, it is assumed to be ".csv".
+         * @param separator The separator between the values in the CSV file.
+         *
+         * @result table The created table.
+         *
+         * @example
+         * pipeline example {
+         *     val result = Table.fromCsvFile("input.csv");
          * }
          */
         @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
         @PythonName("from_csv_file")
         static fun fromCsvFile(
-            path: String
+            path: String,
+            separator: String = ","
         ) -> table: Table
 
         /**
-         * Read data from an Excel file into a table.
+         * Create a table from a map that maps column names to column values.
          *
-         * Valid file extensions are `.xls`, `.xlsx`, `.xlsm`, `.xlsb`, `.odf`, `.ods` and `.odt`.
+         * @param data The data.
          *
-         * @param path The path to the Excel file.
-         *
-         * @result table The table created from the Excel file.
+         * @result table The generated table.
          *
          * @example
          * pipeline example {
-         *     val table = Table.fromExcelFile("path/to/file.xlsx");
+         *     val data = {"a'": [1, 2, 3], "b": [4, 5, 6]};
+         *     val result = Table.fromMap(data);
          * }
          */
-        @Deprecated(
-            alternative="Table.fromCsvFile",
-            reason="Requires a heavy depencency just for two methods.",
-            sinceVersion="0.15.0",
-            removalVersion="0.16.0"
-        )
-        @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
-        @PythonName("from_excel_file")
-        static fun fromExcelFile(
-            path: String
+        @Pure
+        @PythonName("from_dict")
+        static fun fromMap(
+            data: Map<String, List<Any>>
         ) -> table: Table
 
         /**
-         * Read data from a JSON file into a table.
+         * Create a table from a JSON file.
          *
-         * @param path The path to the JSON file.
+         * @param path The path to the JSON file. If the file extension is omitted, it is assumed to be ".json".
          *
-         * @result table The table created from the JSON file.
+         * @result table The created table.
          *
          * @example
          * pipeline example {
-         *     val table = Table.fromJsonFile("path/to/file.json");
+         *     val result = Table.fromJsonFile("input.json");
          * }
          */
         @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
@@ -138,543 +133,238 @@ pipeline example {
         ) -> table: Table
 
         /**
-         * Create a table from a map of column names to column values.
+         * Create a table from a Parquet file.
          *
-         * @param data The data.
+         * @param path The path to the Parquet file. If the file extension is omitted, it is assumed to be ".parquet".
          *
-         * @result table The generated table.
+         * @result table The created table.
          *
          * @example
          * pipeline example {
-         *     val table = Table.fromMap({"a": [1, 2], "b": [3, 4]});
+         *     val result = Table.fromParquetFile("input.parquet");
          * }
          */
-        @Pure
-        @PythonName("from_dict")
-        static fun fromMap(
-            data: Map<String, List<Any?>>
+        @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
+        @PythonName("from_parquet_file")
+        static fun fromParquetFile(
+            path: String
         ) -> table: Table
 
         /**
-         * Return a table created from a list of columns.
+         * Return a new table with additional columns.
          *
-         * @param columns The columns to be combined. They need to have the same size.
+         * **Notes:**
          *
-         * @result table The generated table.
+         * - The original table is not modified.
+         * - This operation must fully load the data into memory, which can be expensive.
          *
-         * @example
-         * pipeline example {
-         *     val column1 = Column("a", [1, 2]);
-         *     val column2 = Column("b", [3, 4]);
-         *     val table = Table.fromColumns([column1, column2]);
-         * }
-         */
-        @Pure
-        @PythonName("from_columns")
-        static fun fromColumns(
-            columns: List<Column>
-        ) -> table: Table
-
-        /**
-         * Return a table created from a list of rows.
+         * @param columns The columns to add.
          *
-         * @param rows The rows to be combined. They need to have a matching schema.
-         *
-         * @result table The generated table.
+         * @result newTable The table with the additional columns.
          *
          * @example
          * pipeline example {
-         *     val row1 = Row({"a": 1, "b": 3});
-         *     val row2 = Row({"a": 2, "b": 4});
-         *     val table = Table.fromRows([row1, row2]);
-         * }
-         */
-        @Deprecated(
-            alternative="None.",
-            reason="This interface cannot be implemented efficiently.",
-            sinceVersion="0.15.0",
-            removalVersion="0.16.0"
-        )
-        @Pure
-        @PythonName("from_rows")
-        static fun fromRows(
-            rows: List<Row>
-        ) -> table: Table
-
-        /**
-         * Return a column with the data of the specified column.
-         *
-         * @param columnName The name of the column.
-         *
-         * @result column The column.
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val column = table.getColumn("a"); // Column("a", [1, 2])
-         * }
-         */
-        @Pure
-        @PythonName("get_column")
-        fun getColumn(
-            @PythonName("column_name") columnName: String
-        ) -> column: Column
-
-        /**
-         * Return whether the table contains a given column.
-         *
-         * @param columnName The name of the column.
-         *
-         * @result hasColumn True if the column exists.
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val hasColumn = table.hasColumn("a"); // true
-         * }
-         */
-        @Pure
-        @PythonName("has_column")
-        fun hasColumn(
-            @PythonName("column_name") columnName: String
-        ) -> hasColumn: Boolean
-
-        /**
-         * Return the type of the given column.
-         *
-         * @param columnName The name of the column to be queried.
-         *
-         * @result type The type of the column.
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val type = table.getColumnType("a"); // Integer
-         * }
-         */
-        @Pure
-        @PythonName("get_column_type")
-        fun getColumnType(
-            @PythonName("column_name") columnName: String
-        ) -> type: ColumnType
-
-        /**
-         * Return the row at a specified index.
-         *
-         * @param index The index.
-         *
-         * @result row The row of the table at the index.
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val row = table.getRow(0); // Row({"a": 1, "b": 3})
-         * }
-         */
-        @Deprecated(
-            alternative="None.",
-            reason="This interface cannot be implemented efficiently.",
-            sinceVersion="0.15.0",
-            removalVersion="0.16.0"
-        )
-        @Pure
-        @PythonName("get_row")
-        fun getRow(
-            index: Int
-        ) -> row: Row
-
-        /**
-         * Return a table with a number of statistical key values.
-         *
-         * The original table is not modified.
-         *
-         * @result statistics The table with statistics.
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val statistics = table.summarizeStatistics();
-         * }
-         */
-        @Pure
-        @PythonName("summarize_statistics")
-        fun summarizeStatistics() -> statistics: Table
-
-        /**
-         * Return a new table with the provided column attached at the end.
-         *
-         * The original table is not modified.
-         *
-         * @result newTable The table with the column attached.
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val column = Column("c", [5, 6]);
-         *     val newTable = table.addColumn(column);
-         *     // Table({
-         *     //     "a": [1, 2],
-         *     //     "b": [3, 4],
-         *     //     "c": [5, 6],
-         *     // })
-         * }
-         */
-        @Deprecated(
-            alternative="Table.addColumns",
-            reason="No need for two methods.",
-            sinceVersion="0.15.0",
-            removalVersion="0.16.0"
-        )
-        @Pure
-        @PythonName("add_column")
-        fun addColumn(
-            column: Column
-        ) -> newTable: Table
-
-        /**
-         * Return a new `Table` with multiple added columns.
-         *
-         * The original table is not modified.
-         *
-         * @param columns The columns to be added.
-         *
-         * @result newTable A new table combining the original table and the given columns.
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val column1 = Column("c", [5, 6]);
-         *     val column2 = Column("d", [7, 8]);
-         *     val newTable = table.addColumns([column1, column2]);
-         *     // Table({
-         *     //     "a": [1, 2],
-         *     //     "b": [3, 4],
-         *     //     "c": [5, 6],
-         *     //     "d": [7, 8],
-         *     // })
+         *     val table = Table({"a": [1, 2, 3]});
+         *     val newColumn = Column("b", [4, 5, 6]);
+         *     val result = table.addColumns(newColumn);
          * }
          */
         @Pure
         @PythonName("add_columns")
         fun addColumns(
-            columns: union<List<Column>, Table>
+            columns: union<Column, List<Column>>
         ) -> newTable: Table
 
         /**
-         * Return a new `Table` with an added Row attached.
+         * Return a new table with an additional computed column.
          *
-         * If the table happens to be empty beforehand, respective columns will be added automatically.
+         * **Note:** The original table is not modified.
          *
-         * The order of columns of the new row will be adjusted to the order of columns in the table.
-         * The new table will contain the merged schema.
+         * @param name The name of the new column.
+         * @param computer The function that computes the values of the new column.
          *
-         * The original table is not modified.
-         *
-         * @param row The row to be added.
-         *
-         * @result newTable A new table with the added row at the end.
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [4, 5]});
-         *     val row = Row({"a": 3, "b": 6});
-         *     val newTable = table.addRow(row);
-         *     // Table({
-         *     //     "a": [1, 2, 3],
-         *     //     "b": [4, 5, 6],
-         *     // })
-         * }
-         */
-        @Deprecated(
-            alternative="None.",
-            reason="This interface cannot be implemented efficiently.",
-            sinceVersion="0.15.0",
-            removalVersion="0.16.0"
-        )
-        @Pure
-        @PythonName("add_row")
-        fun addRow(
-            row: Row
-        ) -> newTable: Table
-
-        /**
-         * Return a new `Table` with multiple added Rows attached.
-         *
-         * The order of columns of the new rows will be adjusted to the order of columns in the table.
-         * The new table will contain the merged schema.
-         *
-         * The original table is not modified.
-         *
-         * @param rows The rows to be added.
-         *
-         * @result newTable A new table which combines the original table and the given rows.
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [5, 6]});
-         *     val row1 = Row({"a": 3, "b": 7});
-         *     val row2 = Row({"a": 4, "b": 8});
-         *     val newTable = table.addRows([row1, row2]);
-         *     // Table({
-         *     //     "a": [1, 2, 3, 4],
-         *     //     "b": [5, 6, 7, 8],
-         *     // })
-         * }
-         */
-        @Deprecated(
-            alternative="None.",
-            reason="This interface cannot be implemented efficiently.",
-            sinceVersion="0.15.0",
-            removalVersion="0.16.0"
-        )
-        @Pure
-        @PythonName("add_rows")
-        fun addRows(
-            rows: union<List<Row>, Table>
-        ) -> newTable: Table
-
-        /**
-         * Return a new table with rows filtered by Callable (e.g. lambda function).
-         *
-         * The original table is not modified.
-         *
-         * @param query A Callable that is applied to all rows.
-         *
-         * @result filteredTable A table containing only the rows filtered by the query.
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val filteredTable = table.filterRows((row) ->
-         *         row.getValue("a") as (Int) > 1
-         *     );
-         *     // Table({"a": [2], "b": [4]})
-         * }
-         */
-        @Deprecated(
-            alternative="Try ExperimentalTable.removeRows",
-            reason="Users looked for a method with 'remove' in the name, so they missed this.",
-            sinceVersion="0.15.0",
-            removalVersion="0.16.0"
-        )
-        @Pure
-        @PythonName("filter_rows")
-        fun filterRows(
-            query: (row: Row) -> matches: Boolean
-        ) -> filteredTable: Table
-
-        /**
-         * Return a map with copies of the output tables as values and the keys from the key_selector.
-         *
-         * The original table is not modified.
-         *
-         * @param keySelector A Callable that is applied to all rows and returns the key of the group.
-         *
-         * @result tablesByKey A map containing the new tables as values and the selected keys as keys.
+         * @result newTable The table with the computed column.
          *
          * @example
          * pipeline example {
          *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
-         *     val tablesByKey = table.groupRows((row) ->
-         *         row.getValue("a") as (Int) <= 2
-         *     );
-         *     // {
-         *     //     true: Table({"a": [1, 2], "b": [4, 5]}),
-         *     //     false: Table({"a": [3], "b": [6]}),
-         *     // }
+         *     val result = table.addComputedColumn("c", (row) -> row.getValue("a").add(row.getValue("b")));
          * }
          */
-        @Deprecated(
-            alternative="None.",
-            reason="We'll provide a new solution with a more useful and efficient result.",
-            sinceVersion="0.15.0",
-            removalVersion="0.16.0"
-        )
         @Pure
-        @PythonName("group_rows")
-        fun groupRows<T>(
-            @PythonName("key_selector") keySelector: (row: Row) -> key: T
-        ) -> tablesByKey: Map<T, Table>
+        @PythonName("add_computed_column")
+        fun addComputedColumn(
+            name: String,
+            computer: (row: Row) -> computedCell: Cell
+        ) -> newTable: Table
 
         /**
-         * Return a new table with only the given column(s).
+         * Get a column from the table.
          *
-         * The original table is not modified.
+         * **Note:** This operation must fully load the data into memory, which can be expensive.
          *
-         * Note: When removing the last column of the table, the `number_of_columns` property will be set to 0.
+         * @param name The name of the column.
          *
-         * @param columnNames A list containing only the columns to be kept.
-         *
-         * @result projectedTable A table containing only the given column(s).
+         * @result column The column.
          *
          * @example
          * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val projectedTable = table.keepOnlyColumns(["a"]);
-         *     // Table({"a": [1, 2]})
+         *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+         *     val result = table.getColumn("a");
+         *     // Column("a", [1, 2, 3])
          * }
          */
-        @Deprecated(
-            alternative="Try ExperimentalTable.removeColumnsExcept",
-            reason="Users looked for a method with 'remove' in the name, so they missed this.",
-            sinceVersion="0.15.0",
-            removalVersion="0.16.0"
-        )
         @Pure
-        @PythonName("keep_only_columns")
-        fun keepOnlyColumns(
-            @PythonName("column_names") columnNames: List<String>
-        ) -> projectedTable: Table
+        @PythonName("get_column")
+        fun getColumn(
+            name: String
+        ) -> column: Column
 
         /**
-         * Return a new table without the given column(s).
+         * Get the data type of a column.
          *
-         * The original table is not modified.
+         * @param name The name of the column.
          *
-         * Note: When removing the last column of the table, the `number_of_columns` property will be set to 0.
-         *
-         * @param columnNames A list containing all columns to be dropped.
-         *
-         * @result projectedTable A table without the given columns.
+         * @result type The data type of the column.
          *
          * @example
          * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val projectedTable = table.removeColumns(["a"]);
-         *     // Table({"b": [3, 4]})
+         *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+         *     val result = table.getColumnType("a");
+         * }
+         */
+        @Pure
+        @PythonName("get_column_type")
+        fun getColumnType(
+            name: String
+        ) -> type: DataType
+
+        /**
+         * Check if the table has a column with a specific name.
+         *
+         * @param name The name of the column.
+         *
+         * @result hasColumn Whether the table has a column with the specified name.
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+         *     val result = table.hasColumn("a"); // true
+         * }
+         */
+        @Pure
+        @PythonName("has_column")
+        fun hasColumn(
+            name: String
+        ) -> hasColumn: Boolean
+
+        /**
+         * Return a new table without the specified columns.
+         *
+         * **Notes:**
+         *
+         * - The original table is not modified.
+         * - This method does not raise if a column does not exist. You can use it to ensure that the resulting table does
+         *   not contain certain columns.
+         *
+         * @param names The names of the columns to remove.
+         *
+         * @result newTable The table with the columns removed.
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+         *     val result = table.removeColumns("a");
+         *     // Table({"b": [4, 5, 6]})
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+         *     val result = table.removeColumns("c");
+         *     // Table({"a": [1, 2, 3], "b": [4, 5, 6]})
          * }
          */
         @Pure
         @PythonName("remove_columns")
         fun removeColumns(
-            @PythonName("column_names") columnNames: List<String>
-        ) -> projectedTable: Table
+            names: union<List<String>, String>
+        ) -> newTable: Table
 
         /**
-         * Return a new table without the columns that contain missing values.
+         * Return a new table with only the specified columns.
          *
-         * The original table is not modified.
+         * @param names The names of the columns to keep.
          *
-         * Note: When removing the last column of the table, the `number_of_columns` property will be set to 0.
-         *
-         * @result projectedTable A table without the columns that contain missing values.
+         * @result newTable The table with only the specified columns.
          *
          * @example
          * pipeline example {
-         *     val table = Table({"a": [1, null], "b": [3, 4]});
-         *     val projectedTable = table.removeColumnsWithMissingValues();
-         *     // Table({"b": [3, 4]})
+         *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+         *     val result = table.removeColumnsExcept("a");
+         *     // Table({"a": [1, 2, 3]})
+         * }
+         */
+        @Pure
+        @PythonName("remove_columns_except")
+        fun removeColumnsExcept(
+            names: union<List<String>, String>
+        ) -> newTable: Table
+
+        /**
+         * Return a new table without columns that contain missing values.
+         *
+         * **Notes:**
+         *
+         * - The original table is not modified.
+         * - This operation must fully load the data into memory, which can be expensive.
+         *
+         * @result newTable The table without columns containing missing values.
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table({"a": [1, 2, 3], "b": [4, 5, null]});
+         *     val result = table.removeColumnsWithMissingValues();
+         *     // Table({"a": [1, 2, 3]})
          * }
          */
         @Pure
         @PythonName("remove_columns_with_missing_values")
-        fun removeColumnsWithMissingValues() -> projectedTable: Table
+        fun removeColumnsWithMissingValues() -> newTable: Table
 
         /**
-         * Return a new table without the columns that contain non-numerical values.
+         * Return a new table without non-numeric columns.
          *
-         * The original table is not modified.
+         * **Note:** The original table is not modified.
          *
-         * Note: When removing the last column of the table, the `number_of_columns` property will be set to 0.
-         *
-         * @result projectedTable A table without the columns that contain non-numerical values.
+         * @result newTable The table without non-numeric columns.
          *
          * @example
          * pipeline example {
-         *     val table = Table({"a": ["z", "y"], "b": [1, 2]});
-         *     val projectedTable = table.removeColumnsWithNonNumericalValues();
-         *     // Table({"b": [1, 2]})
-         * }
-         */
-        @Deprecated(
-            alternative="Try ExperimentalTable.removeNonNumericColumns",
-            reason="More concise name.",
-            sinceVersion="0.15.0",
-            removalVersion="0.16.0"
-        )
-        @Pure
-        @PythonName("remove_columns_with_non_numerical_values")
-        fun removeColumnsWithNonNumericalValues() -> projectedTable: Table
-
-        /**
-         * Return a new table with every duplicate row removed.
-         *
-         * The original table is not modified.
-         *
-         * @result filteredTable The table with the duplicate rows removed.
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2, 1], "b": [3, 4, 3]});
-         *     val filteredTable = table.removeDuplicateRows();
-         *     // Table({"a": [1, 2], "b": [3, 4]})
+         *     val table = Table({"a": [1, 2, 3], "b": ["4", "5", "6"]});
+         *     val result = table.removeNonNumericColumns();
+         *     // Table({"a": [1, 2, 3]})
          * }
          */
         @Pure
-        @PythonName("remove_duplicate_rows")
-        fun removeDuplicateRows() -> filteredTable: Table
+        @PythonName("remove_non_numeric_columns")
+        fun removeNonNumericColumns() -> newTable: Table
 
         /**
-         * Return a new table without the rows that contain missing values.
+         * Return a new table with a column renamed.
          *
-         * The original table is not modified.
+         * **Note:** The original table is not modified.
          *
-         * @result filteredTable A table without the rows that contain missing values.
+         * @param oldName The name of the column to rename.
+         * @param newName The new name of the column.
+         *
+         * @result newTable The table with the column renamed.
          *
          * @example
          * pipeline example {
-         *     val table = Table({"a": [1, null], "b": [3, 4]});
-         *     val filteredTable = table.removeRowsWithMissingValues();
-         *     // Table({"a": [1], "b": [3]})
-         * }
-         */
-        @Pure
-        @PythonName("remove_rows_with_missing_values")
-        fun removeRowsWithMissingValues() -> filteredTable: Table
-
-        /**
-         * Return a new table without those rows that contain at least one outlier.
-         *
-         * We define an outlier as a value that has a distance of more than 3 standard deviations from the column mean.
-         * Missing values are not considered outliers. They are also ignored during the calculation of the standard
-         * deviation.
-         *
-         * The original table is not modified.
-         *
-         * @result filteredTable A new table without rows containing outliers.
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({
-         *         "a": [1,   2,    3,   4, 5,   6, 7,    8, 9,  10,    11],
-         *         "b": [0, 0.1, -0.1, 0.2, 0, 0.1, 0, -0.3, 0, 0.3,  1000]
-         *     });
-         *     val filteredTable = table.removeRowsWithOutliers();
-         *     // Table({
-         *     //     "a": [1,   2,    3,   4, 5,   6, 7,    8, 9,  10],
-         *     //     "b": [0, 0.1, -0.1, 0.2, 0, 0.1, 0, -0.3, 0, 0.3]
-         *     // })
-         * }
-         */
-        @Pure
-        @PythonName("remove_rows_with_outliers")
-        fun removeRowsWithOutliers() -> filteredTable: Table
-
-        /**
-         * Return a new `Table` with a single column renamed.
-         *
-         * The original table is not modified.
-         *
-         * @param oldName The old name of the target column.
-         * @param newName The new name of the target column.
-         *
-         * @result newTable The Table with the renamed column.
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val newTable = table.renameColumn("a", "c");
-         *     // Table({"c": [1, 2], "b": [3, 4]})
+         *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+         *     val result = table.renameColumn("a", "c");
+         *     // Table({"c": [1, 2, 3], "b": [4, 5, 6]})
          * }
          */
         @Pure
@@ -685,425 +375,453 @@ pipeline example {
         ) -> newTable: Table
 
         /**
-         * Return a new table with the specified old column replaced by a list of new columns.
+         * Return a new table with a column replaced by zero or more columns.
          *
-         * The order of columns is kept.
+         * **Note:** The original table is not modified.
          *
-         * The original table is not modified.
+         * @param oldName The name of the column to replace.
+         * @param newColumns The new columns.
          *
-         * @param oldColumnName The name of the column to be replaced.
-         * @param newColumns The list of new columns replacing the old column.
-         *
-         * @result newTable A table with the old column replaced by the new columns.
+         * @result newTable The table with the column replaced.
          *
          * @example
          * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val column = Column("c", [5, 6]);
-         *     val newTable = table.replaceColumn("a", [column]);
-         *     // Table({"c": [5, 6], "b": [3, 4]})
-         * }
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val column1 = Column("c", [5, 6]);
-         *     val column2 = Column("d", [7, 8]);
-         *     val newTable = table.replaceColumn("a", [column1, column2]);
-         *     // Table({"c": [5, 6], "d": [7, 8], "b": [3, 4]})
+         *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+         *     val result = table.replaceColumn("a", []);
+         *     // Table({"b": [4, 5, 6]})
          * }
          */
         @Pure
         @PythonName("replace_column")
         fun replaceColumn(
-            @PythonName("old_column_name") oldColumnName: String,
-            @PythonName("new_columns") newColumns: List<Column>
+            @PythonName("old_name") oldName: String,
+            @PythonName("new_columns") newColumns: union<Column, List<Column>, Table>
         ) -> newTable: Table
 
         /**
-         * Return a new `Table` with randomly shuffled rows of this `Table`.
+         * Return a new table with a column transformed.
          *
-         * The original table is not modified.
+         * **Note:** The original table is not modified.
          *
-         * @result shuffledTable The shuffled Table.
+         * @param name The name of the column to transform.
+         * @param transformer The function that transforms the column.
          *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
-         *     val shuffledTable = table.shuffleRows();
-         * }
-         */
-        @Pure
-        @PythonName("shuffle_rows")
-        fun shuffleRows() -> shuffledTable: Table
-
-        /**
-         * Slice a part of the table into a new table.
-         *
-         * The original table is not modified.
-         *
-         * @param start The first index of the range to be copied into a new table, None by default.
-         * @param end The last index of the range to be copied into a new table, None by default.
-         * @param step The step size used to iterate through the table, 1 by default.
-         *
-         * @result slicedTable The resulting table.
+         * @result newTable The table with the transformed column.
          *
          * @example
          * pipeline example {
          *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
-         *     val slicedTable = table.sliceRows(start = 1);
-         *     // Table({"a": [2, 3], "b": [5, 6]})
-         * }
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
-         *     val slicedTable = table.sliceRows(end = 2);
-         *     // Table({"a": [1, 2], "b": [4, 5]})
-         * }
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
-         *     val slicedTable = table.sliceRows(step = 2);
-         *     // Table({"a": [1, 3], "b": [4, 6]})
-         * }
-         */
-        @Pure
-        @PythonName("slice_rows")
-        fun sliceRows(
-            start: Int? = null,
-            end: Int? = null,
-            step: Int = 1
-        ) -> slicedTable: Table
-
-        /**
-         * Sort the columns of a `Table` with the given comparator and return a new `Table`.
-         *
-         * The comparator is a function that takes two columns `col1` and `col2` and
-         * returns an integer:
-         *
-         * * If `col1` should be ordered before `col2`, the function should return a negative number.
-         * * If `col1` should be ordered after `col2`, the function should return a positive number.
-         * * If the original order of `col1` and `col2` should be kept, the function should return 0.
-         *
-         * If no comparator is given, the columns will be sorted alphabetically by their name.
-         *
-         * The original table is not modified.
-         *
-         * @param comparator The function used to compare two columns.
-         *
-         * @result sortedTable A new table with sorted columns.
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val sortedTable = table.sortColumns((col1, col2) -> 1);
-         *     // Table({"a": [1, 2], "b": [3, 4]})
-         * }
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val sortedTable = table.sortColumns((col1, col2) -> -1);
-         *     // Table({"b": [3, 4], "a": [1, 2]})
-         * }
-         */
-        @Deprecated(
-            alternative="None.",
-            reason="No use case.",
-            sinceVersion="0.15.0",
-            removalVersion="0.16.0"
-        )
-        @Pure
-        @PythonName("sort_columns")
-        fun sortColumns(
-            comparator: (column1: Column, column2: Column) -> comparison: Int
-        ) -> sortedTable: Table
-
-        /**
-         * Sort the rows of a `Table` with the given comparator and return a new `Table`.
-         *
-         * The comparator is a function that takes two rows `row1` and `row2` and
-         * returns an integer:
-         *
-         * * If `row1` should be ordered before `row2`, the function should return a negative number.
-         * * If `row1` should be ordered after `row2`, the function should return a positive number.
-         * * If the original order of `row1` and `row2` should be kept, the function should return 0.
-         *
-         * The original table is not modified.
-         *
-         * @param comparator The function used to compare two rows.
-         *
-         * @result sortedTable A new table with sorted rows.
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val sortedTable = table.sortRows((row1, row2) -> 1);
-         *     // Table({"a": [1, 2], "b": [3, 4]})
-         * }
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val sortedTable = table.sortRows((row1, row2) -> -1);
-         *     // Table({"a": [2, 1], "b": [4, 3]})
-         * }
-         */
-        @Deprecated(
-            alternative="Try ExperimentalTable.sortRows",
-            reason="Selecting a key is more ergonomic than a comparator.",
-            sinceVersion="0.15.0",
-            removalVersion="0.16.0"
-        )
-        @Pure
-        @PythonName("sort_rows")
-        fun sortRows(
-            comparator: (row1: Row, row2: Row) -> comparison: Int
-        ) -> sortedTable: Table
-
-        /**
-         * Split the table into two new tables. Consider using {@link Table.shuffleRows} before splitting to ensure a random
-         * distribution of rows in both tables.
-         *
-         * The original table is not modified.
-         *
-         * @param ratioInFirst
-         * How many rows should be in the first table, expressed as a ratio of the total number of rows. Must be between 0
-         * and 1.
-         *
-         * @result first The first table with the specified size.
-         * @result second The second table with the remaining rows.
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2, 3, 4], "b": [5, 6, 7, 8]});
-         *     val first, val second = table.splitRows(0.5);
-         *     // first:  Table({"a": [1, 2], "b": [5, 6]})
-         *     // second: Table({"a": [3, 4], "b": [7, 8]})
-         * }
-         */
-        @Pure
-        @PythonName("split_rows")
-        fun splitRows(
-            @PythonName("percentage_in_first") ratioInFirst: Float
-        ) -> (first: Table, second: Table)
-
-        /**
-         * Return a new `Table` with the provided column transformed by calling the provided transformer.
-         *
-         * The original table is not modified.
-         *
-         * @result transformedTable The table with the transformed column.
-         *
-         * @example
-         * pipeline example {
-         *     val prices = Table({
-         *         "product": ["apple", "banana", "cherry"],
-         *         "price":   [    100,        2,        4],
-         *     });
-         *     val discountedPrices = prices.transformColumn("price", (row) ->
-         *         row.getValue("price") as (Int) * 0.5
-         *     );
-         *     // Table({
-         *     //     "product": ["apple", "banana", "cherry"],
-         *     //     "price":   [    50,        1,        2],
-         *     // })
+         *     val result = table.transformColumn("a", (cell) -> cell.add(1));
+         *     // Table({"a": [2, 3, 4], "b": [4, 5, 6]})
          * }
          */
         @Pure
         @PythonName("transform_column")
         fun transformColumn(
             name: String,
-            transformer: (row: Row) -> newColumnValue: Any?
-        ) -> transformedTable: Table
+            transformer: (cell: Cell) -> transformedCell: Cell
+        ) -> newTable: Table
 
         /**
-         * Return a new `Table` with a learned transformation applied to this table.
+         * Return a new table without duplicate rows.
          *
-         * The original table is not modified.
+         * **Note:** The original table is not modified.
          *
-         * @param transformer The transformer which transforms the given table.
-         *
-         * @result transformedTable The transformed table.
+         * @result newTable The table without duplicate rows.
          *
          * @example
          * pipeline example {
-         *    val table = Table({"a": [1, null], "b": [3, 4]});
-         *    val imputer = Imputer(Imputer.Strategy.Mean).fit(table, ["a"]);
-         *    val transformedTable = table.transformTable(imputer);
-         *    // Table({"a": [1, 1], "b": [3, 4]})
+         *     val table = Table({"a": [1, 2, 2], "b": [4, 5, 5]});
+         *     val result = table.removeDuplicateRows();
+         *     // Table({"a": [1, 2], "b": [4, 5]})
          * }
          */
         @Pure
-        @PythonName("transform_table")
-        fun transformTable(
-            transformer: TableTransformer
-        ) -> transformedTable: Table
+        @PythonName("remove_duplicate_rows")
+        fun removeDuplicateRows() -> newTable: Table
 
         /**
-         * Return a new `Table` with the inverted transformation applied by the given transformer.
+         * Return a new table without rows that satisfy a condition.
          *
-         * The original table is not modified.
+         * **Note:** The original table is not modified.
          *
-         * @param transformer A transformer that was fitted with columns, which are all present in the table.
+         * @param query The function that determines which rows to remove.
          *
-         * @result originalTable The original table.
+         * @result newTable The table without the specified rows.
          *
          * @example
          * pipeline example {
-         *     val table = Table({"a": ["z", "y"], "b": [3, 4]});
-         *     val encoder = LabelEncoder().fit(table, ["a"]);
-         *     val transformedTable = table.transformTable(encoder);
-         *     val originalTable = transformedTable.inverseTransformTable(encoder);
-         *     // Table({"a": ["z", "y"], "b": [3, 4]})
+         *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+         *     val result = table.removeRows((row) -> row.getValue("a").eq(2));
+         *     // Table({"a": [1, 3], "b": [4, 6]})
+         * }
+         */
+        @Pure
+        @PythonName("remove_rows")
+        fun removeRows(
+            query: (row: Row) -> shouldRemoveRow: Cell<Boolean>
+        ) -> newTable: Table
+
+        /**
+         * Return a new table without rows that satisfy a condition on a specific column.
+         *
+         * **Note:** The original table is not modified.
+         *
+         * @param name The name of the column.
+         * @param query The function that determines which rows to remove.
+         *
+         * @result newTable The table without the specified rows.
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+         *     val result = table.removeRowsByColumn("a", (cell) -> cell.eq(2));
+         *     // Table({"a": [1, 3], "b": [4, 6]})
+         * }
+         */
+        @Pure
+        @PythonName("remove_rows_by_column")
+        fun removeRowsByColumn(
+            name: String,
+            query: (cell: Cell) -> shouldRemoveRow: Cell<Boolean>
+        ) -> newTable: Table
+
+        /**
+         * Return a new table without rows containing missing values in the specified columns.
+         *
+         * **Note:** The original table is not modified.
+         *
+         * @param columnNames Names of the columns to consider. If null, all columns are considered.
+         *
+         * @result newTable The table without rows containing missing values in the specified columns.
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table({"a": [1, null, 3], "b": [4, 5, null]});
+         *     val result = table.removeRowsWithMissingValues();
+         *     // Table({"a": [1], "b": [4]})
+         * }
+         */
+        @Pure
+        @PythonName("remove_rows_with_missing_values")
+        fun removeRowsWithMissingValues(
+            @PythonName("column_names") columnNames: List<String>? = null
+        ) -> newTable: Table
+
+        /**
+         * Return a new table without rows containing outliers in the specified columns.
+         *
+         * Whether a data point is an outlier in a column is determined by its z-score. The z-score the distance of the
+         * data point from the mean of the column divided by the standard deviation of the column. If the z-score is
+         * greater than the given threshold, the data point is considered an outlier. Missing values are ignored during the
+         * calculation of the z-score.
+         *
+         * The z-score is only defined for numeric columns. Non-numeric columns are ignored, even if they are specified in
+         * `column_names`.
+         *
+         * **Notes:**
+         *
+         * - The original table is not modified.
+         * - This operation must fully load the data into memory, which can be expensive.
+         *
+         * @param columnNames Names of the columns to consider. If null, all numeric columns are considered.
+         * @param zScoreThreshold The z-score threshold for detecting outliers.
+         *
+         * @result newTable The table without rows containing outliers in the specified columns.
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table(
+         *         {
+         *             "a": [1, 2, 3, 4, 5, 6, 1000, null],
+         *             "b": [1, 2, 3, 4, 5, 6,    7,    8],
+         *         }
+         *     );
+         *     val result = table.removeRowsWithOutliers(zScoreThreshold=2.0);
+         *     // Table({"a": [1, 2, 3, 4, 5, 6, null], "b": [1, 2, 3, 4, 5, 6]})
+         * }
+         */
+        @Pure
+        @PythonName("remove_rows_with_outliers")
+        fun removeRowsWithOutliers(
+            @PythonName("column_names") columnNames: List<String>? = null,
+            @PythonName("z_score_threshold") zScoreThreshold: Float = 3.0
+        ) -> newTable: Table
+
+        /**
+         * Return a new table with the rows shuffled.
+         *
+         * **Note:** The original table is not modified.
+         *
+         * @result newTable The table with the rows shuffled.
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+         *     val result = table.shuffleRows();
+         *     // Table({"a": [3, 2, 1], "b": [6, 5, 4]})
+         * }
+         */
+        @Pure
+        @PythonName("shuffle_rows")
+        fun shuffleRows() -> newTable: Table
+
+        /**
+         * Return a new table with a slice of rows.
+         *
+         * **Note:** The original table is not modified.
+         *
+         * @param start The start index of the slice.
+         * @param length The length of the slice. If null, the slice contains all rows starting from `start`. Must greater than or
+         * equal to 0.
+         *
+         * @result newTable The table with the slice of rows.
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+         *     val result = table.sliceRows(start=1);
+         *     // Table({"a": [2, 3], "b": [5, 6]})
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+         *     val result = table.sliceRows(start=1, length=1);
+         *     // Table({"a": [2], "b": [5]})
+         * }
+         */
+        @Pure
+        @PythonName("slice_rows")
+        fun sliceRows(
+            start: Int = 0,
+            length: Int? = null
+        ) -> newTable: Table
+
+        /**
+         * Return a new table with the rows sorted.
+         *
+         * **Note:** The original table is not modified.
+         *
+         * @param keySelector The function that selects the key to sort by.
+         * @param descending Whether to sort in descending order.
+         *
+         * @result newTable The table with the rows sorted.
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table({"a": [2, 1, 3], "b": [1, 1, 2]});
+         *     val result = table.sortRows((row) -> row.getValue("a").^sub(row.getValue("b")));
+         *     // Table({"a": [1, 2, 3], "b": [1, 1, 2]})
+         * }
+         */
+        @Pure
+        @PythonName("sort_rows")
+        fun sortRows(
+            @PythonName("key_selector") keySelector: (row: Row) -> key: Cell,
+            descending: Boolean = false
+        ) -> newTable: Table
+
+        /**
+         * Return a new table with the rows sorted by a specific column.
+         *
+         * **Note:** The original table is not modified.
+         *
+         * @param name The name of the column to sort by.
+         * @param descending Whether to sort in descending order.
+         *
+         * @result newTable The table with the rows sorted by the specified column.
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table({"a": [2, 1, 3], "b": [1, 1, 2]});
+         *     val result = table.sortRowsByColumn("a");
+         *     // Table({"a": [1, 2, 3], "b": [1, 1, 2]})
+         * }
+         */
+        @Pure
+        @PythonName("sort_rows_by_column")
+        fun sortRowsByColumn(
+            name: String,
+            descending: Boolean = false
+        ) -> newTable: Table
+
+        /**
+         * Create two tables by splitting the rows of the current table.
+         *
+         * The first table contains a percentage of the rows specified by `percentage_in_first`, and the second table
+         * contains the remaining rows.
+         *
+         * **Notes:**
+         *
+         * - The original table is not modified.
+         * - By default, the rows are shuffled before splitting. You can disable this by setting `shuffle` to false.
+         *
+         * @param percentageInFirst The percentage of rows to include in the first table. Must be between 0 and 1.
+         * @param shuffle Whether to shuffle the rows before splitting.
+         *
+         * @result firstTable The first table.
+         * @result secondTable The second table.
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table({"a": [1, 2, 3, 4, 5], "b": [6, 7, 8, 9, 10]});
+         *     val firstTable, val secondTable = table.splitRows(0.6);
+         * }
+         */
+        @Pure
+        @PythonName("split_rows")
+        fun splitRows(
+            @PythonName("percentage_in_first") percentageInFirst: Float,
+            shuffle: Boolean = true
+        ) -> (firstTable: Table, secondTable: Table)
+
+        /**
+         * Return a new table with the columns of another table added.
+         *
+         * **Notes:**
+         *
+         * - The original tables are not modified.
+         * - This operation must fully load the data into memory, which can be expensive.
+         *
+         * @param other The table to add as columns.
+         *
+         * @result newTable The table with the columns added.
+         *
+         * @example
+         * pipeline example {
+         *     val table1 = Table({"a": [1, 2, 3]});
+         *     val table2 = Table({"b": [4, 5, 6]});
+         *     val result = table1.addTableAsColumns(table2);
+         *     // Table({"a": [1, 2, 3], "b": [4, 5, 6]})
+         * }
+         */
+        @Pure
+        @PythonName("add_table_as_columns")
+        fun addTableAsColumns(
+            other: Table
+        ) -> newTable: Table
+
+        /**
+         * Return a new table with the rows of another table added.
+         *
+         * **Notes:**
+         *
+         * - The original tables are not modified.
+         * - This operation must fully load the data into memory, which can be expensive.
+         *
+         * @param other The table to add as rows.
+         *
+         * @result newTable The table with the rows added.
+         *
+         * @example
+         * pipeline example {
+         *     val table1 = Table({"a": [1, 2, 3]});
+         *     val table2 = Table({"a": [4, 5, 6]});
+         *     val result = table1.addTableAsRows(table2);
+         *     // Table({"a": [1, 2, 3, 4, 5, 6]})
+         * }
+         */
+        @Pure
+        @PythonName("add_table_as_rows")
+        fun addTableAsRows(
+            other: Table
+        ) -> newTable: Table
+
+        /**
+         * Return a new table inverse-transformed by a **fitted, invertible** transformer.
+         *
+         * **Notes:**
+         *
+         * - The original table is not modified.
+         * - Depending on the transformer, this operation might fully load the data into memory, which can be expensive.
+         *
+         * @param fittedTransformer The fitted, invertible transformer to apply.
+         *
+         * @result newTable The inverse-transformed table.
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table({"a": [1, 2, 3]});
+         *     val transformer, val transformedTable = RangeScaler(min=0.0, max=1.0).fitAndTransform(table, ["a"]);
+         *     val result = transformedTable.inverseTransformTable(transformer);
+         *     // Table({"a": [1, 2, 3]})
          * }
          */
         @Pure
         @PythonName("inverse_transform_table")
         fun inverseTransformTable(
-            transformer: InvertibleTableTransformer
-        ) -> originalTable: Table
+            @PythonName("fitted_transformer") fittedTransformer: InvertibleTableTransformer
+        ) -> newTable: Table
 
         /**
-         * Plot a correlation heatmap for all numerical columns of this `Table`.
+         * Return a new table transformed by a **fitted** transformer.
          *
-         * @result correlationHeatmap The plot as an image.
+         * **Notes:**
+         *
+         * - The original table is not modified.
+         * - Depending on the transformer, this operation might fully load the data into memory, which can be expensive.
+         *
+         * @param fittedTransformer The fitted transformer to apply.
+         *
+         * @result newTable The transformed table.
          *
          * @example
          * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val correlationHeatmap = table.plotCorrelationHeatmap();
+         *     val table = Table({"a": [1, 2, 3]});
+         *     val transformer = RangeScaler(min=0.0, max=1.0).fit(table, ["a"]);
+         *     val result = table.transformTable(transformer);
+         *     // Table({"a": [0, 0.5, 1]})
          * }
          */
-        @Deprecated(
-            alternative="Try ExperimentalTable.plot.correlationHeatmap instead.",
-            reason="Groups all plotting methods in one place.",
-            sinceVersion="0.15.0",
-            removalVersion="0.16.0"
-        )
         @Pure
-        @PythonName("plot_correlation_heatmap")
-        fun plotCorrelationHeatmap() -> correlationHeatmap: Image
+        @PythonName("transform_table")
+        fun transformTable(
+            @PythonName("fitted_transformer") fittedTransformer: TableTransformer
+        ) -> newTable: Table
 
         /**
-         * Plot two columns against each other in a lineplot.
+         * Return a table with important statistics about this table.
          *
-         * If there are multiple x-values for a y-value, the resulting plot will consist of a line representing the mean
-         * and the lower-transparency area around the line representing the 95% confidence interval.
-         *
-         * @param xColumnName The column name of the column to be plotted on the x-Axis.
-         * @param yColumnName The column name of the column to be plotted on the y-Axis.
-         *
-         * @result lineplot The plot as an image.
+         * @result statistics The table with statistics.
          *
          * @example
          * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val lineplot = table.plotLineplot("a", "b");
+         *     val table = Table({"a": [1, 3]});
+         *     val result = table.summarizeStatistics();
          * }
          */
-        @Deprecated(
-            alternative="Try ExperimentalTable.plot.lineplot instead.",
-            reason="Groups all plotting methods in one place.",
-            sinceVersion="0.15.0",
-            removalVersion="0.16.0"
-        )
         @Pure
-        @PythonName("plot_lineplot")
-        fun plotLineplot(
-            @PythonName("x_column_name") xColumnName: String,
-            @PythonName("y_column_name") yColumnName: String
-        ) -> lineplot: Image
+        @PythonName("summarize_statistics")
+        fun summarizeStatistics() -> statistics: Table
 
         /**
-         * Plot two columns against each other in a scatterplot.
+         * Return the data of the table as a list of columns.
          *
-         * @param xColumnName The column name of the column to be plotted on the x-Axis.
-         * @param yColumnName The column name of the column to be plotted on the y-Axis.
-         *
-         * @result scatterplot The plot as an image.
+         * @result columns List of columns.
          *
          * @example
          * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val scatterplot = table.plotScatterplot("a", "b");
+         *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+         *     val columns = table.toColumns();
          * }
          */
-        @Deprecated(
-            alternative="Try ExperimentalTable.plot.scatterplot instead.",
-            reason="Groups all plotting methods in one place.",
-            sinceVersion="0.15.0",
-            removalVersion="0.16.0"
-        )
         @Pure
-        @PythonName("plot_scatterplot")
-        fun plotScatterplot(
-            @PythonName("x_column_name") xColumnName: String,
-            @PythonName("y_column_name") yColumnName: String
-        ) -> scatterplot: Image
+        @PythonName("to_columns")
+        fun toColumns() -> columns: List<Column>
 
         /**
-         * Plot a boxplot for every numerical column.
+         * Write the table to a CSV file.
          *
-         * @result boxplots The plot as an image.
+         * If the file and/or the parent directories do not exist, they will be created. If the file exists already, it
+         * will be overwritten.
+         *
+         * @param path The path to the CSV file. If the file extension is omitted, it is assumed to be ".csv".
          *
          * @example
          * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val boxplots = table.plotBoxplots();
-         * }
-         */
-        @Deprecated(
-            alternative="Try ExperimentalTable.plot.boxplots instead.",
-            reason="Groups all plotting methods in one place.",
-            sinceVersion="0.15.0",
-            removalVersion="0.16.0"
-        )
-        @Pure
-        @PythonName("plot_boxplots")
-        fun plotBoxplots() -> boxplots: Image
-
-        /**
-         * Plot a histogram for every column.
-         *
-         * @param numberOfBins The number of bins to use in the histogram.
-         *
-         * @result histograms The plot as an image.
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val histograms = table.plotHistograms();
-         * }
-         */
-        @Deprecated(
-            alternative="Try ExperimentalTable.plot.histograms instead.",
-            reason="Groups all plotting methods in one place.",
-            sinceVersion="0.15.0",
-            removalVersion="0.16.0"
-        )
-        @Pure
-        @PythonName("plot_histograms")
-        fun plotHistograms(
-            @PythonName("number_of_bins") const numberOfBins: Int = 10
-        ) -> histograms: Image where {
-            numberOfBins > 0
-        }
-
-        /**
-         * Write the data from the table into a CSV file.
-         *
-         * If the file and/or the directories do not exist they will be created. If the file already exists it will be
-         * overwritten.
-         *
-         * @param path The path to the output file.
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     table.toCsvFile("path/to/file.csv");
+         *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+         *     table.toCsvFile("output.csv");
          * }
          */
         @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
@@ -1113,505 +831,344 @@ pipeline example {
         )
 
         /**
-         * Write the data from the table into an Excel file.
-         *
-         * Valid file extensions are `.xls`, '.xlsx', `.xlsm`, `.xlsb`, `.odf`, `.ods` and `.odt`.
-         * If the file and/or the directories do not exist, they will be created. If the file already exists, it will be
-         * overwritten.
-         *
-         * @param path The path to the output file.
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     table.toExcelFile("path/to/file.xlsx");
-         * }
-         */
-        @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
-        @PythonName("to_excel_file")
-        fun toExcelFile(
-            path: String
-        )
-
-        /**
-         * Write the data from the table into a JSON file.
-         *
-         * If the file and/or the directories do not exist, they will be created. If the file already exists it will be
-         * overwritten.
-         *
-         * @param path The path to the output file.
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     table.toJsonFile("path/to/file.json");
-         * }
-         */
-        @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
-        @PythonName("to_json_file")
-        fun toJsonFile(
-            path: String
-        )
-
-        /**
-         * Return a map of column names to column values.
+         * Return a map that maps column names to column values.
          *
          * @result map Map representation of the table.
          *
          * @example
          * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val map = table.toMap();
-         *     // {"a": [1, 2], "b": [3, 4]}
+         *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+         *     val result = table.toMap();
+         *     // {"a": [1, 2, 3], "b": [4, 5, 6]}
          * }
          */
         @Pure
         @PythonName("to_dict")
-        fun toMap() -> map: Map<String, List<Any?>>
+        fun toMap() -> map: Map<String, List<Any>>
 
         /**
-         * Return an HTML representation of the table.
+         * Write the table to a JSON file.
          *
-         * @result html The generated HTML.
+         * If the file and/or the parent directories do not exist, they will be created. If the file exists already, it
+         * will be overwritten.
+         *
+         * **Note:** This operation must fully load the data into memory, which can be expensive.
+         *
+         * @param path The path to the JSON file. If the file extension is omitted, it is assumed to be ".json".
+         * @param orientation The orientation of the JSON file. If "column", the JSON file will be structured as a list of columns. If
+         * "row", the JSON file will be structured as a list of rows. Row orientation is more human-readable, but
+         * slower and less memory-efficient.
          *
          * @example
          * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val html = table.toHtml();
+         *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+         *     table.toJsonFile("output.json");
          * }
          */
-        @Deprecated(
-            alternative="None.",
-            reason="No use case.",
-            sinceVersion="0.15.0",
-            removalVersion="0.16.0"
+        @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
+        @PythonName("to_json_file")
+        fun toJsonFile(
+            path: String,
+            orientation: literal<"column", "row"> = "column"
         )
-        @Pure
-        @PythonName("to_html")
-        fun toHtml() -> html: String
 
         /**
-         * Return a list of the columns.
+         * Write the table to a Parquet file.
          *
-         * @result columns List of columns.
+         * If the file and/or the parent directories do not exist, they will be created. If the file exists already, it
+         * will be overwritten.
+         *
+         * @param path The path to the Parquet file. If the file extension is omitted, it is assumed to be ".parquet".
          *
          * @example
          * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val columns = table.toColumns();
-         *     // [Column("a", [1, 2]), Column("b", [3, 4])]
+         *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+         *     table.toParquetFile("output.parquet");
          * }
          */
-        @Pure
-        @PythonName("to_columns")
-        fun toColumns() -> columns: List<Column>
-
-        /**
-         * Return a list of the rows.
-         *
-         * @result rows List of rows.
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 4]});
-         *     val rows = table.toRows();
-         *     // [Row({"a": 1, "b": 3}), Row({"a": 2, "b": 4})]
-         * }
-         */
-        @Deprecated(
-            alternative="None.",
-            reason="This interface cannot be implemented efficiently.",
-            sinceVersion="0.15.0",
-            removalVersion="0.16.0"
+        @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
+        @PythonName("to_parquet_file")
+        fun toParquetFile(
+            path: String
         )
-        @Pure
-        @PythonName("to_rows")
-        fun toRows() -> rows: List<Row>
 
         /**
-         * Return a new `TabularDataset` with columns marked as a target column or feature columns.
+         * Return a new `TabularDataset` with columns marked as a target, feature, or extra.
          *
-         * The original table is not modified.
+         * - The target column is the column that a model should predict.
+         * - Feature columns are columns that a model should use to make predictions.
+         * - Extra columns are columns that are neither feature nor target. They can be used to provide additional context,
+         *   like an ID column.
          *
-         * @param targetName
-         * Name of the target column.
+         * Feature columns are implicitly defined as all columns except the target and extra columns. If no extra columns
+         * are specified, all columns except the target column are used as features.
          *
-         * @param extraNames
-         * Names of the columns that are neither features nor target. If None, no extra columns are used, i.e. all but the
-         * target column are used as features.
+         * @param targetName Name of the target column.
+         * @param extraNames Names of the columns that are neither feature nor target. If null, no extra columns are used, i.e. all but
+         * the target column are used as features.
          *
-         * @result dataset A new tabular dataset with the given target and extras.
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({
-         *         "age":      [23, 16],
-         *         "survived": [ 0,  1],
-         *     });
-         *     val dataset = table.toTabularDataset("survived");
-         * }
+         * @result dataset A new tabular dataset with the given target and feature names.
          *
          * @example
          * pipeline example {
-         *     val table = Table({
-         *         "id":       [ 1,  2],
-         *         "age":      [23, 16],
-         *         "survived": [ 0,  1],
-         *     });
-         *     val dataset = table.toTabularDataset("target", extraNames = ["id"]);
+         *     val table = Table(
+         *         {
+         *             "item": ["apple", "milk", "beer"],
+         *             "price": [1.10, 1.19, 1.79],
+         *             "amount_bought": [74, 72, 51],
+         *         }
+         *     );
+         *     val dataset = table.toTabularDataset(targetName="amount_bought", extraNames=["item"]);
          * }
          */
         @Pure
         @PythonName("to_tabular_dataset")
         fun toTabularDataset(
             @PythonName("target_name") targetName: String,
-            @PythonName("extra_names") extraNames: List<String> = []
+            @PythonName("extra_names") extraNames: List<String>? = null
         ) -> dataset: TabularDataset
+
+        /**
+         * Return a new `TimeSeriesDataset` with columns marked as a target column, time or feature columns.
+         *
+         * The original table is not modified.
+         *
+         * @param targetName Name of the target column.
+         * @param timeName Name of the time column.
+         * @param extraNames Names of the columns that are neither features nor target. If null, no extra columns are used, i.e. all but
+         * the target column are used as features.
+         *
+         * @result dataset A new time series dataset with the given target and feature names.
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table(
+         *         {
+         *             "day": [0, 1, 2],
+         *             "price": [1.10, 1.19, 1.79],
+         *             "amount_bought": [74, 72, 51],
+         *         }
+         *     );
+         *     val dataset = table.toTimeSeriesDataset(targetName="amount_bought", timeName= "day");
+         * }
+         */
+        @Pure
+        @PythonName("to_time_series_dataset")
+        fun toTimeSeriesDataset(
+            @PythonName("target_name") targetName: String,
+            @PythonName("time_name") timeName: String,
+            @PythonName("extra_names") extraNames: List<String>? = null
+        ) -> dataset: TimeSeriesDataset
     }
     ```
 
-## `#!sds attr` columnNames {#safeds.data.tabular.containers.Table.columnNames data-toc-label='columnNames'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `columnCount` {#safeds.data.tabular.containers.Table.columnCount data-toc-label='[attribute] columnCount'}
 
-Return a list of all column names in this table.
+The number of columns in the table.
+
+**Type:** [`Int`][safeds.lang.Int]
+
+## <code class="doc-symbol doc-symbol-attribute"></code> `columnNames` {#safeds.data.tabular.containers.Table.columnNames data-toc-label='[attribute] columnNames'}
+
+The names of the columns in the table.
 
 **Type:** [`List<String>`][safeds.lang.List]
 
-**Examples:**
+## <code class="doc-symbol doc-symbol-attribute"></code> `plot` {#safeds.data.tabular.containers.Table.plot data-toc-label='[attribute] plot'}
 
-```sds hl_lines="3"
-pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    val columnNames = table.columnNames; // ["a", "b"]
-}
-```
+The plotter for the table.
 
-## `#!sds attr` numberOfColumns {#safeds.data.tabular.containers.Table.numberOfColumns data-toc-label='numberOfColumns'}
+**Type:** [`TablePlotter`][safeds.data.tabular.plotting.TablePlotter]
 
-Return the number of columns.
+## <code class="doc-symbol doc-symbol-attribute"></code> `rowCount` {#safeds.data.tabular.containers.Table.rowCount data-toc-label='[attribute] rowCount'}
 
-**Type:** [`Int`][safeds.lang.Int]
+The number of rows in the table.
 
-**Examples:**
-
-```sds hl_lines="3"
-pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    val numberOfColumns = table.numberOfColumns; // 2
-}
-```
-
-## `#!sds attr` numberOfRows {#safeds.data.tabular.containers.Table.numberOfRows data-toc-label='numberOfRows'}
-
-Return the number of rows.
+**Note:** This operation must fully load the data into memory, which can be expensive.
 
 **Type:** [`Int`][safeds.lang.Int]
 
-**Examples:**
+## <code class="doc-symbol doc-symbol-attribute"></code> `schema` {#safeds.data.tabular.containers.Table.schema data-toc-label='[attribute] schema'}
 
-```sds hl_lines="3"
-pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    val numberOfRows = table.numberOfRows; // 2
-}
-```
-
-## `#!sds attr` schema {#safeds.data.tabular.containers.Table.schema data-toc-label='schema'}
-
-Return the schema of the table.
+The schema of the table.
 
 **Type:** [`Schema`][safeds.data.tabular.typing.Schema]
 
-**Examples:**
+## <code class="doc-symbol doc-symbol-function"></code> `addColumns` {#safeds.data.tabular.containers.Table.addColumns data-toc-label='[function] addColumns'}
 
-```sds hl_lines="3"
-pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    val `schema` = table.`schema`;
-}
-```
+Return a new table with additional columns.
 
-## :warning:{ title="Deprecated" } `#!sds fun` addColumn {#safeds.data.tabular.containers.Table.addColumn data-toc-label='addColumn'}
+**Notes:**
 
-!!! warning "Deprecated"
-
-    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
-
-    - **Alternative:** Table.addColumns
-    - **Reason:** No need for two methods.
-
-Return a new table with the provided column attached at the end.
-
-The original table is not modified.
+- The original table is not modified.
+- This operation must fully load the data into memory, which can be expensive.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `column` | [`Column<Any?>`][safeds.data.tabular.containers.Column] | - | - |
+| `columns` | `#!sds union<Column<Any?>, List<Column<Any?>>>` | The columns to add. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `newTable` | [`Table`][safeds.data.tabular.containers.Table] | The table with the column attached. |
+| `newTable` | [`Table`][safeds.data.tabular.containers.Table] | The table with the additional columns. |
 
 **Examples:**
 
 ```sds hl_lines="4"
 pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    val column = Column("c", [5, 6]);
-    val newTable = table.addColumn(column);
-    // Table({
-    //     "a": [1, 2],
-    //     "b": [3, 4],
-    //     "c": [5, 6],
-    // })
+    val table = Table({"a": [1, 2, 3]});
+    val newColumn = Column("b", [4, 5, 6]);
+    val result = table.addColumns(newColumn);
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="319"
-    @Deprecated(
-        alternative="Table.addColumns",
-        reason="No need for two methods.",
-        sinceVersion="0.15.0",
-        removalVersion="0.16.0"
-    )
-    @Pure
-    @PythonName("add_column")
-    fun addColumn(
-        column: Column
-    ) -> newTable: Table
-    ```
-
-## `#!sds fun` addColumns {#safeds.data.tabular.containers.Table.addColumns data-toc-label='addColumns'}
-
-Return a new `Table` with multiple added columns.
-
-The original table is not modified.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `columns` | `#!sds union<List<Column<Any?>>, Table>` | The columns to be added. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `newTable` | [`Table`][safeds.data.tabular.containers.Table] | A new table combining the original table and the given columns. |
-
-**Examples:**
-
-```sds hl_lines="5"
-pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    val column1 = Column("c", [5, 6]);
-    val column2 = Column("d", [7, 8]);
-    val newTable = table.addColumns([column1, column2]);
-    // Table({
-    //     "a": [1, 2],
-    //     "b": [3, 4],
-    //     "c": [5, 6],
-    //     "d": [7, 8],
-    // })
-}
-```
-
-??? quote "Stub code in `Table.sdsstub`"
-
-    ```sds linenums="354"
+    ```sds linenums="172"
     @Pure
     @PythonName("add_columns")
     fun addColumns(
-        columns: union<List<Column>, Table>
+        columns: union<Column, List<Column>>
     ) -> newTable: Table
     ```
 
-## :warning:{ title="Deprecated" } `#!sds fun` addRow {#safeds.data.tabular.containers.Table.addRow data-toc-label='addRow'}
+## <code class="doc-symbol doc-symbol-function"></code> `addComputedColumn` {#safeds.data.tabular.containers.Table.addComputedColumn data-toc-label='[function] addComputedColumn'}
 
-!!! warning "Deprecated"
+Return a new table with an additional computed column.
 
-    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
-
-    - **Alternative:** None.
-    - **Reason:** This interface cannot be implemented efficiently.
-
-Return a new `Table` with an added Row attached.
-
-If the table happens to be empty beforehand, respective columns will be added automatically.
-
-The order of columns of the new row will be adjusted to the order of columns in the table.
-The new table will contain the merged schema.
-
-The original table is not modified.
+**Note:** The original table is not modified.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `row` | [`Row`][safeds.data.tabular.containers.Row] | The row to be added. | - |
+| `name` | [`String`][safeds.lang.String] | The name of the new column. | - |
+| `computer` | `#!sds (row: Row) -> (computedCell: Cell<Any?>)` | The function that computes the values of the new column. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `newTable` | [`Table`][safeds.data.tabular.containers.Table] | A new table with the added row at the end. |
-
-**Examples:**
-
-```sds hl_lines="4"
-pipeline example {
-    val table = Table({"a": [1, 2], "b": [4, 5]});
-    val row = Row({"a": 3, "b": 6});
-    val newTable = table.addRow(row);
-    // Table({
-    //     "a": [1, 2, 3],
-    //     "b": [4, 5, 6],
-    // })
-}
-```
-
-??? quote "Stub code in `Table.sdsstub`"
-
-    ```sds linenums="385"
-    @Deprecated(
-        alternative="None.",
-        reason="This interface cannot be implemented efficiently.",
-        sinceVersion="0.15.0",
-        removalVersion="0.16.0"
-    )
-    @Pure
-    @PythonName("add_row")
-    fun addRow(
-        row: Row
-    ) -> newTable: Table
-    ```
-
-## :warning:{ title="Deprecated" } `#!sds fun` addRows {#safeds.data.tabular.containers.Table.addRows data-toc-label='addRows'}
-
-!!! warning "Deprecated"
-
-    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
-
-    - **Alternative:** None.
-    - **Reason:** This interface cannot be implemented efficiently.
-
-Return a new `Table` with multiple added Rows attached.
-
-The order of columns of the new rows will be adjusted to the order of columns in the table.
-The new table will contain the merged schema.
-
-The original table is not modified.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `rows` | `#!sds union<List<Row>, Table>` | The rows to be added. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `newTable` | [`Table`][safeds.data.tabular.containers.Table] | A new table which combines the original table and the given rows. |
-
-**Examples:**
-
-```sds hl_lines="5"
-pipeline example {
-    val table = Table({"a": [1, 2], "b": [5, 6]});
-    val row1 = Row({"a": 3, "b": 7});
-    val row2 = Row({"a": 4, "b": 8});
-    val newTable = table.addRows([row1, row2]);
-    // Table({
-    //     "a": [1, 2, 3, 4],
-    //     "b": [5, 6, 7, 8],
-    // })
-}
-```
-
-??? quote "Stub code in `Table.sdsstub`"
-
-    ```sds linenums="421"
-    @Deprecated(
-        alternative="None.",
-        reason="This interface cannot be implemented efficiently.",
-        sinceVersion="0.15.0",
-        removalVersion="0.16.0"
-    )
-    @Pure
-    @PythonName("add_rows")
-    fun addRows(
-        rows: union<List<Row>, Table>
-    ) -> newTable: Table
-    ```
-
-## :warning:{ title="Deprecated" } `#!sds fun` filterRows {#safeds.data.tabular.containers.Table.filterRows data-toc-label='filterRows'}
-
-!!! warning "Deprecated"
-
-    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
-
-    - **Alternative:** Try ExperimentalTable.removeRows
-    - **Reason:** Users looked for a method with 'remove' in the name, so they missed this.
-
-Return a new table with rows filtered by Callable (e.g. lambda function).
-
-The original table is not modified.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `query` | `#!sds (row: Row) -> (matches: Boolean)` | A Callable that is applied to all rows. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `filteredTable` | [`Table`][safeds.data.tabular.containers.Table] | A table containing only the rows filtered by the query. |
+| `newTable` | [`Table`][safeds.data.tabular.containers.Table] | The table with the computed column. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    val filteredTable = table.filterRows((row) ->
-        row.getValue("a") as (Int) > 1
-    );
-    // Table({"a": [2], "b": [4]})
+    val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+    val result = table.addComputedColumn("c", (row) -> row.getValue("a").add(row.getValue("b")));
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="451"
-    @Deprecated(
-        alternative="Try ExperimentalTable.removeRows",
-        reason="Users looked for a method with 'remove' in the name, so they missed this.",
-        sinceVersion="0.15.0",
-        removalVersion="0.16.0"
-    )
+    ```sds linenums="194"
     @Pure
-    @PythonName("filter_rows")
-    fun filterRows(
-        query: (row: Row) -> matches: Boolean
-    ) -> filteredTable: Table
+    @PythonName("add_computed_column")
+    fun addComputedColumn(
+        name: String,
+        computer: (row: Row) -> computedCell: Cell
+    ) -> newTable: Table
     ```
 
-## `#!sds fun` getColumn {#safeds.data.tabular.containers.Table.getColumn data-toc-label='getColumn'}
+## <code class="doc-symbol doc-symbol-function"></code> `addTableAsColumns` {#safeds.data.tabular.containers.Table.addTableAsColumns data-toc-label='[function] addTableAsColumns'}
 
-Return a column with the data of the specified column.
+Return a new table with the columns of another table added.
+
+**Notes:**
+
+- The original tables are not modified.
+- This operation must fully load the data into memory, which can be expensive.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `columnName` | [`String`][safeds.lang.String] | The name of the column. | - |
+| `other` | [`Table`][safeds.data.tabular.containers.Table] | The table to add as columns. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `newTable` | [`Table`][safeds.data.tabular.containers.Table] | The table with the columns added. |
+
+**Examples:**
+
+```sds hl_lines="4"
+pipeline example {
+    val table1 = Table({"a": [1, 2, 3]});
+    val table2 = Table({"b": [4, 5, 6]});
+    val result = table1.addTableAsColumns(table2);
+    // Table({"a": [1, 2, 3], "b": [4, 5, 6]})
+}
+```
+
+??? quote "Stub code in `Table.sdsstub`"
+
+    ```sds linenums="699"
+    @Pure
+    @PythonName("add_table_as_columns")
+    fun addTableAsColumns(
+        other: Table
+    ) -> newTable: Table
+    ```
+
+## <code class="doc-symbol doc-symbol-function"></code> `addTableAsRows` {#safeds.data.tabular.containers.Table.addTableAsRows data-toc-label='[function] addTableAsRows'}
+
+Return a new table with the rows of another table added.
+
+**Notes:**
+
+- The original tables are not modified.
+- This operation must fully load the data into memory, which can be expensive.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `other` | [`Table`][safeds.data.tabular.containers.Table] | The table to add as rows. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `newTable` | [`Table`][safeds.data.tabular.containers.Table] | The table with the rows added. |
+
+**Examples:**
+
+```sds hl_lines="4"
+pipeline example {
+    val table1 = Table({"a": [1, 2, 3]});
+    val table2 = Table({"a": [4, 5, 6]});
+    val result = table1.addTableAsRows(table2);
+    // Table({"a": [1, 2, 3, 4, 5, 6]})
+}
+```
+
+??? quote "Stub code in `Table.sdsstub`"
+
+    ```sds linenums="725"
+    @Pure
+    @PythonName("add_table_as_rows")
+    fun addTableAsRows(
+        other: Table
+    ) -> newTable: Table
+    ```
+
+## <code class="doc-symbol doc-symbol-function"></code> `getColumn` {#safeds.data.tabular.containers.Table.getColumn data-toc-label='[function] getColumn'}
+
+Get a column from the table.
+
+**Note:** This operation must fully load the data into memory, which can be expensive.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `name` | [`String`][safeds.lang.String] | The name of the column. | - |
 
 **Results:**
 
@@ -1623,554 +1180,470 @@ Return a column with the data of the specified column.
 
 ```sds hl_lines="3"
 pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    val column = table.getColumn("a"); // Column("a", [1, 2])
+    val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+    val result = table.getColumn("a");
+    // Column("a", [1, 2, 3])
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="214"
+    ```sds linenums="217"
     @Pure
     @PythonName("get_column")
     fun getColumn(
-        @PythonName("column_name") columnName: String
+        name: String
     ) -> column: Column
     ```
 
-## `#!sds fun` getColumnType {#safeds.data.tabular.containers.Table.getColumnType data-toc-label='getColumnType'}
+## <code class="doc-symbol doc-symbol-function"></code> `getColumnType` {#safeds.data.tabular.containers.Table.getColumnType data-toc-label='[function] getColumnType'}
 
-Return the type of the given column.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `columnName` | [`String`][safeds.lang.String] | The name of the column to be queried. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `type` | [`ColumnType`][safeds.data.tabular.typing.ColumnType] | The type of the column. |
-
-**Examples:**
-
-```sds hl_lines="3"
-pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    val type = table.getColumnType("a"); // Integer
-}
-```
-
-??? quote "Stub code in `Table.sdsstub`"
-
-    ```sds linenums="252"
-    @Pure
-    @PythonName("get_column_type")
-    fun getColumnType(
-        @PythonName("column_name") columnName: String
-    ) -> type: ColumnType
-    ```
-
-## :warning:{ title="Deprecated" } `#!sds fun` getRow {#safeds.data.tabular.containers.Table.getRow data-toc-label='getRow'}
-
-!!! warning "Deprecated"
-
-    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
-
-    - **Alternative:** None.
-    - **Reason:** This interface cannot be implemented efficiently.
-
-Return the row at a specified index.
+Get the data type of a column.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `index` | [`Int`][safeds.lang.Int] | The index. | - |
+| `name` | [`String`][safeds.lang.String] | The name of the column. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `row` | [`Row`][safeds.data.tabular.containers.Row] | The row of the table at the index. |
-
-**Examples:**
-
-```sds hl_lines="3"
-pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    val row = table.getRow(0); // Row({"a": 1, "b": 3})
-}
-```
-
-??? quote "Stub code in `Table.sdsstub`"
-
-    ```sds linenums="271"
-    @Deprecated(
-        alternative="None.",
-        reason="This interface cannot be implemented efficiently.",
-        sinceVersion="0.15.0",
-        removalVersion="0.16.0"
-    )
-    @Pure
-    @PythonName("get_row")
-    fun getRow(
-        index: Int
-    ) -> row: Row
-    ```
-
-## :warning:{ title="Deprecated" } `#!sds fun` groupRows {#safeds.data.tabular.containers.Table.groupRows data-toc-label='groupRows'}
-
-!!! warning "Deprecated"
-
-    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
-
-    - **Alternative:** None.
-    - **Reason:** We'll provide a new solution with a more useful and efficient result.
-
-Return a map with copies of the output tables as values and the keys from the key_selector.
-
-The original table is not modified.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `keySelector` | `#!sds (row: Row) -> (key: T)` | A Callable that is applied to all rows and returns the key of the group. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `tablesByKey` | [`Map<T, Table>`][safeds.lang.Map] | A map containing the new tables as values and the selected keys as keys. |
-
-**Type parameters:**
-
-| Name | Upper Bound | Description | Default |
-|------|-------------|-------------|---------|
-| `T` | [`Any?`][safeds.lang.Any] | - | - |
+| `type` | [`DataType`][safeds.data.tabular.typing.DataType] | The data type of the column. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
-    val tablesByKey = table.groupRows((row) ->
-        row.getValue("a") as (Int) <= 2
-    );
-    // {
-    //     true: Table({"a": [1, 2], "b": [4, 5]}),
-    //     false: Table({"a": [3], "b": [6]}),
-    // }
+    val result = table.getColumnType("a");
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="484"
-    @Deprecated(
-        alternative="None.",
-        reason="We'll provide a new solution with a more useful and efficient result.",
-        sinceVersion="0.15.0",
-        removalVersion="0.16.0"
-    )
+    ```sds linenums="236"
     @Pure
-    @PythonName("group_rows")
-    fun groupRows<T>(
-        @PythonName("key_selector") keySelector: (row: Row) -> key: T
-    ) -> tablesByKey: Map<T, Table>
+    @PythonName("get_column_type")
+    fun getColumnType(
+        name: String
+    ) -> type: DataType
     ```
 
-## `#!sds fun` hasColumn {#safeds.data.tabular.containers.Table.hasColumn data-toc-label='hasColumn'}
+## <code class="doc-symbol doc-symbol-function"></code> `hasColumn` {#safeds.data.tabular.containers.Table.hasColumn data-toc-label='[function] hasColumn'}
 
-Return whether the table contains a given column.
+Check if the table has a column with a specific name.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `columnName` | [`String`][safeds.lang.String] | The name of the column. | - |
+| `name` | [`String`][safeds.lang.String] | The name of the column. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `hasColumn` | [`Boolean`][safeds.lang.Boolean] | True if the column exists. |
+| `hasColumn` | [`Boolean`][safeds.lang.Boolean] | Whether the table has a column with the specified name. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    val hasColumn = table.hasColumn("a"); // true
+    val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+    val result = table.hasColumn("a"); // true
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="233"
+    ```sds linenums="255"
     @Pure
     @PythonName("has_column")
     fun hasColumn(
-        @PythonName("column_name") columnName: String
+        name: String
     ) -> hasColumn: Boolean
     ```
 
-## `#!sds fun` inverseTransformTable {#safeds.data.tabular.containers.Table.inverseTransformTable data-toc-label='inverseTransformTable'}
+## <code class="doc-symbol doc-symbol-function"></code> `inverseTransformTable` {#safeds.data.tabular.containers.Table.inverseTransformTable data-toc-label='[function] inverseTransformTable'}
 
-Return a new `Table` with the inverted transformation applied by the given transformer.
+Return a new table inverse-transformed by a **fitted, invertible** transformer.
 
-The original table is not modified.
+**Notes:**
+
+- The original table is not modified.
+- Depending on the transformer, this operation might fully load the data into memory, which can be expensive.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `transformer` | [`InvertibleTableTransformer`][safeds.data.tabular.transformation.InvertibleTableTransformer] | A transformer that was fitted with columns, which are all present in the table. | - |
+| `fittedTransformer` | [`InvertibleTableTransformer`][safeds.data.tabular.transformation.InvertibleTableTransformer] | The fitted, invertible transformer to apply. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `originalTable` | [`Table`][safeds.data.tabular.containers.Table] | The original table. |
+| `newTable` | [`Table`][safeds.data.tabular.containers.Table] | The inverse-transformed table. |
 
 **Examples:**
 
-```sds hl_lines="5"
+```sds hl_lines="4"
 pipeline example {
-    val table = Table({"a": ["z", "y"], "b": [3, 4]});
-    val encoder = LabelEncoder().fit(table, ["a"]);
-    val transformedTable = table.transformTable(encoder);
-    val originalTable = transformedTable.inverseTransformTable(encoder);
-    // Table({"a": ["z", "y"], "b": [3, 4]})
+    val table = Table({"a": [1, 2, 3]});
+    val transformer, val transformedTable = RangeScaler(min=0.0, max=1.0).fitAndTransform(table, ["a"]);
+    val result = transformedTable.inverseTransformTable(transformer);
+    // Table({"a": [1, 2, 3]})
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="960"
+    ```sds linenums="751"
     @Pure
     @PythonName("inverse_transform_table")
     fun inverseTransformTable(
-        transformer: InvertibleTableTransformer
-    ) -> originalTable: Table
+        @PythonName("fitted_transformer") fittedTransformer: InvertibleTableTransformer
+    ) -> newTable: Table
     ```
 
-## :warning:{ title="Deprecated" } `#!sds fun` keepOnlyColumns {#safeds.data.tabular.containers.Table.keepOnlyColumns data-toc-label='keepOnlyColumns'}
+## <code class="doc-symbol doc-symbol-function"></code> `removeColumns` {#safeds.data.tabular.containers.Table.removeColumns data-toc-label='[function] removeColumns'}
 
-!!! warning "Deprecated"
+Return a new table without the specified columns.
 
-    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+**Notes:**
 
-    - **Alternative:** Try ExperimentalTable.removeColumnsExcept
-    - **Reason:** Users looked for a method with 'remove' in the name, so they missed this.
-
-Return a new table with only the given column(s).
-
-The original table is not modified.
-
-Note: When removing the last column of the table, the `number_of_columns` property will be set to 0.
+- The original table is not modified.
+- This method does not raise if a column does not exist. You can use it to ensure that the resulting table does
+  not contain certain columns.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `columnNames` | [`List<String>`][safeds.lang.List] | A list containing only the columns to be kept. | - |
+| `names` | `#!sds union<List<String>, String>` | The names of the columns to remove. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `projectedTable` | [`Table`][safeds.data.tabular.containers.Table] | A table containing only the given column(s). |
+| `newTable` | [`Table`][safeds.data.tabular.containers.Table] | The table with the columns removed. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    val projectedTable = table.keepOnlyColumns(["a"]);
-    // Table({"a": [1, 2]})
+    val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+    val result = table.removeColumns("a");
+    // Table({"b": [4, 5, 6]})
 }
 ```
-
-??? quote "Stub code in `Table.sdsstub`"
-
-    ```sds linenums="514"
-    @Deprecated(
-        alternative="Try ExperimentalTable.removeColumnsExcept",
-        reason="Users looked for a method with 'remove' in the name, so they missed this.",
-        sinceVersion="0.15.0",
-        removalVersion="0.16.0"
-    )
-    @Pure
-    @PythonName("keep_only_columns")
-    fun keepOnlyColumns(
-        @PythonName("column_names") columnNames: List<String>
-    ) -> projectedTable: Table
-    ```
-
-## :warning:{ title="Deprecated" } `#!sds fun` plotBoxplots {#safeds.data.tabular.containers.Table.plotBoxplots data-toc-label='plotBoxplots'}
-
-!!! warning "Deprecated"
-
-    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
-
-    - **Alternative:** Try ExperimentalTable.plot.boxplots instead.
-    - **Reason:** Groups all plotting methods in one place.
-
-Plot a boxplot for every numerical column.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `boxplots` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
-
-**Examples:**
-
 ```sds hl_lines="3"
 pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    val boxplots = table.plotBoxplots();
+    val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+    val result = table.removeColumns("c");
+    // Table({"a": [1, 2, 3], "b": [4, 5, 6]})
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="1055"
-    @Deprecated(
-        alternative="Try ExperimentalTable.plot.boxplots instead.",
-        reason="Groups all plotting methods in one place.",
-        sinceVersion="0.15.0",
-        removalVersion="0.16.0"
-    )
+    ```sds linenums="288"
     @Pure
-    @PythonName("plot_boxplots")
-    fun plotBoxplots() -> boxplots: Image
+    @PythonName("remove_columns")
+    fun removeColumns(
+        names: union<List<String>, String>
+    ) -> newTable: Table
     ```
 
-## :warning:{ title="Deprecated" } `#!sds fun` plotCorrelationHeatmap {#safeds.data.tabular.containers.Table.plotCorrelationHeatmap data-toc-label='plotCorrelationHeatmap'}
+## <code class="doc-symbol doc-symbol-function"></code> `removeColumnsExcept` {#safeds.data.tabular.containers.Table.removeColumnsExcept data-toc-label='[function] removeColumnsExcept'}
 
-!!! warning "Deprecated"
-
-    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
-
-    - **Alternative:** Try ExperimentalTable.plot.correlationHeatmap instead.
-    - **Reason:** Groups all plotting methods in one place.
-
-Plot a correlation heatmap for all numerical columns of this `Table`.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `correlationHeatmap` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
-
-**Examples:**
-
-```sds hl_lines="3"
-pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    val correlationHeatmap = table.plotCorrelationHeatmap();
-}
-```
-
-??? quote "Stub code in `Table.sdsstub`"
-
-    ```sds linenums="977"
-    @Deprecated(
-        alternative="Try ExperimentalTable.plot.correlationHeatmap instead.",
-        reason="Groups all plotting methods in one place.",
-        sinceVersion="0.15.0",
-        removalVersion="0.16.0"
-    )
-    @Pure
-    @PythonName("plot_correlation_heatmap")
-    fun plotCorrelationHeatmap() -> correlationHeatmap: Image
-    ```
-
-## :warning:{ title="Deprecated" } `#!sds fun` plotHistograms {#safeds.data.tabular.containers.Table.plotHistograms data-toc-label='plotHistograms'}
-
-!!! warning "Deprecated"
-
-    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
-
-    - **Alternative:** Try ExperimentalTable.plot.histograms instead.
-    - **Reason:** Groups all plotting methods in one place.
-
-Plot a histogram for every column.
+Return a new table with only the specified columns.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `numberOfBins` | [`Int`][safeds.lang.Int] | The number of bins to use in the histogram. | `#!sds 10` |
+| `names` | `#!sds union<List<String>, String>` | The names of the columns to keep. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `histograms` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
+| `newTable` | [`Table`][safeds.data.tabular.containers.Table] | The table with only the specified columns. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    val histograms = table.plotHistograms();
+    val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+    val result = table.removeColumnsExcept("a");
+    // Table({"a": [1, 2, 3]})
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="1078"
-    @Deprecated(
-        alternative="Try ExperimentalTable.plot.histograms instead.",
-        reason="Groups all plotting methods in one place.",
-        sinceVersion="0.15.0",
-        removalVersion="0.16.0"
-    )
+    ```sds linenums="308"
     @Pure
-    @PythonName("plot_histograms")
-    fun plotHistograms(
-        @PythonName("number_of_bins") const numberOfBins: Int = 10
-    ) -> histograms: Image where {
-        numberOfBins > 0
-    }
+    @PythonName("remove_columns_except")
+    fun removeColumnsExcept(
+        names: union<List<String>, String>
+    ) -> newTable: Table
     ```
 
-## :warning:{ title="Deprecated" } `#!sds fun` plotLineplot {#safeds.data.tabular.containers.Table.plotLineplot data-toc-label='plotLineplot'}
+## <code class="doc-symbol doc-symbol-function"></code> `removeColumnsWithMissingValues` {#safeds.data.tabular.containers.Table.removeColumnsWithMissingValues data-toc-label='[function] removeColumnsWithMissingValues'}
 
-!!! warning "Deprecated"
+Return a new table without columns that contain missing values.
 
-    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+**Notes:**
 
-    - **Alternative:** Try ExperimentalTable.plot.lineplot instead.
-    - **Reason:** Groups all plotting methods in one place.
-
-Plot two columns against each other in a lineplot.
-
-If there are multiple x-values for a y-value, the resulting plot will consist of a line representing the mean
-and the lower-transparency area around the line representing the 95% confidence interval.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `xColumnName` | [`String`][safeds.lang.String] | The column name of the column to be plotted on the x-Axis. | - |
-| `yColumnName` | [`String`][safeds.lang.String] | The column name of the column to be plotted on the y-Axis. | - |
+- The original table is not modified.
+- This operation must fully load the data into memory, which can be expensive.
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `lineplot` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
+| `newTable` | [`Table`][safeds.data.tabular.containers.Table] | The table without columns containing missing values. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    val lineplot = table.plotLineplot("a", "b");
+    val table = Table({"a": [1, 2, 3], "b": [4, 5, null]});
+    val result = table.removeColumnsWithMissingValues();
+    // Table({"a": [1, 2, 3]})
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="1004"
-    @Deprecated(
-        alternative="Try ExperimentalTable.plot.lineplot instead.",
-        reason="Groups all plotting methods in one place.",
-        sinceVersion="0.15.0",
-        removalVersion="0.16.0"
-    )
+    ```sds linenums="331"
     @Pure
-    @PythonName("plot_lineplot")
-    fun plotLineplot(
-        @PythonName("x_column_name") xColumnName: String,
-        @PythonName("y_column_name") yColumnName: String
-    ) -> lineplot: Image
+    @PythonName("remove_columns_with_missing_values")
+    fun removeColumnsWithMissingValues() -> newTable: Table
     ```
 
-## :warning:{ title="Deprecated" } `#!sds fun` plotScatterplot {#safeds.data.tabular.containers.Table.plotScatterplot data-toc-label='plotScatterplot'}
+## <code class="doc-symbol doc-symbol-function"></code> `removeDuplicateRows` {#safeds.data.tabular.containers.Table.removeDuplicateRows data-toc-label='[function] removeDuplicateRows'}
 
-!!! warning "Deprecated"
+Return a new table without duplicate rows.
 
-    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
-
-    - **Alternative:** Try ExperimentalTable.plot.scatterplot instead.
-    - **Reason:** Groups all plotting methods in one place.
-
-Plot two columns against each other in a scatterplot.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `xColumnName` | [`String`][safeds.lang.String] | The column name of the column to be plotted on the x-Axis. | - |
-| `yColumnName` | [`String`][safeds.lang.String] | The column name of the column to be plotted on the y-Axis. | - |
+**Note:** The original table is not modified.
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `scatterplot` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
+| `newTable` | [`Table`][safeds.data.tabular.containers.Table] | The table without duplicate rows. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    val scatterplot = table.plotScatterplot("a", "b");
+    val table = Table({"a": [1, 2, 2], "b": [4, 5, 5]});
+    val result = table.removeDuplicateRows();
+    // Table({"a": [1, 2], "b": [4, 5]})
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="1031"
-    @Deprecated(
-        alternative="Try ExperimentalTable.plot.scatterplot instead.",
-        reason="Groups all plotting methods in one place.",
-        sinceVersion="0.15.0",
-        removalVersion="0.16.0"
-    )
+    ```sds linenums="439"
     @Pure
-    @PythonName("plot_scatterplot")
-    fun plotScatterplot(
-        @PythonName("x_column_name") xColumnName: String,
-        @PythonName("y_column_name") yColumnName: String
-    ) -> scatterplot: Image
+    @PythonName("remove_duplicate_rows")
+    fun removeDuplicateRows() -> newTable: Table
     ```
 
-## `#!sds fun` removeColumns {#safeds.data.tabular.containers.Table.removeColumns data-toc-label='removeColumns'}
+## <code class="doc-symbol doc-symbol-function"></code> `removeNonNumericColumns` {#safeds.data.tabular.containers.Table.removeNonNumericColumns data-toc-label='[function] removeNonNumericColumns'}
 
-Return a new table without the given column(s).
+Return a new table without non-numeric columns.
 
-The original table is not modified.
-
-Note: When removing the last column of the table, the `number_of_columns` property will be set to 0.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `columnNames` | [`List<String>`][safeds.lang.List] | A list containing all columns to be dropped. | - |
+**Note:** The original table is not modified.
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `projectedTable` | [`Table`][safeds.data.tabular.containers.Table] | A table without the given columns. |
+| `newTable` | [`Table`][safeds.data.tabular.containers.Table] | The table without non-numeric columns. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    val projectedTable = table.removeColumns(["a"]);
-    // Table({"b": [3, 4]})
+    val table = Table({"a": [1, 2, 3], "b": ["4", "5", "6"]});
+    val result = table.removeNonNumericColumns();
+    // Table({"a": [1, 2, 3]})
+}
+```
+
+??? quote "Stub code in `Table.sdsstub`"
+
+    ```sds linenums="349"
+    @Pure
+    @PythonName("remove_non_numeric_columns")
+    fun removeNonNumericColumns() -> newTable: Table
+    ```
+
+## <code class="doc-symbol doc-symbol-function"></code> `removeRows` {#safeds.data.tabular.containers.Table.removeRows data-toc-label='[function] removeRows'}
+
+Return a new table without rows that satisfy a condition.
+
+**Note:** The original table is not modified.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `query` | `#!sds (row: Row) -> (shouldRemoveRow: Cell<Boolean>)` | The function that determines which rows to remove. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `newTable` | [`Table`][safeds.data.tabular.containers.Table] | The table without the specified rows. |
+
+**Examples:**
+
+```sds hl_lines="3"
+pipeline example {
+    val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+    val result = table.removeRows((row) -> row.getValue("a").eq(2));
+    // Table({"a": [1, 3], "b": [4, 6]})
+}
+```
+
+??? quote "Stub code in `Table.sdsstub`"
+
+    ```sds linenums="459"
+    @Pure
+    @PythonName("remove_rows")
+    fun removeRows(
+        query: (row: Row) -> shouldRemoveRow: Cell<Boolean>
+    ) -> newTable: Table
+    ```
+
+## <code class="doc-symbol doc-symbol-function"></code> `removeRowsByColumn` {#safeds.data.tabular.containers.Table.removeRowsByColumn data-toc-label='[function] removeRowsByColumn'}
+
+Return a new table without rows that satisfy a condition on a specific column.
+
+**Note:** The original table is not modified.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `name` | [`String`][safeds.lang.String] | The name of the column. | - |
+| `query` | `#!sds (cell: Cell<Any?>) -> (shouldRemoveRow: Cell<Boolean>)` | The function that determines which rows to remove. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `newTable` | [`Table`][safeds.data.tabular.containers.Table] | The table without the specified rows. |
+
+**Examples:**
+
+```sds hl_lines="3"
+pipeline example {
+    val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+    val result = table.removeRowsByColumn("a", (cell) -> cell.eq(2));
+    // Table({"a": [1, 3], "b": [4, 6]})
+}
+```
+
+??? quote "Stub code in `Table.sdsstub`"
+
+    ```sds linenums="482"
+    @Pure
+    @PythonName("remove_rows_by_column")
+    fun removeRowsByColumn(
+        name: String,
+        query: (cell: Cell) -> shouldRemoveRow: Cell<Boolean>
+    ) -> newTable: Table
+    ```
+
+## <code class="doc-symbol doc-symbol-function"></code> `removeRowsWithMissingValues` {#safeds.data.tabular.containers.Table.removeRowsWithMissingValues data-toc-label='[function] removeRowsWithMissingValues'}
+
+Return a new table without rows containing missing values in the specified columns.
+
+**Note:** The original table is not modified.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `columnNames` | [`List<String>?`][safeds.lang.List] | Names of the columns to consider. If null, all columns are considered. | `#!sds null` |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `newTable` | [`Table`][safeds.data.tabular.containers.Table] | The table without rows containing missing values in the specified columns. |
+
+**Examples:**
+
+```sds hl_lines="3"
+pipeline example {
+    val table = Table({"a": [1, null, 3], "b": [4, 5, null]});
+    val result = table.removeRowsWithMissingValues();
+    // Table({"a": [1], "b": [4]})
+}
+```
+
+??? quote "Stub code in `Table.sdsstub`"
+
+    ```sds linenums="505"
+    @Pure
+    @PythonName("remove_rows_with_missing_values")
+    fun removeRowsWithMissingValues(
+        @PythonName("column_names") columnNames: List<String>? = null
+    ) -> newTable: Table
+    ```
+
+## <code class="doc-symbol doc-symbol-function"></code> `removeRowsWithOutliers` {#safeds.data.tabular.containers.Table.removeRowsWithOutliers data-toc-label='[function] removeRowsWithOutliers'}
+
+Return a new table without rows containing outliers in the specified columns.
+
+Whether a data point is an outlier in a column is determined by its z-score. The z-score the distance of the
+data point from the mean of the column divided by the standard deviation of the column. If the z-score is
+greater than the given threshold, the data point is considered an outlier. Missing values are ignored during the
+calculation of the z-score.
+
+The z-score is only defined for numeric columns. Non-numeric columns are ignored, even if they are specified in
+`column_names`.
+
+**Notes:**
+
+- The original table is not modified.
+- This operation must fully load the data into memory, which can be expensive.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `columnNames` | [`List<String>?`][safeds.lang.List] | Names of the columns to consider. If null, all numeric columns are considered. | `#!sds null` |
+| `zScoreThreshold` | [`Float`][safeds.lang.Float] | The z-score threshold for detecting outliers. | `#!sds 3.0` |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `newTable` | [`Table`][safeds.data.tabular.containers.Table] | The table without rows containing outliers in the specified columns. |
+
+**Examples:**
+
+```sds hl_lines="8"
+pipeline example {
+    val table = Table(
+        {
+            "a": [1, 2, 3, 4, 5, 6, 1000, null],
+            "b": [1, 2, 3, 4, 5, 6,    7,    8],
+        }
+    );
+    val result = table.removeRowsWithOutliers(zScoreThreshold=2.0);
+    // Table({"a": [1, 2, 3, 4, 5, 6, null], "b": [1, 2, 3, 4, 5, 6]})
 }
 ```
 
@@ -2178,221 +1651,45 @@ pipeline example {
 
     ```sds linenums="544"
     @Pure
-    @PythonName("remove_columns")
-    fun removeColumns(
-        @PythonName("column_names") columnNames: List<String>
-    ) -> projectedTable: Table
-    ```
-
-## `#!sds fun` removeColumnsWithMissingValues {#safeds.data.tabular.containers.Table.removeColumnsWithMissingValues data-toc-label='removeColumnsWithMissingValues'}
-
-Return a new table without the columns that contain missing values.
-
-The original table is not modified.
-
-Note: When removing the last column of the table, the `number_of_columns` property will be set to 0.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `projectedTable` | [`Table`][safeds.data.tabular.containers.Table] | A table without the columns that contain missing values. |
-
-**Examples:**
-
-```sds hl_lines="3"
-pipeline example {
-    val table = Table({"a": [1, null], "b": [3, 4]});
-    val projectedTable = table.removeColumnsWithMissingValues();
-    // Table({"b": [3, 4]})
-}
-```
-
-??? quote "Stub code in `Table.sdsstub`"
-
-    ```sds linenums="566"
-    @Pure
-    @PythonName("remove_columns_with_missing_values")
-    fun removeColumnsWithMissingValues() -> projectedTable: Table
-    ```
-
-## :warning:{ title="Deprecated" } `#!sds fun` removeColumnsWithNonNumericalValues {#safeds.data.tabular.containers.Table.removeColumnsWithNonNumericalValues data-toc-label='removeColumnsWithNonNumericalValues'}
-
-!!! warning "Deprecated"
-
-    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
-
-    - **Alternative:** Try ExperimentalTable.removeNonNumericColumns
-    - **Reason:** More concise name.
-
-Return a new table without the columns that contain non-numerical values.
-
-The original table is not modified.
-
-Note: When removing the last column of the table, the `number_of_columns` property will be set to 0.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `projectedTable` | [`Table`][safeds.data.tabular.containers.Table] | A table without the columns that contain non-numerical values. |
-
-**Examples:**
-
-```sds hl_lines="3"
-pipeline example {
-    val table = Table({"a": ["z", "y"], "b": [1, 2]});
-    val projectedTable = table.removeColumnsWithNonNumericalValues();
-    // Table({"b": [1, 2]})
-}
-```
-
-??? quote "Stub code in `Table.sdsstub`"
-
-    ```sds linenums="586"
-    @Deprecated(
-        alternative="Try ExperimentalTable.removeNonNumericColumns",
-        reason="More concise name.",
-        sinceVersion="0.15.0",
-        removalVersion="0.16.0"
-    )
-    @Pure
-    @PythonName("remove_columns_with_non_numerical_values")
-    fun removeColumnsWithNonNumericalValues() -> projectedTable: Table
-    ```
-
-## `#!sds fun` removeDuplicateRows {#safeds.data.tabular.containers.Table.removeDuplicateRows data-toc-label='removeDuplicateRows'}
-
-Return a new table with every duplicate row removed.
-
-The original table is not modified.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `filteredTable` | [`Table`][safeds.data.tabular.containers.Table] | The table with the duplicate rows removed. |
-
-**Examples:**
-
-```sds hl_lines="3"
-pipeline example {
-    val table = Table({"a": [1, 2, 1], "b": [3, 4, 3]});
-    val filteredTable = table.removeDuplicateRows();
-    // Table({"a": [1, 2], "b": [3, 4]})
-}
-```
-
-??? quote "Stub code in `Table.sdsstub`"
-
-    ```sds linenums="610"
-    @Pure
-    @PythonName("remove_duplicate_rows")
-    fun removeDuplicateRows() -> filteredTable: Table
-    ```
-
-## `#!sds fun` removeRowsWithMissingValues {#safeds.data.tabular.containers.Table.removeRowsWithMissingValues data-toc-label='removeRowsWithMissingValues'}
-
-Return a new table without the rows that contain missing values.
-
-The original table is not modified.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `filteredTable` | [`Table`][safeds.data.tabular.containers.Table] | A table without the rows that contain missing values. |
-
-**Examples:**
-
-```sds hl_lines="3"
-pipeline example {
-    val table = Table({"a": [1, null], "b": [3, 4]});
-    val filteredTable = table.removeRowsWithMissingValues();
-    // Table({"a": [1], "b": [3]})
-}
-```
-
-??? quote "Stub code in `Table.sdsstub`"
-
-    ```sds linenums="628"
-    @Pure
-    @PythonName("remove_rows_with_missing_values")
-    fun removeRowsWithMissingValues() -> filteredTable: Table
-    ```
-
-## `#!sds fun` removeRowsWithOutliers {#safeds.data.tabular.containers.Table.removeRowsWithOutliers data-toc-label='removeRowsWithOutliers'}
-
-Return a new table without those rows that contain at least one outlier.
-
-We define an outlier as a value that has a distance of more than 3 standard deviations from the column mean.
-Missing values are not considered outliers. They are also ignored during the calculation of the standard
-deviation.
-
-The original table is not modified.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `filteredTable` | [`Table`][safeds.data.tabular.containers.Table] | A new table without rows containing outliers. |
-
-**Examples:**
-
-```sds hl_lines="6"
-pipeline example {
-    val table = Table({
-        "a": [1,   2,    3,   4, 5,   6, 7,    8, 9,  10,    11],
-        "b": [0, 0.1, -0.1, 0.2, 0, 0.1, 0, -0.3, 0, 0.3,  1000]
-    });
-    val filteredTable = table.removeRowsWithOutliers();
-    // Table({
-    //     "a": [1,   2,    3,   4, 5,   6, 7,    8, 9,  10],
-    //     "b": [0, 0.1, -0.1, 0.2, 0, 0.1, 0, -0.3, 0, 0.3]
-    // })
-}
-```
-
-??? quote "Stub code in `Table.sdsstub`"
-
-    ```sds linenums="656"
-    @Pure
     @PythonName("remove_rows_with_outliers")
-    fun removeRowsWithOutliers() -> filteredTable: Table
+    fun removeRowsWithOutliers(
+        @PythonName("column_names") columnNames: List<String>? = null,
+        @PythonName("z_score_threshold") zScoreThreshold: Float = 3.0
+    ) -> newTable: Table
     ```
 
-## `#!sds fun` renameColumn {#safeds.data.tabular.containers.Table.renameColumn data-toc-label='renameColumn'}
+## <code class="doc-symbol doc-symbol-function"></code> `renameColumn` {#safeds.data.tabular.containers.Table.renameColumn data-toc-label='[function] renameColumn'}
 
-Return a new `Table` with a single column renamed.
+Return a new table with a column renamed.
 
-The original table is not modified.
+**Note:** The original table is not modified.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `oldName` | [`String`][safeds.lang.String] | The old name of the target column. | - |
-| `newName` | [`String`][safeds.lang.String] | The new name of the target column. | - |
+| `oldName` | [`String`][safeds.lang.String] | The name of the column to rename. | - |
+| `newName` | [`String`][safeds.lang.String] | The new name of the column. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `newTable` | [`Table`][safeds.data.tabular.containers.Table] | The Table with the renamed column. |
+| `newTable` | [`Table`][safeds.data.tabular.containers.Table] | The table with the column renamed. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    val newTable = table.renameColumn("a", "c");
-    // Table({"c": [1, 2], "b": [3, 4]})
+    val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+    val result = table.renameColumn("a", "c");
+    // Table({"c": [1, 2, 3], "b": [4, 5, 6]})
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="677"
+    ```sds linenums="370"
     @Pure
     @PythonName("rename_column")
     fun renameColumn(
@@ -2401,321 +1698,252 @@ pipeline example {
     ) -> newTable: Table
     ```
 
-## `#!sds fun` replaceColumn {#safeds.data.tabular.containers.Table.replaceColumn data-toc-label='replaceColumn'}
+## <code class="doc-symbol doc-symbol-function"></code> `replaceColumn` {#safeds.data.tabular.containers.Table.replaceColumn data-toc-label='[function] replaceColumn'}
 
-Return a new table with the specified old column replaced by a list of new columns.
+Return a new table with a column replaced by zero or more columns.
 
-The order of columns is kept.
-
-The original table is not modified.
+**Note:** The original table is not modified.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `oldColumnName` | [`String`][safeds.lang.String] | The name of the column to be replaced. | - |
-| `newColumns` | [`List<Column<Any?>>`][safeds.lang.List] | The list of new columns replacing the old column. | - |
+| `oldName` | [`String`][safeds.lang.String] | The name of the column to replace. | - |
+| `newColumns` | `#!sds union<Column<Any?>, List<Column<Any?>>, Table>` | The new columns. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `newTable` | [`Table`][safeds.data.tabular.containers.Table] | A table with the old column replaced by the new columns. |
+| `newTable` | [`Table`][safeds.data.tabular.containers.Table] | The table with the column replaced. |
 
 **Examples:**
 
-```sds hl_lines="4"
+```sds hl_lines="3"
 pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    val column = Column("c", [5, 6]);
-    val newTable = table.replaceColumn("a", [column]);
-    // Table({"c": [5, 6], "b": [3, 4]})
-}
-```
-```sds hl_lines="5"
-pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    val column1 = Column("c", [5, 6]);
-    val column2 = Column("d", [7, 8]);
-    val newTable = table.replaceColumn("a", [column1, column2]);
-    // Table({"c": [5, 6], "d": [7, 8], "b": [3, 4]})
+    val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+    val result = table.replaceColumn("a", []);
+    // Table({"b": [4, 5, 6]})
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="713"
+    ```sds linenums="394"
     @Pure
     @PythonName("replace_column")
     fun replaceColumn(
-        @PythonName("old_column_name") oldColumnName: String,
-        @PythonName("new_columns") newColumns: List<Column>
+        @PythonName("old_name") oldName: String,
+        @PythonName("new_columns") newColumns: union<Column, List<Column>, Table>
     ) -> newTable: Table
     ```
 
-## `#!sds fun` shuffleRows {#safeds.data.tabular.containers.Table.shuffleRows data-toc-label='shuffleRows'}
+## <code class="doc-symbol doc-symbol-function"></code> `shuffleRows` {#safeds.data.tabular.containers.Table.shuffleRows data-toc-label='[function] shuffleRows'}
 
-Return a new `Table` with randomly shuffled rows of this `Table`.
+Return a new table with the rows shuffled.
 
-The original table is not modified.
+**Note:** The original table is not modified.
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `shuffledTable` | [`Table`][safeds.data.tabular.containers.Table] | The shuffled Table. |
+| `newTable` | [`Table`][safeds.data.tabular.containers.Table] | The table with the rows shuffled. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
-    val shuffledTable = table.shuffleRows();
+    val result = table.shuffleRows();
+    // Table({"a": [3, 2, 1], "b": [6, 5, 4]})
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="733"
+    ```sds linenums="565"
     @Pure
     @PythonName("shuffle_rows")
-    fun shuffleRows() -> shuffledTable: Table
+    fun shuffleRows() -> newTable: Table
     ```
 
-## `#!sds fun` sliceRows {#safeds.data.tabular.containers.Table.sliceRows data-toc-label='sliceRows'}
+## <code class="doc-symbol doc-symbol-function"></code> `sliceRows` {#safeds.data.tabular.containers.Table.sliceRows data-toc-label='[function] sliceRows'}
 
-Slice a part of the table into a new table.
+Return a new table with a slice of rows.
 
-The original table is not modified.
+**Note:** The original table is not modified.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `start` | [`Int?`][safeds.lang.Int] | The first index of the range to be copied into a new table, None by default. | `#!sds null` |
-| `end` | [`Int?`][safeds.lang.Int] | The last index of the range to be copied into a new table, None by default. | `#!sds null` |
-| `step` | [`Int`][safeds.lang.Int] | The step size used to iterate through the table, 1 by default. | `#!sds 1` |
+| `start` | [`Int`][safeds.lang.Int] | The start index of the slice. | `#!sds 0` |
+| `length` | [`Int?`][safeds.lang.Int] | The length of the slice. If null, the slice contains all rows starting from `start`. Must greater than or equal to 0. | `#!sds null` |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `slicedTable` | [`Table`][safeds.data.tabular.containers.Table] | The resulting table. |
+| `newTable` | [`Table`][safeds.data.tabular.containers.Table] | The table with the slice of rows. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
-    val slicedTable = table.sliceRows(start = 1);
+    val result = table.sliceRows(start=1);
     // Table({"a": [2, 3], "b": [5, 6]})
 }
 ```
 ```sds hl_lines="3"
 pipeline example {
     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
-    val slicedTable = table.sliceRows(end = 2);
-    // Table({"a": [1, 2], "b": [4, 5]})
-}
-```
-```sds hl_lines="3"
-pipeline example {
-    val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
-    val slicedTable = table.sliceRows(step = 2);
-    // Table({"a": [1, 3], "b": [4, 6]})
+    val result = table.sliceRows(start=1, length=1);
+    // Table({"a": [2], "b": [5]})
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="769"
+    ```sds linenums="594"
     @Pure
     @PythonName("slice_rows")
     fun sliceRows(
-        start: Int? = null,
-        end: Int? = null,
-        step: Int = 1
-    ) -> slicedTable: Table
+        start: Int = 0,
+        length: Int? = null
+    ) -> newTable: Table
     ```
 
-## :warning:{ title="Deprecated" } `#!sds fun` sortColumns {#safeds.data.tabular.containers.Table.sortColumns data-toc-label='sortColumns'}
+## <code class="doc-symbol doc-symbol-function"></code> `sortRows` {#safeds.data.tabular.containers.Table.sortRows data-toc-label='[function] sortRows'}
 
-!!! warning "Deprecated"
+Return a new table with the rows sorted.
 
-    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
-
-    - **Alternative:** None.
-    - **Reason:** No use case.
-
-Sort the columns of a `Table` with the given comparator and return a new `Table`.
-
-The comparator is a function that takes two columns `col1` and `col2` and
-returns an integer:
-
-* If `col1` should be ordered before `col2`, the function should return a negative number.
-* If `col1` should be ordered after `col2`, the function should return a positive number.
-* If the original order of `col1` and `col2` should be kept, the function should return 0.
-
-If no comparator is given, the columns will be sorted alphabetically by their name.
-
-The original table is not modified.
+**Note:** The original table is not modified.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `comparator` | `#!sds (column1: Column<Any?>, column2: Column<Any?>) -> (comparison: Int)` | The function used to compare two columns. | - |
+| `keySelector` | `#!sds (row: Row) -> (key: Cell<Any?>)` | The function that selects the key to sort by. | - |
+| `descending` | [`Boolean`][safeds.lang.Boolean] | Whether to sort in descending order. | `#!sds false` |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `sortedTable` | [`Table`][safeds.data.tabular.containers.Table] | A new table with sorted columns. |
+| `newTable` | [`Table`][safeds.data.tabular.containers.Table] | The table with the rows sorted. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    val sortedTable = table.sortColumns((col1, col2) -> 1);
-    // Table({"a": [1, 2], "b": [3, 4]})
-}
-```
-```sds hl_lines="3"
-pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    val sortedTable = table.sortColumns((col1, col2) -> -1);
-    // Table({"b": [3, 4], "a": [1, 2]})
+    val table = Table({"a": [2, 1, 3], "b": [1, 1, 2]});
+    val result = table.sortRows((row) -> row.getValue("a").^sub(row.getValue("b")));
+    // Table({"a": [1, 2, 3], "b": [1, 1, 2]})
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="809"
-    @Deprecated(
-        alternative="None.",
-        reason="No use case.",
-        sinceVersion="0.15.0",
-        removalVersion="0.16.0"
-    )
-    @Pure
-    @PythonName("sort_columns")
-    fun sortColumns(
-        comparator: (column1: Column, column2: Column) -> comparison: Int
-    ) -> sortedTable: Table
-    ```
-
-## :warning:{ title="Deprecated" } `#!sds fun` sortRows {#safeds.data.tabular.containers.Table.sortRows data-toc-label='sortRows'}
-
-!!! warning "Deprecated"
-
-    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
-
-    - **Alternative:** Try ExperimentalTable.sortRows
-    - **Reason:** Selecting a key is more ergonomic than a comparator.
-
-Sort the rows of a `Table` with the given comparator and return a new `Table`.
-
-The comparator is a function that takes two rows `row1` and `row2` and
-returns an integer:
-
-* If `row1` should be ordered before `row2`, the function should return a negative number.
-* If `row1` should be ordered after `row2`, the function should return a positive number.
-* If the original order of `row1` and `row2` should be kept, the function should return 0.
-
-The original table is not modified.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `comparator` | `#!sds (row1: Row, row2: Row) -> (comparison: Int)` | The function used to compare two rows. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `sortedTable` | [`Table`][safeds.data.tabular.containers.Table] | A new table with sorted rows. |
-
-**Examples:**
-
-```sds hl_lines="3"
-pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    val sortedTable = table.sortRows((row1, row2) -> 1);
-    // Table({"a": [1, 2], "b": [3, 4]})
-}
-```
-```sds hl_lines="3"
-pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    val sortedTable = table.sortRows((row1, row2) -> -1);
-    // Table({"a": [2, 1], "b": [4, 3]})
-}
-```
-
-??? quote "Stub code in `Table.sdsstub`"
-
-    ```sds linenums="851"
-    @Deprecated(
-        alternative="Try ExperimentalTable.sortRows",
-        reason="Selecting a key is more ergonomic than a comparator.",
-        sinceVersion="0.15.0",
-        removalVersion="0.16.0"
-    )
+    ```sds linenums="618"
     @Pure
     @PythonName("sort_rows")
     fun sortRows(
-        comparator: (row1: Row, row2: Row) -> comparison: Int
-    ) -> sortedTable: Table
+        @PythonName("key_selector") keySelector: (row: Row) -> key: Cell,
+        descending: Boolean = false
+    ) -> newTable: Table
     ```
 
-## `#!sds fun` splitRows {#safeds.data.tabular.containers.Table.splitRows data-toc-label='splitRows'}
+## <code class="doc-symbol doc-symbol-function"></code> `sortRowsByColumn` {#safeds.data.tabular.containers.Table.sortRowsByColumn data-toc-label='[function] sortRowsByColumn'}
 
-Split the table into two new tables. Consider using [Table.shuffleRows][safeds.data.tabular.containers.Table.shuffleRows] before splitting to ensure a random
-distribution of rows in both tables.
+Return a new table with the rows sorted by a specific column.
 
-The original table is not modified.
+**Note:** The original table is not modified.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `ratioInFirst` | [`Float`][safeds.lang.Float] | How many rows should be in the first table, expressed as a ratio of the total number of rows. Must be between 0 and 1. | - |
+| `name` | [`String`][safeds.lang.String] | The name of the column to sort by. | - |
+| `descending` | [`Boolean`][safeds.lang.Boolean] | Whether to sort in descending order. | `#!sds false` |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `first` | [`Table`][safeds.data.tabular.containers.Table] | The first table with the specified size. |
-| `second` | [`Table`][safeds.data.tabular.containers.Table] | The second table with the remaining rows. |
+| `newTable` | [`Table`][safeds.data.tabular.containers.Table] | The table with the rows sorted by the specified column. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val table = Table({"a": [1, 2, 3, 4], "b": [5, 6, 7, 8]});
-    val first, val second = table.splitRows(0.5);
-    // first:  Table({"a": [1, 2], "b": [5, 6]})
-    // second: Table({"a": [3, 4], "b": [7, 8]})
+    val table = Table({"a": [2, 1, 3], "b": [1, 1, 2]});
+    val result = table.sortRowsByColumn("a");
+    // Table({"a": [1, 2, 3], "b": [1, 1, 2]})
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="884"
+    ```sds linenums="642"
+    @Pure
+    @PythonName("sort_rows_by_column")
+    fun sortRowsByColumn(
+        name: String,
+        descending: Boolean = false
+    ) -> newTable: Table
+    ```
+
+## <code class="doc-symbol doc-symbol-function"></code> `splitRows` {#safeds.data.tabular.containers.Table.splitRows data-toc-label='[function] splitRows'}
+
+Create two tables by splitting the rows of the current table.
+
+The first table contains a percentage of the rows specified by `percentage_in_first`, and the second table
+contains the remaining rows.
+
+**Notes:**
+
+- The original table is not modified.
+- By default, the rows are shuffled before splitting. You can disable this by setting `shuffle` to false.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `percentageInFirst` | [`Float`][safeds.lang.Float] | The percentage of rows to include in the first table. Must be between 0 and 1. | - |
+| `shuffle` | [`Boolean`][safeds.lang.Boolean] | Whether to shuffle the rows before splitting. | `#!sds true` |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `firstTable` | [`Table`][safeds.data.tabular.containers.Table] | The first table. |
+| `secondTable` | [`Table`][safeds.data.tabular.containers.Table] | The second table. |
+
+**Examples:**
+
+```sds hl_lines="3"
+pipeline example {
+    val table = Table({"a": [1, 2, 3, 4, 5], "b": [6, 7, 8, 9, 10]});
+    val firstTable, val secondTable = table.splitRows(0.6);
+}
+```
+
+??? quote "Stub code in `Table.sdsstub`"
+
+    ```sds linenums="672"
     @Pure
     @PythonName("split_rows")
     fun splitRows(
-        @PythonName("percentage_in_first") ratioInFirst: Float
-    ) -> (first: Table, second: Table)
+        @PythonName("percentage_in_first") percentageInFirst: Float,
+        shuffle: Boolean = true
+    ) -> (firstTable: Table, secondTable: Table)
     ```
 
-## `#!sds fun` summarizeStatistics {#safeds.data.tabular.containers.Table.summarizeStatistics data-toc-label='summarizeStatistics'}
+## <code class="doc-symbol doc-symbol-function"></code> `summarizeStatistics` {#safeds.data.tabular.containers.Table.summarizeStatistics data-toc-label='[function] summarizeStatistics'}
 
-Return a table with a number of statistical key values.
-
-The original table is not modified.
+Return a table with important statistics about this table.
 
 **Results:**
 
@@ -2727,22 +1955,22 @@ The original table is not modified.
 
 ```sds hl_lines="3"
 pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    val statistics = table.summarizeStatistics();
+    val table = Table({"a": [1, 3]});
+    val result = table.summarizeStatistics();
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="296"
+    ```sds linenums="794"
     @Pure
     @PythonName("summarize_statistics")
     fun summarizeStatistics() -> statistics: Table
     ```
 
-## `#!sds fun` toColumns {#safeds.data.tabular.containers.Table.toColumns data-toc-label='toColumns'}
+## <code class="doc-symbol doc-symbol-function"></code> `toColumns` {#safeds.data.tabular.containers.Table.toColumns data-toc-label='[function] toColumns'}
 
-Return a list of the columns.
+Return the data of the table as a list of columns.
 
 **Results:**
 
@@ -2754,45 +1982,44 @@ Return a list of the columns.
 
 ```sds hl_lines="3"
 pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
+    val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
     val columns = table.toColumns();
-    // [Column("a", [1, 2]), Column("b", [3, 4])]
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="1202"
+    ```sds linenums="809"
     @Pure
     @PythonName("to_columns")
     fun toColumns() -> columns: List<Column>
     ```
 
-## `#!sds fun` toCsvFile {#safeds.data.tabular.containers.Table.toCsvFile data-toc-label='toCsvFile'}
+## <code class="doc-symbol doc-symbol-function"></code> `toCsvFile` {#safeds.data.tabular.containers.Table.toCsvFile data-toc-label='[function] toCsvFile'}
 
-Write the data from the table into a CSV file.
+Write the table to a CSV file.
 
-If the file and/or the directories do not exist they will be created. If the file already exists it will be
-overwritten.
+If the file and/or the parent directories do not exist, they will be created. If the file exists already, it
+will be overwritten.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `path` | [`String`][safeds.lang.String] | The path to the output file. | - |
+| `path` | [`String`][safeds.lang.String] | The path to the CSV file. If the file extension is omitted, it is assumed to be ".csv". | - |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    table.toCsvFile("path/to/file.csv");
+    val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+    table.toCsvFile("output.csv");
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="1106"
+    ```sds linenums="827"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_csv_file")
     fun toCsvFile(
@@ -2800,183 +2027,156 @@ pipeline example {
     )
     ```
 
-## `#!sds fun` toExcelFile {#safeds.data.tabular.containers.Table.toExcelFile data-toc-label='toExcelFile'}
+## <code class="doc-symbol doc-symbol-function"></code> `toJsonFile` {#safeds.data.tabular.containers.Table.toJsonFile data-toc-label='[function] toJsonFile'}
 
-Write the data from the table into an Excel file.
+Write the table to a JSON file.
 
-Valid file extensions are `.xls`, '.xlsx', `.xlsm`, `.xlsb`, `.odf`, `.ods` and `.odt`.
-If the file and/or the directories do not exist, they will be created. If the file already exists, it will be
-overwritten.
+If the file and/or the parent directories do not exist, they will be created. If the file exists already, it
+will be overwritten.
 
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `path` | [`String`][safeds.lang.String] | The path to the output file. | - |
-
-**Examples:**
-
-```sds hl_lines="3"
-pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    table.toExcelFile("path/to/file.xlsx");
-}
-```
-
-??? quote "Stub code in `Table.sdsstub`"
-
-    ```sds linenums="1127"
-    @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
-    @PythonName("to_excel_file")
-    fun toExcelFile(
-        path: String
-    )
-    ```
-
-## :warning:{ title="Deprecated" } `#!sds fun` toHtml {#safeds.data.tabular.containers.Table.toHtml data-toc-label='toHtml'}
-
-!!! warning "Deprecated"
-
-    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
-
-    - **Alternative:** None.
-    - **Reason:** No use case.
-
-Return an HTML representation of the table.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `html` | [`String`][safeds.lang.String] | The generated HTML. |
-
-**Examples:**
-
-```sds hl_lines="3"
-pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    val html = table.toHtml();
-}
-```
-
-??? quote "Stub code in `Table.sdsstub`"
-
-    ```sds linenums="1180"
-    @Deprecated(
-        alternative="None.",
-        reason="No use case.",
-        sinceVersion="0.15.0",
-        removalVersion="0.16.0"
-    )
-    @Pure
-    @PythonName("to_html")
-    fun toHtml() -> html: String
-    ```
-
-## `#!sds fun` toJsonFile {#safeds.data.tabular.containers.Table.toJsonFile data-toc-label='toJsonFile'}
-
-Write the data from the table into a JSON file.
-
-If the file and/or the directories do not exist, they will be created. If the file already exists it will be
-overwritten.
+**Note:** This operation must fully load the data into memory, which can be expensive.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `path` | [`String`][safeds.lang.String] | The path to the output file. | - |
+| `path` | [`String`][safeds.lang.String] | The path to the JSON file. If the file extension is omitted, it is assumed to be ".json". | - |
+| `orientation` | `#!sds literal<"column", "row">` | The orientation of the JSON file. If "column", the JSON file will be structured as a list of columns. If "row", the JSON file will be structured as a list of rows. Row orientation is more human-readable, but slower and less memory-efficient. | `#!sds "column"` |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    table.toJsonFile("path/to/file.json");
+    val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+    table.toJsonFile("output.json");
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="1147"
+    ```sds linenums="868"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_json_file")
     fun toJsonFile(
+        path: String,
+        orientation: literal<"column", "row"> = "column"
+    )
+    ```
+
+## <code class="doc-symbol doc-symbol-function"></code> `toMap` {#safeds.data.tabular.containers.Table.toMap data-toc-label='[function] toMap'}
+
+Return a map that maps column names to column values.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `map` | [`Map<String, List<Any>>`][safeds.lang.Map] | Map representation of the table. |
+
+**Examples:**
+
+```sds hl_lines="3"
+pipeline example {
+    val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+    val result = table.toMap();
+    // {"a": [1, 2, 3], "b": [4, 5, 6]}
+}
+```
+
+??? quote "Stub code in `Table.sdsstub`"
+
+    ```sds linenums="845"
+    @Pure
+    @PythonName("to_dict")
+    fun toMap() -> map: Map<String, List<Any>>
+    ```
+
+## <code class="doc-symbol doc-symbol-function"></code> `toParquetFile` {#safeds.data.tabular.containers.Table.toParquetFile data-toc-label='[function] toParquetFile'}
+
+Write the table to a Parquet file.
+
+If the file and/or the parent directories do not exist, they will be created. If the file exists already, it
+will be overwritten.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `path` | [`String`][safeds.lang.String] | The path to the Parquet file. If the file extension is omitted, it is assumed to be ".parquet". | - |
+
+**Examples:**
+
+```sds hl_lines="3"
+pipeline example {
+    val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+    table.toParquetFile("output.parquet");
+}
+```
+
+??? quote "Stub code in `Table.sdsstub`"
+
+    ```sds linenums="889"
+    @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
+    @PythonName("to_parquet_file")
+    fun toParquetFile(
         path: String
     )
     ```
 
-## `#!sds fun` toMap {#safeds.data.tabular.containers.Table.toMap data-toc-label='toMap'}
+## <code class="doc-symbol doc-symbol-function"></code> `toTabularDataset` {#safeds.data.tabular.containers.Table.toTabularDataset data-toc-label='[function] toTabularDataset'}
 
-Return a map of column names to column values.
+Return a new `TabularDataset` with columns marked as a target, feature, or extra.
 
-**Results:**
+- The target column is the column that a model should predict.
+- Feature columns are columns that a model should use to make predictions.
+- Extra columns are columns that are neither feature nor target. They can be used to provide additional context,
+  like an ID column.
 
-| Name | Type | Description |
-|------|------|-------------|
-| `map` | [`Map<String, List<Any?>>`][safeds.lang.Map] | Map representation of the table. |
+Feature columns are implicitly defined as all columns except the target and extra columns. If no extra columns
+are specified, all columns except the target column are used as features.
 
-**Examples:**
+**Parameters:**
 
-```sds hl_lines="3"
-pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    val map = table.toMap();
-    // {"a": [1, 2], "b": [3, 4]}
-}
-```
-
-??? quote "Stub code in `Table.sdsstub`"
-
-    ```sds linenums="1165"
-    @Pure
-    @PythonName("to_dict")
-    fun toMap() -> map: Map<String, List<Any?>>
-    ```
-
-## :warning:{ title="Deprecated" } `#!sds fun` toRows {#safeds.data.tabular.containers.Table.toRows data-toc-label='toRows'}
-
-!!! warning "Deprecated"
-
-    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
-
-    - **Alternative:** None.
-    - **Reason:** This interface cannot be implemented efficiently.
-
-Return a list of the rows.
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `targetName` | [`String`][safeds.lang.String] | Name of the target column. | - |
+| `extraNames` | [`List<String>?`][safeds.lang.List] | Names of the columns that are neither feature nor target. If null, no extra columns are used, i.e. all but the target column are used as features. | `#!sds null` |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `rows` | [`List<Row>`][safeds.lang.List] | List of rows. |
+| `dataset` | [`TabularDataset`][safeds.data.labeled.containers.TabularDataset] | A new tabular dataset with the given target and feature names. |
 
 **Examples:**
 
-```sds hl_lines="3"
+```sds hl_lines="9"
 pipeline example {
-    val table = Table({"a": [1, 2], "b": [3, 4]});
-    val rows = table.toRows();
-    // [Row({"a": 1, "b": 3}), Row({"a": 2, "b": 4})]
+    val table = Table(
+        {
+            "item": ["apple", "milk", "beer"],
+            "price": [1.10, 1.19, 1.79],
+            "amount_bought": [74, 72, 51],
+        }
+    );
+    val dataset = table.toTabularDataset(targetName="amount_bought", extraNames=["item"]);
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="1218"
-    @Deprecated(
-        alternative="None.",
-        reason="This interface cannot be implemented efficiently.",
-        sinceVersion="0.15.0",
-        removalVersion="0.16.0"
-    )
+    ```sds linenums="924"
     @Pure
-    @PythonName("to_rows")
-    fun toRows() -> rows: List<Row>
+    @PythonName("to_tabular_dataset")
+    fun toTabularDataset(
+        @PythonName("target_name") targetName: String,
+        @PythonName("extra_names") extraNames: List<String>? = null
+    ) -> dataset: TabularDataset
     ```
 
-## `#!sds fun` toTabularDataset {#safeds.data.tabular.containers.Table.toTabularDataset data-toc-label='toTabularDataset'}
+## <code class="doc-symbol doc-symbol-function"></code> `toTimeSeriesDataset` {#safeds.data.tabular.containers.Table.toTimeSeriesDataset data-toc-label='[function] toTimeSeriesDataset'}
 
-Return a new `TabularDataset` with columns marked as a target column or feature columns.
+Return a new `TimeSeriesDataset` with columns marked as a target column, time or feature columns.
 
 The original table is not modified.
 
@@ -2985,280 +2185,223 @@ The original table is not modified.
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `targetName` | [`String`][safeds.lang.String] | Name of the target column. | - |
-| `extraNames` | [`List<String>`][safeds.lang.List] | Names of the columns that are neither features nor target. If None, no extra columns are used, i.e. all but the target column are used as features. | `#!sds []` |
+| `timeName` | [`String`][safeds.lang.String] | Name of the time column. | - |
+| `extraNames` | [`List<String>?`][safeds.lang.List] | Names of the columns that are neither features nor target. If null, no extra columns are used, i.e. all but the target column are used as features. | `#!sds null` |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `dataset` | [`TabularDataset`][safeds.data.labeled.containers.TabularDataset] | A new tabular dataset with the given target and extras. |
+| `dataset` | [`TimeSeriesDataset`][safeds.data.labeled.containers.TimeSeriesDataset] | A new time series dataset with the given target and feature names. |
 
 **Examples:**
 
-```sds hl_lines="6"
+```sds hl_lines="9"
 pipeline example {
-    val table = Table({
-        "age":      [23, 16],
-        "survived": [ 0,  1],
-    });
-    val dataset = table.toTabularDataset("survived");
-}
-```
-```sds hl_lines="7"
-pipeline example {
-    val table = Table({
-        "id":       [ 1,  2],
-        "age":      [23, 16],
-        "survived": [ 0,  1],
-    });
-    val dataset = table.toTabularDataset("target", extraNames = ["id"]);
+    val table = Table(
+        {
+            "day": [0, 1, 2],
+            "price": [1.10, 1.19, 1.79],
+            "amount_bought": [74, 72, 51],
+        }
+    );
+    val dataset = table.toTimeSeriesDataset(targetName="amount_bought", timeName= "day");
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="1261"
+    ```sds linenums="955"
     @Pure
-    @PythonName("to_tabular_dataset")
-    fun toTabularDataset(
+    @PythonName("to_time_series_dataset")
+    fun toTimeSeriesDataset(
         @PythonName("target_name") targetName: String,
-        @PythonName("extra_names") extraNames: List<String> = []
-    ) -> dataset: TabularDataset
+        @PythonName("time_name") timeName: String,
+        @PythonName("extra_names") extraNames: List<String>? = null
+    ) -> dataset: TimeSeriesDataset
     ```
 
-## `#!sds fun` transformColumn {#safeds.data.tabular.containers.Table.transformColumn data-toc-label='transformColumn'}
+## <code class="doc-symbol doc-symbol-function"></code> `transformColumn` {#safeds.data.tabular.containers.Table.transformColumn data-toc-label='[function] transformColumn'}
 
-Return a new `Table` with the provided column transformed by calling the provided transformer.
+Return a new table with a column transformed.
 
-The original table is not modified.
+**Note:** The original table is not modified.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `name` | [`String`][safeds.lang.String] | - | - |
-| `transformer` | `#!sds (row: Row) -> (newColumnValue: Any?)` | - | - |
+| `name` | [`String`][safeds.lang.String] | The name of the column to transform. | - |
+| `transformer` | `#!sds (cell: Cell<Any?>) -> (transformedCell: Cell<Any?>)` | The function that transforms the column. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `transformedTable` | [`Table`][safeds.data.tabular.containers.Table] | The table with the transformed column. |
+| `newTable` | [`Table`][safeds.data.tabular.containers.Table] | The table with the transformed column. |
 
 **Examples:**
 
-```sds hl_lines="6"
+```sds hl_lines="3"
 pipeline example {
-    val prices = Table({
-        "product": ["apple", "banana", "cherry"],
-        "price":   [    100,        2,        4],
-    });
-    val discountedPrices = prices.transformColumn("price", (row) ->
-        row.getValue("price") as (Int) * 0.5
-    );
-    // Table({
-    //     "product": ["apple", "banana", "cherry"],
-    //     "price":   [    50,        1,        2],
-    // })
+    val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+    val result = table.transformColumn("a", (cell) -> cell.add(1));
+    // Table({"a": [2, 3, 4], "b": [4, 5, 6]})
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="912"
+    ```sds linenums="418"
     @Pure
     @PythonName("transform_column")
     fun transformColumn(
         name: String,
-        transformer: (row: Row) -> newColumnValue: Any?
-    ) -> transformedTable: Table
+        transformer: (cell: Cell) -> transformedCell: Cell
+    ) -> newTable: Table
     ```
 
-## `#!sds fun` transformTable {#safeds.data.tabular.containers.Table.transformTable data-toc-label='transformTable'}
+## <code class="doc-symbol doc-symbol-function"></code> `transformTable` {#safeds.data.tabular.containers.Table.transformTable data-toc-label='[function] transformTable'}
 
-Return a new `Table` with a learned transformation applied to this table.
+Return a new table transformed by a **fitted** transformer.
 
-The original table is not modified.
+**Notes:**
+
+- The original table is not modified.
+- Depending on the transformer, this operation might fully load the data into memory, which can be expensive.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `transformer` | [`TableTransformer`][safeds.data.tabular.transformation.TableTransformer] | The transformer which transforms the given table. | - |
+| `fittedTransformer` | [`TableTransformer`][safeds.data.tabular.transformation.TableTransformer] | The fitted transformer to apply. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `transformedTable` | [`Table`][safeds.data.tabular.containers.Table] | The transformed table. |
+| `newTable` | [`Table`][safeds.data.tabular.containers.Table] | The transformed table. |
 
 **Examples:**
 
 ```sds hl_lines="4"
 pipeline example {
-   val table = Table({"a": [1, null], "b": [3, 4]});
-   val imputer = Imputer(Imputer.Strategy.Mean).fit(table, ["a"]);
-   val transformedTable = table.transformTable(imputer);
-   // Table({"a": [1, 1], "b": [3, 4]})
+    val table = Table({"a": [1, 2, 3]});
+    val transformer = RangeScaler(min=0.0, max=1.0).fit(table, ["a"]);
+    val result = table.transformTable(transformer);
+    // Table({"a": [0, 0.5, 1]})
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="936"
+    ```sds linenums="777"
     @Pure
     @PythonName("transform_table")
     fun transformTable(
-        transformer: TableTransformer
-    ) -> transformedTable: Table
+        @PythonName("fitted_transformer") fittedTransformer: TableTransformer
+    ) -> newTable: Table
     ```
 
-## `#!sds static fun` fromColumns {#safeds.data.tabular.containers.Table.fromColumns data-toc-label='fromColumns'}
+## <code class="doc-symbol doc-symbol-static-function"></code> `fromColumns` {#safeds.data.tabular.containers.Table.fromColumns data-toc-label='[static-function] fromColumns'}
 
-Return a table created from a list of columns.
+Create a table from a list of columns.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `columns` | [`List<Column<Any?>>`][safeds.lang.List] | The columns to be combined. They need to have the same size. | - |
+| `columns` | `#!sds union<Column<Any?>, List<Column<Any?>>>` | The columns. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `table` | [`Table`][safeds.data.tabular.containers.Table] | The generated table. |
+| `table` | [`Table`][safeds.data.tabular.containers.Table] | The created table. |
 
 **Examples:**
 
 ```sds hl_lines="4"
 pipeline example {
-    val column1 = Column("a", [1, 2]);
-    val column2 = Column("b", [3, 4]);
-    val table = Table.fromColumns([column1, column2]);
+    val a = Column("a", [1, 2, 3]);
+    val b = Column("b", [4, 5, 6]);
+    val result = Table.fromColumns([a, b]);
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="169"
+    ```sds linenums="72"
     @Pure
     @PythonName("from_columns")
     static fun fromColumns(
-        columns: List<Column>
+        columns: union<Column, List<Column>>
     ) -> table: Table
     ```
 
-## `#!sds static fun` fromCsvFile {#safeds.data.tabular.containers.Table.fromCsvFile data-toc-label='fromCsvFile'}
+## <code class="doc-symbol doc-symbol-static-function"></code> `fromCsvFile` {#safeds.data.tabular.containers.Table.fromCsvFile data-toc-label='[static-function] fromCsvFile'}
 
-Read data from a CSV file into a table.
+Create a table from a CSV file.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `path` | [`String`][safeds.lang.String] | The path to the CSV file. | - |
+| `path` | [`String`][safeds.lang.String] | The path to the CSV file. If the file extension is omitted, it is assumed to be ".csv". | - |
+| `separator` | [`String`][safeds.lang.String] | The separator between the values in the CSV file. | `#!sds ","` |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `table` | [`Table`][safeds.data.tabular.containers.Table] | The table created from the CSV file. |
+| `table` | [`Table`][safeds.data.tabular.containers.Table] | The created table. |
 
 **Examples:**
 
 ```sds hl_lines="2"
 pipeline example {
-    val table = Table.fromCsvFile("path/to/file.csv");
+    val result = Table.fromCsvFile("input.csv");
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="87"
+    ```sds linenums="91"
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
     @PythonName("from_csv_file")
     static fun fromCsvFile(
-        path: String
+        path: String,
+        separator: String = ","
     ) -> table: Table
     ```
 
-## :warning:{ title="Deprecated" } `#!sds static fun` fromExcelFile {#safeds.data.tabular.containers.Table.fromExcelFile data-toc-label='fromExcelFile'}
+## <code class="doc-symbol doc-symbol-static-function"></code> `fromJsonFile` {#safeds.data.tabular.containers.Table.fromJsonFile data-toc-label='[static-function] fromJsonFile'}
 
-!!! warning "Deprecated"
-
-    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
-
-    - **Alternative:** Table.fromCsvFile
-    - **Reason:** Requires a heavy depencency just for two methods.
-
-Read data from an Excel file into a table.
-
-Valid file extensions are `.xls`, `.xlsx`, `.xlsm`, `.xlsb`, `.odf`, `.ods` and `.odt`.
+Create a table from a JSON file.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `path` | [`String`][safeds.lang.String] | The path to the Excel file. | - |
+| `path` | [`String`][safeds.lang.String] | The path to the JSON file. If the file extension is omitted, it is assumed to be ".json". | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `table` | [`Table`][safeds.data.tabular.containers.Table] | The table created from the Excel file. |
+| `table` | [`Table`][safeds.data.tabular.containers.Table] | The created table. |
 
 **Examples:**
 
 ```sds hl_lines="2"
 pipeline example {
-    val table = Table.fromExcelFile("path/to/file.xlsx");
+    val result = Table.fromJsonFile("input.json");
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="107"
-    @Deprecated(
-        alternative="Table.fromCsvFile",
-        reason="Requires a heavy depencency just for two methods.",
-        sinceVersion="0.15.0",
-        removalVersion="0.16.0"
-    )
-    @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
-    @PythonName("from_excel_file")
-    static fun fromExcelFile(
-        path: String
-    ) -> table: Table
-    ```
-
-## `#!sds static fun` fromJsonFile {#safeds.data.tabular.containers.Table.fromJsonFile data-toc-label='fromJsonFile'}
-
-Read data from a JSON file into a table.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `path` | [`String`][safeds.lang.String] | The path to the JSON file. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `table` | [`Table`][safeds.data.tabular.containers.Table] | The table created from the JSON file. |
-
-**Examples:**
-
-```sds hl_lines="2"
-pipeline example {
-    val table = Table.fromJsonFile("path/to/file.json");
-}
-```
-
-??? quote "Stub code in `Table.sdsstub`"
-
-    ```sds linenums="131"
+    ```sds linenums="129"
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
     @PythonName("from_json_file")
     static fun fromJsonFile(
@@ -3266,85 +2409,71 @@ pipeline example {
     ) -> table: Table
     ```
 
-## `#!sds static fun` fromMap {#safeds.data.tabular.containers.Table.fromMap data-toc-label='fromMap'}
+## <code class="doc-symbol doc-symbol-static-function"></code> `fromMap` {#safeds.data.tabular.containers.Table.fromMap data-toc-label='[static-function] fromMap'}
 
-Create a table from a map of column names to column values.
+Create a table from a map that maps column names to column values.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `data` | [`Map<String, List<Any?>>`][safeds.lang.Map] | The data. | - |
+| `data` | [`Map<String, List<Any>>`][safeds.lang.Map] | The data. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
 | `table` | [`Table`][safeds.data.tabular.containers.Table] | The generated table. |
+
+**Examples:**
+
+```sds hl_lines="3"
+pipeline example {
+    val data = {"a'": [1, 2, 3], "b": [4, 5, 6]};
+    val result = Table.fromMap(data);
+}
+```
+
+??? quote "Stub code in `Table.sdsstub`"
+
+    ```sds linenums="111"
+    @Pure
+    @PythonName("from_dict")
+    static fun fromMap(
+        data: Map<String, List<Any>>
+    ) -> table: Table
+    ```
+
+## <code class="doc-symbol doc-symbol-static-function"></code> `fromParquetFile` {#safeds.data.tabular.containers.Table.fromParquetFile data-toc-label='[static-function] fromParquetFile'}
+
+Create a table from a Parquet file.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `path` | [`String`][safeds.lang.String] | The path to the Parquet file. If the file extension is omitted, it is assumed to be ".parquet". | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `table` | [`Table`][safeds.data.tabular.containers.Table] | The created table. |
 
 **Examples:**
 
 ```sds hl_lines="2"
 pipeline example {
-    val table = Table.fromMap({"a": [1, 2], "b": [3, 4]});
+    val result = Table.fromParquetFile("input.parquet");
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="149"
-    @Pure
-    @PythonName("from_dict")
-    static fun fromMap(
-        data: Map<String, List<Any?>>
-    ) -> table: Table
-    ```
-
-## :warning:{ title="Deprecated" } `#!sds static fun` fromRows {#safeds.data.tabular.containers.Table.fromRows data-toc-label='fromRows'}
-
-!!! warning "Deprecated"
-
-    This function is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
-
-    - **Alternative:** None.
-    - **Reason:** This interface cannot be implemented efficiently.
-
-Return a table created from a list of rows.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `rows` | [`List<Row>`][safeds.lang.List] | The rows to be combined. They need to have a matching schema. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `table` | [`Table`][safeds.data.tabular.containers.Table] | The generated table. |
-
-**Examples:**
-
-```sds hl_lines="4"
-pipeline example {
-    val row1 = Row({"a": 1, "b": 3});
-    val row2 = Row({"a": 2, "b": 4});
-    val table = Table.fromRows([row1, row2]);
-}
-```
-
-??? quote "Stub code in `Table.sdsstub`"
-
-    ```sds linenums="189"
-    @Deprecated(
-        alternative="None.",
-        reason="This interface cannot be implemented efficiently.",
-        sinceVersion="0.15.0",
-        removalVersion="0.16.0"
-    )
-    @Pure
-    @PythonName("from_rows")
-    static fun fromRows(
-        rows: List<Row>
+    ```sds linenums="147"
+    @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
+    @PythonName("from_parquet_file")
+    static fun fromParquetFile(
+        path: String
     ) -> table: Table
     ```

@@ -1,494 +1,164 @@
-# :warning:{ title="Deprecated" } `#!sds class` Row {#safeds.data.tabular.containers.Row data-toc-label='Row'}
+---
+search:
+  boost: 0.5
+---
 
-!!! warning "Deprecated"
+# <code class="doc-symbol doc-symbol-class"></code> `Row` {#safeds.data.tabular.containers.Row data-toc-label='[class] Row'}
 
-    This class is deprecated since version **0.15.0** and will be removed in version **0.16.0**.
+A one-dimensional collection of named, heterogeneous values.
 
-    - **Alternative:** None.
-    - **Reason:** This interface cannot be implemented efficiently.
-
-A row is a collection of named values.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `data` | [`Map<String, Any>?`][safeds.lang.Map] | The data. If None, an empty row is created. | `#!sds null` |
-
-**Examples:**
-
-```sds hl_lines="2"
-pipeline example {
-    val row = Row({"a": 1, "b": 2});
-}
-```
+This class cannot be instantiated directly. It is only used for arguments of callbacks.
 
 ??? quote "Stub code in `Row.sdsstub`"
 
-    ```sds linenums="21"
-    class Row(
-        data: Map<String, Any>? = null // TODO: update default value to empty map
-    ) {
+    ```sds linenums="11"
+    class Row {
         /**
-         * Return a list of all column names in the row.
-         *
-         * @example
-         * pipeline example {
-         *     val row = Row({"a": 1, "b": 2});
-         *     val columnNames = row.columnNames; // ["a", "b"]
-         * }
+         * The names of the columns in the row.
          */
         @PythonName("column_names") attr columnNames: List<String>
         /**
-         * Return the number of columns in this row.
-         *
-         * @example
-         * pipeline example {
-         *     val row = Row({"a": 1, "b": 2});
-         *     val numberOfColumns = row.numberOfColumns; // 2
-         * }
+         * The number of columns in the row.
          */
-        @PythonName("number_of_columns") attr numberOfColumns: Int
+        @PythonName("number_of_columns") attr columnCount: Int
         /**
-         * Return the schema of the row.
-         *
-         * @example
-         * pipeline example {
-         *     val row = Row({"a": 1, "b": 2});
-         *     val `schema` = row.`schema`;
-         * }
+         * The schema of the row.
          */
-        attr `schema`: Schema
+        attr ^schema: Schema
 
         /**
-         * Create a row from a dictionary that maps column names to column values.
+         * Get the value of the specified column.
          *
-         * @param data The data.
+         * @param name The name of the column.
          *
-         * @result row The created row.
-         *
-         * @example
-         * pipeline example {
-         *     val row = Row.fromDict({"a": 1, "b": 2});
-         * }
-         */
-        @Pure
-        @PythonName("from_dict")
-        static fun fromDict(
-            data: Map<String, Any>
-        ) -> row: Row
-
-        /**
-         * Return the value of a specified column.
-         *
-         * @param columnName The column name.
-         *
-         * @result value The column value.
-         *
-         * @example
-         * pipeline example {
-         *     val row = Row({"a": 1, "b": 2});
-         *     val value = row.getValue("a"); // 1
-         * }
+         * @result value The value of the column.
          */
         @Pure
         @PythonName("get_value")
         fun getValue(
-            @PythonName("column_name") columnName: String
-        ) -> value: Any
+            name: String
+        ) -> value: Cell<Any>
 
         /**
-         * Check whether the row contains a given column.
+         * Get the type of the specified column.
          *
-         * @param columnName The column name.
-         *
-         * @result hasColumn True, if the row contains the column, False otherwise.
-         *
-         * @example
-         * pipeline example {
-         *     val row = Row({"a": 1, "b": 2});
-         *     val hasColumn = row.hasColumn("a"); // True
-         * }
-         */
-        @Pure
-        @PythonName("has_column")
-        fun hasColumn(
-            @PythonName("column_name") columnName: String
-        ) -> hasColumn: Boolean
-
-        /**
-         * Return the type of the specified column.
-         *
-         * @param columnName The column name.
+         * @param name The name of the column.
          *
          * @result type The type of the column.
-         *
-         * @example
-         * pipeline example {
-         *     val row = Row({"a": 1, "b": 2});
-         *     val type = row.getColumnType("a"); // Integer
-         * }
          */
         @Pure
         @PythonName("get_column_type")
         fun getColumnType(
-            @PythonName("column_name") columnName: String
-        ) -> type: ColumnType
+            name: String
+        ) -> type: DataType
 
         /**
-         * Sort the columns of a `Row` with the given comparator and return a new `Row`.
+         * Check if the row has a column with the specified name.
          *
-         * The original row is not modified. The comparator is a function with four parameters:
+         * @param name The name of the column.
          *
-         * * `name_1` is the name of the first column.
-         * * `value_1` is the value of the first column.
-         * * `name_2` is the name of the second column.
-         * * `value_2` is the value of the second column.
-         *
-         * It should return an integer, indicating the desired order of the columns:
-         *
-         * * If `col1` should be ordered before `col2`, the function should return a negative number.
-         * * If `col1` should be ordered after `col2`, the function should return a positive number.
-         * * If the original order of `col1` and `col2` should be kept, the function should return 0.
-         *
-         * If no comparator is given, the columns will be sorted alphabetically by their name.
-         *
-         * @param comparator The function used to compare two tuples of (ColumnName, Value).
-         *
-         * @result sortedRow A new row with sorted columns.
-         *
-         * @example
-         * pipeline example {
-         *     val row = Row({"b": 2, "a": 1});
-         *     val sortedRow = row.sortColumns((name1, value1, name2, value2) ->
-         *         value1 as (Int) - value2 as (Int)
-         *     );
-         * }
+         * @result hasColumn Whether the row has a column with the specified name.
          */
         @Pure
-        @PythonName("sort_columns")
-        fun sortColumns(
-            comparator: (name1: String, value1: Any, name2: String, value2: Any) -> comparison: Int
-        ) -> sortedRow: Row
-
-        /**
-         * Return a map of column names to column values.
-         *
-         * @result map Map representation of the row.
-         *
-         * @example
-         * pipeline example {
-         *     val row = Row({"a": 1, "b": 2});
-         *     val map = row.toMap(); // {"a": 1, "b": 2}
-         * }
-         */
-        @Pure
-        @PythonName("to_dict")
-        fun toMap() -> map: Map<String, Any>
-
-        /**
-         * Return an HTML representation of the row.
-         *
-         * @result html The generated HTML.
-         *
-         * @example
-         * pipeline example {
-         *     val row = Row({"a": 1, "b": 2});
-         *     val html = row.toHtml();
-         * }
-         */
-        @Pure
-        @PythonName("to_html")
-        fun toHtml() -> html: String
+        @PythonName("has_column")
+        fun hasColumn(
+            name: String
+        ) -> hasColumn: Boolean
     }
     ```
 
-## `#!sds attr` columnNames {#safeds.data.tabular.containers.Row.columnNames data-toc-label='columnNames'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `columnCount` {#safeds.data.tabular.containers.Row.columnCount data-toc-label='[attribute] columnCount'}
 
-Return a list of all column names in the row.
-
-**Type:** [`List<String>`][safeds.lang.List]
-
-**Examples:**
-
-```sds hl_lines="3"
-pipeline example {
-    val row = Row({"a": 1, "b": 2});
-    val columnNames = row.columnNames; // ["a", "b"]
-}
-```
-
-## `#!sds attr` numberOfColumns {#safeds.data.tabular.containers.Row.numberOfColumns data-toc-label='numberOfColumns'}
-
-Return the number of columns in this row.
+The number of columns in the row.
 
 **Type:** [`Int`][safeds.lang.Int]
 
-**Examples:**
+## <code class="doc-symbol doc-symbol-attribute"></code> `columnNames` {#safeds.data.tabular.containers.Row.columnNames data-toc-label='[attribute] columnNames'}
 
-```sds hl_lines="3"
-pipeline example {
-    val row = Row({"a": 1, "b": 2});
-    val numberOfColumns = row.numberOfColumns; // 2
-}
-```
+The names of the columns in the row.
 
-## `#!sds attr` schema {#safeds.data.tabular.containers.Row.schema data-toc-label='schema'}
+**Type:** [`List<String>`][safeds.lang.List]
 
-Return the schema of the row.
+## <code class="doc-symbol doc-symbol-attribute"></code> `schema` {#safeds.data.tabular.containers.Row.schema data-toc-label='[attribute] schema'}
+
+The schema of the row.
 
 **Type:** [`Schema`][safeds.data.tabular.typing.Schema]
 
-**Examples:**
+## <code class="doc-symbol doc-symbol-function"></code> `getColumnType` {#safeds.data.tabular.containers.Row.getColumnType data-toc-label='[function] getColumnType'}
 
-```sds hl_lines="3"
-pipeline example {
-    val row = Row({"a": 1, "b": 2});
-    val `schema` = row.`schema`;
-}
-```
-
-## `#!sds fun` getColumnType {#safeds.data.tabular.containers.Row.getColumnType data-toc-label='getColumnType'}
-
-Return the type of the specified column.
+Get the type of the specified column.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `columnName` | [`String`][safeds.lang.String] | The column name. | - |
+| `name` | [`String`][safeds.lang.String] | The name of the column. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `type` | [`ColumnType`][safeds.data.tabular.typing.ColumnType] | The type of the column. |
-
-**Examples:**
-
-```sds hl_lines="3"
-pipeline example {
-    val row = Row({"a": 1, "b": 2});
-    val type = row.getColumnType("a"); // Integer
-}
-```
+| `type` | [`DataType`][safeds.data.tabular.typing.DataType] | The type of the column. |
 
 ??? quote "Stub code in `Row.sdsstub`"
 
-    ```sds linenums="124"
+    ```sds linenums="45"
     @Pure
     @PythonName("get_column_type")
     fun getColumnType(
-        @PythonName("column_name") columnName: String
-    ) -> type: ColumnType
+        name: String
+    ) -> type: DataType
     ```
 
-## `#!sds fun` getValue {#safeds.data.tabular.containers.Row.getValue data-toc-label='getValue'}
+## <code class="doc-symbol doc-symbol-function"></code> `getValue` {#safeds.data.tabular.containers.Row.getValue data-toc-label='[function] getValue'}
 
-Return the value of a specified column.
+Get the value of the specified column.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `columnName` | [`String`][safeds.lang.String] | The column name. | - |
+| `name` | [`String`][safeds.lang.String] | The name of the column. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `value` | [`Any`][safeds.lang.Any] | The column value. |
-
-**Examples:**
-
-```sds hl_lines="3"
-pipeline example {
-    val row = Row({"a": 1, "b": 2});
-    val value = row.getValue("a"); // 1
-}
-```
+| `value` | [`Cell<Any>`][safeds.data.tabular.containers.Cell] | The value of the column. |
 
 ??? quote "Stub code in `Row.sdsstub`"
 
-    ```sds linenums="86"
+    ```sds linenums="32"
     @Pure
     @PythonName("get_value")
     fun getValue(
-        @PythonName("column_name") columnName: String
-    ) -> value: Any
+        name: String
+    ) -> value: Cell<Any>
     ```
 
-## `#!sds fun` hasColumn {#safeds.data.tabular.containers.Row.hasColumn data-toc-label='hasColumn'}
+## <code class="doc-symbol doc-symbol-function"></code> `hasColumn` {#safeds.data.tabular.containers.Row.hasColumn data-toc-label='[function] hasColumn'}
 
-Check whether the row contains a given column.
+Check if the row has a column with the specified name.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `columnName` | [`String`][safeds.lang.String] | The column name. | - |
+| `name` | [`String`][safeds.lang.String] | The name of the column. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `hasColumn` | [`Boolean`][safeds.lang.Boolean] | True, if the row contains the column, False otherwise. |
-
-**Examples:**
-
-```sds hl_lines="3"
-pipeline example {
-    val row = Row({"a": 1, "b": 2});
-    val hasColumn = row.hasColumn("a"); // True
-}
-```
+| `hasColumn` | [`Boolean`][safeds.lang.Boolean] | Whether the row has a column with the specified name. |
 
 ??? quote "Stub code in `Row.sdsstub`"
 
-    ```sds linenums="105"
+    ```sds linenums="58"
     @Pure
     @PythonName("has_column")
     fun hasColumn(
-        @PythonName("column_name") columnName: String
+        name: String
     ) -> hasColumn: Boolean
-    ```
-
-## `#!sds fun` sortColumns {#safeds.data.tabular.containers.Row.sortColumns data-toc-label='sortColumns'}
-
-Sort the columns of a `Row` with the given comparator and return a new `Row`.
-
-The original row is not modified. The comparator is a function with four parameters:
-
-* `name_1` is the name of the first column.
-* `value_1` is the value of the first column.
-* `name_2` is the name of the second column.
-* `value_2` is the value of the second column.
-
-It should return an integer, indicating the desired order of the columns:
-
-* If `col1` should be ordered before `col2`, the function should return a negative number.
-* If `col1` should be ordered after `col2`, the function should return a positive number.
-* If the original order of `col1` and `col2` should be kept, the function should return 0.
-
-If no comparator is given, the columns will be sorted alphabetically by their name.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `comparator` | `#!sds (name1: String, value1: Any, name2: String, value2: Any) -> (comparison: Int)` | The function used to compare two tuples of (ColumnName, Value). | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `sortedRow` | [`Row`][safeds.data.tabular.containers.Row] | A new row with sorted columns. |
-
-**Examples:**
-
-```sds hl_lines="3"
-pipeline example {
-    val row = Row({"b": 2, "a": 1});
-    val sortedRow = row.sortColumns((name1, value1, name2, value2) ->
-        value1 as (Int) - value2 as (Int)
-    );
-}
-```
-
-??? quote "Stub code in `Row.sdsstub`"
-
-    ```sds linenums="160"
-    @Pure
-    @PythonName("sort_columns")
-    fun sortColumns(
-        comparator: (name1: String, value1: Any, name2: String, value2: Any) -> comparison: Int
-    ) -> sortedRow: Row
-    ```
-
-## `#!sds fun` toHtml {#safeds.data.tabular.containers.Row.toHtml data-toc-label='toHtml'}
-
-Return an HTML representation of the row.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `html` | [`String`][safeds.lang.String] | The generated HTML. |
-
-**Examples:**
-
-```sds hl_lines="3"
-pipeline example {
-    val row = Row({"a": 1, "b": 2});
-    val html = row.toHtml();
-}
-```
-
-??? quote "Stub code in `Row.sdsstub`"
-
-    ```sds linenums="192"
-    @Pure
-    @PythonName("to_html")
-    fun toHtml() -> html: String
-    ```
-
-## `#!sds fun` toMap {#safeds.data.tabular.containers.Row.toMap data-toc-label='toMap'}
-
-Return a map of column names to column values.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `map` | [`Map<String, Any>`][safeds.lang.Map] | Map representation of the row. |
-
-**Examples:**
-
-```sds hl_lines="3"
-pipeline example {
-    val row = Row({"a": 1, "b": 2});
-    val map = row.toMap(); // {"a": 1, "b": 2}
-}
-```
-
-??? quote "Stub code in `Row.sdsstub`"
-
-    ```sds linenums="177"
-    @Pure
-    @PythonName("to_dict")
-    fun toMap() -> map: Map<String, Any>
-    ```
-
-## `#!sds static fun` fromDict {#safeds.data.tabular.containers.Row.fromDict data-toc-label='fromDict'}
-
-Create a row from a dictionary that maps column names to column values.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `data` | [`Map<String, Any>`][safeds.lang.Map] | The data. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `row` | [`Row`][safeds.data.tabular.containers.Row] | The created row. |
-
-**Examples:**
-
-```sds hl_lines="2"
-pipeline example {
-    val row = Row.fromDict({"a": 1, "b": 2});
-}
-```
-
-??? quote "Stub code in `Row.sdsstub`"
-
-    ```sds linenums="67"
-    @Pure
-    @PythonName("from_dict")
-    static fun fromDict(
-        data: Map<String, Any>
-    ) -> row: Row
     ```

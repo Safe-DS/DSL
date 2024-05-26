@@ -7,38 +7,38 @@ from safeds.ml.classical.classification import Classifier
 /**
  * Random forest classification.
  *
- * @param numberOfTrees The number of trees to be used in the random forest. Has to be greater than 0.
- * @param maximumDepth The maximum depth of each tree. If None, the depth is not limited. Has to be greater than 0.
- * @param minimumNumberOfSamplesInLeaves The minimum number of samples that must remain in the leaves of each tree. Has to be greater than 0.
+ * @param treeCount The number of trees to be used in the random forest. Has to be greater than 0.
+ * @param maxDepth The maximum depth of each tree. If null, the depth is not limited. Has to be greater than 0.
+ * @param minSampleCountInLeaves The minimum number of samples that must remain in the leaves of each tree. Has to be greater than 0.
  *
  * @example
  * pipeline example {
  *     val training = Table.fromCsvFile("training.csv").toTabularDataset("target");
  *     val test = Table.fromCsvFile("test.csv").toTabularDataset("target");
- *     val classifier = RandomForestClassifier(numberOfTrees = 10).fit(training);
+ *     val classifier = RandomForestClassifier(treeCount = 10).fit(training);
  *     val accuracy = classifier.accuracy(test);
  * }
  */
 class RandomForestClassifier(
-    @PythonName("number_of_trees") const numberOfTrees: Int = 100,
-    @PythonName("maximum_depth") maximumDepth: Int? = null,
-    @PythonName("minimum_number_of_samples_in_leaves") const minimumNumberOfSamplesInLeaves: Int = 1,
+    @PythonName("number_of_trees") const treeCount: Int = 100,
+    @PythonName("maximum_depth") maxDepth: Int? = null,
+    @PythonName("minimum_number_of_samples_in_leaves") const minSampleCountInLeaves: Int = 1,
 ) sub Classifier where {
-    numberOfTrees > 0,
-    minimumNumberOfSamplesInLeaves > 0,
+    treeCount > 0,
+    minSampleCountInLeaves > 0,
 } {
     /**
      * Get the number of trees used in the random forest.
      */
-    @PythonName("number_of_trees") attr numberOfTrees: Int
+    @PythonName("number_of_trees") attr treeCount: Int
     /**
      * The maximum depth of each tree.
      */
-    @PythonName("maximum_depth") attr maximumDepth: Int?
+    @PythonName("maximum_depth") attr maxDepth: Int?
     /**
      * The minimum number of samples that must remain in the leaves of each tree.
      */
-    @PythonName("minimum_number_of_samples_in_leaves") attr minimumNumberOfSamplesInLeaves: Int
+    @PythonName("minimum_number_of_samples_in_leaves") attr minSampleCountInLeaves: Int
 
     /**
      * Create a copy of this classifier and fit it with the given training data.
@@ -51,6 +51,6 @@ class RandomForestClassifier(
      */
     @Pure
     fun fit(
-        @PythonName("training_set") trainingSet: union<ExperimentalTabularDataset, TabularDataset>
+        @PythonName("training_set") trainingSet: TabularDataset
     ) -> fittedClassifier: RandomForestClassifier
 }

@@ -68,7 +68,7 @@ builtins = (
 )
 
 identifier_fragment = r"[_a-zA-Z][_a-zA-Z0-9]*"
-identifier_regex = rf"{identifier_fragment}|`{identifier_fragment}`"
+identifier_regex = rf"{identifier_fragment}|^{identifier_fragment}"
 qualified_name_regex = rf"({identifier_regex})(\.({identifier_regex}))*"
 
 

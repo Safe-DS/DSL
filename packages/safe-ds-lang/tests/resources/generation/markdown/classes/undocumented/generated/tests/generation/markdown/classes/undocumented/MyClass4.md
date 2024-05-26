@@ -1,4 +1,4 @@
-# `#!sds class` MyClass4 {#tests.generation.markdown.classes.undocumented.MyClass4 data-toc-label='MyClass4'}
+# <code class="doc-symbol doc-symbol-class"></code> `MyClass4` {#tests.generation.markdown.classes.undocumented.MyClass4 data-toc-label='[class] MyClass4'}
 
 **Parameters:**
 

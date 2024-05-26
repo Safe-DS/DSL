@@ -1,4 +1,0 @@
-package safeds.ml.nn
-
-@Experimental
-class OutputConversionImageToImage() sub OutputConversion<Image, Image>

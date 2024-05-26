@@ -8,7 +8,7 @@ from safeds.ml.classical.regression import Regressor
  * Ada Boost regression.
  *
  * @param learner The learner from which the boosted ensemble is built.
- * @param maximumNumberOfLearners The maximum number of learners at which boosting is terminated. In case of perfect fit, the learning procedure
+ * @param maxLearnerCount The maximum number of learners at which boosting is terminated. In case of perfect fit, the learning procedure
  * is stopped early. Has to be greater than 0.
  * @param learningRate Weight applied to each regressor at each boosting iteration. A higher learning rate increases the contribution
  * of each regressor. Has to be greater than 0.
@@ -17,16 +17,16 @@ from safeds.ml.classical.regression import Regressor
  * pipeline example {
  *     val training = Table.fromCsvFile("training.csv").toTabularDataset("target");
  *     val test = Table.fromCsvFile("test.csv").toTabularDataset("target");
- *     val regressor = AdaBoostRegressor(maximumNumberOfLearners = 100).fit(training);
+ *     val regressor = AdaBoostRegressor(maxLearnerCount = 100).fit(training);
  *     val meanSquaredError = regressor.meanSquaredError(test);
  * }
  */
 class AdaBoostRegressor(
     learner: Regressor = DecisionTreeRegressor(),
-    @PythonName("maximum_number_of_learners") const maximumNumberOfLearners: Int = 50,
+    @PythonName("maximum_number_of_learners") const maxLearnerCount: Int = 50,
     @PythonName("learning_rate") const learningRate: Float = 1.0
 ) sub Regressor where {
-    maximumNumberOfLearners >= 1,
+    maxLearnerCount >= 1,
     learningRate > 0.0
 } {
     /**
@@ -36,7 +36,7 @@ class AdaBoostRegressor(
     /**
      * Get the maximum number of learners in the ensemble.
      */
-    @PythonName("maximum_number_of_learners") attr maximumNumberOfLearners: Int
+    @PythonName("maximum_number_of_learners") attr maxLearnerCount: Int
     /**
      * Get the learning rate.
      */
@@ -53,6 +53,6 @@ class AdaBoostRegressor(
      */
     @Pure
     fun fit(
-        @PythonName("training_set") trainingSet: union<ExperimentalTabularDataset, TabularDataset>
+        @PythonName("training_set") trainingSet: TabularDataset
     ) -> fittedRegressor: AdaBoostRegressor
 }

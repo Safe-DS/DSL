@@ -212,7 +212,7 @@ export class RunnerApi {
             tablePlaceholder +
             '.getColumn("' +
             columnName +
-            '").plotHistogram(); \n'
+            '").plot.histogram(); \n'
         );
     }
 
@@ -224,7 +224,7 @@ export class RunnerApi {
             tablePlaceholder +
             '.getColumn("' +
             columnName +
-            '").plotBoxplot(); \n'
+            '").plot.boxPlot(); \n'
         );
     }
 
@@ -239,9 +239,9 @@ export class RunnerApi {
             newPlaceholderName +
             ' = ' +
             tablePlaceholder +
-            '.plotLineplot(xColumnName="' +
+            '.plot.linePlot(xName="' +
             xAxisColumnName +
-            '", yColumnName="' +
+            '", yName="' +
             yAxisColumnName +
             '"); \n'
         );
@@ -258,16 +258,16 @@ export class RunnerApi {
             newPlaceholderName +
             ' = ' +
             tablePlaceholder +
-            '.plotScatterplot(xColumnName="' +
+            '.plot.scatterPlot(xName="' +
             xAxisColumnName +
-            '", yColumnName="' +
+            '", yName="' +
             yAxisColumnName +
             '"); \n'
         );
     }
 
     private sdsStringForCorrelationHeatmap(tablePlaceholder: string, newPlaceholderName: string) {
-        return 'val ' + newPlaceholderName + ' = ' + tablePlaceholder + '.plotCorrelationHeatmap(); \n';
+        return 'val ' + newPlaceholderName + ' = ' + tablePlaceholder + '.plot.correlationHeatmap(); \n';
     }
 
     private sdsStringForRemoveColumns(columnNames: string[], tablePlaceholder: string, newPlaceholderName: string) {

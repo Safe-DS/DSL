@@ -2,6 +2,7 @@ package safeds.data.labeled.containers
 
 from safeds.data.image.containers import ImageList
 from safeds.data.image.typing import ImageSize
+from safeds.data.labeled.containers import Dataset
 from safeds.data.tabular.containers import Table
 
 /**
@@ -18,7 +19,7 @@ class ImageDataset<T>(
     @PythonName("output_data") outputData: T,
     @PythonName("batch_size") batchSize: Int = 1,
     shuffle: Boolean = false
-) {
+) sub Dataset {
     /**
      * Get the input `ImageSize` of this dataset.
      */

@@ -38,6 +38,6 @@ class LassoRegressor(
      */
     @Pure
     fun fit(
-        @PythonName("training_set") trainingSet: union<ExperimentalTabularDataset, TabularDataset>
+        @PythonName("training_set") trainingSet: TabularDataset
     ) -> fittedRegressor: LassoRegressor
 }

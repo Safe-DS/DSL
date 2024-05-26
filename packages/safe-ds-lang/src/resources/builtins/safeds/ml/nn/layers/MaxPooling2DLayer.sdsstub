@@ -1,0 +1,24 @@
+package safeds.ml.nn.layers
+
+from safeds.ml.nn.layers import Layer
+
+/**
+ * @param kernelSize the size of the kernel
+ * @param stride the stride of the pooling
+ * @param padding the padding of the pooling
+ */
+@Experimental
+class MaxPooling2DLayer(
+    @PythonName("kernel_size") kernelSize: Int,
+    stride: Int = -1,
+    padding: Int = 0
+) sub Layer {
+    /**
+     * Get the input_size of this layer.
+     */
+    @PythonName("input_size") attr inputSize: ImageSize
+    /**
+     * Get the output_size of this layer.
+     */
+    @PythonName("output_size") attr outputSize: ImageSize
+}
