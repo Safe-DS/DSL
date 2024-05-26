@@ -513,6 +513,8 @@
             type: 'internal',
             columnName: $table!.columns[columnIndex].name,
         });
+
+        selectedColumnIndexes = selectedColumnIndexes.filter((selectedIndex) => selectedIndex !== columnIndex);
     };
     //#endregion
 
@@ -535,14 +537,11 @@
         return;
     };
 
-    const generateOneColumnTab = function (type: OneColumnTabTypes) {
-        if (selectedColumnIndexes.length !== 1) {
-            throw new Error('One column must be selected to generate a one column plot');
-        }
+    const generateOneColumnTab = function (type: OneColumnTabTypes, columnIndex: number) {
         if (type === 'infoPanel') {
             throw new Error('Not implemented yet.');
         }
-        const columnName = $table!.columns[selectedColumnIndexes[0]].name;
+        const columnName = $table!.columns[columnIndex].name;
 
         executeExternalHistoryEntry({
             action: type,
@@ -913,20 +912,22 @@
                 <button class="contextItem" type="button" on:click={() => toggleHideColumn(rightClickedColumnIndex)}
                     >Hide Column</button
                 >
-            {/if}
-            {#if selectedColumnIndexes.length === 0 && !$table?.columns[rightClickedColumnIndex].hidden}
-                <button class="contextItem" type="button" on:click={() => generateOneColumnTab('histogram')}
-                    >Plot Histogram</button
+                <button class="contextItem" type="button" on:click={() => setSelectionToColumn(rightClickedColumnIndex)}
+                    >Select Column</button
                 >
-                <button class="contextItem" type="button" on:click={() => generateOneColumnTab('boxPlot')}>
-                    Plot Boxplot</button
-                >
-            {:else if selectedColumnIndexes.includes(rightClickedColumnIndex) && !$table?.columns[rightClickedColumnIndex].hidden}
-                <button
-                    class="contextItem"
-                    type="button"
-                    on:click={() => removeColumnFromSelection(rightClickedColumnIndex)}>Deselect Column</button
-                >
+                {#if selectedColumnIndexes.includes(rightClickedColumnIndex)}
+                    <button
+                        class="contextItem"
+                        type="button"
+                        on:click={() => removeColumnFromSelection(rightClickedColumnIndex)}>Deselect Column</button
+                    >
+                {:else if selectedColumnIndexes.length >= 1}
+                    <button
+                        class="contextItem"
+                        type="button"
+                        on:click={() => addColumnToSelection(rightClickedColumnIndex)}>Add To Selection</button
+                    >
+                {/if}
                 {#if selectedColumnIndexes.length === 2}
                     <button class="contextItem" type="button" on:click={() => generateTwoColumnTab('scatterPlot')}
                         >Plot Scatterplot</button
@@ -934,44 +935,19 @@
                     <button class="contextItem" type="button" on:click={() => generateTwoColumnTab('linePlot')}
                         >Plot Lineplot</button
                     >
-                {:else if selectedColumnIndexes.length === 1}
-                    <button class="contextItem" type="button" on:click={() => generateOneColumnTab('histogram')}
-                        >Plot Histogram</button
-                    >
-                    <button class="contextItem" type="button" on:click={() => generateOneColumnTab('boxPlot')}>
-                        Plot Boxplot</button
-                    >
                 {/if}
-            {:else}
-                {#if selectedColumnIndexes.length >= 1 && !$table?.columns[rightClickedColumnIndex].hidden}
-                    <button
-                        class="contextItem"
-                        type="button"
-                        on:click={() => addColumnToSelection(rightClickedColumnIndex)}>Add To Selection</button
-                    >
-                    {#if selectedColumnIndexes.length === 2}
-                        <button class="contextItem" type="button" on:click={() => generateTwoColumnTab('scatterPlot')}
-                            >Plot Scatterplot</button
-                        >
-                        <button class="contextItem" type="button" on:click={() => generateTwoColumnTab('linePlot')}
-                            >Plot Lineplot</button
-                        >
-                    {:else if selectedColumnIndexes.length === 1}
-                        <button class="contextItem" type="button" on:click={() => generateOneColumnTab('histogram')}
-                            >Plot Histogram</button
-                        >
-                        <button class="contextItem" type="button" on:click={() => generateOneColumnTab('boxPlot')}>
-                            Plot Boxplot</button
-                        >
-                    {/if}
-                {/if}
-                {#if !$table?.columns[rightClickedColumnIndex].hidden}
-                    <button
-                        class="contextItem"
-                        type="button"
-                        on:click={() => setSelectionToColumn(rightClickedColumnIndex)}>Select Column</button
-                    >
-                {/if}
+                <button
+                    class="contextItem"
+                    type="button"
+                    on:click={() => generateOneColumnTab('histogram', rightClickedColumnIndex)}>Plot Histogram</button
+                >
+                <button
+                    class="contextItem"
+                    type="button"
+                    on:click={() => generateOneColumnTab('boxPlot', rightClickedColumnIndex)}
+                >
+                    Plot Boxplot</button
+                >
             {/if}
         </div>
     {/if}
