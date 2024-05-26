@@ -11,6 +11,10 @@
     export let tab: Tab | EmptyTab;
     export let sidebarWidth: number;
 
+    const allowsNonNumericalColumns = function (type: string) {
+        return type === 'histogram';
+    };
+
     const columnNames = derived(
         table,
         ($table) =>
@@ -140,7 +144,7 @@
             throw new Error('Invalid tab type');
         }
 
-        if (copyOverColumns && tab.type !== 'empty') {
+        if (copyOverColumns && tab.type !== 'empty' && $buildATab.columnNumber !== 'none') {
             if (tab.columnNumber === 'one') {
                 buildATab.update((buildingTab) => {
                     buildingTab.xAxisColumnName = tab.content.columnName;
@@ -153,6 +157,33 @@
                     return buildingTab;
                 });
             }
+        }
+
+        // Check if columns now require numerical column only and if so check if selected column(s) are numerical
+        if (!allowsNonNumericalColumns($buildATab.type)) {
+            buildATab.update((buildingTab) => {
+                if (
+                    buildingTab.xAxisColumnName &&
+                    !$numericalColumnNames.find((column) => column.name === buildingTab.xAxisColumnName)
+                ) {
+                    buildingTab.xAxisColumnName = undefined;
+                }
+                if (
+                    buildingTab.yAxisColumnName &&
+                    !$numericalColumnNames.find((column) => column.name === buildingTab.yAxisColumnName)
+                ) {
+                    buildingTab.yAxisColumnName = undefined;
+                }
+                return buildingTab;
+            });
+        }
+
+        // Set yAxisColumnName to undefined if it is not required
+        if ($buildATab.columnNumber === 'one') {
+            buildATab.update((buildingTab) => {
+                buildingTab.yAxisColumnName = undefined;
+                return buildingTab;
+            });
         }
     };
 
@@ -292,7 +323,7 @@
                                         $tabInfo.xAxisColumnName ??
                                         'Select'}
                                     onSelect={newXAxisSelected}
-                                    possibleOptions={$tabInfo.type === 'histogram'
+                                    possibleOptions={allowsNonNumericalColumns($tabInfo.type)
                                         ? $columnNames
                                         : $numericalColumnNames}
                                     fontSize="1.1em"
@@ -309,7 +340,7 @@
                                         $tabInfo.xAxisColumnName ??
                                         'Select'}
                                     onSelect={newXAxisSelected}
-                                    possibleOptions={$tabInfo.type === 'histogram'
+                                    possibleOptions={allowsNonNumericalColumns($tabInfo.type)
                                         ? $columnNames
                                         : $numericalColumnNames}
                                     fontSize="1.1em"
@@ -343,7 +374,9 @@
                         <DropDownButton
                             selectedOption={$tabInfo.content?.yAxisColumnName ?? $tabInfo.yAxisColumnName ?? 'Select'}
                             onSelect={newYAxisSelected}
-                            possibleOptions={$tabInfo.type === 'histogram' ? $columnNames : $numericalColumnNames}
+                            possibleOptions={allowsNonNumericalColumns($tabInfo.type)
+                                ? $columnNames
+                                : $numericalColumnNames}
                             fontSize="1.1em"
                             height="40px"
                             width="140px"
@@ -392,10 +425,11 @@
     .infoBar {
         display: flex;
         flex-direction: row;
-        align-items: center;
+        align-items: flex-end;
         justify-content: space-between;
         max-width: 750px;
         margin-bottom: 4vw;
+        height: 65px;
     }
 
     .leftInfoRow {
