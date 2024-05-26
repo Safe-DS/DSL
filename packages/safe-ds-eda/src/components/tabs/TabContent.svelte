@@ -86,8 +86,9 @@
             return 'Lineplot';
         } else if (fromTab.type === 'scatterPlot') {
             return 'Scatterplot';
-        } else if (fromTab.type === 'infoPanel') return 'Info Panel';
-        else {
+        } else if (fromTab.type === 'infoPanel') {
+            return 'Info Panel';
+        } else {
             throw new Error('Invalid tab type');
         }
     };
@@ -291,7 +292,9 @@
                                         $tabInfo.xAxisColumnName ??
                                         'Select'}
                                     onSelect={newXAxisSelected}
-                                    possibleOptions={$tabInfo.type === 'boxPlot' ? $numericalColumnNames : $columnNames}
+                                    possibleOptions={$tabInfo.type === 'histogram'
+                                        ? $columnNames
+                                        : $numericalColumnNames}
                                     fontSize="1.1em"
                                     height="40px"
                                     width="140px"
@@ -306,7 +309,9 @@
                                         $tabInfo.xAxisColumnName ??
                                         'Select'}
                                     onSelect={newXAxisSelected}
-                                    possibleOptions={$columnNames}
+                                    possibleOptions={$tabInfo.type === 'histogram'
+                                        ? $columnNames
+                                        : $numericalColumnNames}
                                     fontSize="1.1em"
                                     height="40px"
                                     width="140px"
@@ -338,7 +343,7 @@
                         <DropDownButton
                             selectedOption={$tabInfo.content?.yAxisColumnName ?? $tabInfo.yAxisColumnName ?? 'Select'}
                             onSelect={newYAxisSelected}
-                            possibleOptions={$columnNames}
+                            possibleOptions={$tabInfo.type === 'histogram' ? $columnNames : $numericalColumnNames}
                             fontSize="1.1em"
                             height="40px"
                             width="140px"
