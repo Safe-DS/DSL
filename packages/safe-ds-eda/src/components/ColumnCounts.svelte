@@ -1,7 +1,5 @@
 <script lang="ts">
-    import { each } from 'lodash';
-    import { addEmptyTabHistoryEntry, addInternalToHistory } from '../apis/historyApi';
-    import PlusIcon from '../icons/Plus.svelte';
+    import { addInternalToHistory } from '../apis/historyApi';
     import { disableNonContextMenuEffects, restoreNonContextMenuEffects } from '../toggleNonContextMenuEffects';
     import { preventClicks, table } from '../webviewState';
 
@@ -91,6 +89,7 @@
     .wrapper {
         cursor: pointer;
         position: relative;
+        z-index: 100;
     }
 
     .text {
@@ -114,7 +113,7 @@
         position: absolute;
         border: 2px solid var(--medium-light-color);
         background-color: var(--lightest-color);
-        z-index: 1000;
+        z-index: 100;
         padding: 0;
         color: var(--darkest-color);
         display: flex;
