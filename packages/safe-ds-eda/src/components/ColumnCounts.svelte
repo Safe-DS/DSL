@@ -79,7 +79,7 @@
                 >
             {/each}
             {#if $table.columns.filter((col) => col.hidden).length === 0}
-                <button disabled>No Col. Hidden</button>
+                <button disabled>All visible</button>
             {/if}
         </div>
     {/if}
