@@ -61,7 +61,7 @@
             action: 'showColumn',
             alias: `Show column ${columnName}`,
             type: 'internal',
-            columnName: columnName,
+            columnName,
         });
     };
 </script>
