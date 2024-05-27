@@ -22,9 +22,8 @@
             <span class="tableName"
                 >{$table?.name ?? 'Loading ...'}
                 <span class="caret"><CaretIcon /></span>
-            </span>{/if}
-        {#if width > 70}
-            <span class="rowCounts">{$table?.visibleRows ?? 0}/{$table?.totalRows ?? 0} Rows</span>{/if}
+            </span>
+        {/if}
     </div>
     {#if width > 50}
         <div class="historyBar" class:no-borders={width < 50}>
@@ -58,14 +57,55 @@
             <NewTabButton />
         </div>
     {/if}
+    <div class="footer" style:width="{width}px" class:footerCellsCrunched={width < 300}>
+        <div class="footerCell">
+            <span>{$table?.visibleRows ?? 0}/{$table?.totalRows ?? 0}</span>
+            <span>Rows</span>
+        </div>
+        <div class="footerCell columnCount">
+            <span>{$table?.columns.filter((col) => !col.hidden).length ?? 0}/{$table?.columns.length ?? 0}</span>
+            <span>Columns </span>
+        </div>
+    </div>
 </div>
 
 <style>
     .sidebar {
         background-color: var(--bg-dark);
         color: var(--font-dark);
+        height: calc(100% - 64px);
         overflow-y: auto;
         overflow-x: hidden;
+        position: relative;
+    }
+
+    .footer {
+        height: 64px;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        position: fixed;
+        bottom: 0;
+        background-color: var(--bg-medium);
+        padding: 20px;
+        gap: 20px;
+    }
+
+    .footerCell {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .footerCellsCrunched .footerCell {
+        flex-direction: column;
+        gap: 0px;
+    }
+
+    .columnCount {
+        cursor: pointer;
     }
 
     .titleBar {
@@ -144,7 +184,6 @@
         display: flex;
         flex-direction: column;
         width: 100%;
-        height: fit-content;
     }
 
     .tab {

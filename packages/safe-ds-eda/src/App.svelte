@@ -71,6 +71,7 @@
         overflow: hidden;
         position: relative;
         background-color: var(--bg-dark);
+        height: 100%;
     }
 
     .contentWrapper {
