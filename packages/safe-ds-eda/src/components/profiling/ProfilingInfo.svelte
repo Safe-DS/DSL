@@ -26,12 +26,12 @@
                 content: {
                     columnName,
                     encodedImage: profilingItem.value,
-                    outdated: false,
                 },
                 id: crypto.randomUUID(),
                 imageTab: true,
                 columnNumber: 'one',
                 isInGeneration: false,
+                outdated: false,
             },
         );
     };
