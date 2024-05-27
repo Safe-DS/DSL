@@ -59,7 +59,7 @@
             {/if}
         </div>
         <div class="icon">
-            <CaretIcon color="var(--bg-bright)" />
+            <CaretIcon color="var(--lightest-color)" />
         </div>
     </div>
 
@@ -100,7 +100,7 @@
         align-items: center;
         padding: 0px 0px 0px 15px;
         border-radius: 5px;
-        background-color: var(--bg-dark);
+        background-color: var(--medium-light-color);
         height: 100%;
         width: 100%;
         cursor: pointer;
@@ -113,7 +113,7 @@
     }
 
     .dropdownButton .buttonText {
-        color: var(--font-dark);
+        color: var(--darkest-color);
         font-size: inherit;
         font-family: sans-serif;
         text-overflow: ellipsis;
@@ -136,7 +136,7 @@
         height: 100%;
         display: inline-block;
         border-radius: 5px 0px 0px 5px;
-        background-color: var(--bg-most-dark);
+        background-color: var(--medium-color);
         transform: rotate(180deg);
         display: flex;
         align-items: center;
@@ -159,12 +159,12 @@
     }
 
     .disabledButton:hover {
-        background-color: var(--bg-dark) !important;
+        background-color: var(--medium-light-color) !important;
     }
 
     .dropdownMenu {
         position: absolute; /* Positioning the dropdown near the button */
-        background-color: var(--bg-dark);
+        background-color: var(--medium-light-color);
         border-radius: 0px 0px 5px 5px;
         list-style: none;
         padding: 0;
@@ -175,7 +175,7 @@
 
     .dropdownItem {
         padding: 10px 15px;
-        color: var(--font-dark);
+        color: var(--darkest-color);
         cursor: pointer;
         font-size: 16px;
         font-family: sans-serif;
@@ -192,7 +192,7 @@
 
     .itemComment {
         font-size: 0.7em;
-        color: var(--font-light);
+        color: var(--dark-color);
     }
 
     .dropdownItem:hover {

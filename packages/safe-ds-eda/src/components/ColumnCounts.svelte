@@ -107,16 +107,16 @@
     }
 
     .text:hover * {
-        color: var(--font-light);
+        color: var(--dark-color);
     }
 
     .contextMenu {
         position: absolute;
-        border: 2px solid var(--bg-dark);
-        background-color: var(--bg-bright);
+        border: 2px solid var(--medium-light-color);
+        background-color: var(--lightest-color);
         z-index: 1000;
         padding: 0;
-        color: var(--font-dark);
+        color: var(--darkest-color);
         display: flex;
         flex-direction: column;
         width: max-content;
@@ -128,20 +128,20 @@
     .contextMenu button {
         padding: 5px 15px;
         cursor: pointer;
-        background-color: var(--bg-bright);
-        color: var(--font-dark);
+        background-color: var(--lightest-color);
+        color: var(--darkest-color);
         text-align: left;
         width: 100%;
     }
 
     .contextMenu button:hover {
         background-color: var(--primary-color);
-        color: var(--font-bright);
+        color: var(--light-color);
     }
 
     .contextMenu :disabled:hover {
-        background-color: var(--bg-bright);
-        color: var(--font-dark);
+        background-color: var(--lightest-color);
+        color: var(--darkest-color);
         cursor: default;
     }
 </style>

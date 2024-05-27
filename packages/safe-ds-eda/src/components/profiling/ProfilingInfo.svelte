@@ -139,15 +139,15 @@
     }
 
     .important {
-        color: var(--font-dark);
+        color: var(--darkest-color);
     }
 
     .default {
-        color: var(--font-light);
+        color: var(--dark-color);
     }
 
     .category {
-        color: var(--font-light);
+        color: var(--dark-color);
     }
 
     .zoomIconWrapper {

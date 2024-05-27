@@ -71,8 +71,8 @@
 
 <style>
     .sidebar {
-        background-color: var(--bg-dark);
-        color: var(--font-dark);
+        background-color: var(--medium-light-color);
+        color: var(--darkest-color);
         height: calc(100% - 64px);
         overflow-y: auto;
         overflow-x: hidden;
@@ -87,7 +87,7 @@
         align-items: center;
         position: fixed;
         bottom: 0;
-        background-color: var(--bg-medium);
+        background-color: var(--light-color);
         padding: 20px;
         gap: 20px;
     }
@@ -121,7 +121,7 @@
     .sidebarButton {
         height: 50px;
         padding: 0px;
-        border-top: 2px solid var(--bg-bright);
+        border-top: 2px solid var(--lightest-color);
     }
 
     .tableName {
@@ -140,14 +140,14 @@
 
     .historyBar {
         font-size: 1.3rem;
-        background-color: var(--bg-bright);
+        background-color: var(--lightest-color);
         padding: 19.5px 20px 0 20px;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         flex-wrap: wrap;
         align-items: center;
-        border-bottom: 2px solid var(--bg-medium);
+        border-bottom: 2px solid var(--light-color);
     }
 
     .no-borders {
@@ -194,11 +194,11 @@
         align-items: center;
         padding-left: 20px;
         cursor: pointer;
-        background-color: var(--bg-medium);
+        background-color: var(--light-color);
         font-size: 1.1rem;
     }
     .tabActive {
-        background-color: var(--bg-bright);
+        background-color: var(--lightest-color);
         font-size: 1.4rem;
         height: 50px;
     }

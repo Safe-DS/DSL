@@ -974,7 +974,7 @@
         top: 0;
         left: 0;
         right: 0;
-        background-color: var(--bg-dark);
+        background-color: var(--medium-light-color);
         overflow: visible;
     }
 
@@ -990,7 +990,7 @@
     table {
         table-layout: fixed;
         width: 100.1%; /* To prevent lagging on vert scroll */
-        background-color: var(--bg-dark);
+        background-color: var(--medium-light-color);
         overflow-x: scroll;
         position: relative;
     }
@@ -1005,12 +1005,12 @@
         background-color: transparent;
     }
     th {
-        border-left: 3px solid var(--bg-bright);
-        border-right: 2px solid var(--bg-bright);
-        border-bottom: 3px solid var(--bg-bright);
-        border-top: 3px solid var(--bg-bright);
+        border-left: 3px solid var(--lightest-color);
+        border-right: 2px solid var(--lightest-color);
+        border-bottom: 3px solid var(--lightest-color);
+        border-top: 3px solid var(--lightest-color);
         background-color: var(--primary-color);
-        color: var(--bg-bright);
+        color: var(--lightest-color);
         font-weight: 500;
         font-size: 1.1rem;
         overflow: hidden;
@@ -1020,19 +1020,23 @@
         cursor: pointer;
     }
 
+    th:hover {
+        color: var(--medium-light-color);
+    }
+
     th,
     td {
         white-space: nowrap;
         overflow: hidden;
-        border-right: 2px solid var(--bg-dark);
+        border-right: 2px solid var(--medium-light-color);
     }
     tbody {
-        border-left: 3px solid var(--bg-bright);
+        border-left: 3px solid var(--lightest-color);
         z-index: 1;
     }
     tr {
-        border-bottom: 2px solid var(--bg-dark);
-        background-color: var(--bg-bright);
+        border-bottom: 2px solid var(--medium-light-color);
+        background-color: var(--lightest-color);
     }
     tr:hover {
         background-color: var(--primary-color-desaturated);
@@ -1043,7 +1047,7 @@
     }
 
     .noHover:hover {
-        background-color: var(--bg-dark) !important;
+        background-color: var(--medium-light-color) !important;
     }
 
     .resizeHandle {
@@ -1056,7 +1060,7 @@
     }
 
     .borderRight {
-        border-right: 2px solid var(--bg-bright);
+        border-right: 2px solid var(--lightest-color);
     }
     .hiddenProfilingWrapper {
         position: relative !important;
@@ -1070,11 +1074,11 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         font-size: 0.8rem;
-        border-left: 3px solid var(--bg-bright) !important;
+        border-left: 3px solid var(--lightest-color) !important;
     }
 
     .borderColumnEndIndex {
-        border-left: 2px solid var(--bg-dark) !important;
+        border-left: 2px solid var(--medium-light-color) !important;
         text-align: right;
     }
 
@@ -1141,7 +1145,7 @@
         position: absolute !important;
         pointer-events: none; /* Make it non-interactive */
         z-index: 1000; /* Ensure it's on top */
-        border: 3px solid var(--bg-dark);
+        border: 3px solid var(--medium-light-color);
         display: flex;
         flex-direction: column;
         align-items: start;
@@ -1152,11 +1156,11 @@
 
     .contextMenu {
         position: absolute;
-        border: 2px solid var(--bg-dark);
-        background-color: var(--bg-bright);
+        border: 2px solid var(--medium-light-color);
+        background-color: var(--lightest-color);
         z-index: 1000;
         padding: 0;
-        color: var(--font-dark);
+        color: var(--darkest-color);
         display: flex;
         flex-direction: column;
         width: max-content;
@@ -1165,21 +1169,21 @@
     .contextMenu button {
         padding: 5px 15px;
         cursor: pointer;
-        background-color: var(--bg-bright);
-        color: var(--font-dark);
+        background-color: var(--lightest-color);
+        color: var(--darkest-color);
         text-align: left;
         width: 100%;
     }
 
     .contextMenu button:hover {
         background-color: var(--primary-color);
-        color: var(--font-bright);
+        color: var(--light-color);
     }
 
     .profilingBannerRow {
         position: relative;
         z-index: 10;
-        border-top: 2px solid var(--bg-bright);
+        border-top: 2px solid var(--lightest-color);
     }
 
     .profilingBannerRow * {
@@ -1190,9 +1194,9 @@
 
     .profiling {
         padding: 0;
-        border-right: 2px solid var(--bg-bright);
-        border-left: 3px solid var(--bg-bright);
-        background-color: var(--bg-dark) !important;
+        border-right: 2px solid var(--lightest-color);
+        border-left: 3px solid var(--lightest-color);
+        background-color: var(--medium-light-color) !important;
     }
 
     .profiling.expanded {
@@ -1219,11 +1223,11 @@
     .profilingBanner {
         height: 35px;
         width: 100%;
-        background-color: var(--bg-dark);
+        background-color: var(--medium-light-color);
         font-size: 1.1rem;
-        border-top: 2px solid var(--bg-bright);
-        border-left: 3px solid var(--bg-bright);
-        border-bottom: 3px solid var(--bg-bright);
+        border-top: 2px solid var(--lightest-color);
+        border-left: 3px solid var(--lightest-color);
+        border-bottom: 3px solid var(--lightest-color);
         user-select: none;
         padding-left: 0;
         z-index: 10;
@@ -1234,7 +1238,7 @@
     }
 
     .hiddenColumnHeader {
-        background-color: var(--bg-dark);
+        background-color: var(--medium-light-color);
         width: 10px;
         padding: 0px;
     }

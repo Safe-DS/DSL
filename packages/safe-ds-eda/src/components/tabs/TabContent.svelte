@@ -417,7 +417,7 @@
         height: 100%;
         padding: 4vw 50px;
         overflow-x: scroll;
-        background-color: var(--bg-bright);
+        background-color: var(--lightest-color);
         display: grid;
         grid-template-columns: 1fr auto 1fr;
     }
@@ -459,13 +459,13 @@
 
     .axisName {
         font-size: 1.2em;
-        color: var(--font-light);
+        color: var(--dark-color);
     }
 
     .loading {
         min-width: 600px;
         margin: 0 auto;
-        background-color: var(--bg-medium);
+        background-color: var(--light-color);
         position: absolute;
         top: 0;
         left: 0;
@@ -485,7 +485,7 @@
     .generateButton {
         padding: 10px 20px;
         background-color: var(--primary-color);
-        color: var(--font-bright);
+        color: var(--light-color);
         border: none;
         border-radius: 5px;
         cursor: pointer;
@@ -494,7 +494,7 @@
 
     .generateButton:hover {
         background-color: var(--primary-color-desaturated);
-        color: var(--font-light);
+        color: var(--dark-color);
     }
 
     .columnSwitchButton {

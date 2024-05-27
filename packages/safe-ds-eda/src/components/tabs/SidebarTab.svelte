@@ -65,13 +65,13 @@
         height: 100%;
         padding: 0px 20px 0px 20px;
         margin-bottom: 10px;
-        background-color: var(--bg-medium);
+        background-color: var(--light-color);
         font-size: 1.1rem;
         cursor: pointer;
     }
 
     .activeWrapper {
-        background-color: var(--bg-bright);
+        background-color: var(--lightest-color);
         font-size: 1.2rem;
     }
 
@@ -90,6 +90,6 @@
     .comment {
         margin-left: auto;
         font-size: 0.9rem;
-        color: var(--font-light);
+        color: var(--dark-color);
     }
 </style>
