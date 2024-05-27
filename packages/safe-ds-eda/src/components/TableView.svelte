@@ -601,7 +601,7 @@
     const hasProfilingErrors = derived(table, ($table) => {
         if (!$table) return false;
         for (const column of $table.columns) {
-            if (!column.profiling || column.hidden) return false;
+            if (!column.profiling || column.hidden) continue;
             if (
                 column.profiling.missingRatio?.interpretation === 'error' ||
                 column.profiling.validRatio?.interpretation === 'error'
