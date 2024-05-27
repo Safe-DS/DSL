@@ -772,6 +772,8 @@
                                 style="height: {showProfiling && column.profiling
                                     ? getOptionalProfilingHeight(column.profiling)
                                     : ''}; {isReorderDragging && dragStartIndex === index ? 'display: none;' : ''}"
+                                on:mousedown={(event) =>
+                                    event.button === 2 ? handleColumnRightClick(event, index) : null}
                                 on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                             >
                                 <div class="content" class:expanded={showProfiling}>
@@ -793,6 +795,8 @@
                                 style="height: {showProfiling && column.profiling
                                     ? getOptionalProfilingHeight(column.profiling)
                                     : ''};"
+                                on:mousedown={(event) =>
+                                    event.button === 2 ? handleColumnRightClick(event, index) : null}
                                 on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                             >
                             </td>{/if}
