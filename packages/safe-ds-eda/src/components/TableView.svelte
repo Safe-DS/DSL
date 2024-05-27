@@ -151,6 +151,7 @@
     const doResizeDrag = function (event: MouseEvent): void {
         if (isResizeDragging && targetColumn) {
             const currentWidth = startWidth + event.clientX - startX;
+            if (currentWidth < 20) return; // Minimum width
             requestAnimationFrame(() => {
                 targetColumn.style.width = `${currentWidth}px`;
                 savedColumnWidths.update((map) => {
@@ -746,7 +747,8 @@
                             {:else}
                                 <th
                                     bind:this={headerElements[index]}
-                                    class:reorderHighlightedLeft={isReorderDragging && dragCurrentIndex === index}
+                                    class:reorderHighlightedLeftHiddenColumn={isReorderDragging &&
+                                        dragCurrentIndex === index}
                                     class="hiddenColumnHeader"
                                     on:mousedown={(event) =>
                                         event.button === 2 ? handleColumnRightClick(event, index) : null}
@@ -1144,7 +1146,23 @@
     }
 
     .reorderHighlightedLeft {
-        background: linear-gradient(to left, #036ed1 0%, #036ed1 calc(100% - 4px), white calc(100% - 4px), white 100%);
+        background: linear-gradient(
+            to left,
+            var(--primary-color) 0%,
+            var(--primary-color) calc(100% - 4px),
+            var(--lightest-color) calc(100% - 4px),
+            var(--lightest-color) 100%
+        );
+    }
+
+    .reorderHighlightedLeftHiddenColumn {
+        background: linear-gradient(
+            to left,
+            var(--medium-light-color) 0%,
+            var(--medium-light-color) calc(100% - 4px),
+            var(--dark-color) calc(100% - 2px),
+            var(--dark-color) 100%
+        );
     }
 
     .dragging {
@@ -1245,7 +1263,7 @@
 
     .hiddenColumnHeader {
         background-color: var(--medium-light-color);
-        width: 10px;
+        width: 15px;
         padding: 0px;
         cursor: default;
     }
