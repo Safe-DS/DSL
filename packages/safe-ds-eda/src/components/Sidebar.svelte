@@ -6,6 +6,7 @@
     import TableIcon from '../icons/Table.svelte';
     import SidebarTab from './tabs/SidebarTab.svelte';
     import NewTabButton from './NewTabButton.svelte';
+    import ColumnCounts from './ColumnCounts.svelte';
 
     export let width: number;
 
@@ -63,8 +64,7 @@
             <span>Rows</span>
         </div>
         <div class="footerCell columnCount">
-            <span>{$table?.columns.filter((col) => !col.hidden).length ?? 0}/{$table?.columns.length ?? 0}</span>
-            <span>Columns </span>
+            <ColumnCounts flexAsRow={width >= 300} />
         </div>
     </div>
 </div>
