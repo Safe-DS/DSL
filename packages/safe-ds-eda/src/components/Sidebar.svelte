@@ -112,7 +112,7 @@
     .footerCrunched {
         flex-direction: column;
         height: 120px;
-        gap: 10px;
+        gap: 15px;
     }
 
     .footerCellsCrunched .footerCell {

@@ -727,7 +727,12 @@
                                     >
                                         <FilterIcon />
                                     </div>
-                                    <div class="sortIconsWrapper">
+                                    <div
+                                        class="sortIconsWrapper"
+                                        style:display={($savedColumnWidths.get(column.name) ?? 0) > 60
+                                            ? 'inline-flex'
+                                            : 'none'}
+                                    >
                                         <div class="sortIconWrapper">
                                             <CaretIcon color="var(--transparent)" />
                                         </div>
@@ -743,9 +748,10 @@
                                     bind:this={headerElements[index]}
                                     class:reorderHighlightedLeft={isReorderDragging && dragCurrentIndex === index}
                                     class="hiddenColumnHeader"
-                                    on:mousedown={(event) => handleColumnInteractionStart(event, index)}
+                                    on:mousedown={(event) =>
+                                        event.button === 2 ? handleColumnRightClick(event, index) : null}
                                     on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
-                                    >...
+                                >
                                 </th>
                             {/if}
                         {/each}
@@ -1241,5 +1247,6 @@
         background-color: var(--medium-light-color);
         width: 10px;
         padding: 0px;
+        cursor: default;
     }
 </style>
