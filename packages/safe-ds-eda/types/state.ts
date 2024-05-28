@@ -1,4 +1,4 @@
-type InternalAction = 'reorderColumns' | 'resizeColumn' | 'hideColumn' | 'highlightColumn' | 'emptyTab';
+type InternalAction = 'reorderColumns' | 'resizeColumn' | 'hideColumn' | 'showColumn' | 'highlightColumn' | 'emptyTab';
 type ExternalManipulatingAction = 'filterColumn' | 'sortColumn' | TableFilterTypes;
 type ExternalVisualizingAction = TabType | 'refreshTab';
 type Action = InternalAction | ExternalManipulatingAction | ExternalVisualizingAction;
@@ -33,7 +33,7 @@ export interface InternalColumnWithValueHistoryEntry extends InternalHistoryEntr
 }
 
 export interface InternalColumnHistoryEntry extends InternalHistoryEntryBase {
-    action: 'hideColumn' | 'highlightColumn';
+    action: 'hideColumn' | 'highlightColumn' | 'showColumn';
     columnName: string;
 }
 
@@ -117,19 +117,18 @@ interface TabObject {
     imageTab: boolean;
     columnNumber: 'one' | 'two' | 'none';
     isInGeneration: boolean;
+    outdated: boolean;
 }
 
 interface ImageTabObject extends TabObject {
     imageTab: true;
     content: {
-        outdated: boolean;
         encodedImage: Base64Image;
     };
 }
 
 interface OneColumnTabContent {
     columnName: string;
-    outdated: boolean;
     encodedImage: Base64Image;
 }
 
@@ -140,22 +139,21 @@ export interface OneColumnTab extends ImageTabObject {
 }
 
 interface InfoPanelTabContent {
+    columnName: string;
     correlations: { columnName: string; correlation: number }[];
-    outdated: boolean;
     statistics: { statName: string; statValue: number }[];
 }
 
 export interface InfoPanelTab extends TabObject {
     imageTab: false;
     type: 'infoPanel';
-    columnNumber: 'none';
+    columnNumber: 'one';
     content: InfoPanelTabContent;
 }
 
 interface TwoColumnTabContent {
     xAxisColumnName: string;
     yAxisColumnName: string;
-    outdated: boolean;
     encodedImage: Base64Image;
 }
 
@@ -166,7 +164,6 @@ export interface TwoColumnTab extends ImageTabObject {
 }
 
 interface NoColumnTabContent {
-    outdated: boolean;
     encodedImage: Base64Image;
 }
 

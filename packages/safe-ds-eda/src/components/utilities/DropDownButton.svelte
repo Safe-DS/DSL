@@ -3,10 +3,10 @@
     import { preventClicks } from '../../webviewState';
 
     export let selectedOption: string;
-    export let possibleOptions: string[];
-    export let fontSize: string = '1.5em';
-    export let height: string = '50px';
-    export let width: string = '180px';
+    export let possibleOptions: { name: string; color?: string; comment?: string }[];
+    export let fontSize: string = '1.4em';
+    export let height: string = '45px';
+    export let width: string = '160px';
     export let changesDisabled: boolean = false;
     export let onSelect: (selected: string) => void; // Function prop to notify parent of changes
 
@@ -43,7 +43,7 @@
     bind:this={dropdownRef}
     class="wrapperDropdownButton"
     class:disabledWrapper={changesDisabled}
-    style="font-size: {fontSize}; width: {width}; height: {height};"
+    style="font-size: {fontSize}; width: {width}; height: {height}; min-height: 40px;"
 >
     <div
         role="none"
@@ -52,19 +52,32 @@
         class:disabledButton={changesDisabled}
         on:click={toggleDropdown}
     >
-        <div class="buttonText">
-            {selectedOption}
+        <div class="buttonText" style:color={possibleOptions.find((o) => o.name === selectedOption)?.color}>
+            <span>{selectedOption}</span>
+            {#if possibleOptions.find((o) => o.name === selectedOption)?.comment}
+                <span class="itemComment">{possibleOptions.find((o) => o.name === selectedOption)?.comment}</span>
+            {/if}
         </div>
         <div class="icon">
-            <CaretIcon color="var(--bg-bright)" />
+            <CaretIcon color="var(--lightest-color)" />
         </div>
     </div>
 
     {#if isDropdownOpen}
-        <ul class="dropdownMenu" style:width style:top={height}>
+        <ul class="dropdownMenu" style="width: {width}; top: calc(max(40px, {height}));">
             {#each possibleOptions as option}
-                {#if option !== selectedOption}
-                    <li role="none" class="dropdownItem" on:click={() => selectOption(option)}>{option}</li>
+                {#if option.name !== selectedOption}
+                    <li
+                        role="none"
+                        class="dropdownItem"
+                        on:click={() => selectOption(option.name)}
+                        style:color={option.color}
+                    >
+                        <span>{option.name}</span>
+                        {#if option.comment}
+                            <span class="itemComment">{option.comment}</span>
+                        {/if}
+                    </li>
                 {/if}
             {/each}
         </ul>
@@ -87,7 +100,7 @@
         align-items: center;
         padding: 0px 0px 0px 15px;
         border-radius: 5px;
-        background-color: var(--bg-dark);
+        background-color: var(--medium-light-color);
         height: 100%;
         width: 100%;
         cursor: pointer;
@@ -100,7 +113,7 @@
     }
 
     .dropdownButton .buttonText {
-        color: var(--font-dark);
+        color: var(--darkest-color);
         font-size: inherit;
         font-family: sans-serif;
         text-overflow: ellipsis;
@@ -109,6 +122,13 @@
         flex-basis: auto;
         white-space: nowrap;
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+
+    .buttonText * {
+        color: inherit;
     }
 
     .dropdownButton .icon {
@@ -116,7 +136,7 @@
         height: 100%;
         display: inline-block;
         border-radius: 5px 0px 0px 5px;
-        background-color: var(--bg-most-dark);
+        background-color: var(--medium-color);
         transform: rotate(180deg);
         display: flex;
         align-items: center;
@@ -139,12 +159,12 @@
     }
 
     .disabledButton:hover {
-        background-color: var(--bg-dark) !important;
+        background-color: var(--medium-light-color) !important;
     }
 
     .dropdownMenu {
         position: absolute; /* Positioning the dropdown near the button */
-        background-color: var(--bg-dark);
+        background-color: var(--medium-light-color);
         border-radius: 0px 0px 5px 5px;
         list-style: none;
         padding: 0;
@@ -155,12 +175,24 @@
 
     .dropdownItem {
         padding: 10px 15px;
-        color: var(--font-dark);
+        color: var(--darkest-color);
         cursor: pointer;
         font-size: 16px;
         font-family: sans-serif;
         font-size: inherit;
         width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+
+    .dropdownItem * {
+        color: inherit;
+    }
+
+    .itemComment {
+        font-size: 0.7em;
+        color: var(--dark-color);
     }
 
     .dropdownItem:hover {

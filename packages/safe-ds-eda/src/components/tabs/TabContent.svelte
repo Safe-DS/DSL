@@ -11,7 +11,34 @@
     export let tab: Tab | EmptyTab;
     export let sidebarWidth: number;
 
-    const columnNames = $table?.columns.map((column) => column.name) || [];
+    const allowsNonNumericalColumns = function (type: string) {
+        return type === 'histogram';
+    };
+
+    const columnNames = derived(
+        table,
+        ($table) =>
+            $table?.columns.map((column) => {
+                return {
+                    name: column.name,
+                    color: column.hidden ? 'var(--error-color)' : undefined,
+                    comment: column.hidden ? 'hidden' : undefined,
+                };
+            }) || [],
+    );
+    const numericalColumnNames = derived(
+        table,
+        ($table) =>
+            $table?.columns
+                .filter((column) => column.type === 'numerical')
+                .map((column) => {
+                    return {
+                        name: column.name,
+                        color: column.hidden ? 'var(--error-color)' : undefined,
+                        comment: column.hidden ? 'hidden' : undefined,
+                    };
+                }) || [],
+    );
     const possibleTableNames = ['Histogram', 'Boxplot', 'Heatmap', 'Lineplot', 'Scatterplot'];
 
     let isLoadingGeneratedTab = false;
@@ -63,8 +90,9 @@
             return 'Lineplot';
         } else if (fromTab.type === 'scatterPlot') {
             return 'Scatterplot';
-        } else if (fromTab.type === 'infoPanel') return 'Info Panel';
-        else {
+        } else if (fromTab.type === 'infoPanel') {
+            return 'Info Panel';
+        } else {
             throw new Error('Invalid tab type');
         }
     };
@@ -116,7 +144,7 @@
             throw new Error('Invalid tab type');
         }
 
-        if (copyOverColumns && tab.type !== 'empty') {
+        if (copyOverColumns && tab.type !== 'empty' && $buildATab.columnNumber !== 'none') {
             if (tab.columnNumber === 'one') {
                 buildATab.update((buildingTab) => {
                     buildingTab.xAxisColumnName = tab.content.columnName;
@@ -129,6 +157,33 @@
                     return buildingTab;
                 });
             }
+        }
+
+        // Check if columns now require numerical column only and if so check if selected column(s) are numerical
+        if (!allowsNonNumericalColumns($buildATab.type)) {
+            buildATab.update((buildingTab) => {
+                if (
+                    buildingTab.xAxisColumnName &&
+                    !$numericalColumnNames.find((column) => column.name === buildingTab.xAxisColumnName)
+                ) {
+                    buildingTab.xAxisColumnName = undefined;
+                }
+                if (
+                    buildingTab.yAxisColumnName &&
+                    !$numericalColumnNames.find((column) => column.name === buildingTab.yAxisColumnName)
+                ) {
+                    buildingTab.yAxisColumnName = undefined;
+                }
+                return buildingTab;
+            });
+        }
+
+        // Set yAxisColumnName to undefined if it is not required
+        if ($buildATab.columnNumber === 'one') {
+            buildATab.update((buildingTab) => {
+                buildingTab.yAxisColumnName = undefined;
+                return buildingTab;
+            });
         }
     };
 
@@ -247,11 +302,11 @@
                     <DropDownButton
                         selectedOption={getTabName($tabInfo)}
                         onSelect={newTypeSelected}
-                        possibleOptions={possibleTableNames}
+                        possibleOptions={possibleTableNames.map((name) => ({ name }))}
                         {changesDisabled}
                     />
                     <span class="outdated"
-                        >{#if tab.type !== 'empty' && tab.content.outdated}
+                        >{#if tab.type !== 'empty' && tab.outdated && !$isInBuildingState}
                             Outdated!
                         {/if}</span
                     >
@@ -268,9 +323,11 @@
                                         $tabInfo.xAxisColumnName ??
                                         'Select'}
                                     onSelect={newXAxisSelected}
-                                    possibleOptions={columnNames}
+                                    possibleOptions={allowsNonNumericalColumns($tabInfo.type)
+                                        ? $columnNames
+                                        : $numericalColumnNames}
                                     fontSize="1.1em"
-                                    height="30px"
+                                    height="40px"
                                     width="140px"
                                     {changesDisabled}
                                 />
@@ -283,9 +340,11 @@
                                         $tabInfo.xAxisColumnName ??
                                         'Select'}
                                     onSelect={newXAxisSelected}
-                                    possibleOptions={columnNames}
+                                    possibleOptions={allowsNonNumericalColumns($tabInfo.type)
+                                        ? $columnNames
+                                        : $numericalColumnNames}
                                     fontSize="1.1em"
-                                    height="30px"
+                                    height="40px"
                                     width="140px"
                                     {changesDisabled}
                                 />
@@ -315,9 +374,11 @@
                         <DropDownButton
                             selectedOption={$tabInfo.content?.yAxisColumnName ?? $tabInfo.yAxisColumnName ?? 'Select'}
                             onSelect={newYAxisSelected}
-                            possibleOptions={columnNames}
+                            possibleOptions={allowsNonNumericalColumns($tabInfo.type)
+                                ? $columnNames
+                                : $numericalColumnNames}
                             fontSize="1.1em"
-                            height="30px"
+                            height="40px"
                             width="140px"
                             {changesDisabled}
                         />
@@ -356,7 +417,7 @@
         height: 100%;
         padding: 4vw 50px;
         overflow-x: scroll;
-        background-color: var(--bg-bright);
+        background-color: var(--lightest-color);
         display: grid;
         grid-template-columns: 1fr auto 1fr;
     }
@@ -364,10 +425,11 @@
     .infoBar {
         display: flex;
         flex-direction: row;
-        align-items: center;
+        align-items: flex-end;
         justify-content: space-between;
         max-width: 750px;
         margin-bottom: 4vw;
+        height: 65px;
     }
 
     .leftInfoRow {
@@ -397,14 +459,13 @@
 
     .axisName {
         font-size: 1.2em;
-        color: var(--font-light);
+        color: var(--dark-color);
     }
 
     .loading {
-        min-width: 540px;
-        max-width: 800px;
+        min-width: 600px;
         margin: 0 auto;
-        background-color: var(--bg-medium);
+        background-color: var(--light-color);
         position: absolute;
         top: 0;
         left: 0;
@@ -418,13 +479,13 @@
     .content {
         position: relative;
         z-index: 0;
-        min-width: 540px;
+        min-width: 600px;
     }
 
     .generateButton {
         padding: 10px 20px;
         background-color: var(--primary-color);
-        color: var(--font-bright);
+        color: var(--light-color);
         border: none;
         border-radius: 5px;
         cursor: pointer;
@@ -433,7 +494,7 @@
 
     .generateButton:hover {
         background-color: var(--primary-color-desaturated);
-        color: var(--font-light);
+        color: var(--dark-color);
     }
 
     .columnSwitchButton {

@@ -37,6 +37,6 @@
     }
 
     .filterName {
-        color: var(--font-light);
+        color: var(--dark-color);
     }
 </style>

@@ -2,7 +2,7 @@
     <!-- SVG with styled plus -->
     <style>
         .background {
-            fill: var(--bg-bright);
+            fill: var(--lightest-color);
         } /* Primary color background */
         .plus {
             fill: var(--primary-color);
