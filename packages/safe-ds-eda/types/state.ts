@@ -1,5 +1,5 @@
 type InternalAction = 'reorderColumns' | 'resizeColumn' | 'hideColumn' | 'showColumn' | 'highlightColumn' | 'emptyTab';
-type ExternalManipulatingAction = 'filterColumn' | 'sortColumn' | TableFilterTypes;
+type ExternalManipulatingAction = 'filterColumn' | 'sortByColumn' | TableFilterTypes;
 type ExternalVisualizingAction = TabType | 'refreshTab';
 type Action = InternalAction | ExternalManipulatingAction | ExternalVisualizingAction;
 
@@ -52,7 +52,7 @@ export interface ExternalManipulatingTableFilterHistoryEntry extends ExternalMan
 }
 
 export interface ExternalManipulatingColumnSortHistoryEntry extends ExternalManipulatingHistoryEntryBase {
-    action: 'sortColumn';
+    action: 'sortByColumn';
     columnName: string;
     sort: PossibleSorts;
 }
@@ -228,7 +228,7 @@ export interface ProfilingDetailName extends ProfilingDetailBase {
 export type ProfilingDetail = ProfilingDetailStatistical | ProfilingDetailImage | ProfilingDetailName;
 
 // ------------ Types for the Columns -----------
-type PossibleSorts = 'asc' | 'desc' | null;
+export type PossibleSorts = 'asc' | 'desc' | null;
 
 interface ColumnBase {
     type: 'numerical' | 'categorical';

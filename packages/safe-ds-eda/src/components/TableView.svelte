@@ -9,6 +9,7 @@
         Column,
         OneColumnTabTypes,
         PossibleColumnFilter,
+        PossibleSorts,
         Profiling,
         ProfilingDetail,
         ProfilingDetailStatistical,
@@ -556,6 +557,21 @@
     //#endregion // Plotting
 
     //#region Sorting
+    const sortByColumn = function (event: MouseEvent, columnIndex: number, direction: PossibleSorts) {
+        if (event.button !== 0 || $preventClicks) return;
+
+        event.stopPropagation();
+
+        const columnName = $table!.columns[columnIndex].name;
+
+        executeExternalHistoryEntry({
+            action: 'sortByColumn',
+            alias: `Sort by ${columnName} ${direction === 'asc' ? 'ascending' : 'descending'}`,
+            type: 'external-manipulating',
+            columnName,
+            sort: direction,
+        });
+    };
     //#endregion // Sorting
 
     //#region Profiling ---
@@ -737,15 +753,27 @@
                                             ? 'inline-flex'
                                             : 'none'}
                                     >
-                                        <div class="sortIconWrapper">
+                                        <div
+                                            class="sortIconWrapper"
+                                            role="none"
+                                            on:mousedown={(event) => sortByColumn(event, index, 'desc')}
+                                        >
                                             <CaretIcon
-                                                color="var(--transparent-medium)"
+                                                color={column.appliedSort === 'desc'
+                                                    ? 'var(--lightest-color)'
+                                                    : 'var(--transparent-medium)'}
                                                 hoverColor="var(--transparent-light)"
                                             />
                                         </div>
-                                        <div class="sortIconWrapper rotate">
+                                        <div
+                                            class="sortIconWrapper rotate"
+                                            role="none"
+                                            on:mousedown={(event) => sortByColumn(event, index, 'asc')}
+                                        >
                                             <CaretIcon
-                                                color="var(--transparent-medium)"
+                                                color={column.appliedSort === 'asc'
+                                                    ? 'var(--lightest-color)'
+                                                    : 'var(--transparent-medium)'}
                                                 hoverColor="var(--transparent-light)"
                                             />
                                         </div>

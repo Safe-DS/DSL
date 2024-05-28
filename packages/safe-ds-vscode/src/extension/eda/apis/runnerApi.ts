@@ -3,6 +3,7 @@ import {
     Column,
     ExternalHistoryEntry,
     HistoryEntry,
+    PossibleSorts,
     Profiling,
     ProfilingDetailStatistical,
     Table,
@@ -119,6 +120,45 @@ export class RunnerApi {
     }
     //#endregion
 
+    //#region Helpers
+    private runnerResultToTable(tableName: string, runnerResult: any, columnIsNumeric: Map<string, boolean>): Table {
+        const table: Table = {
+            totalRows: 0,
+            name: tableName,
+            columns: [] as Table['columns'],
+            appliedFilters: [] as Table['appliedFilters'],
+        };
+
+        let currentMax = 0;
+        for (const [columnName, columnValues] of Object.entries(runnerResult)) {
+            if (!Array.isArray(columnValues)) {
+                continue;
+            }
+            if (currentMax < columnValues.length) {
+                currentMax = columnValues.length;
+            }
+
+            const columnType = columnIsNumeric.get(columnName) ? 'numerical' : 'categorical';
+
+            const column: Column = {
+                name: columnName,
+                values: columnValues,
+                type: columnType,
+                hidden: false,
+                highlighted: false,
+                appliedFilters: [],
+                appliedSort: null,
+                coloredHighLow: false,
+            };
+            table.columns.push(column);
+        }
+        table.totalRows = currentMax;
+        table.visibleRows = currentMax;
+
+        return table;
+    }
+    //#endregion
+
     //#region SDS code generation
     private sdsStringForHistoryEntry(
         historyEntry: ExternalHistoryEntry,
@@ -170,6 +210,16 @@ export class RunnerApi {
             case 'heatmap':
                 return {
                     sdsString: this.sdsStringForCorrelationHeatmap(
+                        overrideTablePlaceholder ?? this.tablePlaceholder,
+                        newPlaceholderName,
+                    ),
+                    placeholderNames: [newPlaceholderName],
+                };
+            case 'sortByColumn':
+                return {
+                    sdsString: this.sdsStringForSortRowsByColumn(
+                        historyEntry.columnName,
+                        historyEntry.sort,
                         overrideTablePlaceholder ?? this.tablePlaceholder,
                         newPlaceholderName,
                     ),
@@ -287,6 +337,30 @@ export class RunnerApi {
             '"]); \n'
         );
     }
+
+    private sdsStringForSortRowsByColumn(
+        columnName: string,
+        direction: PossibleSorts,
+        tablePlaceholder: string,
+        newPlaceholderName: string,
+    ) {
+        if (!direction) throw new Error('Null direction not implemented!');
+        return (
+            'val ' +
+            newPlaceholderName +
+            ' = ' +
+            tablePlaceholder +
+            '.sortRowsByColumn("' +
+            columnName +
+            '" , ' +
+            (direction === 'desc') +
+            '); \n'
+        );
+    }
+
+    private sdsStringForTableSchema(tablePlaceholder: string, newPlaceholderName: string) {
+        return 'val ' + newPlaceholderName + ' = ' + tablePlaceholder + '.^schema; \n';
+    }
     //#endregion
 
     //#region Placeholder handling
@@ -347,46 +421,13 @@ export class RunnerApi {
             }
 
             await this.addToAndExecutePipeline(pipelineExecutionId, sdsLines, placeholderNames);
-            const columnIsNumeric = new Map<string, string>();
+            const columnIsNumeric = new Map<string, boolean>();
             for (const [columnName, placeholderName] of columnNameToPlaceholderIsNumericNameMap) {
                 const columnType = await this.getPlaceholderValue(placeholderName, pipelineExecutionId);
-                columnIsNumeric.set(columnName, columnType as string);
+                columnIsNumeric.set(columnName, columnType as boolean);
             }
 
-            const table: Table = {
-                totalRows: 0,
-                name: tableName,
-                columns: [] as Table['columns'],
-                appliedFilters: [] as Table['appliedFilters'],
-            };
-
-            let currentMax = 0;
-            for (const [columnName, columnValues] of Object.entries(pythonTableColumns)) {
-                if (!Array.isArray(columnValues)) {
-                    continue;
-                }
-                if (currentMax < columnValues.length) {
-                    currentMax = columnValues.length;
-                }
-
-                const columnType = columnIsNumeric.get(columnName) ? 'numerical' : 'categorical';
-
-                const column: Column = {
-                    name: columnName,
-                    values: columnValues,
-                    type: columnType,
-                    hidden: false,
-                    highlighted: false,
-                    appliedFilters: [],
-                    appliedSort: null,
-                    coloredHighLow: false,
-                };
-                table.columns.push(column);
-            }
-            table.totalRows = currentMax;
-            table.visibleRows = currentMax;
-
-            return table;
+            return this.runnerResultToTable(tableName, pythonTableColumns, columnIsNumeric);
         } else {
             return undefined;
         }
@@ -578,7 +619,7 @@ export class RunnerApi {
                             validRatio,
                             missingRatio,
                             other: [
-                                { type: 'text', value: 'Categorical', interpretation: 'important' },
+                                { type: 'text', value: 'Numerical', interpretation: 'important' },
                                 {
                                     type: 'text',
                                     value: uniqueValues + ' Distincts',
@@ -629,13 +670,17 @@ export class RunnerApi {
     ): Promise<RunnerExecutionResultMessage['value']> {
         let sdsLines = '';
         let placeholderNames: string[] = [];
-        for (const entry of pastEntries) {
+        let currentPlaceholderOverride = this.tablePlaceholder;
+        // let schemaPlaceHolder = this.genPlaceholderName('schema');
+
+        const filteredPastEntries: HistoryEntry[] = this.filterPastEntries(pastEntries, newEntry);
+
+        for (const entry of filteredPastEntries) {
             if (entry.type === 'external-manipulating') {
                 // Only manipulating actions have to be repeated before last entry that is of interest, others do not influence that end result
-                const sdsString = this.sdsStringForHistoryEntry(entry).sdsString;
-                if (sdsString) {
-                    sdsLines += sdsString + '\n';
-                }
+                const sdsStringObj = this.sdsStringForHistoryEntry(entry, currentPlaceholderOverride);
+                sdsLines += sdsStringObj.sdsString + '\n';
+                currentPlaceholderOverride = sdsStringObj.placeholderNames[0]!;
                 safeDsLogger.debug(`Running old entry ${entry.id} with action ${entry.action}`);
             }
         }
@@ -648,7 +693,7 @@ export class RunnerApi {
                 overriddenTablePlaceholder = this.genPlaceholderName('hiddenColsOverride');
                 sdsLines += this.sdsStringForRemoveColumns(
                     hiddenColumns,
-                    this.tablePlaceholder,
+                    currentPlaceholderOverride,
                     overriddenTablePlaceholder,
                 );
             }
@@ -659,14 +704,23 @@ export class RunnerApi {
 
             safeDsLogger.debug(`Running new entry ${newEntry.id} with action ${newEntry.action}`);
         } else if (newEntry.type === 'external-manipulating') {
-            throw new Error('Not implemented');
+            const sdsStringObj = this.sdsStringForHistoryEntry(newEntry, currentPlaceholderOverride);
+            sdsLines += sdsStringObj.sdsString;
+            placeholderNames = sdsStringObj.placeholderNames;
+
+            safeDsLogger.debug(`Running new entry ${newEntry.id} with action ${newEntry.action}`);
         } else if (newEntry.type === 'internal') {
             throw new Error('Cannot execute internal history entry in Runner');
         }
 
         const pipelineExecutionId = crypto.randomUUID();
         try {
-            await this.addToAndExecutePipeline(pipelineExecutionId, sdsLines, placeholderNames);
+            await this.addToAndExecutePipeline(
+                pipelineExecutionId,
+                sdsLines,
+                // placeholderNames.concat(schemaPlaceHolder),
+                placeholderNames,
+            );
         } catch (e) {
             throw e;
         }
@@ -730,8 +784,47 @@ export class RunnerApi {
                 };
             }
         } else {
-            throw new Error('Not implemented');
+            const newTable = await this.getPlaceholderValue(placeholderNames[0]!, pipelineExecutionId);
+            // const schema = await this.getPlaceholderValue(schemaPlaceHolder, pipelineExecutionId); // Not displayable yet, waiting
+
+            if (!newTable) throw new Error('Table not found');
+
+            return {
+                type: 'table',
+                historyId: newEntry.id,
+                content: this.runnerResultToTable(
+                    this.tablePlaceholder,
+                    newTable,
+                    new Map<string, boolean>(
+                        Object.keys(newTable).map((col) => [col, typeof newTable[col][0] === 'number']),
+                    ), // temp until schema works as otherwise we would need another execution to get column names
+                ),
+            };
         }
+    }
+
+    filterPastEntries(pastEntries: HistoryEntry[], newEntry: HistoryEntry): HistoryEntry[] {
+        // Keep all non sort entries and the last sort entry
+        // If want to change from override sort to stacking sort: keep all entries but have to adapt UI to show all applied sorts and their order
+        const filteredPastEntries: HistoryEntry[] = [];
+        let lastSortIndex = -1;
+        if (newEntry.action !== 'sortByColumn') {
+            // If it were to be a sort, the last sort entry is the new entry
+            for (let i = pastEntries.length - 1; i >= 0; i--) {
+                if (pastEntries[i]!.action === 'sortByColumn') {
+                    lastSortIndex = i;
+                    break;
+                }
+            }
+        }
+
+        for (let i = 0; i < pastEntries.length; i++) {
+            if (pastEntries[i]!.action !== 'sortByColumn' || i === lastSortIndex) {
+                filteredPastEntries.push(pastEntries[i]!);
+            }
+        }
+
+        return filteredPastEntries;
     }
     //#endregion
     //#endregion // Public API

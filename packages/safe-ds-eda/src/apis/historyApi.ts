@@ -1,11 +1,13 @@
 import { get } from 'svelte/store';
 import type { FromExtensionMessage, RunnerExecutionResultMessage } from '../../types/messaging';
 import type {
+    CategoricalFilter,
     EmptyTab,
     ExternalHistoryEntry,
     HistoryEntry,
     InteralEmptyTabHistoryEntry,
     InternalHistoryEntry,
+    NumericalFilter,
     RealTab,
     Tab,
     TabHistoryEntry,
@@ -203,8 +205,37 @@ const deployResult = function (result: RunnerExecutionResultMessage, historyEntr
         tabs.update((state) => state.concat(tab));
         currentTabIndex.set(get(tabs).indexOf(tab));
     } else if (resultContent.type === 'table') {
+        table.update((state) => {
+            for (const column of resultContent.content.columns) {
+                const existingColumn = state?.columns.find((c) => c.name === column.name);
+                if (!existingColumn) throw new Error('New Column not found in current table!');
+
+                column.profiling = existingColumn.profiling; // Preserve profiling, after this if it was a type that invalidated profiling, it will be invalidated
+                column.hidden = existingColumn.hidden;
+                column.highlighted = existingColumn.highlighted;
+                if (historyEntry.action === 'sortByColumn' && column.name === historyEntry.columnName) {
+                    column.appliedSort = historyEntry.sort; // Set sorted column to sorted if it was a sort action, otherwise preserve
+                } else if (historyEntry.action !== 'sortByColumn') {
+                    column.appliedSort = existingColumn.appliedSort;
+                }
+                if (historyEntry.action === 'filterColumn' && column.name === historyEntry.columnName) {
+                    if (existingColumn.type === 'numerical') {
+                        column.appliedFilters = existingColumn.appliedFilters.concat([
+                            historyEntry.filter as NumericalFilter,
+                        ]); // Set filtered column to filtered if it was a filter action, otherwise preserve
+                    } else if (existingColumn.type === 'categorical') {
+                        column.appliedFilters = existingColumn.appliedFilters.concat([
+                            historyEntry.filter as CategoricalFilter,
+                        ]); // Set filtered column to filtered if it was a filter action, otherwise preserve
+                    }
+                } else if (historyEntry.action !== 'filterColumn') {
+                    column.appliedFilters = existingColumn.appliedFilters;
+                }
+            }
+            return resultContent.content;
+        });
+
         updateTabOutdated(historyEntry);
-        throw new Error('Not implemented');
     }
 };
 
