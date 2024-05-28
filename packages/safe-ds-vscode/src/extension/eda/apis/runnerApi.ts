@@ -270,6 +270,12 @@ export class RunnerApi {
         return 'val ' + newPlaceholderName + ' = ' + tablePlaceholder + '.plot.correlationHeatmap(); \n';
     }
 
+    private sdsStringForIsNumeric(tablePlaceholder: string, columnName: string, newPlaceholderName: string) {
+        return (
+            'val ' + newPlaceholderName + ' = ' + tablePlaceholder + '.getColumn("' + columnName + '").isNumeric; \n'
+        );
+    }
+
     private sdsStringForRemoveColumns(columnNames: string[], tablePlaceholder: string, newPlaceholderName: string) {
         return (
             'val ' +
@@ -301,6 +307,9 @@ export class RunnerApi {
                     return;
                 }
                 this.services.runtime.PythonServer.removeMessageCallback('placeholder_value', placeholderValueCallback);
+                safeDsLogger.debug(
+                    'Got placeholder value: ' + JSON.stringify(message.data.value).slice(0, 100) + '...',
+                );
                 resolve(message.data.value);
             };
 
@@ -322,8 +331,28 @@ export class RunnerApi {
     //#region Table fetching
     public async getTableByPlaceholder(tableName: string, pipelineExecutionId: string): Promise<Table | undefined> {
         safeDsLogger.debug('Getting table by placeholder: ' + tableName);
+
         const pythonTableColumns = await this.getPlaceholderValue(tableName, pipelineExecutionId);
         if (pythonTableColumns) {
+            // Get Column Types
+            safeDsLogger.debug('Getting column types for table: ' + tableName);
+            let sdsLines = '';
+            let placeholderNames: string[] = [];
+            let columnNameToPlaceholderIsNumericNameMap = new Map<string, string>();
+            for (const columnName of Object.keys(pythonTableColumns)) {
+                const newPlaceholderName = this.genPlaceholderName(columnName + '_type');
+                columnNameToPlaceholderIsNumericNameMap.set(columnName, newPlaceholderName);
+                placeholderNames.push(newPlaceholderName);
+                sdsLines += this.sdsStringForIsNumeric(tableName, columnName, newPlaceholderName);
+            }
+
+            await this.addToAndExecutePipeline(pipelineExecutionId, sdsLines, placeholderNames);
+            const columnIsNumeric = new Map<string, string>();
+            for (const [columnName, placeholderName] of columnNameToPlaceholderIsNumericNameMap) {
+                const columnType = await this.getPlaceholderValue(placeholderName, pipelineExecutionId);
+                columnIsNumeric.set(columnName, columnType as string);
+            }
+
             const table: Table = {
                 totalRows: 0,
                 name: tableName,
@@ -340,8 +369,7 @@ export class RunnerApi {
                     currentMax = columnValues.length;
                 }
 
-                const isNumerical = typeof columnValues[0] === 'number';
-                const columnType = isNumerical ? 'numerical' : 'categorical';
+                const columnType = columnIsNumeric.get(columnName) ? 'numerical' : 'categorical';
 
                 const column: Column = {
                     name: columnName,
