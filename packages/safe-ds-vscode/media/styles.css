@@ -9,7 +9,8 @@
     --medium-color: #ccc;
     --dark-color: #6d6d6d;
     --darkest-color: #292929;
-    --transparent: #ffffffa1;
+    --transparent-light: #ffffffd9;
+    --transparent-medium: #ffffffa1;
 }
 
 .noSelect {

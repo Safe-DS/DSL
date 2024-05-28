@@ -555,6 +555,9 @@
     };
     //#endregion // Plotting
 
+    //#region Sorting
+    //#endregion // Sorting
+
     //#region Profiling ---
     let fullHeadBackground: HTMLElement;
     let profilingInfo: HTMLElement;
@@ -735,10 +738,16 @@
                                             : 'none'}
                                     >
                                         <div class="sortIconWrapper">
-                                            <CaretIcon color="var(--transparent)" />
+                                            <CaretIcon
+                                                color="var(--transparent-medium)"
+                                                hoverColor="var(--transparent-light)"
+                                            />
                                         </div>
                                         <div class="sortIconWrapper rotate">
-                                            <CaretIcon color="var(--transparent)" />
+                                            <CaretIcon
+                                                color="var(--transparent-medium)"
+                                                hoverColor="var(--transparent-light)"
+                                            />
                                         </div>
                                     </div>
                                     <button class="resizeHandle" on:mousedown={(event) => startResizeDrag(event, index)}
