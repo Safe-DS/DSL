@@ -6,31 +6,33 @@ from safeds.data.tabular.transformation import InvertibleTableTransformer
 /**
  * The StandardScaler transforms column values to a range by removing the mean and scaling to unit variance.
  *
+ * @param columnNames The list of columns used to fit the transformer. If `None`, all numeric columns are used.
+ *
  * @example
  * pipeline example {
  *     val table = Table({"a": [0, 1, 0]});
- *     val scaler = StandardScaler().fit(table, ["a"]);
+ *     val scaler = StandardScaler(columnNames = "a").fit(table);
  *     val transformedTable = scaler.transform(table);
  *     // transformedTable = Table({"a": [-0.707,  1.414, -0.707]});
  *     val originalTable = scaler.inverseTransform(transformedTable);
  *     // originalTable = Table({"a": [1, 2, 3]});
  * }
  */
-class StandardScaler() sub InvertibleTableTransformer {
+class StandardScaler(
+    @PythonName("column_names") columnNames: union<List<String>, String, Nothing?> = null
+) sub InvertibleTableTransformer {
     /**
      * Learn a transformation for a set of columns in a table.
      *
      * This transformer is not modified.
      *
      * @param table The table used to fit the transformer.
-     * @param columnNames The list of columns from the table used to fit the transformer. If `null`, all columns are used.
      *
      * @result fittedTransformer The fitted transformer.
      */
     @Pure
     fun fit(
-        table: Table,
-        @PythonName("column_names") columnNames: List<String>?
+        table: Table
     ) -> fittedTransformer: StandardScaler
 
     /**
@@ -39,7 +41,6 @@ class StandardScaler() sub InvertibleTableTransformer {
      * **Note:** Neither this transformer nor the given table are modified.
      *
      * @param table The table used to fit the transformer. The transformer is then applied to this table.
-     * @param columnNames The list of columns from the table used to fit the transformer. If `null`, all columns are used.
      *
      * @result fittedTransformer The fitted transformer.
      * @result transformedTable The transformed table.
@@ -47,7 +48,6 @@ class StandardScaler() sub InvertibleTableTransformer {
     @Pure
     @PythonName("fit_and_transform")
     fun fitAndTransform(
-        table: Table,
-        @PythonName("column_names") columnNames: List<String>? = null
+        table: Table
     ) -> (fittedTransformer: StandardScaler, transformedTable: Table)
 }

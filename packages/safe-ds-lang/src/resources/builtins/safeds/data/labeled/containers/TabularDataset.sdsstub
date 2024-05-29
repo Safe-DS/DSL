@@ -17,7 +17,7 @@ from safeds.data.tabular.containers import Table
  * are specified, all columns except the target column are used as features.
  *
  * @param data The data.
- * @param targetName Name of the target column.
+ * @param targetName The name of the target column.
  * @param extraNames Names of the columns that are neither features nor target. If null, no extra columns are used, i.e. all but
  * the target column are used as features.
  *
@@ -37,7 +37,7 @@ class TabularDataset(
     data: union<Map<String, List<Any>>, Table>,
     @PythonName("target_name") targetName: String,
     @PythonName("extra_names") extraNames: List<String> = []
-) sub Dataset {
+) sub Dataset<Table, Column> {
     /**
      * The feature columns of the tabular dataset.
      */

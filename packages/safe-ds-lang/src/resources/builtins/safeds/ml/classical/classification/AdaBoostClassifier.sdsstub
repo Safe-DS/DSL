@@ -23,22 +23,22 @@ from safeds.ml.classical.classification import Classifier
  */
 class AdaBoostClassifier(
     learner: Classifier = DecisionTreeClassifier(),
-    @PythonName("maximum_number_of_learners") const maxLearnerCount: Int = 50,
+    @PythonName("max_learner_count") const maxLearnerCount: Int = 50,
     @PythonName("learning_rate") const learningRate: Float = 1.0
 ) sub Classifier where {
     maxLearnerCount >= 1,
     learningRate > 0.0
 } {
     /**
-     * Get the base learner used for training the ensemble.
+     * The base learner used for training the ensemble.
      */
     attr learner: Classifier
     /**
-     * Get the maximum number of learners in the ensemble.
+     * The maximum number of learners in the ensemble.
      */
-    @PythonName("maximum_number_of_learners") attr maxLearnerCount: Int
+    @PythonName("max_learner_count") attr maxLearnerCount: Int
     /**
-     * Get the learning rate.
+     * The learning rate.
      */
     @PythonName("learning_rate") attr learningRate: Float
 

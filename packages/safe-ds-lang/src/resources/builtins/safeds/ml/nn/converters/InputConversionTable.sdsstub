@@ -3,8 +3,9 @@ package safeds.ml.nn.converters
 /**
  * The input conversion for a neural network defines the input parameters for the neural network.
  *
- * @param featureNames The names of the features for the input table, used as features for the training.
- * @param targetName The name of the target for the input table, used as target for the training.
+ * @param predictionName The name of the new column where the prediction will be stored.
  */
 @Experimental
-class InputConversionTable() sub InputConversion<TabularDataset, Table>
+class InputConversionTable(
+    @PythonName("prediction_name") predictionName: String = "prediction"
+) sub InputConversion<TabularDataset, Table>
