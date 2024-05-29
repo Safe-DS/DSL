@@ -25,14 +25,14 @@ pipeline example {
 
     ```sds linenums="21"
     class KNearestNeighborsClassifier(
-        @PythonName("number_of_neighbors") const neighborCount: Int
+        @PythonName("neighbor_count") const neighborCount: Int
     ) sub Classifier where {
         neighborCount >= 1
     } {
         /**
-         * Get the number of neighbors used for interpolation.
+         * The number of neighbors used for interpolation.
          */
-        @PythonName("number_of_neighbors") attr neighborCount: Int
+        @PythonName("neighbor_count") attr neighborCount: Int
 
         /**
          * Create a copy of this classifier and fit it with the given training data.
@@ -58,7 +58,7 @@ Whether the model is fitted.
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `neighborCount` {#safeds.ml.classical.classification.KNearestNeighborsClassifier.neighborCount data-toc-label='[attribute] neighborCount'}
 
-Get the number of neighbors used for interpolation.
+The number of neighbors used for interpolation.
 
 **Type:** [`Int`][safeds.lang.Int]
 

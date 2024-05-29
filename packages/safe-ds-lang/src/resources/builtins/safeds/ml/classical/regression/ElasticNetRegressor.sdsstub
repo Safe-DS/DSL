@@ -28,11 +28,11 @@ class ElasticNetRegressor(
     lassoRatio <= 1.0
 } {
     /**
-     * Get the regularization of the model.
+     * The regularization of the model.
      */
     attr alpha: Float
     /**
-     * Get the ratio between Lasso and Ridge regularization.
+     * The ratio between Lasso and Ridge regularization.
      */
     @PythonName("lasso_ratio") attr lassoRatio: Float
 

@@ -17,9 +17,11 @@ A model for regression tasks.
 - [`GradientBoostingRegressor`][safeds.ml.classical.regression.GradientBoostingRegressor]
 - [`KNearestNeighborsRegressor`][safeds.ml.classical.regression.KNearestNeighborsRegressor]
 - [`LassoRegressor`][safeds.ml.classical.regression.LassoRegressor]
+- `#!sds LinearRegressionRegressor`
 - [`LinearRegressor`][safeds.ml.classical.regression.LinearRegressor]
 - [`RandomForestRegressor`][safeds.ml.classical.regression.RandomForestRegressor]
 - [`RidgeRegressor`][safeds.ml.classical.regression.RidgeRegressor]
+- `#!sds SupportVectorMachineRegressor`
 - [`SupportVectorRegressor`][safeds.ml.classical.regression.SupportVectorRegressor]
 
 ??? quote "Stub code in `Regressor.sdsstub`"
@@ -42,6 +44,8 @@ A model for regression tasks.
 
         /**
          * Summarize the regressor's metrics on the given data.
+         *
+         * **Note:** The model must be fitted.
          *
          * @param validationOrTestSet The validation or test set.
          *
@@ -69,7 +73,10 @@ A model for regression tasks.
          * | 0.0        | The model is as good as predicting the mean of the target values. Try something else.      |
          * | (-∞, 0.0)  | The model is worse than predicting the mean of the target values. Something is very wrong. |
          *
-         * **Note:** Some other libraries call this metric `r2_score`.
+         * **Notes:**
+         *
+         * - The model must be fitted.
+         * - Some other libraries call this metric `r2_score`.
          *
          * @param validationOrTestSet The validation or test set.
          *
@@ -87,6 +94,9 @@ A model for regression tasks.
          * The mean absolute error is the average of the absolute differences between the predicted and expected target
          * values. The **lower** the mean absolute error, the better the regressor. Results range from 0.0 to positive
          * infinity.
+         *
+         *
+         * **Note:** The model must be fitted.
          *
          * @param validationOrTestSet The validation or test set.
          *
@@ -109,6 +119,9 @@ A model for regression tasks.
          * This metric is useful for time series data, where the order of the target values has a meaning. It is not useful
          * for other types of data. Because of this, it is not included in the `summarize_metrics` method.
          *
+         *
+         * **Note:** The model must be fitted.
+         *
          * @param validationOrTestSet The validation or test set.
          *
          * @result meanDirectionalAccuracy The mean directional accuracy of the regressor.
@@ -126,7 +139,10 @@ A model for regression tasks.
          * values. The **lower** the mean squared error, the better the regressor. Results range from 0.0 to positive
          * infinity.
          *
-         * **Note:** To get the root mean squared error (RMSE), take the square root of the result.
+         * **Notes:**
+         *
+         * - The model must be fitted.
+         * - To get the root mean squared error (RMSE), take the square root of the result.
          *
          * @param validationOrTestSet The validation or test set.
          *
@@ -144,6 +160,9 @@ A model for regression tasks.
          * The median absolute deviation is the median of the absolute differences between the predicted and expected
          * target values. The **lower** the median absolute deviation, the better the regressor. Results range from 0.0 to
          * positive infinity.
+         *
+         *
+         * **Note:** The model must be fitted.
          *
          * @param validationOrTestSet The validation or test set.
          *
@@ -180,7 +199,10 @@ to 1.0. You can interpret the coefficient of determination as follows:
 | 0.0        | The model is as good as predicting the mean of the target values. Try something else.      |
 | (-∞, 0.0)  | The model is worse than predicting the mean of the target values. Something is very wrong. |
 
-**Note:** Some other libraries call this metric `r2_score`.
+**Notes:**
+
+- The model must be fitted.
+- Some other libraries call this metric `r2_score`.
 
 **Parameters:**
 
@@ -196,7 +218,7 @@ to 1.0. You can interpret the coefficient of determination as follows:
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="60"
+    ```sds linenums="65"
     @Pure
     @PythonName("coefficient_of_determination")
     fun coefficientOfDetermination(
@@ -319,6 +341,9 @@ The mean absolute error is the average of the absolute differences between the p
 values. The **lower** the mean absolute error, the better the regressor. Results range from 0.0 to positive
 infinity.
 
+
+**Note:** The model must be fitted.
+
 **Parameters:**
 
 | Name | Type | Description | Default |
@@ -333,7 +358,7 @@ infinity.
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="77"
+    ```sds linenums="85"
     @Pure
     @PythonName("mean_absolute_error")
     fun meanAbsoluteError(
@@ -353,6 +378,9 @@ directions. The **higher** the mean directional accuracy, the better the regress
 This metric is useful for time series data, where the order of the target values has a meaning. It is not useful
 for other types of data. Because of this, it is not included in the `summarize_metrics` method.
 
+
+**Note:** The model must be fitted.
+
 **Parameters:**
 
 | Name | Type | Description | Default |
@@ -367,7 +395,7 @@ for other types of data. Because of this, it is not included in the `summarize_m
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="98"
+    ```sds linenums="109"
     @Pure
     @PythonName("mean_directional_accuracy")
     fun meanDirectionalAccuracy(
@@ -383,7 +411,10 @@ The mean squared error is the average of the squared differences between the pre
 values. The **lower** the mean squared error, the better the regressor. Results range from 0.0 to positive
 infinity.
 
-**Note:** To get the root mean squared error (RMSE), take the square root of the result.
+**Notes:**
+
+- The model must be fitted.
+- To get the root mean squared error (RMSE), take the square root of the result.
 
 **Parameters:**
 
@@ -399,7 +430,7 @@ infinity.
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="117"
+    ```sds linenums="131"
     @Pure
     @PythonName("mean_squared_error")
     fun meanSquaredError(
@@ -415,6 +446,9 @@ The median absolute deviation is the median of the absolute differences between 
 target values. The **lower** the median absolute deviation, the better the regressor. Results range from 0.0 to
 positive infinity.
 
+
+**Note:** The model must be fitted.
+
 **Parameters:**
 
 | Name | Type | Description | Default |
@@ -429,7 +463,7 @@ positive infinity.
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="134"
+    ```sds linenums="151"
     @Pure
     @PythonName("median_absolute_deviation")
     fun medianAbsoluteDeviation(
@@ -468,6 +502,8 @@ Predict the target values on the given dataset.
 
 Summarize the regressor's metrics on the given data.
 
+**Note:** The model must be fitted.
+
 **Parameters:**
 
 | Name | Type | Description | Default |
@@ -482,7 +518,7 @@ Summarize the regressor's metrics on the given data.
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="32"
+    ```sds linenums="34"
     @Pure
     @PythonName("summarize_metrics")
     fun summarizeMetrics(

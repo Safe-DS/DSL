@@ -1,5 +1,7 @@
 # :test_tube:{ title="Experimental" } <code class="doc-symbol doc-symbol-class"></code> `MaxPooling2DLayer` {#safeds.ml.nn.layers.MaxPooling2DLayer data-toc-label='[class] MaxPooling2DLayer'}
 
+A maximum Pooling 2D Layer.
+
 **Parent type:** [`Layer`][safeds.ml.nn.layers.Layer]
 
 **Parameters:**
@@ -12,7 +14,7 @@
 
 ??? quote "Stub code in `MaxPooling2DLayer.sdsstub`"
 
-    ```sds linenums="11"
+    ```sds linenums="14"
     class MaxPooling2DLayer(
         @PythonName("kernel_size") kernelSize: Int,
         stride: Int = -1,
@@ -21,11 +23,11 @@
         /**
          * Get the input_size of this layer.
          */
-        @PythonName("input_size") attr inputSize: ImageSize
+        @PythonName("input_size") attr inputSize: ModelImageSize
         /**
          * Get the output_size of this layer.
          */
-        @PythonName("output_size") attr outputSize: ImageSize
+        @PythonName("output_size") attr outputSize: ModelImageSize
     }
     ```
 
@@ -33,10 +35,10 @@
 
 Get the input_size of this layer.
 
-**Type:** [`ImageSize`][safeds.data.image.typing.ImageSize]
+**Type:** [`ModelImageSize`][safeds.ml.nn.typing.ModelImageSize]
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `outputSize` {#safeds.ml.nn.layers.MaxPooling2DLayer.outputSize data-toc-label='[attribute] outputSize'}
 
 Get the output_size of this layer.
 
-**Type:** [`ImageSize`][safeds.data.image.typing.ImageSize]
+**Type:** [`ModelImageSize`][safeds.ml.nn.typing.ModelImageSize]

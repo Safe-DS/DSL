@@ -4,12 +4,18 @@ The StandardScaler transforms column values to a range by removing the mean and 
 
 **Parent type:** [`InvertibleTableTransformer`][safeds.data.tabular.transformation.InvertibleTableTransformer]
 
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `columnNames` | `#!sds union<List<String>, String?>` | The list of columns used to fit the transformer. If `None`, all numeric columns are used. | `#!sds null` |
+
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
     val table = Table({"a": [0, 1, 0]});
-    val scaler = StandardScaler().fit(table, ["a"]);
+    val scaler = StandardScaler(columnNames = "a").fit(table);
     val transformedTable = scaler.transform(table);
     // transformedTable = Table({"a": [-0.707,  1.414, -0.707]});
     val originalTable = scaler.inverseTransform(transformedTable);
@@ -19,22 +25,22 @@ pipeline example {
 
 ??? quote "Stub code in `StandardScaler.sdsstub`"
 
-    ```sds linenums="19"
-    class StandardScaler() sub InvertibleTableTransformer {
+    ```sds linenums="21"
+    class StandardScaler(
+        @PythonName("column_names") columnNames: union<List<String>, String, Nothing?> = null
+    ) sub InvertibleTableTransformer {
         /**
          * Learn a transformation for a set of columns in a table.
          *
          * This transformer is not modified.
          *
          * @param table The table used to fit the transformer.
-         * @param columnNames The list of columns from the table used to fit the transformer. If `null`, all columns are used.
          *
          * @result fittedTransformer The fitted transformer.
          */
         @Pure
         fun fit(
-            table: Table,
-            @PythonName("column_names") columnNames: List<String>?
+            table: Table
         ) -> fittedTransformer: StandardScaler
 
         /**
@@ -43,7 +49,6 @@ pipeline example {
          * **Note:** Neither this transformer nor the given table are modified.
          *
          * @param table The table used to fit the transformer. The transformer is then applied to this table.
-         * @param columnNames The list of columns from the table used to fit the transformer. If `null`, all columns are used.
          *
          * @result fittedTransformer The fitted transformer.
          * @result transformedTable The transformed table.
@@ -51,8 +56,7 @@ pipeline example {
         @Pure
         @PythonName("fit_and_transform")
         fun fitAndTransform(
-            table: Table,
-            @PythonName("column_names") columnNames: List<String>? = null
+            table: Table
         ) -> (fittedTransformer: StandardScaler, transformedTable: Table)
     }
     ```
@@ -74,7 +78,6 @@ This transformer is not modified.
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `table` | [`Table`][safeds.data.tabular.containers.Table] | The table used to fit the transformer. | - |
-| `columnNames` | [`List<String>?`][safeds.lang.List] | The list of columns from the table used to fit the transformer. If `null`, all columns are used. | - |
 
 **Results:**
 
@@ -84,11 +87,10 @@ This transformer is not modified.
 
 ??? quote "Stub code in `StandardScaler.sdsstub`"
 
-    ```sds linenums="30"
+    ```sds linenums="33"
     @Pure
     fun fit(
-        table: Table,
-        @PythonName("column_names") columnNames: List<String>?
+        table: Table
     ) -> fittedTransformer: StandardScaler
     ```
 
@@ -103,7 +105,6 @@ Learn a transformation for a set of columns in a table and apply the learned tra
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `table` | [`Table`][safeds.data.tabular.containers.Table] | The table used to fit the transformer. The transformer is then applied to this table. | - |
-| `columnNames` | [`List<String>?`][safeds.lang.List] | The list of columns from the table used to fit the transformer. If `null`, all columns are used. | `#!sds null` |
 
 **Results:**
 
@@ -114,12 +115,11 @@ Learn a transformation for a set of columns in a table and apply the learned tra
 
 ??? quote "Stub code in `StandardScaler.sdsstub`"
 
-    ```sds linenums="47"
+    ```sds linenums="48"
     @Pure
     @PythonName("fit_and_transform")
     fun fitAndTransform(
-        table: Table,
-        @PythonName("column_names") columnNames: List<String>? = null
+        table: Table
     ) -> (fittedTransformer: StandardScaler, transformedTable: Table)
     ```
 
@@ -145,7 +145,7 @@ Column order and types may differ from the original table. Likewise, some values
 
 ??? quote "Stub code in `InvertibleTableTransformer.sdsstub`"
 
-    ```sds linenums="55"
+    ```sds linenums="51"
     @Pure
     @PythonName("inverse_transform")
     fun inverseTransform(

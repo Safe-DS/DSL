@@ -9,14 +9,15 @@ Replace missing values with the given strategy.
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `strategy` | [`Strategy`][safeds.data.tabular.transformation.SimpleImputer.Strategy] | The strategy used to impute missing values. | - |
-| `valueToReplace` | `#!sds union<Float, String?>` | - | `#!sds null` |
+| `columnNames` | `#!sds union<List<String>, String?>` | The list of columns used to fit the transformer. If `None`, all columns are used. | `#!sds null` |
+| `valueToReplace` | `#!sds union<Float, String?>` | The value that should be replaced. | `#!sds null` |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
    val table = Table({"a": [1, null], "b": [3, 4]});
-   val imputer = SimpleImputer(SimpleImputer.Strategy.Mean).fit(table, ["a"]);
+   val imputer = SimpleImputer(SimpleImputer.Strategy.Mean, columnNames = "a").fit(table);
    val transformedTable = imputer.transform(table);
    // Table({"a": [1, 1], "b": [3, 4]})
 }
@@ -24,7 +25,7 @@ pipeline example {
 ```sds hl_lines="3"
 pipeline example {
    val table = Table({"a": [1, null], "b": [3, 4]});
-   val imputer = SimpleImputer(SimpleImputer.Strategy.Constant(0)).fit(table, ["a"]);
+   val imputer = SimpleImputer(SimpleImputer.Strategy.Constant(0), columnNames = "a").fit(table);
    val transformedTable = imputer.transform(table);
    // Table({"a": [1, 0], "b": [3, 4]})
 }
@@ -32,9 +33,10 @@ pipeline example {
 
 ??? quote "Stub code in `SimpleImputer.sdsstub`"
 
-    ```sds linenums="27"
+    ```sds linenums="29"
     class SimpleImputer(
         strategy: SimpleImputer.Strategy,
+        @PythonName("column_names") columnNames: union<List<String>, String, Nothing?> = null,
         @PythonName("value_to_replace") valueToReplace: union<Float, String, Nothing?> = null
     ) sub TableTransformer {
         /**
@@ -83,14 +85,12 @@ pipeline example {
          * This transformer is not modified.
          *
          * @param table The table used to fit the transformer.
-         * @param columnNames The list of columns from the table used to fit the transformer. If `null`, all columns are used.
          *
          * @result fittedTransformer The fitted transformer.
          */
         @Pure
         fun fit(
-            table: Table,
-            @PythonName("column_names") columnNames: List<String>?
+            table: Table
         ) -> fittedTransformer: SimpleImputer
 
         /**
@@ -99,7 +99,6 @@ pipeline example {
          * **Note:** Neither this transformer nor the given table are modified.
          *
          * @param table The table used to fit the transformer. The transformer is then applied to this table.
-         * @param columnNames The list of columns from the table used to fit the transformer. If `null`, all columns are used.
          *
          * @result fittedTransformer The fitted transformer.
          * @result transformedTable The transformed table.
@@ -107,8 +106,7 @@ pipeline example {
         @Pure
         @PythonName("fit_and_transform")
         fun fitAndTransform(
-            table: Table,
-            @PythonName("column_names") columnNames: List<String>? = null
+            table: Table
         ) -> (fittedTransformer: SimpleImputer, transformedTable: Table)
     }
     ```
@@ -142,7 +140,6 @@ This transformer is not modified.
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `table` | [`Table`][safeds.data.tabular.containers.Table] | The table used to fit the transformer. | - |
-| `columnNames` | [`List<String>?`][safeds.lang.List] | The list of columns from the table used to fit the transformer. If `null`, all columns are used. | - |
 
 **Results:**
 
@@ -152,11 +149,10 @@ This transformer is not modified.
 
 ??? quote "Stub code in `SimpleImputer.sdsstub`"
 
-    ```sds linenums="81"
+    ```sds linenums="83"
     @Pure
     fun fit(
-        table: Table,
-        @PythonName("column_names") columnNames: List<String>?
+        table: Table
     ) -> fittedTransformer: SimpleImputer
     ```
 
@@ -171,7 +167,6 @@ Learn a transformation for a set of columns in a table and apply the learned tra
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `table` | [`Table`][safeds.data.tabular.containers.Table] | The table used to fit the transformer. The transformer is then applied to this table. | - |
-| `columnNames` | [`List<String>?`][safeds.lang.List] | The list of columns from the table used to fit the transformer. If `null`, all columns are used. | `#!sds null` |
 
 **Results:**
 
@@ -186,8 +181,7 @@ Learn a transformation for a set of columns in a table and apply the learned tra
     @Pure
     @PythonName("fit_and_transform")
     fun fitAndTransform(
-        table: Table,
-        @PythonName("column_names") columnNames: List<String>? = null
+        table: Table
     ) -> (fittedTransformer: SimpleImputer, transformedTable: Table)
     ```
 
@@ -224,7 +218,7 @@ Various strategies to replace missing values.
 
 ??? quote "Stub code in `SimpleImputer.sdsstub`"
 
-    ```sds linenums="34"
+    ```sds linenums="37"
     enum Strategy {
         /**
          * Replace missing values with the given constant value.

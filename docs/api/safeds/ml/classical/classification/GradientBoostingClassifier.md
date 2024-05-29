@@ -26,18 +26,18 @@ pipeline example {
 
     ```sds linenums="23"
     class GradientBoostingClassifier(
-        @PythonName("number_of_trees") const treeCount: Int = 100,
+        @PythonName("tree_count") const treeCount: Int = 100,
         @PythonName("learning_rate") const learningRate: Float = 0.1
     ) sub Classifier where {
         treeCount >= 1,
         learningRate > 0.0
     } {
         /**
-         * Get the number of trees (estimators) in the ensemble.
+         * The number of trees (estimators) in the ensemble.
          */
-        @PythonName("number_of_trees") attr treeCount: Int
+        @PythonName("tree_count") attr treeCount: Int
         /**
-         * Get the learning rate.
+         * The learning rate.
          */
         @PythonName("learning_rate") attr learningRate: Float
 
@@ -65,13 +65,13 @@ Whether the model is fitted.
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `learningRate` {#safeds.ml.classical.classification.GradientBoostingClassifier.learningRate data-toc-label='[attribute] learningRate'}
 
-Get the learning rate.
+The learning rate.
 
 **Type:** [`Float`][safeds.lang.Float]
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `treeCount` {#safeds.ml.classical.classification.GradientBoostingClassifier.treeCount data-toc-label='[attribute] treeCount'}
 
-Get the number of trees (estimators) in the ensemble.
+The number of trees (estimators) in the ensemble.
 
 **Type:** [`Int`][safeds.lang.Int]
 

@@ -16,29 +16,29 @@ from safeds.data.image.typing import ImageSize
 @Experimental
 class ImageList {
     /**
-     * Return the number of images in this image list.
+     * The number of images in this image list.
      */
-    @PythonName("number_of_images") attr imageCount: Int
+    @PythonName("image_count") attr imageCount: Int
     /**
-     * Return a list of all widths in this image list.
+     * A list of all widths in this image list.
      */
     attr widths: List<Int>
     /**
-     * Return a list of all heights in this image list.
+     * A list of all heights in this image list.
      */
     attr heights: List<Int>
     /**
-     * Return the channel of all images.
+     * The channel of all images.
      */
     attr channel: Int
     /**
-     * Return the sizes of all images.
+     * The sizes of all images.
      */
     attr sizes: List<ImageSize>
     /**
-     * Return the number of different sizes of images in this image list.
+     * The number of different sizes of images in this image list.
      */
-    @PythonName("number_of_sizes") attr sizeCount: Int
+    @PythonName("size_count") attr sizeCount: Int
 
     /**
      * Create an ImageList from a list of images.

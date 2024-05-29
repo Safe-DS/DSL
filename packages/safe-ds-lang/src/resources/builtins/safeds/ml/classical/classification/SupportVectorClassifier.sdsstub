@@ -60,11 +60,11 @@ class SupportVectorClassifier(
     }
 
     /**
-     * Get the regularization strength.
+     * The regularization strength.
      */
     attr c: Float
     /**
-     * Get the type of kernel used.
+     * The type of kernel used.
      */
     attr kernel: SupportVectorClassifier.Kernel
 

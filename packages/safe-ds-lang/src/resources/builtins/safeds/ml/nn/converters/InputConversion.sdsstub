@@ -2,6 +2,9 @@ package safeds.ml.nn.converters
 
 /**
  * The input conversion for a neural network, defines the input parameters for the neural network.
+ *
+ * @typeParam D The type of the full dataset. It's the input to `fit` and the output of `predict`.
+ * @typeParam F The type of the features. It's the input to `predict`.
  */
 @Experimental
-class InputConversion<FitIn, PredictIn>
+class InputConversion<D, in F>
