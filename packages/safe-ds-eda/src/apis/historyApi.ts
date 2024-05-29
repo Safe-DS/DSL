@@ -264,7 +264,7 @@ const deployResult = function (result: RunnerExecutionResultMessage, historyEntr
                 column.hidden = existingColumn.hidden;
                 column.highlighted = existingColumn.highlighted;
                 if (historyEntry.action === 'sortByColumn' && column.name === historyEntry.columnName) {
-                    column.appliedSort = historyEntry.sort; // Set sorted column to sorted if it was a sort action, otherwise preserve
+                    column.appliedSort = historyEntry.sort; // Set sorted column to sorted if it was a sort action, otherwise if also not a void sort preserve
                 } else if (historyEntry.action !== 'sortByColumn' && historyEntry.action !== 'voidSortByColumn') {
                     column.appliedSort = existingColumn.appliedSort;
                 }
