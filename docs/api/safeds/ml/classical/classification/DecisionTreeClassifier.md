@@ -26,19 +26,19 @@ pipeline example {
 
     ```sds linenums="20"
     class DecisionTreeClassifier(
-        @PythonName("maximum_depth") maxDepth: Int? = null,
-        @PythonName("minimum_number_of_samples_in_leaves") const minSampleCountInLeaves: Int = 1
+        @PythonName("max_depth") maxDepth: Int? = null,
+        @PythonName("min_sample_count_in_leaves") const minSampleCountInLeaves: Int = 1
     ) sub Classifier where {
         minSampleCountInLeaves > 0
     } {
         /**
          * The maximum depth of the tree.
          */
-        @PythonName("maximum_depth") attr maxDepth: Int?
+        @PythonName("max_depth") attr maxDepth: Int?
         /**
          * The minimum number of samples that must remain in the leaves of the tree.
          */
-        @PythonName("minimum_number_of_samples_in_leaves") attr minSampleCountInLeaves: Int
+        @PythonName("min_sample_count_in_leaves") attr minSampleCountInLeaves: Int
 
         /**
          * Create a copy of this classifier and fit it with the given training data.

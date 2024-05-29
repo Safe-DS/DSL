@@ -20,6 +20,11 @@ This class cannot be instantiated directly. It is only used for arguments of cal
     ```sds linenums="8"
     class Cell<out T = Any?> {
         /**
+         * Namespace for operations on strings.
+         */
+        attr str: StringCell
+
+        /**
          * Negate a boolean. This WILL LATER BE equivalent to the ^not operator.
          *
          * @example
@@ -148,6 +153,21 @@ This class cannot be instantiated directly. It is only used for arguments of cal
         ) -> result: Cell
 
         /**
+         * Divide by a value. This WILL LATER BE equivalent to the `/` operator.
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("example", [6, 8]);
+         *     val result = column.transform((cell) -> cell.div(2));
+         *     // Column("example", [3, 4])
+         * }
+         */
+        @Pure
+        fun div(
+            other: Any
+        ) -> result: Cell
+
+        /**
          * Perform a modulo operation.
          *
          * @example
@@ -204,21 +224,6 @@ This class cannot be instantiated directly. It is only used for arguments of cal
          */
         @Pure
         fun ^sub(
-            other: Any
-        ) -> result: Cell
-
-        /**
-         * Divide by a value. This WILL LATER BE equivalent to the `/` operator.
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("example", [6, 8]);
-         *     val result = column.transform((cell) -> cell.div(2));
-         *     // Column("example", [3, 4])
-         * }
-         */
-        @Pure
-        fun div(
             other: Any
         ) -> result: Cell
 
@@ -299,6 +304,12 @@ This class cannot be instantiated directly. It is only used for arguments of cal
     }
     ```
 
+## <code class="doc-symbol doc-symbol-attribute"></code> `str` {#safeds.data.tabular.containers.Cell.str data-toc-label='[attribute] str'}
+
+Namespace for operations on strings.
+
+**Type:** [`StringCell`][safeds.data.tabular.containers.StringCell]
+
 ## <code class="doc-symbol doc-symbol-function"></code> `abs` {#safeds.data.tabular.containers.Cell.abs data-toc-label='[function] abs'}
 
 Get the absolute value.
@@ -321,7 +332,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="80"
+    ```sds linenums="85"
     @Pure
     fun abs() -> result: Cell
     ```
@@ -354,7 +365,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="132"
+    ```sds linenums="137"
     @Pure
     fun add(
         other: Any
@@ -389,7 +400,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="33"
+    ```sds linenums="38"
     @Pure
     @PythonName("and_")
     fun ^and(
@@ -419,7 +430,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="93"
+    ```sds linenums="98"
     @Pure
     fun ceil() -> result: Cell
     ```
@@ -452,7 +463,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="207"
+    ```sds linenums="152"
     @Pure
     fun div(
         other: Any
@@ -487,7 +498,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="222"
+    ```sds linenums="227"
     @Pure
     fun eq(
         other: Any
@@ -516,7 +527,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="106"
+    ```sds linenums="111"
     @Pure
     fun floor() -> result: Cell
     ```
@@ -549,7 +560,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="237"
+    ```sds linenums="242"
     @Pure
     fun ge(
         other: Any
@@ -584,7 +595,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="252"
+    ```sds linenums="257"
     @Pure
     fun gt(
         other: Any
@@ -619,7 +630,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="267"
+    ```sds linenums="272"
     @Pure
     fun le(
         other: Any
@@ -654,7 +665,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="282"
+    ```sds linenums="287"
     @Pure
     fun lt(
         other: Any
@@ -689,7 +700,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="147"
+    ```sds linenums="167"
     @Pure
     fun mod(
         other: Any
@@ -724,7 +735,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="162"
+    ```sds linenums="182"
     @Pure
     fun mul(
         other: Any
@@ -753,7 +764,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="119"
+    ```sds linenums="124"
     @Pure
     fun neg() -> result: Cell
     ```
@@ -780,7 +791,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="19"
+    ```sds linenums="24"
     @Pure
     @PythonName("not_")
     fun ^not() -> result: Cell<Boolean>
@@ -814,7 +825,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="49"
+    ```sds linenums="54"
     @Pure
     @PythonName("or_")
     fun ^or(
@@ -850,7 +861,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="177"
+    ```sds linenums="197"
     @Pure
     fun pow(
         other: union<Cell, Float>
@@ -885,7 +896,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="192"
+    ```sds linenums="212"
     @Pure
     fun ^sub(
         other: Any
@@ -920,7 +931,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="65"
+    ```sds linenums="70"
     @Pure
     fun xor(
         other: union<Boolean, Cell<Boolean>>

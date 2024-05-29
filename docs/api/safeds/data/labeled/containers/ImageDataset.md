@@ -2,14 +2,14 @@
 
 A Dataset for ImageLists as input and ImageLists, Tables or Columns as output.
 
-**Parent type:** [`Dataset`][safeds.data.labeled.containers.Dataset]
+**Parent type:** [`Dataset<ImageList, O>`][safeds.data.labeled.containers.Dataset]
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `inputData` | [`ImageList`][safeds.data.image.containers.ImageList] | the input ImageList | - |
-| `outputData` | `#!sds T` | the output data | - |
+| `outputData` | `#!sds O` | the output data | - |
 | `batchSize` | [`Int`][safeds.lang.Int] | the batch size used for training | `#!sds 1` |
 | `shuffle` | [`Boolean`][safeds.lang.Boolean] | weather the data should be shuffled after each epoch of training | `#!sds false` |
 
@@ -17,17 +17,17 @@ A Dataset for ImageLists as input and ImageLists, Tables or Columns as output.
 
 | Name | Upper Bound | Description | Default |
 |------|-------------|-------------|---------|
-| `T` | [`Any?`][safeds.lang.Any] | - | - |
+| `O` | [`Any?`][safeds.lang.Any] | - | - |
 
 ??? quote "Stub code in `ImageDataset.sdsstub`"
 
     ```sds linenums="17"
-    class ImageDataset<T>(
+    class ImageDataset<out O>(
         @PythonName("input_data") inputData: ImageList,
-        @PythonName("output_data") outputData: T,
+        @PythonName("output_data") outputData: O,
         @PythonName("batch_size") batchSize: Int = 1,
         shuffle: Boolean = false
-    ) sub Dataset {
+    ) sub Dataset<ImageList, O> {
         /**
          * Get the input `ImageSize` of this dataset.
          */
@@ -53,7 +53,7 @@ A Dataset for ImageLists as input and ImageLists, Tables or Columns as output.
          */
         @Pure
         @PythonName("get_output")
-        fun getOutput() -> output: T
+        fun getOutput() -> output: O
 
         /**
          * Return a new `ImageDataset` with shuffled data.
@@ -63,7 +63,7 @@ A Dataset for ImageLists as input and ImageLists, Tables or Columns as output.
          * @result imageDataset the shuffled `ImageDataset`
          */
         @Pure
-        fun shuffle() -> imageDataset: ImageDataset<T>
+        fun shuffle() -> imageDataset: ImageDataset<O>
     }
     ```
 
@@ -105,14 +105,14 @@ Get the output data of this dataset.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `output` | `#!sds T` | the output data of this dataset |
+| `output` | `#!sds O` | the output data of this dataset |
 
 ??? quote "Stub code in `ImageDataset.sdsstub`"
 
     ```sds linenums="46"
     @Pure
     @PythonName("get_output")
-    fun getOutput() -> output: T
+    fun getOutput() -> output: O
     ```
 
 ## <code class="doc-symbol doc-symbol-function"></code> `shuffle` {#safeds.data.labeled.containers.ImageDataset.shuffle data-toc-label='[function] shuffle'}
@@ -125,11 +125,11 @@ The original dataset list is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `imageDataset` | [`ImageDataset<T>`][safeds.data.labeled.containers.ImageDataset] | the shuffled `ImageDataset` |
+| `imageDataset` | [`ImageDataset<O>`][safeds.data.labeled.containers.ImageDataset] | the shuffled `ImageDataset` |
 
 ??? quote "Stub code in `ImageDataset.sdsstub`"
 
     ```sds linenums="57"
     @Pure
-    fun shuffle() -> imageDataset: ImageDataset<T>
+    fun shuffle() -> imageDataset: ImageDataset<O>
     ```

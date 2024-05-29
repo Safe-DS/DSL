@@ -53,7 +53,7 @@ pipeline example {
          */
         @Pure
         fun histogram(
-            @PythonName("maximum_number_of_bins") const maxBinCount: Int = 10
+            @PythonName("max_bin_count") const maxBinCount: Int = 10
         ) -> plot: Image where {
             maxBinCount > 0
         }
@@ -136,7 +136,7 @@ pipeline example {
     ```sds linenums="47"
     @Pure
     fun histogram(
-        @PythonName("maximum_number_of_bins") const maxBinCount: Int = 10
+        @PythonName("max_bin_count") const maxBinCount: Int = 10
     ) -> plot: Image where {
         maxBinCount > 0
     }

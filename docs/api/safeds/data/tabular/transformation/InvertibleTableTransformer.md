@@ -21,14 +21,12 @@ A `TableTransformer` that can also undo the learned transformation after it has 
          * **Note:** This transformer is not modified.
          *
          * @param table The table used to fit the transformer.
-         * @param columnNames The list of columns from the table used to fit the transformer. If `null`, all columns are used.
          *
          * @result fittedTransformer The fitted transformer.
          */
         @Pure
         fun fit(
-            table: Table,
-            @PythonName("column_names") columnNames: List<String>?
+            table: Table
         ) -> fittedTransformer: InvertibleTableTransformer
 
         /**
@@ -37,7 +35,6 @@ A `TableTransformer` that can also undo the learned transformation after it has 
          * **Note:** Neither this transformer nor the given table are modified.
          *
          * @param table The table used to fit the transformer. The transformer is then applied to this table.
-         * @param columnNames The list of columns from the table used to fit the transformer. If `null`, all columns are used.
          *
          * @result fittedTransformer The fitted transformer.
          * @result transformedTable The transformed table.
@@ -45,8 +42,7 @@ A `TableTransformer` that can also undo the learned transformation after it has 
         @Pure
         @PythonName("fit_and_transform")
         fun fitAndTransform(
-            table: Table,
-            @PythonName("column_names") columnNames: List<String>? = null
+            table: Table
         ) -> (fittedTransformer: InvertibleTableTransformer, transformedTable: Table)
 
         /**
@@ -85,7 +81,6 @@ Learn a transformation for a set of columns in a table.
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `table` | [`Table`][safeds.data.tabular.containers.Table] | The table used to fit the transformer. | - |
-| `columnNames` | [`List<String>?`][safeds.lang.List] | The list of columns from the table used to fit the transformer. If `null`, all columns are used. | - |
 
 **Results:**
 
@@ -95,11 +90,10 @@ Learn a transformation for a set of columns in a table.
 
 ??? quote "Stub code in `InvertibleTableTransformer.sdsstub`"
 
-    ```sds linenums="20"
+    ```sds linenums="19"
     @Pure
     fun fit(
-        table: Table,
-        @PythonName("column_names") columnNames: List<String>?
+        table: Table
     ) -> fittedTransformer: InvertibleTableTransformer
     ```
 
@@ -114,7 +108,6 @@ Learn a transformation for a set of columns in a table and apply the learned tra
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `table` | [`Table`][safeds.data.tabular.containers.Table] | The table used to fit the transformer. The transformer is then applied to this table. | - |
-| `columnNames` | [`List<String>?`][safeds.lang.List] | The list of columns from the table used to fit the transformer. If `null`, all columns are used. | `#!sds null` |
 
 **Results:**
 
@@ -125,12 +118,11 @@ Learn a transformation for a set of columns in a table and apply the learned tra
 
 ??? quote "Stub code in `InvertibleTableTransformer.sdsstub`"
 
-    ```sds linenums="37"
+    ```sds linenums="34"
     @Pure
     @PythonName("fit_and_transform")
     fun fitAndTransform(
-        table: Table,
-        @PythonName("column_names") columnNames: List<String>? = null
+        table: Table
     ) -> (fittedTransformer: InvertibleTableTransformer, transformedTable: Table)
     ```
 
@@ -156,7 +148,7 @@ Column order and types may differ from the original table. Likewise, some values
 
 ??? quote "Stub code in `InvertibleTableTransformer.sdsstub`"
 
-    ```sds linenums="55"
+    ```sds linenums="51"
     @Pure
     @PythonName("inverse_transform")
     fun inverseTransform(

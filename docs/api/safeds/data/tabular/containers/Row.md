@@ -20,18 +20,25 @@ This class cannot be instantiated directly. It is only used for arguments of cal
         /**
          * The number of columns in the row.
          */
-        @PythonName("number_of_columns") attr columnCount: Int
+        @PythonName("column_count") attr columnCount: Int
         /**
          * The schema of the row.
          */
         attr ^schema: Schema
 
         /**
-         * Get the value of the specified column.
+         * Get the value of the specified column. This WILL LATER BE equivalent to using the `[]` operator (indexed access).
          *
          * @param name The name of the column.
          *
          * @result value The value of the column.
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table({"col1": [1, 2], "col2": [3, 4]});
+         *     val result = table.removeRows((row) -> row.getValue("col1").eq(1));
+         *     // Table({"col1": [2], "col2": [4]})
+         * }
          */
         @Pure
         @PythonName("get_value")
@@ -103,7 +110,7 @@ Get the type of the specified column.
 
 ??? quote "Stub code in `Row.sdsstub`"
 
-    ```sds linenums="45"
+    ```sds linenums="52"
     @Pure
     @PythonName("get_column_type")
     fun getColumnType(
@@ -113,7 +120,7 @@ Get the type of the specified column.
 
 ## <code class="doc-symbol doc-symbol-function"></code> `getValue` {#safeds.data.tabular.containers.Row.getValue data-toc-label='[function] getValue'}
 
-Get the value of the specified column.
+Get the value of the specified column. This WILL LATER BE equivalent to using the `[]` operator (indexed access).
 
 **Parameters:**
 
@@ -127,9 +134,19 @@ Get the value of the specified column.
 |------|------|-------------|
 | `value` | [`Cell<Any>`][safeds.data.tabular.containers.Cell] | The value of the column. |
 
+**Examples:**
+
+```sds hl_lines="3"
+pipeline example {
+    val table = Table({"col1": [1, 2], "col2": [3, 4]});
+    val result = table.removeRows((row) -> row.getValue("col1").eq(1));
+    // Table({"col1": [2], "col2": [4]})
+}
+```
+
 ??? quote "Stub code in `Row.sdsstub`"
 
-    ```sds linenums="32"
+    ```sds linenums="39"
     @Pure
     @PythonName("get_value")
     fun getValue(
@@ -155,7 +172,7 @@ Check if the row has a column with the specified name.
 
 ??? quote "Stub code in `Row.sdsstub`"
 
-    ```sds linenums="58"
+    ```sds linenums="65"
     @Pure
     @PythonName("has_column")
     fun hasColumn(

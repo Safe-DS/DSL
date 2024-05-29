@@ -14,29 +14,29 @@ To create an `ImageList` call one of the following static methods:
     ```sds linenums="17"
     class ImageList {
         /**
-         * Return the number of images in this image list.
+         * The number of images in this image list.
          */
-        @PythonName("number_of_images") attr imageCount: Int
+        @PythonName("image_count") attr imageCount: Int
         /**
-         * Return a list of all widths in this image list.
+         * A list of all widths in this image list.
          */
         attr widths: List<Int>
         /**
-         * Return a list of all heights in this image list.
+         * A list of all heights in this image list.
          */
         attr heights: List<Int>
         /**
-         * Return the channel of all images.
+         * The channel of all images.
          */
         attr channel: Int
         /**
-         * Return the sizes of all images.
+         * The sizes of all images.
          */
         attr sizes: List<ImageSize>
         /**
-         * Return the number of different sizes of images in this image list.
+         * The number of different sizes of images in this image list.
          */
-        @PythonName("number_of_sizes") attr sizeCount: Int
+        @PythonName("size_count") attr sizeCount: Int
 
         /**
          * Create an ImageList from a list of images.
@@ -515,37 +515,37 @@ To create an `ImageList` call one of the following static methods:
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `channel` {#safeds.data.image.containers.ImageList.channel data-toc-label='[attribute] channel'}
 
-Return the channel of all images.
+The channel of all images.
 
 **Type:** [`Int`][safeds.lang.Int]
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `heights` {#safeds.data.image.containers.ImageList.heights data-toc-label='[attribute] heights'}
 
-Return a list of all heights in this image list.
+A list of all heights in this image list.
 
 **Type:** [`List<Int>`][safeds.lang.List]
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `imageCount` {#safeds.data.image.containers.ImageList.imageCount data-toc-label='[attribute] imageCount'}
 
-Return the number of images in this image list.
+The number of images in this image list.
 
 **Type:** [`Int`][safeds.lang.Int]
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `sizeCount` {#safeds.data.image.containers.ImageList.sizeCount data-toc-label='[attribute] sizeCount'}
 
-Return the number of different sizes of images in this image list.
+The number of different sizes of images in this image list.
 
 **Type:** [`Int`][safeds.lang.Int]
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `sizes` {#safeds.data.image.containers.ImageList.sizes data-toc-label='[attribute] sizes'}
 
-Return the sizes of all images.
+The sizes of all images.
 
 **Type:** [`List<ImageSize>`][safeds.lang.List]
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `widths` {#safeds.data.image.containers.ImageList.widths data-toc-label='[attribute] widths'}
 
-Return a list of all widths in this image list.
+A list of all widths in this image list.
 
 **Type:** [`List<Int>`][safeds.lang.List]
 

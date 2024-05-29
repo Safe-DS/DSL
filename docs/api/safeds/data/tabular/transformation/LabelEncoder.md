@@ -8,14 +8,15 @@ The LabelEncoder encodes one or more given columns into labels.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `partialOrder` | [`List<Any?>`][safeds.lang.List] | The partial order of the labels. The labels are encoded in the order of the given list. Additional values are encoded as the next integer after the last value in the list in the order they appear in the data. | `#!sds []` |
+| `columnNames` | `#!sds union<List<String>, String?>` | The list of columns used to fit the transformer. If `None`, all non-numeric columns are used. | `#!sds null` |
+| `partialOrder` | [`List<Any?>`][safeds.lang.List] | The partial order of the labels. The labels are encoded in the order of the given list. Additional values are assigned labels in the order they are encountered during fitting. | `#!sds []` |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
    val table = Table({"a": ["z", "y"], "b": [3, 4]});
-   val encoder = LabelEncoder().fit(table, ["a"]);
+   val encoder = LabelEncoder(columnNames = "a").fit(table);
    val transformedTable = encoder.transform(table);
    // Table({"a": [1, 0], "b": [3, 4]})
    val originalTable = encoder.inverseTransform(transformedTable);
@@ -25,24 +26,28 @@ pipeline example {
 
 ??? quote "Stub code in `LabelEncoder.sdsstub`"
 
-    ```sds linenums="22"
+    ```sds linenums="23"
     class LabelEncoder(
+        @PythonName("column_names") columnNames: union<List<String>, String, Nothing?> = null,
         @PythonName("partial_order") partialOrder: List<Any?> = []
     ) sub InvertibleTableTransformer {
+        /**
+         * The partial order of the labels.
+         */
+        @PythonName("partial_order") attr partialOrder: List<Any>
+
         /**
          * Learn a transformation for a set of columns in a table.
          *
          * This transformer is not modified.
          *
          * @param table The table used to fit the transformer.
-         * @param columnNames The list of columns from the table used to fit the transformer. If `null`, all non-numeric columns are used.
          *
          * @result fittedTransformer The fitted transformer.
          */
         @Pure
         fun fit(
-            table: Table,
-            @PythonName("column_names") columnNames: List<String>?
+            table: Table
         ) -> fittedTransformer: LabelEncoder
 
         /**
@@ -51,7 +56,6 @@ pipeline example {
          * **Note:** Neither this transformer nor the given table are modified.
          *
          * @param table The table used to fit the transformer. The transformer is then applied to this table.
-         * @param columnNames The list of columns from the table used to fit the transformer. If `null`, all columns are used.
          *
          * @result fittedTransformer The fitted transformer.
          * @result transformedTable The transformed table.
@@ -59,8 +63,7 @@ pipeline example {
         @Pure
         @PythonName("fit_and_transform")
         fun fitAndTransform(
-            table: Table,
-            @PythonName("column_names") columnNames: List<String>? = null
+            table: Table
         ) -> (fittedTransformer: LabelEncoder, transformedTable: Table)
     }
     ```
@@ -70,6 +73,12 @@ pipeline example {
 Whether the transformer is fitted.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
+
+## <code class="doc-symbol doc-symbol-attribute"></code> `partialOrder` {#safeds.data.tabular.transformation.LabelEncoder.partialOrder data-toc-label='[attribute] partialOrder'}
+
+The partial order of the labels.
+
+**Type:** [`List<Any>`][safeds.lang.List]
 
 ## <code class="doc-symbol doc-symbol-function"></code> `fit` {#safeds.data.tabular.transformation.LabelEncoder.fit data-toc-label='[function] fit'}
 
@@ -82,7 +91,6 @@ This transformer is not modified.
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `table` | [`Table`][safeds.data.tabular.containers.Table] | The table used to fit the transformer. | - |
-| `columnNames` | [`List<String>?`][safeds.lang.List] | The list of columns from the table used to fit the transformer. If `null`, all non-numeric columns are used. | - |
 
 **Results:**
 
@@ -92,11 +100,10 @@ This transformer is not modified.
 
 ??? quote "Stub code in `LabelEncoder.sdsstub`"
 
-    ```sds linenums="35"
+    ```sds linenums="41"
     @Pure
     fun fit(
-        table: Table,
-        @PythonName("column_names") columnNames: List<String>?
+        table: Table
     ) -> fittedTransformer: LabelEncoder
     ```
 
@@ -111,7 +118,6 @@ Learn a transformation for a set of columns in a table and apply the learned tra
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `table` | [`Table`][safeds.data.tabular.containers.Table] | The table used to fit the transformer. The transformer is then applied to this table. | - |
-| `columnNames` | [`List<String>?`][safeds.lang.List] | The list of columns from the table used to fit the transformer. If `null`, all columns are used. | `#!sds null` |
 
 **Results:**
 
@@ -122,12 +128,11 @@ Learn a transformation for a set of columns in a table and apply the learned tra
 
 ??? quote "Stub code in `LabelEncoder.sdsstub`"
 
-    ```sds linenums="52"
+    ```sds linenums="56"
     @Pure
     @PythonName("fit_and_transform")
     fun fitAndTransform(
-        table: Table,
-        @PythonName("column_names") columnNames: List<String>? = null
+        table: Table
     ) -> (fittedTransformer: LabelEncoder, transformedTable: Table)
     ```
 
@@ -153,7 +158,7 @@ Column order and types may differ from the original table. Likewise, some values
 
 ??? quote "Stub code in `InvertibleTableTransformer.sdsstub`"
 
-    ```sds linenums="55"
+    ```sds linenums="51"
     @Pure
     @PythonName("inverse_transform")
     fun inverseTransform(

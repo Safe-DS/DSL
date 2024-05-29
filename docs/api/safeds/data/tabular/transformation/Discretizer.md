@@ -9,13 +9,14 @@ The Discretizer bins continuous data into intervals.
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `binCount` | [`Int`][safeds.lang.Int] | The number of bins to be created. | `#!sds 5` |
+| `columnNames` | `#!sds union<List<String>, String?>` | The list of columns used to fit the transformer. If `None`, all numeric columns are used. | `#!sds null` |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
     val table = Table({"a": [1, 2, 3, 4]});
-    val discretizer = Discretizer(2).fit(table, ["a"]);
+    val discretizer = Discretizer(2, columnNames = "a").fit(table);
     val transformedTable = discretizer.transform(table);
     // Table({"a": [0, 0, 1, 1]})
 }
@@ -23,16 +24,17 @@ pipeline example {
 
 ??? quote "Stub code in `Discretizer.sdsstub`"
 
-    ```sds linenums="19"
+    ```sds linenums="20"
     class Discretizer(
-        @PythonName("number_of_bins") const binCount: Int = 5
+        @PythonName("bin_count") const binCount: Int = 5,
+        @PythonName("column_names") columnNames: union<List<String>, String, Nothing?> = null
     ) sub TableTransformer where {
         binCount >= 2
     } {
         /**
          * The number of bins to be created.
          */
-        @PythonName("number_of_bins") attr binCount: Int
+        @PythonName("bin_count") attr binCount: Int
 
         /**
          * Learn a transformation for a set of columns in a table.
@@ -40,14 +42,12 @@ pipeline example {
          * This transformer is not modified.
          *
          * @param table The table used to fit the transformer.
-         * @param columnNames The list of columns from the table used to fit the transformer. If `null`, all columns are used.
          *
          * @result fittedTransformer The fitted transformer.
          */
         @Pure
         fun fit(
-            table: Table,
-            @PythonName("column_names") columnNames: List<String>?
+            table: Table
         ) -> fittedTransformer: Discretizer
 
         /**
@@ -56,7 +56,6 @@ pipeline example {
          * **Note:** Neither this transformer nor the given table are modified.
          *
          * @param table The table used to fit the transformer. The transformer is then applied to this table.
-         * @param columnNames The list of columns from the table used to fit the transformer. If `null`, all columns are used.
          *
          * @result fittedTransformer The fitted transformer.
          * @result transformedTable The transformed table.
@@ -64,8 +63,7 @@ pipeline example {
         @Pure
         @PythonName("fit_and_transform")
         fun fitAndTransform(
-            table: Table,
-            @PythonName("column_names") columnNames: List<String>? = null
+            table: Table
         ) -> (fittedTransformer: Discretizer, transformedTable: Table)
     }
     ```
@@ -93,7 +91,6 @@ This transformer is not modified.
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `table` | [`Table`][safeds.data.tabular.containers.Table] | The table used to fit the transformer. | - |
-| `columnNames` | [`List<String>?`][safeds.lang.List] | The list of columns from the table used to fit the transformer. If `null`, all columns are used. | - |
 
 **Results:**
 
@@ -103,11 +100,10 @@ This transformer is not modified.
 
 ??? quote "Stub code in `Discretizer.sdsstub`"
 
-    ```sds linenums="39"
+    ```sds linenums="40"
     @Pure
     fun fit(
-        table: Table,
-        @PythonName("column_names") columnNames: List<String>?
+        table: Table
     ) -> fittedTransformer: Discretizer
     ```
 
@@ -122,7 +118,6 @@ Learn a transformation for a set of columns in a table and apply the learned tra
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `table` | [`Table`][safeds.data.tabular.containers.Table] | The table used to fit the transformer. The transformer is then applied to this table. | - |
-| `columnNames` | [`List<String>?`][safeds.lang.List] | The list of columns from the table used to fit the transformer. If `null`, all columns are used. | `#!sds null` |
 
 **Results:**
 
@@ -133,12 +128,11 @@ Learn a transformation for a set of columns in a table and apply the learned tra
 
 ??? quote "Stub code in `Discretizer.sdsstub`"
 
-    ```sds linenums="56"
+    ```sds linenums="55"
     @Pure
     @PythonName("fit_and_transform")
     fun fitAndTransform(
-        table: Table,
-        @PythonName("column_names") columnNames: List<String>? = null
+        table: Table
     ) -> (fittedTransformer: Discretizer, transformedTable: Table)
     ```
 

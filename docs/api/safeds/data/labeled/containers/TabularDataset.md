@@ -12,14 +12,14 @@ Columns in a tabular dataset are divided into three categories:
 Feature columns are implicitly defined as all columns except the target and extra columns. If no extra columns
 are specified, all columns except the target column are used as features.
 
-**Parent type:** [`Dataset`][safeds.data.labeled.containers.Dataset]
+**Parent type:** [`Dataset<Table, Column<Any?>>`][safeds.data.labeled.containers.Dataset]
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `data` | `#!sds union<Map<String, List<Any>>, Table>` | The data. | - |
-| `targetName` | [`String`][safeds.lang.String] | Name of the target column. | - |
+| `targetName` | [`String`][safeds.lang.String] | The name of the target column. | - |
 | `extraNames` | [`List<String>`][safeds.lang.List] | Names of the columns that are neither features nor target. If null, no extra columns are used, i.e. all but the target column are used as features. | `#!sds []` |
 
 **Examples:**
@@ -44,7 +44,7 @@ pipeline example {
         data: union<Map<String, List<Any>>, Table>,
         @PythonName("target_name") targetName: String,
         @PythonName("extra_names") extraNames: List<String> = []
-    ) sub Dataset {
+    ) sub Dataset<Table, Column> {
         /**
          * The feature columns of the tabular dataset.
          */
