@@ -535,6 +535,7 @@
             columnNumber: 'two',
             xAxisColumnName,
             yAxisColumnName,
+            newTabId: crypto.randomUUID(),
         });
         return;
     };
@@ -551,6 +552,7 @@
             type: 'external-visualizing',
             columnNumber: 'one',
             columnName,
+            newTabId: crypto.randomUUID(),
         });
         return;
     };
@@ -657,12 +659,10 @@
                 possibleColumnFilters.push({
                     type: 'specificValue',
                     values: ['-'].concat(profilingCategories.map((profilingItem) => profilingItem.name)),
-                    columnName: column.name,
                 });
             } else {
                 possibleColumnFilters.push({
                     type: 'searchString',
-                    columnName: column.name,
                 });
             }
         } else {
@@ -679,7 +679,6 @@
                 type: 'valueRange',
                 min: colMin,
                 max: colMax,
-                columnName: column.name,
             });
         }
 

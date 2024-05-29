@@ -1,6 +1,6 @@
 type InternalAction = 'reorderColumns' | 'resizeColumn' | 'hideColumn' | 'showColumn' | 'highlightColumn' | 'emptyTab';
 type ExternalManipulatingAction = 'filterColumn' | 'sortByColumn' | TableFilterTypes;
-type ExternalVisualizingAction = TabType | 'refreshTab';
+type ExternalVisualizingAction = TabType;
 type Action = InternalAction | ExternalManipulatingAction | ExternalVisualizingAction;
 
 interface HistoryEntryBase {
@@ -19,12 +19,25 @@ interface ExternalManipulatingHistoryEntryBase extends HistoryEntryBase {
     action: ExternalManipulatingAction;
 }
 
-interface ExternalVisualizingHistoryEntryBase extends HistoryEntryBase {
+interface ExternalVisualizingHistoryEntryBaseExisting extends HistoryEntryBase {
     type: 'external-visualizing';
     action: ExternalVisualizingAction;
     columnNumber: 'one' | 'two' | 'none';
-    existingTabId?: string;
+    existingTabId: string;
+    newTabId?: never;
 }
+
+interface ExternalVisualizingHistoryEntryBaseNew extends HistoryEntryBase {
+    type: 'external-visualizing';
+    action: ExternalVisualizingAction;
+    columnNumber: 'one' | 'two' | 'none';
+    newTabId: string;
+    existingTabId?: never;
+}
+
+type ExternalVisualizingHistoryEntryBase =
+    | ExternalVisualizingHistoryEntryBaseExisting
+    | ExternalVisualizingHistoryEntryBaseNew;
 
 export interface InternalColumnWithValueHistoryEntry extends InternalHistoryEntryBase {
     action: 'reorderColumns' | 'resizeColumn';
@@ -39,6 +52,7 @@ export interface InternalColumnHistoryEntry extends InternalHistoryEntryBase {
 
 export interface InteralEmptyTabHistoryEntry extends InternalHistoryEntryBase {
     action: 'emptyTab';
+    newTabId: string;
 }
 
 export interface ExternalManipulatingColumnFilterHistoryEntry extends ExternalManipulatingHistoryEntryBase {
@@ -57,27 +71,23 @@ export interface ExternalManipulatingColumnSortHistoryEntry extends ExternalMani
     sort: PossibleSorts;
 }
 
-export interface ExternalVisualizingNoColumnHistoryEntry extends ExternalVisualizingHistoryEntryBase {
+export type ExternalVisualizingNoColumnHistoryEntry = {
     action: NoColumnTabTypes;
     columnNumber: 'none';
-}
+} & ExternalVisualizingHistoryEntryBase;
 
-export interface ExternalVisualizingOneColumnHistoryEntry extends ExternalVisualizingHistoryEntryBase {
+export type ExternalVisualizingOneColumnHistoryEntry = {
     action: OneColumnTabTypes;
     columnName: string;
     columnNumber: 'one';
-}
+} & ExternalVisualizingHistoryEntryBase;
 
-export interface ExternalVisualizingTwoColumnHistoryEntry extends ExternalVisualizingHistoryEntryBase {
+export type ExternalVisualizingTwoColumnHistoryEntry = {
     action: TwoColumnTabTypes;
     xAxisColumnName: string;
     yAxisColumnName: string;
     columnNumber: 'two';
-}
-
-export interface ExternalVisualizingRefreshHistoryEntry extends ExternalVisualizingHistoryEntryBase {
-    action: 'refreshTab';
-}
+} & ExternalVisualizingHistoryEntryBase;
 
 export type TabHistoryEntry =
     | ExternalVisualizingNoColumnHistoryEntry
@@ -94,13 +104,13 @@ export type ExternalManipulatingHistoryEntry =
 export type ExternalVisualizingHistoryEntry =
     | ExternalVisualizingNoColumnHistoryEntry
     | ExternalVisualizingOneColumnHistoryEntry
-    | ExternalVisualizingTwoColumnHistoryEntry
-    | ExternalVisualizingRefreshHistoryEntry;
+    | ExternalVisualizingTwoColumnHistoryEntry;
 
 export type ExternalHistoryEntry = ExternalManipulatingHistoryEntry | ExternalVisualizingHistoryEntry;
 
 export type HistoryEntry = (InternalHistoryEntry | ExternalHistoryEntry) & {
     id: number;
+    overrideId: string;
 };
 
 // ------------------ Types for the Tabs ------------------
@@ -110,7 +120,7 @@ export type NoColumnTabTypes = 'heatmap';
 type TabType = TwoColumnTabTypes | OneColumnTabTypes | NoColumnTabTypes;
 
 interface TabObject {
-    id?: string;
+    id: string;
     type: TabType;
     tabComment: string;
     content: Object;
@@ -260,7 +270,6 @@ interface FilterBase {
 
 interface ColumnFilterBase extends FilterBase {
     type: 'valueRange' | 'specificValue' | 'searchString';
-    columnName: string;
 }
 
 export interface PossibleSearchStringFilter extends ColumnFilterBase {

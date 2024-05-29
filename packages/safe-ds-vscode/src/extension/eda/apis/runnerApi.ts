@@ -679,14 +679,14 @@ export class RunnerApi {
             if (entry.type === 'external-manipulating') {
                 // Only manipulating actions have to be repeated before last entry that is of interest, others do not influence that end result
                 const sdsStringObj = this.sdsStringForHistoryEntry(entry, currentPlaceholderOverride);
-                sdsLines += sdsStringObj.sdsString + '\n';
+                sdsLines += sdsStringObj.sdsString;
                 currentPlaceholderOverride = sdsStringObj.placeholderNames[0]!;
                 safeDsLogger.debug(`Running old entry ${entry.id} with action ${entry.action}`);
             }
         }
 
         if (newEntry.type === 'external-visualizing') {
-            if (newEntry.action === 'infoPanel' || newEntry.action === 'refreshTab') throw new Error('Not implemented');
+            if (newEntry.action === 'infoPanel') throw new Error('Not implemented');
 
             let overriddenTablePlaceholder;
             if (hiddenColumns && hiddenColumns.length > 0) {
@@ -698,7 +698,10 @@ export class RunnerApi {
                 );
             }
 
-            const sdsStringObj = this.sdsStringForHistoryEntry(newEntry, overriddenTablePlaceholder);
+            const sdsStringObj = this.sdsStringForHistoryEntry(
+                newEntry,
+                overriddenTablePlaceholder ?? currentPlaceholderOverride,
+            );
             sdsLines += sdsStringObj.sdsString;
             placeholderNames = sdsStringObj.placeholderNames;
 
@@ -743,7 +746,7 @@ export class RunnerApi {
                         columnNumber: newEntry.columnNumber,
                         imageTab: true,
                         isInGeneration: false,
-                        id: newEntry.existingTabId,
+                        id: newEntry.existingTabId ?? newEntry.newTabId,
                         content: { encodedImage: image },
                         outdated: false,
                     },
@@ -758,7 +761,7 @@ export class RunnerApi {
                         columnNumber: newEntry.columnNumber,
                         imageTab: true,
                         isInGeneration: false,
-                        id: newEntry.existingTabId,
+                        id: newEntry.existingTabId ?? newEntry.newTabId,
                         outdated: false,
                         content: {
                             encodedImage: image,
@@ -777,7 +780,7 @@ export class RunnerApi {
                         columnNumber: newEntry.columnNumber,
                         imageTab: true,
                         isInGeneration: false,
-                        id: newEntry.existingTabId,
+                        id: newEntry.existingTabId ?? newEntry.newTabId,
                         content: { encodedImage: image, columnName: newEntry.columnName },
                         outdated: false,
                     },
@@ -804,23 +807,30 @@ export class RunnerApi {
     }
 
     filterPastEntries(pastEntries: HistoryEntry[], newEntry: HistoryEntry): HistoryEntry[] {
-        // Keep all non sort entries and the last sort entry
-        // If want to change from override sort to stacking sort: keep all entries but have to adapt UI to show all applied sorts and their order
+        // Keep only the last occurrence of each unique overrideId
+        const lastOccurrenceMap = new Map<string, number>();
         const filteredPastEntries: HistoryEntry[] = [];
-        let lastSortIndex = -1;
-        if (newEntry.action !== 'sortByColumn') {
-            // If it were to be a sort, the last sort entry is the new entry
-            for (let i = pastEntries.length - 1; i >= 0; i--) {
-                if (pastEntries[i]!.action === 'sortByColumn') {
-                    lastSortIndex = i;
-                    break;
-                }
+
+        // New entry's overrideId is never appended to filteredPastEntries but accounted for in lastOccurrenceMap to have it override other past entries
+        lastOccurrenceMap.set(newEntry.overrideId, pastEntries.length);
+
+        // Traverse from end to start to record the last occurrence of each unique overrideId
+        for (let i = pastEntries.length - 1; i >= 0; i--) {
+            const entry = pastEntries[i]!;
+            const overrideId = entry.overrideId;
+
+            if (!lastOccurrenceMap.has(overrideId)) {
+                lastOccurrenceMap.set(overrideId, i);
             }
         }
 
+        // Traverse from start to end to build the final result with only the last occurrences
         for (let i = 0; i < pastEntries.length; i++) {
-            if (pastEntries[i]!.action !== 'sortByColumn' || i === lastSortIndex) {
-                filteredPastEntries.push(pastEntries[i]!);
+            const entry = pastEntries[i]!;
+            const overrideId = entry.overrideId;
+
+            if (lastOccurrenceMap.get(overrideId) === i) {
+                filteredPastEntries.push(entry);
             }
         }
 

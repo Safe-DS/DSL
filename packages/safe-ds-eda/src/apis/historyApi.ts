@@ -24,6 +24,32 @@ export const getAndIncrementEntryId = function (): number {
     return entryIdCounter++;
 };
 
+const generateOverrideId = function (entry: ExternalHistoryEntry | InternalHistoryEntry): string {
+    switch (entry.action) {
+        case 'hideColumn':
+        case 'showColumn':
+        case 'resizeColumn':
+        case 'reorderColumns':
+        case 'highlightColumn':
+            return entry.columnName + '.' + entry.action;
+        case 'sortByColumn':
+            return entry.action; // Thus enforcing override sort
+        case 'filterColumn':
+            return entry.columnName + entry.filter.type + '.' + entry.action;
+        case 'linePlot':
+        case 'scatterPlot':
+        case 'histogram':
+        case 'boxPlot':
+        case 'infoPanel':
+        case 'heatmap':
+        case 'emptyTab':
+            const tabId = entry.newTabId ?? entry.existingTabId;
+            return entry.type + '.' + tabId;
+        default:
+            throw new Error('Unknown action type to generateOverrideId');
+    }
+};
+
 window.addEventListener('message', (event) => {
     const message = event.data as FromExtensionMessage;
 
@@ -53,6 +79,7 @@ export const addInternalToHistory = function (entry: InternalHistoryEntry): void
         const entryWithId: HistoryEntry = {
             ...entry,
             id: getAndIncrementEntryId(),
+            overrideId: generateOverrideId(entry),
         };
         const newHistory = [...state, entryWithId];
         return newHistory;
@@ -66,6 +93,7 @@ export const executeExternalHistoryEntry = function (entry: ExternalHistoryEntry
         const entryWithId: HistoryEntry = {
             ...entry,
             id: getAndIncrementEntryId(),
+            overrideId: generateOverrideId(entry),
         };
         const newHistory = [...state, entryWithId];
 
@@ -93,7 +121,7 @@ export const addAndDeployTabHistoryEntry = function (entry: TabHistoryEntry & { 
     }
 
     history.update((state) => {
-        return [...state, entry];
+        return [...state, { ...entry, overrideId: generateOverrideId(entry) }];
     });
     tabs.update((state) => {
         const newTabs = (state ?? []).concat(tab);
@@ -103,20 +131,22 @@ export const addAndDeployTabHistoryEntry = function (entry: TabHistoryEntry & { 
 };
 
 export const addEmptyTabHistoryEntry = function (): void {
+    const tabId = crypto.randomUUID();
     const entry: InteralEmptyTabHistoryEntry & { id: number } = {
         action: 'emptyTab',
         type: 'internal',
         alias: 'New empty tab',
         id: getAndIncrementEntryId(),
+        newTabId: tabId,
     };
     const tab: EmptyTab = {
         type: 'empty',
-        id: crypto.randomUUID(),
+        id: tabId,
         isInGeneration: true,
     };
 
     history.update((state) => {
-        return [...state, entry];
+        return [...state, { ...entry, overrideId: generateOverrideId(entry) }];
     });
     tabs.update((state) => {
         const newTabs = (state ?? []).concat(tab);
@@ -183,13 +213,14 @@ export const unsetTabAsGenerating = function (tab: RealTab): void {
 const deployResult = function (result: RunnerExecutionResultMessage, historyEntry: ExternalHistoryEntry) {
     const resultContent = result.value;
     if (resultContent.type === 'tab') {
-        if (resultContent.content.id) {
-            const existingTab = get(tabs).find((et) => et.id === resultContent.content.id);
+        if (historyEntry.type !== 'external-visualizing') throw new Error('Deploying tab from non-visualizing entry');
+        if (historyEntry.existingTabId) {
+            const existingTab = get(tabs).find((et) => et.id === historyEntry.existingTabId);
             if (existingTab) {
                 const tabIndex = get(tabs).indexOf(existingTab);
                 tabs.update((state) =>
                     state.map((t) => {
-                        if (t.id === resultContent.content.id) {
+                        if (t.id === historyEntry.existingTabId) {
                             return resultContent.content;
                         } else {
                             return t;
@@ -199,11 +230,12 @@ const deployResult = function (result: RunnerExecutionResultMessage, historyEntr
                 currentTabIndex.set(tabIndex);
                 return;
             }
+        } else {
+            const tab = resultContent.content;
+            tab.id = historyEntry.newTabId!; // Mus exist if not existingTabId, not sure why ts does not pick up on it itself here
+            tabs.update((state) => state.concat(tab));
+            currentTabIndex.set(get(tabs).indexOf(tab));
         }
-        const tab = resultContent.content;
-        tab.id = crypto.randomUUID();
-        tabs.update((state) => state.concat(tab));
-        currentTabIndex.set(get(tabs).indexOf(tab));
     } else if (resultContent.type === 'table') {
         table.update((state) => {
             for (const column of resultContent.content.columns) {
