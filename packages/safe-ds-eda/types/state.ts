@@ -1,5 +1,5 @@
 type InternalAction = 'reorderColumns' | 'resizeColumn' | 'hideColumn' | 'showColumn' | 'highlightColumn' | 'emptyTab';
-type ExternalManipulatingAction = 'filterColumn' | 'sortByColumn' | TableFilterTypes;
+type ExternalManipulatingAction = 'filterColumn' | 'sortByColumn' | 'voidSortByColumn' | TableFilterTypes;
 type ExternalVisualizingAction = TabType;
 type Action = InternalAction | ExternalManipulatingAction | ExternalVisualizingAction;
 
@@ -71,6 +71,11 @@ export interface ExternalManipulatingColumnSortHistoryEntry extends ExternalMani
     sort: PossibleSorts;
 }
 
+export interface ExternalManipulatingColumnSortVoidHistoryEntry extends ExternalManipulatingHistoryEntryBase {
+    action: 'voidSortByColumn';
+    columnName: string;
+}
+
 export type ExternalVisualizingNoColumnHistoryEntry = {
     action: NoColumnTabTypes;
     columnNumber: 'none';
@@ -100,7 +105,8 @@ export type InternalHistoryEntry =
 export type ExternalManipulatingHistoryEntry =
     | ExternalManipulatingColumnFilterHistoryEntry
     | ExternalManipulatingTableFilterHistoryEntry
-    | ExternalManipulatingColumnSortHistoryEntry;
+    | ExternalManipulatingColumnSortHistoryEntry
+    | ExternalManipulatingColumnSortVoidHistoryEntry;
 export type ExternalVisualizingHistoryEntry =
     | ExternalVisualizingNoColumnHistoryEntry
     | ExternalVisualizingOneColumnHistoryEntry
@@ -238,7 +244,7 @@ export interface ProfilingDetailName extends ProfilingDetailBase {
 export type ProfilingDetail = ProfilingDetailStatistical | ProfilingDetailImage | ProfilingDetailName;
 
 // ------------ Types for the Columns -----------
-export type PossibleSorts = 'asc' | 'desc' | null;
+export type PossibleSorts = 'asc' | 'desc';
 
 interface ColumnBase {
     type: 'numerical' | 'categorical';
@@ -246,7 +252,7 @@ interface ColumnBase {
     values: any;
     hidden: boolean;
     highlighted: boolean;
-    appliedSort: PossibleSorts;
+    appliedSort: PossibleSorts | null;
     profiling?: Profiling;
 }
 

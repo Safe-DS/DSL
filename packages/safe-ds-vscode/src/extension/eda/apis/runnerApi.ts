@@ -225,6 +225,12 @@ export class RunnerApi {
                     ),
                     placeholderNames: [newPlaceholderName],
                 };
+            case 'voidSortByColumn':
+                // This is a void action, no SDS code is generated and new placeholder is just previous one
+                return {
+                    sdsString: '',
+                    placeholderNames: [overrideTablePlaceholder ?? this.tablePlaceholder],
+                };
             default:
                 throw new Error('Unknown history entry action: ' + historyEntry.action);
         }

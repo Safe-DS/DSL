@@ -559,12 +559,22 @@
     //#endregion // Plotting
 
     //#region Sorting
-    const sortByColumn = function (event: MouseEvent, columnIndex: number, direction: PossibleSorts) {
+    const sortByColumn = function (event: MouseEvent, columnIndex: number, direction: PossibleSorts | null) {
         if (event.button !== 0 || $preventClicks) return;
 
         event.stopPropagation();
 
         const columnName = $table!.columns[columnIndex].name;
+
+        if (!direction) {
+            executeExternalHistoryEntry({
+                action: 'voidSortByColumn',
+                alias: `Remove sorting by ${columnName}`,
+                type: 'external-manipulating',
+                columnName,
+            });
+            return;
+        }
 
         executeExternalHistoryEntry({
             action: 'sortByColumn',
@@ -755,7 +765,12 @@
                                         <div
                                             class="sortIconWrapper"
                                             role="none"
-                                            on:mousedown={(event) => sortByColumn(event, index, 'desc')}
+                                            on:mousedown={(event) =>
+                                                sortByColumn(
+                                                    event,
+                                                    index,
+                                                    column.appliedSort === 'desc' ? null : 'desc',
+                                                )}
                                         >
                                             <CaretIcon
                                                 color={column.appliedSort === 'desc'
@@ -767,7 +782,8 @@
                                         <div
                                             class="sortIconWrapper rotate"
                                             role="none"
-                                            on:mousedown={(event) => sortByColumn(event, index, 'asc')}
+                                            on:mousedown={(event) =>
+                                                sortByColumn(event, index, column.appliedSort === 'asc' ? null : 'asc')}
                                         >
                                             <CaretIcon
                                                 color={column.appliedSort === 'asc'

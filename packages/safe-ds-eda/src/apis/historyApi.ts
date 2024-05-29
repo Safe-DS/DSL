@@ -34,6 +34,8 @@ const generateOverrideId = function (entry: ExternalHistoryEntry | InternalHisto
             return entry.columnName + '.' + entry.action;
         case 'sortByColumn':
             return entry.action; // Thus enforcing override sort
+        case 'voidSortByColumn':
+            return 'sortByColumn'; // This overriding previous sorts
         case 'filterColumn':
             return entry.columnName + entry.filter.type + '.' + entry.action;
         case 'linePlot':
@@ -232,7 +234,7 @@ const deployResult = function (result: RunnerExecutionResultMessage, historyEntr
             }
         } else {
             const tab = resultContent.content;
-            tab.id = historyEntry.newTabId!; // Mus exist if not existingTabId, not sure why ts does not pick up on it itself here
+            tab.id = historyEntry.newTabId!; // Must exist if not existingTabId, not sure why ts does not pick up on it itself here
             tabs.update((state) => state.concat(tab));
             currentTabIndex.set(get(tabs).indexOf(tab));
         }
@@ -247,7 +249,7 @@ const deployResult = function (result: RunnerExecutionResultMessage, historyEntr
                 column.highlighted = existingColumn.highlighted;
                 if (historyEntry.action === 'sortByColumn' && column.name === historyEntry.columnName) {
                     column.appliedSort = historyEntry.sort; // Set sorted column to sorted if it was a sort action, otherwise preserve
-                } else if (historyEntry.action !== 'sortByColumn') {
+                } else if (historyEntry.action !== 'sortByColumn' && historyEntry.action !== 'voidSortByColumn') {
                     column.appliedSort = existingColumn.appliedSort;
                 }
                 if (historyEntry.action === 'filterColumn' && column.name === historyEntry.columnName) {
