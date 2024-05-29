@@ -313,19 +313,16 @@ const updateTabOutdated = function (entry: ExternalHistoryEntry | InternalHistor
     if (entry.action === 'hideColumn' || entry.action === 'showColumn') {
         tabs.update((state) => {
             const newTabs = state.map((t) => {
-                if (t.type !== 'empty') {
-                    if (
-                        t.columnNumber === 'none' &&
-                        get(table)?.columns.find((c) => c.name === entry.columnName)?.type === 'numerical'
-                    ) {
-                        // UPDATE the if in case there are none column tabs that do not depend on numerical columns
-                        return {
-                            ...t,
-                            outdated: true,
-                        };
-                    } else {
-                        return t;
-                    }
+                if (
+                    t.type !== 'empty' &&
+                    t.columnNumber === 'none' &&
+                    get(table)?.columns.find((c) => c.name === entry.columnName)?.type === 'numerical'
+                ) {
+                    // UPDATE the if in case there are none column tabs that do not depend on numerical columns
+                    return {
+                        ...t,
+                        outdated: true,
+                    };
                 } else {
                     return t;
                 }

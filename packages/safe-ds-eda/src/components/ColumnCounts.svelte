@@ -49,7 +49,7 @@
                     if (columnName === column.name) {
                         return {
                             ...column,
-                            hidden: !column.hidden,
+                            hidden: false,
                         };
                     }
                     return column;

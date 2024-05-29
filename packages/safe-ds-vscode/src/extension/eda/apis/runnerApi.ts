@@ -332,18 +332,6 @@ export class RunnerApi {
         );
     }
 
-    private sdsStringForRemoveColumns(columnNames: string[], tablePlaceholder: string, newPlaceholderName: string) {
-        return (
-            'val ' +
-            newPlaceholderName +
-            ' = ' +
-            tablePlaceholder +
-            '.removeColumns(["' +
-            columnNames.join('","') +
-            '"]); \n'
-        );
-    }
-
     private sdsStringForSortRowsByColumn(
         columnName: string,
         direction: PossibleSorts,
@@ -362,6 +350,11 @@ export class RunnerApi {
             (direction === 'desc') +
             '); \n'
         );
+    }
+
+    private sdsStringForRemoveColumns(columnNames: string[], tablePlaceholder: string, newPlaceholderName: string) {
+        const quotedColumns = columnNames.map((name) => `"${name}"`).join(',');
+        return 'val ' + newPlaceholderName + ' = ' + tablePlaceholder + `.removeColumns([${quotedColumns}]); \n`;
     }
 
     private sdsStringForTableSchema(tablePlaceholder: string, newPlaceholderName: string) {

@@ -15,7 +15,7 @@
         return type === 'histogram';
     };
 
-    const columnNames = derived(
+    const allColumnOptions = derived(
         table,
         ($table) =>
             $table?.columns.map((column) => {
@@ -26,7 +26,7 @@
                 };
             }) || [],
     );
-    const numericalColumnNames = derived(
+    const numericalColumnOptions = derived(
         table,
         ($table) =>
             $table?.columns
@@ -159,18 +159,18 @@
             }
         }
 
-        // Check if columns now require numerical column only and if so check if selected column(s) are numerical
+        // Check if type now requires numerical column(s) only and if so check if selected column(s) are numerical
         if (!allowsNonNumericalColumns($buildATab.type)) {
             buildATab.update((buildingTab) => {
                 if (
                     buildingTab.xAxisColumnName &&
-                    !$numericalColumnNames.find((column) => column.name === buildingTab.xAxisColumnName)
+                    !$numericalColumnOptions.find((column) => column.name === buildingTab.xAxisColumnName)
                 ) {
                     buildingTab.xAxisColumnName = undefined;
                 }
                 if (
                     buildingTab.yAxisColumnName &&
-                    !$numericalColumnNames.find((column) => column.name === buildingTab.yAxisColumnName)
+                    !$numericalColumnOptions.find((column) => column.name === buildingTab.yAxisColumnName)
                 ) {
                     buildingTab.yAxisColumnName = undefined;
                 }
@@ -324,8 +324,8 @@
                                         'Select'}
                                     onSelect={newXAxisSelected}
                                     possibleOptions={allowsNonNumericalColumns($tabInfo.type)
-                                        ? $columnNames
-                                        : $numericalColumnNames}
+                                        ? $allColumnOptions
+                                        : $numericalColumnOptions}
                                     fontSize="1.1em"
                                     height="40px"
                                     width="140px"
@@ -341,8 +341,8 @@
                                         'Select'}
                                     onSelect={newXAxisSelected}
                                     possibleOptions={allowsNonNumericalColumns($tabInfo.type)
-                                        ? $columnNames
-                                        : $numericalColumnNames}
+                                        ? $allColumnOptions
+                                        : $numericalColumnOptions}
                                     fontSize="1.1em"
                                     height="40px"
                                     width="140px"
@@ -375,8 +375,8 @@
                             selectedOption={$tabInfo.content?.yAxisColumnName ?? $tabInfo.yAxisColumnName ?? 'Select'}
                             onSelect={newYAxisSelected}
                             possibleOptions={allowsNonNumericalColumns($tabInfo.type)
-                                ? $columnNames
-                                : $numericalColumnNames}
+                                ? $allColumnOptions
+                                : $numericalColumnOptions}
                             fontSize="1.1em"
                             height="40px"
                             width="140px"
