@@ -1,11 +1,13 @@
-import { SafeDsServices } from '../safe-ds-module.js';
-import { GenericRequestType } from './types.js';
-import { LangiumSharedServices } from 'langium/lsp';
-import { AstNode, LangiumDocument } from 'langium';
-import { parse } from './ast-parser/parser.js';
-import { AstInterface } from '../../../../safe-ds-vscode/src/extension/custom-editor/messaging/getAst.js';
+import { SafeDsServices } from "../safe-ds-module.js";
+import { GenericRequestType } from "./types.js";
+import { LangiumSharedServices } from "langium/lsp";
+import { parseDocument } from "./ast-parser/parser/document.js";
+import { AstInterface } from "../../../../safe-ds-vscode/src/extension/custom-editor/messaging/getAst.js";
+import { Utils } from "./ast-parser/utils.js";
+import { extname } from "path";
+import { documentToJson, saveJson } from "./ast-parser/tools/debug-utils.js";
 
-const LOGGING_TAG = 'CustomEditor] [AstParser';
+const LOGGING_TAG = "CustomEditor] [AstParser";
 
 const getAstHandler = async (
     message: AstInterface.Message,
@@ -13,33 +15,49 @@ const getAstHandler = async (
     safeDsServices: SafeDsServices,
 ): Promise<AstInterface.Response> => {
     const logger = safeDsServices.communication.MessagingProvider;
-    if (!['sds', 'sdsstub', 'sdsdev'].includes(message.uri.path.split('.').reverse()[0]!)) {
-        logger.error(LOGGING_TAG, `Document <${message.uri.path}> is not parseable`);
-        return { ast: '' };
+    Utils.initialize(logger);
+
+    const fileExtension = extname(message.uri.path);
+    const parseableExtensions = [".sds", ".sdsdev"];
+    if (!parseableExtensions.includes(fileExtension)) {
+        Utils.pushError(LOGGING_TAG, `Unknown file type <${message.uri.path}>`);
+        return { errorList: Utils.errorList };
     }
 
-    let targetDocument: LangiumDocument<AstNode> = await sharedServices.workspace.LangiumDocuments.getOrCreateDocument(
-        message.uri,
-    );
-    if (!sharedServices.workspace.LangiumDocuments.hasDocument(message.uri)) {
-        await sharedServices.workspace.DocumentBuilder.build([targetDocument]);
-    }
+    const document =
+        await sharedServices.workspace.LangiumDocuments.getOrCreateDocument(
+            message.uri,
+        );
+    await sharedServices.workspace.DocumentBuilder.build([document]);
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const newAST = parse(targetDocument, safeDsServices);
+    // Todo: Merge main, Fix the Test pipeline, Create Tests
+    parseDocument(document);
+    // saveJson(documentToJson(document, 16), "currentDocument");
+
+    const ast = JSON.stringify({
+        calls: Utils.callList,
+        edges: Utils.edgeList,
+    });
 
     return {
-        error: {
-            action: 'block',
-            source: `[${LOGGING_TAG}]`,
-            message: `The parsing of the Ast is not yet fully implemented.\nPlease keep calm, and have a cup of tea, with some biscuits.\nHere is how far we currenlty are:\n\n${newAST}`,
-        },
+        errorList: [
+            {
+                action: "block",
+                source: `[${LOGGING_TAG}]`,
+                message: `The parsing of the Ast is not yet fully implemented.\nPlease keep calm, and have a cup of tea, with some biscuits.\nHere is how far we currenlty are:\n\n${ast}`,
+            },
+            ...Utils.errorList,
+        ],
     };
 };
 
 export const GetAst: GenericRequestType = {
-    method: 'custom-editor/getAST',
+    method: "custom-editor/getAST",
     handler:
-        (sharedServices: LangiumSharedServices, safeDsServices: SafeDsServices) => (message: AstInterface.Message) =>
+        (
+            sharedServices: LangiumSharedServices,
+            safeDsServices: SafeDsServices,
+        ) =>
+        (message: AstInterface.Message) =>
             getAstHandler(message, sharedServices, safeDsServices),
 };

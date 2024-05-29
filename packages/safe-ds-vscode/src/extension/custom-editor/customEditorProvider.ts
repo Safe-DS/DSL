@@ -79,7 +79,7 @@ export class SafeDSCustomEditorProvider implements vscode.CustomTextEditorProvid
         webviewPanel.webview.options = {
             enableScripts: true,
         };
-        const messageHandler = MessageHandler.getInstance(webviewPanel.webview, this.client, document.uri);
+        const messageHandler = new MessageHandler(webviewPanel.webview, this.client, document.uri);
         this.context.subscriptions.push(messageHandler.webview.listenToMessages());
         webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview, document.fileName);
 

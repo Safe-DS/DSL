@@ -6,22 +6,20 @@ import * as vscode from 'vscode';
 import { GetAst } from '$lang/language/custom-editor/getAst.js';
 import { AstInterface } from './getAst.js';
 
+// Todo: This class can technically be reworked a bit
+// maybe just having two static spaces, with messageListener is enough
+// It should still be possible ot initiate messages from the extension, but for now that's
+// almost not necessary
+
 export class MessageHandler {
-    private static instance: MessageHandler;
     private vscodeWebview: Webview;
     private client: LanguageClient;
     private documentUri: Uri;
-    private constructor(webview: Webview, client: LanguageClient, uri: Uri) {
+
+    constructor(webview: Webview, client: LanguageClient, uri: Uri) {
         this.vscodeWebview = webview;
         this.client = client;
         this.documentUri = uri;
-    }
-
-    public static getInstance(webview: Webview, client: LanguageClient, uri: Uri) {
-        if (!MessageHandler.instance) {
-            MessageHandler.instance = new MessageHandler(webview, client, uri);
-        }
-        return MessageHandler.instance;
     }
 
     public get webview() {
@@ -31,13 +29,12 @@ export class MessageHandler {
         return {
             listenToMessages(): Disposable {
                 return vscodeWebview.onDidReceiveMessage(async (message: WebviewToExtension) => {
-                    logOutput('I GOT A MESSAGE');
                     switch (message.command) {
                         case 'test':
                             logOutput(message.value);
                             break;
                         case 'RequestAst':
-                            logOutput('I got a request for AST');
+                            // Todo: Set the vscode application state as "loading AST" in the bottom bar
                             const response = await client.sendRequest(
                                 new RequestType<AstInterface.Message, AstInterface.Response, void>(GetAst.method),
                                 { uri: documentUri },
@@ -64,8 +61,8 @@ export class MessageHandler {
     public get languageServer() {
         const client = this.client;
         return {
-            async getAst_SAMPLE(documentUri: vscode.Uri): Promise<AstInterface.Response> {
-                // await client.onReady(); // Ensure the client is ready before sending requests // This is suggested in every tutorial, but the method doesn't exist?
+            async getAst_DEPRECATED(documentUri: vscode.Uri): Promise<AstInterface.Response> {
+                // await client.onReady(); // Todo: properly look for this -> Ensure the client is ready before sending requests // This is suggested in every tutorial, but the method doesn't exist?
                 const response = await client.sendRequest(
                     new RequestType<AstInterface.Message, AstInterface.Response, void>(GetAst.method),
                     { uri: documentUri },

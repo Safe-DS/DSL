@@ -36,15 +36,15 @@
 {#if criticalErrorList.length > 0}
     <div class=" flex h-full w-full flex-col items-center justify-center gap-4">
         <span class="text-xs text-red-600">Critical Error</span>
-        <ScrollArea class="h-3/4 rounded-md border-2 border-red-600 p-6">
-            <div class="flex flex-col gap-2">
+        <ScrollArea class="h-3/4 w-3/4 rounded-md border-2 border-red-600 p-6">
+            <div class="flex flex-col gap-2 select-text">
                 {#each criticalErrorList as error}
                     <div
-                        class=" whitespace-pre-wrap text-xl font-bold text-red-600"
+                        class="select-text whitespace-pre-wrap text-xl font-bold text-red-600"
                     >
                         {error.source}
                     </div>
-                    <div class="whitespace-pre-wrap text-sm text-gray-300">
+                    <div class="select-text whitespace-pre-wrap text-sm text-gray-300">
                         {error.message}
                     </div>
                 {/each}

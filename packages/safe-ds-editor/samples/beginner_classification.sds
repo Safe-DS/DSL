@@ -50,8 +50,16 @@ pipeline predictSpeed {
     val model = modelUntrained.fit(trainTagged2);
 
 // score = model.accuracy(validate_tagged2)
+
     val score = model.accuracy(validateTagged2);
 
+// val train3, val validate = subsetImages.splitRows(percentageInFirst, shuffle = doSomething());
+    val train3, val validate3 = subsetImages.splitRows(
+        percentageInFirst = doSomethingElse()
+    );
+    val train4, val validate4 = subsetImages.splitRows(
+        doSomethingElse()
+    );
 // print(score)
 // print(score)
 
