@@ -15,6 +15,8 @@ const table = writable<Table | undefined>();
 
 const history = writable<HistoryEntry[]>([]);
 
+const tableLoading = writable<boolean>(false);
+
 window.addEventListener('message', (event) => {
     const message = event.data as FromExtensionMessage;
     // eslint-disable-next-line no-console
@@ -50,4 +52,4 @@ window.addEventListener('message', (event) => {
     }
 });
 
-export { history, tabs, table, currentTabIndex, preventClicks, cancelTabIdsWaiting };
+export { history, tabs, table, currentTabIndex, preventClicks, cancelTabIdsWaiting, tableLoading };

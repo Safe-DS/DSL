@@ -12,7 +12,7 @@ import type {
     Tab,
     TabHistoryEntry,
 } from '../../types/state';
-import { cancelTabIdsWaiting, tabs, history, currentTabIndex, table } from '../webviewState';
+import { cancelTabIdsWaiting, tabs, history, currentTabIndex, table, tableLoading } from '../webviewState';
 import { executeRunner } from './extensionApi';
 
 // Wait for results to return from the server
@@ -70,6 +70,11 @@ window.addEventListener('message', (event) => {
 
         deployResult(message, asyncQueue[0]);
         asyncQueue.shift();
+
+        if (asyncQueue.length === 0) {
+            tableLoading.set(false);
+        }
+
         evaluateMessagesWaitingForTurn();
     } else if (message.command === 'cancelRunnerExecution') {
         cancelExecuteExternalHistoryEntry(message.value);
@@ -91,6 +96,13 @@ export const addInternalToHistory = function (entry: InternalHistoryEntry): void
 };
 
 export const executeExternalHistoryEntry = function (entry: ExternalHistoryEntry): void {
+    // Set table to loading if loading takes longer than 500ms
+    setTimeout(() => {
+        if (asyncQueue.length > 0) {
+            tableLoading.set(true);
+        }
+    }, 500);
+
     history.update((state) => {
         const entryWithId: HistoryEntry = {
             ...entry,
@@ -169,6 +181,10 @@ export const cancelExecuteExternalHistoryEntry = function (entry: HistoryEntry):
             if (tab.type !== 'empty') {
                 unsetTabAsGenerating(tab);
             }
+        }
+
+        if (asyncQueue.length === 0) {
+            tableLoading.set(false);
         }
     } else {
         throw new Error('Entry already fully executed');
