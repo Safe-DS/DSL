@@ -23,7 +23,7 @@ class RidgeRegressor(
     alpha >= 0.0
 } {
     /**
-     * Get the regularization of the model.
+     * The regularization of the model.
      */
     attr alpha: Float
 

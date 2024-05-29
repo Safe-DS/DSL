@@ -28,22 +28,22 @@ pipeline example {
     ```sds linenums="24"
     class AdaBoostClassifier(
         learner: Classifier = DecisionTreeClassifier(),
-        @PythonName("maximum_number_of_learners") const maxLearnerCount: Int = 50,
+        @PythonName("max_learner_count") const maxLearnerCount: Int = 50,
         @PythonName("learning_rate") const learningRate: Float = 1.0
     ) sub Classifier where {
         maxLearnerCount >= 1,
         learningRate > 0.0
     } {
         /**
-         * Get the base learner used for training the ensemble.
+         * The base learner used for training the ensemble.
          */
         attr learner: Classifier
         /**
-         * Get the maximum number of learners in the ensemble.
+         * The maximum number of learners in the ensemble.
          */
-        @PythonName("maximum_number_of_learners") attr maxLearnerCount: Int
+        @PythonName("max_learner_count") attr maxLearnerCount: Int
         /**
-         * Get the learning rate.
+         * The learning rate.
          */
         @PythonName("learning_rate") attr learningRate: Float
 
@@ -71,19 +71,19 @@ Whether the model is fitted.
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `learner` {#safeds.ml.classical.classification.AdaBoostClassifier.learner data-toc-label='[attribute] learner'}
 
-Get the base learner used for training the ensemble.
+The base learner used for training the ensemble.
 
 **Type:** [`Classifier`][safeds.ml.classical.classification.Classifier]
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `learningRate` {#safeds.ml.classical.classification.AdaBoostClassifier.learningRate data-toc-label='[attribute] learningRate'}
 
-Get the learning rate.
+The learning rate.
 
 **Type:** [`Float`][safeds.lang.Float]
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `maxLearnerCount` {#safeds.ml.classical.classification.AdaBoostClassifier.maxLearnerCount data-toc-label='[attribute] maxLearnerCount'}
 
-Get the maximum number of learners in the ensemble.
+The maximum number of learners in the ensemble.
 
 **Type:** [`Int`][safeds.lang.Int]
 

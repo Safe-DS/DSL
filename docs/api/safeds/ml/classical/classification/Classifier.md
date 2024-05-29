@@ -16,8 +16,10 @@ A model for classification tasks.
 - [`GradientBoostingClassifier`][safeds.ml.classical.classification.GradientBoostingClassifier]
 - [`KNearestNeighborsClassifier`][safeds.ml.classical.classification.KNearestNeighborsClassifier]
 - [`LogisticClassifier`][safeds.ml.classical.classification.LogisticClassifier]
+- `#!sds LogisticRegressionClassifier`
 - [`RandomForestClassifier`][safeds.ml.classical.classification.RandomForestClassifier]
 - [`SupportVectorClassifier`][safeds.ml.classical.classification.SupportVectorClassifier]
+- `#!sds SupportVectorMachineClassifier`
 
 ??? quote "Stub code in `Classifier.sdsstub`"
 

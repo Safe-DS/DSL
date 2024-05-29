@@ -10,13 +10,14 @@ The RangeScaler transforms column values by scaling each value to a given range.
 |------|------|-------------|---------|
 | `min` | [`Float`][safeds.lang.Float] | The minimum of the new range after the transformation | `#!sds 0.0` |
 | `max` | [`Float`][safeds.lang.Float] | The maximum of the new range after the transformation | `#!sds 1.0` |
+| `columnNames` | `#!sds union<List<String>, String?>` | The list of columns used to fit the transformer. If `None`, all numeric columns are used. | `#!sds null` |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
     val table = Table({"a": [1, 2, 3]});
-    val scaler = RangeScaler(0.0, 1.0).fit(table, ["a"]);
+    val scaler = RangeScaler(0.0, 1.0, columnNames = "a").fit(table);
     val transformedTable = scaler.transform(table);
     // transformedTable = Table({"a": [0.0, 0.5, 1.0]});
     val originalTable = scaler.inverseTransform(transformedTable);
@@ -26,10 +27,11 @@ pipeline example {
 
 ??? quote "Stub code in `RangeScaler.sdsstub`"
 
-    ```sds linenums="22"
+    ```sds linenums="23"
     class RangeScaler(
-        const min: Float = 0.0,
-        const max: Float = 1.0
+        @PythonName("min_") const min: Float = 0.0,
+        @PythonName("max_") const max: Float = 1.0,
+        @PythonName("column_names") columnNames: union<List<String>, String, Nothing?> = null
     ) sub InvertibleTableTransformer {
         /**
          * The minimum of the new range after the transformation.
@@ -46,14 +48,12 @@ pipeline example {
          * This transformer is not modified.
          *
          * @param table The table used to fit the transformer.
-         * @param columnNames The list of columns from the table used to fit the transformer. If `null`, all numeric columns are used.
          *
          * @result fittedTransformer The fitted transformer.
          */
         @Pure
         fun fit(
-            table: Table,
-            @PythonName("column_names") columnNames: List<String>?
+            table: Table
         ) -> fittedTransformer: RangeScaler
 
         /**
@@ -62,7 +62,6 @@ pipeline example {
          * **Note:** Neither this transformer nor the given table are modified.
          *
          * @param table The table used to fit the transformer. The transformer is then applied to this table.
-         * @param columnNames The list of columns from the table used to fit the transformer. If `null`, all columns are used.
          *
          * @result fittedTransformer The fitted transformer.
          * @result transformedTable The transformed table.
@@ -70,8 +69,7 @@ pipeline example {
         @Pure
         @PythonName("fit_and_transform")
         fun fitAndTransform(
-            table: Table,
-            @PythonName("column_names") columnNames: List<String>? = null
+            table: Table
         ) -> (fittedTransformer: RangeScaler, transformedTable: Table)
     }
     ```
@@ -105,7 +103,6 @@ This transformer is not modified.
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `table` | [`Table`][safeds.data.tabular.containers.Table] | The table used to fit the transformer. | - |
-| `columnNames` | [`List<String>?`][safeds.lang.List] | The list of columns from the table used to fit the transformer. If `null`, all numeric columns are used. | - |
 
 **Results:**
 
@@ -115,11 +112,10 @@ This transformer is not modified.
 
 ??? quote "Stub code in `RangeScaler.sdsstub`"
 
-    ```sds linenums="45"
+    ```sds linenums="46"
     @Pure
     fun fit(
-        table: Table,
-        @PythonName("column_names") columnNames: List<String>?
+        table: Table
     ) -> fittedTransformer: RangeScaler
     ```
 
@@ -134,7 +130,6 @@ Learn a transformation for a set of columns in a table and apply the learned tra
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `table` | [`Table`][safeds.data.tabular.containers.Table] | The table used to fit the transformer. The transformer is then applied to this table. | - |
-| `columnNames` | [`List<String>?`][safeds.lang.List] | The list of columns from the table used to fit the transformer. If `null`, all columns are used. | `#!sds null` |
 
 **Results:**
 
@@ -145,12 +140,11 @@ Learn a transformation for a set of columns in a table and apply the learned tra
 
 ??? quote "Stub code in `RangeScaler.sdsstub`"
 
-    ```sds linenums="62"
+    ```sds linenums="61"
     @Pure
     @PythonName("fit_and_transform")
     fun fitAndTransform(
-        table: Table,
-        @PythonName("column_names") columnNames: List<String>? = null
+        table: Table
     ) -> (fittedTransformer: RangeScaler, transformedTable: Table)
     ```
 
@@ -176,7 +170,7 @@ Column order and types may differ from the original table. Likewise, some values
 
 ??? quote "Stub code in `InvertibleTableTransformer.sdsstub`"
 
-    ```sds linenums="55"
+    ```sds linenums="51"
     @Pure
     @PythonName("inverse_transform")
     fun inverseTransform(

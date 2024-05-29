@@ -2,18 +2,18 @@
 
 The input conversion for a neural network, defines the input parameters for the neural network.
 
+**Parent type:** [`InputConversion<TimeSeriesDataset, TimeSeriesDataset>`][safeds.ml.nn.converters.InputConversion]
+
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `windowSize` | [`Int`][safeds.lang.Int] | The size of the created windows | - |
-| `forecastHorizon` | [`Int`][safeds.lang.Int] | The forecast horizon defines the future lag of the predicted values | - |
+| `predictionName` | [`String`][safeds.lang.String] | The name of the new column where the prediction will be stored. | `#!sds "prediction_nn"` |
 
 ??? quote "Stub code in `InputConversionTimeSeries.sdsstub`"
 
-    ```sds linenums="10"
+    ```sds linenums="9"
     class InputConversionTimeSeries(
-        @PythonName("window_size") windowSize: Int,
-        @PythonName("forecast_horizon") forecastHorizon: Int
-    )
+        @PythonName("prediction_name") predictionName: String = "prediction_nn"
+    ) sub InputConversion<TimeSeriesDataset, TimeSeriesDataset>
     ```

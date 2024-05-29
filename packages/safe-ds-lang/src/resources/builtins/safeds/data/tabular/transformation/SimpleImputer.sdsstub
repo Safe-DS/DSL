@@ -7,11 +7,13 @@ from safeds.data.tabular.transformation import TableTransformer
  * Replace missing values with the given strategy.
  *
  * @param strategy The strategy used to impute missing values.
+ * @param columnNames The list of columns used to fit the transformer. If `None`, all columns are used.
+ * @param valueToReplace The value that should be replaced.
  *
  * @example
  * pipeline example {
  *    val table = Table({"a": [1, null], "b": [3, 4]});
- *    val imputer = SimpleImputer(SimpleImputer.Strategy.Mean).fit(table, ["a"]);
+ *    val imputer = SimpleImputer(SimpleImputer.Strategy.Mean, columnNames = "a").fit(table);
  *    val transformedTable = imputer.transform(table);
  *    // Table({"a": [1, 1], "b": [3, 4]})
  * }
@@ -19,13 +21,14 @@ from safeds.data.tabular.transformation import TableTransformer
 * @example
  * pipeline example {
  *    val table = Table({"a": [1, null], "b": [3, 4]});
- *    val imputer = SimpleImputer(SimpleImputer.Strategy.Constant(0)).fit(table, ["a"]);
+ *    val imputer = SimpleImputer(SimpleImputer.Strategy.Constant(0), columnNames = "a").fit(table);
  *    val transformedTable = imputer.transform(table);
  *    // Table({"a": [1, 0], "b": [3, 4]})
  * }
  */
 class SimpleImputer(
     strategy: SimpleImputer.Strategy,
+    @PythonName("column_names") columnNames: union<List<String>, String, Nothing?> = null,
     @PythonName("value_to_replace") valueToReplace: union<Float, String, Nothing?> = null
 ) sub TableTransformer {
     /**
@@ -74,14 +77,12 @@ class SimpleImputer(
      * This transformer is not modified.
      *
      * @param table The table used to fit the transformer.
-     * @param columnNames The list of columns from the table used to fit the transformer. If `null`, all columns are used.
      *
      * @result fittedTransformer The fitted transformer.
      */
     @Pure
     fun fit(
-        table: Table,
-        @PythonName("column_names") columnNames: List<String>?
+        table: Table
     ) -> fittedTransformer: SimpleImputer
 
     /**
@@ -90,7 +91,6 @@ class SimpleImputer(
      * **Note:** Neither this transformer nor the given table are modified.
      *
      * @param table The table used to fit the transformer. The transformer is then applied to this table.
-     * @param columnNames The list of columns from the table used to fit the transformer. If `null`, all columns are used.
      *
      * @result fittedTransformer The fitted transformer.
      * @result transformedTable The transformed table.
@@ -98,7 +98,6 @@ class SimpleImputer(
     @Pure
     @PythonName("fit_and_transform")
     fun fitAndTransform(
-        table: Table,
-        @PythonName("column_names") columnNames: List<String>? = null
+        table: Table
     ) -> (fittedTransformer: SimpleImputer, transformedTable: Table)
 }

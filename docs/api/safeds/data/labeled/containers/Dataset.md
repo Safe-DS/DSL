@@ -7,13 +7,21 @@ search:
 
 A dataset is used as input to machine learning models.
 
+**Type parameters:**
+
+| Name | Upper Bound | Description | Default |
+|------|-------------|-------------|---------|
+| `I` | [`Any?`][safeds.lang.Any] | The type of the input data. | - |
+| `O` | [`Any?`][safeds.lang.Any] | The type of the output data. | - |
+
 **Inheritors:**
 
 - [`ImageDataset`][safeds.data.labeled.containers.ImageDataset]
 - [`TabularDataset`][safeds.data.labeled.containers.TabularDataset]
+- [`TimeSeriesDataset`][safeds.data.labeled.containers.TimeSeriesDataset]
 
 ??? quote "Stub code in `Dataset.sdsstub`"
 
-    ```sds linenums="6"
-    class Dataset
+    ```sds linenums="9"
+    class Dataset<out I, out O>
     ```

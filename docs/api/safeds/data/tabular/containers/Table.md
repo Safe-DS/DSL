@@ -39,13 +39,13 @@ pipeline example {
         /**
          * The number of columns in the table.
          */
-        @PythonName("number_of_columns") attr columnCount: Int
+        @PythonName("column_count") attr columnCount: Int
         /**
          * The number of rows in the table.
          *
          * **Note:** This operation must fully load the data into memory, which can be expensive.
          */
-        @PythonName("number_of_rows") attr rowCount: Int
+        @PythonName("row_count") attr rowCount: Int
         /**
          * The plotter for the table.
          */
@@ -200,8 +200,6 @@ pipeline example {
 
         /**
          * Get a column from the table.
-         *
-         * **Note:** This operation must fully load the data into memory, which can be expensive.
          *
          * @param name The name of the column.
          *
@@ -421,6 +419,45 @@ pipeline example {
             name: String,
             transformer: (cell: Cell) -> transformedCell: Cell
         ) -> newTable: Table
+
+        /**
+         * Return how many rows in the table satisfy the predicate.
+         *
+         * The predicate can return one of three results:
+         *
+         * - true, if the row satisfies the predicate.
+         * - false, if the row does not satisfy the predicate.
+         * - null, if the truthiness of the predicate is unknown, e.g. due to missing values.
+         *
+         * By default, cases where the truthiness of the predicate is unknown are ignored and this method returns how often
+         * the predicate returns true.
+         *
+         * You can instead enable Kleene logic by setting `ignore_unknown = False`. In this case, this method returns null
+         * if the predicate returns null at least once. Otherwise, it still returns how often the predicate returns true.
+         *
+         * @param predicate The predicate to apply to each row.
+         * @param ignoreUnknown Whether to ignore cases where the truthiness of the predicate is unknown.
+         *
+         * @result count The number of rows in the table that satisfy the predicate.
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table({"col1": [1, 2, 3], "col2": [1, 3, 3]});
+         *     val result = table.countRowIf((row) -> row.getValue("col1").eq(row.getValue("col2"))); // 2
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table({"col1": [1, 2, 3], "col2": [1, 3, 3]});
+         *     val result = table.countRowIf((row) -> row.getValue("col1").gt(row.getValue("col2"))); // 0
+         * }
+         */
+        @Pure
+        @PythonName("count_row_if")
+        fun countRowIf(
+            predicate: (cell: Row) -> satisfiesPredicate: Cell<Boolean?>,
+            @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
+        ) -> count: Int?
 
         /**
          * Return a new table without duplicate rows.
@@ -743,7 +780,7 @@ pipeline example {
          * @example
          * pipeline example {
          *     val table = Table({"a": [1, 2, 3]});
-         *     val transformer, val transformedTable = RangeScaler(min=0.0, max=1.0).fitAndTransform(table, ["a"]);
+         *     val transformer, val transformedTable = RangeScaler(min=0.0, max=1.0, columnNames="a").fitAndTransform(table);
          *     val result = transformedTable.inverseTransformTable(transformer);
          *     // Table({"a": [1, 2, 3]})
          * }
@@ -769,7 +806,7 @@ pipeline example {
          * @example
          * pipeline example {
          *     val table = Table({"a": [1, 2, 3]});
-         *     val transformer = RangeScaler(min=0.0, max=1.0).fit(table, ["a"]);
+         *     val transformer = RangeScaler(min=0.0, max=1.0, columnNames="a").fit(table);
          *     val result = table.transformTable(transformer);
          *     // Table({"a": [0, 0.5, 1]})
          * }
@@ -903,7 +940,7 @@ pipeline example {
          * Feature columns are implicitly defined as all columns except the target and extra columns. If no extra columns
          * are specified, all columns except the target column are used as features.
          *
-         * @param targetName Name of the target column.
+         * @param targetName The name of the target column.
          * @param extraNames Names of the columns that are neither feature nor target. If null, no extra columns are used, i.e. all but
          * the target column are used as features.
          *
@@ -933,10 +970,12 @@ pipeline example {
          *
          * The original table is not modified.
          *
-         * @param targetName Name of the target column.
-         * @param timeName Name of the time column.
-         * @param extraNames Names of the columns that are neither features nor target. If null, no extra columns are used, i.e. all but
+         * @param targetName The name of the target column.
+         * @param timeName The name of the time column.
+         * @param windowSize The number of consecutive sample to use as input for prediction.
+         * @param extraNames Names of the columns that are neither features nor target. If None, no extra columns are used, i.e. all but
          * the target column are used as features.
+         * @param forecastHorizon The number of time steps to predict into the future.
          *
          * @result dataset A new time series dataset with the given target and feature names.
          *
@@ -949,7 +988,7 @@ pipeline example {
          *             "amount_bought": [74, 72, 51],
          *         }
          *     );
-         *     val dataset = table.toTimeSeriesDataset(targetName="amount_bought", timeName= "day");
+         *     val dataset = table.toTimeSeriesDataset(targetName="amount_bought", timeName= "day", windowSize=2);
          * }
          */
         @Pure
@@ -957,7 +996,9 @@ pipeline example {
         fun toTimeSeriesDataset(
             @PythonName("target_name") targetName: String,
             @PythonName("time_name") timeName: String,
-            @PythonName("extra_names") extraNames: List<String>? = null
+            @PythonName("window_size") windowSize: Int,
+            @PythonName("extra_names") extraNames: List<String>? = null,
+            @PythonName("forecast_horizon") forecastHorizon: Int = 1
         ) -> dataset: TimeSeriesDataset
     }
     ```
@@ -1108,7 +1149,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="699"
+    ```sds linenums="736"
     @Pure
     @PythonName("add_table_as_columns")
     fun addTableAsColumns(
@@ -1150,7 +1191,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="725"
+    ```sds linenums="762"
     @Pure
     @PythonName("add_table_as_rows")
     fun addTableAsRows(
@@ -1158,11 +1199,64 @@ pipeline example {
     ) -> newTable: Table
     ```
 
+## <code class="doc-symbol doc-symbol-function"></code> `countRowIf` {#safeds.data.tabular.containers.Table.countRowIf data-toc-label='[function] countRowIf'}
+
+Return how many rows in the table satisfy the predicate.
+
+The predicate can return one of three results:
+
+- true, if the row satisfies the predicate.
+- false, if the row does not satisfy the predicate.
+- null, if the truthiness of the predicate is unknown, e.g. due to missing values.
+
+By default, cases where the truthiness of the predicate is unknown are ignored and this method returns how often
+the predicate returns true.
+
+You can instead enable Kleene logic by setting `ignore_unknown = False`. In this case, this method returns null
+if the predicate returns null at least once. Otherwise, it still returns how often the predicate returns true.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `predicate` | `#!sds (cell: Row) -> (satisfiesPredicate: Cell<Boolean?>)` | The predicate to apply to each row. | - |
+| `ignoreUnknown` | [`Boolean`][safeds.lang.Boolean] | Whether to ignore cases where the truthiness of the predicate is unknown. | `#!sds true` |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `count` | [`Int?`][safeds.lang.Int] | The number of rows in the table that satisfy the predicate. |
+
+**Examples:**
+
+```sds hl_lines="3"
+pipeline example {
+    val table = Table({"col1": [1, 2, 3], "col2": [1, 3, 3]});
+    val result = table.countRowIf((row) -> row.getValue("col1").eq(row.getValue("col2"))); // 2
+}
+```
+```sds hl_lines="3"
+pipeline example {
+    val table = Table({"col1": [1, 2, 3], "col2": [1, 3, 3]});
+    val result = table.countRowIf((row) -> row.getValue("col1").gt(row.getValue("col2"))); // 0
+}
+```
+
+??? quote "Stub code in `Table.sdsstub`"
+
+    ```sds linenums="455"
+    @Pure
+    @PythonName("count_row_if")
+    fun countRowIf(
+        predicate: (cell: Row) -> satisfiesPredicate: Cell<Boolean?>,
+        @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
+    ) -> count: Int?
+    ```
+
 ## <code class="doc-symbol doc-symbol-function"></code> `getColumn` {#safeds.data.tabular.containers.Table.getColumn data-toc-label='[function] getColumn'}
 
 Get a column from the table.
-
-**Note:** This operation must fully load the data into memory, which can be expensive.
 
 **Parameters:**
 
@@ -1188,7 +1282,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="217"
+    ```sds linenums="215"
     @Pure
     @PythonName("get_column")
     fun getColumn(
@@ -1223,7 +1317,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="236"
+    ```sds linenums="234"
     @Pure
     @PythonName("get_column_type")
     fun getColumnType(
@@ -1258,7 +1352,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="255"
+    ```sds linenums="253"
     @Pure
     @PythonName("has_column")
     fun hasColumn(
@@ -1292,7 +1386,7 @@ Return a new table inverse-transformed by a **fitted, invertible** transformer.
 ```sds hl_lines="4"
 pipeline example {
     val table = Table({"a": [1, 2, 3]});
-    val transformer, val transformedTable = RangeScaler(min=0.0, max=1.0).fitAndTransform(table, ["a"]);
+    val transformer, val transformedTable = RangeScaler(min=0.0, max=1.0, columnNames="a").fitAndTransform(table);
     val result = transformedTable.inverseTransformTable(transformer);
     // Table({"a": [1, 2, 3]})
 }
@@ -1300,7 +1394,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="751"
+    ```sds linenums="788"
     @Pure
     @PythonName("inverse_transform_table")
     fun inverseTransformTable(
@@ -1349,7 +1443,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="288"
+    ```sds linenums="286"
     @Pure
     @PythonName("remove_columns")
     fun removeColumns(
@@ -1385,7 +1479,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="308"
+    ```sds linenums="306"
     @Pure
     @PythonName("remove_columns_except")
     fun removeColumnsExcept(
@@ -1420,7 +1514,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="331"
+    ```sds linenums="329"
     @Pure
     @PythonName("remove_columns_with_missing_values")
     fun removeColumnsWithMissingValues() -> newTable: Table
@@ -1450,7 +1544,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="439"
+    ```sds linenums="476"
     @Pure
     @PythonName("remove_duplicate_rows")
     fun removeDuplicateRows() -> newTable: Table
@@ -1480,7 +1574,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="349"
+    ```sds linenums="347"
     @Pure
     @PythonName("remove_non_numeric_columns")
     fun removeNonNumericColumns() -> newTable: Table
@@ -1516,7 +1610,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="459"
+    ```sds linenums="496"
     @Pure
     @PythonName("remove_rows")
     fun removeRows(
@@ -1555,7 +1649,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="482"
+    ```sds linenums="519"
     @Pure
     @PythonName("remove_rows_by_column")
     fun removeRowsByColumn(
@@ -1594,7 +1688,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="505"
+    ```sds linenums="542"
     @Pure
     @PythonName("remove_rows_with_missing_values")
     fun removeRowsWithMissingValues(
@@ -1649,7 +1743,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="544"
+    ```sds linenums="581"
     @Pure
     @PythonName("remove_rows_with_outliers")
     fun removeRowsWithOutliers(
@@ -1689,7 +1783,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="370"
+    ```sds linenums="368"
     @Pure
     @PythonName("rename_column")
     fun renameColumn(
@@ -1729,7 +1823,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="394"
+    ```sds linenums="392"
     @Pure
     @PythonName("replace_column")
     fun replaceColumn(
@@ -1762,7 +1856,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="565"
+    ```sds linenums="602"
     @Pure
     @PythonName("shuffle_rows")
     fun shuffleRows() -> newTable: Table
@@ -1806,7 +1900,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="594"
+    ```sds linenums="631"
     @Pure
     @PythonName("slice_rows")
     fun sliceRows(
@@ -1846,7 +1940,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="618"
+    ```sds linenums="655"
     @Pure
     @PythonName("sort_rows")
     fun sortRows(
@@ -1886,7 +1980,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="642"
+    ```sds linenums="679"
     @Pure
     @PythonName("sort_rows_by_column")
     fun sortRowsByColumn(
@@ -1932,7 +2026,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="672"
+    ```sds linenums="709"
     @Pure
     @PythonName("split_rows")
     fun splitRows(
@@ -1962,7 +2056,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="794"
+    ```sds linenums="831"
     @Pure
     @PythonName("summarize_statistics")
     fun summarizeStatistics() -> statistics: Table
@@ -1989,7 +2083,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="809"
+    ```sds linenums="846"
     @Pure
     @PythonName("to_columns")
     fun toColumns() -> columns: List<Column>
@@ -2019,7 +2113,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="827"
+    ```sds linenums="864"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_csv_file")
     fun toCsvFile(
@@ -2054,7 +2148,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="868"
+    ```sds linenums="905"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_json_file")
     fun toJsonFile(
@@ -2085,7 +2179,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="845"
+    ```sds linenums="882"
     @Pure
     @PythonName("to_dict")
     fun toMap() -> map: Map<String, List<Any>>
@@ -2115,7 +2209,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="889"
+    ```sds linenums="926"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_parquet_file")
     fun toParquetFile(
@@ -2139,7 +2233,7 @@ are specified, all columns except the target column are used as features.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `targetName` | [`String`][safeds.lang.String] | Name of the target column. | - |
+| `targetName` | [`String`][safeds.lang.String] | The name of the target column. | - |
 | `extraNames` | [`List<String>?`][safeds.lang.List] | Names of the columns that are neither feature nor target. If null, no extra columns are used, i.e. all but the target column are used as features. | `#!sds null` |
 
 **Results:**
@@ -2165,7 +2259,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="924"
+    ```sds linenums="961"
     @Pure
     @PythonName("to_tabular_dataset")
     fun toTabularDataset(
@@ -2184,9 +2278,11 @@ The original table is not modified.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `targetName` | [`String`][safeds.lang.String] | Name of the target column. | - |
-| `timeName` | [`String`][safeds.lang.String] | Name of the time column. | - |
-| `extraNames` | [`List<String>?`][safeds.lang.List] | Names of the columns that are neither features nor target. If null, no extra columns are used, i.e. all but the target column are used as features. | `#!sds null` |
+| `targetName` | [`String`][safeds.lang.String] | The name of the target column. | - |
+| `timeName` | [`String`][safeds.lang.String] | The name of the time column. | - |
+| `windowSize` | [`Int`][safeds.lang.Int] | The number of consecutive sample to use as input for prediction. | - |
+| `extraNames` | [`List<String>?`][safeds.lang.List] | Names of the columns that are neither features nor target. If None, no extra columns are used, i.e. all but the target column are used as features. | `#!sds null` |
+| `forecastHorizon` | [`Int`][safeds.lang.Int] | The number of time steps to predict into the future. | `#!sds 1` |
 
 **Results:**
 
@@ -2205,19 +2301,21 @@ pipeline example {
             "amount_bought": [74, 72, 51],
         }
     );
-    val dataset = table.toTimeSeriesDataset(targetName="amount_bought", timeName= "day");
+    val dataset = table.toTimeSeriesDataset(targetName="amount_bought", timeName= "day", windowSize=2);
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="955"
+    ```sds linenums="994"
     @Pure
     @PythonName("to_time_series_dataset")
     fun toTimeSeriesDataset(
         @PythonName("target_name") targetName: String,
         @PythonName("time_name") timeName: String,
-        @PythonName("extra_names") extraNames: List<String>? = null
+        @PythonName("window_size") windowSize: Int,
+        @PythonName("extra_names") extraNames: List<String>? = null,
+        @PythonName("forecast_horizon") forecastHorizon: Int = 1
     ) -> dataset: TimeSeriesDataset
     ```
 
@@ -2252,7 +2350,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="418"
+    ```sds linenums="416"
     @Pure
     @PythonName("transform_column")
     fun transformColumn(
@@ -2287,7 +2385,7 @@ Return a new table transformed by a **fitted** transformer.
 ```sds hl_lines="4"
 pipeline example {
     val table = Table({"a": [1, 2, 3]});
-    val transformer = RangeScaler(min=0.0, max=1.0).fit(table, ["a"]);
+    val transformer = RangeScaler(min=0.0, max=1.0, columnNames="a").fit(table);
     val result = table.transformTable(transformer);
     // Table({"a": [0, 0.5, 1]})
 }
@@ -2295,7 +2393,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="777"
+    ```sds linenums="814"
     @Pure
     @PythonName("transform_table")
     fun transformTable(

@@ -67,11 +67,11 @@ pipeline example {
         }
 
         /**
-         * Get the regularization strength.
+         * The regularization strength.
          */
         attr c: Float
         /**
-         * Get the type of kernel used.
+         * The type of kernel used.
          */
         attr kernel: SupportVectorClassifier.Kernel
 
@@ -93,7 +93,7 @@ pipeline example {
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `c` {#safeds.ml.classical.classification.SupportVectorClassifier.c data-toc-label='[attribute] c'}
 
-Get the regularization strength.
+The regularization strength.
 
 **Type:** [`Float`][safeds.lang.Float]
 
@@ -105,7 +105,7 @@ Whether the model is fitted.
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `kernel` {#safeds.ml.classical.classification.SupportVectorClassifier.kernel data-toc-label='[attribute] kernel'}
 
-Get the type of kernel used.
+The type of kernel used.
 
 **Type:** [`Kernel`][safeds.ml.classical.classification.SupportVectorClassifier.Kernel]
 
