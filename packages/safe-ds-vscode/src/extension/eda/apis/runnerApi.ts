@@ -120,7 +120,10 @@ export class RunnerApi {
     //#endregion
 
     //#region SDS code generation
-    private sdsStringForHistoryEntry(historyEntry: ExternalHistoryEntry): {
+    private sdsStringForHistoryEntry(
+        historyEntry: ExternalHistoryEntry,
+        overrideTablePlaceholder?: string,
+    ): {
         sdsString: string;
         placeholderNames: string[];
     } {
@@ -130,7 +133,7 @@ export class RunnerApi {
                 return {
                     sdsString: this.sdsStringForHistogramByColumnName(
                         historyEntry.columnName,
-                        this.tablePlaceholder,
+                        overrideTablePlaceholder ?? this.tablePlaceholder,
                         newPlaceholderName,
                     ),
                     placeholderNames: [newPlaceholderName],
@@ -139,7 +142,7 @@ export class RunnerApi {
                 return {
                     sdsString: this.sdsStringForBoxplotByColumnName(
                         historyEntry.columnName,
-                        this.tablePlaceholder,
+                        overrideTablePlaceholder ?? this.tablePlaceholder,
                         newPlaceholderName,
                     ),
                     placeholderNames: [newPlaceholderName],
@@ -149,7 +152,7 @@ export class RunnerApi {
                     sdsString: this.sdsStringForLinePlotByColumnNames(
                         historyEntry.xAxisColumnName,
                         historyEntry.yAxisColumnName,
-                        this.tablePlaceholder,
+                        overrideTablePlaceholder ?? this.tablePlaceholder,
                         newPlaceholderName,
                     ),
                     placeholderNames: [newPlaceholderName],
@@ -159,14 +162,17 @@ export class RunnerApi {
                     sdsString: this.sdsStringForScatterPlotByColumnNames(
                         historyEntry.xAxisColumnName,
                         historyEntry.yAxisColumnName,
-                        this.tablePlaceholder,
+                        overrideTablePlaceholder ?? this.tablePlaceholder,
                         newPlaceholderName,
                     ),
                     placeholderNames: [newPlaceholderName],
                 };
             case 'heatmap':
                 return {
-                    sdsString: this.sdsStringForCorrelationHeatmap(this.tablePlaceholder, newPlaceholderName),
+                    sdsString: this.sdsStringForCorrelationHeatmap(
+                        overrideTablePlaceholder ?? this.tablePlaceholder,
+                        newPlaceholderName,
+                    ),
                     placeholderNames: [newPlaceholderName],
                 };
             default:
@@ -268,6 +274,11 @@ export class RunnerApi {
         return (
             'val ' + newPlaceholderName + ' = ' + tablePlaceholder + '.getColumn("' + columnName + '").isNumeric; \n'
         );
+    }
+
+    private sdsStringForRemoveColumns(columnNames: string[], tablePlaceholder: string, newPlaceholderName: string) {
+        const quotedColumns = columnNames.map((name) => `"${name}"`).join(',');
+        return 'val ' + newPlaceholderName + ' = ' + tablePlaceholder + `.removeColumns([${quotedColumns}]); \n`;
     }
     //#endregion
 
@@ -607,6 +618,7 @@ export class RunnerApi {
     public async executeHistoryAndReturnNewResult(
         pastEntries: HistoryEntry[],
         newEntry: HistoryEntry,
+        hiddenColumns?: string[],
     ): Promise<RunnerExecutionResultMessage['value']> {
         let sdsLines = '';
         let placeholderNames: string[] = [];
@@ -624,8 +636,18 @@ export class RunnerApi {
         if (newEntry.type === 'external-visualizing') {
             if (newEntry.action === 'infoPanel' || newEntry.action === 'refreshTab') throw new Error('Not implemented');
 
-            const sdsStringObj = this.sdsStringForHistoryEntry(newEntry);
-            sdsLines += sdsStringObj.sdsString + '\n';
+            let overriddenTablePlaceholder;
+            if (hiddenColumns && hiddenColumns.length > 0) {
+                overriddenTablePlaceholder = this.genPlaceholderName('hiddenColsOverride');
+                sdsLines += this.sdsStringForRemoveColumns(
+                    hiddenColumns,
+                    this.tablePlaceholder,
+                    overriddenTablePlaceholder,
+                );
+            }
+
+            const sdsStringObj = this.sdsStringForHistoryEntry(newEntry, overriddenTablePlaceholder);
+            sdsLines += sdsStringObj.sdsString;
             placeholderNames = sdsStringObj.placeholderNames;
 
             safeDsLogger.debug(`Running new entry ${newEntry.id} with action ${newEntry.action}`);
@@ -661,7 +683,8 @@ export class RunnerApi {
                         imageTab: true,
                         isInGeneration: false,
                         id: newEntry.existingTabId,
-                        content: { outdated: false, encodedImage: image },
+                        content: { encodedImage: image },
+                        outdated: false,
                     },
                 };
             } else if (newEntry.columnNumber === 'two') {
@@ -675,8 +698,8 @@ export class RunnerApi {
                         imageTab: true,
                         isInGeneration: false,
                         id: newEntry.existingTabId,
+                        outdated: false,
                         content: {
-                            outdated: false,
                             encodedImage: image,
                             xAxisColumnName: newEntry.xAxisColumnName,
                             yAxisColumnName: newEntry.yAxisColumnName,
@@ -694,7 +717,8 @@ export class RunnerApi {
                         imageTab: true,
                         isInGeneration: false,
                         id: newEntry.existingTabId,
-                        content: { outdated: false, encodedImage: image, columnName: newEntry.columnName },
+                        content: { encodedImage: image, columnName: newEntry.columnName },
+                        outdated: false,
                     },
                 };
             }

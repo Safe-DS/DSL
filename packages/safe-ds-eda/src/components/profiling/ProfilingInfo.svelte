@@ -26,12 +26,12 @@
                 content: {
                     columnName,
                     encodedImage: profilingItem.value,
-                    outdated: false,
                 },
                 id: crypto.randomUUID(),
                 imageTab: true,
                 columnNumber: 'one',
                 isInGeneration: false,
+                outdated: false,
             },
         );
     };
@@ -139,15 +139,15 @@
     }
 
     .important {
-        color: var(--font-dark);
+        color: var(--darkest-color);
     }
 
     .default {
-        color: var(--font-light);
+        color: var(--dark-color);
     }
 
     .category {
-        color: var(--font-light);
+        color: var(--dark-color);
     }
 
     .zoomIconWrapper {

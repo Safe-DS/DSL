@@ -70,7 +70,9 @@
         flex-shrink: 0;
         overflow: hidden;
         position: relative;
-        background-color: var(--bg-dark);
+        background-color: var(--medium-light-color);
+        height: 100%;
+        z-index: 10;
     }
 
     .contentWrapper {
@@ -91,6 +93,7 @@
         top: 0;
         cursor: ew-resize;
         background-color: transparent;
+        z-index: 20;
     }
 
     .hide {

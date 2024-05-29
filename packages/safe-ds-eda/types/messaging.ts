@@ -21,15 +21,27 @@ interface ToExtensionSetErrorMessage extends ToExtensionCommandMessage {
 interface ToExtensionExecuteRunnerMessage extends ToExtensionCommandMessage {
     command: 'executeRunner';
     value: {
+        type: 'default';
         pastEntries: defaultTypes.HistoryEntry[];
         newEntry: defaultTypes.HistoryEntry;
+    };
+}
+
+interface ToExtensionExecuteExcludingHiddenColumns extends ToExtensionCommandMessage {
+    command: 'executeRunner';
+    value: {
+        type: 'excludingHiddenColumns';
+        pastEntries: defaultTypes.HistoryEntry[];
+        newEntry: defaultTypes.HistoryEntry;
+        hiddenColumns: string[];
     };
 }
 
 export type ToExtensionMessage =
     | ToExtensionSetInfoMessage
     | ToExtensionSetErrorMessage
-    | ToExtensionExecuteRunnerMessage;
+    | ToExtensionExecuteRunnerMessage
+    | ToExtensionExecuteExcludingHiddenColumns;
 
 // From extension
 type FromExtensionCommand = 'setInitialTable' | 'setProfiling' | 'runnerExecutionResult' | 'cancelRunnerExecution';
