@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { throttle } from 'lodash';
-    import { table, preventClicks } from '../webviewState';
+    import { table, preventClicks, tableLoading } from '../webviewState';
     import CaretIcon from '../icons/Caret.svelte';
     import ErrorIcon from '../icons/Error.svelte';
     import FilterIcon from '../icons/Filter.svelte';
@@ -9,6 +9,7 @@
         Column,
         OneColumnTabTypes,
         PossibleColumnFilter,
+        PossibleSorts,
         Profiling,
         ProfilingDetail,
         ProfilingDetailStatistical,
@@ -360,6 +361,7 @@
     let visibleEnd = 0;
     let visibleRowCount = 10;
     let scrollTop = 0;
+    let scrollLeft = 0;
     let lastHeight = 0;
 
     const updateVisibleRows = function (): void {
@@ -374,6 +376,7 @@
             currentContextMenu.style.top = currentContextMenu.offsetTop - scrollTop + tableContainer.scrollTop + 'px';
         }
         scrollTop = tableContainer.scrollTop;
+        scrollLeft = tableContainer.scrollLeft;
     };
 
     const recalculateVisibleRowCount = function (): void {
@@ -534,6 +537,7 @@
             columnNumber: 'two',
             xAxisColumnName,
             yAxisColumnName,
+            newTabId: crypto.randomUUID(),
         });
         return;
     };
@@ -550,10 +554,39 @@
             type: 'external-visualizing',
             columnNumber: 'one',
             columnName,
+            newTabId: crypto.randomUUID(),
         });
         return;
     };
     //#endregion // Plotting
+
+    //#region Sorting
+    const sortByColumn = function (event: MouseEvent, columnIndex: number, direction: PossibleSorts | null) {
+        if (event.button !== 0 || $preventClicks) return;
+
+        event.stopPropagation();
+
+        const columnName = $table!.columns[columnIndex].name;
+
+        if (!direction) {
+            executeExternalHistoryEntry({
+                action: 'voidSortByColumn',
+                alias: `Remove sorting by ${columnName}`,
+                type: 'external-manipulating',
+                columnName,
+            });
+            return;
+        }
+
+        executeExternalHistoryEntry({
+            action: 'sortByColumn',
+            alias: `Sort by ${columnName} ${direction === 'asc' ? 'ascending' : 'descending'}`,
+            type: 'external-manipulating',
+            columnName,
+            sort: direction,
+        });
+    };
+    //#endregion // Sorting
 
     //#region Profiling ---
     let fullHeadBackground: HTMLElement;
@@ -638,12 +671,10 @@
                 possibleColumnFilters.push({
                     type: 'specificValue',
                     values: ['-'].concat(profilingCategories.map((profilingItem) => profilingItem.name)),
-                    columnName: column.name,
                 });
             } else {
                 possibleColumnFilters.push({
                     type: 'searchString',
-                    columnName: column.name,
                 });
             }
         } else {
@@ -660,7 +691,6 @@
                 type: 'valueRange',
                 min: colMin,
                 max: colMax,
-                columnName: column.name,
             });
         }
 
@@ -691,8 +721,15 @@
 
 <div bind:this={tableContainer} class="tableContainer">
     {#if !$table}
-        <span>Loading ...</span>
+        <div class="loadingScreen">
+            <span class="loading">Loading...</span>
+        </div>
     {:else}
+        {#if $tableLoading}
+            <div class="loadingScreen" style:top="{scrollTop}px" style:left="{scrollLeft}px">
+                <span class="loading">Loading...</span>
+            </div>
+        {/if}
         <div class="contentWrapper" style:height="{numRows * rowHeight}px">
             <table>
                 <div
@@ -734,11 +771,35 @@
                                             ? 'inline-flex'
                                             : 'none'}
                                     >
-                                        <div class="sortIconWrapper">
-                                            <CaretIcon color="var(--transparent)" />
+                                        <div
+                                            class="sortIconWrapper"
+                                            role="none"
+                                            on:mousedown={(event) =>
+                                                sortByColumn(
+                                                    event,
+                                                    index,
+                                                    column.appliedSort === 'desc' ? null : 'desc',
+                                                )}
+                                        >
+                                            <CaretIcon
+                                                color={column.appliedSort === 'desc'
+                                                    ? 'var(--lightest-color)'
+                                                    : 'var(--transparent-medium)'}
+                                                hoverColor="var(--transparent-light)"
+                                            />
                                         </div>
-                                        <div class="sortIconWrapper rotate">
-                                            <CaretIcon color="var(--transparent)" />
+                                        <div
+                                            class="sortIconWrapper rotate"
+                                            role="none"
+                                            on:mousedown={(event) =>
+                                                sortByColumn(event, index, column.appliedSort === 'asc' ? null : 'asc')}
+                                        >
+                                            <CaretIcon
+                                                color={column.appliedSort === 'asc'
+                                                    ? 'var(--lightest-color)'
+                                                    : 'var(--transparent-medium)'}
+                                                hoverColor="var(--transparent-light)"
+                                            />
                                         </div>
                                     </div>
                                     <button class="resizeHandle" on:mousedown={(event) => startResizeDrag(event, index)}
@@ -971,6 +1032,24 @@
 </div>
 
 <style>
+    .loadingScreen {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        background-color: var(--transparent-medium);
+        z-index: 1000;
+    }
+
+    .loadingScreen .loading {
+        color: var(--medium-color);
+        font-weight: 600;
+        font-size: 2.5rem;
+        font-family: monospace;
+    }
+
     .tableContainer {
         overflow-y: auto;
         height: 100%;
@@ -1006,7 +1085,7 @@
     .headerRow {
         position: relative;
         top: 0;
-        z-index: 1000;
+        z-index: 500;
     }
 
     thead tr:hover {

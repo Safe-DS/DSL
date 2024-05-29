@@ -11,6 +11,7 @@
 
     const zoomIntoImage = function (profilingItem: ProfilingDetailImage) {
         const entryId = getAndIncrementEntryId();
+        const tabId = crypto.randomUUID();
         addAndDeployTabHistoryEntry(
             {
                 action: 'histogram',
@@ -19,6 +20,7 @@
                 columnName,
                 id: entryId,
                 columnNumber: 'one',
+                newTabId: tabId,
             },
             {
                 type: 'histogram',
@@ -27,7 +29,7 @@
                     columnName,
                     encodedImage: profilingItem.value,
                 },
-                id: crypto.randomUUID(),
+                id: tabId,
                 imageTab: true,
                 columnNumber: 'one',
                 isInGeneration: false,

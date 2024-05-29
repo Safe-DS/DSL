@@ -1,16 +1,18 @@
 import { get } from 'svelte/store';
 import type { FromExtensionMessage, RunnerExecutionResultMessage } from '../../types/messaging';
 import type {
+    CategoricalFilter,
     EmptyTab,
     ExternalHistoryEntry,
     HistoryEntry,
     InteralEmptyTabHistoryEntry,
     InternalHistoryEntry,
+    NumericalFilter,
     RealTab,
     Tab,
     TabHistoryEntry,
 } from '../../types/state';
-import { cancelTabIdsWaiting, tabs, history, currentTabIndex, table } from '../webviewState';
+import { cancelTabIdsWaiting, tabs, history, currentTabIndex, table, tableLoading } from '../webviewState';
 import { executeRunner } from './extensionApi';
 
 // Wait for results to return from the server
@@ -20,6 +22,34 @@ let entryIdCounter = 0;
 
 export const getAndIncrementEntryId = function (): number {
     return entryIdCounter++;
+};
+
+const generateOverrideId = function (entry: ExternalHistoryEntry | InternalHistoryEntry): string {
+    switch (entry.action) {
+        case 'hideColumn':
+        case 'showColumn':
+        case 'resizeColumn':
+        case 'reorderColumns':
+        case 'highlightColumn':
+            return entry.columnName + '.' + entry.action;
+        case 'sortByColumn':
+            return entry.action; // Thus enforcing override sort
+        case 'voidSortByColumn':
+            return 'sortByColumn'; // This overriding previous sorts
+        case 'filterColumn':
+            return entry.columnName + entry.filter.type + '.' + entry.action;
+        case 'linePlot':
+        case 'scatterPlot':
+        case 'histogram':
+        case 'boxPlot':
+        case 'infoPanel':
+        case 'heatmap':
+        case 'emptyTab':
+            const tabId = entry.newTabId ?? entry.existingTabId;
+            return entry.type + '.' + tabId;
+        default:
+            throw new Error('Unknown action type to generateOverrideId');
+    }
 };
 
 window.addEventListener('message', (event) => {
@@ -40,6 +70,11 @@ window.addEventListener('message', (event) => {
 
         deployResult(message, asyncQueue[0]);
         asyncQueue.shift();
+
+        if (asyncQueue.length === 0) {
+            tableLoading.set(false);
+        }
+
         evaluateMessagesWaitingForTurn();
     } else if (message.command === 'cancelRunnerExecution') {
         cancelExecuteExternalHistoryEntry(message.value);
@@ -51,6 +86,7 @@ export const addInternalToHistory = function (entry: InternalHistoryEntry): void
         const entryWithId: HistoryEntry = {
             ...entry,
             id: getAndIncrementEntryId(),
+            overrideId: generateOverrideId(entry),
         };
         const newHistory = [...state, entryWithId];
         return newHistory;
@@ -60,10 +96,18 @@ export const addInternalToHistory = function (entry: InternalHistoryEntry): void
 };
 
 export const executeExternalHistoryEntry = function (entry: ExternalHistoryEntry): void {
+    // Set table to loading if loading takes longer than 500ms
+    setTimeout(() => {
+        if (asyncQueue.length > 0) {
+            tableLoading.set(true);
+        }
+    }, 500);
+
     history.update((state) => {
         const entryWithId: HistoryEntry = {
             ...entry,
             id: getAndIncrementEntryId(),
+            overrideId: generateOverrideId(entry),
         };
         const newHistory = [...state, entryWithId];
 
@@ -91,7 +135,7 @@ export const addAndDeployTabHistoryEntry = function (entry: TabHistoryEntry & { 
     }
 
     history.update((state) => {
-        return [...state, entry];
+        return [...state, { ...entry, overrideId: generateOverrideId(entry) }];
     });
     tabs.update((state) => {
         const newTabs = (state ?? []).concat(tab);
@@ -101,20 +145,22 @@ export const addAndDeployTabHistoryEntry = function (entry: TabHistoryEntry & { 
 };
 
 export const addEmptyTabHistoryEntry = function (): void {
+    const tabId = crypto.randomUUID();
     const entry: InteralEmptyTabHistoryEntry & { id: number } = {
         action: 'emptyTab',
         type: 'internal',
         alias: 'New empty tab',
         id: getAndIncrementEntryId(),
+        newTabId: tabId,
     };
     const tab: EmptyTab = {
         type: 'empty',
-        id: crypto.randomUUID(),
+        id: tabId,
         isInGeneration: true,
     };
 
     history.update((state) => {
-        return [...state, entry];
+        return [...state, { ...entry, overrideId: generateOverrideId(entry) }];
     });
     tabs.update((state) => {
         const newTabs = (state ?? []).concat(tab);
@@ -135,6 +181,10 @@ export const cancelExecuteExternalHistoryEntry = function (entry: HistoryEntry):
             if (tab.type !== 'empty') {
                 unsetTabAsGenerating(tab);
             }
+        }
+
+        if (asyncQueue.length === 0) {
+            tableLoading.set(false);
         }
     } else {
         throw new Error('Entry already fully executed');
@@ -181,13 +231,14 @@ export const unsetTabAsGenerating = function (tab: RealTab): void {
 const deployResult = function (result: RunnerExecutionResultMessage, historyEntry: ExternalHistoryEntry) {
     const resultContent = result.value;
     if (resultContent.type === 'tab') {
-        if (resultContent.content.id) {
-            const existingTab = get(tabs).find((et) => et.id === resultContent.content.id);
+        if (historyEntry.type !== 'external-visualizing') throw new Error('Deploying tab from non-visualizing entry');
+        if (historyEntry.existingTabId) {
+            const existingTab = get(tabs).find((et) => et.id === historyEntry.existingTabId);
             if (existingTab) {
                 const tabIndex = get(tabs).indexOf(existingTab);
                 tabs.update((state) =>
                     state.map((t) => {
-                        if (t.id === resultContent.content.id) {
+                        if (t.id === historyEntry.existingTabId) {
                             return resultContent.content;
                         } else {
                             return t;
@@ -197,14 +248,44 @@ const deployResult = function (result: RunnerExecutionResultMessage, historyEntr
                 currentTabIndex.set(tabIndex);
                 return;
             }
+        } else {
+            const tab = resultContent.content;
+            tab.id = historyEntry.newTabId!; // Must exist if not existingTabId, not sure why ts does not pick up on it itself here
+            tabs.update((state) => state.concat(tab));
+            currentTabIndex.set(get(tabs).indexOf(tab));
         }
-        const tab = resultContent.content;
-        tab.id = crypto.randomUUID();
-        tabs.update((state) => state.concat(tab));
-        currentTabIndex.set(get(tabs).indexOf(tab));
     } else if (resultContent.type === 'table') {
+        table.update((state) => {
+            for (const column of resultContent.content.columns) {
+                const existingColumn = state?.columns.find((c) => c.name === column.name);
+                if (!existingColumn) throw new Error('New Column not found in current table!');
+
+                column.profiling = existingColumn.profiling; // Preserve profiling, after this if it was a type that invalidated profiling, it will be invalidated
+                column.hidden = existingColumn.hidden;
+                column.highlighted = existingColumn.highlighted;
+                if (historyEntry.action === 'sortByColumn' && column.name === historyEntry.columnName) {
+                    column.appliedSort = historyEntry.sort; // Set sorted column to sorted if it was a sort action, otherwise if also not a void sort preserve
+                } else if (historyEntry.action !== 'sortByColumn' && historyEntry.action !== 'voidSortByColumn') {
+                    column.appliedSort = existingColumn.appliedSort;
+                }
+                if (historyEntry.action === 'filterColumn' && column.name === historyEntry.columnName) {
+                    if (existingColumn.type === 'numerical') {
+                        column.appliedFilters = existingColumn.appliedFilters.concat([
+                            historyEntry.filter as NumericalFilter,
+                        ]); // Set filtered column to filtered if it was a filter action, otherwise preserve
+                    } else if (existingColumn.type === 'categorical') {
+                        column.appliedFilters = existingColumn.appliedFilters.concat([
+                            historyEntry.filter as CategoricalFilter,
+                        ]); // Set filtered column to filtered if it was a filter action, otherwise preserve
+                    }
+                } else if (historyEntry.action !== 'filterColumn') {
+                    column.appliedFilters = existingColumn.appliedFilters;
+                }
+            }
+            return resultContent.content;
+        });
+
         updateTabOutdated(historyEntry);
-        throw new Error('Not implemented');
     }
 };
 
