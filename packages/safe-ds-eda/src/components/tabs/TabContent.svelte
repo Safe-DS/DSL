@@ -159,7 +159,7 @@
             }
         }
 
-        // Check if columns now require numerical column only and if so check if selected column(s) are numerical
+        // Check if type now requires numerical column(s) only and if so check if selected column(s) are numerical
         if (!allowsNonNumericalColumns($buildATab.type)) {
             buildATab.update((buildingTab) => {
                 if (

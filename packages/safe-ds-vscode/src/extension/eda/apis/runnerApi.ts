@@ -277,15 +277,8 @@ export class RunnerApi {
     }
 
     private sdsStringForRemoveColumns(columnNames: string[], tablePlaceholder: string, newPlaceholderName: string) {
-        return (
-            'val ' +
-            newPlaceholderName +
-            ' = ' +
-            tablePlaceholder +
-            '.removeColumns(["' +
-            columnNames.join('","') +
-            '"]); \n'
-        );
+        const quotedColumns = columnNames.map((name) => `"${name}"`).join(',');
+        return 'val ' + newPlaceholderName + ' = ' + tablePlaceholder + `.removeColumns([${quotedColumns}]); \n`;
     }
     //#endregion
 
