@@ -92,7 +92,7 @@ train a regression model and print the mean squared error of that fitted model. 
 
 6. Regressor
 
-    You can now train the data using a Regressor: 
+    Now you can train the data using a Regressor: 
     [Here](https://dsl.safeds.com/en/stable/api/safeds/ml/classical/regression/Regressor/) 
     you can find other regressors.
     Create your regressor simply by initializing and assigning it to a variable.
