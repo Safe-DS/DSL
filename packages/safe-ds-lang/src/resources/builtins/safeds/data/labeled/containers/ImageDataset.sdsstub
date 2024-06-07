@@ -21,12 +21,12 @@ from safeds.data.tabular.containers import Table
  * }
  */
 @Experimental
-class ImageDataset<T>(
+class ImageDataset<out O>(
     @PythonName("input_data") inputData: ImageList,
-    @PythonName("output_data") outputData: T,
+    @PythonName("output_data") outputData: O,
     @PythonName("batch_size") batchSize: Int = 1,
     shuffle: Boolean = false
-) sub Dataset {
+) sub Dataset<ImageList, O> {
     /**
      * Get the input `ImageSize` of this dataset.
      */
@@ -68,7 +68,7 @@ class ImageDataset<T>(
      */
     @Pure
     @PythonName("get_output")
-    fun getOutput() -> output: T
+    fun getOutput() -> output: O
 
     /**
      * Return a new `ImageDataset` with shuffled data.
@@ -87,5 +87,5 @@ class ImageDataset<T>(
      * }
      */
     @Pure
-    fun shuffle() -> imageDataset: ImageDataset<T>
+    fun shuffle() -> imageDataset: ImageDataset<O>
 }

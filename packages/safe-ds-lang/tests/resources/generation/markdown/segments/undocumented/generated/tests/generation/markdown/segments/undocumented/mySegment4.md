@@ -1,4 +1,4 @@
-# `#!sds segment` mySegment4 {#tests.generation.markdown.segments.undocumented.mySegment4 data-toc-label='mySegment4'}
+# <code class="doc-symbol doc-symbol-segment"></code> `mySegment4` {#tests.generation.markdown.segments.undocumented.mySegment4 data-toc-label='[segment] mySegment4'}
 
 **Parameters:**
 

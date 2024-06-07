@@ -1,4 +1,6 @@
-# :test_tube:{ title="Experimental" } `#!sds class` LSTMLayer {#safeds.ml.nn.layers.LSTMLayer data-toc-label='LSTMLayer'}
+# :test_tube:{ title="Experimental" } <code class="doc-symbol doc-symbol-class"></code> `LSTMLayer` {#safeds.ml.nn.layers.LSTMLayer data-toc-label='[class] LSTMLayer'}
+
+A long short-term memory (LSTM) layer.
 
 **Parent type:** [`Layer`][safeds.ml.nn.layers.Layer]
 
@@ -6,15 +8,13 @@
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `outputSize` | [`Int`][safeds.lang.Int] | The number of neurons in this layer | - |
-| `inputSize` | [`Int?`][safeds.lang.Int] | The number of neurons in the previous layer | `#!sds null` |
+| `neuronCount` | [`Int`][safeds.lang.Int] | The number of neurons in this layer | - |
 
 ??? quote "Stub code in `LSTMLayer.sdsstub`"
 
-    ```sds linenums="10"
+    ```sds linenums="11"
     class LSTMLayer(
-        @PythonName("output_size") outputSize: Int,
-        @PythonName("input_size") inputSize: Int? = null
+        @PythonName("neuron_count") neuronCount: Int
     ) sub Layer {
         /**
          * Get the input_size of this layer.
@@ -27,13 +27,13 @@
     }
     ```
 
-## `#!sds attr` inputSize {#safeds.ml.nn.layers.LSTMLayer.inputSize data-toc-label='inputSize'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `inputSize` {#safeds.ml.nn.layers.LSTMLayer.inputSize data-toc-label='[attribute] inputSize'}
 
 Get the input_size of this layer.
 
 **Type:** [`Int`][safeds.lang.Int]
 
-## `#!sds attr` outputSize {#safeds.ml.nn.layers.LSTMLayer.outputSize data-toc-label='outputSize'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `outputSize` {#safeds.ml.nn.layers.LSTMLayer.outputSize data-toc-label='[attribute] outputSize'}
 
 Get the output_size of this layer.
 

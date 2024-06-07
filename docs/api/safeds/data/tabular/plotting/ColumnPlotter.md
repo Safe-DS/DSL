@@ -1,4 +1,4 @@
-# `#!sds class` ColumnPlotter {#safeds.data.tabular.plotting.ColumnPlotter data-toc-label='ColumnPlotter'}
+# <code class="doc-symbol doc-symbol-class"></code> `ColumnPlotter` {#safeds.data.tabular.plotting.ColumnPlotter data-toc-label='[class] ColumnPlotter'}
 
 A class that contains plotting methods for a column.
 
@@ -53,7 +53,7 @@ pipeline example {
          */
         @Pure
         fun histogram(
-            @PythonName("maximum_number_of_bins") const maxBinCount: Int = 10
+            @PythonName("max_bin_count") const maxBinCount: Int = 10
         ) -> plot: Image where {
             maxBinCount > 0
         }
@@ -79,7 +79,7 @@ pipeline example {
     }
     ```
 
-## `#!sds fun` boxPlot {#safeds.data.tabular.plotting.ColumnPlotter.boxPlot data-toc-label='boxPlot'}
+## <code class="doc-symbol doc-symbol-function"></code> `boxPlot` {#safeds.data.tabular.plotting.ColumnPlotter.boxPlot data-toc-label='[function] boxPlot'}
 
 Create a box plot for the values in the column. This is only possible for numeric columns.
 
@@ -106,7 +106,7 @@ pipeline example {
     fun boxPlot() -> plot: Image
     ```
 
-## `#!sds fun` histogram {#safeds.data.tabular.plotting.ColumnPlotter.histogram data-toc-label='histogram'}
+## <code class="doc-symbol doc-symbol-function"></code> `histogram` {#safeds.data.tabular.plotting.ColumnPlotter.histogram data-toc-label='[function] histogram'}
 
 Create a histogram for the values in the column.
 
@@ -136,13 +136,13 @@ pipeline example {
     ```sds linenums="47"
     @Pure
     fun histogram(
-        @PythonName("maximum_number_of_bins") const maxBinCount: Int = 10
+        @PythonName("max_bin_count") const maxBinCount: Int = 10
     ) -> plot: Image where {
         maxBinCount > 0
     }
     ```
 
-## `#!sds fun` lagPlot {#safeds.data.tabular.plotting.ColumnPlotter.lagPlot data-toc-label='lagPlot'}
+## <code class="doc-symbol doc-symbol-function"></code> `lagPlot` {#safeds.data.tabular.plotting.ColumnPlotter.lagPlot data-toc-label='[function] lagPlot'}
 
 Create a lag plot for the values in the column.
 

@@ -1,4 +1,4 @@
-# :test_tube:{ title="Experimental" } `#!sds annotation` MyAnnotation1 {#tests.generation.markdown.annotations.experimental.MyAnnotation1 data-toc-label='MyAnnotation1'}
+# :test_tube:{ title="Experimental" } <code class="doc-symbol doc-symbol-annotation"></code> `MyAnnotation1` {#tests.generation.markdown.annotations.experimental.MyAnnotation1 data-toc-label='[annotation] MyAnnotation1'}
 
 **Targets:**
 

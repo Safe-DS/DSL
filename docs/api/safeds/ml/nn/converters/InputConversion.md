@@ -3,7 +3,7 @@ search:
   boost: 0.5
 ---
 
-# :test_tube:{ title="Experimental" } `#!sds abstract class` InputConversion {#safeds.ml.nn.converters.InputConversion data-toc-label='InputConversion'}
+# :test_tube:{ title="Experimental" } <code class="doc-symbol doc-symbol-class"></code> `InputConversion` {#safeds.ml.nn.converters.InputConversion data-toc-label='[class] InputConversion'}
 
 The input conversion for a neural network, defines the input parameters for the neural network.
 
@@ -11,15 +11,19 @@ The input conversion for a neural network, defines the input parameters for the 
 
 | Name | Upper Bound | Description | Default |
 |------|-------------|-------------|---------|
-| `FitIn` | [`Any?`][safeds.lang.Any] | - | - |
-| `PredictIn` | [`Any?`][safeds.lang.Any] | - | - |
+| `D` | [`Any?`][safeds.lang.Any] | The type of the full dataset. It's the input to `fit` and the output of `predict`. | - |
+| `F` | [`Any?`][safeds.lang.Any] | The type of the features. It's the input to `predict`. | - |
 
 **Inheritors:**
 
+- [`InputConversionImageToColumn`][safeds.ml.nn.converters.InputConversionImageToColumn]
+- [`InputConversionImageToImage`][safeds.ml.nn.converters.InputConversionImageToImage]
+- [`InputConversionImageToTable`][safeds.ml.nn.converters.InputConversionImageToTable]
 - [`InputConversionTable`][safeds.ml.nn.converters.InputConversionTable]
+- [`InputConversionTimeSeries`][safeds.ml.nn.converters.InputConversionTimeSeries]
 
 ??? quote "Stub code in `InputConversion.sdsstub`"
 
-    ```sds linenums="7"
-    class InputConversion<FitIn, PredictIn>
+    ```sds linenums="10"
+    class InputConversion<D, in F>
     ```

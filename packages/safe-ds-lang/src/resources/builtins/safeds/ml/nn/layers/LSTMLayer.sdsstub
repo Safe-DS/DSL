@@ -3,13 +3,13 @@ package safeds.ml.nn.layers
 from safeds.ml.nn.layers import Layer
 
 /**
- * @param outputSize The number of neurons in this layer
- * @param inputSize The number of neurons in the previous layer
+ * A long short-term memory (LSTM) layer.
+ *
+ * @param neuronCount The number of neurons in this layer
  */
 @Experimental
 class LSTMLayer(
-    @PythonName("output_size") outputSize: Int,
-    @PythonName("input_size") inputSize: Int? = null
+    @PythonName("neuron_count") neuronCount: Int
 ) sub Layer {
     /**
      * Get the input_size of this layer.

@@ -3,9 +3,16 @@ search:
   boost: 0.5
 ---
 
-# `#!sds abstract class` Dataset {#safeds.data.labeled.containers.Dataset data-toc-label='Dataset'}
+# <code class="doc-symbol doc-symbol-class"></code> `Dataset` {#safeds.data.labeled.containers.Dataset data-toc-label='[class] Dataset'}
 
 A dataset is used as input to machine learning models.
+
+**Type parameters:**
+
+| Name | Upper Bound | Description | Default |
+|------|-------------|-------------|---------|
+| `I` | [`Any?`][safeds.lang.Any] | The type of the input data. | - |
+| `O` | [`Any?`][safeds.lang.Any] | The type of the output data. | - |
 
 **Inheritors:**
 
@@ -15,6 +22,6 @@ A dataset is used as input to machine learning models.
 
 ??? quote "Stub code in `Dataset.sdsstub`"
 
-    ```sds linenums="6"
-    class Dataset
+    ```sds linenums="9"
+    class Dataset<out I, out O>
     ```

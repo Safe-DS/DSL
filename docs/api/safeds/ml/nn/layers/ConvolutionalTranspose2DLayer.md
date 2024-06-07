@@ -1,4 +1,6 @@
-# :test_tube:{ title="Experimental" } `#!sds class` ConvolutionalTranspose2DLayer {#safeds.ml.nn.layers.ConvolutionalTranspose2DLayer data-toc-label='ConvolutionalTranspose2DLayer'}
+# :test_tube:{ title="Experimental" } <code class="doc-symbol doc-symbol-class"></code> `ConvolutionalTranspose2DLayer` {#safeds.ml.nn.layers.ConvolutionalTranspose2DLayer data-toc-label='[class] ConvolutionalTranspose2DLayer'}
+
+A convolutional transpose 2D Layer.
 
 **Parent type:** [`Convolutional2DLayer`][safeds.ml.nn.layers.Convolutional2DLayer]
 
@@ -14,7 +16,7 @@
 
 ??? quote "Stub code in `ConvolutionalTranspose2DLayer.sdsstub`"
 
-    ```sds linenums="14"
+    ```sds linenums="16"
     class ConvolutionalTranspose2DLayer(
         @PythonName("output_channel") outputChannel: Int,
         @PythonName("kernel_size") kernelSize: Int,
@@ -24,14 +26,14 @@
     ) sub Convolutional2DLayer
     ```
 
-## `#!sds attr` inputSize {#safeds.ml.nn.layers.ConvolutionalTranspose2DLayer.inputSize data-toc-label='inputSize'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `inputSize` {#safeds.ml.nn.layers.ConvolutionalTranspose2DLayer.inputSize data-toc-label='[attribute] inputSize'}
 
 Get the input_size of this layer.
 
-**Type:** [`ImageSize`][safeds.data.image.typing.ImageSize]
+**Type:** [`ModelImageSize`][safeds.ml.nn.typing.ModelImageSize]
 
-## `#!sds attr` outputSize {#safeds.ml.nn.layers.ConvolutionalTranspose2DLayer.outputSize data-toc-label='outputSize'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `outputSize` {#safeds.ml.nn.layers.ConvolutionalTranspose2DLayer.outputSize data-toc-label='[attribute] outputSize'}
 
 Get the output_size of this layer.
 
-**Type:** [`ImageSize`][safeds.data.image.typing.ImageSize]
+**Type:** [`ModelImageSize`][safeds.ml.nn.typing.ModelImageSize]

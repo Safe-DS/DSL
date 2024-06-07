@@ -3,7 +3,7 @@ search:
   boost: 0.5
 ---
 
-# `#!sds abstract class` MyClass8 {#tests.generation.markdown.classes.documented.MyClass8 data-toc-label='MyClass8'}
+# <code class="doc-symbol doc-symbol-class"></code> `MyClass8` {#tests.generation.markdown.classes.documented.MyClass8 data-toc-label='[class] MyClass8'}
 
 Description of MyClass8.
 
@@ -20,13 +20,13 @@ Description of MyClass8.
     }
     ```
 
-## `#!sds attr` myAttribute1 {#tests.generation.markdown.classes.documented.MyClass8.myAttribute1 data-toc-label='myAttribute1'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `myAttribute1` {#tests.generation.markdown.classes.documented.MyClass8.myAttribute1 data-toc-label='[attribute] myAttribute1'}
 
 Description of myAttribute1.
 
 **Type:** [`MyClass1`][tests.generation.markdown.classes.documented.MyClass1]
 
-## `#!sds fun` myFunction1 {#tests.generation.markdown.classes.documented.MyClass8.myFunction1 data-toc-label='myFunction1'}
+## <code class="doc-symbol doc-symbol-function"></code> `myFunction1` {#tests.generation.markdown.classes.documented.MyClass8.myFunction1 data-toc-label='[function] myFunction1'}
 
 Description of myFunction1.
 

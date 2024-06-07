@@ -3,7 +3,7 @@ search:
   boost: 0.5
 ---
 
-# `#!sds abstract class` List {#safeds.lang.List data-toc-label='List'}
+# <code class="doc-symbol doc-symbol-class"></code> `List` {#safeds.lang.List data-toc-label='[class] List'}
 
 A list of elements.
 
@@ -72,7 +72,7 @@ pipeline example {
     }
     ```
 
-## `#!sds fun` join {#safeds.lang.List.join data-toc-label='join'}
+## <code class="doc-symbol doc-symbol-function"></code> `join` {#safeds.lang.List.join data-toc-label='[function] join'}
 
 Join the elements of the list into a string using the separator.
 
@@ -109,7 +109,7 @@ pipeline example {
     fun join(separator: String = ", ") -> string: String
     ```
 
-## `#!sds fun` size {#safeds.lang.List.size data-toc-label='size'}
+## <code class="doc-symbol doc-symbol-function"></code> `size` {#safeds.lang.List.size data-toc-label='[function] size'}
 
 Return the number of elements in the list.
 
@@ -135,7 +135,7 @@ pipeline example {
     fun size() -> size: Int
     ```
 
-## `#!sds fun` slice {#safeds.lang.List.slice data-toc-label='slice'}
+## <code class="doc-symbol doc-symbol-function"></code> `slice` {#safeds.lang.List.slice data-toc-label='[function] slice'}
 
 Return the slice of the list starting at the start index up to but excluding the end index.
 

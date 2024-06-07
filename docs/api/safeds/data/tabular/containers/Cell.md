@@ -3,7 +3,7 @@ search:
   boost: 0.5
 ---
 
-# `#!sds abstract class` Cell {#safeds.data.tabular.containers.Cell data-toc-label='Cell'}
+# <code class="doc-symbol doc-symbol-class"></code> `Cell` {#safeds.data.tabular.containers.Cell data-toc-label='[class] Cell'}
 
 A single value in a table.
 
@@ -19,6 +19,11 @@ This class cannot be instantiated directly. It is only used for arguments of cal
 
     ```sds linenums="8"
     class Cell<out T = Any?> {
+        /**
+         * Namespace for operations on strings.
+         */
+        attr str: StringCell
+
         /**
          * Negate a boolean. This WILL LATER BE equivalent to the ^not operator.
          *
@@ -148,6 +153,21 @@ This class cannot be instantiated directly. It is only used for arguments of cal
         ) -> result: Cell
 
         /**
+         * Divide by a value. This WILL LATER BE equivalent to the `/` operator.
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("example", [6, 8]);
+         *     val result = column.transform((cell) -> cell.div(2));
+         *     // Column("example", [3, 4])
+         * }
+         */
+        @Pure
+        fun div(
+            other: Any
+        ) -> result: Cell
+
+        /**
          * Perform a modulo operation.
          *
          * @example
@@ -204,21 +224,6 @@ This class cannot be instantiated directly. It is only used for arguments of cal
          */
         @Pure
         fun ^sub(
-            other: Any
-        ) -> result: Cell
-
-        /**
-         * Divide by a value. This WILL LATER BE equivalent to the `/` operator.
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("example", [6, 8]);
-         *     val result = column.transform((cell) -> cell.div(2));
-         *     // Column("example", [3, 4])
-         * }
-         */
-        @Pure
-        fun div(
             other: Any
         ) -> result: Cell
 
@@ -299,7 +304,13 @@ This class cannot be instantiated directly. It is only used for arguments of cal
     }
     ```
 
-## `#!sds fun` abs {#safeds.data.tabular.containers.Cell.abs data-toc-label='abs'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `str` {#safeds.data.tabular.containers.Cell.str data-toc-label='[attribute] str'}
+
+Namespace for operations on strings.
+
+**Type:** [`StringCell`][safeds.data.tabular.containers.StringCell]
+
+## <code class="doc-symbol doc-symbol-function"></code> `abs` {#safeds.data.tabular.containers.Cell.abs data-toc-label='[function] abs'}
 
 Get the absolute value.
 
@@ -321,12 +332,12 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="80"
+    ```sds linenums="85"
     @Pure
     fun abs() -> result: Cell
     ```
 
-## `#!sds fun` add {#safeds.data.tabular.containers.Cell.add data-toc-label='add'}
+## <code class="doc-symbol doc-symbol-function"></code> `add` {#safeds.data.tabular.containers.Cell.add data-toc-label='[function] add'}
 
 Add a value. This WILL LATER BE equivalent to the `+` operator.
 
@@ -354,14 +365,14 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="132"
+    ```sds linenums="137"
     @Pure
     fun add(
         other: Any
     ) -> result: Cell
     ```
 
-## `#!sds fun` and {#safeds.data.tabular.containers.Cell.and data-toc-label='and'}
+## <code class="doc-symbol doc-symbol-function"></code> `and` {#safeds.data.tabular.containers.Cell.and data-toc-label='[function] and'}
 
 Perform a boolean AND operation. This WILL LATER BE equivalent to the ^and operator.
 
@@ -389,7 +400,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="33"
+    ```sds linenums="38"
     @Pure
     @PythonName("and_")
     fun ^and(
@@ -397,7 +408,7 @@ pipeline example {
     ) -> result: Cell<Boolean>
     ```
 
-## `#!sds fun` ceil {#safeds.data.tabular.containers.Cell.ceil data-toc-label='ceil'}
+## <code class="doc-symbol doc-symbol-function"></code> `ceil` {#safeds.data.tabular.containers.Cell.ceil data-toc-label='[function] ceil'}
 
 Round up to the nearest integer.
 
@@ -419,12 +430,12 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="93"
+    ```sds linenums="98"
     @Pure
     fun ceil() -> result: Cell
     ```
 
-## `#!sds fun` div {#safeds.data.tabular.containers.Cell.div data-toc-label='div'}
+## <code class="doc-symbol doc-symbol-function"></code> `div` {#safeds.data.tabular.containers.Cell.div data-toc-label='[function] div'}
 
 Divide by a value. This WILL LATER BE equivalent to the `/` operator.
 
@@ -452,14 +463,14 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="207"
+    ```sds linenums="152"
     @Pure
     fun div(
         other: Any
     ) -> result: Cell
     ```
 
-## `#!sds fun` eq {#safeds.data.tabular.containers.Cell.eq data-toc-label='eq'}
+## <code class="doc-symbol doc-symbol-function"></code> `eq` {#safeds.data.tabular.containers.Cell.eq data-toc-label='[function] eq'}
 
 Check if equal to a value. This WILL LATER BE equivalent to the `==` operator.
 
@@ -487,14 +498,14 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="222"
+    ```sds linenums="227"
     @Pure
     fun eq(
         other: Any
     ) -> result: Cell<Boolean>
     ```
 
-## `#!sds fun` floor {#safeds.data.tabular.containers.Cell.floor data-toc-label='floor'}
+## <code class="doc-symbol doc-symbol-function"></code> `floor` {#safeds.data.tabular.containers.Cell.floor data-toc-label='[function] floor'}
 
 Round down to the nearest integer.
 
@@ -516,12 +527,12 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="106"
+    ```sds linenums="111"
     @Pure
     fun floor() -> result: Cell
     ```
 
-## `#!sds fun` ge {#safeds.data.tabular.containers.Cell.ge data-toc-label='ge'}
+## <code class="doc-symbol doc-symbol-function"></code> `ge` {#safeds.data.tabular.containers.Cell.ge data-toc-label='[function] ge'}
 
 Check if greater than or equal to a value. This WILL LATER BE equivalent to the `>=` operator.
 
@@ -549,14 +560,14 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="237"
+    ```sds linenums="242"
     @Pure
     fun ge(
         other: Any
     ) -> result: Cell<Boolean>
     ```
 
-## `#!sds fun` gt {#safeds.data.tabular.containers.Cell.gt data-toc-label='gt'}
+## <code class="doc-symbol doc-symbol-function"></code> `gt` {#safeds.data.tabular.containers.Cell.gt data-toc-label='[function] gt'}
 
 Check if greater than a value. This WILL LATER BE equivalent to the `>` operator.
 
@@ -584,14 +595,14 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="252"
+    ```sds linenums="257"
     @Pure
     fun gt(
         other: Any
     ) -> result: Cell<Boolean>
     ```
 
-## `#!sds fun` le {#safeds.data.tabular.containers.Cell.le data-toc-label='le'}
+## <code class="doc-symbol doc-symbol-function"></code> `le` {#safeds.data.tabular.containers.Cell.le data-toc-label='[function] le'}
 
 Check if less than or equal to a value. This WILL LATER BE equivalent to the `<=` operator.
 
@@ -619,14 +630,14 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="267"
+    ```sds linenums="272"
     @Pure
     fun le(
         other: Any
     ) -> result: Cell<Boolean>
     ```
 
-## `#!sds fun` lt {#safeds.data.tabular.containers.Cell.lt data-toc-label='lt'}
+## <code class="doc-symbol doc-symbol-function"></code> `lt` {#safeds.data.tabular.containers.Cell.lt data-toc-label='[function] lt'}
 
 Check if less than a value. This WILL LATER BE equivalent to the `<` operator.
 
@@ -654,14 +665,14 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="282"
+    ```sds linenums="287"
     @Pure
     fun lt(
         other: Any
     ) -> result: Cell<Boolean>
     ```
 
-## `#!sds fun` mod {#safeds.data.tabular.containers.Cell.mod data-toc-label='mod'}
+## <code class="doc-symbol doc-symbol-function"></code> `mod` {#safeds.data.tabular.containers.Cell.mod data-toc-label='[function] mod'}
 
 Perform a modulo operation.
 
@@ -689,14 +700,14 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="147"
+    ```sds linenums="167"
     @Pure
     fun mod(
         other: Any
     ) -> result: Cell
     ```
 
-## `#!sds fun` mul {#safeds.data.tabular.containers.Cell.mul data-toc-label='mul'}
+## <code class="doc-symbol doc-symbol-function"></code> `mul` {#safeds.data.tabular.containers.Cell.mul data-toc-label='[function] mul'}
 
 Multiply by a value. This WILL LATER BE equivalent to the `*` operator.
 
@@ -724,14 +735,14 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="162"
+    ```sds linenums="182"
     @Pure
     fun mul(
         other: Any
     ) -> result: Cell
     ```
 
-## `#!sds fun` neg {#safeds.data.tabular.containers.Cell.neg data-toc-label='neg'}
+## <code class="doc-symbol doc-symbol-function"></code> `neg` {#safeds.data.tabular.containers.Cell.neg data-toc-label='[function] neg'}
 
 Negate the value.
 
@@ -753,12 +764,12 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="119"
+    ```sds linenums="124"
     @Pure
     fun neg() -> result: Cell
     ```
 
-## `#!sds fun` not {#safeds.data.tabular.containers.Cell.not data-toc-label='not'}
+## <code class="doc-symbol doc-symbol-function"></code> `not` {#safeds.data.tabular.containers.Cell.not data-toc-label='[function] not'}
 
 Negate a boolean. This WILL LATER BE equivalent to the ^not operator.
 
@@ -780,13 +791,13 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="19"
+    ```sds linenums="24"
     @Pure
     @PythonName("not_")
     fun ^not() -> result: Cell<Boolean>
     ```
 
-## `#!sds fun` or {#safeds.data.tabular.containers.Cell.or data-toc-label='or'}
+## <code class="doc-symbol doc-symbol-function"></code> `or` {#safeds.data.tabular.containers.Cell.or data-toc-label='[function] or'}
 
 Perform a boolean OR operation. This WILL LATER BE equivalent to the ^or operator.
 
@@ -814,7 +825,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="49"
+    ```sds linenums="54"
     @Pure
     @PythonName("or_")
     fun ^or(
@@ -822,7 +833,7 @@ pipeline example {
     ) -> result: Cell<Boolean>
     ```
 
-## `#!sds fun` pow {#safeds.data.tabular.containers.Cell.pow data-toc-label='pow'}
+## <code class="doc-symbol doc-symbol-function"></code> `pow` {#safeds.data.tabular.containers.Cell.pow data-toc-label='[function] pow'}
 
 Raise to a power.
 
@@ -850,14 +861,14 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="177"
+    ```sds linenums="197"
     @Pure
     fun pow(
         other: union<Cell, Float>
     ) -> result: Cell
     ```
 
-## `#!sds fun` sub {#safeds.data.tabular.containers.Cell.sub data-toc-label='sub'}
+## <code class="doc-symbol doc-symbol-function"></code> `sub` {#safeds.data.tabular.containers.Cell.sub data-toc-label='[function] sub'}
 
 Subtract a value. This WILL LATER BE equivalent to the `-` operator.
 
@@ -885,14 +896,14 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="192"
+    ```sds linenums="212"
     @Pure
     fun ^sub(
         other: Any
     ) -> result: Cell
     ```
 
-## `#!sds fun` xor {#safeds.data.tabular.containers.Cell.xor data-toc-label='xor'}
+## <code class="doc-symbol doc-symbol-function"></code> `xor` {#safeds.data.tabular.containers.Cell.xor data-toc-label='[function] xor'}
 
 Perform a boolean XOR operation.
 
@@ -920,7 +931,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="65"
+    ```sds linenums="70"
     @Pure
     fun xor(
         other: union<Boolean, Cell<Boolean>>

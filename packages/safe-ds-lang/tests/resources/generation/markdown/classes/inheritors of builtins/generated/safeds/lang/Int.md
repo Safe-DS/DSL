@@ -3,7 +3,7 @@ search:
   boost: 0.5
 ---
 
-# `#!sds abstract class` Int {#safeds.lang.Int data-toc-label='Int'}
+# <code class="doc-symbol doc-symbol-class"></code> `Int` {#safeds.lang.Int data-toc-label='[class] Int'}
 
 **Parent type:** `#!sds Number`
 

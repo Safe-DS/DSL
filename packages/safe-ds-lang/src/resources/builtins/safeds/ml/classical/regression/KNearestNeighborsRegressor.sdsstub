@@ -19,14 +19,14 @@ from safeds.ml.classical.regression import Regressor
  * }
  */
 class KNearestNeighborsRegressor(
-    @PythonName("number_of_neighbors") const neighborCount: Int
+    @PythonName("neighbor_count") const neighborCount: Int
 ) sub Regressor where {
     neighborCount >= 1
 } {
     /**
-     * Get the number of neighbors used for interpolation.
+     * The number of neighbors used for interpolation.
      */
-    @PythonName("number_of_neighbors") attr neighborCount: Int
+    @PythonName("neighbor_count") attr neighborCount: Int
 
     /**
      * Create a copy of this regressor and fit it with the given training data.
