@@ -15,13 +15,12 @@ from safeds.data.tabular.containers import Table
  *
  * @example
  * pipeline example {
- *     // from safeds.data.labeled.containers import TabularDataset
- *     // dataset = TimeSeriesDataset(
- *     //     {"id": [1, 2, 3], "feature": [4, 5, 6], "target": [1, 2, 3], "error":[0,0,1]},
- *     //     target_name="target",
- *     //     time_name = "id",
- *     //     extra_names=["error"]
- *     // )
+ *      val dataset = TimeSeriesDataset(
+ *          {"id": [1, 2, 3], "feature": [4, 5, 6], "target": [1, 2, 3], "error":[0,0,1]},
+ *          target_name="target",
+ *          time_name = "id",
+ *          extra_names=["error"]
+ *      );
  * }
  */
 @Experimental
@@ -30,7 +29,7 @@ class TimeSeriesDataset(
     @PythonName("target_name") targetName: String,
     @PythonName("time_name") timeName: String,
     @PythonName("extra_names") extraNames: List<String>? = null
-) {
+) sub Dataset {
     /**
      * The feature columns of the time series dataset.
      */
@@ -56,6 +55,17 @@ class TimeSeriesDataset(
      * The original `TimeSeriesDataset` is not modified.
      *
      * @result table A table containing the feature columns, the target column, the time column and the extra columns.
+     * @example
+     * pipeline example {
+     *      val dataset = TimeSeriesDataset(
+     *          {"id": [1, 2, 3], "feature": [4, 5, 6], "target": [1, 2, 3], "error":[0,0,1]},
+     *          target_name="target",
+     *          time_name = "id",
+     *          extra_names=["error"]
+     *      );
+     *      // The next line is an example for the Method "toTable()"
+     *      val result = dataset.toTable();
+     * }
      */
     @Pure
     @PythonName("to_table")

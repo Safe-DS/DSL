@@ -57,6 +57,19 @@ class TabularDataset(
      * Return a table containing all columns of the tabular dataset.
      *
      * @result table A table containing all columns of the tabular dataset.
+     * @example
+     * pipeline example {
+     *     val table = Table(
+     *         {
+     *             "id": [1, 2, 3],
+     *             "feature": [4, 5, 6],
+     *             "target": [1, 2, 3],
+     *         },
+     *     );
+     *     val tabularDataset = table.toTabularDataset(targetName="target", extraNames=["id"]);
+     *     // The next line is an example for the Method "toTable()"
+     *     val result = tabularDataset.toTable();
+     * }
      */
     @Pure
     @PythonName("to_table")

@@ -4,6 +4,8 @@ A time series dataset maps feature and time columns to a target column. Not like
 
 Create a time series dataset from a mapping of column names to their values.
 
+**Parent type:** [`Dataset`][safeds.data.labeled.containers.Dataset]
+
 **Parameters:**
 
 | Name | Type | Description | Default |
@@ -15,27 +17,26 @@ Create a time series dataset from a mapping of column names to their values.
 
 **Examples:**
 
-```sds hl_lines="3"
+```sds hl_lines="2"
 pipeline example {
-    // from safeds.data.labeled.containers import TabularDataset
-    // dataset = TimeSeriesDataset(
-    //     {"id": [1, 2, 3], "feature": [4, 5, 6], "target": [1, 2, 3], "error":[0,0,1]},
-    //     target_name="target",
-    //     time_name = "id",
-    //     extra_names=["error"]
-    // )
+     val dataset = TimeSeriesDataset(
+         {"id": [1, 2, 3], "feature": [4, 5, 6], "target": [1, 2, 3], "error":[0,0,1]},
+         target_name="target",
+         time_name = "id",
+         extra_names=["error"]
+     );
 }
 ```
 
 ??? quote "Stub code in `TimeSeriesDataset.sdsstub`"
 
-    ```sds linenums="28"
+    ```sds linenums="27"
     class TimeSeriesDataset(
         data: union<Map<String, List<Any>>, Table>,
         @PythonName("target_name") targetName: String,
         @PythonName("time_name") timeName: String,
         @PythonName("extra_names") extraNames: List<String>? = null
-    ) {
+    ) sub Dataset {
         /**
          * The feature columns of the time series dataset.
          */
@@ -61,6 +62,17 @@ pipeline example {
          * The original `TimeSeriesDataset` is not modified.
          *
          * @result table A table containing the feature columns, the target column, the time column and the extra columns.
+         * @example
+         * pipeline example {
+         *      val dataset = TimeSeriesDataset(
+         *          {"id": [1, 2, 3], "feature": [4, 5, 6], "target": [1, 2, 3], "error":[0,0,1]},
+         *          target_name="target",
+         *          time_name = "id",
+         *          extra_names=["error"]
+         *      );
+         *      // The next line is an example for the Method "toTable()"
+         *      val result = dataset.toTable();
+         * }
          */
         @Pure
         @PythonName("to_table")
@@ -106,9 +118,24 @@ The original `TimeSeriesDataset` is not modified.
 |------|------|-------------|
 | `table` | [`Table`][safeds.data.tabular.containers.Table] | A table containing the feature columns, the target column, the time column and the extra columns. |
 
+**Examples:**
+
+```sds hl_lines="8 9"
+pipeline example {
+     val dataset = TimeSeriesDataset(
+         {"id": [1, 2, 3], "feature": [4, 5, 6], "target": [1, 2, 3], "error":[0,0,1]},
+         target_name="target",
+         time_name = "id",
+         extra_names=["error"]
+     );
+     // The next line is an example for the Method "toTable()"
+     val result = dataset.toTable();
+}
+```
+
 ??? quote "Stub code in `TimeSeriesDataset.sdsstub`"
 
-    ```sds linenums="60"
+    ```sds linenums="70"
     @Pure
     @PythonName("to_table")
     fun toTable() -> table: Table

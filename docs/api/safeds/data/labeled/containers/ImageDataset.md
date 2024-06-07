@@ -19,9 +19,19 @@ A Dataset for ImageLists as input and ImageLists, Tables or Columns as output.
 |------|-------------|-------------|---------|
 | `T` | [`Any?`][safeds.lang.Any] | - | - |
 
+**Examples:**
+
+```sds hl_lines="4"
+pipeline example {
+    val image = Image.fromFile("testimage.png");;
+    val imageList = ImageList.fromImages([image]);
+    val dataset = ImageDataset(imageList, "exampleOutput", 20, true);
+}
+```
+
 ??? quote "Stub code in `ImageDataset.sdsstub`"
 
-    ```sds linenums="17"
+    ```sds linenums="24"
     class ImageDataset<T>(
         @PythonName("input_data") inputData: ImageList,
         @PythonName("output_data") outputData: T,
@@ -41,6 +51,14 @@ A Dataset for ImageLists as input and ImageLists, Tables or Columns as output.
          * Get the input data of this dataset.
          *
          * @result input the input data of this dataset
+         * @example
+         * pipeline example {
+         *     val image = Image.fromFile("testimage.png");;
+         *     val imageList = ImageList.fromImages([image]);
+         *     val dataset = ImageDataset(imageList, "exampleOutput", 20, true);
+         *     // The next line is an example for the Method "getInput()"
+         *     val input = dataset.getInput();
+         * }
          */
         @Pure
         @PythonName("get_input")
@@ -50,6 +68,14 @@ A Dataset for ImageLists as input and ImageLists, Tables or Columns as output.
          * Get the output data of this dataset.
          *
          * @result output the output data of this dataset
+         * @example
+         * pipeline example {
+         *     val image = Image.fromFile("testimage.png");;
+         *     val imageList = ImageList.fromImages([image]);
+         *     val dataset = ImageDataset(imageList, "exampleOutput", 20, true);
+         *     // The next line is an example for the Method "getOutput()"
+         *     val output = dataset.getOutput();
+         * }
          */
         @Pure
         @PythonName("get_output")
@@ -61,6 +87,15 @@ A Dataset for ImageLists as input and ImageLists, Tables or Columns as output.
          * The original dataset list is not modified.
          *
          * @result imageDataset the shuffled `ImageDataset`
+         * @example
+         * pipeline example {
+         *     val image = Image.fromFile("testimage.png");;
+         *     val imageList = ImageList.fromImages([image]);
+         *     // In the next line we don't shuffle the ImageDataset
+         *     val dataset = ImageDataset(imageList, "exampleOutput", 20, false);
+         *     // The next line shuffles the dataset
+         *     val shuffledDataset = dataset.shuffle();
+         * }
          */
         @Pure
         fun shuffle() -> imageDataset: ImageDataset<T>
@@ -89,9 +124,21 @@ Get the input data of this dataset.
 |------|------|-------------|
 | `input` | [`ImageList`][safeds.data.image.containers.ImageList] | the input data of this dataset |
 
+**Examples:**
+
+```sds hl_lines="5 6"
+pipeline example {
+    val image = Image.fromFile("testimage.png");;
+    val imageList = ImageList.fromImages([image]);
+    val dataset = ImageDataset(imageList, "exampleOutput", 20, true);
+    // The next line is an example for the Method "getInput()"
+    val input = dataset.getInput();
+}
+```
+
 ??? quote "Stub code in `ImageDataset.sdsstub`"
 
-    ```sds linenums="37"
+    ```sds linenums="52"
     @Pure
     @PythonName("get_input")
     fun getInput() -> input: ImageList
@@ -107,9 +154,21 @@ Get the output data of this dataset.
 |------|------|-------------|
 | `output` | `#!sds T` | the output data of this dataset |
 
+**Examples:**
+
+```sds hl_lines="5 6"
+pipeline example {
+    val image = Image.fromFile("testimage.png");;
+    val imageList = ImageList.fromImages([image]);
+    val dataset = ImageDataset(imageList, "exampleOutput", 20, true);
+    // The next line is an example for the Method "getOutput()"
+    val output = dataset.getOutput();
+}
+```
+
 ??? quote "Stub code in `ImageDataset.sdsstub`"
 
-    ```sds linenums="46"
+    ```sds linenums="69"
     @Pure
     @PythonName("get_output")
     fun getOutput() -> output: T
@@ -127,9 +186,22 @@ The original dataset list is not modified.
 |------|------|-------------|
 | `imageDataset` | [`ImageDataset<T>`][safeds.data.labeled.containers.ImageDataset] | the shuffled `ImageDataset` |
 
+**Examples:**
+
+```sds hl_lines="4 7"
+pipeline example {
+    val image = Image.fromFile("testimage.png");;
+    val imageList = ImageList.fromImages([image]);
+    // In the next line we don't shuffle the ImageDataset
+    val dataset = ImageDataset(imageList, "exampleOutput", 20, false);
+    // The next line shuffles the dataset
+    val shuffledDataset = dataset.shuffle();
+}
+```
+
 ??? quote "Stub code in `ImageDataset.sdsstub`"
 
-    ```sds linenums="57"
+    ```sds linenums="89"
     @Pure
     fun shuffle() -> imageDataset: ImageDataset<T>
     ```

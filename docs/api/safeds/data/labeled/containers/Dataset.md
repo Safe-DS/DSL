@@ -11,6 +11,7 @@ A dataset is used as input to machine learning models.
 
 - [`ImageDataset`][safeds.data.labeled.containers.ImageDataset]
 - [`TabularDataset`][safeds.data.labeled.containers.TabularDataset]
+- [`TimeSeriesDataset`][safeds.data.labeled.containers.TimeSeriesDataset]
 
 ??? quote "Stub code in `Dataset.sdsstub`"
 

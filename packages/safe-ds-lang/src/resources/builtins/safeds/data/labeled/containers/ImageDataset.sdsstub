@@ -12,6 +12,13 @@ from safeds.data.tabular.containers import Table
  * @param outputData the output data
  * @param batchSize the batch size used for training
  * @param shuffle weather the data should be shuffled after each epoch of training
+ *
+ * @example
+ * pipeline example {
+ *     val image = Image.fromFile("testimage.png");;
+ *     val imageList = ImageList.fromImages([image]);
+ *     val dataset = ImageDataset(imageList, "exampleOutput", 20, true);
+ * }
  */
 @Experimental
 class ImageDataset<T>(
@@ -33,6 +40,14 @@ class ImageDataset<T>(
      * Get the input data of this dataset.
      *
      * @result input the input data of this dataset
+     * @example
+     * pipeline example {
+     *     val image = Image.fromFile("testimage.png");;
+     *     val imageList = ImageList.fromImages([image]);
+     *     val dataset = ImageDataset(imageList, "exampleOutput", 20, true);
+     *     // The next line is an example for the Method "getInput()"
+     *     val input = dataset.getInput();
+     * }
      */
     @Pure
     @PythonName("get_input")
@@ -42,6 +57,14 @@ class ImageDataset<T>(
      * Get the output data of this dataset.
      *
      * @result output the output data of this dataset
+     * @example
+     * pipeline example {
+     *     val image = Image.fromFile("testimage.png");;
+     *     val imageList = ImageList.fromImages([image]);
+     *     val dataset = ImageDataset(imageList, "exampleOutput", 20, true);
+     *     // The next line is an example for the Method "getOutput()"
+     *     val output = dataset.getOutput();
+     * }
      */
     @Pure
     @PythonName("get_output")
@@ -53,6 +76,15 @@ class ImageDataset<T>(
      * The original dataset list is not modified.
      *
      * @result imageDataset the shuffled `ImageDataset`
+     * @example
+     * pipeline example {
+     *     val image = Image.fromFile("testimage.png");;
+     *     val imageList = ImageList.fromImages([image]);
+     *     // In the next line we don't shuffle the ImageDataset
+     *     val dataset = ImageDataset(imageList, "exampleOutput", 20, false);
+     *     // The next line shuffles the dataset
+     *     val shuffledDataset = dataset.shuffle();
+     * }
      */
     @Pure
     fun shuffle() -> imageDataset: ImageDataset<T>
