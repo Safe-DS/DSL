@@ -1,4 +1,4 @@
-# Your First Safe-DS Program
+# Your First Safe-DS Regression Program
 
 Usually it's suggested to start your learning journey by printing "Hello World!" but we are going to step further with this short
 tutorial. In this tutorial you will learn how to write your first Safe-DS pipeline, which will import data from a csv file,
@@ -92,7 +92,7 @@ train a regression model and print the mean squared error of that fitted model. 
 
 6. Regressor
 
-    Now you can train the data using a Regressor: 
+    Now you can train the data using a regressor: 
     [Here](https://dsl.safeds.com/en/stable/api/safeds/ml/classical/regression/Regressor/) 
     you can find other regressors.
     Create your regressor simply by initializing and assigning it to a variable.
@@ -110,7 +110,7 @@ train a regression model and print the mean squared error of that fitted model. 
     ```
 
 
-8. Use fitted regressor
+8. Using the fitted regressor
 
     Now you can use your regressor on your test data and print the mean squared error for example.
     ```sds
