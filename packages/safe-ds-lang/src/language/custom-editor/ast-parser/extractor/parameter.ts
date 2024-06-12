@@ -1,33 +1,38 @@
 import { SdsExpression, SdsParameter } from "../../../generated/ast.js";
 import { parseExpression } from "../parser/expression.js";
 import { Utils } from "../utils.js";
-import { Datatype, getDatatype, defaultDatatype } from "./datatype.js";
-import { Literal, isLiteral, defaultLiteral } from "./literal.js";
+import { Datatype } from "./datatype.js";
+import { Literal } from "./literal.js";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const LOGGING_TAG = "CustomEditor] [AstParser] [Parameter";
+export class Parameter {
+    public static readonly LOGGING_TAG = "CustomEditor] [AstParser] [Parameter";
 
-export interface Parameter {
-    $type: "parameter";
-    name: string;
-    datatype: Datatype;
-    defaultValue: Literal | undefined;
-    isConstant: boolean;
-}
+    private constructor(
+        public readonly name: string,
+        public readonly datatype: Datatype,
+        public readonly defaultValue: Literal | undefined,
+        public readonly isConstant: boolean,
+    ) {}
 
-export const getParameter = (node: SdsParameter): Parameter => {
-    const name = node.name;
-    const isConstant = node.isConstant;
-    const defaultValue = getDefaultValue(node.defaultValue);
+    public static get(node: SdsParameter): Parameter {
+        const name = node.name;
+        const isConstant = node.isConstant;
+        const defaultValue = getDefaultValue(node.defaultValue);
 
-    // Qustion: Does a undefined type mean implicit type? How should this be handled?
-    if (!node.type) {
-        Utils.pushError(LOGGING_TAG, `Undefined Type for Parameter <${name}>`);
+        // Qustion: Does a undefined type mean implicit type? How should this be handled?
+        if (!node.type) {
+            Utils.pushError(
+                Parameter.LOGGING_TAG,
+                `Undefined Type for Parameter <${name}>`,
+            );
+        }
+        const datatype = node.type
+            ? Datatype.get(node.type)
+            : Datatype.default();
+
+        return new Parameter(name, datatype, defaultValue, isConstant);
     }
-    const datatype = node.type ? getDatatype(node.type) : defaultDatatype;
-
-    return { $type: "parameter", name, datatype, defaultValue, isConstant };
-};
+}
 
 const getDefaultValue = (
     defaultValue: SdsExpression | undefined,
@@ -37,9 +42,9 @@ const getDefaultValue = (
     }
 
     const tmp = parseExpression(defaultValue);
-    if (isLiteral(tmp)) {
+    if (tmp instanceof Literal) {
         return tmp;
     }
 
-    return defaultLiteral;
+    return Literal.default();
 };

@@ -1,9 +1,8 @@
 import { SdsReference } from "../../../generated/ast.js";
-import { Declaration, parseDeclaration } from "../parser/declaration.js";
+import { Declaration } from "../extractor/declaration.js";
 import { Utils } from "../utils.js";
-import { defaultFunction } from "./function.js";
+import { Function } from "../extractor/function.js";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const LOGGING_TAG = "CustomEditor] [AstParser] [Reference";
 
 export const getReference = (node: SdsReference): Declaration => {
@@ -12,15 +11,15 @@ export const getReference = (node: SdsReference): Declaration => {
         Utils.pushError(
             LOGGING_TAG,
             // Question: Is there a better way to get the line of a certain start that includes empty lines and comments
+            // Answer:
+            //   rangeToString
+            //   locationToString
+            // Todo:
             `Unable to resolve reference in line ${node.$cstNode?.range.start.line}`,
         );
-        // rangeToString
-        // locationToString
-        return defaultFunction;
+
+        return Function.default();
     }
-    const declaration = parseDeclaration(target);
-    if (!declaration) {
-        return defaultFunction;
-    }
+    const declaration = Declaration.get(target) ?? Function.default();
     return declaration;
 };

@@ -1,48 +1,34 @@
 import { SdsFunction } from "../../../generated/ast.js";
-import { Parameter, getParameter } from "./parameter.js";
-import { Result, getResult } from "./result.js";
+import { Declaration } from "./declaration.js";
+import { Parameter } from "./parameter.js";
+import { Result } from "./result.js";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const LOGGING_TAG = "CustomEditor] [AstParser] [Function";
+export class Function extends Declaration {
+    public static override LOGGING_TAG = "CustomEditor] [AstParser] [Function";
 
-export const defaultFunction: Function = {
-    $type: "function",
-    name: "unknown",
-    isStatic: false,
-    parameterList: [],
-    resultList: [],
-};
+    private constructor(
+        name: string,
+        public readonly isStatic: Boolean,
+        public readonly parameterList: Parameter[],
+        public readonly resultList: Result[],
+    ) {
+        super(name);
+    }
 
-export interface Function {
-    $type: "function";
-    name: string;
-    isStatic: Boolean;
-    parameterList: Parameter[];
-    resultList: Result[];
+    public static override default(): Function {
+        return new Function("unknown", false, [], []);
+    }
+
+    public static override get(node: SdsFunction): Function {
+        const parameterList =
+            node.parameterList?.parameters.map(Parameter.get) ?? [];
+        const resultList = node.resultList?.results.map(Result.get) ?? [];
+
+        return new Function(
+            node.name,
+            node.isStatic,
+            parameterList,
+            resultList,
+        );
+    }
 }
-
-export const getFunction = (node: SdsFunction): Function => {
-    const parameterList =
-        node.parameterList?.parameters.map(getParameter) ?? [];
-    const resultList = node.resultList?.results.map(getResult) ?? [];
-
-    return {
-        $type: "function",
-        name: node.name,
-        isStatic: node.isStatic,
-        parameterList,
-        resultList,
-    };
-};
-
-export const isFunction = (object: any): object is Function => {
-    return (
-        object &&
-        typeof object === "object" &&
-        typeof object.name === "string" &&
-        typeof object.isStatic === "boolean" &&
-        Array.isArray(object.parameterList) &&
-        Array.isArray(object.resultList) &&
-        object.$type === "function"
-    );
-};

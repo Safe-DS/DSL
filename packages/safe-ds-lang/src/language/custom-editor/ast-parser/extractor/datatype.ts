@@ -9,71 +9,59 @@ import {
 } from "../../../generated/ast.js";
 import { Utils } from "../utils.js";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const LOGGING_TAG = "CustomEditor] [AstParser] [Datatype";
+export class Datatype {
+    public static readonly LOGGING_TAG = "CustomEditor] [AstParser] [Datatype";
 
-export const defaultDatatype: Datatype = {
-    $type: "datatype",
-    type: "unknown",
-    displayValue: "",
-};
+    private constructor(
+        public readonly type: string,
+        public readonly displayValue: string | string[],
+    ) {}
 
-export interface Datatype {
-    $type: "datatype";
-    type:
-        | "unknown"
-        | "SdsNamedType"
-        | "SdsCallableType"
-        | "SdsLiteralType"
-        | "SdsUnionType"
-        | "SdsUnknownType";
-    displayValue: string | string[];
+    public static default(): Datatype {
+        return new Datatype("unknown", "");
+    }
+
+    public static get(node: SdsType): Datatype {
+        if (isSdsCallableType(node)) {
+            return new Datatype(node.$type, "");
+        }
+
+        if (isSdsLiteralType(node)) {
+            return new Datatype(
+                node.$type,
+                node.literalList.literals.map((literal) => literal.$type),
+            );
+        }
+
+        if (isSdsMemberType(node)) {
+            return Datatype.get(node.receiver);
+        }
+
+        if (isSdsNamedType(node)) {
+            return new Datatype(node.$type, node.declaration?.ref?.name ?? "");
+        }
+
+        if (isSdsUnionType(node)) {
+            return new Datatype(
+                node.$type,
+                node.typeArgumentList.typeArguments
+                    .map(
+                        (typeArgument) =>
+                            Datatype.get(typeArgument.value).displayValue,
+                    )
+                    .flat(),
+            );
+        }
+
+        if (isSdsUnknownType(node)) {
+            return new Datatype(node.$type, "unknown");
+        }
+
+        Utils.pushError(
+            Datatype.LOGGING_TAG,
+            `Unexpected node type <${node.$type}>`,
+        );
+
+        return Datatype.default();
+    }
 }
-
-export const getDatatype = (node: SdsType): Datatype => {
-    if (isSdsCallableType(node)) {
-        return { $type: "datatype", type: node.$type, displayValue: "" };
-    }
-
-    if (isSdsLiteralType(node)) {
-        return {
-            $type: "datatype",
-            type: node.$type,
-            displayValue: node.literalList.literals.map(
-                (literal) => literal.$type,
-            ),
-        };
-    }
-
-    if (isSdsMemberType(node)) {
-        return getDatatype(node.receiver);
-    }
-
-    if (isSdsNamedType(node)) {
-        return {
-            $type: "datatype",
-            type: node.$type,
-            displayValue: node.declaration?.ref?.name ?? "",
-        };
-    }
-
-    if (isSdsUnionType(node)) {
-        return {
-            $type: "datatype",
-            type: node.$type,
-            displayValue: node.typeArgumentList.typeArguments
-                .map(
-                    (typeArgument) =>
-                        getDatatype(typeArgument.value).displayValue,
-                )
-                .flat(),
-        };
-    }
-
-    if (isSdsUnknownType(node)) {
-        return { $type: "datatype", type: node.$type, displayValue: "unknown" };
-    }
-
-    Utils.pushError(LOGGING_TAG, `Unexpected node type <${node.$type}>`);
-    return defaultDatatype;
-};

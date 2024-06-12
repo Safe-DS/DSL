@@ -3,13 +3,8 @@ import {
     isSdsAssignment,
     isSdsExpressionStatement,
 } from "../../../generated/ast.js";
-import {
-    createEdge,
-    isPort,
-    isPortList,
-    placeholderToPort,
-} from "../extractor/edge.js";
-import { Placeholder, isPlaceholder } from "../extractor/placeholder.js";
+import { Edge, Port } from "../extractor/edge.js";
+import { Placeholder } from "../extractor/placeholder.js";
 import { Utils, zip } from "../utils.js";
 import { parseAssignee } from "./assignee.js";
 import { parseExpression } from "./expression.js";
@@ -27,7 +22,7 @@ export const parseStatement = (statement: SdsStatement): void => {
             ? parseExpression(statement.expression)
             : [];
 
-        if (!isPortList(expressionResult)) return;
+        if (!Port.isPortList(expressionResult)) return;
 
         if (assigneeList.length !== expressionResult.length) {
             Utils.pushError(
@@ -38,9 +33,12 @@ export const parseStatement = (statement: SdsStatement): void => {
 
         zip(assigneeList, expressionResult).forEach(
             ([assignee, expression]) => {
-                if (isPlaceholder(assignee) && isPort(expression)) {
+                if (
+                    assignee instanceof Placeholder &&
+                    expression instanceof Port
+                ) {
                     Utils.edgeList.push(
-                        createEdge(expression, placeholderToPort(assignee)),
+                        new Edge(expression, Port.fromPlaceholder(assignee)),
                     );
                 }
             },

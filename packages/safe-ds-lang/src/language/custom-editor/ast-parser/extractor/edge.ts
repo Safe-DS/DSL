@@ -1,64 +1,35 @@
 import { Placeholder } from "./placeholder.js";
 import { Result } from "./result.js";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const LOGGING_TAG = "CustomEditor] [AstParser] [Edge";
+export class Edge {
+    public static readonly LOGGING_TAG = "CustomEditor] [AstParser] [Edge";
 
-export interface Port {
-    $type: "port";
-    nodeId: number;
-    portIdentifier: string;
+    public constructor(
+        public readonly from: Port,
+        public readonly to: Port,
+    ) {}
 }
 
-export interface Edge {
-    $type: "edge";
-    from: Port;
-    to: Port;
+export class Port {
+    public static readonly LOGGING_TAG = "CustomEditor] [AstParser] [Port";
+
+    private constructor(
+        public readonly nodeId: number,
+        public readonly portIdentifier: string,
+    ) {}
+
+    public static fromPlaceholder = (placeholder: Placeholder): Port => {
+        return new Port(-1, placeholder.name);
+    };
+
+    public static fromResult = (result: Result, nodeId: number): Port => {
+        return new Port(nodeId, result.name);
+    };
+
+    public static isPortList(object: any): object is Port[] {
+        return (
+            Array.isArray(object) &&
+            object.every((element) => element instanceof Port)
+        );
+    }
 }
-
-export const createEdge = (from: Port, to: Port): Edge => {
-    return {
-        $type: "edge",
-        from,
-        to,
-    };
-};
-
-export const placeholderToPort = (placeholder: Placeholder): Port => {
-    return {
-        $type: "port",
-        nodeId: -1,
-        portIdentifier: placeholder.name,
-    };
-};
-
-export const resultToPort = (result: Result, nodeId: number): Port => {
-    return {
-        $type: "port",
-        nodeId,
-        portIdentifier: result.name,
-    };
-};
-
-export const isPort = (object: any): object is Port => {
-    return (
-        object &&
-        typeof object === "object" &&
-        typeof object.nodeId === "number" &&
-        typeof object.portIdentifier === "string" &&
-        object.$type === "port"
-    );
-};
-
-export const isPortList = (object: any): object is Port[] => {
-    return Array.isArray(object) && object.every(isPort);
-};
-
-export const isEdge = (object: any): object is Edge => {
-    return (
-        object &&
-        typeof object === "object" &&
-        isPort(object.from) &&
-        isPort(object.to)
-    );
-};

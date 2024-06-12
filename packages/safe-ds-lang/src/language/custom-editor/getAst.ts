@@ -5,6 +5,7 @@ import { parseDocument } from "./ast-parser/parser/document.js";
 import { AstInterface } from "../../../../safe-ds-vscode/src/extension/custom-editor/messaging/getAst.js";
 import { Utils } from "./ast-parser/utils.js";
 import { extname } from "path";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { documentToJson, saveJson } from "./ast-parser/tools/debug-utils.js";
 
 const LOGGING_TAG = "CustomEditor] [AstParser";

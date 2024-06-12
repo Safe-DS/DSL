@@ -8,13 +8,13 @@ import {
     isSdsTemplateString,
 } from "../../../generated/ast.js";
 import { Port } from "../extractor/edge.js";
-import { Literal, getLiteral } from "../extractor/literal.js";
-import { MemberAccess, getMemberAccess } from "../extractor/memberAccess.js";
-import { getReference } from "../extractor/reference.js";
+import { Literal } from "../extractor/literal.js";
+import { MemberAccess } from "../extractor/memberAccess.js";
+import { getReference } from "./reference.js";
 import { Utils } from "../utils.js";
-import { parseCall } from "../extractor/call.js";
-import { Declaration } from "./declaration.js";
-import { Lambda, getLambda } from "../extractor/lambda.js";
+import { Declaration } from "../extractor/declaration.js";
+import { Lambda } from "../extractor/lambda.js";
+import { Call } from "../extractor/call.js";
 
 const LOGGING_TAG = "CustomEditor] [AstParser] [Expression";
 
@@ -26,11 +26,11 @@ export const parseExpression = (
     }
 
     if (isSdsLiteral(node)) {
-        return getLiteral(node);
+        return Literal.get(node);
     }
 
     if (isSdsMemberAccess(node)) {
-        return getMemberAccess(node);
+        return MemberAccess.get(node);
     }
 
     if (isSdsReference(node)) {
@@ -38,12 +38,12 @@ export const parseExpression = (
     }
 
     if (isSdsCall(node)) {
-        const ports = parseCall(node);
+        const ports = Call.get(node);
         return ports;
     }
 
     if (isSdsLambda(node)) {
-        return getLambda(node);
+        return Lambda.get(node);
     }
 
     if (isSdsTemplateString(node)) {

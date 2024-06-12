@@ -1,40 +1,34 @@
 import { SdsArgument } from "../../../generated/ast.js";
 import { parseExpression } from "../parser/expression.js";
-import { Port, isPortList } from "./edge.js";
-import { Literal, isLiteral, defaultLiteral } from "./literal.js";
-import { getParameter } from "./parameter.js";
+import { Port } from "./edge.js";
+import { Literal } from "./literal.js";
+import { Parameter } from "./parameter.js";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const LOGGING_TAG = "CustomEditor] [AstParser] [Argument";
+export class Argument {
+    public static readonly LOGGING_TAG = "CustomEditor] [AstParser] [Argument";
 
-export const defaultArgmuent: Argument = {
-    $type: "argument",
-    parameterName: undefined,
-    value: defaultLiteral,
-};
+    private constructor(
+        public readonly value: Literal,
+        public readonly parameterName?: string,
+    ) {}
 
-export interface Argument {
-    $type: "argument";
-    parameterName: string | undefined;
-    value: Literal;
+    public static default(): Argument {
+        return new Argument(Literal.default(), undefined);
+    }
+
+    public static get(node: SdsArgument): Argument | Port {
+        const parameterName = node.parameter?.ref
+            ? Parameter.get(node.parameter.ref).name
+            : undefined;
+
+        let value = parseExpression(node.value);
+        if (Port.isPortList(value) && value.length === 1) {
+            return value[0]!;
+        }
+        if (!value || !(value instanceof Literal)) {
+            return Argument.default();
+        }
+
+        return new Argument(value, parameterName);
+    }
 }
-
-export const getArgument = (node: SdsArgument): Argument | Port => {
-    const parameterName = node.parameter?.ref
-        ? getParameter(node.parameter.ref).name
-        : undefined;
-
-    let value = parseExpression(node.value);
-    if (isPortList(value) && value.length === 1) {
-        return value[0]!;
-    }
-    if (!value || !isLiteral(value)) {
-        return defaultArgmuent;
-    }
-
-    return {
-        $type: "argument",
-        parameterName,
-        value,
-    };
-};

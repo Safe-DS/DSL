@@ -1,25 +1,28 @@
 import { SdsResult } from "../../../generated/ast.js";
 import { Utils } from "../utils.js";
-import { Datatype, getDatatype, defaultDatatype } from "./datatype.js";
+import { Datatype } from "./datatype.js";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const LOGGING_TAG = "CustomEditor] [AstParser] [Result";
+export class Result {
+    public static readonly LOGGING_TAG = "CustomEditor] [AstParser] [Result";
 
-export interface Result {
-    $type: "result";
-    name: string;
-    datatype: Datatype;
-}
+    private constructor(
+        public readonly name: string,
+        public readonly datatype: Datatype,
+    ) {}
 
-export const getResult = (node: SdsResult): Result => {
-    const name = node.name;
+    public static get(node: SdsResult): Result {
+        const name = node.name;
 
-    // Qustion: Does a undefined type mean implicit type? How should this be handled?
-    // -> Grammatik lässt mehr zu -> ist aber fehler
-    if (!node.type) {
-        Utils.pushError(LOGGING_TAG, `Undefined Type for Result <${name}>`);
+        if (!node.type) {
+            Utils.pushError(
+                Result.LOGGING_TAG,
+                `Undefined Type for Result <${name}>`,
+            );
+        }
+        const datatype = node.type
+            ? Datatype.get(node.type)
+            : Datatype.default();
+
+        return new Result(name, datatype);
     }
-    const datatype = node.type ? getDatatype(node.type) : defaultDatatype;
-
-    return { $type: "result", name, datatype };
-};
+}
