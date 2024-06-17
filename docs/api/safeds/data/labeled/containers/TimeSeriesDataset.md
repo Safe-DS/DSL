@@ -8,8 +8,6 @@ Unlike a TabularDataset, a TimeSeries needs to contain one target and one time c
 
 **Parent type:** [`Dataset<Table, Column<Any?>>`][safeds.data.labeled.containers.Dataset]
 
-**Parent type:** [`Dataset`][safeds.data.labeled.containers.Dataset]
-
 **Parameters:**
 
 | Name | Type | Description | Default |
@@ -25,45 +23,27 @@ Unlike a TabularDataset, a TimeSeries needs to contain one target and one time c
 
 ```sds hl_lines="2"
 pipeline example {
-<<<<<<< HEAD
-     val dataset = TimeSeriesDataset(
-         {"id": [1, 2, 3], "feature": [4, 5, 6], "target": [1, 2, 3], "error":[0,0,1]},
-         target_name="target",
-         time_name = "id",
-         extra_names=["error"]
-     );
-=======
-    // dataset = TimeSeriesDataset(
-    //     {"id": [1, 2, 3], "feature": [4, 5, 6], "target": [1, 2, 3], "error":[0,0,1]},
-    //     target_name="target",
-    //     time_name = "id",
-    //     window_size=1,
-    //     extra_names=["error"],
-    // )
->>>>>>> main
+    val dataset = TimeSeriesDataset(
+        {"time": [1, 2, 3], "feature": [4, 5, 6], "target": [1, 2, 3], "id": [1, 2, 3]},
+        targetName = "target",
+        timeName = "time",
+        windowSize = 1,
+        extraNames = ["id"]
+    );
 }
 ```
 
 ??? quote "Stub code in `TimeSeriesDataset.sdsstub`"
 
-<<<<<<< HEAD
-    ```sds linenums="27"
-=======
     ```sds linenums="30"
->>>>>>> main
     class TimeSeriesDataset(
         data: union<Map<String, List<Any>>, Table>,
         @PythonName("target_name") targetName: String,
         @PythonName("time_name") timeName: String,
-<<<<<<< HEAD
-        @PythonName("extra_names") extraNames: List<String>? = null
-    ) sub Dataset {
-=======
         @PythonName("window_size") windowSize: Int,
         @PythonName("extra_names") extraNames: List<String>? = null,
         @PythonName("forecast_horizon") forecastHorizon: Int = 1
     ) sub Dataset<Table, Column> {
->>>>>>> main
         /**
          * The feature columns of the time series dataset.
          */
@@ -97,16 +77,17 @@ pipeline example {
          * The original `TimeSeriesDataset` is not modified.
          *
          * @result table A table containing the feature columns, the target column, the time column and the extra columns.
+         *
          * @example
          * pipeline example {
-         *      val dataset = TimeSeriesDataset(
-         *          {"id": [1, 2, 3], "feature": [4, 5, 6], "target": [1, 2, 3], "error":[0,0,1]},
-         *          target_name="target",
-         *          time_name = "id",
-         *          extra_names=["error"]
-         *      );
-         *      // The next line is an example for the Method "toTable()"
-         *      val result = dataset.toTable();
+         *     val dataset = TimeSeriesDataset(
+         *         {"time": [1, 2, 3], "feature": [4, 5, 6], "target": [1, 2, 3], "id": [1, 2, 3]},
+         *         targetName = "target",
+         *         timeName = "time",
+         *         windowSize = 1,
+         *         extraNames = ["id"]
+         *     );
+         *     val result = dataset.toTable();
          * }
          */
         @Pure
@@ -167,26 +148,22 @@ The original `TimeSeriesDataset` is not modified.
 
 **Examples:**
 
-```sds hl_lines="8 9"
+```sds hl_lines="9"
 pipeline example {
-     val dataset = TimeSeriesDataset(
-         {"id": [1, 2, 3], "feature": [4, 5, 6], "target": [1, 2, 3], "error":[0,0,1]},
-         target_name="target",
-         time_name = "id",
-         extra_names=["error"]
-     );
-     // The next line is an example for the Method "toTable()"
-     val result = dataset.toTable();
+    val dataset = TimeSeriesDataset(
+        {"time": [1, 2, 3], "feature": [4, 5, 6], "target": [1, 2, 3], "id": [1, 2, 3]},
+        targetName = "target",
+        timeName = "time",
+        windowSize = 1,
+        extraNames = ["id"]
+    );
+    val result = dataset.toTable();
 }
 ```
 
 ??? quote "Stub code in `TimeSeriesDataset.sdsstub`"
 
-<<<<<<< HEAD
-    ```sds linenums="70"
-=======
-    ```sds linenums="72"
->>>>>>> main
+    ```sds linenums="84"
     @Pure
     @PythonName("to_table")
     fun toTable() -> table: Table

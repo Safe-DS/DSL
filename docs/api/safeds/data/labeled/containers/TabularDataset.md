@@ -66,6 +66,7 @@ pipeline example {
          * Return a table containing all columns of the tabular dataset.
          *
          * @result table A table containing all columns of the tabular dataset.
+         *
          * @example
          * pipeline example {
          *     val table = Table(
@@ -76,7 +77,6 @@ pipeline example {
          *         },
          *     );
          *     val tabularDataset = table.toTabularDataset(targetName="target", extraNames=["id"]);
-         *     // The next line is an example for the Method "toTable()"
          *     val result = tabularDataset.toTable();
          * }
          */
@@ -118,7 +118,7 @@ Return a table containing all columns of the tabular dataset.
 
 **Examples:**
 
-```sds hl_lines="10 11"
+```sds hl_lines="10"
 pipeline example {
     val table = Table(
         {
@@ -128,7 +128,6 @@ pipeline example {
         },
     );
     val tabularDataset = table.toTabularDataset(targetName="target", extraNames=["id"]);
-    // The next line is an example for the Method "toTable()"
     val result = tabularDataset.toTable();
 }
 ```
