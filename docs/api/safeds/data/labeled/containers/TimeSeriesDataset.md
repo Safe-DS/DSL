@@ -23,13 +23,13 @@ Unlike a TabularDataset, a TimeSeries needs to contain one target and one time c
 
 ```sds hl_lines="2"
 pipeline example {
-    // dataset = TimeSeriesDataset(
-    //     {"id": [1, 2, 3], "feature": [4, 5, 6], "target": [1, 2, 3], "error":[0,0,1]},
-    //     target_name="target",
-    //     time_name = "id",
-    //     window_size=1,
-    //     extra_names=["error"],
-    // )
+    val dataset = TimeSeriesDataset(
+        {"time": [1, 2, 3], "feature": [4, 5, 6], "target": [1, 2, 3], "id": [1, 2, 3]},
+        targetName = "target",
+        timeName = "time",
+        windowSize = 1,
+        extraNames = ["id"]
+    );
 }
 ```
 
@@ -77,6 +77,18 @@ pipeline example {
          * The original `TimeSeriesDataset` is not modified.
          *
          * @result table A table containing the feature columns, the target column, the time column and the extra columns.
+         *
+         * @example
+         * pipeline example {
+         *     val dataset = TimeSeriesDataset(
+         *         {"time": [1, 2, 3], "feature": [4, 5, 6], "target": [1, 2, 3], "id": [1, 2, 3]},
+         *         targetName = "target",
+         *         timeName = "time",
+         *         windowSize = 1,
+         *         extraNames = ["id"]
+         *     );
+         *     val result = dataset.toTable();
+         * }
          */
         @Pure
         @PythonName("to_table")
@@ -134,9 +146,24 @@ The original `TimeSeriesDataset` is not modified.
 |------|------|-------------|
 | `table` | [`Table`][safeds.data.tabular.containers.Table] | A table containing the feature columns, the target column, the time column and the extra columns. |
 
+**Examples:**
+
+```sds hl_lines="9"
+pipeline example {
+    val dataset = TimeSeriesDataset(
+        {"time": [1, 2, 3], "feature": [4, 5, 6], "target": [1, 2, 3], "id": [1, 2, 3]},
+        targetName = "target",
+        timeName = "time",
+        windowSize = 1,
+        extraNames = ["id"]
+    );
+    val result = dataset.toTable();
+}
+```
+
 ??? quote "Stub code in `TimeSeriesDataset.sdsstub`"
 
-    ```sds linenums="72"
+    ```sds linenums="84"
     @Pure
     @PythonName("to_table")
     fun toTable() -> table: Table

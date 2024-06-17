@@ -66,6 +66,19 @@ pipeline example {
          * Return a table containing all columns of the tabular dataset.
          *
          * @result table A table containing all columns of the tabular dataset.
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table(
+         *         {
+         *             "id": [1, 2, 3],
+         *             "feature": [4, 5, 6],
+         *             "target": [1, 2, 3],
+         *         },
+         *     );
+         *     val tabularDataset = table.toTabularDataset(targetName="target", extraNames=["id"]);
+         *     val result = tabularDataset.toTable();
+         * }
          */
         @Pure
         @PythonName("to_table")
@@ -103,9 +116,25 @@ Return a table containing all columns of the tabular dataset.
 |------|------|-------------|
 | `table` | [`Table`][safeds.data.tabular.containers.Table] | A table containing all columns of the tabular dataset. |
 
+**Examples:**
+
+```sds hl_lines="10"
+pipeline example {
+    val table = Table(
+        {
+            "id": [1, 2, 3],
+            "feature": [4, 5, 6],
+            "target": [1, 2, 3],
+        },
+    );
+    val tabularDataset = table.toTabularDataset(targetName="target", extraNames=["id"]);
+    val result = tabularDataset.toTable();
+}
+```
+
 ??? quote "Stub code in `TabularDataset.sdsstub`"
 
-    ```sds linenums="61"
+    ```sds linenums="74"
     @Pure
     @PythonName("to_table")
     fun toTable() -> table: Table
