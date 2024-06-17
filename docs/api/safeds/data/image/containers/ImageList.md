@@ -44,15 +44,6 @@ To create an `ImageList` call one of the following static methods:
          * @param images the list of images
          *
          * @result imageList the image list
-         *
-         * @example
-         * example pipeline {
-         *     val image0 = Image.fromFile("example0.png");
-         *     val image1 = Image.fromFile("example1.png");
-         *     val image2 = Image.fromFile("example2.png");
-         *     val listOfInstancesOfImage = [image0, image1, image2];
-         *     val imageList = ImageList.fromImages(listOfInstancesOfImage);
-         * }
          */
         @Pure
         @PythonName("from_images")
@@ -68,12 +59,6 @@ To create an `ImageList` call one of the following static methods:
          * @param path the path to the directory or a list of files
          *
          * @result imageList the image list
-         *
-         * @example
-         * example pipeline {
-         *     val imagePathList = ["example0.png", "example1.png", "example2.png"];
-         *     val imageList = ImageList.fromFiles(imagePathList);
-         * }
          */
         @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
         @PythonName("from_files")
@@ -87,14 +72,6 @@ To create an `ImageList` call one of the following static methods:
          * @param index the index for the image to return
          *
          * @result image the image at the given index
-         *
-         * @example
-         * example pipeline {
-         *     val imagePathList = ["example0.png", "example1.png", "example2.png"];
-         *     val imageList = ImageList.fromFiles(imagePathList);
-         *     val index = 1;
-         *     val secondImage = imageList.getImage(index);
-         * }
          */
         @Pure
         @PythonName("get_image")
@@ -110,16 +87,6 @@ To create an `ImageList` call one of the following static methods:
          * @param image the image to search for occurrences
          *
          * @result indices all occurrences of the image
-         *
-         * @example
-         * example pipeline {
-         *     val image0 = Image.fromFile("example0.png");
-         *     val image1 = Image.fromFile("example1.png");
-         *     val image2 = Image.fromFile("example2.png");
-         *     val listOfInstancesOfImage = [image0, image1, image2, image1];
-         *     val imageList = ImageList.fromImages(listOfInstancesOfImage);
-         *     val index = imageList.index(image1); // index == [1, 3]
-         * }
          */
         @Pure
         fun index(
@@ -132,16 +99,6 @@ To create an `ImageList` call one of the following static methods:
          * @param image the image to check
          *
          * @result hasImage Weather the given image is in this image list
-         *
-         * @example
-         * example pipeline {
-         *     val image0 = Image.fromFile("example0.png");
-         *     val image1 = Image.fromFile("example1.png");
-         *     val image2 = Image.fromFile("example2.png");
-         *     val listOfInstancesOfImage = [image0, image1, image2];
-         *     val imageList = ImageList.fromImages(listOfInstancesOfImage);
-         *     val containsImage1 = imageList.hasImage(image1); // containsImage1 == true
-         * }
          */
         @Pure
         @PythonName("has_image")
@@ -177,17 +134,6 @@ To create an `ImageList` call one of the following static methods:
          * @param indices a list of all indices to include in the output. If null, all indices will be included
          *
          * @result images the list of all images
-         *
-         * @example
-         * example pipeline {
-         *     val image0 = Image.fromFile("example0.png");
-         *     val image1 = Image.fromFile("example1.png");
-         *     val image2 = Image.fromFile("example2.png");
-         *     val listOfInstancesOfImage = [image0, image1, image2];
-         *     val imageList = ImageList.fromImages(listOfInstancesOfImage);
-         *     val indexList = [0, 2];
-         *     val listOfInstancesOfImageFromImageList = imageList.toImages(indexList);
-         * }
          */
         @Pure
         @PythonName("to_images")
@@ -203,16 +149,6 @@ To create an `ImageList` call one of the following static methods:
          * @param channel The new number of channels. 1 will result in grayscale images
          *
          * @result imageList the image list with the given number of channels
-         *
-         * @example
-         * example pipeline {
-         *     val image0 = Image.fromFile("example0.png");
-         *     val image1 = Image.fromFile("example1.png");
-         *     val image2 = Image.fromFile("example2.png");
-         *     val listOfInstancesOfImage = [image0, image1, image2];
-         *     val imageList = ImageList.fromImages(listOfInstancesOfImage);
-         *     val grayImageList = imageList.changeChannel(1);
-         * }
          */
         @Pure
         @PythonName("change_channel")
@@ -228,16 +164,6 @@ To create an `ImageList` call one of the following static methods:
          * @param image The image to be added to the image list
          *
          * @result imageList the image list with the new image added
-         *
-         * @example
-         * example pipeline {
-         *     val image0 = Image.fromFile("example0.png");
-         *     val image1 = Image.fromFile("example1.png");
-         *     val image2 = Image.fromFile("example2.png");
-         *     val listOfInstancesOfImage = [image0, image1];
-         *     val imageList = ImageList.fromImages(listOfInstancesOfImage);
-         *     val newImageList = imageList.addImage(image2);
-         * }
          */
         @Pure
         @PythonName("add_image")
@@ -253,18 +179,6 @@ To create an `ImageList` call one of the following static methods:
          * @param images The images to be added to the image list
          *
          * @result imageList the image list with the new images added
-         *
-         * @example
-         * example pipeline {
-         *     val image0 = Image.fromFile("example0.png");
-         *     val image1 = Image.fromFile("example1.png");
-         *     val image2 = Image.fromFile("example2.png");
-         *     val image3 = Image.fromFile("example3.png");
-         *     val listOfInstancesOfImage0 = [image0, image1];
-         *     val listOfInstancesOfImage1 = [image2, image3];
-         *     val imageList = ImageList.fromImages(listOfInstancesOfImage0);
-         *     val newImageList = imageList.addImages(listOfInstancesOfImage1);
-         * }
          */
         @Pure
         @PythonName("add_images")
@@ -653,22 +567,9 @@ The original image list is not modified.
 |------|------|-------------|
 | `imageList` | [`ImageList`][safeds.data.image.containers.ImageList] | the image list with the new image added |
 
-**Examples:**
-
-```sds hl_lines="7"
-example pipeline {
-    val image0 = Image.fromFile("example0.png");
-    val image1 = Image.fromFile("example1.png");
-    val image2 = Image.fromFile("example2.png");
-    val listOfInstancesOfImage = [image0, image1];
-    val imageList = ImageList.fromImages(listOfInstancesOfImage);
-    val newImageList = imageList.addImage(image2);
-}
-```
-
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="244"
+    ```sds linenums="170"
     @Pure
     @PythonName("add_image")
     fun addImage(
@@ -694,24 +595,9 @@ The original image list is not modified.
 |------|------|-------------|
 | `imageList` | [`ImageList`][safeds.data.image.containers.ImageList] | the image list with the new images added |
 
-**Examples:**
-
-```sds hl_lines="9"
-example pipeline {
-    val image0 = Image.fromFile("example0.png");
-    val image1 = Image.fromFile("example1.png");
-    val image2 = Image.fromFile("example2.png");
-    val image3 = Image.fromFile("example3.png");
-    val listOfInstancesOfImage0 = [image0, image1];
-    val listOfInstancesOfImage1 = [image2, image3];
-    val imageList = ImageList.fromImages(listOfInstancesOfImage0);
-    val newImageList = imageList.addImages(listOfInstancesOfImage1);
-}
-```
-
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="271"
+    ```sds linenums="185"
     @Pure
     @PythonName("add_images")
     fun addImages(
@@ -739,7 +625,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="474"
+    ```sds linenums="388"
     @Pure
     @PythonName("add_noise")
     fun addNoise(
@@ -769,7 +655,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="457"
+    ```sds linenums="371"
     @Pure
     @PythonName("adjust_brightness")
     fun adjustBrightness(
@@ -799,7 +685,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="514"
+    ```sds linenums="428"
     @Pure
     @PythonName("adjust_color_balance")
     fun adjustColorBalance(
@@ -829,7 +715,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="494"
+    ```sds linenums="408"
     @Pure
     @PythonName("adjust_contrast")
     fun adjustContrast(
@@ -859,7 +745,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="532"
+    ```sds linenums="446"
     @Pure
     fun blur(
         const radius: Int
@@ -886,22 +772,9 @@ The original image list is not modified.
 |------|------|-------------|
 | `imageList` | [`ImageList`][safeds.data.image.containers.ImageList] | the image list with the given number of channels |
 
-**Examples:**
-
-```sds hl_lines="7"
-example pipeline {
-    val image0 = Image.fromFile("example0.png");
-    val image1 = Image.fromFile("example1.png");
-    val image2 = Image.fromFile("example2.png");
-    val listOfInstancesOfImage = [image0, image1, image2];
-    val imageList = ImageList.fromImages(listOfInstancesOfImage);
-    val grayImageList = imageList.changeChannel(1);
-}
-```
-
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="219"
+    ```sds linenums="155"
     @Pure
     @PythonName("change_channel")
     fun changeChannel(
@@ -923,7 +796,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="393"
+    ```sds linenums="307"
     @Pure
     @PythonName("convert_to_grayscale")
     fun convertToGrayscale() -> imageList: ImageList
@@ -952,7 +825,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="409"
+    ```sds linenums="323"
     @Pure
     fun crop(
         const x: Int,
@@ -981,7 +854,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="598"
+    ```sds linenums="512"
     @Pure
     @PythonName("find_edges")
     fun findEdges() -> imageList: ImageList
@@ -1001,7 +874,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="440"
+    ```sds linenums="354"
     @Pure
     @PythonName("flip_horizontally")
     fun flipHorizontally() -> imageList: ImageList
@@ -1021,7 +894,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="429"
+    ```sds linenums="343"
     @Pure
     @PythonName("flip_vertically")
     fun flipVertically() -> imageList: ImageList
@@ -1043,20 +916,9 @@ Return the image at the given index.
 |------|------|-------------|
 | `image` | [`Image`][safeds.data.image.containers.Image] | the image at the given index |
 
-**Examples:**
-
-```sds hl_lines="5"
-example pipeline {
-    val imagePathList = ["example0.png", "example1.png", "example2.png"];
-    val imageList = ImageList.fromFiles(imagePathList);
-    val index = 1;
-    val secondImage = imageList.getImage(index);
-}
-```
-
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="101"
+    ```sds linenums="78"
     @Pure
     @PythonName("get_image")
     fun getImage(
@@ -1080,22 +942,9 @@ Return whether the given image is in this image list.
 |------|------|-------------|
 | `hasImage` | [`Boolean`][safeds.lang.Boolean] | Weather the given image is in this image list |
 
-**Examples:**
-
-```sds hl_lines="7"
-example pipeline {
-    val image0 = Image.fromFile("example0.png");
-    val image1 = Image.fromFile("example1.png");
-    val image2 = Image.fromFile("example2.png");
-    val listOfInstancesOfImage = [image0, image1, image2];
-    val imageList = ImageList.fromImages(listOfInstancesOfImage);
-    val containsImage1 = imageList.hasImage(image1); // containsImage1 == true
-}
-```
-
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="148"
+    ```sds linenums="105"
     @Pure
     @PythonName("has_image")
     fun hasImage(
@@ -1121,22 +970,9 @@ If the image has multiple occurrences, all indices will be returned
 |------|------|-------------|
 | `indices` | [`List<Int>`][safeds.lang.List] | all occurrences of the image |
 
-**Examples:**
-
-```sds hl_lines="7"
-example pipeline {
-    val image0 = Image.fromFile("example0.png");
-    val image1 = Image.fromFile("example1.png");
-    val image2 = Image.fromFile("example2.png");
-    val listOfInstancesOfImage = [image0, image1, image2, image1];
-    val imageList = ImageList.fromImages(listOfInstancesOfImage);
-    val index = imageList.index(image1); // index == [1, 3]
-}
-```
-
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="126"
+    ```sds linenums="93"
     @Pure
     fun index(
         image: Image
@@ -1157,7 +993,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="565"
+    ```sds linenums="479"
     @Pure
     @PythonName("invert_colors")
     fun invertColors() -> imageList: ImageList
@@ -1179,7 +1015,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="352"
+    ```sds linenums="266"
     @Pure
     @PythonName("remove_duplicate_images")
     fun removeDuplicateImages() -> imageList: ImageList
@@ -1207,7 +1043,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="288"
+    ```sds linenums="202"
     @Pure
     @PythonName("remove_image")
     fun removeImage(
@@ -1235,7 +1071,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="320"
+    ```sds linenums="234"
     @Pure
     @PythonName("remove_image_by_index")
     fun removeImageByIndex(
@@ -1265,7 +1101,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="305"
+    ```sds linenums="219"
     @Pure
     @PythonName("remove_images")
     fun removeImages(
@@ -1294,7 +1130,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="336"
+    ```sds linenums="250"
     @Pure
     @PythonName("remove_images_with_size")
     fun removeImagesWithSize(
@@ -1324,7 +1160,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="377"
+    ```sds linenums="291"
     @Pure
     fun resize(
         @PythonName("new_width") const newWidth: Int,
@@ -1349,7 +1185,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="587"
+    ```sds linenums="501"
     @Pure
     @PythonName("rotate_left")
     fun rotateLeft() -> imageList: ImageList
@@ -1369,7 +1205,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="576"
+    ```sds linenums="490"
     @Pure
     @PythonName("rotate_right")
     fun rotateRight() -> imageList: ImageList
@@ -1395,7 +1231,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="551"
+    ```sds linenums="465"
     @Pure
     fun sharpen(
         const factor: Float
@@ -1418,7 +1254,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="363"
+    ```sds linenums="277"
     @Pure
     @PythonName("shuffle_images")
     fun shuffleImages() -> imageList: ImageList
@@ -1440,23 +1276,9 @@ Return a list of all images in this image list.
 |------|------|-------------|
 | `images` | [`List<Image>`][safeds.lang.List] | the list of all images |
 
-**Examples:**
-
-```sds hl_lines="8"
-example pipeline {
-    val image0 = Image.fromFile("example0.png");
-    val image1 = Image.fromFile("example1.png");
-    val image2 = Image.fromFile("example2.png");
-    val listOfInstancesOfImage = [image0, image1, image2];
-    val imageList = ImageList.fromImages(listOfInstancesOfImage);
-    val indexList = [0, 2];
-    val listOfInstancesOfImageFromImageList = imageList.toImages(indexList);
-}
-```
-
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="194"
+    ```sds linenums="140"
     @Pure
     @PythonName("to_images")
     fun toImages(
@@ -1476,7 +1298,7 @@ Save all images as jpeg files.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="159"
+    ```sds linenums="116"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_jpeg_files")
     fun toJpegFiles(
@@ -1496,7 +1318,7 @@ Save all images as png files.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="170"
+    ```sds linenums="127"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_png_files")
     fun toPngFiles(
@@ -1522,18 +1344,9 @@ If you provide a path to a directory the images will be sorted alphabetically wh
 |------|------|-------------|
 | `imageList` | [`ImageList`][safeds.data.image.containers.ImageList] | the image list |
 
-**Examples:**
-
-```sds hl_lines="3"
-example pipeline {
-    val imagePathList = ["example0.png", "example1.png", "example2.png"];
-    val imageList = ImageList.fromFiles(imagePathList);
-}
-```
-
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="80"
+    ```sds linenums="65"
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
     @PythonName("from_files")
     static fun fromFiles(
@@ -1557,21 +1370,9 @@ Create an ImageList from a list of images.
 |------|------|-------------|
 | `imageList` | [`ImageList`][safeds.data.image.containers.ImageList] | the image list |
 
-**Examples:**
-
-```sds hl_lines="6"
-example pipeline {
-    val image0 = Image.fromFile("example0.png");
-    val image1 = Image.fromFile("example1.png");
-    val image2 = Image.fromFile("example2.png");
-    val listOfInstancesOfImage = [image0, image1, image2];
-    val imageList = ImageList.fromImages(listOfInstancesOfImage);
-}
-```
-
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="59"
+    ```sds linenums="50"
     @Pure
     @PythonName("from_images")
     static fun fromImages(
