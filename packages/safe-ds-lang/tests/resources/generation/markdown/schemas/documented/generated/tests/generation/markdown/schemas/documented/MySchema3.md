@@ -1,4 +1,4 @@
-# `#!sds schema` MySchema3 {#tests.generation.markdown.schemas.documented.MySchema3 data-toc-label='MySchema3'}
+# <code class="doc-symbol doc-symbol-schema"></code> `MySchema3` {#tests.generation.markdown.schemas.documented.MySchema3 data-toc-label='[schema] MySchema3'}
 
 Description of MySchema3.
 

@@ -1,4 +1,4 @@
-# `#!sds class` Column {#safeds.data.tabular.containers.Column data-toc-label='Column'}
+# <code class="doc-symbol doc-symbol-class"></code> `Column` {#safeds.data.tabular.containers.Column data-toc-label='[class] Column'}
 
 A named, one-dimensional collection of homogeneous values.
 
@@ -7,7 +7,7 @@ A named, one-dimensional collection of homogeneous values.
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `name` | [`String`][safeds.lang.String] | The name of the column. | - |
-| `data` | [`List<T>?`][safeds.lang.List] | The data of the column. If null, an empty column is created. | `#!sds null` |
+| `data` | [`List<T>`][safeds.lang.List] | The data of the column. | `#!sds []` |
 
 **Type parameters:**
 
@@ -28,7 +28,7 @@ pipeline example {
     ```sds linenums="18"
     class Column<out T = Any?>(
         name: String,
-        data: List<T>? = null
+        data: List<T> = []
     ) {
         /**
          * Whether the column is numeric.
@@ -45,7 +45,7 @@ pipeline example {
         /**
          * The number of rows in the column.
          */
-        @PythonName("number_of_rows") attr rowCount: Int
+        @PythonName("row_count") attr rowCount: Int
         /**
          * The plotter for the column.
          */
@@ -55,8 +55,28 @@ pipeline example {
          */
         attr type: DataType
 
+        /*
+         * Return the distinct values in the column.
+         *
+         * @param ignoreMissingValues Whether to ignore missing values.
+         *
+         * @result distinctValues The distinct values in the column.
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("test", [1, 2, 3, 2]);
+         *     val result = column.getDistinctValues();
+         *     // [1, 2, 3]
+         * }
+         */
+        @Pure
+        @PythonName("get_distinct_values")
+        fun getDistinctValues(
+            @PythonName("ignore_missing_values") ignoreMissingValues: Boolean = true,
+        ) -> distinctValues: List<T?>
+
         /**
-         * Return the column value at specified index.
+         * Return the column value at specified index. This WILL LATER BE equivalent to the `[]` operator (indexed access).
          *
          * Nonnegative indices are counted from the beginning (starting at 0), negative indices from the end (starting at
          * -1).
@@ -78,9 +98,176 @@ pipeline example {
         ) -> value: T
 
         /**
+         * Return whether all values in the column satisfy the predicate.
+         *
+         * The predicate can return one of three values:
+         *
+         * - true, if the value satisfies the predicate.
+         * - false, if the value does not satisfy the predicate.
+         * - null, if the truthiness of the predicate is unknown, e.g. due to missing values.
+         *
+         * By default, cases where the truthiness of the predicate is unknown are ignored and this method returns:
+         *
+         * - true, if the predicate always returns true or null.
+         * - false, if the predicate returns false at least once.
+         *
+         * You can instead enable Kleene logic by setting `ignoreUnknown = false`. In this case, this method returns:
+         *
+         * - true, if the predicate always returns true.
+         * - false, if the predicate returns false at least once.
+         * - null, if the predicate never returns false, but at least once null.
+         *
+         * @param predicate The predicate to apply to each value.
+         * @param ignoreUnknown Whether to ignore cases where the truthiness of the predicate is unknown.
+         *
+         * @result allSatisfyPredicate Whether all values in the column satisfy the predicate.
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("test", [1, 2, 3]);
+         *     val result = column.all((cell) -> cell.gt(0)); // true
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("test", [1, 2, 3]);
+         *     val result = column.all((cell) -> cell.lt(3)); // false
+         * }
+         */
+        @Pure
+        fun all(
+            predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
+            @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
+        ) -> allSatisfyPredicate: Boolean?
+
+        /**
+         * Return whether any value in the column satisfies the predicate.
+         *
+         * The predicate can return one of three values:
+         *
+         * - true, if the value satisfies the predicate.
+         * - false, if the value does not satisfy the predicate.
+         * - null, if the truthiness of the predicate is unknown, e.g. due to missing values.
+         *
+         * By default, cases where the truthiness of the predicate is unknown are ignored and this method returns:
+         *
+         * - true, if the predicate returns true at least once.
+         * - false, if the predicate always returns false or null.
+         *
+         * You can instead enable Kleene logic by setting `ignoreUnknown = false`. In this case, this method returns:
+         *
+         * - true, if the predicate returns true at least once.
+         * - false, if the predicate always returns false.
+         * - null, if the predicate never returns true, but at least once null.
+         *
+         * @param predicate The predicate to apply to each value.
+         * @param ignoreUnknown Whether to ignore cases where the truthiness of the predicate is unknown.
+         *
+         * @result anySatisfyPredicate Whether any value in the column satisfies the predicate.
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("test", [1, 2, 3]);
+         *     val result = column.any((cell) -> cell.gt(2)); // true
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("test", [1, 2, 3]);
+         *     val result = column.any((cell) -> cell.lt(0)); // false
+         * }
+         */
+        @Pure
+        fun any(
+            predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
+            @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
+        ) -> anySatisfyPredicate: Boolean?
+
+        /**
+         * Return how many values in the column satisfy the predicate.
+         *
+         * The predicate can return one of three results:
+         *
+         * - true, if the value satisfies the predicate.
+         * - false, if the value does not satisfy the predicate.
+         * - null, if the truthiness of the predicate is unknown, e.g. due to missing values.
+         *
+         * By default, cases where the truthiness of the predicate is unknown are ignored and this method returns how
+         * often the predicate returns true.
+         *
+         * You can instead enable Kleene logic by setting `ignore_unknown = False`. In this case, this method returns null
+         * if the predicate returns null at least once. Otherwise, it still returns how often the predicate returns true.
+         *
+         * @param predicate The predicate to apply to each value.
+         * @param ignoreUnknown Whether to ignore cases where the truthiness of the predicate is unknown.
+         *
+         * @result count The number of values in the column that satisfy the predicate.
+         *
+         * @example
+         * pipeline example {
+         *    val column = Column("test", [1, 2, 3]);
+         *    val result = column.countIf((cell) -> cell.gt(1)); // 2
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("test", [1, 2, 3]);
+         *     val result = column.countIf((cell) -> cell.lt(0)); // 0
+         * }
+         */
+        @Pure
+        fun countIf(
+            predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
+            @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
+        ) -> count: Int?
+
+        /**
+         * Return whether no value in the column satisfies the predicate.
+         *
+         * The predicate can return one of three values:
+         *
+         * - true, if the value satisfies the predicate.
+         * - false, if the value does not satisfy the predicate.
+         * - null, if the truthiness of the predicate is unknown, e.g. due to missing values.
+         *
+         * By default, cases where the truthiness of the predicate is unknown are ignored and this method returns:
+         *
+         * - true, if the predicate always returns false or null.
+         * - false, if the predicate returns true at least once.
+         *
+         * You can instead enable Kleene logic by setting `ignoreUnknown = false`. In this case, this method returns:
+         *
+         * - true, if the predicate always returns false.
+         * - false, if the predicate returns true at least once.
+         * - null, if the predicate never returns true, but at least once null.
+         *
+         * @param predicate The predicate to apply to each value.
+         * @param ignoreUnknown Whether to ignore cases where the truthiness of the predicate is unknown.
+         *
+         * @result noneSatisfyPredicate Whether no value in the column satisfies the predicate.
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("test", [1, 2, 3]);
+         *     val result = column.none((cell) -> cell.lt(0)); // true
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("test", [1, 2, 3]);
+         *     val result = column.none((cell) -> cell.gt(2)); // false
+         * }
+         */
+        @Pure
+        fun none(
+            predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
+            @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
+        ) -> noneSatisfyPredicate: Int?
+
+        /**
          * Return a new column with a new name.
          *
-         * The original column is not modified.
+         * **Note:** The original column is not modified.
          *
          * @param newName The new name of the column.
          *
@@ -101,7 +288,7 @@ pipeline example {
         /**
          * Return a new column with values transformed by the transformer.
          *
-         * The original column is not modified.
+         * **Note:** The original column is not modified.
          *
          * @param transformer The transformer to apply to each value.
          *
@@ -311,6 +498,27 @@ pipeline example {
         fun missingValueRatio() -> missingValueRatio: Float
 
         /**
+         * Return the mode of the values in the column.
+         *
+         * The mode is the value that appears most frequently in the column. If multiple values occur equally often, all
+         * of them are returned. The values are sorted in ascending order.
+         *
+         * @param ignoreMissingValues Whether to ignore missing values.
+         *
+         * @result mode The mode of the values in the column.
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("test", [3, 1, 2, 1, 3]);
+         *     val result = column.mode(); // [1, 3]
+         * }
+         */
+        @Pure
+        fun mode(
+            @PythonName("ignore_missing_values") ignoreMissingValues: Boolean = true,
+        ) -> mode: List<T?>
+
+        /**
          * Return the stability of the column.
          *
          * We define the stability as the number of occurrences of the most common non-missing value divided by the total
@@ -398,43 +606,161 @@ pipeline example {
     }
     ```
 
-## `#!sds attr` isNumeric {#safeds.data.tabular.containers.Column.isNumeric data-toc-label='isNumeric'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `isNumeric` {#safeds.data.tabular.containers.Column.isNumeric data-toc-label='[attribute] isNumeric'}
 
 Whether the column is numeric.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
 
-## `#!sds attr` isTemporal {#safeds.data.tabular.containers.Column.isTemporal data-toc-label='isTemporal'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `isTemporal` {#safeds.data.tabular.containers.Column.isTemporal data-toc-label='[attribute] isTemporal'}
 
 Whether the column is temporal.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
 
-## `#!sds attr` name {#safeds.data.tabular.containers.Column.name data-toc-label='name'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `name` {#safeds.data.tabular.containers.Column.name data-toc-label='[attribute] name'}
 
 The name of the column.
 
 **Type:** [`String`][safeds.lang.String]
 
-## `#!sds attr` plot {#safeds.data.tabular.containers.Column.plot data-toc-label='plot'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `plot` {#safeds.data.tabular.containers.Column.plot data-toc-label='[attribute] plot'}
 
 The plotter for the column.
 
 **Type:** [`ColumnPlotter`][safeds.data.tabular.plotting.ColumnPlotter]
 
-## `#!sds attr` rowCount {#safeds.data.tabular.containers.Column.rowCount data-toc-label='rowCount'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `rowCount` {#safeds.data.tabular.containers.Column.rowCount data-toc-label='[attribute] rowCount'}
 
 The number of rows in the column.
 
 **Type:** [`Int`][safeds.lang.Int]
 
-## `#!sds attr` type {#safeds.data.tabular.containers.Column.type data-toc-label='type'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `type` {#safeds.data.tabular.containers.Column.type data-toc-label='[attribute] type'}
 
 The type of the column.
 
 **Type:** [`DataType`][safeds.data.tabular.typing.DataType]
 
-## `#!sds fun` correlationWith {#safeds.data.tabular.containers.Column.correlationWith data-toc-label='correlationWith'}
+## <code class="doc-symbol doc-symbol-function"></code> `all` {#safeds.data.tabular.containers.Column.all data-toc-label='[function] all'}
+
+Return whether all values in the column satisfy the predicate.
+
+The predicate can return one of three values:
+
+- true, if the value satisfies the predicate.
+- false, if the value does not satisfy the predicate.
+- null, if the truthiness of the predicate is unknown, e.g. due to missing values.
+
+By default, cases where the truthiness of the predicate is unknown are ignored and this method returns:
+
+- true, if the predicate always returns true or null.
+- false, if the predicate returns false at least once.
+
+You can instead enable Kleene logic by setting `ignoreUnknown = false`. In this case, this method returns:
+
+- true, if the predicate always returns true.
+- false, if the predicate returns false at least once.
+- null, if the predicate never returns false, but at least once null.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `predicate` | `#!sds (cell: Cell<T>) -> (satisfiesPredicate: Cell<Boolean?>)` | The predicate to apply to each value. | - |
+| `ignoreUnknown` | [`Boolean`][safeds.lang.Boolean] | Whether to ignore cases where the truthiness of the predicate is unknown. | `#!sds true` |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `allSatisfyPredicate` | [`Boolean?`][safeds.lang.Boolean] | Whether all values in the column satisfy the predicate. |
+
+**Examples:**
+
+```sds hl_lines="3"
+pipeline example {
+    val column = Column("test", [1, 2, 3]);
+    val result = column.all((cell) -> cell.gt(0)); // true
+}
+```
+```sds hl_lines="3"
+pipeline example {
+    val column = Column("test", [1, 2, 3]);
+    val result = column.all((cell) -> cell.lt(3)); // false
+}
+```
+
+??? quote "Stub code in `Column.sdsstub`"
+
+    ```sds linenums="126"
+    @Pure
+    fun all(
+        predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
+        @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
+    ) -> allSatisfyPredicate: Boolean?
+    ```
+
+## <code class="doc-symbol doc-symbol-function"></code> `any` {#safeds.data.tabular.containers.Column.any data-toc-label='[function] any'}
+
+Return whether any value in the column satisfies the predicate.
+
+The predicate can return one of three values:
+
+- true, if the value satisfies the predicate.
+- false, if the value does not satisfy the predicate.
+- null, if the truthiness of the predicate is unknown, e.g. due to missing values.
+
+By default, cases where the truthiness of the predicate is unknown are ignored and this method returns:
+
+- true, if the predicate returns true at least once.
+- false, if the predicate always returns false or null.
+
+You can instead enable Kleene logic by setting `ignoreUnknown = false`. In this case, this method returns:
+
+- true, if the predicate returns true at least once.
+- false, if the predicate always returns false.
+- null, if the predicate never returns true, but at least once null.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `predicate` | `#!sds (cell: Cell<T>) -> (satisfiesPredicate: Cell<Boolean?>)` | The predicate to apply to each value. | - |
+| `ignoreUnknown` | [`Boolean`][safeds.lang.Boolean] | Whether to ignore cases where the truthiness of the predicate is unknown. | `#!sds true` |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `anySatisfyPredicate` | [`Boolean?`][safeds.lang.Boolean] | Whether any value in the column satisfies the predicate. |
+
+**Examples:**
+
+```sds hl_lines="3"
+pipeline example {
+    val column = Column("test", [1, 2, 3]);
+    val result = column.any((cell) -> cell.gt(2)); // true
+}
+```
+```sds hl_lines="3"
+pipeline example {
+    val column = Column("test", [1, 2, 3]);
+    val result = column.any((cell) -> cell.lt(0)); // false
+}
+```
+
+??? quote "Stub code in `Column.sdsstub`"
+
+    ```sds linenums="169"
+    @Pure
+    fun any(
+        predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
+        @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
+    ) -> anySatisfyPredicate: Boolean?
+    ```
+
+## <code class="doc-symbol doc-symbol-function"></code> `correlationWith` {#safeds.data.tabular.containers.Column.correlationWith data-toc-label='[function] correlationWith'}
 
 Calculate the Pearson correlation between this column and another column.
 
@@ -476,7 +802,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="154"
+    ```sds linenums="341"
     @Pure
     @PythonName("correlation_with")
     fun correlationWith(
@@ -484,7 +810,61 @@ pipeline example {
     ) -> correlation: Float
     ```
 
-## `#!sds fun` distinctValueCount {#safeds.data.tabular.containers.Column.distinctValueCount data-toc-label='distinctValueCount'}
+## <code class="doc-symbol doc-symbol-function"></code> `countIf` {#safeds.data.tabular.containers.Column.countIf data-toc-label='[function] countIf'}
+
+Return how many values in the column satisfy the predicate.
+
+The predicate can return one of three results:
+
+- true, if the value satisfies the predicate.
+- false, if the value does not satisfy the predicate.
+- null, if the truthiness of the predicate is unknown, e.g. due to missing values.
+
+By default, cases where the truthiness of the predicate is unknown are ignored and this method returns how
+often the predicate returns true.
+
+You can instead enable Kleene logic by setting `ignore_unknown = False`. In this case, this method returns null
+if the predicate returns null at least once. Otherwise, it still returns how often the predicate returns true.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `predicate` | `#!sds (cell: Cell<T>) -> (satisfiesPredicate: Cell<Boolean?>)` | The predicate to apply to each value. | - |
+| `ignoreUnknown` | [`Boolean`][safeds.lang.Boolean] | Whether to ignore cases where the truthiness of the predicate is unknown. | `#!sds true` |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `count` | [`Int?`][safeds.lang.Int] | The number of values in the column that satisfy the predicate. |
+
+**Examples:**
+
+```sds hl_lines="3"
+pipeline example {
+   val column = Column("test", [1, 2, 3]);
+   val result = column.countIf((cell) -> cell.gt(1)); // 2
+}
+```
+```sds hl_lines="3"
+pipeline example {
+    val column = Column("test", [1, 2, 3]);
+    val result = column.countIf((cell) -> cell.lt(0)); // 0
+}
+```
+
+??? quote "Stub code in `Column.sdsstub`"
+
+    ```sds linenums="207"
+    @Pure
+    fun countIf(
+        predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
+        @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
+    ) -> count: Int?
+    ```
+
+## <code class="doc-symbol doc-symbol-function"></code> `distinctValueCount` {#safeds.data.tabular.containers.Column.distinctValueCount data-toc-label='[function] distinctValueCount'}
 
 Return the number of distinct values in the column.
 
@@ -511,7 +891,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="173"
+    ```sds linenums="360"
     @Pure
     @PythonName("distinct_value_count")
     fun distinctValueCount(
@@ -519,9 +899,33 @@ pipeline example {
     ) -> distinctValueCount: Int
     ```
 
-## `#!sds fun` getValue {#safeds.data.tabular.containers.Column.getValue data-toc-label='getValue'}
+## <code class="doc-symbol doc-symbol-function"></code> `getDistinctValues` {#safeds.data.tabular.containers.Column.getDistinctValues data-toc-label='[function] getDistinctValues'}
 
-Return the column value at specified index.
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `ignoreMissingValues` | [`Boolean`][safeds.lang.Boolean] | - | `#!sds true` |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `distinctValues` | [`List<T?>`][safeds.lang.List] | - |
+
+??? quote "Stub code in `Column.sdsstub`"
+
+    ```sds linenums="61"
+    @Pure
+    @PythonName("get_distinct_values")
+    fun getDistinctValues(
+        @PythonName("ignore_missing_values") ignoreMissingValues: Boolean = true,
+    ) -> distinctValues: List<T?>
+    ```
+
+## <code class="doc-symbol doc-symbol-function"></code> `getValue` {#safeds.data.tabular.containers.Column.getValue data-toc-label='[function] getValue'}
+
+Return the column value at specified index. This WILL LATER BE equivalent to the `[]` operator (indexed access).
 
 Nonnegative indices are counted from the beginning (starting at 0), negative indices from the end (starting at
 -1).
@@ -549,7 +953,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="63"
+    ```sds linenums="83"
     @Pure
     @PythonName("get_value")
     fun getValue(
@@ -557,7 +961,7 @@ pipeline example {
     ) -> value: T
     ```
 
-## `#!sds fun` idness {#safeds.data.tabular.containers.Column.idness data-toc-label='idness'}
+## <code class="doc-symbol doc-symbol-function"></code> `idness` {#safeds.data.tabular.containers.Column.idness data-toc-label='[function] idness'}
 
 Calculate the idness of this column.
 
@@ -590,12 +994,12 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="202"
+    ```sds linenums="389"
     @Pure
     fun idness() -> idness: Float
     ```
 
-## `#!sds fun` max {#safeds.data.tabular.containers.Column.max data-toc-label='max'}
+## <code class="doc-symbol doc-symbol-function"></code> `max` {#safeds.data.tabular.containers.Column.max data-toc-label='[function] max'}
 
 Return the maximum value in the column.
 
@@ -616,12 +1020,12 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="216"
+    ```sds linenums="403"
     @Pure
     fun max() -> max: T?
     ```
 
-## `#!sds fun` mean {#safeds.data.tabular.containers.Column.mean data-toc-label='mean'}
+## <code class="doc-symbol doc-symbol-function"></code> `mean` {#safeds.data.tabular.containers.Column.mean data-toc-label='[function] mean'}
 
 Return the mean of the values in the column.
 
@@ -644,12 +1048,12 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="232"
+    ```sds linenums="419"
     @Pure
     fun mean() -> mean: T
     ```
 
-## `#!sds fun` median {#safeds.data.tabular.containers.Column.median data-toc-label='median'}
+## <code class="doc-symbol doc-symbol-function"></code> `median` {#safeds.data.tabular.containers.Column.median data-toc-label='[function] median'}
 
 Return the median of the values in the column.
 
@@ -673,12 +1077,12 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="249"
+    ```sds linenums="436"
     @Pure
     fun median() -> median: T
     ```
 
-## `#!sds fun` min {#safeds.data.tabular.containers.Column.min data-toc-label='min'}
+## <code class="doc-symbol doc-symbol-function"></code> `min` {#safeds.data.tabular.containers.Column.min data-toc-label='[function] min'}
 
 Return the minimum value in the column.
 
@@ -699,12 +1103,12 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="263"
+    ```sds linenums="450"
     @Pure
     fun min() -> min: T?
     ```
 
-## `#!sds fun` missingValueCount {#safeds.data.tabular.containers.Column.missingValueCount data-toc-label='missingValueCount'}
+## <code class="doc-symbol doc-symbol-function"></code> `missingValueCount` {#safeds.data.tabular.containers.Column.missingValueCount data-toc-label='[function] missingValueCount'}
 
 Return the number of missing values in the column.
 
@@ -725,13 +1129,13 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="277"
+    ```sds linenums="464"
     @Pure
     @PythonName("missing_value_count")
     fun missingValueCount() -> missingValueCount: Int
     ```
 
-## `#!sds fun` missingValueRatio {#safeds.data.tabular.containers.Column.missingValueRatio data-toc-label='missingValueRatio'}
+## <code class="doc-symbol doc-symbol-function"></code> `missingValueRatio` {#safeds.data.tabular.containers.Column.missingValueRatio data-toc-label='[function] missingValueRatio'}
 
 Return the missing value ratio.
 
@@ -758,17 +1162,113 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="298"
+    ```sds linenums="485"
     @Pure
     @PythonName("missing_value_ratio")
     fun missingValueRatio() -> missingValueRatio: Float
     ```
 
-## `#!sds fun` rename {#safeds.data.tabular.containers.Column.rename data-toc-label='rename'}
+## <code class="doc-symbol doc-symbol-function"></code> `mode` {#safeds.data.tabular.containers.Column.mode data-toc-label='[function] mode'}
+
+Return the mode of the values in the column.
+
+The mode is the value that appears most frequently in the column. If multiple values occur equally often, all
+of them are returned. The values are sorted in ascending order.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `ignoreMissingValues` | [`Boolean`][safeds.lang.Boolean] | Whether to ignore missing values. | `#!sds true` |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `mode` | [`List<T?>`][safeds.lang.List] | The mode of the values in the column. |
+
+**Examples:**
+
+```sds hl_lines="3"
+pipeline example {
+    val column = Column("test", [3, 1, 2, 1, 3]);
+    val result = column.mode(); // [1, 3]
+}
+```
+
+??? quote "Stub code in `Column.sdsstub`"
+
+    ```sds linenums="505"
+    @Pure
+    fun mode(
+        @PythonName("ignore_missing_values") ignoreMissingValues: Boolean = true,
+    ) -> mode: List<T?>
+    ```
+
+## <code class="doc-symbol doc-symbol-function"></code> `none` {#safeds.data.tabular.containers.Column.none data-toc-label='[function] none'}
+
+Return whether no value in the column satisfies the predicate.
+
+The predicate can return one of three values:
+
+- true, if the value satisfies the predicate.
+- false, if the value does not satisfy the predicate.
+- null, if the truthiness of the predicate is unknown, e.g. due to missing values.
+
+By default, cases where the truthiness of the predicate is unknown are ignored and this method returns:
+
+- true, if the predicate always returns false or null.
+- false, if the predicate returns true at least once.
+
+You can instead enable Kleene logic by setting `ignoreUnknown = false`. In this case, this method returns:
+
+- true, if the predicate always returns false.
+- false, if the predicate returns true at least once.
+- null, if the predicate never returns true, but at least once null.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `predicate` | `#!sds (cell: Cell<T>) -> (satisfiesPredicate: Cell<Boolean?>)` | The predicate to apply to each value. | - |
+| `ignoreUnknown` | [`Boolean`][safeds.lang.Boolean] | Whether to ignore cases where the truthiness of the predicate is unknown. | `#!sds true` |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `noneSatisfyPredicate` | [`Int?`][safeds.lang.Int] | Whether no value in the column satisfies the predicate. |
+
+**Examples:**
+
+```sds hl_lines="3"
+pipeline example {
+    val column = Column("test", [1, 2, 3]);
+    val result = column.none((cell) -> cell.lt(0)); // true
+}
+```
+```sds hl_lines="3"
+pipeline example {
+    val column = Column("test", [1, 2, 3]);
+    val result = column.none((cell) -> cell.gt(2)); // false
+}
+```
+
+??? quote "Stub code in `Column.sdsstub`"
+
+    ```sds linenums="250"
+    @Pure
+    fun none(
+        predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
+        @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
+    ) -> noneSatisfyPredicate: Int?
+    ```
+
+## <code class="doc-symbol doc-symbol-function"></code> `rename` {#safeds.data.tabular.containers.Column.rename data-toc-label='[function] rename'}
 
 Return a new column with a new name.
 
-The original column is not modified.
+**Note:** The original column is not modified.
 
 **Parameters:**
 
@@ -794,14 +1294,14 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="85"
+    ```sds linenums="272"
     @Pure
     fun rename(
         @PythonName("new_name") newName: String
     ) -> renamedColumn: Column<T>
     ```
 
-## `#!sds fun` stability {#safeds.data.tabular.containers.Column.stability data-toc-label='stability'}
+## <code class="doc-symbol doc-symbol-function"></code> `stability` {#safeds.data.tabular.containers.Column.stability data-toc-label='[function] stability'}
 
 Return the stability of the column.
 
@@ -828,12 +1328,12 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="319"
+    ```sds linenums="527"
     @Pure
     fun stability() -> stability: Float
     ```
 
-## `#!sds fun` standardDeviation {#safeds.data.tabular.containers.Column.standardDeviation data-toc-label='standardDeviation'}
+## <code class="doc-symbol doc-symbol-function"></code> `standardDeviation` {#safeds.data.tabular.containers.Column.standardDeviation data-toc-label='[function] standardDeviation'}
 
 Return the standard deviation of the values in the column.
 
@@ -856,13 +1356,13 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="336"
+    ```sds linenums="544"
     @Pure
     @PythonName("standard_deviation")
     fun standardDeviation() -> standardDeviation: Float
     ```
 
-## `#!sds fun` summarizeStatistics {#safeds.data.tabular.containers.Column.summarizeStatistics data-toc-label='summarizeStatistics'}
+## <code class="doc-symbol doc-symbol-function"></code> `summarizeStatistics` {#safeds.data.tabular.containers.Column.summarizeStatistics data-toc-label='[function] summarizeStatistics'}
 
 Return a table with important statistics about the column.
 
@@ -883,13 +1383,13 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="122"
+    ```sds linenums="309"
     @Pure
     @PythonName("summarize_statistics")
     fun summarizeStatistics() -> statistics: Table
     ```
 
-## `#!sds fun` toList {#safeds.data.tabular.containers.Column.toList data-toc-label='toList'}
+## <code class="doc-symbol doc-symbol-function"></code> `toList` {#safeds.data.tabular.containers.Column.toList data-toc-label='[function] toList'}
 
 Return the values of the column in a list.
 
@@ -910,13 +1410,13 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="368"
+    ```sds linenums="576"
     @Pure
     @PythonName("to_list")
     fun toList() -> values: List<T>
     ```
 
-## `#!sds fun` toTable {#safeds.data.tabular.containers.Column.toTable data-toc-label='toTable'}
+## <code class="doc-symbol doc-symbol-function"></code> `toTable` {#safeds.data.tabular.containers.Column.toTable data-toc-label='[function] toTable'}
 
 Create a table that contains only this column.
 
@@ -938,17 +1438,17 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="384"
+    ```sds linenums="592"
     @Pure
     @PythonName("to_table")
     fun toTable() -> table: Table
     ```
 
-## `#!sds fun` transform {#safeds.data.tabular.containers.Column.transform data-toc-label='transform'}
+## <code class="doc-symbol doc-symbol-function"></code> `transform` {#safeds.data.tabular.containers.Column.transform data-toc-label='[function] transform'}
 
 Return a new column with values transformed by the transformer.
 
-The original column is not modified.
+**Note:** The original column is not modified.
 
 **Parameters:**
 
@@ -980,14 +1480,14 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="106"
+    ```sds linenums="293"
     @Pure
     fun transform<R>(
         transformer: (cell: Cell<T>) -> transformedCell: Cell<R>
     ) -> transformedColumn: Column<R>
     ```
 
-## `#!sds fun` variance {#safeds.data.tabular.containers.Column.variance data-toc-label='variance'}
+## <code class="doc-symbol doc-symbol-function"></code> `variance` {#safeds.data.tabular.containers.Column.variance data-toc-label='[function] variance'}
 
 Return the variance of the values in the column.
 
@@ -1010,7 +1510,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="354"
+    ```sds linenums="562"
     @Pure
     fun variance() -> variance: Float
     ```

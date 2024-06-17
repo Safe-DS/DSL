@@ -1,4 +1,4 @@
-# `#!sds abstract class` RegressionMetrics {#safeds.ml.metrics.RegressionMetrics data-toc-label='RegressionMetrics'}
+# <code class="doc-symbol doc-symbol-class"></code> `RegressionMetrics` {#safeds.ml.metrics.RegressionMetrics data-toc-label='[class] RegressionMetrics'}
 
 A collection of regression metrics.
 
@@ -134,7 +134,7 @@ A collection of regression metrics.
     }
     ```
 
-## `#!sds static fun` coefficientOfDetermination {#safeds.ml.metrics.RegressionMetrics.coefficientOfDetermination data-toc-label='coefficientOfDetermination'}
+## <code class="doc-symbol doc-symbol-static-function"></code> `coefficientOfDetermination` {#safeds.ml.metrics.RegressionMetrics.coefficientOfDetermination data-toc-label='[static-function] coefficientOfDetermination'}
 
 Compute the coefficient of determination (R²) on the given data.
 
@@ -177,7 +177,7 @@ to 1.0. You can interpret the coefficient of determination as follows:
     ) -> coefficientOfDetermination: Float
     ```
 
-## `#!sds static fun` meanAbsoluteError {#safeds.ml.metrics.RegressionMetrics.meanAbsoluteError data-toc-label='meanAbsoluteError'}
+## <code class="doc-symbol doc-symbol-static-function"></code> `meanAbsoluteError` {#safeds.ml.metrics.RegressionMetrics.meanAbsoluteError data-toc-label='[static-function] meanAbsoluteError'}
 
 Compute the mean absolute error (MAE) on the given data.
 
@@ -209,7 +209,7 @@ infinity.
     ) -> meanAbsoluteError: Float
     ```
 
-## `#!sds static fun` meanDirectionalAccuracy {#safeds.ml.metrics.RegressionMetrics.meanDirectionalAccuracy data-toc-label='meanDirectionalAccuracy'}
+## <code class="doc-symbol doc-symbol-static-function"></code> `meanDirectionalAccuracy` {#safeds.ml.metrics.RegressionMetrics.meanDirectionalAccuracy data-toc-label='[static-function] meanDirectionalAccuracy'}
 
 Compute the mean directional accuracy (MDA) on the given data.
 
@@ -245,7 +245,7 @@ for other types of data. Because of this, it is not included in the `summarize` 
     ) -> meanDirectionalAccuracy: Float
     ```
 
-## `#!sds static fun` meanSquaredError {#safeds.ml.metrics.RegressionMetrics.meanSquaredError data-toc-label='meanSquaredError'}
+## <code class="doc-symbol doc-symbol-static-function"></code> `meanSquaredError` {#safeds.ml.metrics.RegressionMetrics.meanSquaredError data-toc-label='[static-function] meanSquaredError'}
 
 Compute the mean squared error (MSE) on the given data.
 
@@ -279,7 +279,7 @@ infinity.
     ) -> meanSquaredError: Float
     ```
 
-## `#!sds static fun` medianAbsoluteDeviation {#safeds.ml.metrics.RegressionMetrics.medianAbsoluteDeviation data-toc-label='medianAbsoluteDeviation'}
+## <code class="doc-symbol doc-symbol-static-function"></code> `medianAbsoluteDeviation` {#safeds.ml.metrics.RegressionMetrics.medianAbsoluteDeviation data-toc-label='[static-function] medianAbsoluteDeviation'}
 
 Compute the median absolute deviation (MAD) on the given data.
 
@@ -311,7 +311,7 @@ positive infinity.
     ) -> medianAbsoluteDeviation: Float
     ```
 
-## `#!sds static fun` summarize {#safeds.ml.metrics.RegressionMetrics.summarize data-toc-label='summarize'}
+## <code class="doc-symbol doc-symbol-static-function"></code> `summarize` {#safeds.ml.metrics.RegressionMetrics.summarize data-toc-label='[static-function] summarize'}
 
 Summarize regression metrics on the given data.
 

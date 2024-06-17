@@ -3,7 +3,7 @@ search:
   boost: 0.5
 ---
 
-# `#!sds abstract class` Int {#safeds.lang.Int data-toc-label='Int'}
+# <code class="doc-symbol doc-symbol-class"></code> `Int` {#safeds.lang.Int data-toc-label='[class] Int'}
 
 An integer.
 
@@ -36,7 +36,7 @@ pipeline example {
     }
     ```
 
-## `#!sds fun` toFloat {#safeds.lang.Int.toFloat data-toc-label='toFloat'}
+## <code class="doc-symbol doc-symbol-function"></code> `toFloat` {#safeds.lang.Int.toFloat data-toc-label='[function] toFloat'}
 
 Convert this integer to a floating-point number.
 

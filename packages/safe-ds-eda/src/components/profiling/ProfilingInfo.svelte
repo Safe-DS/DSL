@@ -11,6 +11,7 @@
 
     const zoomIntoImage = function (profilingItem: ProfilingDetailImage) {
         const entryId = getAndIncrementEntryId();
+        const tabId = crypto.randomUUID();
         addAndDeployTabHistoryEntry(
             {
                 action: 'histogram',
@@ -19,6 +20,7 @@
                 columnName,
                 id: entryId,
                 columnNumber: 'one',
+                newTabId: tabId,
             },
             {
                 type: 'histogram',
@@ -26,12 +28,12 @@
                 content: {
                     columnName,
                     encodedImage: profilingItem.value,
-                    outdated: false,
                 },
-                id: crypto.randomUUID(),
+                id: tabId,
                 imageTab: true,
                 columnNumber: 'one',
                 isInGeneration: false,
+                outdated: false,
             },
         );
     };
@@ -139,15 +141,15 @@
     }
 
     .important {
-        color: var(--font-dark);
+        color: var(--darkest-color);
     }
 
     .default {
-        color: var(--font-light);
+        color: var(--dark-color);
     }
 
     .category {
-        color: var(--font-light);
+        color: var(--dark-color);
     }
 
     .zoomIconWrapper {

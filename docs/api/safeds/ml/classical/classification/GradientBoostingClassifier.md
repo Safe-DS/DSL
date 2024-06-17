@@ -1,4 +1,4 @@
-# `#!sds class` GradientBoostingClassifier {#safeds.ml.classical.classification.GradientBoostingClassifier data-toc-label='GradientBoostingClassifier'}
+# <code class="doc-symbol doc-symbol-class"></code> `GradientBoostingClassifier` {#safeds.ml.classical.classification.GradientBoostingClassifier data-toc-label='[class] GradientBoostingClassifier'}
 
 Gradient boosting classification.
 
@@ -26,18 +26,18 @@ pipeline example {
 
     ```sds linenums="23"
     class GradientBoostingClassifier(
-        @PythonName("number_of_trees") const treeCount: Int = 100,
+        @PythonName("tree_count") const treeCount: Int = 100,
         @PythonName("learning_rate") const learningRate: Float = 0.1
     ) sub Classifier where {
         treeCount >= 1,
         learningRate > 0.0
     } {
         /**
-         * Get the number of trees (estimators) in the ensemble.
+         * The number of trees (estimators) in the ensemble.
          */
-        @PythonName("number_of_trees") attr treeCount: Int
+        @PythonName("tree_count") attr treeCount: Int
         /**
-         * Get the learning rate.
+         * The learning rate.
          */
         @PythonName("learning_rate") attr learningRate: Float
 
@@ -57,25 +57,25 @@ pipeline example {
     }
     ```
 
-## `#!sds attr` isFitted {#safeds.ml.classical.classification.GradientBoostingClassifier.isFitted data-toc-label='isFitted'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `isFitted` {#safeds.ml.classical.classification.GradientBoostingClassifier.isFitted data-toc-label='[attribute] isFitted'}
 
 Whether the model is fitted.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
 
-## `#!sds attr` learningRate {#safeds.ml.classical.classification.GradientBoostingClassifier.learningRate data-toc-label='learningRate'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `learningRate` {#safeds.ml.classical.classification.GradientBoostingClassifier.learningRate data-toc-label='[attribute] learningRate'}
 
-Get the learning rate.
+The learning rate.
 
 **Type:** [`Float`][safeds.lang.Float]
 
-## `#!sds attr` treeCount {#safeds.ml.classical.classification.GradientBoostingClassifier.treeCount data-toc-label='treeCount'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `treeCount` {#safeds.ml.classical.classification.GradientBoostingClassifier.treeCount data-toc-label='[attribute] treeCount'}
 
-Get the number of trees (estimators) in the ensemble.
+The number of trees (estimators) in the ensemble.
 
 **Type:** [`Int`][safeds.lang.Int]
 
-## `#!sds fun` accuracy {#safeds.ml.classical.classification.GradientBoostingClassifier.accuracy data-toc-label='accuracy'}
+## <code class="doc-symbol doc-symbol-function"></code> `accuracy` {#safeds.ml.classical.classification.GradientBoostingClassifier.accuracy data-toc-label='[function] accuracy'}
 
 Compute the accuracy of the classifier on the given data.
 
@@ -105,7 +105,7 @@ better. Results range from 0.0 to 1.0.
     ) -> accuracy: Float
     ```
 
-## `#!sds fun` f1Score {#safeds.ml.classical.classification.GradientBoostingClassifier.f1Score data-toc-label='f1Score'}
+## <code class="doc-symbol doc-symbol-function"></code> `f1Score` {#safeds.ml.classical.classification.GradientBoostingClassifier.f1Score data-toc-label='[function] f1Score'}
 
 Compute the classifier's F₁ score on the given data.
 
@@ -138,7 +138,7 @@ classifier. Results range from 0.0 to 1.0.
     ) -> f1Score: Float
     ```
 
-## `#!sds fun` fit {#safeds.ml.classical.classification.GradientBoostingClassifier.fit data-toc-label='fit'}
+## <code class="doc-symbol doc-symbol-function"></code> `fit` {#safeds.ml.classical.classification.GradientBoostingClassifier.fit data-toc-label='[function] fit'}
 
 Create a copy of this classifier and fit it with the given training data.
 
@@ -165,7 +165,7 @@ This classifier is not modified.
     ) -> fittedClassifier: GradientBoostingClassifier
     ```
 
-## `#!sds fun` getFeatureNames {#safeds.ml.classical.classification.GradientBoostingClassifier.getFeatureNames data-toc-label='getFeatureNames'}
+## <code class="doc-symbol doc-symbol-function"></code> `getFeatureNames` {#safeds.ml.classical.classification.GradientBoostingClassifier.getFeatureNames data-toc-label='[function] getFeatureNames'}
 
 Return the names of the feature columns.
 
@@ -185,7 +185,7 @@ Return the names of the feature columns.
     fun getFeatureNames() -> featureNames: List<String>
     ```
 
-## `#!sds fun` getFeaturesSchema {#safeds.ml.classical.classification.GradientBoostingClassifier.getFeaturesSchema data-toc-label='getFeaturesSchema'}
+## <code class="doc-symbol doc-symbol-function"></code> `getFeaturesSchema` {#safeds.ml.classical.classification.GradientBoostingClassifier.getFeaturesSchema data-toc-label='[function] getFeaturesSchema'}
 
 Return the schema of the feature columns.
 
@@ -205,7 +205,7 @@ Return the schema of the feature columns.
     fun getFeaturesSchema() -> featureSchema: Schema
     ```
 
-## `#!sds fun` getTargetName {#safeds.ml.classical.classification.GradientBoostingClassifier.getTargetName data-toc-label='getTargetName'}
+## <code class="doc-symbol doc-symbol-function"></code> `getTargetName` {#safeds.ml.classical.classification.GradientBoostingClassifier.getTargetName data-toc-label='[function] getTargetName'}
 
 Return the name of the target column.
 
@@ -225,7 +225,7 @@ Return the name of the target column.
     fun getTargetName() -> targetName: String
     ```
 
-## `#!sds fun` getTargetType {#safeds.ml.classical.classification.GradientBoostingClassifier.getTargetType data-toc-label='getTargetType'}
+## <code class="doc-symbol doc-symbol-function"></code> `getTargetType` {#safeds.ml.classical.classification.GradientBoostingClassifier.getTargetType data-toc-label='[function] getTargetType'}
 
 Return the type of the target column.
 
@@ -245,7 +245,7 @@ Return the type of the target column.
     fun getTargetType() -> targetType: DataType
     ```
 
-## `#!sds fun` precision {#safeds.ml.classical.classification.GradientBoostingClassifier.precision data-toc-label='precision'}
+## <code class="doc-symbol doc-symbol-function"></code> `precision` {#safeds.ml.classical.classification.GradientBoostingClassifier.precision data-toc-label='[function] precision'}
 
 Compute the classifier's precision on the given data.
 
@@ -277,7 +277,7 @@ better the classifier. Results range from 0.0 to 1.0.
     ) -> precision: Float
     ```
 
-## `#!sds fun` predict {#safeds.ml.classical.classification.GradientBoostingClassifier.predict data-toc-label='predict'}
+## <code class="doc-symbol doc-symbol-function"></code> `predict` {#safeds.ml.classical.classification.GradientBoostingClassifier.predict data-toc-label='[function] predict'}
 
 Predict the target values on the given dataset.
 
@@ -304,7 +304,7 @@ Predict the target values on the given dataset.
     ) -> prediction: TabularDataset
     ```
 
-## `#!sds fun` recall {#safeds.ml.classical.classification.GradientBoostingClassifier.recall data-toc-label='recall'}
+## <code class="doc-symbol doc-symbol-function"></code> `recall` {#safeds.ml.classical.classification.GradientBoostingClassifier.recall data-toc-label='[function] recall'}
 
 Compute the classifier's recall on the given data.
 
@@ -336,7 +336,7 @@ better the classifier. Results range from 0.0 to 1.0.
     ) -> recall: Float
     ```
 
-## `#!sds fun` summarizeMetrics {#safeds.ml.classical.classification.GradientBoostingClassifier.summarizeMetrics data-toc-label='summarizeMetrics'}
+## <code class="doc-symbol doc-symbol-function"></code> `summarizeMetrics` {#safeds.ml.classical.classification.GradientBoostingClassifier.summarizeMetrics data-toc-label='[function] summarizeMetrics'}
 
 Summarize the classifier's metrics on the given data.
 

@@ -1,4 +1,4 @@
-# :test_tube:{ title="Experimental" } `#!sds annotation` Tags {#safeds.lang.Tags data-toc-label='Tags'}
+# :test_tube:{ title="Experimental" } <code class="doc-symbol doc-symbol-annotation"></code> `Tags` {#safeds.lang.Tags data-toc-label='[annotation] Tags'}
 
 Tags to associate with a declaration. They can be used for filtering.
 

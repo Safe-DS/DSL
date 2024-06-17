@@ -1,4 +1,6 @@
-# :test_tube:{ title="Experimental" } `#!sds class` Convolutional2DLayer {#safeds.ml.nn.layers.Convolutional2DLayer data-toc-label='Convolutional2DLayer'}
+# :test_tube:{ title="Experimental" } <code class="doc-symbol doc-symbol-class"></code> `Convolutional2DLayer` {#safeds.ml.nn.layers.Convolutional2DLayer data-toc-label='[class] Convolutional2DLayer'}
+
+A convolutional 2D Layer.
 
 **Parent type:** [`Layer`][safeds.ml.nn.layers.Layer]
 
@@ -17,7 +19,7 @@
 
 ??? quote "Stub code in `Convolutional2DLayer.sdsstub`"
 
-    ```sds linenums="13"
+    ```sds linenums="15"
     class Convolutional2DLayer(
         @PythonName("output_channel") outputChannel: Int,
         @PythonName("kernel_size") kernelSize: Int,
@@ -27,22 +29,22 @@
         /**
          * Get the input_size of this layer.
          */
-        @PythonName("input_size") attr inputSize: ImageSize
+        @PythonName("input_size") attr inputSize: ModelImageSize
         /**
          * Get the output_size of this layer.
          */
-        @PythonName("output_size") attr outputSize: ImageSize
+        @PythonName("output_size") attr outputSize: ModelImageSize
     }
     ```
 
-## `#!sds attr` inputSize {#safeds.ml.nn.layers.Convolutional2DLayer.inputSize data-toc-label='inputSize'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `inputSize` {#safeds.ml.nn.layers.Convolutional2DLayer.inputSize data-toc-label='[attribute] inputSize'}
 
 Get the input_size of this layer.
 
-**Type:** [`ImageSize`][safeds.data.image.typing.ImageSize]
+**Type:** [`ModelImageSize`][safeds.ml.nn.typing.ModelImageSize]
 
-## `#!sds attr` outputSize {#safeds.ml.nn.layers.Convolutional2DLayer.outputSize data-toc-label='outputSize'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `outputSize` {#safeds.ml.nn.layers.Convolutional2DLayer.outputSize data-toc-label='[attribute] outputSize'}
 
 Get the output_size of this layer.
 
-**Type:** [`ImageSize`][safeds.data.image.typing.ImageSize]
+**Type:** [`ModelImageSize`][safeds.ml.nn.typing.ModelImageSize]

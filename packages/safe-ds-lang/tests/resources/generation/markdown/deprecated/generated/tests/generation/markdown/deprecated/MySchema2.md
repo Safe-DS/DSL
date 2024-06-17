@@ -1,8 +1,8 @@
-# :warning:{ title="Deprecated" } `#!sds schema` MySchema2 {#tests.generation.markdown.deprecated.MySchema2 data-toc-label='MySchema2'}
+# :warning:{ title="Deprecated" } <code class="doc-symbol doc-symbol-schema"></code> `MySchema2` {#tests.generation.markdown.deprecated.MySchema2 data-toc-label='[schema] MySchema2'}
 
 !!! warning "Deprecated"
 
-    This schema is deprecated.
+    This declaration is deprecated.
 
     - **Alternative:** Something else
 

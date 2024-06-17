@@ -1,4 +1,4 @@
-# `#!sds fun` myFunction4 {#tests.generation.markdown.functions.undocumented.myFunction4 data-toc-label='myFunction4'}
+# <code class="doc-symbol doc-symbol-function"></code> `myFunction4` {#tests.generation.markdown.functions.undocumented.myFunction4 data-toc-label='[function] myFunction4'}
 
 **Results:**
 

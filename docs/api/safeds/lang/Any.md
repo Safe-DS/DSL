@@ -3,7 +3,7 @@ search:
   boost: 0.5
 ---
 
-# `#!sds abstract class` Any {#safeds.lang.Any data-toc-label='Any'}
+# <code class="doc-symbol doc-symbol-class"></code> `Any` {#safeds.lang.Any data-toc-label='[class] Any'}
 
 The common superclass of all classes.
 
@@ -43,7 +43,7 @@ The common superclass of all classes.
     }
     ```
 
-## `#!sds fun` toBoolean {#safeds.lang.Any.toBoolean data-toc-label='toBoolean'}
+## <code class="doc-symbol doc-symbol-function"></code> `toBoolean` {#safeds.lang.Any.toBoolean data-toc-label='[function] toBoolean'}
 
 Return whether the object is truthy.
 
@@ -74,7 +74,7 @@ pipeline example {
     fun toBoolean() -> boolean: Boolean
     ```
 
-## `#!sds fun` toString {#safeds.lang.Any.toString data-toc-label='toString'}
+## <code class="doc-symbol doc-symbol-function"></code> `toString` {#safeds.lang.Any.toString data-toc-label='[function] toString'}
 
 Return a string representation of the object.
 

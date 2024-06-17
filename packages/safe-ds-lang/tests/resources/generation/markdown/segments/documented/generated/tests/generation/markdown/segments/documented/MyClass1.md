@@ -1,4 +1,4 @@
-# `#!sds class` MyClass1 {#tests.generation.markdown.segments.documented.MyClass1 data-toc-label='MyClass1'}
+# <code class="doc-symbol doc-symbol-class"></code> `MyClass1` {#tests.generation.markdown.segments.documented.MyClass1 data-toc-label='[class] MyClass1'}
 
 ??? quote "Stub code in `resources.sdsstub`"
 

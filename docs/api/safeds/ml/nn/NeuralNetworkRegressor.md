@@ -1,4 +1,4 @@
-# :test_tube:{ title="Experimental" } `#!sds class` NeuralNetworkRegressor {#safeds.ml.nn.NeuralNetworkRegressor data-toc-label='NeuralNetworkRegressor'}
+# :test_tube:{ title="Experimental" } <code class="doc-symbol doc-symbol-class"></code> `NeuralNetworkRegressor` {#safeds.ml.nn.NeuralNetworkRegressor data-toc-label='[class] NeuralNetworkRegressor'}
 
 A NeuralNetworkRegressor is a neural network that is used for regression tasks.
 
@@ -6,30 +6,40 @@ A NeuralNetworkRegressor is a neural network that is used for regression tasks.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `inputConversion` | [`InputConversion<FitIn, PredictIn>`][safeds.ml.nn.converters.InputConversion] | to convert the input data for the neural network | - |
+| `inputConversion` | `#!sds InputConversion<D, F>` | to convert the input data for the neural network | - |
 | `layers` | [`List<Layer>`][safeds.lang.List] | a list of layers for the neural network to learn | - |
-| `outputConversion` | [`OutputConversion<PredictIn, PredictOut>`][safeds.ml.nn.converters.OutputConversion] | to convert the output data of the neural network back | - |
 
 **Type parameters:**
 
 | Name | Upper Bound | Description | Default |
 |------|-------------|-------------|---------|
-| `FitIn` | [`Any?`][safeds.lang.Any] | - | - |
-| `PredictIn` | [`Any?`][safeds.lang.Any] | - | - |
-| `PredictOut` | [`Any?`][safeds.lang.Any] | - | - |
+| `D` | [`Any?`][safeds.lang.Any] | The type of the full dataset. It's the input to `fit` and the output of `predict`. | - |
+| `F` | [`Any?`][safeds.lang.Any] | The type of the features. It's the input to `predict`. | - |
 
 ??? quote "Stub code in `NeuralNetworkRegressor.sdsstub`"
 
-    ```sds linenums="15"
-    class NeuralNetworkRegressor<FitIn, PredictIn, PredictOut>(
-        @PythonName("input_conversion") inputConversion: InputConversion<FitIn, PredictIn>,
-        layers: List<Layer>,
-        @PythonName("output_conversion") outputConversion: OutputConversion<PredictIn, PredictOut>
+    ```sds linenums="17"
+    class NeuralNetworkRegressor<D, F>(
+        @PythonName("input_conversion") inputConversion: InputConversion<D, F>,
+        layers: List<Layer>
     ) {
         /**
          * Whether the regressor is fitted.
          */
         @PythonName("is_fitted") attr isFitted: Boolean
+
+        /**
+         * Load a pretrained model from a [Huggingface repository](https://huggingface.co/models/).
+         *
+         * @param huggingfaceRepo the name of the huggingface repository
+         *
+         * @result pretrainedModel the pretrained model as a NeuralNetworkRegressor
+         */
+        @Pure
+        @PythonName("load_pretrained_model")
+        static fun loadPretrainedModel(
+            @PythonName("huggingface_repo") huggingfaceRepo: String
+        ) -> pretrainedModel: NeuralNetworkRegressor<Any, Any>
 
         /**
          * Train the neural network with given training data.
@@ -40,8 +50,10 @@ A NeuralNetworkRegressor is a neural network that is used for regression tasks.
          * @param epochSize The number of times the training cycle should be done.
          * @param batchSize The size of data batches that should be loaded at one time.
          * @param learningRate The learning rate of the neural network.
-         * @param callbackOnBatchCompletion Function used to view metrics while training. Gets called after a batch is completed with the index of the last batch and the overall loss average.
-         * @param callbackOnEpochCompletion Function used to view metrics while training. Gets called after an epoch is completed with the index of the last epoch and the overall loss average.
+         * @param callbackOnBatchCompletion Function used to view metrics while training. Gets called after a batch is completed with the index of the
+         * last batch and the overall loss average.
+         * @param callbackOnEpochCompletion Function used to view metrics while training. Gets called after an epoch is completed with the index of the
+         * last epoch and the overall loss average.
          *
          * @result fittedRegressor The trained Model
          *
@@ -52,13 +64,13 @@ A NeuralNetworkRegressor is a neural network that is used for regression tasks.
          */
         @Pure
         fun fit(
-            @PythonName("train_data") trainData: FitIn,
+            @PythonName("train_data") trainData: D,
             @PythonName("epoch_size") const epochSize: Int = 25,
             @PythonName("batch_size") const batchSize: Int = 1,
             @PythonName("learning_rate") learningRate: Float = 0.001,
             @PythonName("callback_on_batch_completion") callbackOnBatchCompletion: (param1: Int, param2: Float) -> () = (param1, param2) {},
             @PythonName("callback_on_epoch_completion") callbackOnEpochCompletion: (param1: Int, param2: Float) -> () = (param1, param2) {}
-        ) -> fittedRegressor: NeuralNetworkRegressor<FitIn, PredictIn, PredictOut> where {
+        ) -> fittedRegressor: NeuralNetworkRegressor<D, F> where {
             epochSize >= 1,
             batchSize >= 1
         }
@@ -79,18 +91,18 @@ A NeuralNetworkRegressor is a neural network that is used for regression tasks.
          */
         @Pure
         fun predict(
-            @PythonName("test_data") testData: PredictIn
-        ) -> prediction: PredictOut
+            @PythonName("test_data") testData: F
+        ) -> prediction: D
     }
     ```
 
-## `#!sds attr` isFitted {#safeds.ml.nn.NeuralNetworkRegressor.isFitted data-toc-label='isFitted'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `isFitted` {#safeds.ml.nn.NeuralNetworkRegressor.isFitted data-toc-label='[attribute] isFitted'}
 
 Whether the regressor is fitted.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
 
-## `#!sds fun` fit {#safeds.ml.nn.NeuralNetworkRegressor.fit data-toc-label='fit'}
+## <code class="doc-symbol doc-symbol-function"></code> `fit` {#safeds.ml.nn.NeuralNetworkRegressor.fit data-toc-label='[function] fit'}
 
 Train the neural network with given training data.
 
@@ -100,7 +112,7 @@ The original model is not modified.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `trainData` | `#!sds FitIn` | The data the network should be trained on. | - |
+| `trainData` | `#!sds D` | The data the network should be trained on. | - |
 | `epochSize` | [`Int`][safeds.lang.Int] | The number of times the training cycle should be done. | `#!sds 25` |
 | `batchSize` | [`Int`][safeds.lang.Int] | The size of data batches that should be loaded at one time. | `#!sds 1` |
 | `learningRate` | [`Float`][safeds.lang.Float] | The learning rate of the neural network. | `#!sds 0.001` |
@@ -111,7 +123,7 @@ The original model is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `fittedRegressor` | [`NeuralNetworkRegressor<FitIn, PredictIn, PredictOut>`][safeds.ml.nn.NeuralNetworkRegressor] | The trained Model |
+| `fittedRegressor` | [`NeuralNetworkRegressor<D, F>`][safeds.ml.nn.NeuralNetworkRegressor] | The trained Model |
 
 **Examples:**
 
@@ -123,22 +135,22 @@ pipeline example {
 
 ??? quote "Stub code in `NeuralNetworkRegressor.sdsstub`"
 
-    ```sds linenums="44"
+    ```sds linenums="60"
     @Pure
     fun fit(
-        @PythonName("train_data") trainData: FitIn,
+        @PythonName("train_data") trainData: D,
         @PythonName("epoch_size") const epochSize: Int = 25,
         @PythonName("batch_size") const batchSize: Int = 1,
         @PythonName("learning_rate") learningRate: Float = 0.001,
         @PythonName("callback_on_batch_completion") callbackOnBatchCompletion: (param1: Int, param2: Float) -> () = (param1, param2) {},
         @PythonName("callback_on_epoch_completion") callbackOnEpochCompletion: (param1: Int, param2: Float) -> () = (param1, param2) {}
-    ) -> fittedRegressor: NeuralNetworkRegressor<FitIn, PredictIn, PredictOut> where {
+    ) -> fittedRegressor: NeuralNetworkRegressor<D, F> where {
         epochSize >= 1,
         batchSize >= 1
     }
     ```
 
-## `#!sds fun` predict {#safeds.ml.nn.NeuralNetworkRegressor.predict data-toc-label='predict'}
+## <code class="doc-symbol doc-symbol-function"></code> `predict` {#safeds.ml.nn.NeuralNetworkRegressor.predict data-toc-label='[function] predict'}
 
 Make a prediction for the given test data.
 
@@ -148,13 +160,13 @@ The original Model is not modified.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `testData` | `#!sds PredictIn` | The data the network should predict. | - |
+| `testData` | `#!sds F` | The data the network should predict. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `prediction` | `#!sds PredictOut` | The given test_data with an added "prediction" column at the end |
+| `prediction` | `#!sds D` | The given test_data with an added "prediction" column at the end |
 
 **Examples:**
 
@@ -166,9 +178,35 @@ pipeline example {
 
 ??? quote "Stub code in `NeuralNetworkRegressor.sdsstub`"
 
-    ```sds linenums="71"
+    ```sds linenums="87"
     @Pure
     fun predict(
-        @PythonName("test_data") testData: PredictIn
-    ) -> prediction: PredictOut
+        @PythonName("test_data") testData: F
+    ) -> prediction: D
+    ```
+
+## <code class="doc-symbol doc-symbol-static-function"></code> `loadPretrainedModel` {#safeds.ml.nn.NeuralNetworkRegressor.loadPretrainedModel data-toc-label='[static-function] loadPretrainedModel'}
+
+Load a pretrained model from a [Huggingface repository](https://huggingface.co/models/).
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `huggingfaceRepo` | [`String`][safeds.lang.String] | the name of the huggingface repository | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `pretrainedModel` | [`NeuralNetworkRegressor<Any, Any>`][safeds.ml.nn.NeuralNetworkRegressor] | the pretrained model as a NeuralNetworkRegressor |
+
+??? quote "Stub code in `NeuralNetworkRegressor.sdsstub`"
+
+    ```sds linenums="33"
+    @Pure
+    @PythonName("load_pretrained_model")
+    static fun loadPretrainedModel(
+        @PythonName("huggingface_repo") huggingfaceRepo: String
+    ) -> pretrainedModel: NeuralNetworkRegressor<Any, Any>
     ```

@@ -6,6 +6,7 @@
     import TableIcon from '../icons/Table.svelte';
     import SidebarTab from './tabs/SidebarTab.svelte';
     import NewTabButton from './NewTabButton.svelte';
+    import ColumnCounts from './ColumnCounts.svelte';
 
     export let width: number;
 
@@ -18,13 +19,12 @@
 
 <div class="sidebar">
     <div class="titleBar">
-        {#if width > 100}
+        {#if width > 109}
             <span class="tableName"
                 >{$table?.name ?? 'Loading ...'}
                 <span class="caret"><CaretIcon /></span>
-            </span>{/if}
-        {#if width > 70}
-            <span class="rowCounts">{$table?.visibleRows ?? 0}/{$table?.totalRows ?? 0} Rows</span>{/if}
+            </span>
+        {/if}
     </div>
     {#if width > 50}
         <div class="historyBar" class:no-borders={width < 50}>
@@ -58,14 +58,70 @@
             <NewTabButton />
         </div>
     {/if}
+    {#if width > 109}
+        <div
+            class="footer"
+            style:width="{width}px"
+            class:footerCellsCrunched={width < 300}
+            class:footerCrunched={width < 200}
+        >
+            <div class="footerCell">
+                <span>{$table?.visibleRows ?? 0}/{$table?.totalRows ?? 0}</span>
+                <span>Rows</span>
+            </div>
+            <div class="footerCell columnCount">
+                <ColumnCounts flexAsRow={width >= 300} />
+            </div>
+        </div>
+    {/if}
 </div>
 
 <style>
     .sidebar {
-        background-color: var(--bg-dark);
-        color: var(--font-dark);
+        background-color: var(--medium-light-color);
+        color: var(--darkest-color);
+        height: calc(100% - 64px);
         overflow-y: auto;
         overflow-x: hidden;
+        position: relative;
+        z-index: 10;
+    }
+
+    .footer {
+        height: 64px;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        position: fixed;
+        bottom: 0;
+        background-color: var(--light-color);
+        padding: 20px;
+        gap: 20px;
+        z-index: 10;
+    }
+
+    .footerCell {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        z-index: 10;
+        gap: 5px;
+    }
+
+    .footerCrunched {
+        flex-direction: column;
+        height: 120px;
+        gap: 15px;
+    }
+
+    .footerCellsCrunched .footerCell {
+        flex-direction: column;
+        gap: 0px;
+    }
+
+    .columnCount {
+        cursor: pointer;
     }
 
     .titleBar {
@@ -81,7 +137,7 @@
     .sidebarButton {
         height: 50px;
         padding: 0px;
-        border-top: 2px solid var(--bg-bright);
+        border-top: 2px solid var(--lightest-color);
     }
 
     .tableName {
@@ -100,14 +156,14 @@
 
     .historyBar {
         font-size: 1.3rem;
-        background-color: var(--bg-bright);
+        background-color: var(--lightest-color);
         padding: 19.5px 20px 0 20px;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         flex-wrap: wrap;
         align-items: center;
-        border-bottom: 2px solid var(--bg-medium);
+        border-bottom: 2px solid var(--light-color);
     }
 
     .no-borders {
@@ -144,7 +200,6 @@
         display: flex;
         flex-direction: column;
         width: 100%;
-        height: fit-content;
     }
 
     .tab {
@@ -155,11 +210,11 @@
         align-items: center;
         padding-left: 20px;
         cursor: pointer;
-        background-color: var(--bg-medium);
+        background-color: var(--light-color);
         font-size: 1.1rem;
     }
     .tabActive {
-        background-color: var(--bg-bright);
+        background-color: var(--lightest-color);
         font-size: 1.4rem;
         height: 50px;
     }
