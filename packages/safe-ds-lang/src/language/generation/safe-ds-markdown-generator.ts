@@ -112,7 +112,7 @@ export class SafeDsMarkdownGenerator {
         }
 
         const uri = this.uriForModuleMember(node, options).toString();
-        return [TextDocument.create(uri, 'md', 0, GENERATED_WARNING + content)];
+        return [TextDocument.create(uri, 'md', 0, content)];
     }
 
     /**
@@ -494,6 +494,9 @@ export class SafeDsMarkdownGenerator {
 
     private renderPreamble(node: SdsDeclaration, state: DetailsState, tag?: Tag): string {
         let result = this.renderFrontMatter(node);
+        if (state.level === 1) {
+            result += GENERATED_WARNING;
+        }
         result += this.renderHeading(node, state, tag) + '\n';
 
         const deprecationWarning = this.renderDeprecationWarning(node);
@@ -733,7 +736,7 @@ export class SafeDsMarkdownGenerator {
         );
 
         const frontMatter = `---\nsearch:\n  exclude: true\n---\n\n`;
-        const content = GENERATED_WARNING + frontMatter + this.describeSummary('', summary);
+        const content = frontMatter + GENERATED_WARNING + this.describeSummary('', summary);
 
         return TextDocument.create(uri, 'md', 0, content);
     }
