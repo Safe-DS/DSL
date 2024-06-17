@@ -14,7 +14,7 @@ nav:
     - README.md
   - Getting Started:
     - Installation: getting-started/installation.md
-    - First Program: getting-started/first-program.md
+    - First Regression Program: getting-started/first-regression-program.md
   - Language Reference:
     - pipeline-language/README.md
     - Basic Structure:
