@@ -8,16 +8,17 @@ from safeds.data.tabular.containers import Table
 /**
  * A Dataset for ImageLists as input and ImageLists, Tables or Columns as output.
  *
- * @param inputData the input ImageList
- * @param outputData the output data
- * @param batchSize the batch size used for training
- * @param shuffle weather the data should be shuffled after each epoch of training
+ * @param inputData The input ImageList
+ * @param outputData The output data
+ * @param batchSize The batch size used for training
+ * @param shuffle Whether the data should be shuffled after each epoch of training
  *
  * @example
  * pipeline example {
- *     val image = Image.fromFile("testimage.png");;
+ *     val image = Image.fromFile("example.png");
  *     val imageList = ImageList.fromImages([image]);
- *     val dataset = ImageDataset(imageList, "exampleOutput", 20, true);
+ *     val labels = Column("label", ["example"]);
+ *     val dataset = ImageDataset(imageList, labels);
  * }
  */
 @Experimental
@@ -40,12 +41,13 @@ class ImageDataset<out O>(
      * Get the input data of this dataset.
      *
      * @result input the input data of this dataset
+     *
      * @example
      * pipeline example {
-     *     val image = Image.fromFile("testimage.png");;
+     *     val image = Image.fromFile("example.png");
      *     val imageList = ImageList.fromImages([image]);
-     *     val dataset = ImageDataset(imageList, "exampleOutput", 20, true);
-     *     // The next line is an example for the Method "getInput()"
+     *     val labels = Column("label", ["example"]);
+     *     val dataset = ImageDataset(imageList, labels);
      *     val input = dataset.getInput();
      * }
      */
@@ -57,12 +59,13 @@ class ImageDataset<out O>(
      * Get the output data of this dataset.
      *
      * @result output the output data of this dataset
+     *
      * @example
      * pipeline example {
-     *     val image = Image.fromFile("testimage.png");;
+     *     val image = Image.fromFile("example.png");
      *     val imageList = ImageList.fromImages([image]);
-     *     val dataset = ImageDataset(imageList, "exampleOutput", 20, true);
-     *     // The next line is an example for the Method "getOutput()"
+     *     val labels = Column("label", ["example"]);
+     *     val dataset = ImageDataset(imageList, labels);
      *     val output = dataset.getOutput();
      * }
      */
@@ -76,13 +79,13 @@ class ImageDataset<out O>(
      * The original dataset list is not modified.
      *
      * @result imageDataset the shuffled `ImageDataset`
+     *
      * @example
      * pipeline example {
-     *     val image = Image.fromFile("testimage.png");;
+     *     val image = Image.fromFile("example.png");
      *     val imageList = ImageList.fromImages([image]);
-     *     // In the next line we don't shuffle the ImageDataset
-     *     val dataset = ImageDataset(imageList, "exampleOutput", 20, false);
-     *     // The next line shuffles the dataset
+     *     val labels = Column("label", ["example"]);
+     *     val dataset = ImageDataset(imageList, labels);
      *     val shuffledDataset = dataset.shuffle();
      * }
      */
