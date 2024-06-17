@@ -4,6 +4,8 @@ from safeds.data.image.typing import ImageSize
 from safeds.ml.nn.layers import Convolutional2DLayer
 
 /**
+ * A convolutional transpose 2D Layer.
+ *
  * @param outputChannel the amount of output channels
  * @param kernelSize the size of the kernel
  * @param stride the stride of the transposed convolution

@@ -1,0 +1,7 @@
+package safeds.ml.nn.typing
+
+/**
+ * A container for constant image size in neural networks.
+ */
+@Experimental
+class ConstantImageSize sub ModelImageSize

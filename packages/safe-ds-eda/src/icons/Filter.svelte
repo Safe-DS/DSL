@@ -1,5 +1,5 @@
 <script lang="ts">
-    export let color = 'var(--transparent)';
+    export let color = 'var(--transparent-medium)';
 </script>
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"

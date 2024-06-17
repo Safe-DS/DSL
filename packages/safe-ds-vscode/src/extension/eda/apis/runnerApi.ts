@@ -3,6 +3,7 @@ import {
     Column,
     ExternalHistoryEntry,
     HistoryEntry,
+    PossibleSorts,
     Profiling,
     ProfilingDetailStatistical,
     Table,
@@ -119,8 +120,50 @@ export class RunnerApi {
     }
     //#endregion
 
+    //#region Helpers
+    private runnerResultToTable(tableName: string, runnerResult: any, columnIsNumeric: Map<string, boolean>): Table {
+        const table: Table = {
+            totalRows: 0,
+            name: tableName,
+            columns: [] as Table['columns'],
+            appliedFilters: [] as Table['appliedFilters'],
+        };
+
+        let currentMax = 0;
+        for (const [columnName, columnValues] of Object.entries(runnerResult)) {
+            if (!Array.isArray(columnValues)) {
+                continue;
+            }
+            if (currentMax < columnValues.length) {
+                currentMax = columnValues.length;
+            }
+
+            const columnType = columnIsNumeric.get(columnName) ? 'numerical' : 'categorical';
+
+            const column: Column = {
+                name: columnName,
+                values: columnValues,
+                type: columnType,
+                hidden: false,
+                highlighted: false,
+                appliedFilters: [],
+                appliedSort: null,
+                coloredHighLow: false,
+            };
+            table.columns.push(column);
+        }
+        table.totalRows = currentMax;
+        table.visibleRows = currentMax;
+
+        return table;
+    }
+    //#endregion
+
     //#region SDS code generation
-    private sdsStringForHistoryEntry(historyEntry: ExternalHistoryEntry): {
+    private sdsStringForHistoryEntry(
+        historyEntry: ExternalHistoryEntry,
+        overrideTablePlaceholder?: string,
+    ): {
         sdsString: string;
         placeholderNames: string[];
     } {
@@ -130,7 +173,7 @@ export class RunnerApi {
                 return {
                     sdsString: this.sdsStringForHistogramByColumnName(
                         historyEntry.columnName,
-                        this.tablePlaceholder,
+                        overrideTablePlaceholder ?? this.tablePlaceholder,
                         newPlaceholderName,
                     ),
                     placeholderNames: [newPlaceholderName],
@@ -139,7 +182,7 @@ export class RunnerApi {
                 return {
                     sdsString: this.sdsStringForBoxplotByColumnName(
                         historyEntry.columnName,
-                        this.tablePlaceholder,
+                        overrideTablePlaceholder ?? this.tablePlaceholder,
                         newPlaceholderName,
                     ),
                     placeholderNames: [newPlaceholderName],
@@ -149,7 +192,7 @@ export class RunnerApi {
                     sdsString: this.sdsStringForLinePlotByColumnNames(
                         historyEntry.xAxisColumnName,
                         historyEntry.yAxisColumnName,
-                        this.tablePlaceholder,
+                        overrideTablePlaceholder ?? this.tablePlaceholder,
                         newPlaceholderName,
                     ),
                     placeholderNames: [newPlaceholderName],
@@ -159,15 +202,34 @@ export class RunnerApi {
                     sdsString: this.sdsStringForScatterPlotByColumnNames(
                         historyEntry.xAxisColumnName,
                         historyEntry.yAxisColumnName,
-                        this.tablePlaceholder,
+                        overrideTablePlaceholder ?? this.tablePlaceholder,
                         newPlaceholderName,
                     ),
                     placeholderNames: [newPlaceholderName],
                 };
             case 'heatmap':
                 return {
-                    sdsString: this.sdsStringForCorrelationHeatmap(this.tablePlaceholder, newPlaceholderName),
+                    sdsString: this.sdsStringForCorrelationHeatmap(
+                        overrideTablePlaceholder ?? this.tablePlaceholder,
+                        newPlaceholderName,
+                    ),
                     placeholderNames: [newPlaceholderName],
+                };
+            case 'sortByColumn':
+                return {
+                    sdsString: this.sdsStringForSortRowsByColumn(
+                        historyEntry.columnName,
+                        historyEntry.sort,
+                        overrideTablePlaceholder ?? this.tablePlaceholder,
+                        newPlaceholderName,
+                    ),
+                    placeholderNames: [newPlaceholderName],
+                };
+            case 'voidSortByColumn':
+                // This is a void action, no SDS code is generated and new placeholder is just previous one
+                return {
+                    sdsString: '',
+                    placeholderNames: [overrideTablePlaceholder ?? this.tablePlaceholder],
                 };
             default:
                 throw new Error('Unknown history entry action: ' + historyEntry.action);
@@ -263,6 +325,41 @@ export class RunnerApi {
     private sdsStringForCorrelationHeatmap(tablePlaceholder: string, newPlaceholderName: string) {
         return 'val ' + newPlaceholderName + ' = ' + tablePlaceholder + '.plot.correlationHeatmap(); \n';
     }
+
+    private sdsStringForIsNumeric(tablePlaceholder: string, columnName: string, newPlaceholderName: string) {
+        return (
+            'val ' + newPlaceholderName + ' = ' + tablePlaceholder + '.getColumn("' + columnName + '").isNumeric; \n'
+        );
+    }
+
+    private sdsStringForSortRowsByColumn(
+        columnName: string,
+        direction: PossibleSorts,
+        tablePlaceholder: string,
+        newPlaceholderName: string,
+    ) {
+        if (!direction) throw new Error('Null direction not implemented!');
+        return (
+            'val ' +
+            newPlaceholderName +
+            ' = ' +
+            tablePlaceholder +
+            '.sortRowsByColumn("' +
+            columnName +
+            '" , ' +
+            (direction === 'desc') +
+            '); \n'
+        );
+    }
+
+    private sdsStringForRemoveColumns(columnNames: string[], tablePlaceholder: string, newPlaceholderName: string) {
+        const quotedColumns = columnNames.map((name) => `"${name}"`).join(',');
+        return 'val ' + newPlaceholderName + ' = ' + tablePlaceholder + `.removeColumns([${quotedColumns}]); \n`;
+    }
+
+    private sdsStringForTableSchema(tablePlaceholder: string, newPlaceholderName: string) {
+        return 'val ' + newPlaceholderName + ' = ' + tablePlaceholder + '.^schema; \n';
+    }
     //#endregion
 
     //#region Placeholder handling
@@ -283,6 +380,9 @@ export class RunnerApi {
                     return;
                 }
                 this.services.runtime.PythonServer.removeMessageCallback('placeholder_value', placeholderValueCallback);
+                safeDsLogger.debug(
+                    'Got placeholder value: ' + JSON.stringify(message.data.value).slice(0, 100) + '...',
+                );
                 resolve(message.data.value);
             };
 
@@ -304,43 +404,29 @@ export class RunnerApi {
     //#region Table fetching
     public async getTableByPlaceholder(tableName: string, pipelineExecutionId: string): Promise<Table | undefined> {
         safeDsLogger.debug('Getting table by placeholder: ' + tableName);
+
         const pythonTableColumns = await this.getPlaceholderValue(tableName, pipelineExecutionId);
         if (pythonTableColumns) {
-            const table: Table = {
-                totalRows: 0,
-                name: tableName,
-                columns: [] as Table['columns'],
-                appliedFilters: [] as Table['appliedFilters'],
-            };
-
-            let currentMax = 0;
-            for (const [columnName, columnValues] of Object.entries(pythonTableColumns)) {
-                if (!Array.isArray(columnValues)) {
-                    continue;
-                }
-                if (currentMax < columnValues.length) {
-                    currentMax = columnValues.length;
-                }
-
-                const isNumerical = typeof columnValues[0] === 'number';
-                const columnType = isNumerical ? 'numerical' : 'categorical';
-
-                const column: Column = {
-                    name: columnName,
-                    values: columnValues,
-                    type: columnType,
-                    hidden: false,
-                    highlighted: false,
-                    appliedFilters: [],
-                    appliedSort: null,
-                    coloredHighLow: false,
-                };
-                table.columns.push(column);
+            // Get Column Types
+            safeDsLogger.debug('Getting column types for table: ' + tableName);
+            let sdsLines = '';
+            let placeholderNames: string[] = [];
+            let columnNameToPlaceholderIsNumericNameMap = new Map<string, string>();
+            for (const columnName of Object.keys(pythonTableColumns)) {
+                const newPlaceholderName = this.genPlaceholderName(columnName + '_type');
+                columnNameToPlaceholderIsNumericNameMap.set(columnName, newPlaceholderName);
+                placeholderNames.push(newPlaceholderName);
+                sdsLines += this.sdsStringForIsNumeric(tableName, columnName, newPlaceholderName);
             }
-            table.totalRows = currentMax;
-            table.visibleRows = currentMax;
 
-            return table;
+            await this.addToAndExecutePipeline(pipelineExecutionId, sdsLines, placeholderNames);
+            const columnIsNumeric = new Map<string, boolean>();
+            for (const [columnName, placeholderName] of columnNameToPlaceholderIsNumericNameMap) {
+                const columnType = await this.getPlaceholderValue(placeholderName, pipelineExecutionId);
+                columnIsNumeric.set(columnName, columnType as boolean);
+            }
+
+            return this.runnerResultToTable(tableName, pythonTableColumns, columnIsNumeric);
         } else {
             return undefined;
         }
@@ -532,7 +618,7 @@ export class RunnerApi {
                             validRatio,
                             missingRatio,
                             other: [
-                                { type: 'text', value: 'Categorical', interpretation: 'important' },
+                                { type: 'text', value: 'Numerical', interpretation: 'important' },
                                 {
                                     type: 'text',
                                     value: uniqueValues + ' Distincts',
@@ -579,37 +665,64 @@ export class RunnerApi {
     public async executeHistoryAndReturnNewResult(
         pastEntries: HistoryEntry[],
         newEntry: HistoryEntry,
+        hiddenColumns?: string[],
     ): Promise<RunnerExecutionResultMessage['value']> {
         let sdsLines = '';
         let placeholderNames: string[] = [];
-        for (const entry of pastEntries) {
+        let currentPlaceholderOverride = this.tablePlaceholder;
+        // let schemaPlaceHolder = this.genPlaceholderName('schema');
+
+        const filteredPastEntries: HistoryEntry[] = this.filterPastEntries(pastEntries, newEntry);
+
+        for (const entry of filteredPastEntries) {
             if (entry.type === 'external-manipulating') {
                 // Only manipulating actions have to be repeated before last entry that is of interest, others do not influence that end result
-                const sdsString = this.sdsStringForHistoryEntry(entry).sdsString;
-                if (sdsString) {
-                    sdsLines += sdsString + '\n';
-                }
+                const sdsStringObj = this.sdsStringForHistoryEntry(entry, currentPlaceholderOverride);
+                sdsLines += sdsStringObj.sdsString;
+                currentPlaceholderOverride = sdsStringObj.placeholderNames[0]!;
                 safeDsLogger.debug(`Running old entry ${entry.id} with action ${entry.action}`);
             }
         }
 
         if (newEntry.type === 'external-visualizing') {
-            if (newEntry.action === 'infoPanel' || newEntry.action === 'refreshTab') throw new Error('Not implemented');
+            if (newEntry.action === 'infoPanel') throw new Error('Not implemented');
 
-            const sdsStringObj = this.sdsStringForHistoryEntry(newEntry);
-            sdsLines += sdsStringObj.sdsString + '\n';
+            let overriddenTablePlaceholder;
+            if (hiddenColumns && hiddenColumns.length > 0) {
+                overriddenTablePlaceholder = this.genPlaceholderName('hiddenColsOverride');
+                sdsLines += this.sdsStringForRemoveColumns(
+                    hiddenColumns,
+                    currentPlaceholderOverride,
+                    overriddenTablePlaceholder,
+                );
+            }
+
+            const sdsStringObj = this.sdsStringForHistoryEntry(
+                newEntry,
+                overriddenTablePlaceholder ?? currentPlaceholderOverride,
+            );
+            sdsLines += sdsStringObj.sdsString;
             placeholderNames = sdsStringObj.placeholderNames;
 
             safeDsLogger.debug(`Running new entry ${newEntry.id} with action ${newEntry.action}`);
         } else if (newEntry.type === 'external-manipulating') {
-            throw new Error('Not implemented');
+            const sdsStringObj = this.sdsStringForHistoryEntry(newEntry, currentPlaceholderOverride);
+            sdsLines += sdsStringObj.sdsString;
+            placeholderNames = sdsStringObj.placeholderNames;
+
+            safeDsLogger.debug(`Running new entry ${newEntry.id} with action ${newEntry.action}`);
         } else if (newEntry.type === 'internal') {
             throw new Error('Cannot execute internal history entry in Runner');
         }
 
         const pipelineExecutionId = crypto.randomUUID();
         try {
-            await this.addToAndExecutePipeline(pipelineExecutionId, sdsLines, placeholderNames);
+            await this.addToAndExecutePipeline(
+                pipelineExecutionId,
+                sdsLines,
+                // placeholderNames.concat(schemaPlaceHolder),
+                placeholderNames,
+            );
         } catch (e) {
             throw e;
         }
@@ -632,8 +745,9 @@ export class RunnerApi {
                         columnNumber: newEntry.columnNumber,
                         imageTab: true,
                         isInGeneration: false,
-                        id: newEntry.existingTabId,
-                        content: { outdated: false, encodedImage: image },
+                        id: newEntry.existingTabId ?? newEntry.newTabId,
+                        content: { encodedImage: image },
+                        outdated: false,
                     },
                 };
             } else if (newEntry.columnNumber === 'two') {
@@ -646,9 +760,9 @@ export class RunnerApi {
                         columnNumber: newEntry.columnNumber,
                         imageTab: true,
                         isInGeneration: false,
-                        id: newEntry.existingTabId,
+                        id: newEntry.existingTabId ?? newEntry.newTabId,
+                        outdated: false,
                         content: {
-                            outdated: false,
                             encodedImage: image,
                             xAxisColumnName: newEntry.xAxisColumnName,
                             yAxisColumnName: newEntry.yAxisColumnName,
@@ -665,14 +779,61 @@ export class RunnerApi {
                         columnNumber: newEntry.columnNumber,
                         imageTab: true,
                         isInGeneration: false,
-                        id: newEntry.existingTabId,
-                        content: { outdated: false, encodedImage: image, columnName: newEntry.columnName },
+                        id: newEntry.existingTabId ?? newEntry.newTabId,
+                        content: { encodedImage: image, columnName: newEntry.columnName },
+                        outdated: false,
                     },
                 };
             }
         } else {
-            throw new Error('Not implemented');
+            const newTable = await this.getPlaceholderValue(placeholderNames[0]!, pipelineExecutionId);
+            // const schema = await this.getPlaceholderValue(schemaPlaceHolder, pipelineExecutionId); // Not displayable yet, waiting
+
+            if (!newTable) throw new Error('Table not found');
+
+            return {
+                type: 'table',
+                historyId: newEntry.id,
+                content: this.runnerResultToTable(
+                    this.tablePlaceholder,
+                    newTable,
+                    new Map<string, boolean>(
+                        Object.keys(newTable).map((col) => [col, typeof newTable[col][0] === 'number']),
+                    ), // temp until schema works as otherwise we would need another execution to get column names
+                ),
+            };
         }
+    }
+
+    filterPastEntries(pastEntries: HistoryEntry[], newEntry: HistoryEntry): HistoryEntry[] {
+        // Keep only the last occurrence of each unique overrideId
+        const lastOccurrenceMap = new Map<string, number>();
+        const filteredPastEntries: HistoryEntry[] = [];
+
+        // New entry's overrideId is never appended to filteredPastEntries but accounted for in lastOccurrenceMap to have it override other past entries
+        lastOccurrenceMap.set(newEntry.overrideId, pastEntries.length);
+
+        // Traverse from end to start to record the last occurrence of each unique overrideId
+        for (let i = pastEntries.length - 1; i >= 0; i--) {
+            const entry = pastEntries[i]!;
+            const overrideId = entry.overrideId;
+
+            if (!lastOccurrenceMap.has(overrideId)) {
+                lastOccurrenceMap.set(overrideId, i);
+            }
+        }
+
+        // Traverse from start to end to build the final result with only the last occurrences
+        for (let i = 0; i < pastEntries.length; i++) {
+            const entry = pastEntries[i]!;
+            const overrideId = entry.overrideId;
+
+            if (lastOccurrenceMap.get(overrideId) === i) {
+                filteredPastEntries.push(entry);
+            }
+        }
+
+        return filteredPastEntries;
     }
     //#endregion
     //#endregion // Public API

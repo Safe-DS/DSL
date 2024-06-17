@@ -1,9 +1,11 @@
 package safeds.ml.nn.layers
 
-from safeds.data.image.typing import ImageSize
 from safeds.ml.nn.layers import Layer
+from safeds.ml.nn.typing import ModelImageSize
 
 /**
+ * A convolutional 2D Layer.
+ *
  * @param outputChannel the amount of output channels
  * @param kernelSize the size of the kernel
  * @param stride the stride of the convolution
@@ -19,9 +21,9 @@ class Convolutional2DLayer(
     /**
      * Get the input_size of this layer.
      */
-    @PythonName("input_size") attr inputSize: ImageSize
+    @PythonName("input_size") attr inputSize: ModelImageSize
     /**
      * Get the output_size of this layer.
      */
-    @PythonName("output_size") attr outputSize: ImageSize
+    @PythonName("output_size") attr outputSize: ModelImageSize
 }

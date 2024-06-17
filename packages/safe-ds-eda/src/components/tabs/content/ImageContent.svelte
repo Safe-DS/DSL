@@ -12,7 +12,7 @@
     .wrapper {
         height: 100%;
         width: 100%;
-        min-width: 500px;
+        min-width: 600px;
         max-width: 800px;
         margin: 0 auto;
     }

@@ -1,3 +1,14 @@
+## [0.17.0](https://github.com/Safe-DS/DSL/compare/v0.16.1...v0.17.0) (2024-05-29)
+
+
+### Features
+
+* hide columns in EDA ([#1181](https://github.com/Safe-DS/DSL/issues/1181)) ([15ccaac](https://github.com/Safe-DS/DSL/commit/15ccaac13ee29c8fa9ab22da53b16bf031fd39fe)), closes [#1171](https://github.com/Safe-DS/DSL/issues/1171)
+* infer column type using runner ([#1182](https://github.com/Safe-DS/DSL/issues/1182)) ([846f404](https://github.com/Safe-DS/DSL/commit/846f404f28e89399f79dd344c6d3d89a5018b2bd)), closes [#994](https://github.com/Safe-DS/DSL/issues/994)
+* integrate version 0.26.0 of the `safe-ds` Python library ([#1184](https://github.com/Safe-DS/DSL/issues/1184)) ([e79de17](https://github.com/Safe-DS/DSL/commit/e79de1797eb73c05a6d8e4448b5dc0988cf61896))
+* show symbol types in headings and table of contents ([#1178](https://github.com/Safe-DS/DSL/issues/1178)) ([b2f0966](https://github.com/Safe-DS/DSL/commit/b2f0966e8ca7f301d3a372c7e982b5b1552b24e7)), closes [#1164](https://github.com/Safe-DS/DSL/issues/1164)
+* sort rows in EDA ([#1183](https://github.com/Safe-DS/DSL/issues/1183)) ([ddd5186](https://github.com/Safe-DS/DSL/commit/ddd51868cb4dac6990129d826c6f1e994270f4b4)), closes [#1151](https://github.com/Safe-DS/DSL/issues/1151)
+
 ## [0.16.1](https://github.com/Safe-DS/DSL/compare/v0.16.0...v0.16.1) (2024-05-17)
 
 
