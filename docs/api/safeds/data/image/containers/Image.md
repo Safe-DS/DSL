@@ -4,9 +4,9 @@ A container for image data.
 
 **Examples:**
 
-```sds
+```sds hl_lines="2"
 pipeline example {
-    // TODO
+    val image = Image.fromFile("example.png");
 }
 ```
 
@@ -16,29 +16,14 @@ pipeline example {
     class Image {
         /**
          * Get the width of the image in pixels.
-         *
-         * @example
-         * pipeline example {
-         *     // TODO
-         * }
          */
         attr width: Int
         /**
          * Get the height of the image in pixels.
-         *
-         * @example
-         * pipeline example {
-         *     // TODO
-         * }
          */
         attr height: Int
         /**
          * Get the number of channels of the image.
-         *
-         * @example
-         * pipeline example {
-         *     // TODO
-         * }
          */
         attr channel: Int
         /**
@@ -55,7 +40,7 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.png");
          * }
          */
         @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
@@ -71,7 +56,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.png");
+         *     image.toJpegFile("output.jpeg");
          * }
          */
         @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
@@ -87,7 +73,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.png");
+         *     image.toPngFile("output.png");
          * }
          */
         @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
@@ -103,13 +90,19 @@ pipeline example {
          *
          * @param channel The new number of channels. 1 will result in a grayscale image.
          *
-         * @result result1 The image with the given number of channels.
+         * @result newImage The image with the given number of channels.
+         *
+         * @example
+         * pipeline example {
+         *     val image = Image.fromFile("example.png");
+         *     val newImage = image.changeChannel(channel = 1);
+         * }
          */
         @Pure
         @PythonName("change_channel")
         fun changeChannel(
             channel: Int
-        ) -> result1: Image
+        ) -> newImage: Image
 
         /**
          * Return a new `Image` that has been resized to a given size.
@@ -119,18 +112,19 @@ pipeline example {
          * @param newWidth The new width of the image.
          * @param newHeight The new height of the image.
          *
-         * @result result1 The image with the given width and height.
+         * @result newImage The image with the given width and height.
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.png");
+         *     val newImage = image.resize(newWidth = 100, newHeight = 50);
          * }
          */
         @Pure
         fun resize(
             @PythonName("new_width") const newWidth: Int,
             @PythonName("new_height") const newHeight: Int
-        ) -> result1: Image where {
+        ) -> newImage: Image where {
             newWidth >= 0,
             newHeight >= 0
         }
@@ -140,16 +134,17 @@ pipeline example {
          *
          * The original image is not modified.
          *
-         * @result result1 The grayscale image.
+         * @result newImage The grayscale image.
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.png");
+         *     val newImage = image.convertToGrayscale();
          * }
          */
         @Pure
         @PythonName("convert_to_grayscale")
-        fun convertToGrayscale() -> result1: Image
+        fun convertToGrayscale() -> newImage: Image
 
         /**
          * Return a new `Image` that has been cropped to a given bounding rectangle.
@@ -161,11 +156,12 @@ pipeline example {
          * @param width The width of the bounding rectangle.
          * @param height The height of the bounding rectangle.
          *
-         * @result result1 The cropped image.
+         * @result newImage The cropped image.
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.png");
+         *     val newImage = image.crop(20, 20, 80, 40);
          * }
          */
         @Pure
@@ -174,7 +170,7 @@ pipeline example {
             const y: Int,
             const width: Int,
             const height: Int
-        ) -> result1: Image where {
+        ) -> newImage: Image where {
             x >= 0,
             y >= 0,
             width >= 0,
@@ -186,32 +182,34 @@ pipeline example {
          *
          * The original image is not modified.
          *
-         * @result result1 The flipped image.
+         * @result newImage The flipped image.
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.png");
+         *     val newImage = image.flipVertically();
          * }
          */
         @Pure
         @PythonName("flip_vertically")
-        fun flipVertically() -> result1: Image
+        fun flipVertically() -> newImage: Image
 
         /**
          * Return a new `Image` that is flipped horizontally (vertical axis, flips left-right and vice versa).
          *
          * The original image is not modified.
          *
-         * @result result1 The flipped image.
+         * @result newImage The flipped image.
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.png");
+         *     val newImage = image.flipHorizontally();
          * }
          */
         @Pure
         @PythonName("flip_horizontally")
-        fun flipHorizontally() -> result1: Image
+        fun flipHorizontally() -> newImage: Image
 
         /**
          * Return a new `Image` with an adjusted brightness.
@@ -224,18 +222,19 @@ pipeline example {
          * Above 1.0 will resolut in a brighter image.
          * Has to be bigger than or equal to 0 (black).
          *
-         * @result result1 The Image with adjusted brightness.
+         * @result newImage The Image with adjusted brightness.
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.png");
+         *     val newImage = image.adjustBrightness(factor = 2.0);
          * }
          */
         @Pure
         @PythonName("adjust_brightness")
         fun adjustBrightness(
             const factor: Float
-        ) -> result1: Image where {
+        ) -> newImage: Image where {
             factor >= 0.0
         }
 
@@ -246,18 +245,19 @@ pipeline example {
          *
          * @param standardDeviation The standard deviation of the normal distribution. Has to be bigger than or equal to 0.
          *
-         * @result result1 The image with added noise.
+         * @result newImage The image with added noise.
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.png");
+         *     val newImage = image.addNoise(standardDeviation = 1.0);
          * }
          */
         @Pure
         @PythonName("add_noise")
         fun addNoise(
             @PythonName("standard_deviation") const standardDeviation: Float
-        ) -> result1: Image where {
+        ) -> newImage: Image where {
             standardDeviation >= 0.0
         }
 
@@ -271,18 +271,19 @@ pipeline example {
          * If factor < 1, make image greyer.
          * Has to be bigger than or equal to 0 (gray).
          *
-         * @result result1 New image with adjusted contrast.
+         * @result newImage New image with adjusted contrast.
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.png");
+         *     val newImage = image.adjustContrast(factor = 2.0);
          * }
          */
         @Pure
         @PythonName("adjust_contrast")
         fun adjustContrast(
             const factor: Float
-        ) -> result1: Image where {
+        ) -> newImage: Image where {
             factor >= 0.0
         }
 
@@ -296,18 +297,19 @@ pipeline example {
          * If factor = 1, no changes will be made.
          * If factor > 1, increase color balance of image.
          *
-         * @result result1 The new, adjusted image.
+         * @result newImage The new, adjusted image.
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.png");
+         *     val newImage = image.adjustColorBalance(factor = 2.0);
          * }
          */
         @Pure
         @PythonName("adjust_color_balance")
         fun adjustColorBalance(
             const factor: Float
-        ) -> result1: Image where {
+        ) -> newImage: Image where {
             factor >= 0.0
         }
 
@@ -319,17 +321,18 @@ pipeline example {
          * @param radius Radius is directly proportional to the blur value. The radius is equal to the amount of pixels united in
          * each direction. A radius of 1 will result in a united box of 9 pixels.
          *
-         * @result result1 The blurred image.
+         * @result newImage The blurred image.
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.png");
+         *     val newImage = image.blur(radius = 50);
          * }
          */
         @Pure
         fun blur(
             const radius: Int
-        ) -> result1: Image where {
+        ) -> newImage: Image where {
             radius >= 0
         }
 
@@ -343,17 +346,18 @@ pipeline example {
          * If factor < 1, blur the image.
          * Has to be bigger than or equal to 0 (blurred).
          *
-         * @result result1 The image sharpened by the given factor.
+         * @result newImage The image sharpened by the given factor.
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.png");
+         *     val newImage = image.sharpen(factor = 5.0);
          * }
          */
         @Pure
         fun sharpen(
             const factor: Float
-        ) -> result1: Image where {
+        ) -> newImage: Image where {
             factor >= 0.0
         }
 
@@ -362,64 +366,68 @@ pipeline example {
          *
          * The original image is not modified.
          *
-         * @result result1 The image with inverted colors.
+         * @result newImage The image with inverted colors.
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.png");
+         *     val newImage = image.invertColors();
          * }
          */
         @Pure
         @PythonName("invert_colors")
-        fun invertColors() -> result1: Image
+        fun invertColors() -> newImage: Image
 
         /**
          * Return a new `Image` that is rotated 90 degrees clockwise.
          *
          * The original image is not modified.
          *
-         * @result result1 The image rotated 90 degrees clockwise.
+         * @result newImage The image rotated 90 degrees clockwise.
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.png");
+         *     val newImage = image.rotateRight();
          * }
          */
         @Pure
         @PythonName("rotate_right")
-        fun rotateRight() -> result1: Image
+        fun rotateRight() -> newImage: Image
 
         /**
          * Return a new `Image` that is rotated 90 degrees counter-clockwise.
          *
          * The original image is not modified.
          *
-         * @result result1 The image rotated 90 degrees counter-clockwise.
+         * @result newImage The image rotated 90 degrees counter-clockwise.
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.png");
+         *     val newImage = image.rotateLeft();
          * }
          */
         @Pure
         @PythonName("rotate_left")
-        fun rotateLeft() -> result1: Image
+        fun rotateLeft() -> newImage: Image
 
         /**
          * Return a grayscale version of the image with the edges highlighted.
          *
          * The original image is not modified.
          *
-         * @result result1 The image with edges found.
+         * @result newImage The image with edges found.
          *
          * @example
          * pipeline example {
-         *     // TODO
+         *     val image = Image.fromFile("example.png");
+         *     val newImage = image.findEdges();
          * }
          */
         @Pure
         @PythonName("find_edges")
-        fun findEdges() -> result1: Image
+        fun findEdges() -> newImage: Image
     }
     ```
 
@@ -429,27 +437,11 @@ Get the number of channels of the image.
 
 **Type:** [`Int`][safeds.lang.Int]
 
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
-
 ## <code class="doc-symbol doc-symbol-attribute"></code> `height` {#safeds.data.image.containers.Image.height data-toc-label='[attribute] height'}
 
 Get the height of the image in pixels.
 
 **Type:** [`Int`][safeds.lang.Int]
-
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `size` {#safeds.data.image.containers.Image.size data-toc-label='[attribute] size'}
 
@@ -462,14 +454,6 @@ Get the `ImageSize` of the image.
 Get the width of the image in pixels.
 
 **Type:** [`Int`][safeds.lang.Int]
-
-**Examples:**
-
-```sds
-pipeline example {
-    // TODO
-}
-```
 
 ## <code class="doc-symbol doc-symbol-function"></code> `addNoise` {#safeds.data.image.containers.Image.addNoise data-toc-label='[function] addNoise'}
 
@@ -487,13 +471,14 @@ The original image is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The image with added noise. |
+| `newImage` | [`Image`][safeds.data.image.containers.Image] | The image with added noise. |
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // TODO
+    val image = Image.fromFile("example.png");
+    val newImage = image.addNoise(standardDeviation = 1.0);
 }
 ```
 
@@ -504,7 +489,7 @@ pipeline example {
     @PythonName("add_noise")
     fun addNoise(
         @PythonName("standard_deviation") const standardDeviation: Float
-    ) -> result1: Image where {
+    ) -> newImage: Image where {
         standardDeviation >= 0.0
     }
     ```
@@ -525,24 +510,25 @@ The original image is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The Image with adjusted brightness. |
+| `newImage` | [`Image`][safeds.data.image.containers.Image] | The Image with adjusted brightness. |
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // TODO
+    val image = Image.fromFile("example.png");
+    val newImage = image.adjustBrightness(factor = 2.0);
 }
 ```
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="232"
+    ```sds linenums="231"
     @Pure
     @PythonName("adjust_brightness")
     fun adjustBrightness(
         const factor: Float
-    ) -> result1: Image where {
+    ) -> newImage: Image where {
         factor >= 0.0
     }
     ```
@@ -563,24 +549,25 @@ The original image is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The new, adjusted image. |
+| `newImage` | [`Image`][safeds.data.image.containers.Image] | The new, adjusted image. |
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // TODO
+    val image = Image.fromFile("example.png");
+    val newImage = image.adjustColorBalance(factor = 2.0);
 }
 ```
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="304"
+    ```sds linenums="306"
     @Pure
     @PythonName("adjust_color_balance")
     fun adjustColorBalance(
         const factor: Float
-    ) -> result1: Image where {
+    ) -> newImage: Image where {
         factor >= 0.0
     }
     ```
@@ -601,24 +588,25 @@ The original image is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | New image with adjusted contrast. |
+| `newImage` | [`Image`][safeds.data.image.containers.Image] | New image with adjusted contrast. |
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // TODO
+    val image = Image.fromFile("example.png");
+    val newImage = image.adjustContrast(factor = 2.0);
 }
 ```
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="279"
+    ```sds linenums="280"
     @Pure
     @PythonName("adjust_contrast")
     fun adjustContrast(
         const factor: Float
-    ) -> result1: Image where {
+    ) -> newImage: Image where {
         factor >= 0.0
     }
     ```
@@ -639,23 +627,24 @@ The original image is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The blurred image. |
+| `newImage` | [`Image`][safeds.data.image.containers.Image] | The blurred image. |
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // TODO
+    val image = Image.fromFile("example.png");
+    val newImage = image.blur(radius = 50);
 }
 ```
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="327"
+    ```sds linenums="330"
     @Pure
     fun blur(
         const radius: Int
-    ) -> result1: Image where {
+    ) -> newImage: Image where {
         radius >= 0
     }
     ```
@@ -676,16 +665,25 @@ The original image is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The image with the given number of channels. |
+| `newImage` | [`Image`][safeds.data.image.containers.Image] | The image with the given number of channels. |
+
+**Examples:**
+
+```sds hl_lines="3"
+pipeline example {
+    val image = Image.fromFile("example.png");
+    val newImage = image.changeChannel(channel = 1);
+}
+```
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="106"
+    ```sds linenums="99"
     @Pure
     @PythonName("change_channel")
     fun changeChannel(
         channel: Int
-    ) -> result1: Image
+    ) -> newImage: Image
     ```
 
 ## <code class="doc-symbol doc-symbol-function"></code> `convertToGrayscale` {#safeds.data.image.containers.Image.convertToGrayscale data-toc-label='[function] convertToGrayscale'}
@@ -698,22 +696,23 @@ The original image is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The grayscale image. |
+| `newImage` | [`Image`][safeds.data.image.containers.Image] | The grayscale image. |
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // TODO
+    val image = Image.fromFile("example.png");
+    val newImage = image.convertToGrayscale();
 }
 ```
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="148"
+    ```sds linenums="143"
     @Pure
     @PythonName("convert_to_grayscale")
-    fun convertToGrayscale() -> result1: Image
+    fun convertToGrayscale() -> newImage: Image
     ```
 
 ## <code class="doc-symbol doc-symbol-function"></code> `crop` {#safeds.data.image.containers.Image.crop data-toc-label='[function] crop'}
@@ -735,26 +734,27 @@ The original image is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The cropped image. |
+| `newImage` | [`Image`][safeds.data.image.containers.Image] | The cropped image. |
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // TODO
+    val image = Image.fromFile("example.png");
+    val newImage = image.crop(20, 20, 80, 40);
 }
 ```
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="169"
+    ```sds linenums="165"
     @Pure
     fun crop(
         const x: Int,
         const y: Int,
         const width: Int,
         const height: Int
-    ) -> result1: Image where {
+    ) -> newImage: Image where {
         x >= 0,
         y >= 0,
         width >= 0,
@@ -772,22 +772,23 @@ The original image is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The image with edges found. |
+| `newImage` | [`Image`][safeds.data.image.containers.Image] | The image with edges found. |
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // TODO
+    val image = Image.fromFile("example.png");
+    val newImage = image.findEdges();
 }
 ```
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="418"
+    ```sds linenums="426"
     @Pure
     @PythonName("find_edges")
-    fun findEdges() -> result1: Image
+    fun findEdges() -> newImage: Image
     ```
 
 ## <code class="doc-symbol doc-symbol-function"></code> `flipHorizontally` {#safeds.data.image.containers.Image.flipHorizontally data-toc-label='[function] flipHorizontally'}
@@ -800,22 +801,23 @@ The original image is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The flipped image. |
+| `newImage` | [`Image`][safeds.data.image.containers.Image] | The flipped image. |
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // TODO
+    val image = Image.fromFile("example.png");
+    val newImage = image.flipHorizontally();
 }
 ```
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="210"
+    ```sds linenums="208"
     @Pure
     @PythonName("flip_horizontally")
-    fun flipHorizontally() -> result1: Image
+    fun flipHorizontally() -> newImage: Image
     ```
 
 ## <code class="doc-symbol doc-symbol-function"></code> `flipVertically` {#safeds.data.image.containers.Image.flipVertically data-toc-label='[function] flipVertically'}
@@ -828,22 +830,23 @@ The original image is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The flipped image. |
+| `newImage` | [`Image`][safeds.data.image.containers.Image] | The flipped image. |
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // TODO
+    val image = Image.fromFile("example.png");
+    val newImage = image.flipVertically();
 }
 ```
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="194"
+    ```sds linenums="191"
     @Pure
     @PythonName("flip_vertically")
-    fun flipVertically() -> result1: Image
+    fun flipVertically() -> newImage: Image
     ```
 
 ## <code class="doc-symbol doc-symbol-function"></code> `invertColors` {#safeds.data.image.containers.Image.invertColors data-toc-label='[function] invertColors'}
@@ -856,22 +859,23 @@ The original image is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The image with inverted colors. |
+| `newImage` | [`Image`][safeds.data.image.containers.Image] | The image with inverted colors. |
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // TODO
+    val image = Image.fromFile("example.png");
+    val newImage = image.invertColors();
 }
 ```
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="370"
+    ```sds linenums="375"
     @Pure
     @PythonName("invert_colors")
-    fun invertColors() -> result1: Image
+    fun invertColors() -> newImage: Image
     ```
 
 ## <code class="doc-symbol doc-symbol-function"></code> `resize` {#safeds.data.image.containers.Image.resize data-toc-label='[function] resize'}
@@ -891,24 +895,25 @@ The original image is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The image with the given width and height. |
+| `newImage` | [`Image`][safeds.data.image.containers.Image] | The image with the given width and height. |
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // TODO
+    val image = Image.fromFile("example.png");
+    val newImage = image.resize(newWidth = 100, newHeight = 50);
 }
 ```
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="127"
+    ```sds linenums="121"
     @Pure
     fun resize(
         @PythonName("new_width") const newWidth: Int,
         @PythonName("new_height") const newHeight: Int
-    ) -> result1: Image where {
+    ) -> newImage: Image where {
         newWidth >= 0,
         newHeight >= 0
     }
@@ -924,22 +929,23 @@ The original image is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The image rotated 90 degrees counter-clockwise. |
+| `newImage` | [`Image`][safeds.data.image.containers.Image] | The image rotated 90 degrees counter-clockwise. |
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // TODO
+    val image = Image.fromFile("example.png");
+    val newImage = image.rotateLeft();
 }
 ```
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="402"
+    ```sds linenums="409"
     @Pure
     @PythonName("rotate_left")
-    fun rotateLeft() -> result1: Image
+    fun rotateLeft() -> newImage: Image
     ```
 
 ## <code class="doc-symbol doc-symbol-function"></code> `rotateRight` {#safeds.data.image.containers.Image.rotateRight data-toc-label='[function] rotateRight'}
@@ -952,22 +958,23 @@ The original image is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The image rotated 90 degrees clockwise. |
+| `newImage` | [`Image`][safeds.data.image.containers.Image] | The image rotated 90 degrees clockwise. |
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // TODO
+    val image = Image.fromFile("example.png");
+    val newImage = image.rotateRight();
 }
 ```
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="386"
+    ```sds linenums="392"
     @Pure
     @PythonName("rotate_right")
-    fun rotateRight() -> result1: Image
+    fun rotateRight() -> newImage: Image
     ```
 
 ## <code class="doc-symbol doc-symbol-function"></code> `sharpen` {#safeds.data.image.containers.Image.sharpen data-toc-label='[function] sharpen'}
@@ -986,23 +993,24 @@ The original image is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result1` | [`Image`][safeds.data.image.containers.Image] | The image sharpened by the given factor. |
+| `newImage` | [`Image`][safeds.data.image.containers.Image] | The image sharpened by the given factor. |
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // TODO
+    val image = Image.fromFile("example.png");
+    val newImage = image.sharpen(factor = 5.0);
 }
 ```
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="351"
+    ```sds linenums="355"
     @Pure
     fun sharpen(
         const factor: Float
-    ) -> result1: Image where {
+    ) -> newImage: Image where {
         factor >= 0.0
     }
     ```
@@ -1019,15 +1027,16 @@ Save the image as a JPEG file.
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // TODO
+    val image = Image.fromFile("example.png");
+    image.toJpegFile("output.jpeg");
 }
 ```
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="75"
+    ```sds linenums="61"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_jpeg_file")
     fun toJpegFile(
@@ -1047,15 +1056,16 @@ Save the image as a PNG file.
 
 **Examples:**
 
-```sds
+```sds hl_lines="3"
 pipeline example {
-    // TODO
+    val image = Image.fromFile("example.png");
+    image.toPngFile("output.png");
 }
 ```
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="91"
+    ```sds linenums="78"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_png_file")
     fun toPngFile(
@@ -1081,15 +1091,15 @@ Create an image from a file.
 
 **Examples:**
 
-```sds
+```sds hl_lines="2"
 pipeline example {
-    // TODO
+    val image = Image.fromFile("example.png");
 }
 ```
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="59"
+    ```sds linenums="44"
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
     @PythonName("from_file")
     static fun fromFile(
