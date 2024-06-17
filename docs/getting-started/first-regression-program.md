@@ -1,170 +1,176 @@
 # Your First Safe-DS Regression Program
 
-Usually it's suggested to start your learning journey by printing "Hello World!" but we are going to step further with this short
-tutorial. In this tutorial you will learn how to write your first Safe-DS pipeline, which will import data from a csv file,
-train a regression model and print the mean squared error of that fitted model. In order to do so, start by creating a .sds file.
+Usually it's suggested to start your learning journey by printing "Hello World!", but since Safe-DS is a language for
+data science, we are going to step further with this short tutorial: You will learn how to write your first Safe-DS
+pipeline, which will import data from a CSV file, train a regression model and print the mean squared error of that
+fitted model.
 
-1. Package
+## File
 
-    All Safe-DS programs must declare their packages at the beginning of the file.
-    ```sds 
-    package demo 
-    ```
+Start by creating a file with the extension `.sds`.
 
+## Package
 
-2. Pipeline
+All Safe-DS programs must declare their packages at the beginning of the file.
 
-    Next you have to define your pipeline which is the main part of your program.
-    Pipelines are data science programs designed to solve a specific task. They act as the entry point to start execution.
-    ```sds
-    pipeline demoPipeline {
-      // Every further code must go here
-    }
-    ```        
+```sds
+package demo
+```
 
+## Pipeline
 
-3. Integrate data
+Next you have to define your pipeline which is the main part of your program. Pipelines are data science programs
+designed to solve a specific task. They act as the entry point to start execution.
 
-    Using data from other files can be done easily by placing your data files in the same folder as your .sds file.
-    It's common to use .csv files for data so we will use them as well.
-    Once you placed your file into that folder, you can write the following line to create a table. 
-    ```sds
+```sds
+pipeline demo {
+  // All further code must go here
+}
+```
+
+## Reading Data
+
+Using data from other files can be done easily by placing your data files in the same folder as your `.sds` file. It's
+common to use `.csv` files for data, so we will use them as well. Once you placed your file into that folder, you can
+write the following line to create a table.
+
+```sds
+val rawData = Table.fromCsvFile("input.csv");
+```
+
+Now you can use your data by accessing the variable `rawData`.
+
+## Cleaning Your Data
+
+At this point is usual to clean your data. If your data needs no cleaning, you can skip this part.
+
+Removing columns:
+
+```sds
+val removedColumns = rawData.removeColumns(["columnName"]);
+```
+
+You can now access your data by its new name `removedColumns`.
+
+Removing rows:
+
+```sds
+val removedRows = removedColumns.removeRowsWithMissingValues();
+```
+
+You can also use an imputer in order to replace missing values with these different strategies:
+
+- `SimpleImputer.Strategy.Mean` (replace missing values with the mean of the column)
+- `SimpleImputer.Strategy.Median` (replace missing values with the median of the column)
+- `SimpleImputer.Strategy.Mode` (replace missing values with the most frequent value of the column)
+- `SimpleImputer.Strategy.Constant` (replace missing values with a constant value)
+
+```sds
+val columnsToImpute = ["columnName1", "columnName2"];
+val fittedImputer = SimpleImputer(SimpleImputer.Strategy.Mean, columnsToImpute).fit(removedRows);
+val imputedData = fittedImputer.transform(removedRows);
+```
+
+You can also use an label encoder to label specific values if your data is ordinal:
+
+```sds
+val columnsToEncode = ["columnName3", "columnName4"];
+val fittedLabelEncoder = LabelEncoder(columnsToEncode).fit(imputedData);
+val labeledData = fittedLabelEncoder.transform(imputedData);
+```
+
+It's also possible to use a one-hot encoder if your data is nominal:
+
+```sds
+val columnsToOneHotEncode = ["columnName5", "columnName6"];
+val fittedOneHotEncoder = OneHotEncoder(columnsToOneHotEncode).fit(labeledData);
+val oneHotEncodedData = fittedOneHotEncoder.transform(labeledData);
+```
+
+## Create Training and Testing Set
+
+In order to train a model on your data and later evaluate its performance, you have to create a test and training set:
+
+```sds
+val train, val test = oneHotEncodedData.splitRows(0.7);
+val trainSet = train.toTabularDataset("targetColumnName");
+val testSet = test.toTabularDataset("targetColumnName");
+```
+
+## Regressor
+
+Now you can train the data using a
+regressor: [Here](https://dsl.safeds.com/en/stable/api/safeds/ml/classical/regression/Regressor/) you can find other
+regressors. Create your regressor simply by initializing and assigning it to a variable.
+
+```sds
+val regressor = DecisionTreeRegressor();
+```
+
+## Fitting a Regressor
+
+Once you have defined your regressor, you can fit that regressor by calling the fit function
+and passing your train set.
+
+```sds
+val fittedRegressor = regressor.fit(trainSet);
+```
+
+## Predicting with the Fitted Regressor
+
+Now you can use your regressor to predict target values on your test set:
+
+```sds
+val _prediction = fittedRegressor.predict(testSet);
+```
+
+## Evaluating the Fitted Regressor
+
+Last but not least you might want to test evaluate model, which is easily achieved by these lines:
+
+```sds
+val _metrics = fittedRegressor.summarizeMetrics(testSet);
+```
+
+## Full Code
+
+```sds
+package demo
+
+pipeline demo {
+    // Read data
     val rawData = Table.fromCsvFile("input.csv");
-    ```
-    Now you can use your data by accessing the variable `rawData`. 
 
+    // Remove columns and rows
+    val removedColumns = rawData.removeColumns(["columnName"]);
+    val removedRows = removedColumns.removeRowsWithMissingValues();
 
-4. Cleaning your data
-
-    At this point is usual to clean your data so if your data needs no cleaning, you can skip this part.
-
-    Removing columns:
-    ```sds
-    val removedColumns = result.removeColumns(["columnName"]);
-    ```
-    You can now access your data by it's new name `removedColumns`.
-
-    Removing rows:
-    ```sds
-    val removedRows = removedColumns.removeRowswithMissingValues();
-    ```
-
-    You can also use an imputer in order to replace missing values with these different strategies:
-
-    - `SimpleImputer.Strategy.Mean`
-
-    - `SimpleImputer.Strategy.Median`
-
-    - `SimpleImputer.Strategy.Mode`
-
-    - `SimpleImputer.Strategy.Constant`
-
-    ```sds
+    // Impute
     val columnsToImpute = ["columnName1", "columnName2"];
-    val fittedImputer = SimpleImputer(SimpleImputer.Strategy.Mean).fit(removedRows, columnsToImpute);
+    val fittedImputer = SimpleImputer(SimpleImputer.Strategy.Mean, columnsToImpute).fit(removedRows);
     val imputedData = fittedImputer.transform(removedRows);
-    ```
 
-    You can also use an label encoder to label specific values if your data is ordinal
-    ```sds
+    // Label encoding
     val columnsToEncode = ["columnName3", "columnName4"];
-    val fittedLabelEncoder = LabelEncoder().fit(removedRows, columnsToEncode);
-    val labeldData = fittedLabelEncoder.transform(removedRows);
-    ```
+    val fittedLabelEncoder = LabelEncoder(columnsToEncode).fit(imputedData);
+    val labeledData = fittedLabelEncoder.transform(imputedData);
 
-    It's also possible to use an one hot encoder if your data is nomial.
-    ```sds
+    // One-hot encoding
     val columnsToOneHotEncode = ["columnName5", "columnName6"];
-    val fittedOneHotEncoder = OneHotEncoder().fit(removedRows, columnsToOneHotEncode);
-    val oneHotEncodedData = fittedOneHotEncoder.transform(removedRows);
-    ```
+    val fittedOneHotEncoder = OneHotEncoder(columnsToOneHotEncode).fit(labeledData);
+    val oneHotEncodedData = fittedOneHotEncoder.transform(labeledData);
 
-
-5. Create Training and Testing Set
-
-    In order to train a model on your data, you have to create a test and training set.
-    ```sds
-    val train, val test = data.splitRows(0.7);
+    // Split and tag data
+    val train, val test = oneHotEncodedData.splitRows(0.7);
     val trainSet = train.toTabularDataset("targetColumnName");
     val testSet = test.toTabularDataset("targetColumnName");
-    ```
 
-
-6. Regressor
-
-    Now you can train the data using a regressor: 
-    [Here](https://dsl.safeds.com/en/stable/api/safeds/ml/classical/regression/Regressor/) 
-    you can find other regressors.
-    Create your regressor simply by initializing and assigning it to a variable.
-    ```sds
+    // Define and train a regressor
     val regressor = DecisionTreeRegressor();
-    ```
-
-
-7. Fitting a regressor
-
-    Once you have defined your regressor, you can fit that regressor by calling the fit function
-    and passing your train set.
-    ```sds
     val fittedRegressor = regressor.fit(trainSet);
-    ```
 
-
-8. Using the fitted regressor
-
-    Now you can use your regressor on your test data and print the mean squared error for example.
-    ```sds
-    val error = fittedRegressor.meanSquaredError(testSet);
-    ```
-
-
-9. Show your results
-    Last but not least you might want to test your model, which is easily achieved by these lines.
-    ```sds
-    val predicted = fittetRegressor.predict(testSet);
-    val metrics = ClassificationMetrics.summarize(predicted, testSet, "valueOfPositiveClass");
-    ```
-
-
-10. Full code
-
-    ```sds
-    package demo 
-
-    pipeline demoPipeline {
-      val rawData = Table.fromCsvFile("input.csv");
-
-      // removing columns and rows
-      val removedColumns = result.removeColumns(["columnName"]);
-      val removedRows = removedColumns.removeRowswithMissingValues();
-
-      // impute
-      val columnsToImpute = ["columnName1", "columnName2"];
-      val fittedImputer = SimpleImputer(SimpleImputer.Strategy.Mean).fit(removedRows, columnsToImpute);
-      val imputedData = fittedImputer.transform(removedRows);
-
-      // label encode
-      val columnsToEncode = ["columnName3", "columnName4"];
-      val fittedLabelEncoder = LabelEncoder().fit(removedRows, columnsToEncode);
-      val labeldData = fittedLabelEncoder.transform(removedRows);
-
-      // one hot encode
-      val columnsToOneHotEncode = ["columnName5", "columnName6"];
-      val fittedOneHotEncoder = OneHotEncoder().fit(removedRows, columnsToOneHotEncode);
-      val oneHotEncodedData = fittedOneHotEncoder.transform(removedRows);
-
-      // split and tag data
-      val train, val test = data.splitRows(0.7);
-      val trainSet = train.toTabularDataset("targetColumnName");
-      val testSet = test.toTabularDataset("targetColumnName");
-
-      // define and regressor
-      val regressor = DecisionTreeRegressor();
-      val fittedRegressor = regressor.fit(trainSet);
-
-      // print results
-      val error = fittedRegressor.meanSquaredError(testSet);
-      val predicted = fittetRegressor.predict(testSet);
-      val metrics = ClassificationMetrics.summarize(predicted, testSet, "valueOfPositiveClass");
-    }
-    ```
+    // Predict and evaluate
+    val _prediction = fittedRegressor.predict(testSet);
+    val _metrics = fittedRegressor.summarizeMetrics(testSet);
+}
+```
