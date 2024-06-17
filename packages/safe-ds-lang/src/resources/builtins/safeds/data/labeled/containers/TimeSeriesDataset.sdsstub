@@ -3,25 +3,27 @@ package safeds.data.labeled.containers
 from safeds.data.tabular.containers import Table
 
 /**
- * A time series dataset maps feature and time columns to a target column. Not like the TabularDataset a TimeSeries needs to contain one target and one time column, but can have empty features.
+ * A time series dataset maps feature and time columns to a target column.
  *
- * Create a time series dataset from a mapping of column names to their values.
+ * Unlike a TabularDataset, a TimeSeries needs to contain one target and one time column, but can have empty features.
  *
  * @param data The data.
- * @param targetName Name of the target column.
- * @param timeName Name of the time column.
- * @param extraNames Names of the columns that are neither features nor target. If null, no extra columns are used, i.e. all but
+ * @param targetName The name of the target column.
+ * @param timeName The name of the time column.
+ * @param windowSize The number of consecutive sample to use as input for prediction.
+ * @param extraNames Names of the columns that are neither features nor target. If None, no extra columns are used, i.e. all but
  * the target column are used as features.
+ * @param forecastHorizon The number of time steps to predict into the future.
  *
  * @example
  * pipeline example {
- *     // from safeds.data.labeled.containers import TabularDataset
- *     // dataset = TimeSeriesDataset(
- *     //     {"id": [1, 2, 3], "feature": [4, 5, 6], "target": [1, 2, 3], "error":[0,0,1]},
- *     //     target_name="target",
- *     //     time_name = "id",
- *     //     extra_names=["error"]
- *     // )
+ *     val dataset = TimeSeriesDataset(
+ *         {"time": [1, 2, 3], "feature": [4, 5, 6], "target": [1, 2, 3], "id": [1, 2, 3]},
+ *         targetName = "target",
+ *         timeName = "time",
+ *         windowSize = 1,
+ *         extraNames = ["id"]
+ *     );
  * }
  */
 @Experimental
@@ -29,8 +31,10 @@ class TimeSeriesDataset(
     data: union<Map<String, List<Any>>, Table>,
     @PythonName("target_name") targetName: String,
     @PythonName("time_name") timeName: String,
-    @PythonName("extra_names") extraNames: List<String>? = null
-) {
+    @PythonName("window_size") windowSize: Int,
+    @PythonName("extra_names") extraNames: List<String>? = null,
+    @PythonName("forecast_horizon") forecastHorizon: Int = 1
+) sub Dataset<Table, Column> {
     /**
      * The feature columns of the time series dataset.
      */
@@ -44,6 +48,14 @@ class TimeSeriesDataset(
      */
     attr time: Column<Any>
     /**
+     * The number of consecutive sample to use as input for prediction.
+     */
+    @PythonName("window_size") attr windowSize: Int
+    /**
+     * The number of time steps to predict into the future.
+     */
+    @PythonName("forecast_horizon") attr forecastHorizon: Int
+    /**
      * Additional columns of the time series dataset that are neither features, target nor time.
      *
      * These can be used to store additional information about instances, such as IDs.
@@ -56,6 +68,18 @@ class TimeSeriesDataset(
      * The original `TimeSeriesDataset` is not modified.
      *
      * @result table A table containing the feature columns, the target column, the time column and the extra columns.
+     *
+     * @example
+     * pipeline example {
+     *     val dataset = TimeSeriesDataset(
+     *         {"time": [1, 2, 3], "feature": [4, 5, 6], "target": [1, 2, 3], "id": [1, 2, 3]},
+     *         targetName = "target",
+     *         timeName = "time",
+     *         windowSize = 1,
+     *         extraNames = ["id"]
+     *     );
+     *     val result = dataset.toTable();
+     * }
      */
     @Pure
     @PythonName("to_table")

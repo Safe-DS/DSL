@@ -8,11 +8,12 @@ from safeds.data.tabular.transformation import InvertibleTableTransformer
  *
  * @param min The minimum of the new range after the transformation
  * @param max The maximum of the new range after the transformation
+ * @param columnNames The list of columns used to fit the transformer. If `None`, all numeric columns are used.
  *
  * @example
  * pipeline example {
  *     val table = Table({"a": [1, 2, 3]});
- *     val scaler = RangeScaler(0.0, 1.0).fit(table, ["a"]);
+ *     val scaler = RangeScaler(0.0, 1.0, columnNames = "a").fit(table);
  *     val transformedTable = scaler.transform(table);
  *     // transformedTable = Table({"a": [0.0, 0.5, 1.0]});
  *     val originalTable = scaler.inverseTransform(transformedTable);
@@ -20,8 +21,9 @@ from safeds.data.tabular.transformation import InvertibleTableTransformer
  * }
  */
 class RangeScaler(
-    const min: Float = 0.0,
-    const max: Float = 1.0
+    @PythonName("min_") const min: Float = 0.0,
+    @PythonName("max_") const max: Float = 1.0,
+    @PythonName("column_names") columnNames: union<List<String>, String, Nothing?> = null
 ) sub InvertibleTableTransformer {
     /**
      * The minimum of the new range after the transformation.
@@ -38,14 +40,12 @@ class RangeScaler(
      * This transformer is not modified.
      *
      * @param table The table used to fit the transformer.
-     * @param columnNames The list of columns from the table used to fit the transformer. If `null`, all numeric columns are used.
      *
      * @result fittedTransformer The fitted transformer.
      */
     @Pure
     fun fit(
-        table: Table,
-        @PythonName("column_names") columnNames: List<String>?
+        table: Table
     ) -> fittedTransformer: RangeScaler
 
     /**
@@ -54,7 +54,6 @@ class RangeScaler(
      * **Note:** Neither this transformer nor the given table are modified.
      *
      * @param table The table used to fit the transformer. The transformer is then applied to this table.
-     * @param columnNames The list of columns from the table used to fit the transformer. If `null`, all columns are used.
      *
      * @result fittedTransformer The fitted transformer.
      * @result transformedTable The transformed table.
@@ -62,7 +61,6 @@ class RangeScaler(
     @Pure
     @PythonName("fit_and_transform")
     fun fitAndTransform(
-        table: Table,
-        @PythonName("column_names") columnNames: List<String>? = null
+        table: Table
     ) -> (fittedTransformer: RangeScaler, transformedTable: Table)
 }

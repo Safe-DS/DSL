@@ -32,8 +32,12 @@
         </div>
         <span class="title"
             >{#if width > 300 || tabObject.isInGeneration || (tabObject.tabComment === '' && width > 109)}
-                {#if tabObject.isInGeneration}
+                {#if tabObject.isInGeneration && width > 200}
                     Generating...
+                {:else if tabObject.isInGeneration}
+                    ...
+                {:else if tabObject.outdated}
+                    Outdated
                 {:else if tabObject.type === 'histogram'}
                     Histogram
                 {:else if tabObject.type === 'boxPlot'}
@@ -50,7 +54,13 @@
             {/if}</span
         >
     </div>
-    <span class="comment"
+    <span
+        class="comment"
+        class:commentCrunched={!(
+            width > 300 ||
+            tabObject.isInGeneration ||
+            (tabObject.tabComment === '' && width > 109)
+        )}
         >{#if width > 109 && !tabObject.isInGeneration}{tabObject.tabComment}{/if}</span
     >
 </div>
@@ -63,14 +73,14 @@
         height: 100%;
         padding: 0px 20px 0px 20px;
         margin-bottom: 10px;
-        background-color: var(--bg-medium);
+        background-color: var(--light-color);
         font-size: 1.1rem;
         cursor: pointer;
     }
 
     .activeWrapper {
-        background-color: var(--bg-bright);
-        font-size: 1.4rem;
+        background-color: var(--lightest-color);
+        font-size: 1.2rem;
     }
 
     .main {
@@ -88,6 +98,10 @@
     .comment {
         margin-left: auto;
         font-size: 0.9rem;
-        color: var(--font-light);
+        color: var(--dark-color);
+    }
+
+    .commentCrunched {
+        margin-left: 5px;
     }
 </style>
