@@ -122,7 +122,7 @@
 
         isClick = true; // Assume it's a click initially
 
-        holdTimeout = setTimeout(() => handleReorderDragStart(columnIndex), 300); // milliseconds delay for hold detection
+        holdTimeout = setTimeout(() => handleReorderDragStart(columnIndex, event), 300); // milliseconds delay for hold detection
 
         // Define the handler function
         currentMouseUpHandler = (mouseUpEvent: MouseEvent) => {
@@ -192,7 +192,7 @@
     let reorderPrototype: HTMLElement;
     let savedColumnWidthBeforeReorder = 0;
 
-    const handleReorderDragStart = function (columnIndex: number): void {
+    const handleReorderDragStart = function (columnIndex: number, event: MouseEvent): void {
         isClick = false; // If timeout completes, it's a hold
         document.addEventListener('mouseup', handleReorderDragEnd);
         savedColumnWidthBeforeReorder = get(savedColumnWidths).get(headerElements[columnIndex].innerText.trim())!;
@@ -201,6 +201,13 @@
         dragStartIndex = columnIndex;
         dragCurrentIndex = columnIndex;
         selectedColumnIndexes = []; // Clear so reordering doesn't interfere with selection
+
+        // First iteration in case user holds still
+        dragCurrentIndex = columnIndex;
+        requestAnimationFrame(() => {
+            reorderPrototype!.style.left = event.clientX + tableContainer.scrollLeft - sidebarWidth + 'px';
+            reorderPrototype!.style.top = event.clientY + scrollTop + 'px';
+        });
     };
 
     const handleReorderDragOver = function (event: MouseEvent, columnIndex: number): void {
@@ -231,12 +238,22 @@
             if (dragCurrentIndex > dragStartIndex) {
                 dragCurrentIndex -= 1;
             }
+
+            addInternalToHistory({
+                action: 'reorderColumns',
+                alias: `Reorder column ${$table!.columns[dragStartIndex!].name}`,
+                type: 'internal',
+                columnName: $table!.columns[dragStartIndex!].name,
+                value: dragCurrentIndex,
+            });
+
             table.update(($table) => {
                 const newColumns = [...$table!.columns];
                 const movedItem = newColumns.splice(dragStartIndex!, 1)[0];
                 newColumns.splice(dragCurrentIndex!, 0, movedItem);
                 return { ...$table!, columns: newColumns };
             });
+
             document.removeEventListener('mouseup', handleReorderDragEnd);
             isReorderDragging = false;
             dragStartIndex = null;
