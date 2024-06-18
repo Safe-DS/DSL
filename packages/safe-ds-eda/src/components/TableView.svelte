@@ -1315,7 +1315,7 @@
     }
 
     .profiling .content.expanded {
-        overflow-y: scroll;
+        overflow-y: auto;
         max-height: 500px;
         opacity: 1;
         transition:
