@@ -7,8 +7,11 @@
     import SidebarTab from './tabs/SidebarTab.svelte';
     import NewTabButton from './NewTabButton.svelte';
     import ColumnCounts from './ColumnCounts.svelte';
+    import History from './History.svelte';
 
     export let width: number;
+
+    let historyFocused = false;
 
     const changeTab = function (index?: number) {
         if (!$preventClicks) {
@@ -28,7 +31,11 @@
     </div>
     {#if width > 50}
         <div class="historyBar" class:no-borders={width < 50}>
-            <span class="historyItem noSelect"
+            <span
+                class="historyItem noSelect"
+                class:historyFocused
+                role="none"
+                on:click={() => (historyFocused = !historyFocused)}
                 ><span class="icon historyIcon"><HistoryIcon /></span>{#if width > 200}History{/if}</span
             >
             <span class="historyItem noSelect"
@@ -39,23 +46,33 @@
             >
         </div>
     {/if}
-    <div class="tabs">
-        {#if width > 50}
-            <button class="tab" class:tabActive={$currentTabIndex === undefined} on:click={() => changeTab(undefined)}>
-                <span class="icon tableIcon"><TableIcon /></span>{#if width > 109}Table{/if}
-            </button>
-            {#if $tabs}
-                {#each $tabs as tab, index}
-                    <button class="sidebarButton" on:click={() => changeTab(index)}>
-                        <SidebarTab tabObject={tab} active={$currentTabIndex === index} {width} />
-                    </button>
-                {/each}
+    {#if !historyFocused}
+        <div class="tabs">
+            {#if width > 50}
+                <button
+                    class="tab"
+                    class:tabActive={$currentTabIndex === undefined}
+                    on:click={() => changeTab(undefined)}
+                >
+                    <span class="icon tableIcon"><TableIcon /></span>{#if width > 109}Table{/if}
+                </button>
+                {#if $tabs}
+                    {#each $tabs as tab, index}
+                        <button class="sidebarButton" on:click={() => changeTab(index)}>
+                            <SidebarTab tabObject={tab} active={$currentTabIndex === index} {width} />
+                        </button>
+                    {/each}
+                {/if}
             {/if}
+        </div>
+        {#if width > 50}
+            <div class="newTab">
+                <NewTabButton />
+            </div>
         {/if}
-    </div>
-    {#if width > 50}
-        <div class="newTab">
-            <NewTabButton />
+    {:else}
+        <div class="history">
+            <History />
         </div>
     {/if}
     {#if width > 109}
@@ -122,6 +139,11 @@
 
     .columnCount {
         cursor: pointer;
+    }
+
+    .historyFocused {
+        font-weight: bold;
+        font-size: 1.13rem;
     }
 
     .titleBar {
