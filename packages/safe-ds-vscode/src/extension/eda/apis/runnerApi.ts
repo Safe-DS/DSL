@@ -14,7 +14,11 @@ import * as vscode from 'vscode';
 import crypto from 'crypto';
 import { getPipelineDocument } from '../../mainClient.ts';
 import { safeDsLogger } from '../../helpers/logging.js';
-import { RunnerExecutionResultMessage } from '@safe-ds/eda/types/messaging.ts';
+import {
+    ExecuteRunnerAllEntry,
+    MultipleRunnerExecutionResultMessage,
+    RunnerExecutionResultMessage,
+} from '@safe-ds/eda/types/messaging.ts';
 
 export class RunnerApi {
     services: SafeDsServices;
@@ -165,7 +169,7 @@ export class RunnerApi {
         overrideTablePlaceholder?: string,
     ): {
         sdsString: string;
-        placeholderNames: string[];
+        placeholderName: string;
     } {
         const newPlaceholderName = this.genPlaceholderName();
         switch (historyEntry.action) {
@@ -176,7 +180,7 @@ export class RunnerApi {
                         overrideTablePlaceholder ?? this.tablePlaceholder,
                         newPlaceholderName,
                     ),
-                    placeholderNames: [newPlaceholderName],
+                    placeholderName: newPlaceholderName,
                 };
             case 'boxPlot':
                 return {
@@ -185,7 +189,7 @@ export class RunnerApi {
                         overrideTablePlaceholder ?? this.tablePlaceholder,
                         newPlaceholderName,
                     ),
-                    placeholderNames: [newPlaceholderName],
+                    placeholderName: newPlaceholderName,
                 };
             case 'linePlot':
                 return {
@@ -195,7 +199,7 @@ export class RunnerApi {
                         overrideTablePlaceholder ?? this.tablePlaceholder,
                         newPlaceholderName,
                     ),
-                    placeholderNames: [newPlaceholderName],
+                    placeholderName: newPlaceholderName,
                 };
             case 'scatterPlot':
                 return {
@@ -205,7 +209,7 @@ export class RunnerApi {
                         overrideTablePlaceholder ?? this.tablePlaceholder,
                         newPlaceholderName,
                     ),
-                    placeholderNames: [newPlaceholderName],
+                    placeholderName: newPlaceholderName,
                 };
             case 'heatmap':
                 return {
@@ -213,7 +217,7 @@ export class RunnerApi {
                         overrideTablePlaceholder ?? this.tablePlaceholder,
                         newPlaceholderName,
                     ),
-                    placeholderNames: [newPlaceholderName],
+                    placeholderName: newPlaceholderName,
                 };
             case 'sortByColumn':
                 return {
@@ -223,13 +227,13 @@ export class RunnerApi {
                         overrideTablePlaceholder ?? this.tablePlaceholder,
                         newPlaceholderName,
                     ),
-                    placeholderNames: [newPlaceholderName],
+                    placeholderName: newPlaceholderName,
                 };
             case 'voidSortByColumn':
                 // This is a void action, no SDS code is generated and new placeholder is just previous one
                 return {
                     sdsString: '',
-                    placeholderNames: [overrideTablePlaceholder ?? this.tablePlaceholder],
+                    placeholderName: overrideTablePlaceholder ?? this.tablePlaceholder,
                 };
             default:
                 throw new Error('Unknown history entry action: ' + historyEntry.action);
@@ -668,7 +672,7 @@ export class RunnerApi {
         hiddenColumns?: string[],
     ): Promise<RunnerExecutionResultMessage['value']> {
         let sdsLines = '';
-        let placeholderNames: string[] = [];
+        let placeholderNameNeeded: string | undefined;
         let currentPlaceholderOverride = this.tablePlaceholder;
         // let schemaPlaceHolder = this.genPlaceholderName('schema');
 
@@ -679,7 +683,7 @@ export class RunnerApi {
                 // Only manipulating actions have to be repeated before last entry that is of interest, others do not influence that end result
                 const sdsStringObj = this.sdsStringForHistoryEntry(entry, currentPlaceholderOverride);
                 sdsLines += sdsStringObj.sdsString;
-                currentPlaceholderOverride = sdsStringObj.placeholderNames[0]!;
+                currentPlaceholderOverride = sdsStringObj.placeholderName;
                 safeDsLogger.debug(`Running old entry ${entry.id} with action ${entry.action}`);
             }
         }
@@ -702,13 +706,13 @@ export class RunnerApi {
                 overriddenTablePlaceholder ?? currentPlaceholderOverride,
             );
             sdsLines += sdsStringObj.sdsString;
-            placeholderNames = sdsStringObj.placeholderNames;
+            placeholderNameNeeded = sdsStringObj.placeholderName;
 
             safeDsLogger.debug(`Running new entry ${newEntry.id} with action ${newEntry.action}`);
         } else if (newEntry.type === 'external-manipulating') {
             const sdsStringObj = this.sdsStringForHistoryEntry(newEntry, currentPlaceholderOverride);
             sdsLines += sdsStringObj.sdsString;
-            placeholderNames = sdsStringObj.placeholderNames;
+            placeholderNameNeeded = sdsStringObj.placeholderName;
 
             safeDsLogger.debug(`Running new entry ${newEntry.id} with action ${newEntry.action}`);
         } else if (newEntry.type === 'internal') {
@@ -720,19 +724,14 @@ export class RunnerApi {
             await this.addToAndExecutePipeline(
                 pipelineExecutionId,
                 sdsLines,
-                // placeholderNames.concat(schemaPlaceHolder),
-                placeholderNames,
+                placeholderNameNeeded ? [placeholderNameNeeded] : undefined,
             );
         } catch (e) {
             throw e;
         }
 
-        if (
-            newEntry.type === 'external-visualizing' &&
-            newEntry.action !== 'infoPanel' &&
-            placeholderNames.length > 0
-        ) {
-            const result = await this.getPlaceholderValue(placeholderNames[0]!, pipelineExecutionId);
+        if (newEntry.type === 'external-visualizing' && newEntry.action !== 'infoPanel' && placeholderNameNeeded) {
+            const result = await this.getPlaceholderValue(placeholderNameNeeded, pipelineExecutionId);
             const image = result as Base64Image;
 
             if (newEntry.columnNumber === 'none') {
@@ -785,8 +784,8 @@ export class RunnerApi {
                     },
                 };
             }
-        } else {
-            const newTable = await this.getPlaceholderValue(placeholderNames[0]!, pipelineExecutionId);
+        } else if (placeholderNameNeeded) {
+            const newTable = await this.getPlaceholderValue(placeholderNameNeeded, pipelineExecutionId);
             // const schema = await this.getPlaceholderValue(schemaPlaceHolder, pipelineExecutionId); // Not displayable yet, waiting
 
             if (!newTable) throw new Error('Table not found');
@@ -802,7 +801,149 @@ export class RunnerApi {
                     ), // temp until schema works as otherwise we would need another execution to get column names
                 ),
             };
+        } else {
+            throw new Error('placeholderNameNeeded not found');
         }
+    }
+
+    public async executeMultipleHistoryAndReturnNewResults(
+        entries: ExecuteRunnerAllEntry[],
+    ): Promise<MultipleRunnerExecutionResultMessage['value']['results']> {
+        let sdsLines = '';
+        let placeholderNames: string[] = [];
+        let entryIdToPlaceholderNames = new Map<number, string>();
+        let currentPlaceholderOverride = this.tablePlaceholder;
+        // let schemaPlaceHolder = this.genPlaceholderName('schema');
+
+        const filteredEntries: ExecuteRunnerAllEntry[] = this.filterPastEntriesForAllExecution(entries);
+
+        const results: RunnerExecutionResultMessage['value'][] = [];
+        let lastManipulatingEntry: ExecuteRunnerAllEntry | undefined;
+        for (const entry of filteredEntries) {
+            if (entry.entry.type === 'external-visualizing') {
+                if (entry.entry.action === 'infoPanel') throw new Error('Not implemented');
+
+                let overriddenTablePlaceholder;
+                if (entry.type === 'excludingHiddenColumns' && entry.hiddenColumns.length > 0) {
+                    overriddenTablePlaceholder = this.genPlaceholderName('hiddenColsOverride');
+                    sdsLines += this.sdsStringForRemoveColumns(
+                        entry.hiddenColumns,
+                        currentPlaceholderOverride,
+                        overriddenTablePlaceholder,
+                    );
+                }
+
+                const sdsStringObj = this.sdsStringForHistoryEntry(
+                    entry.entry,
+                    overriddenTablePlaceholder ?? currentPlaceholderOverride,
+                );
+                sdsLines += sdsStringObj.sdsString;
+                placeholderNames.push(sdsStringObj.placeholderName);
+                entryIdToPlaceholderNames.set(entry.entry.id, sdsStringObj.placeholderName);
+
+                safeDsLogger.debug(`Running new entry ${entry.entry.id} with action ${entry.entry.action}`);
+            } else if (entry.entry.type === 'external-manipulating') {
+                const sdsStringObj = this.sdsStringForHistoryEntry(entry.entry, currentPlaceholderOverride);
+                sdsLines += sdsStringObj.sdsString;
+                placeholderNames.push(sdsStringObj.placeholderName);
+                entryIdToPlaceholderNames.set(entry.entry.id, sdsStringObj.placeholderName);
+                currentPlaceholderOverride = sdsStringObj.placeholderName;
+                lastManipulatingEntry = entry;
+
+                safeDsLogger.debug(`Running new entry ${entry.entry.id} with action ${entry.entry.action}`);
+            }
+        }
+
+        const pipelineExecutionId = crypto.randomUUID();
+        try {
+            await this.addToAndExecutePipeline(pipelineExecutionId, sdsLines, placeholderNames);
+        } catch (e) {
+            throw e;
+        }
+
+        for (const entry of filteredEntries) {
+            if (entry.entry.type === 'external-visualizing' && entry.entry.action !== 'infoPanel') {
+                const result = await this.getPlaceholderValue(
+                    entryIdToPlaceholderNames.get(entry.entry.id)!,
+                    pipelineExecutionId,
+                );
+                const image = result as Base64Image;
+
+                if (entry.entry.columnNumber === 'none') {
+                    results.push({
+                        type: 'tab',
+                        historyId: entry.entry.id,
+                        content: {
+                            tabComment: '',
+                            type: entry.entry.action,
+                            columnNumber: entry.entry.columnNumber,
+                            imageTab: true,
+                            isInGeneration: false,
+                            id: entry.entry.existingTabId ?? entry.entry.newTabId,
+                            content: { encodedImage: image },
+                            outdated: false,
+                        },
+                    });
+                } else if (entry.entry.columnNumber === 'two') {
+                    results.push({
+                        type: 'tab',
+                        historyId: entry.entry.id,
+                        content: {
+                            tabComment: entry.entry.xAxisColumnName + ' x ' + entry.entry.yAxisColumnName,
+                            type: entry.entry.action,
+                            columnNumber: entry.entry.columnNumber,
+                            imageTab: true,
+                            isInGeneration: false,
+                            id: entry.entry.existingTabId ?? entry.entry.newTabId,
+                            outdated: false,
+                            content: {
+                                encodedImage: image,
+                                xAxisColumnName: entry.entry.xAxisColumnName,
+                                yAxisColumnName: entry.entry.yAxisColumnName,
+                            },
+                        },
+                    });
+                } else {
+                    results.push({
+                        type: 'tab',
+                        historyId: entry.entry.id,
+                        content: {
+                            tabComment: entry.entry.columnName,
+                            type: entry.entry.action,
+                            columnNumber: entry.entry.columnNumber,
+                            imageTab: true,
+                            isInGeneration: false,
+                            id: entry.entry.existingTabId ?? entry.entry.newTabId,
+                            content: { encodedImage: image, columnName: entry.entry.columnName },
+                            outdated: false,
+                        },
+                    });
+                }
+            } else if (entry.entry.type === 'external-manipulating') {
+                if (lastManipulatingEntry?.entry.id !== entry.entry.id) continue; // Only last manipulating entry is of interest as we just need final table
+
+                const newTable = await this.getPlaceholderValue(
+                    entryIdToPlaceholderNames.get(entry.entry.id)!,
+                    pipelineExecutionId,
+                );
+
+                if (!newTable) throw new Error('Table not found');
+
+                results.push({
+                    type: 'table',
+                    historyId: entry.entry.id,
+                    content: this.runnerResultToTable(
+                        this.tablePlaceholder,
+                        newTable,
+                        new Map<string, boolean>(
+                            Object.keys(newTable).map((col) => [col, typeof newTable[col][0] === 'number']),
+                        ), // temp until schema works as otherwise we would need another execution to get column names
+                    ),
+                });
+            }
+        }
+
+        return results;
     }
 
     filterPastEntries(pastEntries: HistoryEntry[], newEntry: HistoryEntry): HistoryEntry[] {
@@ -827,6 +968,34 @@ export class RunnerApi {
         for (let i = 0; i < pastEntries.length; i++) {
             const entry = pastEntries[i]!;
             const overrideId = entry.overrideId;
+
+            if (lastOccurrenceMap.get(overrideId) === i) {
+                filteredPastEntries.push(entry);
+            }
+        }
+
+        return filteredPastEntries;
+    }
+
+    filterPastEntriesForAllExecution(entries: ExecuteRunnerAllEntry[]): ExecuteRunnerAllEntry[] {
+        // Keep only the last occurrence of each unique overrideId
+        const lastOccurrenceMap = new Map<string, number>();
+        const filteredPastEntries: ExecuteRunnerAllEntry[] = [];
+
+        // Traverse from end to start to record the last occurrence of each unique overrideId
+        for (let i = entries.length - 1; i >= 0; i--) {
+            const entry = entries[i]!;
+            const overrideId = entry.entry.overrideId;
+
+            if (!lastOccurrenceMap.has(overrideId)) {
+                lastOccurrenceMap.set(overrideId, i);
+            }
+        }
+
+        // Traverse from start to end to build the final result with only the last occurrences
+        for (let i = 0; i < entries.length; i++) {
+            const entry = entries[i]!;
+            const overrideId = entry.entry.overrideId;
 
             if (lastOccurrenceMap.get(overrideId) === i) {
                 filteredPastEntries.push(entry);

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { table, currentTabIndex, preventClicks, tabs } from '../webviewState';
+    import { table, currentTabIndex, preventClicks, tabs, history } from '../webviewState';
     import CaretIcon from '../icons/Caret.svelte';
     import HistoryIcon from '../icons/History.svelte';
     import UndoIcon from '../icons/Undo.svelte';
@@ -8,6 +8,7 @@
     import NewTabButton from './NewTabButton.svelte';
     import ColumnCounts from './ColumnCounts.svelte';
     import History from './History.svelte';
+    import { undoLastHistoryEntry } from '../apis/historyApi';
 
     export let width: number;
 
@@ -38,7 +39,7 @@
                 on:click={() => (historyFocused = !historyFocused)}
                 ><span class="icon historyIcon"><HistoryIcon /></span>{#if width > 200}History{/if}</span
             >
-            <span class="historyItem noSelect"
+            <span class="historyItem noSelect" role="none" on:click={() => undoLastHistoryEntry()}
                 ><span class="icon undoIcon"><UndoIcon /></span>{#if width > 200}Undo{/if}</span
             >
             <span class="historyItem noSelect"

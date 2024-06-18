@@ -1,7 +1,13 @@
 import * as defaultTypes from './state.js';
 
 // To extension
-type ToExtensionCommand = 'setCurrentGlobalState' | 'resetGlobalState' | 'setInfo' | 'setError' | 'executeRunner';
+type ToExtensionCommand =
+    | 'setCurrentGlobalState'
+    | 'resetGlobalState'
+    | 'setInfo'
+    | 'setError'
+    | 'executeRunner'
+    | 'executeRunnerAll';
 
 interface ToExtensionCommandMessage {
     command: ToExtensionCommand;
@@ -27,7 +33,7 @@ interface ToExtensionExecuteRunnerMessage extends ToExtensionCommandMessage {
     };
 }
 
-interface ToExtensionExecuteExcludingHiddenColumns extends ToExtensionCommandMessage {
+interface ToExtensionExecuteRunnerExcludingHiddenColumnsMessage extends ToExtensionCommandMessage {
     command: 'executeRunner';
     value: {
         type: 'excludingHiddenColumns';
@@ -37,14 +43,33 @@ interface ToExtensionExecuteExcludingHiddenColumns extends ToExtensionCommandMes
     };
 }
 
+export type ExecuteRunnerAllEntry =
+    | {
+          type: 'excludingHiddenColumns';
+          entry: defaultTypes.HistoryEntry;
+          hiddenColumns: string[];
+      }
+    | { type: 'default'; entry: defaultTypes.HistoryEntry };
+
+interface ToExtensionExecuteAllRunnerMessage extends ToExtensionCommandMessage {
+    command: 'executeRunnerAll';
+    value: { entries: ExecuteRunnerAllEntry[]; jumpedToHistoryId: number };
+}
+
 export type ToExtensionMessage =
     | ToExtensionSetInfoMessage
     | ToExtensionSetErrorMessage
     | ToExtensionExecuteRunnerMessage
-    | ToExtensionExecuteExcludingHiddenColumns;
+    | ToExtensionExecuteRunnerExcludingHiddenColumnsMessage
+    | ToExtensionExecuteAllRunnerMessage;
 
 // From extension
-type FromExtensionCommand = 'setInitialTable' | 'setProfiling' | 'runnerExecutionResult' | 'cancelRunnerExecution';
+type FromExtensionCommand =
+    | 'setInitialTable'
+    | 'setProfiling'
+    | 'runnerExecutionResult'
+    | 'multipleRunnerExecutionResult'
+    | 'cancelRunnerExecution';
 
 interface FromExtensionCommandMessage {
     command: FromExtensionCommand;
@@ -85,6 +110,14 @@ export interface RunnerExecutionResultMessage extends FromExtensionCommandMessag
     value: RunnerExecutionResultTab | RunnerExecutionResultTable | RunnerExecutionResultProfiling;
 }
 
+export interface MultipleRunnerExecutionResultMessage extends FromExtensionCommandMessage {
+    command: 'multipleRunnerExecutionResult';
+    value: {
+        results: (RunnerExecutionResultTab | RunnerExecutionResultTable | RunnerExecutionResultProfiling)[];
+        jumpedToHistoryId: number;
+    };
+}
+
 export interface CancelRunnerExecutionMessage extends FromExtensionCommandMessage {
     command: 'cancelRunnerExecution';
     value: defaultTypes.HistoryEntry;
@@ -94,4 +127,5 @@ export type FromExtensionMessage =
     | FromExtensionSetInitialTableMessage
     | FromExtensionSetProfilingMessage
     | RunnerExecutionResultMessage
-    | CancelRunnerExecutionMessage;
+    | CancelRunnerExecutionMessage
+    | MultipleRunnerExecutionResultMessage;

@@ -1,10 +1,9 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { throttle } from 'lodash';
-    import { table, preventClicks, tableLoading } from '../webviewState';
+    import { table, preventClicks, tableLoading, savedColumnWidths } from '../webviewState';
     import CaretIcon from '../icons/Caret.svelte';
     import ErrorIcon from '../icons/Error.svelte';
-    import FilterIcon from '../icons/Filter.svelte';
     import type {
         Column,
         OneColumnTabTypes,
@@ -16,7 +15,7 @@
         TwoColumnTabTypes,
     } from '../../types/state.js';
     import ProfilingInfo from './profiling/ProfilingInfo.svelte';
-    import { derived, writable, get } from 'svelte/store';
+    import { derived, get } from 'svelte/store';
     import ColumnFilters from './column-filters/ColumnFilters.svelte';
     import { imageWidthToHeightRatio } from '../../consts.config';
     import { addInternalToHistory, executeExternalHistoryEntry } from '../apis/historyApi';
@@ -31,7 +30,6 @@
     let numRows = 0;
     const headerElements: HTMLElement[] = [];
     let maxProfilingItemCount = 0;
-    let savedColumnWidths = writable(new Map<string, number>());
 
     //#region Startup
     $: if ($table) {
@@ -173,6 +171,7 @@
         startX = event.clientX;
         startWidth = columnElement.offsetWidth;
         targetColumn = columnElement;
+        resizeWidthMap.set(targetColumn.innerText.trim(), startWidth);
         document.addEventListener('mousemove', throttledDoResizeDrag);
         document.addEventListener('mouseup', stopResizeDrag);
     };
@@ -181,6 +180,14 @@
         isResizeDragging = false;
         document.removeEventListener('mousemove', throttledDoResizeDrag);
         document.removeEventListener('mouseup', stopResizeDrag);
+
+        addInternalToHistory({
+            action: 'resizeColumn',
+            alias: `Resize column ${targetColumn!.innerText.trim()}`,
+            type: 'internal',
+            columnName: targetColumn!.innerText.trim(),
+            value: resizeWidthMap.get(targetColumn!.innerText.trim())!,
+        });
     };
     //#endregion
 
@@ -239,18 +246,18 @@
                 dragCurrentIndex -= 1;
             }
 
-            addInternalToHistory({
-                action: 'reorderColumns',
-                alias: `Reorder column ${$table!.columns[dragStartIndex!].name}`,
-                type: 'internal',
-                columnName: $table!.columns[dragStartIndex!].name,
-                value: dragCurrentIndex,
-            });
-
             table.update(($table) => {
                 const newColumns = [...$table!.columns];
                 const movedItem = newColumns.splice(dragStartIndex!, 1)[0];
                 newColumns.splice(dragCurrentIndex!, 0, movedItem);
+
+                addInternalToHistory({
+                    action: 'reorderColumns',
+                    alias: `Reorder column ${$table!.columns[dragStartIndex!].name}`,
+                    type: 'internal',
+                    columnOrder: newColumns.map((column) => column.name),
+                });
+
                 return { ...$table!, columns: newColumns };
             });
 
@@ -775,13 +782,13 @@
                                     on:mousedown={(event) => handleColumnInteractionStart(event, index)}
                                     on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                                     >{column.name}
-                                    <div
+                                    <!-- <div
                                         role="none"
                                         class="filterIconWrapper"
                                         on:mousedown={(event) => handleFilterContextMenu(event, index)}
                                     >
                                         <FilterIcon />
-                                    </div>
+                                    </div> -->
                                     <div
                                         class="sortIconsWrapper"
                                         style:display={($savedColumnWidths.get(column.name) ?? 0) > 60
