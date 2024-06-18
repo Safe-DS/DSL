@@ -14,7 +14,7 @@ Start by creating a file with the extension `.sds`.
 All Safe-DS programs must declare their packages at the beginning of the file.
 
 ```sds
-package demo
+package regression
 ```
 
 ## Pipeline
@@ -135,7 +135,7 @@ val _metrics = fittedRegressor.summarizeMetrics(testSet);
 ## Full Code
 
 ```sds
-package demo
+package regression
 
 pipeline demo {
     // Read data
