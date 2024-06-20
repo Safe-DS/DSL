@@ -4,6 +4,7 @@
     import { table, preventClicks, tableLoading, savedColumnWidths, showProfiling } from '../webviewState';
     import CaretIcon from '../icons/Caret.svelte';
     import ErrorIcon from '../icons/Error.svelte';
+    import FilterIcon from '../icons/Filter.svelte';
     import type {
         Column,
         OneColumnTabTypes,
@@ -784,13 +785,13 @@
                                     on:mousedown={(event) => handleColumnInteractionStart(event, index)}
                                     on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                                     >{column.name}
-                                    <!-- <div
+                                    <div
                                         role="none"
                                         class="filterIconWrapper"
                                         on:mousedown={(event) => handleFilterContextMenu(event, index)}
                                     >
                                         <FilterIcon />
-                                    </div> -->
+                                    </div>
                                     <div
                                         class="sortIconsWrapper"
                                         style:display={($savedColumnWidths.get(column.name) ?? 0) > 60

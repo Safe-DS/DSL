@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { table, currentTabIndex, preventClicks, tabs, history } from '../webviewState';
+    import { table, currentTabIndex, preventClicks, tabs } from '../webviewState';
     import CaretIcon from '../icons/Caret.svelte';
     import HistoryIcon from '../icons/History.svelte';
     import UndoIcon from '../icons/Undo.svelte';
@@ -8,14 +8,7 @@
     import NewTabButton from './NewTabButton.svelte';
     import ColumnCounts from './ColumnCounts.svelte';
     import History from './History.svelte';
-    import {
-        getRedoEntry,
-        getUndoEntry,
-        redoEntry,
-        redoLastHistoryEntry,
-        undoEntry,
-        undoLastHistoryEntry,
-    } from '../apis/historyApi';
+    import { redoEntry, redoLastHistoryEntry, undoEntry, undoLastHistoryEntry } from '../apis/historyApi';
 
     export let width: number;
 
