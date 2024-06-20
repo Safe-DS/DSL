@@ -15,6 +15,8 @@ const tableKey = writable<number>(0); // If changed will remount the table
 let initialProfiling: { columnName: string; profiling: Profiling }[] = [];
 const tabKey = writable<number>(0); // If changed will remount the tabs
 
+const showProfiling = writable<boolean>(false);
+
 // Define the stores, current state to default in case the extension never calls setWebviewState( Shouldn't happen)
 const table = writable<Table | undefined>();
 
@@ -68,12 +70,12 @@ const setProfiling = (profiling: { columnName: string; profiling: Profiling }[])
 const restoreTableInitialState = () => {
     table.set(initialTable);
     tabs.set([]);
+    setProfiling(initialProfiling);
     currentTabIndex.set(undefined);
     cancelTabIdsWaiting.set([]);
     savedColumnWidths.set(new Map<string, number>());
     tableKey.update((key) => key + 1);
     tabKey.update((key) => key + 1);
-    setProfiling(initialProfiling);
 };
 
 export {
@@ -88,4 +90,5 @@ export {
     restoreTableInitialState,
     tableKey,
     tabKey,
+    showProfiling,
 };

@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { throttle } from 'lodash';
-    import { table, preventClicks, tableLoading, savedColumnWidths } from '../webviewState';
+    import { table, preventClicks, tableLoading, savedColumnWidths, showProfiling } from '../webviewState';
     import CaretIcon from '../icons/Caret.svelte';
     import ErrorIcon from '../icons/Error.svelte';
     import type {
@@ -25,7 +25,6 @@
 
     let profilingImageWidth = 200;
 
-    let showProfiling = false;
     let minTableWidth = 0;
     let numRows = 0;
     const headerElements: HTMLElement[] = [];
@@ -57,9 +56,12 @@
             }
         });
 
-        if (showProfiling) {
+        if ($showProfiling) {
             setTimeout(() => {
-                fullHeadBackground.style.height = 2 * rowHeight + profilingInfo.clientHeight + 'px'; // To also update when profiling info is initially coming and profiling was already open
+                if ($showProfiling && fullHeadBackground && profilingInfo) {
+                    // To catch where we reninitialize the table and thus this is triggered after old one is gone already
+                    fullHeadBackground.style.height = 2 * rowHeight + profilingInfo.clientHeight + 'px'; // To also update when profiling info is initially coming and profiling was already open
+                }
             }, 700); // 700ms is the transition time of the profiling info opening/incresing in height
         }
     }
@@ -618,8 +620,8 @@
 
     const toggleProfiling = function (): void {
         if (!$preventClicks) {
-            showProfiling = !showProfiling;
-            if (showProfiling) {
+            showProfiling.set(!$showProfiling);
+            if ($showProfiling) {
                 setTimeout(() => {
                     fullHeadBackground.style.height = 2 * rowHeight + profilingInfo.clientHeight + 'px';
                 }, 700); // 700ms is the transition time of the profiling info opening/incresing in height
@@ -861,15 +863,15 @@
                         {#if !column.hidden}
                             <td
                                 class="profiling"
-                                class:expanded={showProfiling}
-                                style="height: {showProfiling && column.profiling
+                                class:expanded={$showProfiling}
+                                style="height: {$showProfiling && column.profiling
                                     ? getOptionalProfilingHeight(column.profiling)
                                     : ''}; {isReorderDragging && dragStartIndex === index ? 'display: none;' : ''}"
                                 on:mousedown={(event) =>
                                     event.button === 2 ? handleColumnRightClick(event, index) : null}
                                 on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                             >
-                                <div class="content" class:expanded={showProfiling}>
+                                <div class="content" class:expanded={$showProfiling}>
                                     {#if !column.profiling}
                                         <div>Loading ...</div>
                                     {:else}
@@ -884,8 +886,8 @@
                         {:else}
                             <td
                                 class="profiling"
-                                class:expanded={showProfiling}
-                                style="height: {showProfiling && column.profiling
+                                class:expanded={$showProfiling}
+                                style="height: {$showProfiling && column.profiling
                                     ? getOptionalProfilingHeight(column.profiling)
                                     : ''};"
                                 on:mousedown={(event) =>
@@ -912,13 +914,13 @@
                         on:mouseup={handleReorderDragEnd}
                     >
                         <div>
-                            <span>{showProfiling ? 'Hide Profiling' : 'Show Profiling'}</span>
+                            <span>{$showProfiling ? 'Hide Profiling' : 'Show Profiling'}</span>
                             {#if $hasProfilingErrors}
                                 <div class="errorIconWrapper">
                                     <ErrorIcon />
                                 </div>
                             {/if}
-                            <div class="caretIconWrapper" class:rotate={!showProfiling}>
+                            <div class="caretIconWrapper" class:rotate={!$showProfiling}>
                                 <CaretIcon />
                             </div>
                         </div>

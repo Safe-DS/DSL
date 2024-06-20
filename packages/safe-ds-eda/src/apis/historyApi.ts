@@ -142,7 +142,7 @@ window.addEventListener('message', (event) => {
             } else if (relevantJumpedToEntry!.type === 'external-visualizing') {
                 currentTabIndex.set(
                     get(tabs).findIndex(
-                        (t) => t.id === relevantJumpedToEntry!.existingTabId ?? relevantJumpedToEntry!.newTabId,
+                        (t) => t.id === (relevantJumpedToEntry!.existingTabId ?? relevantJumpedToEntry!.newTabId),
                     ),
                 );
             } else {
@@ -275,6 +275,21 @@ export const cancelExecuteExternalHistoryEntry = function (entry: HistoryEntry):
             if (tab.type !== 'empty') {
                 unsetTabAsGenerating(tab);
             }
+        }
+
+        if (entry.loading) {
+            history.update((state) => {
+                return state.map((e) => {
+                    if (e.id === entry.id) {
+                        return {
+                            ...e,
+                            loading: false,
+                        };
+                    } else {
+                        return e;
+                    }
+                });
+            });
         }
 
         if (asyncQueue.length === 0) {
@@ -425,9 +440,7 @@ const deployResult = function (
                 );
                 if (updateFocusedTab) currentTabIndex.set(tabIndex);
             } else {
-                // eslint-disable-next-line no-console
-                console.error('Existing tab not found in tabs');
-
+                // This will happen if called from executeRunnerAll as we reset tabs before, they are re-sorted later so all good
                 const tab = resultContent.content;
                 tab.id = historyEntry.existingTabId;
                 tabs.update((state) => state.concat(tab));
