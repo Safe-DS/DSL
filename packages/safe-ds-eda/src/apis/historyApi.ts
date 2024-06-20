@@ -179,6 +179,7 @@ window.addEventListener('message', (event) => {
                     currentTabIndex.set(undefined);
                 }
             }
+            lastFocusedTab = null;
             relevantJumpedToHistoryId = undefined;
             tableLoading.set(false);
         }
