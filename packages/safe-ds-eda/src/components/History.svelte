@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { currentHistoryIndex, undoHistoryEntries } from '../apis/historyApi';
+    import { currentHistoryIndex, redoHistoryEntries, undoHistoryEntries } from '../apis/historyApi';
     import { history } from '../webviewState';
 </script>
 
@@ -10,11 +10,17 @@
     {#each $history as historyItem, index}
         <span
             class="historyItem"
-            class:inactiveItem={$currentHistoryIndex < index}
             role="none"
-            on:click={() => ($currentHistoryIndex > index ? undoHistoryEntries(historyItem.id) : undefined)}
+            on:click={() =>
+                $currentHistoryIndex > index
+                    ? undoHistoryEntries(historyItem.id)
+                    : $currentHistoryIndex < index
+                      ? redoHistoryEntries(historyItem.id)
+                      : null}
         >
-            {index + 1}. {historyItem.alias}
+            <span class="historyText" class:inactiveItem={$currentHistoryIndex < index}
+                >{index + 1}. {historyItem.alias}</span
+            >
             {#if historyItem.loading}
                 <span class="spinner"></span>
             {/if}
@@ -37,9 +43,24 @@
     .historyItem {
         cursor: pointer;
         color: var(--darkest-color);
-        font-size: 1.1em;
+        font-size: 1.15em;
         display: flex;
         align-items: center;
+        overflow: hidden;
+    }
+
+    .historyItem:hover * {
+        color: var(--dark-color);
+    }
+
+    .historyText {
+        display: -webkit-box;
+        -webkit-line-clamp: 2; /* Number of lines to show */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-wrap: break-word; /* Ensures long words break correctly */
+        max-width: calc(100% - 26px); /* Account for the spinner width */
     }
 
     .inactiveItem {

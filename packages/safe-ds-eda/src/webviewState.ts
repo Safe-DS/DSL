@@ -21,7 +21,6 @@ const showProfiling = writable<boolean>(false);
 const table = writable<Table | undefined>();
 
 const history = writable<HistoryEntry[]>([]);
-
 const savedColumnWidths = writable(new Map<string, number>());
 
 const tableLoading = writable<boolean>(false);
@@ -71,9 +70,12 @@ const restoreTableInitialState = () => {
     table.set(initialTable);
     tabs.set([]);
     setProfiling(initialProfiling);
-    currentTabIndex.set(undefined);
     cancelTabIdsWaiting.set([]);
     savedColumnWidths.set(new Map<string, number>());
+    rerender();
+};
+
+const rerender = () => {
     tableKey.update((key) => key + 1);
     tabKey.update((key) => key + 1);
 };
@@ -88,6 +90,7 @@ export {
     tableLoading,
     savedColumnWidths,
     restoreTableInitialState,
+    rerender,
     tableKey,
     tabKey,
     showProfiling,

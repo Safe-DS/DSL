@@ -808,11 +808,13 @@ export class RunnerApi {
 
     public async executeMultipleHistoryAndReturnNewResults(
         entries: ExecuteRunnerAllEntry[],
+        placeholderOverride = this.tablePlaceholder,
+        sdsLinesOverride = '',
     ): Promise<MultipleRunnerExecutionResultMessage['value']['results']> {
-        let sdsLines = '';
+        let sdsLines = sdsLinesOverride;
         let placeholderNames: string[] = [];
         let entryIdToPlaceholderNames = new Map<number, string>();
-        let currentPlaceholderOverride = this.tablePlaceholder;
+        let currentPlaceholderOverride = placeholderOverride;
         // let schemaPlaceHolder = this.genPlaceholderName('schema');
 
         const filteredEntries: ExecuteRunnerAllEntry[] = this.filterPastEntriesForAllExecution(entries);
@@ -946,6 +948,36 @@ export class RunnerApi {
         return results;
     }
 
+    public async executeFutureHistoryAndReturnNewResults(
+        pastEntries: HistoryEntry[],
+        futureEntries: ExecuteRunnerAllEntry[],
+    ): Promise<MultipleRunnerExecutionResultMessage['value']['results']> {
+        let sdsLines = '';
+        let currentPlaceholderOverride = this.tablePlaceholder;
+        // let schemaPlaceHolder = this.genPlaceholderName('schema');
+
+        const { pastEntries: filteredPastEntries, futureEntries: filteredFutureEntries } =
+            this.filterPastEntriesForMultipleExecution(pastEntries, futureEntries);
+
+        for (const entry of filteredPastEntries) {
+            if (entry.type === 'external-manipulating') {
+                // Only manipulating actions have to be repeated before last entry that is of interest, others do not influence that end result
+                const sdsStringObj = this.sdsStringForHistoryEntry(entry, currentPlaceholderOverride);
+                sdsLines += sdsStringObj.sdsString;
+                currentPlaceholderOverride = sdsStringObj.placeholderName;
+                safeDsLogger.debug(`Running old entry ${entry.id} with action ${entry.action}`);
+            }
+        }
+
+        const results = await this.executeMultipleHistoryAndReturnNewResults(
+            filteredFutureEntries,
+            currentPlaceholderOverride,
+            sdsLines,
+        );
+
+        return results;
+    }
+
     filterPastEntries(pastEntries: HistoryEntry[], newEntry: HistoryEntry): HistoryEntry[] {
         // Keep only the last occurrence of each unique overrideId
         const lastOccurrenceMap = new Map<string, number>();
@@ -1004,6 +1036,57 @@ export class RunnerApi {
 
         return filteredPastEntries;
     }
+
+    filterPastEntriesForMultipleExecution(
+        pastEntries: HistoryEntry[],
+        futureEntries: ExecuteRunnerAllEntry[],
+    ): { pastEntries: HistoryEntry[]; futureEntries: ExecuteRunnerAllEntry[] } {
+        // Keep only the last occurrence of each unique overrideId
+        const lastOccurrenceMap = new Map<string, number>();
+        const filteredPastEntries: HistoryEntry[] = [];
+        const filteredFutureEntries: ExecuteRunnerAllEntry[] = [];
+
+        // Traverse from end to start to record the last occurrence of each unique overrideId
+        for (let i = pastEntries.length + futureEntries.length - 1; i >= 0; i--) {
+            if (i >= pastEntries.length) {
+                const entry = futureEntries[i - pastEntries.length]!;
+                const overrideId = entry.entry.overrideId;
+
+                if (!lastOccurrenceMap.has(overrideId)) {
+                    lastOccurrenceMap.set(overrideId, i);
+                }
+            } else {
+                const entry = pastEntries[i]!;
+                const overrideId = entry.overrideId;
+
+                if (!lastOccurrenceMap.has(overrideId)) {
+                    lastOccurrenceMap.set(overrideId, i);
+                }
+            }
+        }
+
+        // Traverse from start to end to build the final result with only the last occurrences
+        for (let i = 0; i < pastEntries.length; i++) {
+            const entry = pastEntries[i]!;
+            const overrideId = entry.overrideId;
+
+            if (lastOccurrenceMap.get(overrideId) === i) {
+                filteredPastEntries.push(entry);
+            }
+        }
+
+        for (let i = 0; i < futureEntries.length; i++) {
+            const entry = futureEntries[i]!;
+            const overrideId = entry.entry.overrideId;
+
+            if (lastOccurrenceMap.get(overrideId) === i + pastEntries.length) {
+                filteredFutureEntries.push(entry);
+            }
+        }
+
+        return { pastEntries: filteredPastEntries, futureEntries: filteredFutureEntries };
+    }
+
     //#endregion
     //#endregion // Public API
 }

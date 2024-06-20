@@ -8,7 +8,14 @@
     import NewTabButton from './NewTabButton.svelte';
     import ColumnCounts from './ColumnCounts.svelte';
     import History from './History.svelte';
-    import { undoLastHistoryEntry } from '../apis/historyApi';
+    import {
+        getRedoEntry,
+        getUndoEntry,
+        redoEntry,
+        redoLastHistoryEntry,
+        undoEntry,
+        undoLastHistoryEntry,
+    } from '../apis/historyApi';
 
     export let width: number;
 
@@ -37,13 +44,28 @@
                 class:historyFocused
                 role="none"
                 on:click={() => (historyFocused = !historyFocused)}
-                ><span class="icon historyIcon"><HistoryIcon /></span>{#if width > 200}History{/if}</span
+                ><span class="icon historyIcon"><HistoryIcon strokeWidth={historyFocused ? 20 : 1} /></span
+                >{#if width > 200}History{/if}</span
             >
-            <span class="historyItem noSelect" role="none" on:click={() => undoLastHistoryEntry()}
-                ><span class="icon undoIcon"><UndoIcon /></span>{#if width > 200}Undo{/if}</span
+            <span
+                class="historyItem noSelect"
+                role="none"
+                class:inactive={$undoEntry === undefined}
+                on:click={() => undoLastHistoryEntry()}
+                title={$undoEntry?.alias ?? ''}
+                ><span class="icon undoIcon"
+                    ><UndoIcon color={$undoEntry ? 'var(--primary-color)' : 'var(--dark-color)'} /></span
+                >{#if width > 200}Undo{/if}</span
             >
-            <span class="historyItem noSelect"
-                ><span class="icon redoIcon"><UndoIcon /></span>{#if width > 200}Redo{/if}</span
+            <span
+                class="historyItem noSelect"
+                role="none"
+                class:inactive={$redoEntry === undefined}
+                on:click={() => redoLastHistoryEntry()}
+                title={$redoEntry?.alias ?? ''}
+                ><span class="icon redoIcon"
+                    ><UndoIcon color={$redoEntry ? 'var(--primary-color)' : 'var(--dark-color)'} /></span
+                >{#if width > 200}Redo{/if}</span
             >
         </div>
     {/if}
@@ -71,7 +93,7 @@
                 <NewTabButton />
             </div>
         {/if}
-    {:else}
+    {:else if width > 150}
         <div class="history">
             <History />
         </div>
@@ -247,6 +269,11 @@
         top: 20px;
         left: 10px;
         margin-bottom: 100px;
+    }
+
+    .inactive {
+        color: var(--dark-color);
+        cursor: not-allowed;
     }
 
     @media (max-width: 300px) {

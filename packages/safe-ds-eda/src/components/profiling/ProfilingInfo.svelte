@@ -15,7 +15,7 @@
         addAndDeployTabHistoryEntry(
             {
                 action: 'histogram',
-                alias: `View ${columnName} Histogram`,
+                alias: `Histogram for ${columnName}`,
                 type: 'external-visualizing',
                 columnName,
                 id: entryId,

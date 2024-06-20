@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { get, writable } from 'svelte/store';
 import type { FromExtensionMessage, RunnerExecutionResultMessage } from '../../types/messaging';
 import type {
@@ -22,8 +23,9 @@ import {
     tableLoading,
     savedColumnWidths,
     restoreTableInitialState,
+    rerender,
 } from '../webviewState';
-import { executeRunner, executeRunnerAll } from './extensionApi';
+import { executeRunner, executeRunnerAll, executeRunnerAllFuture } from './extensionApi';
 
 // Wait for results to return from the server
 const asyncQueue: (ExternalHistoryEntry & { id: number })[] = [];
@@ -31,6 +33,9 @@ let messagesWaitingForTurn: RunnerExecutionResultMessage[] = [];
 let entryIdCounter = 0;
 export let currentHistoryIndex = writable<number>(-1); // -1 = last entry, 0 = first entry
 let relevantJumpedToHistoryId: number | undefined;
+export let undoEntry = writable<HistoryEntry | undefined>(undefined);
+export let redoEntry = writable<HistoryEntry | undefined>(undefined);
+let lastFocusedTab: Tab | undefined | null = null; // If set to not null and a multipleRunnerExecutionResult message comes in, the last focused tab will be updated if it is still there
 
 export const getAndIncrementEntryId = function (): number {
     return entryIdCounter++;
@@ -100,7 +105,12 @@ window.addEventListener('message', (event) => {
             const results = message.value.results;
             const currentHistory = get(history);
             const historyMap = new Map(currentHistory.map((entry) => [entry.id, entry]));
-            restoreTableInitialState();
+
+            if (message.value.type === 'past') {
+                restoreTableInitialState();
+            } else {
+                rerender();
+            }
 
             for (let i = 0; i < results.length; i++) {
                 const result = results[i];
@@ -127,7 +137,9 @@ window.addEventListener('message', (event) => {
             tabs.update((state) => {
                 const newTabs = relevantJumpedToEntry!.tabOrder.map((tabOrderId) => {
                     const inState = state.find((t) => t.id === tabOrderId);
-                    if (!inState) throw new Error('Tab from tab order not found in state');
+                    if (!inState) {
+                        throw new Error('Tab from tab order not found in state');
+                    }
                     return inState;
                 });
 
@@ -135,20 +147,37 @@ window.addEventListener('message', (event) => {
             });
 
             // Set currentTabIndex
-            if (relevantJumpedToEntry!.type === 'internal') {
-                if (relevantJumpedToEntry!.action === 'emptyTab') {
-                    currentTabIndex.set(get(tabs).findIndex((t) => t.id === relevantJumpedToEntry!.newTabId));
+            let overrideLastFocusedTab = false;
+            if (lastFocusedTab !== null) {
+                if (lastFocusedTab === undefined) {
+                    currentTabIndex.set(undefined);
+                } else {
+                    const indexOfLastFocusedTab = get(tabs).findIndex((t) => t.id === lastFocusedTab!.id);
+                    if (indexOfLastFocusedTab !== -1) {
+                        currentTabIndex.set(indexOfLastFocusedTab);
+                    } else {
+                        overrideLastFocusedTab = true;
+                        // eslint-disable-next-line no-console
+                        console.error('Last focused tab not found in tabs');
+                    }
+                }
+            }
+            if (lastFocusedTab === null || overrideLastFocusedTab) {
+                if (relevantJumpedToEntry!.type === 'internal') {
+                    if (relevantJumpedToEntry!.action === 'emptyTab') {
+                        currentTabIndex.set(get(tabs).findIndex((t) => t.id === relevantJumpedToEntry!.newTabId));
+                    } else {
+                        currentTabIndex.set(undefined);
+                    }
+                } else if (relevantJumpedToEntry!.type === 'external-visualizing') {
+                    currentTabIndex.set(
+                        get(tabs).findIndex(
+                            (t) => t.id === (relevantJumpedToEntry!.existingTabId ?? relevantJumpedToEntry!.newTabId),
+                        ),
+                    );
                 } else {
                     currentTabIndex.set(undefined);
                 }
-            } else if (relevantJumpedToEntry!.type === 'external-visualizing') {
-                currentTabIndex.set(
-                    get(tabs).findIndex(
-                        (t) => t.id === (relevantJumpedToEntry!.existingTabId ?? relevantJumpedToEntry!.newTabId),
-                    ),
-                );
-            } else {
-                currentTabIndex.set(undefined);
             }
             relevantJumpedToHistoryId = undefined;
             tableLoading.set(false);
@@ -176,8 +205,6 @@ export const addInternalToHistory = function (entry: Exclude<InternalHistoryEntr
         currentHistoryIndex.set(newHistory.length - 1);
         return newHistory;
     });
-
-    updateTabOutdated(entry);
 };
 
 export const executeExternalHistoryEntry = function (entry: ExternalHistoryEntry): void {
@@ -190,8 +217,8 @@ export const executeExternalHistoryEntry = function (entry: ExternalHistoryEntry
         }, 500);
 
     const tabOrder = generateTabOrder();
-    if (entry.type === 'external-visualizing') {
-        tabOrder.push(entry.newTabId ?? entry.existingTabId);
+    if (entry.type === 'external-visualizing' && entry.newTabId) {
+        tabOrder.push(entry.newTabId);
     }
 
     overrideUndoneEntries();
@@ -247,7 +274,7 @@ export const addEmptyTabHistoryEntry = function (): void {
     const entry: InteralEmptyTabHistoryEntry & { id: number } = {
         action: 'emptyTab',
         type: 'internal',
-        alias: 'New empty tab',
+        alias: 'New tab',
         id: getAndIncrementEntryId(),
         newTabId: tabId,
     };
@@ -328,33 +355,23 @@ export const setTabAsGenerating = function (tab: RealTab): void {
     });
 };
 
-export const undoHistoryEntries = function (upToHistoryId: number): void {
-    const currentHistory = get(history);
-    const lastRelevantEntry = currentHistory.find((entry) => entry.id === upToHistoryId)!;
-    const lastRelevantEntryIndex = currentHistory.indexOf(lastRelevantEntry);
+export const redoHistoryEntries = function (upToHistoryId: number): void {
+    lastFocusedTab = null; // In redo we always want to jump to the tab of the last relevant entry
 
+    const currentHistory = get(history);
+    const lastRelevantEntry = currentHistory.find((entry) => entry.id === upToHistoryId);
+    if (!lastRelevantEntry) throw new Error('Entry not found in history');
+    const lastRelevantEntryIndex = currentHistory.indexOf(lastRelevantEntry);
+    if (lastRelevantEntryIndex <= get(currentHistoryIndex)) return; // Do not redo if the entry is the or before the current index
+
+    const previousIndex = get(currentHistoryIndex);
     currentHistoryIndex.set(lastRelevantEntryIndex);
 
-    // Try cancelling any asyncQueue entries that are not yet executed and after the last relevant entry
-    for (let i = currentHistory.length - 1; i > lastRelevantEntryIndex; i--) {
-        const entry = currentHistory[i];
-        if (entry.type === 'internal') {
-            continue;
-        }
-        if (entry.loading) {
-            try {
-                cancelExecuteExternalHistoryEntry(entry, false);
-            } catch (e) {
-                // eslint-disable-next-line no-console
-                console.error('Could not cancel entry', e);
-            }
-        }
-    }
-
-    // If the remaining entries are only internal, we can just redo them
-    if (currentHistory.slice(0, lastRelevantEntryIndex + 1).every((entry) => entry.type === 'internal')) {
-        restoreTableInitialState();
-        redoInternalHistory(currentHistory.slice(0, lastRelevantEntryIndex + 1));
+    // If the entries since the previous index are only internal, we can just redo them
+    if (
+        currentHistory.slice(previousIndex + 1, lastRelevantEntryIndex + 1).every((entry) => entry.type === 'internal')
+    ) {
+        redoInternalHistory(currentHistory.slice(previousIndex + 1, lastRelevantEntryIndex + 1));
 
         if (lastRelevantEntry.action === 'emptyTab') {
             currentTabIndex.set(get(tabs).findIndex((t) => t.id === lastRelevantEntry.newTabId));
@@ -373,7 +390,124 @@ export const undoHistoryEntries = function (upToHistoryId: number): void {
         }
     }, 500);
 
-    // Set entry at lastRelevantEntryIndex to loading and decrease currentHistoryIndex
+    // Set entry at lastRelevantEntryIndex to loading and all others to not loading
+    history.update((state) => {
+        const newHistory = state.map((entry, index) => {
+            if (index === lastRelevantEntryIndex) {
+                return {
+                    ...entry,
+                    loading: true,
+                };
+            } else {
+                return {
+                    ...entry,
+                    loading: false,
+                };
+            }
+        });
+
+        return newHistory;
+    });
+
+    executeRunnerAllFuture(
+        currentHistory.slice(previousIndex + 1, lastRelevantEntryIndex + 1),
+        currentHistory.slice(0, previousIndex + 1),
+        upToHistoryId,
+    );
+};
+
+export const redoLastHistoryEntry = function (): void {
+    const currentHistoryIndexValue = get(currentHistoryIndex);
+    const currentHistory = get(history);
+    if (currentHistoryIndexValue + 1 === currentHistory.length) {
+        // Already at last entry
+        return;
+    }
+
+    const nextEntry = currentHistory[currentHistoryIndexValue + 1];
+
+    redoHistoryEntries(nextEntry.id);
+};
+
+export const getRedoEntry = function (): HistoryEntry | undefined {
+    const currentHistoryIndexValue = get(currentHistoryIndex);
+    const currentHistory = get(history);
+    if (currentHistoryIndexValue + 1 === currentHistory.length) {
+        return undefined;
+    }
+
+    return currentHistory[currentHistoryIndexValue + 1];
+};
+
+export const undoHistoryEntries = function (upToHistoryId: number, changeFocus = true): void {
+    const currentHistory = get(history);
+    const lastRelevantEntry = currentHistory.find((entry) => entry.id === upToHistoryId);
+    if (!lastRelevantEntry) throw new Error('Entry not found in history');
+    const lastRelevantEntryIndex = currentHistory.indexOf(lastRelevantEntry);
+    if (lastRelevantEntryIndex >= get(currentHistoryIndex)) return; // Do not undo if the entry is the or after the current index
+
+    currentHistoryIndex.set(lastRelevantEntryIndex);
+
+    // Try cancelling any asyncQueue entries that are not yet executed and after the last relevant entry
+    for (let i = currentHistory.length - 1; i > lastRelevantEntryIndex; i--) {
+        const entry = currentHistory[i];
+        if (entry.type === 'internal') {
+            continue;
+        }
+        if (entry.loading) {
+            try {
+                cancelExecuteExternalHistoryEntry(entry, false);
+            } catch (error) {
+                history.update((state) => {
+                    return state.map((e) => {
+                        if (e.id === entry.id) {
+                            return {
+                                ...e,
+                                loading: false,
+                            };
+                        } else {
+                            return e;
+                        }
+                    });
+                });
+                // eslint-disable-next-line no-console
+                console.error('Could not cancel entry', error);
+            }
+        }
+    }
+
+    // If the entries until relevant entry are only internal, we can just redo them
+    if (currentHistory.slice(0, lastRelevantEntryIndex + 1).every((entry) => entry.type === 'internal')) {
+        restoreTableInitialState();
+        redoInternalHistory(currentHistory.slice(0, lastRelevantEntryIndex + 1));
+
+        if (changeFocus) {
+            if (lastRelevantEntry.action === 'emptyTab') {
+                currentTabIndex.set(get(tabs).findIndex((t) => t.id === lastRelevantEntry.newTabId));
+            } else {
+                currentTabIndex.set(undefined);
+            }
+        }
+
+        return;
+    }
+
+    if (!changeFocus) {
+        const currentTabIndexValue = get(currentTabIndex);
+        lastFocusedTab = currentTabIndexValue ? get(tabs)[currentTabIndexValue] : undefined;
+    } else {
+        lastFocusedTab = null;
+    }
+
+    relevantJumpedToHistoryId = upToHistoryId;
+    // Set table to loading if loading takes longer than 500ms
+    setTimeout(() => {
+        if (relevantJumpedToHistoryId) {
+            tableLoading.set(true); // Warning: does not check if there are any actual manipulating entries, but this is only loading anyway
+        }
+    }, 500);
+
+    // Set entry at lastRelevantEntryIndex to loading
     history.update((state) => {
         const newHistory = state.map((entry, index) => {
             if (index === lastRelevantEntryIndex) {
@@ -406,7 +540,35 @@ export const undoLastHistoryEntry = function (): void {
     }
 
     const beforeLastEntry = currentHistory[currentHistoryIndexValue - 1];
-    undoHistoryEntries(beforeLastEntry.id);
+    const lastEntry = currentHistory[currentHistoryIndexValue];
+    const currentTabIndexValue = get(currentTabIndex);
+    const currentTab = currentTabIndexValue ? get(tabs)[currentTabIndexValue] : undefined;
+
+    // Do not change forcus if the undone action is in table or in a tab that still exists after undo
+    let dontChangeFocus = false;
+    if (lastEntry.type === 'external-manipulating') {
+        dontChangeFocus = currentTab === undefined;
+    } else if (lastEntry.type === 'external-visualizing') {
+        const tabId = lastEntry.existingTabId; // If not existingTabId, it is a new tab thus cannot stay in focus
+        dontChangeFocus = tabId !== undefined && currentTab?.id === tabId;
+    } else {
+        if (lastEntry.action === 'emptyTab') {
+            dontChangeFocus = false;
+        } else {
+            dontChangeFocus = currentTab === undefined;
+        }
+    }
+    undoHistoryEntries(beforeLastEntry.id, !dontChangeFocus);
+};
+
+export const getUndoEntry = function (): HistoryEntry | undefined {
+    const currentHistoryIndexValue = get(currentHistoryIndex);
+    const currentHistory = get(history);
+    if (currentHistoryIndexValue + 1 === 0) {
+        return undefined;
+    }
+
+    return currentHistory[currentHistoryIndexValue];
 };
 
 export const unsetTabAsGenerating = function (tab: RealTab): void {
@@ -508,8 +670,6 @@ const deployResult = function (
         });
 
         if (updateFocusedTab) currentTabIndex.set(undefined);
-
-        updateTabOutdated(historyEntry);
     }
 
     // Set loading to false
@@ -549,31 +709,61 @@ const evaluateMessagesWaitingForTurn = function () {
     if (firstItemQueueChanged) evaluateMessagesWaitingForTurn(); // Only if first element was deployed we have to scan again, as this is only deployment condition
 };
 
-const updateTabOutdated = function (entry: ExternalHistoryEntry | InternalHistoryEntry): void {
-    if (entry.action === 'hideColumn' || entry.action === 'showColumn') {
-        tabs.update((state) => {
-            const newTabs = state.map((t) => {
-                if (
-                    t.type !== 'empty' &&
-                    t.columnNumber === 'none' &&
-                    get(table)?.columns.find((c) => c.name === entry.columnName)?.type === 'numerical'
-                ) {
-                    // UPDATE the if in case there are none column tabs that do not depend on numerical columns
-                    return {
-                        ...t,
-                        outdated: true,
-                    };
-                } else {
-                    return t;
-                }
-            });
+const updateTabOutdated = function (): void {
+    const currentHistory = get(history).slice(0, get(currentHistoryIndex) + 1);
+    const currentTable = get(table);
+    if (!currentTable) return;
 
-            return newTabs;
+    const relevantToggleColumnEntries = currentHistory
+        .filter(
+            (e) =>
+                (e.action === 'hideColumn' || e.action === 'showColumn') &&
+                currentTable.columns.find((c) => c.name === e.columnName)?.type === 'numerical',
+        )
+        .map((e) => {
+            return { entry: e, index: currentHistory.indexOf(e) };
         });
-    }
+
+    tabs.update((state) => {
+        const newTabs = state.map((t) => {
+            let outdated = false;
+
+            if (t.type !== 'empty' && t.columnNumber === 'none') {
+                for (const entry of relevantToggleColumnEntries) {
+                    // Find out if one of the outdating entries was after the last time the tab was updated
+                    let lastTabUpdateIndex = -1;
+                    for (let i = currentHistory.length - 1; i >= 0; i--) {
+                        const currentEntry = currentHistory[i];
+                        if (
+                            currentEntry.type === 'external-visualizing' &&
+                            (currentEntry.existingTabId ?? currentEntry.newTabId) === t.id
+                        ) {
+                            lastTabUpdateIndex = i;
+                            break;
+                        }
+                    }
+                    if (lastTabUpdateIndex === -1) {
+                        throw new Error('Tab not found in history');
+                    }
+                    if (entry.index > lastTabUpdateIndex) {
+                        // UPDATE the if in case there are none column tabs that do not depend on numerical columns
+                        outdated = true;
+                    }
+                }
+                return {
+                    ...t,
+                    outdated,
+                };
+            } else {
+                return t;
+            }
+        });
+
+        return newTabs;
+    });
 };
 
-export const filterHistory = function (entries: HistoryEntry[]): FullInternalHistoryEntry[] {
+export const filterHistoryOnlyInternal = function (entries: HistoryEntry[]): FullInternalHistoryEntry[] {
     // Keep only the last occurrence of each unique overrideId
     const lastOccurrenceMap = new Map<string, number>();
     const filteredEntries: HistoryEntry[] = [];
@@ -602,7 +792,7 @@ export const filterHistory = function (entries: HistoryEntry[]): FullInternalHis
 };
 
 const redoInternalHistory = function (historyEntries: HistoryEntry[]): void {
-    const entries = filterHistory(historyEntries);
+    const entries = filterHistoryOnlyInternal(historyEntries);
 
     for (const entry of entries) {
         switch (entry.action) {
@@ -682,3 +872,33 @@ const generateTabOrder = function (): string[] {
     const tabOrder = get(tabs).map((tab) => tab.id);
     return tabOrder;
 };
+
+let stillWaitingToExecute = false; // Only one table update can be processed at a time
+table.subscribe(async (_value) => {
+    if (stillWaitingToExecute) return;
+    stillWaitingToExecute = true;
+    // Things can only get outdated when table updates, but have to wait for all history entries to be final, can still be canceled or not even entered yet
+    await new Promise<void>((resolve) => {
+        setTimeout(() => {
+            const checkConditions = () => {
+                if (relevantJumpedToHistoryId === undefined && asyncQueue.length === 0) {
+                    stillWaitingToExecute = false;
+                    resolve();
+                } else {
+                    setTimeout(checkConditions, 100);
+                }
+            };
+            checkConditions();
+        }, 150); // Initial wait of 150ms, either waiting for external, thus checkConditions, or for internal thus initial wait to wait for history entry to be there
+    });
+    updateTabOutdated();
+});
+
+history.subscribe((_value) => {
+    undoEntry.set(getUndoEntry());
+});
+
+currentHistoryIndex.subscribe((_value) => {
+    undoEntry.set(getUndoEntry());
+    redoEntry.set(getRedoEntry());
+});

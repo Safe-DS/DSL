@@ -558,7 +558,7 @@
 
         executeExternalHistoryEntry({
             action: type,
-            alias: `View ${type === 'linePlot' ? 'Lineplot' : 'Scatterplot'} of ${xAxisColumnName} x ${yAxisColumnName}`,
+            alias: `${type === 'linePlot' ? 'Lineplot' : 'Scatterplot'} for ${xAxisColumnName} x ${yAxisColumnName}`,
             type: 'external-visualizing',
             columnNumber: 'two',
             xAxisColumnName,
@@ -576,7 +576,7 @@
 
         executeExternalHistoryEntry({
             action: type,
-            alias: `View ${type === 'histogram' ? 'Histogram' : 'Boxplot'} of ${columnName}`,
+            alias: `${type === 'histogram' ? 'Histogram' : 'Boxplot'} for ${columnName}`,
             type: 'external-visualizing',
             columnNumber: 'one',
             columnName,

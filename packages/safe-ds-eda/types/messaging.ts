@@ -7,7 +7,8 @@ type ToExtensionCommand =
     | 'setInfo'
     | 'setError'
     | 'executeRunner'
-    | 'executeRunnerAll';
+    | 'executeRunnerAll'
+    | 'executeRunnerAllFuture';
 
 interface ToExtensionCommandMessage {
     command: ToExtensionCommand;
@@ -51,6 +52,15 @@ export type ExecuteRunnerAllEntry =
       }
     | { type: 'default'; entry: defaultTypes.HistoryEntry };
 
+export interface ToExtensionExecuteAllFutureRunnerMessage extends ToExtensionCommandMessage {
+    command: 'executeRunnerAllFuture';
+    value: {
+        futureEntries: ExecuteRunnerAllEntry[];
+        pastEntries: defaultTypes.HistoryEntry[];
+        jumpedToHistoryId: number;
+    };
+}
+
 interface ToExtensionExecuteAllRunnerMessage extends ToExtensionCommandMessage {
     command: 'executeRunnerAll';
     value: { entries: ExecuteRunnerAllEntry[]; jumpedToHistoryId: number };
@@ -61,7 +71,8 @@ export type ToExtensionMessage =
     | ToExtensionSetErrorMessage
     | ToExtensionExecuteRunnerMessage
     | ToExtensionExecuteRunnerExcludingHiddenColumnsMessage
-    | ToExtensionExecuteAllRunnerMessage;
+    | ToExtensionExecuteAllRunnerMessage
+    | ToExtensionExecuteAllFutureRunnerMessage;
 
 // From extension
 type FromExtensionCommand =
@@ -113,6 +124,7 @@ export interface RunnerExecutionResultMessage extends FromExtensionCommandMessag
 export interface MultipleRunnerExecutionResultMessage extends FromExtensionCommandMessage {
     command: 'multipleRunnerExecutionResult';
     value: {
+        type: 'future' | 'past';
         results: (RunnerExecutionResultTab | RunnerExecutionResultTable | RunnerExecutionResultProfiling)[];
         jumpedToHistoryId: number;
     };
