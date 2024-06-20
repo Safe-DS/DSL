@@ -95,20 +95,21 @@ window.addEventListener('message', (event) => {
     } else if (message.command === 'multipleRunnerExecutionResult') {
         if (message.value.results.length === 0) return;
         if (relevantJumpedToHistoryId === message.value.jumpedToHistoryId) {
+            // Only deploy if the last message is the one that was jumped to
+
             const results = message.value.results;
             const currentHistory = get(history);
+            const historyMap = new Map(currentHistory.map((entry) => [entry.id, entry]));
             restoreTableInitialState();
 
-            // Only deploy if the last message is the one that was jumped to
             for (let i = 0; i < results.length; i++) {
                 const result = results[i];
-                const entry = currentHistory.find((e) => e.id === result.historyId);
+                const entry = historyMap.get(result.historyId);
                 if (!entry) throw new Error('Entry not found for result');
                 if (entry.type === 'internal') throw new Error('Internal entry found for external result');
                 deployResult(result, entry, false);
             }
 
-            // Redo all internal history things considering overrideIds
             let relevantJumpedToIndex = -1;
             let relevantJumpedToEntry: HistoryEntry | undefined;
             for (let i = 0; i < currentHistory.length; i++) {
@@ -119,6 +120,7 @@ window.addEventListener('message', (event) => {
                 }
             }
 
+            // Redo all internal history things considering overrideIds
             redoInternalHistory(currentHistory.slice(0, relevantJumpedToIndex + 1));
 
             // Restore tab order for still existing tabs
@@ -187,6 +189,11 @@ export const executeExternalHistoryEntry = function (entry: ExternalHistoryEntry
             }
         }, 500);
 
+    const tabOrder = generateTabOrder();
+    if (entry.type === 'external-visualizing') {
+        tabOrder.push(entry.newTabId ?? entry.existingTabId);
+    }
+
     overrideUndoneEntries();
     history.update((state) => {
         const entryWithId: HistoryEntry = {
@@ -194,7 +201,7 @@ export const executeExternalHistoryEntry = function (entry: ExternalHistoryEntry
             id: getAndIncrementEntryId(),
             overrideId: generateOverrideId(entry),
             loading: true,
-            tabOrder: generateTabOrder(), // Not including new entry, but have to update in deploy
+            tabOrder,
         };
         const newHistory = [...state, entryWithId];
         currentHistoryIndex.set(newHistory.length - 1);
@@ -263,7 +270,7 @@ export const addEmptyTabHistoryEntry = function (): void {
     currentTabIndex.set(get(tabs).indexOf(tab));
 };
 
-export const cancelExecuteExternalHistoryEntry = function (entry: HistoryEntry): void {
+export const cancelExecuteExternalHistoryEntry = function (entry: HistoryEntry, removeEntry = true): void {
     const index = asyncQueue.findIndex((queueEntry) => queueEntry.id === entry.id);
     if (index !== -1) {
         asyncQueue.splice(index, 1);
@@ -277,7 +284,7 @@ export const cancelExecuteExternalHistoryEntry = function (entry: HistoryEntry):
             }
         }
 
-        if (entry.loading) {
+        if (entry.loading && !removeEntry) {
             history.update((state) => {
                 return state.map((e) => {
                     if (e.id === entry.id) {
@@ -290,6 +297,10 @@ export const cancelExecuteExternalHistoryEntry = function (entry: HistoryEntry):
                     }
                 });
             });
+        }
+
+        if (removeEntry) {
+            history.update((state) => state.filter((e) => e.id !== entry.id));
         }
 
         if (asyncQueue.length === 0) {
@@ -332,7 +343,7 @@ export const undoHistoryEntries = function (upToHistoryId: number): void {
         }
         if (entry.loading) {
             try {
-                cancelExecuteExternalHistoryEntry(entry);
+                cancelExecuteExternalHistoryEntry(entry, false);
             } catch (e) {
                 // eslint-disable-next-line no-console
                 console.error('Could not cancel entry', e);
