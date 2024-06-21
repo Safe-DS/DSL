@@ -564,10 +564,8 @@
     //#endregion // Right clicks
 
     //#region Column hiding
-    const toggleHideColumn = function (columnIndices?: number[]): void {
-        if (!columnIndices) {
-            columnIndices = selectedColumnIndexes;
-        }
+    const toggleHideColumn = function (passedColumnIndices?: number[]): void {
+        const columnIndices = passedColumnIndices ?? selectedColumnIndexes;
 
         // Find all columns and check that they have the same hidden state
         $table!.columns.forEach((column, index) => {
@@ -625,10 +623,12 @@
         return;
     };
 
-    const generateOneColumnTab = function (type: OneColumnTabTypes, columnIndex?: number) {
+    const generateOneColumnTab = function (type: OneColumnTabTypes, passedColumnIndex?: number) {
         if (type === 'infoPanel') {
             throw new Error('Not implemented yet.');
         }
+
+        let columnIndex = passedColumnIndex;
         if (!columnIndex) {
             if (selectedColumnIndexes.length !== 1) {
                 throw new Error('One column must be selected to generate a one column plot');
