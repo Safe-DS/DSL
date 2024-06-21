@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { throttle } from 'lodash';
-    import { table, preventClicks, tableLoading } from '../webviewState';
+    import { table, preventClicks, tableLoading, savedColumnWidths, showProfiling } from '../webviewState';
     import CaretIcon from '../icons/Caret.svelte';
     import ErrorIcon from '../icons/Error.svelte';
     import FilterIcon from '../icons/Filter.svelte';
@@ -16,7 +16,7 @@
         TwoColumnTabTypes,
     } from '../../types/state.js';
     import ProfilingInfo from './profiling/ProfilingInfo.svelte';
-    import { derived, writable, get } from 'svelte/store';
+    import { derived, get } from 'svelte/store';
     import ColumnFilters from './column-filters/ColumnFilters.svelte';
     import { imageWidthToHeightRatio } from '../../consts.config';
     import { addInternalToHistory, executeExternalHistoryEntry } from '../apis/historyApi';
@@ -26,12 +26,10 @@
 
     let profilingImageWidth = 200;
 
-    let showProfiling = false;
     let minTableWidth = 0;
     let numRows = 0;
     const headerElements: HTMLElement[] = [];
     let maxProfilingItemCount = 0;
-    let savedColumnWidths = writable(new Map<string, number>());
 
     //#region Startup
     $: if ($table) {
@@ -59,9 +57,12 @@
             }
         });
 
-        if (showProfiling) {
+        if ($showProfiling) {
             setTimeout(() => {
-                fullHeadBackground.style.height = 2 * rowHeight + profilingInfo.clientHeight + 'px'; // To also update when profiling info is initially coming and profiling was already open
+                if ($showProfiling && fullHeadBackground && profilingInfo) {
+                    // To catch where we reninitialize the table and thus this is triggered after old one is gone already
+                    fullHeadBackground.style.height = 2 * rowHeight + profilingInfo.clientHeight + 'px'; // To also update when profiling info is initially coming and profiling was already open
+                }
             }, 700); // 700ms is the transition time of the profiling info opening/incresing in height
         }
     }
@@ -92,8 +93,11 @@
     //#endregion
 
     //#region Cell interaction
-    const handleMainCellClick = function (): void {
-        if (!$preventClicks) {
+    const handleMainCellClick = function (event: MouseEvent): void {
+        if (event.button === 2) {
+            handleCellContextMenu(event);
+        } else {
+            if ($preventClicks) return;
             selectedColumnIndexes = [];
             selectedRowIndexes = [];
         }
@@ -122,7 +126,7 @@
 
         isClick = true; // Assume it's a click initially
 
-        holdTimeout = setTimeout(() => handleReorderDragStart(columnIndex), 300); // milliseconds delay for hold detection
+        holdTimeout = setTimeout(() => handleReorderDragStart(columnIndex, event), 300); // milliseconds delay for hold detection
 
         // Define the handler function
         currentMouseUpHandler = (mouseUpEvent: MouseEvent) => {
@@ -173,6 +177,7 @@
         startX = event.clientX;
         startWidth = columnElement.offsetWidth;
         targetColumn = columnElement;
+        resizeWidthMap.set(targetColumn.innerText.trim(), startWidth);
         document.addEventListener('mousemove', throttledDoResizeDrag);
         document.addEventListener('mouseup', stopResizeDrag);
     };
@@ -181,6 +186,14 @@
         isResizeDragging = false;
         document.removeEventListener('mousemove', throttledDoResizeDrag);
         document.removeEventListener('mouseup', stopResizeDrag);
+
+        addInternalToHistory({
+            action: 'resizeColumn',
+            alias: `Resize column ${targetColumn!.innerText.trim()}`,
+            type: 'internal',
+            columnName: targetColumn!.innerText.trim(),
+            value: resizeWidthMap.get(targetColumn!.innerText.trim())!,
+        });
     };
     //#endregion
 
@@ -192,7 +205,7 @@
     let reorderPrototype: HTMLElement;
     let savedColumnWidthBeforeReorder = 0;
 
-    const handleReorderDragStart = function (columnIndex: number): void {
+    const handleReorderDragStart = function (columnIndex: number, event: MouseEvent): void {
         isClick = false; // If timeout completes, it's a hold
         document.addEventListener('mouseup', handleReorderDragEnd);
         savedColumnWidthBeforeReorder = get(savedColumnWidths).get(headerElements[columnIndex].innerText.trim())!;
@@ -201,6 +214,13 @@
         dragStartIndex = columnIndex;
         dragCurrentIndex = columnIndex;
         selectedColumnIndexes = []; // Clear so reordering doesn't interfere with selection
+
+        // First iteration in case user holds still
+        dragCurrentIndex = columnIndex;
+        requestAnimationFrame(() => {
+            reorderPrototype!.style.left = event.clientX + tableContainer.scrollLeft - sidebarWidth + 'px';
+            reorderPrototype!.style.top = event.clientY + scrollTop + 'px';
+        });
     };
 
     const handleReorderDragOver = function (event: MouseEvent, columnIndex: number): void {
@@ -231,12 +251,22 @@
             if (dragCurrentIndex > dragStartIndex) {
                 dragCurrentIndex -= 1;
             }
+
             table.update(($table) => {
                 const newColumns = [...$table!.columns];
                 const movedItem = newColumns.splice(dragStartIndex!, 1)[0];
                 newColumns.splice(dragCurrentIndex!, 0, movedItem);
+
+                addInternalToHistory({
+                    action: 'reorderColumns',
+                    alias: `Reorder column ${$table!.columns[dragStartIndex!].name}`,
+                    type: 'internal',
+                    columnOrder: newColumns.map((column) => column.name),
+                });
+
                 return { ...$table!, columns: newColumns };
             });
+
             document.removeEventListener('mouseup', handleReorderDragEnd);
             isReorderDragging = false;
             dragStartIndex = null;
@@ -395,12 +425,16 @@
     //#region Right clicks
     let currentContextMenu: HTMLElement | null = null;
 
+    let subMenuHovered = -1;
+
     // Column header right click
     let showingColumnHeaderRightClickMenu = false;
     let rightClickedColumnIndex = -1;
     let rightClickColumnMenuElement: HTMLElement;
 
     const handleColumnRightClick = function (event: MouseEvent, columnIndex: number): void {
+        if ($preventClicks && !showingColumnHeaderRightClickMenu) return;
+
         // Logic for what happens when a header is right clicked
         doDefaultContextMenuSetup();
         showingColumnHeaderRightClickMenu = true;
@@ -438,6 +472,31 @@
 
         // Click anywhere else to close the menu, if not clicked in the menu
         window.addEventListener('mousedown', handleRightClickEnd);
+    };
+
+    // Cell context menu
+    let showingCellContextMenu = false;
+    let cellContextMenuElement: HTMLElement;
+
+    const handleCellContextMenu = function (event: MouseEvent): void {
+        if (event.button !== 2) return;
+        if (selectedColumnIndexes.length === 0) return;
+        if ($preventClicks && !showingCellContextMenu) return;
+
+        // Logic for what happens when a cell is right clicked
+        preventClicks.set(true);
+        event.preventDefault();
+        doDefaultContextMenuSetup();
+        showingCellContextMenu = true;
+
+        requestAnimationFrame(() => {
+            currentContextMenu = cellContextMenuElement; // So scrolling can edit the position, somehow assignment does only work in requestAnimationFrame, maybe bc of delay, could lead to bugs maybe in future, keep note of
+            cellContextMenuElement!.style.left = event.clientX + tableContainer.scrollLeft - sidebarWidth + 'px';
+            cellContextMenuElement!.style.top = event.clientY + scrollTop + 'px';
+        });
+
+        // Click anywhere else to close the menu
+        window.addEventListener('click', handleRightClickEnd);
     };
 
     // Scaling methods
@@ -489,17 +548,38 @@
             filterColumnIndex = -1;
             generalCleanup();
         }
+        if (showingCellContextMenu) {
+            showingCellContextMenu = false;
+            generalCleanup();
+        }
+    };
+
+    const subMenuHoverToggle = function (index: number): void {
+        if (subMenuHovered === index) {
+            subMenuHovered = -1;
+        } else {
+            subMenuHovered = index;
+        }
     };
     //#endregion // Right clicks
 
     //#region Column hiding
-    const toggleHideColumn = function (columnIndex: number): void {
+    const toggleHideColumn = function (passedColumnIndices?: number[]): void {
+        const columnIndices = passedColumnIndices ?? selectedColumnIndexes;
+
+        // Find all columns and check that they have the same hidden state
+        $table!.columns.forEach((column, index) => {
+            if (columnIndices!.includes(index) && column.hidden !== $table!.columns[columnIndices![0]].hidden) {
+                throw new Error('Columns must have the same hidden state to be toggled together');
+            }
+        });
+
         let visible = true;
         table.update(($table) => {
             return {
                 ...$table!,
                 columns: $table!.columns.map((column, index) => {
-                    if (index === columnIndex) {
+                    if (columnIndices!.includes(index)) {
                         visible = column.hidden;
                         return {
                             ...column,
@@ -511,14 +591,15 @@
             };
         });
 
-        addInternalToHistory({
-            action: visible ? 'showColumn' : 'hideColumn',
-            alias: `${visible ? 'Show' : 'Hide'} column ${$table!.columns[columnIndex].name}`,
-            type: 'internal',
-            columnName: $table!.columns[columnIndex].name,
-        });
-
-        selectedColumnIndexes = selectedColumnIndexes.filter((selectedIndex) => selectedIndex !== columnIndex);
+        for (const columnIndex of columnIndices) {
+            addInternalToHistory({
+                action: visible ? 'showColumn' : 'hideColumn',
+                alias: `${visible ? 'Show' : 'Hide'} column ${$table!.columns[columnIndex].name}`,
+                type: 'internal',
+                columnName: $table!.columns[columnIndex].name,
+            });
+            selectedColumnIndexes = selectedColumnIndexes.filter((selectedIndex) => selectedIndex !== columnIndex);
+        }
     };
     //#endregion
 
@@ -532,7 +613,7 @@
 
         executeExternalHistoryEntry({
             action: type,
-            alias: `View ${type === 'linePlot' ? 'Lineplot' : 'Scatterplot'} of ${xAxisColumnName} x ${yAxisColumnName}`,
+            alias: `${type === 'linePlot' ? 'Lineplot' : 'Scatterplot'} for ${xAxisColumnName} x ${yAxisColumnName}`,
             type: 'external-visualizing',
             columnNumber: 'two',
             xAxisColumnName,
@@ -542,15 +623,23 @@
         return;
     };
 
-    const generateOneColumnTab = function (type: OneColumnTabTypes, columnIndex: number) {
+    const generateOneColumnTab = function (type: OneColumnTabTypes, passedColumnIndex?: number) {
         if (type === 'infoPanel') {
             throw new Error('Not implemented yet.');
+        }
+
+        let columnIndex = passedColumnIndex;
+        if (!columnIndex) {
+            if (selectedColumnIndexes.length !== 1) {
+                throw new Error('One column must be selected to generate a one column plot');
+            }
+            columnIndex = selectedColumnIndexes[0];
         }
         const columnName = $table!.columns[columnIndex].name;
 
         executeExternalHistoryEntry({
             action: type,
-            alias: `View ${type === 'histogram' ? 'Histogram' : 'Boxplot'} of ${columnName}`,
+            alias: `${type === 'histogram' ? 'Histogram' : 'Boxplot'} for ${columnName}`,
             type: 'external-visualizing',
             columnNumber: 'one',
             columnName,
@@ -594,8 +683,8 @@
 
     const toggleProfiling = function (): void {
         if (!$preventClicks) {
-            showProfiling = !showProfiling;
-            if (showProfiling) {
+            showProfiling.set(!$showProfiling);
+            if ($showProfiling) {
                 setTimeout(() => {
                     fullHeadBackground.style.height = 2 * rowHeight + profilingInfo.clientHeight + 'px';
                 }, 700); // 700ms is the transition time of the profiling info opening/incresing in height
@@ -837,15 +926,15 @@
                         {#if !column.hidden}
                             <td
                                 class="profiling"
-                                class:expanded={showProfiling}
-                                style="height: {showProfiling && column.profiling
+                                class:expanded={$showProfiling}
+                                style="height: {$showProfiling && column.profiling
                                     ? getOptionalProfilingHeight(column.profiling)
                                     : ''}; {isReorderDragging && dragStartIndex === index ? 'display: none;' : ''}"
                                 on:mousedown={(event) =>
                                     event.button === 2 ? handleColumnRightClick(event, index) : null}
                                 on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                             >
-                                <div class="content" class:expanded={showProfiling}>
+                                <div class="content" class:expanded={$showProfiling}>
                                     {#if !column.profiling}
                                         <div>Loading ...</div>
                                     {:else}
@@ -860,8 +949,8 @@
                         {:else}
                             <td
                                 class="profiling"
-                                class:expanded={showProfiling}
-                                style="height: {showProfiling && column.profiling
+                                class:expanded={$showProfiling}
+                                style="height: {$showProfiling && column.profiling
                                     ? getOptionalProfilingHeight(column.profiling)
                                     : ''};"
                                 on:mousedown={(event) =>
@@ -888,13 +977,13 @@
                         on:mouseup={handleReorderDragEnd}
                     >
                         <div>
-                            <span>{showProfiling ? 'Hide Profiling' : 'Show Profiling'}</span>
+                            <span>{$showProfiling ? 'Hide Profiling' : 'Show Profiling'}</span>
                             {#if $hasProfilingErrors}
                                 <div class="errorIconWrapper">
                                     <ErrorIcon />
                                 </div>
                             {/if}
-                            <div class="caretIconWrapper" class:rotate={!showProfiling}>
+                            <div class="caretIconWrapper" class:rotate={!$showProfiling}>
                                 <CaretIcon />
                             </div>
                         </div>
@@ -930,7 +1019,7 @@
                                 {#if !column.hidden}
                                     <td
                                         style={isReorderDragging && dragStartIndex === index ? 'display: none;' : ''}
-                                        on:click={handleMainCellClick}
+                                        on:mousedown={(event) => handleMainCellClick(event)}
                                         on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                                         class:selectedColumn={selectedColumnIndexes.includes(index) ||
                                             selectedRowIndexes.includes(visibleStart + i)}
@@ -941,7 +1030,7 @@
                                     >
                                 {:else}
                                     <td
-                                        on:click={handleMainCellClick}
+                                        on:mousedown={(event) => handleMainCellClick(event)}
                                         on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                                     >
                                     </td>{/if}
@@ -978,13 +1067,10 @@
     {#if showingColumnHeaderRightClickMenu}
         <div class="contextMenu" bind:this={rightClickColumnMenuElement}>
             {#if $table?.columns[rightClickedColumnIndex].hidden ?? false}
-                <button class="contextItem" type="button" on:click={() => toggleHideColumn(rightClickedColumnIndex)}
+                <button class="contextItem" type="button" on:click={() => toggleHideColumn([rightClickedColumnIndex])}
                     >Show Column '{$table?.columns[rightClickedColumnIndex].name}'</button
                 >
             {:else}
-                <button class="contextItem" type="button" on:click={() => toggleHideColumn(rightClickedColumnIndex)}
-                    >Hide Column</button
-                >
                 <button class="contextItem" type="button" on:click={() => setSelectionToColumn(rightClickedColumnIndex)}
                     >Select Column</button
                 >
@@ -1001,26 +1087,258 @@
                         on:click={() => addColumnToSelection(rightClickedColumnIndex)}>Add To Selection</button
                     >
                 {/if}
-                {#if selectedColumnIndexes.length === 2}
-                    <button class="contextItem" type="button" on:click={() => generateTwoColumnTab('scatterPlot')}
-                        >Plot Scatterplot</button
+                {#if selectedColumnIndexes.length >= 1}
+                    <button
+                        class="contextItem subMenuTrigger newCategoryItem"
+                        type="button"
+                        on:mouseenter={() => subMenuHoverToggle(1)}
+                        on:mouseleave={() => subMenuHoverToggle(1)}
                     >
-                    <button class="contextItem" type="button" on:click={() => generateTwoColumnTab('linePlot')}
-                        >Plot Lineplot</button
-                    >
+                        From Selection
+                        <span class="subMenuCaret"
+                            ><CaretIcon
+                                color={subMenuHovered === 1 ? 'var(--lightest-color)' : 'var(--dark-color)'}
+                            /></span
+                        >
+                        <div class="subMenu contextMenu" style:display={subMenuHovered === 1 ? 'block' : 'none'}>
+                            <div class="subMenuContainer">
+                                {#if selectedColumnIndexes.length > 1 && selectedColumnIndexes.every((index) => $table?.columns[index].hidden === $table?.columns[selectedColumnIndexes[0]].hidden)}
+                                    <button
+                                        class="contextItem newCategoryItem"
+                                        type="button"
+                                        on:click={() => toggleHideColumn()}>Hide Columns</button
+                                    >
+                                {:else if selectedColumnIndexes.length === 1}
+                                    <button
+                                        class="contextItem newCategoryItem"
+                                        type="button"
+                                        on:click={() => toggleHideColumn()}>Hide Column</button
+                                    >
+                                {/if}
+                                {#if selectedColumnIndexes.length === 1}
+                                    <button
+                                        class="contextItem"
+                                        type="button"
+                                        on:click={() => generateOneColumnTab('histogram')}>Plot Histogram</button
+                                    >
+                                    {#if $table?.columns[selectedColumnIndexes[0]].type === 'numerical'}
+                                        <button
+                                            class="contextItem"
+                                            type="button"
+                                            on:click={() => generateOneColumnTab('boxPlot')}
+                                        >
+                                            Plot Boxplot</button
+                                        >
+                                    {:else}
+                                        <button
+                                            class="contextItem inactiveItem"
+                                            title="Only possible for numerical column"
+                                        >
+                                            Plot Boxplot
+                                        </button>
+                                    {/if}
+                                    <button class="contextItem inactiveItem" title="Select two columns to plot">
+                                        Plot Scatterplot
+                                    </button>
+                                    <button class="contextItem inactiveItem" title="Select two columns to plot">
+                                        Plot Lineplot
+                                    </button>
+                                {:else if selectedColumnIndexes.length === 2 && $table?.columns[selectedColumnIndexes[0]].type === 'numerical' && $table?.columns[selectedColumnIndexes[1]].type === 'numerical'}
+                                    <button class="contextItem inactiveItem" title="Select just one columns to plot">
+                                        Plot Histogram
+                                    </button>
+                                    <button class="contextItem inactiveItem" title="Select just one columns to plot">
+                                        Plot Boxplot
+                                    </button>
+                                    <button
+                                        class="contextItem"
+                                        type="button"
+                                        on:click={() => generateTwoColumnTab('scatterPlot')}>Plot Scatterplot</button
+                                    >
+                                    <button
+                                        class="contextItem"
+                                        type="button"
+                                        on:click={() => generateTwoColumnTab('linePlot')}>Plot Lineplot</button
+                                    >
+                                {:else if selectedColumnIndexes.length === 2}
+                                    <button class="contextItem inactiveItem" title="Select just one columns to plot">
+                                        Plot Histogram
+                                    </button>
+                                    <button class="contextItem inactiveItem" title="Select just one columns to plot">
+                                        Plot Boxplot
+                                    </button>
+                                    <button
+                                        class="contextItem inactiveItem"
+                                        title="Only possible for numerical columns"
+                                    >
+                                        Plot Scatterplot
+                                    </button>
+                                    <button
+                                        class="contextItem inactiveItem"
+                                        title="Only possible for numerical columns"
+                                    >
+                                        Plot Lineplot
+                                    </button>
+                                {:else}
+                                    <button class="contextItem inactiveItem" title="Select just one columns to plot">
+                                        Plot Histogram
+                                    </button>
+                                    <button class="contextItem inactiveItem" title="Select just one columns to plot">
+                                        Plot Boxplot
+                                    </button>
+                                    <button class="contextItem inactiveItem" title="Select two columns to plot">
+                                        Plot Scatterplot
+                                    </button>
+                                    <button class="contextItem inactiveItem" title="Select two columns to plot">
+                                        Plot Lineplot
+                                    </button>
+                                {/if}
+                            </div>
+                        </div>
+                    </button>
                 {/if}
+                {#if selectedColumnIndexes.length > 0}
+                    <button
+                        class="contextItem subMenuTrigger"
+                        type="button"
+                        on:mouseenter={() => subMenuHoverToggle(2)}
+                        on:mouseleave={() => subMenuHoverToggle(2)}
+                    >
+                        From Click
+                        <span class="subMenuCaret"
+                            ><CaretIcon
+                                color={subMenuHovered === 2 ? 'var(--lightest-color)' : 'var(--dark-color)'}
+                            /></span
+                        >
+                        <div class="subMenu contextMenu" style:display={subMenuHovered === 2 ? 'block' : 'none'}>
+                            <div class="subMenuContainer">
+                                <button
+                                    class="contextItem"
+                                    type="button"
+                                    on:click={() => toggleHideColumn([rightClickedColumnIndex])}>Hide Column</button
+                                >
+                                <button
+                                    class="contextItem"
+                                    type="button"
+                                    on:click={() => generateOneColumnTab('histogram', rightClickedColumnIndex)}
+                                    >Plot Histogram</button
+                                >
+                                {#if $table?.columns[rightClickedColumnIndex].type === 'numerical'}
+                                    <button
+                                        class="contextItem"
+                                        type="button"
+                                        on:click={() => generateOneColumnTab('boxPlot', rightClickedColumnIndex)}
+                                    >
+                                        Plot Boxplot</button
+                                    >
+                                {:else}
+                                    <button class="contextItem inactiveItem" title="Only possible for numerical column">
+                                        Plot Boxplot
+                                    </button>
+                                {/if}
+                            </div>
+                        </div>
+                    </button>
+                {:else}
+                    <button
+                        class="contextItem newCategoryItem"
+                        type="button"
+                        on:click={() => toggleHideColumn([rightClickedColumnIndex])}>Hide Column</button
+                    >
+                    <button
+                        class="contextItem"
+                        type="button"
+                        on:click={() => generateOneColumnTab('histogram', rightClickedColumnIndex)}
+                        >Plot Histogram</button
+                    >
+                    {#if $table?.columns[rightClickedColumnIndex].type === 'numerical'}
+                        <button
+                            class="contextItem"
+                            type="button"
+                            on:click={() => generateOneColumnTab('boxPlot', rightClickedColumnIndex)}
+                        >
+                            Plot Boxplot</button
+                        >
+                    {:else}
+                        <button class="contextItem inactiveItem" title="Only possible for numerical column">
+                            Plot Boxplot
+                        </button>
+                    {/if}
+                {/if}
+            {/if}
+        </div>
+    {/if}
+    {#if showingCellContextMenu}
+        <div class="contextMenu" bind:this={cellContextMenuElement}>
+            {#if selectedColumnIndexes.length > 0}
                 <button
-                    class="contextItem"
+                    class="contextItem subMenuTrigger"
                     type="button"
-                    on:click={() => generateOneColumnTab('histogram', rightClickedColumnIndex)}>Plot Histogram</button
+                    on:mouseenter={() => subMenuHoverToggle(3)}
+                    on:mouseleave={() => subMenuHoverToggle(3)}
                 >
-                <button
-                    class="contextItem"
-                    type="button"
-                    on:click={() => generateOneColumnTab('boxPlot', rightClickedColumnIndex)}
-                >
-                    Plot Boxplot</button
-                >
+                    From Selection
+                    <span class="subMenuCaret"
+                        ><CaretIcon
+                            color={subMenuHovered === 3 ? 'var(--lightest-color)' : 'var(--dark-color)'}
+                        /></span
+                    >
+                    <div class="subMenu contextMenu" style:display={subMenuHovered === 3 ? 'block' : 'none'}>
+                        <div class="subMenuContainer">
+                            {#if selectedColumnIndexes.length > 1 && selectedColumnIndexes.every((index) => $table?.columns[index].hidden === $table?.columns[selectedColumnIndexes[0]].hidden)}
+                                <button
+                                    class="contextItem newCategoryItem"
+                                    type="button"
+                                    on:click={() => toggleHideColumn()}>Hide Columns</button
+                                >
+                            {:else if selectedColumnIndexes.length === 1}
+                                <button
+                                    class="contextItem newCategoryItem"
+                                    type="button"
+                                    on:click={() => toggleHideColumn()}>Hide Column</button
+                                >
+                            {/if}
+                            {#if selectedColumnIndexes.length === 1}
+                                <button
+                                    class="contextItem"
+                                    type="button"
+                                    on:click={() => generateOneColumnTab('histogram')}>Plot Histogram</button
+                                >
+                                {#if $table?.columns[selectedColumnIndexes[0]].type === 'numerical'}
+                                    <button
+                                        class="contextItem"
+                                        type="button"
+                                        on:click={() => generateOneColumnTab('boxPlot')}
+                                    >
+                                        Plot Boxplot</button
+                                    >
+                                {:else}
+                                    <button class="contextItem inactiveItem" title="Only possible for numerical column">
+                                        Plot Boxplot
+                                    </button>
+                                {/if}
+                            {:else if selectedColumnIndexes.length === 2 && $table?.columns[selectedColumnIndexes[0]].type === 'numerical' && $table?.columns[selectedColumnIndexes[1]].type === 'numerical'}
+                                <button
+                                    class="contextItem"
+                                    type="button"
+                                    on:click={() => generateTwoColumnTab('scatterPlot')}>Plot Scatterplot</button
+                                >
+                                <button
+                                    class="contextItem"
+                                    type="button"
+                                    on:click={() => generateTwoColumnTab('linePlot')}>Plot Lineplot</button
+                                >
+                            {:else if selectedColumnIndexes.length === 2}
+                                <button class="contextItem inactiveItem" title="Only possible for numerical columns">
+                                    Plot Scatterplot
+                                </button>
+                                <button class="contextItem inactiveItem" title="Only possible for numerical columns">
+                                    Plot Lineplot
+                                </button>
+                            {/if}
+                        </div>
+                    </div>
+                </button>
             {/if}
         </div>
     {/if}
@@ -1257,32 +1575,6 @@
         text-overflow: ellipsis;
     }
 
-    .contextMenu {
-        position: absolute;
-        border: 2px solid var(--medium-light-color);
-        background-color: var(--lightest-color);
-        z-index: 1000;
-        padding: 0;
-        color: var(--darkest-color);
-        display: flex;
-        flex-direction: column;
-        width: max-content;
-    }
-
-    .contextMenu button {
-        padding: 5px 15px;
-        cursor: pointer;
-        background-color: var(--lightest-color);
-        color: var(--darkest-color);
-        text-align: left;
-        width: 100%;
-    }
-
-    .contextMenu button:hover {
-        background-color: var(--primary-color);
-        color: var(--light-color);
-    }
-
     .profilingBannerRow {
         position: relative;
         z-index: 10;
@@ -1315,7 +1607,7 @@
     }
 
     .profiling .content.expanded {
-        overflow-y: scroll;
+        overflow-y: auto;
         max-height: 500px;
         opacity: 1;
         transition:
@@ -1345,5 +1637,74 @@
         width: 15px;
         padding: 0px;
         cursor: default;
+    }
+
+    .contextMenu {
+        position: absolute;
+        border: 2px solid var(--medium-light-color);
+        background-color: var(--lightest-color);
+        z-index: 1000;
+        padding: 0;
+        color: var(--darkest-color);
+        display: flex;
+        flex-direction: column;
+        width: max-content;
+    }
+
+    .contextMenu button {
+        padding: 5px 30px 5px 15px;
+        cursor: pointer;
+        background-color: var(--lightest-color);
+        color: var(--darkest-color);
+        text-align: left;
+        width: 100%;
+    }
+
+    .contextMenu button:hover {
+        background-color: var(--primary-color);
+        color: var(--light-color);
+    }
+
+    .contextItem {
+        position: relative;
+    }
+
+    .subMenu {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 98%;
+        width: 100%;
+        white-space: nowrap;
+    }
+
+    .subMenuContainer {
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+    }
+
+    .subMenuTrigger {
+        padding-right: 9px !important;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        position: relative;
+    }
+
+    .subMenuCaret {
+        transform: rotate(90deg);
+        margin-left: 10px;
+    }
+
+    .inactiveItem {
+        background-color: var(--lightest-color) !important;
+        color: var(--dark-color) !important;
+        cursor: default !important;
+    }
+
+    .newCategoryItem {
+        border-top: 1px solid var(--medium-color);
+        padding-top: 2px;
     }
 </style>
