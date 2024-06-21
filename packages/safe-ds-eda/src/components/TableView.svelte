@@ -1137,7 +1137,19 @@
                                             Plot Boxplot
                                         </button>
                                     {/if}
+                                    <button class="contextItem inactiveItem" title="Select two columns to plot">
+                                        Plot Scatterplot
+                                    </button>
+                                    <button class="contextItem inactiveItem" title="Select two columns to plot">
+                                        Plot Lineplot
+                                    </button>
                                 {:else if selectedColumnIndexes.length === 2 && $table?.columns[selectedColumnIndexes[0]].type === 'numerical' && $table?.columns[selectedColumnIndexes[1]].type === 'numerical'}
+                                    <button class="contextItem inactiveItem" title="Select just one columns to plot">
+                                        Plot Histogram
+                                    </button>
+                                    <button class="contextItem inactiveItem" title="Select just one columns to plot">
+                                        Plot Boxplot
+                                    </button>
                                     <button
                                         class="contextItem"
                                         type="button"
@@ -1149,6 +1161,12 @@
                                         on:click={() => generateTwoColumnTab('linePlot')}>Plot Lineplot</button
                                     >
                                 {:else if selectedColumnIndexes.length === 2}
+                                    <button class="contextItem inactiveItem" title="Select just one columns to plot">
+                                        Plot Histogram
+                                    </button>
+                                    <button class="contextItem inactiveItem" title="Select just one columns to plot">
+                                        Plot Boxplot
+                                    </button>
                                     <button
                                         class="contextItem inactiveItem"
                                         title="Only possible for numerical columns"
@@ -1159,6 +1177,19 @@
                                         class="contextItem inactiveItem"
                                         title="Only possible for numerical columns"
                                     >
+                                        Plot Lineplot
+                                    </button>
+                                {:else}
+                                    <button class="contextItem inactiveItem" title="Select just one columns to plot">
+                                        Plot Histogram
+                                    </button>
+                                    <button class="contextItem inactiveItem" title="Select just one columns to plot">
+                                        Plot Boxplot
+                                    </button>
+                                    <button class="contextItem inactiveItem" title="Select two columns to plot">
+                                        Plot Scatterplot
+                                    </button>
+                                    <button class="contextItem inactiveItem" title="Select two columns to plot">
                                         Plot Lineplot
                                     </button>
                                 {/if}
