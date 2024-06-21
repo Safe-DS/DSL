@@ -93,8 +93,11 @@
     //#endregion
 
     //#region Cell interaction
-    const handleMainCellClick = function (): void {
-        if (!$preventClicks) {
+    const handleMainCellClick = function (event: MouseEvent): void {
+        if (event.button === 2) {
+            handleCellContextMenu(event);
+        } else {
+            if ($preventClicks) return;
             selectedColumnIndexes = [];
             selectedRowIndexes = [];
         }
@@ -430,6 +433,8 @@
     let rightClickColumnMenuElement: HTMLElement;
 
     const handleColumnRightClick = function (event: MouseEvent, columnIndex: number): void {
+        if ($preventClicks && !showingColumnHeaderRightClickMenu) return;
+
         // Logic for what happens when a header is right clicked
         doDefaultContextMenuSetup();
         showingColumnHeaderRightClickMenu = true;
@@ -467,6 +472,31 @@
 
         // Click anywhere else to close the menu, if not clicked in the menu
         window.addEventListener('mousedown', handleRightClickEnd);
+    };
+
+    // Cell context menu
+    let showingCellContextMenu = false;
+    let cellContextMenuElement: HTMLElement;
+
+    const handleCellContextMenu = function (event: MouseEvent): void {
+        if (event.button !== 2) return;
+        if (selectedColumnIndexes.length === 0) return;
+        if ($preventClicks && !showingCellContextMenu) return;
+
+        // Logic for what happens when a cell is right clicked
+        preventClicks.set(true);
+        event.preventDefault();
+        doDefaultContextMenuSetup();
+        showingCellContextMenu = true;
+
+        requestAnimationFrame(() => {
+            currentContextMenu = cellContextMenuElement; // So scrolling can edit the position, somehow assignment does only work in requestAnimationFrame, maybe bc of delay, could lead to bugs maybe in future, keep note of
+            cellContextMenuElement!.style.left = event.clientX + tableContainer.scrollLeft - sidebarWidth + 'px';
+            cellContextMenuElement!.style.top = event.clientY + scrollTop + 'px';
+        });
+
+        // Click anywhere else to close the menu
+        window.addEventListener('click', handleRightClickEnd);
     };
 
     // Scaling methods
@@ -516,6 +546,10 @@
             }
             showingFilterContextMenu = false;
             filterColumnIndex = -1;
+            generalCleanup();
+        }
+        if (showingCellContextMenu) {
+            showingCellContextMenu = false;
             generalCleanup();
         }
     };
@@ -985,7 +1019,7 @@
                                 {#if !column.hidden}
                                     <td
                                         style={isReorderDragging && dragStartIndex === index ? 'display: none;' : ''}
-                                        on:click={handleMainCellClick}
+                                        on:mousedown={(event) => handleMainCellClick(event)}
                                         on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                                         class:selectedColumn={selectedColumnIndexes.includes(index) ||
                                             selectedRowIndexes.includes(visibleStart + i)}
@@ -996,7 +1030,7 @@
                                     >
                                 {:else}
                                     <td
-                                        on:click={handleMainCellClick}
+                                        on:mousedown={(event) => handleMainCellClick(event)}
                                         on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                                     >
                                     </td>{/if}
@@ -1201,6 +1235,80 @@
                         </button>
                     {/if}
                 {/if}
+            {/if}
+        </div>
+    {/if}
+    {#if showingCellContextMenu}
+        <div class="contextMenu" bind:this={cellContextMenuElement}>
+            {#if selectedColumnIndexes.length > 0}
+                <button
+                    class="contextItem subMenuTrigger"
+                    type="button"
+                    on:mouseenter={() => subMenuHoverToggle(3)}
+                    on:mouseleave={() => subMenuHoverToggle(3)}
+                >
+                    From Selection
+                    <span class="subMenuCaret"
+                        ><CaretIcon
+                            color={subMenuHovered === 3 ? 'var(--lightest-color)' : 'var(--dark-color)'}
+                        /></span
+                    >
+                    <div class="subMenu contextMenu" style:display={subMenuHovered === 3 ? 'block' : 'none'}>
+                        <div class="subMenuContainer">
+                            {#if selectedColumnIndexes.length > 1 && selectedColumnIndexes.every((index) => $table?.columns[index].hidden === $table?.columns[selectedColumnIndexes[0]].hidden)}
+                                <button
+                                    class="contextItem newCategoryItem"
+                                    type="button"
+                                    on:click={() => toggleHideColumn()}>Hide Columns</button
+                                >
+                            {:else if selectedColumnIndexes.length === 1}
+                                <button
+                                    class="contextItem newCategoryItem"
+                                    type="button"
+                                    on:click={() => toggleHideColumn()}>Hide Column</button
+                                >
+                            {/if}
+                            {#if selectedColumnIndexes.length === 1}
+                                <button
+                                    class="contextItem"
+                                    type="button"
+                                    on:click={() => generateOneColumnTab('histogram')}>Plot Histogram</button
+                                >
+                                {#if $table?.columns[selectedColumnIndexes[0]].type === 'numerical'}
+                                    <button
+                                        class="contextItem"
+                                        type="button"
+                                        on:click={() => generateOneColumnTab('boxPlot')}
+                                    >
+                                        Plot Boxplot</button
+                                    >
+                                {:else}
+                                    <button class="contextItem inactiveItem" title="Only possible for numerical column">
+                                        Plot Boxplot
+                                    </button>
+                                {/if}
+                            {:else if selectedColumnIndexes.length === 2 && $table?.columns[selectedColumnIndexes[0]].type === 'numerical' && $table?.columns[selectedColumnIndexes[1]].type === 'numerical'}
+                                <button
+                                    class="contextItem"
+                                    type="button"
+                                    on:click={() => generateTwoColumnTab('scatterPlot')}>Plot Scatterplot</button
+                                >
+                                <button
+                                    class="contextItem"
+                                    type="button"
+                                    on:click={() => generateTwoColumnTab('linePlot')}>Plot Lineplot</button
+                                >
+                            {:else if selectedColumnIndexes.length === 2}
+                                <button class="contextItem inactiveItem" title="Only possible for numerical columns">
+                                    Plot Scatterplot
+                                </button>
+                                <button class="contextItem inactiveItem" title="Only possible for numerical columns">
+                                    Plot Lineplot
+                                </button>
+                            {/if}
+                        </div>
+                    </div>
+                </button>
             {/if}
         </div>
     {/if}
