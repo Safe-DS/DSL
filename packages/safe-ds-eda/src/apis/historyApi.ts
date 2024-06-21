@@ -670,7 +670,10 @@ const deployResult = function (
                             historyEntry.filter as CategoricalFilter,
                         ]);
                     }
-                } else if (historyEntry.action !== 'filterColumn' || newColumn.name !== historyEntry.columnName) {
+                } else if (
+                    (historyEntry.action !== 'filterColumn' && historyEntry.action !== 'voidFilterColumn') ||
+                    newColumn.name !== historyEntry.columnName
+                ) {
                     newColumn.appliedFilters = existingColumn.appliedFilters;
                 }
 

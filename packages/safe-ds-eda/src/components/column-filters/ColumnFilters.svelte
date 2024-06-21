@@ -78,7 +78,17 @@
     };
 
     const confirmSearchStringFilter = () => {
-        if (!searchString) return;
+        if (searchString === '') {
+            executeExternalHistoryEntry({
+                type: 'external-manipulating',
+                action: 'voidFilterColumn',
+                alias: `Remove search filter on ${columnName}`,
+                columnName,
+                filterType: 'searchString',
+            });
+            selectDone();
+            return;
+        }
 
         executeExternalHistoryEntry({
             type: 'external-manipulating',
@@ -105,6 +115,19 @@
 
     const confirmValueRangeFilter = (totalMin: number, totalMax: number) => {
         if (minValue == null || maxValue == null) return;
+        if (isInvalidRange(minValue, maxValue, totalMin, totalMax)) return;
+
+        if (minValue === totalMin && maxValue === totalMax) {
+            executeExternalHistoryEntry({
+                type: 'external-manipulating',
+                action: 'voidFilterColumn',
+                alias: `Remove range filter on ${columnName}`,
+                columnName,
+                filterType: 'valueRange',
+            });
+            selectDone();
+            return;
+        }
 
         executeExternalHistoryEntry({
             type: 'external-manipulating',
@@ -126,9 +149,40 @@
     const isInvalidRange = (minValue: number, maxValue: number, totalMin: number, totalMax: number) => {
         return minValue >= maxValue || minValue < totalMin || maxValue > totalMax;
     };
+
+    const removeFilters = () => {
+        appliedFilters.forEach((filter) => {
+            if (filter.type === 'specificValue') {
+                executeExternalHistoryEntry({
+                    type: 'external-manipulating',
+                    action: 'voidFilterColumn',
+                    alias: `Remove value filter on ${columnName}`,
+                    columnName,
+                    filterType: 'specificValue',
+                });
+            } else if (filter.type === 'searchString') {
+                executeExternalHistoryEntry({
+                    type: 'external-manipulating',
+                    action: 'voidFilterColumn',
+                    alias: `Remove search filter on ${columnName}`,
+                    columnName,
+                    filterType: 'searchString',
+                });
+            } else if (filter.type === 'valueRange') {
+                executeExternalHistoryEntry({
+                    type: 'external-manipulating',
+                    action: 'voidFilterColumn',
+                    alias: `Remove range filter on ${columnName}`,
+                    columnName,
+                    filterType: 'valueRange',
+                });
+            }
+        });
+        selectDone();
+    };
 </script>
 
-<div class="wrapper">
+<div class="wrapper contextMenu">
     {#each possibleFilters as filter}
         {#if filter.type === 'specificValue'}
             <div class="filterRow contextItem">
@@ -189,20 +243,31 @@
                 </div>
             </div>
         {/if}
+        <span class="removeFilters" role="none" on:click={removeFilters}>Remove Filters</span>
     {/each}
 </div>
 
 <style>
+    /* The .contextMenu prefixes needed to not have hover effects disabled by context menu setup */
     .wrapper {
+        position: relative;
         display: flex;
         flex-direction: column;
         gap: 10px;
-        padding: 5px 10px;
+        padding: 5px 10px 30px 10px;
         background-color: var(--lightest-color);
         border-radius: 5px;
     }
 
-    .filterRow {
+    .contextMenu .removeFilters {
+        position: absolute;
+        bottom: 5px;
+        right: 10px;
+        color: var(--primary-color);
+        cursor: pointer;
+    }
+
+    .contextMenu .filterRow {
         display: grid;
         grid-template-columns: 1fr 2fr;
         align-items: center;
@@ -211,13 +276,13 @@
         border-radius: 5px;
     }
 
-    .filterName {
+    .contextMenu .filterName {
         color: var(--dark-color);
         font-weight: bold;
         font-size: 1em;
     }
 
-    .filterInput {
+    .contextMenu .filterInput {
         width: 100%;
         padding: 5px;
         border: 1px solid var(--lightest-color);
@@ -227,26 +292,26 @@
         border-color: var(--medium-color);
     }
 
-    .filterInput:focus {
+    .contextMenu .filterInput:focus {
         outline: none;
         border-color: var(--primary-color);
     }
 
-    .searchStringContainer {
+    .contextMenu .searchStringContainer {
         display: flex;
         align-items: center;
         gap: 5px;
         width: 150px;
     }
 
-    .rangeContainer {
+    .contextMenu .rangeContainer {
         display: flex;
         align-items: center;
         gap: 5px;
         width: 100%;
     }
 
-    .rangeInput {
+    .contextMenu .rangeInput {
         flex-grow: 1;
         padding: 5px;
         border: 1px solid var(--lightest-color);
@@ -256,17 +321,17 @@
         border-color: var(--medium-color);
     }
 
-    .rangeInput:focus {
+    .contextMenu .rangeInput:focus {
         outline: none;
         border-color: var(--primary-color);
     }
 
-    .rangeInput.invalid {
+    .contextMenu .rangeInput.invalid {
         border-color: var(--error-color);
         color: var(--error-color);
     }
 
-    .confirmButton {
+    .contextMenu .confirmButton {
         background-color: var(--primary-color);
         border: none;
         cursor: pointer;
@@ -278,11 +343,11 @@
         transition: background-color 0.2s;
     }
 
-    .confirmButton:hover:not(:disabled) {
+    .contextMenu .confirmButton:hover:not(:disabled) {
         background-color: var(--primary-color-desaturated);
     }
 
-    .confirmButton:disabled {
+    .contextMenu .confirmButton:disabled {
         background-color: var(--medium-color);
         cursor: not-allowed;
     }
