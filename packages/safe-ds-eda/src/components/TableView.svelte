@@ -1096,6 +1096,13 @@
                                         >
                                             Plot Boxplot</button
                                         >
+                                    {:else}
+                                        <button
+                                            class="contextItem inactiveItem"
+                                            title="Only possible for numerical column"
+                                        >
+                                            Plot Boxplot
+                                        </button>
                                     {/if}
                                 {:else if selectedColumnIndexes.length === 2 && $table?.columns[selectedColumnIndexes[0]].type === 'numerical' && $table?.columns[selectedColumnIndexes[1]].type === 'numerical'}
                                     <button
@@ -1108,6 +1115,19 @@
                                         type="button"
                                         on:click={() => generateTwoColumnTab('linePlot')}>Plot Lineplot</button
                                     >
+                                {:else if selectedColumnIndexes.length === 2}
+                                    <button
+                                        class="contextItem inactiveItem"
+                                        title="Only possible for numerical columns"
+                                    >
+                                        Plot Scatterplot
+                                    </button>
+                                    <button
+                                        class="contextItem inactiveItem"
+                                        title="Only possible for numerical columns"
+                                    >
+                                        Plot Lineplot
+                                    </button>
                                 {/if}
                             </div>
                         </div>
@@ -1147,6 +1167,10 @@
                                     >
                                         Plot Boxplot</button
                                     >
+                                {:else}
+                                    <button class="contextItem inactiveItem" title="Only possible for numerical column">
+                                        Plot Boxplot
+                                    </button>
                                 {/if}
                             </div>
                         </div>
@@ -1171,6 +1195,10 @@
                         >
                             Plot Boxplot</button
                         >
+                    {:else}
+                        <button class="contextItem inactiveItem" title="Only possible for numerical column">
+                            Plot Boxplot
+                        </button>
                     {/if}
                 {/if}
             {/if}
@@ -1531,9 +1559,9 @@
     }
 
     .inactiveItem {
-        background-color: var(--medium-light-color) !important;
+        background-color: var(--lightest-color) !important;
         color: var(--dark-color) !important;
-        cursor: default;
+        cursor: default !important;
     }
 
     .newCategoryItem {
