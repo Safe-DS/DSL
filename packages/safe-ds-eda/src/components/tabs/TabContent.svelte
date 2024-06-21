@@ -248,7 +248,7 @@
             return {
                 existingTabId: tab.id,
                 action: $buildATab.type,
-                alias: 'Generate ' + getTabName($buildATab) + ' in existing Tab',
+                alias: getTabName($buildATab) + ' for ' + $buildATab.xAxisColumnName + ' in existing Tab',
                 type: 'external-visualizing',
                 columnName: $buildATab.xAxisColumnName,
                 columnNumber: 'one',
@@ -258,7 +258,13 @@
             return {
                 existingTabId: tab.id,
                 action: $buildATab.type,
-                alias: 'Generate ' + getTabName($buildATab) + ' in existing Tab',
+                alias:
+                    getTabName($buildATab) +
+                    ' for ' +
+                    $buildATab.xAxisColumnName +
+                    ' x ' +
+                    $buildATab.yAxisColumnName +
+                    ' in existing Tab',
                 type: 'external-visualizing',
                 xAxisColumnName: $buildATab.xAxisColumnName,
                 yAxisColumnName: $buildATab.yAxisColumnName,
@@ -268,7 +274,7 @@
             return {
                 existingTabId: tab.id,
                 action: $buildATab.type,
-                alias: 'Generate ' + getTabName($buildATab) + ' in existing Tab',
+                alias: getTabName($buildATab) + ' in existing Tab',
                 type: 'external-visualizing',
                 columnNumber: 'none',
             };

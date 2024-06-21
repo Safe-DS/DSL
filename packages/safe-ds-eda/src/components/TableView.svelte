@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { throttle } from 'lodash';
-    import { table, preventClicks, tableLoading } from '../webviewState';
+    import { table, preventClicks, tableLoading, savedColumnWidths, showProfiling } from '../webviewState';
     import CaretIcon from '../icons/Caret.svelte';
     import ErrorIcon from '../icons/Error.svelte';
     import FilterIcon from '../icons/Filter.svelte';
@@ -16,7 +16,7 @@
         TwoColumnTabTypes,
     } from '../../types/state.js';
     import ProfilingInfo from './profiling/ProfilingInfo.svelte';
-    import { derived, writable, get } from 'svelte/store';
+    import { derived, get } from 'svelte/store';
     import ColumnFilters from './column-filters/ColumnFilters.svelte';
     import { imageWidthToHeightRatio } from '../../consts.config';
     import { addInternalToHistory, executeExternalHistoryEntry } from '../apis/historyApi';
@@ -26,12 +26,10 @@
 
     let profilingImageWidth = 200;
 
-    let showProfiling = false;
     let minTableWidth = 0;
     let numRows = 0;
     const headerElements: HTMLElement[] = [];
     let maxProfilingItemCount = 0;
-    let savedColumnWidths = writable(new Map<string, number>());
 
     //#region Startup
     $: if ($table) {
@@ -59,9 +57,12 @@
             }
         });
 
-        if (showProfiling) {
+        if ($showProfiling) {
             setTimeout(() => {
-                fullHeadBackground.style.height = 2 * rowHeight + profilingInfo.clientHeight + 'px'; // To also update when profiling info is initially coming and profiling was already open
+                if ($showProfiling && fullHeadBackground && profilingInfo) {
+                    // To catch where we reninitialize the table and thus this is triggered after old one is gone already
+                    fullHeadBackground.style.height = 2 * rowHeight + profilingInfo.clientHeight + 'px'; // To also update when profiling info is initially coming and profiling was already open
+                }
             }, 700); // 700ms is the transition time of the profiling info opening/incresing in height
         }
     }
@@ -122,7 +123,7 @@
 
         isClick = true; // Assume it's a click initially
 
-        holdTimeout = setTimeout(() => handleReorderDragStart(columnIndex), 300); // milliseconds delay for hold detection
+        holdTimeout = setTimeout(() => handleReorderDragStart(columnIndex, event), 300); // milliseconds delay for hold detection
 
         // Define the handler function
         currentMouseUpHandler = (mouseUpEvent: MouseEvent) => {
@@ -173,6 +174,7 @@
         startX = event.clientX;
         startWidth = columnElement.offsetWidth;
         targetColumn = columnElement;
+        resizeWidthMap.set(targetColumn.innerText.trim(), startWidth);
         document.addEventListener('mousemove', throttledDoResizeDrag);
         document.addEventListener('mouseup', stopResizeDrag);
     };
@@ -181,6 +183,14 @@
         isResizeDragging = false;
         document.removeEventListener('mousemove', throttledDoResizeDrag);
         document.removeEventListener('mouseup', stopResizeDrag);
+
+        addInternalToHistory({
+            action: 'resizeColumn',
+            alias: `Resize column ${targetColumn!.innerText.trim()}`,
+            type: 'internal',
+            columnName: targetColumn!.innerText.trim(),
+            value: resizeWidthMap.get(targetColumn!.innerText.trim())!,
+        });
     };
     //#endregion
 
@@ -192,7 +202,7 @@
     let reorderPrototype: HTMLElement;
     let savedColumnWidthBeforeReorder = 0;
 
-    const handleReorderDragStart = function (columnIndex: number): void {
+    const handleReorderDragStart = function (columnIndex: number, event: MouseEvent): void {
         isClick = false; // If timeout completes, it's a hold
         document.addEventListener('mouseup', handleReorderDragEnd);
         savedColumnWidthBeforeReorder = get(savedColumnWidths).get(headerElements[columnIndex].innerText.trim())!;
@@ -201,6 +211,13 @@
         dragStartIndex = columnIndex;
         dragCurrentIndex = columnIndex;
         selectedColumnIndexes = []; // Clear so reordering doesn't interfere with selection
+
+        // First iteration in case user holds still
+        dragCurrentIndex = columnIndex;
+        requestAnimationFrame(() => {
+            reorderPrototype!.style.left = event.clientX + tableContainer.scrollLeft - sidebarWidth + 'px';
+            reorderPrototype!.style.top = event.clientY + scrollTop + 'px';
+        });
     };
 
     const handleReorderDragOver = function (event: MouseEvent, columnIndex: number): void {
@@ -231,12 +248,22 @@
             if (dragCurrentIndex > dragStartIndex) {
                 dragCurrentIndex -= 1;
             }
+
             table.update(($table) => {
                 const newColumns = [...$table!.columns];
                 const movedItem = newColumns.splice(dragStartIndex!, 1)[0];
                 newColumns.splice(dragCurrentIndex!, 0, movedItem);
+
+                addInternalToHistory({
+                    action: 'reorderColumns',
+                    alias: `Reorder column ${$table!.columns[dragStartIndex!].name}`,
+                    type: 'internal',
+                    columnOrder: newColumns.map((column) => column.name),
+                });
+
                 return { ...$table!, columns: newColumns };
             });
+
             document.removeEventListener('mouseup', handleReorderDragEnd);
             isReorderDragging = false;
             dragStartIndex = null;
@@ -532,7 +559,7 @@
 
         executeExternalHistoryEntry({
             action: type,
-            alias: `View ${type === 'linePlot' ? 'Lineplot' : 'Scatterplot'} of ${xAxisColumnName} x ${yAxisColumnName}`,
+            alias: `${type === 'linePlot' ? 'Lineplot' : 'Scatterplot'} for ${xAxisColumnName} x ${yAxisColumnName}`,
             type: 'external-visualizing',
             columnNumber: 'two',
             xAxisColumnName,
@@ -550,7 +577,7 @@
 
         executeExternalHistoryEntry({
             action: type,
-            alias: `View ${type === 'histogram' ? 'Histogram' : 'Boxplot'} of ${columnName}`,
+            alias: `${type === 'histogram' ? 'Histogram' : 'Boxplot'} for ${columnName}`,
             type: 'external-visualizing',
             columnNumber: 'one',
             columnName,
@@ -594,8 +621,8 @@
 
     const toggleProfiling = function (): void {
         if (!$preventClicks) {
-            showProfiling = !showProfiling;
-            if (showProfiling) {
+            showProfiling.set(!$showProfiling);
+            if ($showProfiling) {
                 setTimeout(() => {
                     fullHeadBackground.style.height = 2 * rowHeight + profilingInfo.clientHeight + 'px';
                 }, 700); // 700ms is the transition time of the profiling info opening/incresing in height
@@ -837,15 +864,15 @@
                         {#if !column.hidden}
                             <td
                                 class="profiling"
-                                class:expanded={showProfiling}
-                                style="height: {showProfiling && column.profiling
+                                class:expanded={$showProfiling}
+                                style="height: {$showProfiling && column.profiling
                                     ? getOptionalProfilingHeight(column.profiling)
                                     : ''}; {isReorderDragging && dragStartIndex === index ? 'display: none;' : ''}"
                                 on:mousedown={(event) =>
                                     event.button === 2 ? handleColumnRightClick(event, index) : null}
                                 on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                             >
-                                <div class="content" class:expanded={showProfiling}>
+                                <div class="content" class:expanded={$showProfiling}>
                                     {#if !column.profiling}
                                         <div>Loading ...</div>
                                     {:else}
@@ -860,8 +887,8 @@
                         {:else}
                             <td
                                 class="profiling"
-                                class:expanded={showProfiling}
-                                style="height: {showProfiling && column.profiling
+                                class:expanded={$showProfiling}
+                                style="height: {$showProfiling && column.profiling
                                     ? getOptionalProfilingHeight(column.profiling)
                                     : ''};"
                                 on:mousedown={(event) =>
@@ -888,13 +915,13 @@
                         on:mouseup={handleReorderDragEnd}
                     >
                         <div>
-                            <span>{showProfiling ? 'Hide Profiling' : 'Show Profiling'}</span>
+                            <span>{$showProfiling ? 'Hide Profiling' : 'Show Profiling'}</span>
                             {#if $hasProfilingErrors}
                                 <div class="errorIconWrapper">
                                     <ErrorIcon />
                                 </div>
                             {/if}
-                            <div class="caretIconWrapper" class:rotate={!showProfiling}>
+                            <div class="caretIconWrapper" class:rotate={!$showProfiling}>
                                 <CaretIcon />
                             </div>
                         </div>
@@ -1315,7 +1342,7 @@
     }
 
     .profiling .content.expanded {
-        overflow-y: scroll;
+        overflow-y: auto;
         max-height: 500px;
         opacity: 1;
         transition:

@@ -133,6 +133,91 @@ export class EDAPanel {
                     });
                     break;
                 }
+                case 'executeRunnerAll': {
+                    if (!data.value) {
+                        return;
+                    }
+
+                    let alreadyComplete = false;
+
+                    // Execute the runner
+                    const jumpedToHistoryId = data.value.jumpedToHistoryId;
+                    const resultPromise = this.runnerApi.executeMultipleHistoryAndReturnNewResults(data.value.entries);
+
+                    // Check if execution takes longer than 1s to show progress indicator
+                    setTimeout(() => {
+                        if (!alreadyComplete) {
+                            vscode.window.withProgress(
+                                {
+                                    location: vscode.ProgressLocation.Notification,
+                                    title: 'Executing action(s) ...',
+                                },
+                                async () => {
+                                    // Wait for the result to finish in case it's still running
+                                    await resultPromise;
+                                    alreadyComplete = true; // Mark completion to prevent multiple indicators
+                                },
+                            );
+                        }
+                    }, 1000);
+
+                    const results = await resultPromise;
+                    alreadyComplete = true;
+
+                    webviewApi.postMessage(this.panel.webview, {
+                        command: 'multipleRunnerExecutionResult',
+                        value: {
+                            type: 'past',
+                            results,
+                            jumpedToHistoryId,
+                        },
+                    });
+                    break;
+                }
+                case 'executeRunnerAllFuture': {
+                    if (!data.value) {
+                        return;
+                    }
+
+                    let alreadyComplete = false;
+
+                    // Execute the runner
+                    const jumpedToHistoryId = data.value.jumpedToHistoryId;
+                    const resultPromise = this.runnerApi.executeFutureHistoryAndReturnNewResults(
+                        data.value.pastEntries,
+                        data.value.futureEntries,
+                    );
+
+                    // Check if execution takes longer than 1s to show progress indicator
+                    setTimeout(() => {
+                        if (!alreadyComplete) {
+                            vscode.window.withProgress(
+                                {
+                                    location: vscode.ProgressLocation.Notification,
+                                    title: 'Executing action(s) ...',
+                                },
+                                async () => {
+                                    // Wait for the result to finish in case it's still running
+                                    await resultPromise;
+                                    alreadyComplete = true; // Mark completion to prevent multiple indicators
+                                },
+                            );
+                        }
+                    }, 1000);
+
+                    const results = await resultPromise;
+                    alreadyComplete = true;
+
+                    webviewApi.postMessage(this.panel.webview, {
+                        command: 'multipleRunnerExecutionResult',
+                        value: {
+                            type: 'future',
+                            results,
+                            jumpedToHistoryId,
+                        },
+                    });
+                    break;
+                }
             }
         });
         this.disposables.push(this.webviewListener);

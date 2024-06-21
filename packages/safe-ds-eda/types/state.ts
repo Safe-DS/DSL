@@ -7,6 +7,7 @@ interface HistoryEntryBase {
     type: 'internal' | 'external-manipulating' | 'external-visualizing';
     alias: string;
     action: Action;
+    loading?: boolean;
 }
 
 export interface InternalHistoryEntryBase extends HistoryEntryBase {
@@ -40,9 +41,14 @@ type ExternalVisualizingHistoryEntryBase =
     | ExternalVisualizingHistoryEntryBaseNew;
 
 export interface InternalColumnWithValueHistoryEntry extends InternalHistoryEntryBase {
-    action: 'reorderColumns' | 'resizeColumn';
+    action: 'resizeColumn';
     columnName: string;
     value: number;
+}
+
+export interface InternalColumnReoderHistoryEntry extends InternalHistoryEntryBase {
+    action: 'reorderColumns';
+    columnOrder: string[];
 }
 
 export interface InternalColumnHistoryEntry extends InternalHistoryEntryBase {
@@ -101,7 +107,8 @@ export type TabHistoryEntry =
 export type InternalHistoryEntry =
     | InternalColumnWithValueHistoryEntry
     | InternalColumnHistoryEntry
-    | InteralEmptyTabHistoryEntry;
+    | InteralEmptyTabHistoryEntry
+    | InternalColumnReoderHistoryEntry;
 export type ExternalManipulatingHistoryEntry =
     | ExternalManipulatingColumnFilterHistoryEntry
     | ExternalManipulatingTableFilterHistoryEntry
@@ -114,10 +121,16 @@ export type ExternalVisualizingHistoryEntry =
 
 export type ExternalHistoryEntry = ExternalManipulatingHistoryEntry | ExternalVisualizingHistoryEntry;
 
-export type HistoryEntry = (InternalHistoryEntry | ExternalHistoryEntry) & {
+interface ExtendedInfo {
     id: number;
     overrideId: string;
-};
+    tabOrder: string[];
+}
+
+export type FullExternalVisualizingHistoryEntry = ExternalVisualizingHistoryEntry & ExtendedInfo;
+export type FullExternalManipulatingHistoryEntry = ExternalManipulatingHistoryEntry & ExtendedInfo;
+export type FullInternalHistoryEntry = InternalHistoryEntry & ExtendedInfo;
+export type HistoryEntry = (InternalHistoryEntry | ExternalHistoryEntry) & ExtendedInfo;
 
 // ------------------ Types for the Tabs ------------------
 export type TwoColumnTabTypes = 'linePlot' | 'scatterPlot';
