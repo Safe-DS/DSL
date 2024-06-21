@@ -1088,14 +1088,16 @@
                                         type="button"
                                         on:click={() => generateOneColumnTab('histogram')}>Plot Histogram</button
                                     >
-                                    <button
-                                        class="contextItem"
-                                        type="button"
-                                        on:click={() => generateOneColumnTab('boxPlot')}
-                                    >
-                                        Plot Boxplot</button
-                                    >
-                                {:else if selectedColumnIndexes.length === 2}
+                                    {#if $table?.columns[selectedColumnIndexes[0]].type === 'numerical'}
+                                        <button
+                                            class="contextItem"
+                                            type="button"
+                                            on:click={() => generateOneColumnTab('boxPlot')}
+                                        >
+                                            Plot Boxplot</button
+                                        >
+                                    {/if}
+                                {:else if selectedColumnIndexes.length === 2 && $table?.columns[selectedColumnIndexes[0]].type === 'numerical' && $table?.columns[selectedColumnIndexes[1]].type === 'numerical'}
                                     <button
                                         class="contextItem"
                                         type="button"
@@ -1137,13 +1139,15 @@
                                     on:click={() => generateOneColumnTab('histogram', rightClickedColumnIndex)}
                                     >Plot Histogram</button
                                 >
-                                <button
-                                    class="contextItem"
-                                    type="button"
-                                    on:click={() => generateOneColumnTab('boxPlot', rightClickedColumnIndex)}
-                                >
-                                    Plot Boxplot</button
-                                >
+                                {#if $table?.columns[rightClickedColumnIndex].type === 'numerical'}
+                                    <button
+                                        class="contextItem"
+                                        type="button"
+                                        on:click={() => generateOneColumnTab('boxPlot', rightClickedColumnIndex)}
+                                    >
+                                        Plot Boxplot</button
+                                    >
+                                {/if}
                             </div>
                         </div>
                     </button>
@@ -1159,13 +1163,15 @@
                         on:click={() => generateOneColumnTab('histogram', rightClickedColumnIndex)}
                         >Plot Histogram</button
                     >
-                    <button
-                        class="contextItem"
-                        type="button"
-                        on:click={() => generateOneColumnTab('boxPlot', rightClickedColumnIndex)}
-                    >
-                        Plot Boxplot</button
-                    >
+                    {#if $table?.columns[rightClickedColumnIndex].type === 'numerical'}
+                        <button
+                            class="contextItem"
+                            type="button"
+                            on:click={() => generateOneColumnTab('boxPlot', rightClickedColumnIndex)}
+                        >
+                            Plot Boxplot</button
+                        >
+                    {/if}
                 {/if}
             {/if}
         </div>
