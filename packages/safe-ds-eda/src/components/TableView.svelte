@@ -1622,7 +1622,7 @@
     }
 
     .contextMenu button {
-        padding: 5px 30px;
+        padding: 5px 30px 5px 15px;
         cursor: pointer;
         background-color: var(--lightest-color);
         color: var(--darkest-color);
@@ -1664,6 +1664,7 @@
 
     .subMenuCaret {
         transform: rotate(90deg);
+        margin-left: 10px;
     }
 
     .inactiveItem {
