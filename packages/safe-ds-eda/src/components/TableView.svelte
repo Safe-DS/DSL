@@ -422,6 +422,8 @@
     //#region Right clicks
     let currentContextMenu: HTMLElement | null = null;
 
+    let subMenuHovered = -1;
+
     // Column header right click
     let showingColumnHeaderRightClickMenu = false;
     let rightClickedColumnIndex = -1;
@@ -517,16 +519,35 @@
             generalCleanup();
         }
     };
+
+    const subMenuHoverToggle = function (index: number): void {
+        if (subMenuHovered === index) {
+            subMenuHovered = -1;
+        } else {
+            subMenuHovered = index;
+        }
+    };
     //#endregion // Right clicks
 
     //#region Column hiding
-    const toggleHideColumn = function (columnIndex: number): void {
+    const toggleHideColumn = function (columnIndices?: number[]): void {
+        if (!columnIndices) {
+            columnIndices = selectedColumnIndexes;
+        }
+
+        // Find all columns and check that they have the same hidden state
+        $table!.columns.forEach((column, index) => {
+            if (columnIndices!.includes(index) && column.hidden !== $table!.columns[columnIndices![0]].hidden) {
+                throw new Error('Columns must have the same hidden state to be toggled together');
+            }
+        });
+
         let visible = true;
         table.update(($table) => {
             return {
                 ...$table!,
                 columns: $table!.columns.map((column, index) => {
-                    if (index === columnIndex) {
+                    if (columnIndices!.includes(index)) {
                         visible = column.hidden;
                         return {
                             ...column,
@@ -538,14 +559,15 @@
             };
         });
 
-        addInternalToHistory({
-            action: visible ? 'showColumn' : 'hideColumn',
-            alias: `${visible ? 'Show' : 'Hide'} column ${$table!.columns[columnIndex].name}`,
-            type: 'internal',
-            columnName: $table!.columns[columnIndex].name,
-        });
-
-        selectedColumnIndexes = selectedColumnIndexes.filter((selectedIndex) => selectedIndex !== columnIndex);
+        for (const columnIndex of columnIndices) {
+            addInternalToHistory({
+                action: visible ? 'showColumn' : 'hideColumn',
+                alias: `${visible ? 'Show' : 'Hide'} column ${$table!.columns[columnIndex].name}`,
+                type: 'internal',
+                columnName: $table!.columns[columnIndex].name,
+            });
+            selectedColumnIndexes = selectedColumnIndexes.filter((selectedIndex) => selectedIndex !== columnIndex);
+        }
     };
     //#endregion
 
@@ -569,9 +591,15 @@
         return;
     };
 
-    const generateOneColumnTab = function (type: OneColumnTabTypes, columnIndex: number) {
+    const generateOneColumnTab = function (type: OneColumnTabTypes, columnIndex?: number) {
         if (type === 'infoPanel') {
             throw new Error('Not implemented yet.');
+        }
+        if (!columnIndex) {
+            if (selectedColumnIndexes.length !== 1) {
+                throw new Error('One column must be selected to generate a one column plot');
+            }
+            columnIndex = selectedColumnIndexes[0];
         }
         const columnName = $table!.columns[columnIndex].name;
 
@@ -1005,13 +1033,10 @@
     {#if showingColumnHeaderRightClickMenu}
         <div class="contextMenu" bind:this={rightClickColumnMenuElement}>
             {#if $table?.columns[rightClickedColumnIndex].hidden ?? false}
-                <button class="contextItem" type="button" on:click={() => toggleHideColumn(rightClickedColumnIndex)}
+                <button class="contextItem" type="button" on:click={() => toggleHideColumn([rightClickedColumnIndex])}
                     >Show Column '{$table?.columns[rightClickedColumnIndex].name}'</button
                 >
             {:else}
-                <button class="contextItem" type="button" on:click={() => toggleHideColumn(rightClickedColumnIndex)}
-                    >Hide Column</button
-                >
                 <button class="contextItem" type="button" on:click={() => setSelectionToColumn(rightClickedColumnIndex)}
                     >Select Column</button
                 >
@@ -1021,33 +1046,127 @@
                         type="button"
                         on:click={() => removeColumnFromSelection(rightClickedColumnIndex)}>Deselect Column</button
                     >
-                {:else if selectedColumnIndexes.length >= 1}
+                {/if}
+                {#if selectedColumnIndexes.length >= 1}
                     <button
                         class="contextItem"
                         type="button"
                         on:click={() => addColumnToSelection(rightClickedColumnIndex)}>Add To Selection</button
                     >
                 {/if}
-                {#if selectedColumnIndexes.length === 2}
-                    <button class="contextItem" type="button" on:click={() => generateTwoColumnTab('scatterPlot')}
-                        >Plot Scatterplot</button
+                {#if selectedColumnIndexes.length >= 1}
+                    <button
+                        class="contextItem subMenuTrigger"
+                        type="button"
+                        on:mouseenter={() => subMenuHoverToggle(1)}
+                        on:mouseleave={() => subMenuHoverToggle(1)}
                     >
-                    <button class="contextItem" type="button" on:click={() => generateTwoColumnTab('linePlot')}
-                        >Plot Lineplot</button
+                        From Selection
+                        <span class="subMenuCaret"
+                            ><CaretIcon
+                                color={subMenuHovered === 1 ? 'var(--lightest-color)' : 'var(--dark-color)'}
+                            /></span
+                        >
+                        <div class="subMenu contextMenu" style:display={subMenuHovered === 1 ? 'block' : 'none'}>
+                            <div class="subMenuContainer">
+                                {#if selectedColumnIndexes.length > 1 && selectedColumnIndexes.every((index) => $table?.columns[index].hidden === $table?.columns[selectedColumnIndexes[0]].hidden)}
+                                    <button
+                                        class="contextItem newCategoryItem"
+                                        type="button"
+                                        on:click={() => toggleHideColumn()}>Hide Columns</button
+                                    >
+                                {:else if selectedColumnIndexes.length === 1}
+                                    <button
+                                        class="contextItem newCategoryItem"
+                                        type="button"
+                                        on:click={() => toggleHideColumn()}>Hide Column</button
+                                    >
+                                {/if}
+                                {#if selectedColumnIndexes.length === 1}
+                                    <button
+                                        class="contextItem"
+                                        type="button"
+                                        on:click={() => generateOneColumnTab('histogram')}>Plot Histogram</button
+                                    >
+                                    <button
+                                        class="contextItem"
+                                        type="button"
+                                        on:click={() => generateOneColumnTab('boxPlot')}
+                                    >
+                                        Plot Boxplot</button
+                                    >
+                                {:else if selectedColumnIndexes.length === 2}
+                                    <button
+                                        class="contextItem"
+                                        type="button"
+                                        on:click={() => generateTwoColumnTab('scatterPlot')}>Plot Scatterplot</button
+                                    >
+                                    <button
+                                        class="contextItem"
+                                        type="button"
+                                        on:click={() => generateTwoColumnTab('linePlot')}>Plot Lineplot</button
+                                    >
+                                {/if}
+                            </div>
+                        </div>
+                    </button>
+                {/if}
+                {#if selectedColumnIndexes.length > 0}
+                    <button
+                        class="contextItem subMenuTrigger"
+                        type="button"
+                        on:mouseenter={() => subMenuHoverToggle(2)}
+                        on:mouseleave={() => subMenuHoverToggle(2)}
+                    >
+                        From Click
+                        <span class="subMenuCaret"
+                            ><CaretIcon
+                                color={subMenuHovered === 2 ? 'var(--lightest-color)' : 'var(--dark-color)'}
+                            /></span
+                        >
+                        <div class="subMenu contextMenu" style:display={subMenuHovered === 2 ? 'block' : 'none'}>
+                            <div class="subMenuContainer">
+                                <button
+                                    class="contextItem newCategoryItem"
+                                    type="button"
+                                    on:click={() => toggleHideColumn([rightClickedColumnIndex])}>Hide Column</button
+                                >
+                                <button
+                                    class="contextItem"
+                                    type="button"
+                                    on:click={() => generateOneColumnTab('histogram', rightClickedColumnIndex)}
+                                    >Plot Histogram</button
+                                >
+                                <button
+                                    class="contextItem"
+                                    type="button"
+                                    on:click={() => generateOneColumnTab('boxPlot', rightClickedColumnIndex)}
+                                >
+                                    Plot Boxplot</button
+                                >
+                            </div>
+                        </div>
+                    </button>
+                {:else}
+                    <button
+                        class="contextItem newCategoryItem"
+                        type="button"
+                        on:click={() => toggleHideColumn([rightClickedColumnIndex])}>Hide Column</button
+                    >
+                    <button
+                        class="contextItem"
+                        type="button"
+                        on:click={() => generateOneColumnTab('histogram', rightClickedColumnIndex)}
+                        >Plot Histogram</button
+                    >
+                    <button
+                        class="contextItem"
+                        type="button"
+                        on:click={() => generateOneColumnTab('boxPlot', rightClickedColumnIndex)}
+                    >
+                        Plot Boxplot</button
                     >
                 {/if}
-                <button
-                    class="contextItem"
-                    type="button"
-                    on:click={() => generateOneColumnTab('histogram', rightClickedColumnIndex)}>Plot Histogram</button
-                >
-                <button
-                    class="contextItem"
-                    type="button"
-                    on:click={() => generateOneColumnTab('boxPlot', rightClickedColumnIndex)}
-                >
-                    Plot Boxplot</button
-                >
             {/if}
         </div>
     {/if}
@@ -1284,32 +1403,6 @@
         text-overflow: ellipsis;
     }
 
-    .contextMenu {
-        position: absolute;
-        border: 2px solid var(--medium-light-color);
-        background-color: var(--lightest-color);
-        z-index: 1000;
-        padding: 0;
-        color: var(--darkest-color);
-        display: flex;
-        flex-direction: column;
-        width: max-content;
-    }
-
-    .contextMenu button {
-        padding: 5px 15px;
-        cursor: pointer;
-        background-color: var(--lightest-color);
-        color: var(--darkest-color);
-        text-align: left;
-        width: 100%;
-    }
-
-    .contextMenu button:hover {
-        background-color: var(--primary-color);
-        color: var(--light-color);
-    }
-
     .profilingBannerRow {
         position: relative;
         z-index: 10;
@@ -1372,5 +1465,73 @@
         width: 15px;
         padding: 0px;
         cursor: default;
+    }
+
+    .contextMenu {
+        position: absolute;
+        border: 2px solid var(--medium-light-color);
+        background-color: var(--lightest-color);
+        z-index: 1000;
+        padding: 0;
+        color: var(--darkest-color);
+        display: flex;
+        flex-direction: column;
+        width: max-content;
+    }
+
+    .contextMenu button {
+        padding: 5px 30px;
+        cursor: pointer;
+        background-color: var(--lightest-color);
+        color: var(--darkest-color);
+        text-align: left;
+        width: 100%;
+    }
+
+    .contextMenu button:hover {
+        background-color: var(--primary-color);
+        color: var(--light-color);
+    }
+
+    .contextItem {
+        position: relative;
+    }
+
+    .subMenu {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 98%;
+        width: 100%;
+        white-space: nowrap;
+    }
+
+    .subMenuContainer {
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+    }
+
+    .subMenuTrigger {
+        padding-right: 9px !important;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        position: relative;
+    }
+
+    .subMenuCaret {
+        transform: rotate(90deg);
+    }
+
+    .inactiveItem {
+        background-color: var(--medium-light-color) !important;
+        color: var(--dark-color) !important;
+        cursor: default;
+    }
+
+    .newCategoryItem {
+        border-top: 1px solid var(--medium-color);
+        padding-top: 2px;
     }
 </style>
