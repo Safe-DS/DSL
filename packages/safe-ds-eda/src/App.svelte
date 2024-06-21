@@ -2,7 +2,7 @@
     import TableView from './components/TableView.svelte';
     import Sidebar from './components/Sidebar.svelte';
     import { throttle } from 'lodash';
-    import { currentTabIndex, tabs } from './webviewState';
+    import { currentTabIndex, tableKey, tabs } from './webviewState';
     import TabContent from './components/tabs/TabContent.svelte';
 
     let sidebarWidth = 307; // Initial width of the sidebar in pixels
@@ -45,15 +45,19 @@
     </div>
     <div class="contentWrapper">
         <div class:hide={$currentTabIndex !== undefined}>
-            <TableView {sidebarWidth} />
+            {#key $tableKey}
+                <TableView {sidebarWidth} />
+            {/key}
         </div>
-        {#if $tabs.length > 0}
-            {#each $tabs as tab, index}
-                <div class:hide={index !== $currentTabIndex}>
-                    <TabContent {tab} {sidebarWidth} />
-                </div>
-            {/each}
-        {/if}
+        {#key $tableKey}
+            {#if $tabs.length > 0}
+                {#each $tabs as tab, index}
+                    <div class:hide={index !== $currentTabIndex}>
+                        <TabContent {tab} {sidebarWidth} />
+                    </div>
+                {/each}
+            {/if}
+        {/key}
     </div>
 </main>
 

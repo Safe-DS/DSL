@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { EmptyTab, ExternalVisualizingHistoryEntry, Tab } from '../../../types/state';
+    import type { EmptyTab, ExternalVisualizingHistoryEntry, HistoryEntry, Tab } from '../../../types/state';
     import ImageContent from './content/ImageContent.svelte';
     import DropDownButton from '../utilities/DropDownButton.svelte';
     import { cancelTabIdsWaiting, table } from '../../webviewState';
@@ -7,6 +7,7 @@
     import { executeExternalHistoryEntry, setTabAsGenerating } from '../../apis/historyApi';
     import SwapIcon from '../../icons/Swap.svelte';
     import { derived, writable } from 'svelte/store';
+    import Undo from '../../icons/Undo.svelte';
 
     export let tab: Tab | EmptyTab;
     export let sidebarWidth: number;
@@ -248,7 +249,7 @@
             return {
                 existingTabId: tab.id,
                 action: $buildATab.type,
-                alias: 'Generate ' + getTabName($buildATab) + ' in existing Tab',
+                alias: getTabName($buildATab) + ' for ' + $buildATab.xAxisColumnName + ' in existing Tab',
                 type: 'external-visualizing',
                 columnName: $buildATab.xAxisColumnName,
                 columnNumber: 'one',
@@ -258,7 +259,13 @@
             return {
                 existingTabId: tab.id,
                 action: $buildATab.type,
-                alias: 'Generate ' + getTabName($buildATab) + ' in existing Tab',
+                alias:
+                    getTabName($buildATab) +
+                    ' for ' +
+                    $buildATab.xAxisColumnName +
+                    ' x ' +
+                    $buildATab.yAxisColumnName +
+                    ' in existing Tab',
                 type: 'external-visualizing',
                 xAxisColumnName: $buildATab.xAxisColumnName,
                 yAxisColumnName: $buildATab.yAxisColumnName,
@@ -268,9 +275,82 @@
             return {
                 existingTabId: tab.id,
                 action: $buildATab.type,
-                alias: 'Generate ' + getTabName($buildATab) + ' in existing Tab',
+                alias: getTabName($buildATab) + ' in existing Tab',
                 type: 'external-visualizing',
                 columnNumber: 'none',
+            };
+        }
+    };
+
+    const getNewTabEntry = function (): ExternalVisualizingHistoryEntry | undefined {
+        if (tab.type === 'empty') return undefined;
+
+        const newTabId = crypto.randomUUID();
+        if (tab.columnNumber === 'none') {
+            return {
+                newTabId,
+                action: tab.type,
+                alias: getTabName(tab),
+                type: 'external-visualizing',
+                columnNumber: 'none',
+            };
+        } else if (tab.columnNumber === 'one') {
+            return {
+                newTabId,
+                action: tab.type,
+                alias: getTabName(tab) + ' for ' + tab.content.columnName,
+                type: 'external-visualizing',
+                columnName: tab.content.columnName,
+                columnNumber: 'one',
+            };
+        } else {
+            return {
+                newTabId,
+                action: tab.type,
+                alias: getTabName(tab) + ' for ' + tab.content.xAxisColumnName + ' x ' + tab.content.yAxisColumnName,
+                type: 'external-visualizing',
+                xAxisColumnName: tab.content.xAxisColumnName,
+                yAxisColumnName: tab.content.yAxisColumnName,
+                columnNumber: 'two',
+            };
+        }
+    };
+
+    const getRefreshTabEntry = function (): ExternalVisualizingHistoryEntry | undefined {
+        if (tab.type === 'empty') return undefined;
+
+        if (tab.columnNumber === 'none') {
+            return {
+                action: tab.type,
+                alias: getTabName(tab) + ' in existing Tab',
+                type: 'external-visualizing',
+                columnNumber: 'none',
+                existingTabId: tab.id,
+            };
+        } else if (tab.columnNumber === 'one') {
+            return {
+                action: tab.type,
+                alias: getTabName(tab) + ' for ' + tab.content.columnName + ' in existing Tab',
+                type: 'external-visualizing',
+                columnName: tab.content.columnName,
+                columnNumber: 'one',
+                existingTabId: tab.id,
+            };
+        } else {
+            return {
+                action: tab.type,
+                alias:
+                    getTabName(tab) +
+                    ' for ' +
+                    tab.content.xAxisColumnName +
+                    ' x ' +
+                    tab.content.yAxisColumnName +
+                    ' in existing Tab',
+                type: 'external-visualizing',
+                xAxisColumnName: tab.content.xAxisColumnName,
+                yAxisColumnName: tab.content.yAxisColumnName,
+                columnNumber: 'two',
+                existingTabId: tab.id,
             };
         }
     };
@@ -310,6 +390,31 @@
                             Outdated!
                         {/if}</span
                     >
+                </div>
+                <div class="leftInfoRow">
+                    {#if tab.type !== 'empty' && tab.outdated && !$isInBuildingState}
+                        <button
+                            class="refreshButton"
+                            on:click={() => {
+                                const newTab = getRefreshTabEntry();
+                                if (!newTab) return;
+                                setTabAsGenerating(tab);
+                                executeExternalHistoryEntry(newTab);
+                            }}
+                        >
+                            Refresh <Undo color="var(--dark-color)" />
+                        </button>
+                        <button
+                            class="refreshButton"
+                            on:click={() => {
+                                const newTab = getNewTabEntry();
+                                if (!newTab) return;
+                                executeExternalHistoryEntry(newTab);
+                            }}
+                        >
+                            Refresh In new Tab <Undo color="var(--dark-color)" />
+                        </button>
+                    {/if}
                 </div>
             </div>
             <div class="rightInfo">
@@ -429,12 +534,32 @@
         justify-content: space-between;
         max-width: 750px;
         margin-bottom: 4vw;
-        height: 65px;
+        height: 85px;
     }
 
     .leftInfoRow {
         display: flex;
         flex-direction: row;
+        gap: 10px;
+    }
+
+    .refreshButton {
+        margin: 5px 0px;
+        background-color: var(--medium-light-color);
+        padding: 5px 10px;
+        height: 30px;
+        display: flex;
+        flex-direction: row;
+        gap: 5px;
+        justify-content: space-between;
+        align-items: center;
+        flex-grow: 1;
+        flex-shrink: 1;
+        width: auto; /* Ensure the buttons fit their content */
+    }
+
+    .refreshButton:hover {
+        background-color: var(--medium-color);
     }
 
     .rightInfo {
