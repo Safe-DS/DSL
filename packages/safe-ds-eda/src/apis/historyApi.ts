@@ -356,6 +356,8 @@ export const setTabAsGenerating = function (tab: RealTab): void {
     });
 };
 
+//#region History navigation
+//#region Redo
 export const redoHistoryEntries = function (upToHistoryId: number): void {
     lastFocusedTab = null; // In redo we always want to jump to the tab of the last relevant entry
 
@@ -439,7 +441,8 @@ export const getRedoEntry = function (): HistoryEntry | undefined {
 
     return currentHistory[currentHistoryIndexValue + 1];
 };
-
+//#endregion
+//#region Undo
 export const undoHistoryEntries = function (upToHistoryId: number, changeFocus = true): void {
     const currentHistory = get(history);
     const lastRelevantEntry = currentHistory.find((entry) => entry.id === upToHistoryId);
@@ -534,6 +537,7 @@ export const undoLastHistoryEntry = function (): void {
         return;
     }
     if (currentHistoryIndexValue + 1 === 1) {
+        relevantJumpedToHistoryId = undefined;
         restoreTableInitialState();
         currentHistoryIndex.set(-1);
         currentTabIndex.set(undefined);
@@ -571,6 +575,8 @@ export const getUndoEntry = function (): HistoryEntry | undefined {
 
     return currentHistory[currentHistoryIndexValue];
 };
+//#endregion
+//#endregion
 
 export const unsetTabAsGenerating = function (tab: RealTab): void {
     tabs.update((state) => {
