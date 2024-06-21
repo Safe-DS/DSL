@@ -747,32 +747,88 @@ const updateTabOutdated = function (): void {
             return { entry: e, index: currentHistory.indexOf(e) };
         });
 
+    const relevantFilterColumnEntries = currentHistory
+        .filter((e) => e.action === 'filterColumn' || e.action === 'voidFilterColumn')
+        .map((e) => {
+            return { entry: e, index: currentHistory.indexOf(e) };
+        });
+
+    const findLastTabUpdateIndex = function (tabId: string): number {
+        let lastTabUpdateIndex = -1;
+        for (let i = currentHistory.length - 1; i >= 0; i--) {
+            const currentEntry = currentHistory[i];
+            if (
+                currentEntry.type === 'external-visualizing' &&
+                (currentEntry.existingTabId ?? currentEntry.newTabId) === tabId
+            ) {
+                lastTabUpdateIndex = i;
+                break;
+            }
+        }
+        if (lastTabUpdateIndex === -1) {
+            throw new Error('Tab not found in history');
+        }
+        return lastTabUpdateIndex;
+    };
+
     tabs.update((state) => {
         const newTabs = state.map((t) => {
             let outdated = false;
 
             if (t.type !== 'empty' && t.columnNumber === 'none') {
+                // Find out if one of the outdating entries was after the last time the tab was updated
+                const lastTabUpdateIndex = findLastTabUpdateIndex(t.id);
+
                 for (const entry of relevantToggleColumnEntries) {
-                    // Find out if one of the outdating entries was after the last time the tab was updated
-                    let lastTabUpdateIndex = -1;
-                    for (let i = currentHistory.length - 1; i >= 0; i--) {
-                        const currentEntry = currentHistory[i];
-                        if (
-                            currentEntry.type === 'external-visualizing' &&
-                            (currentEntry.existingTabId ?? currentEntry.newTabId) === t.id
-                        ) {
-                            lastTabUpdateIndex = i;
-                            break;
-                        }
-                    }
-                    if (lastTabUpdateIndex === -1) {
-                        throw new Error('Tab not found in history');
-                    }
                     if (entry.index > lastTabUpdateIndex) {
                         // UPDATE the if in case there are none column tabs that do not depend on numerical columns
                         outdated = true;
                     }
                 }
+
+                if (!outdated) {
+                    for (const entryObj of relevantFilterColumnEntries) {
+                        const entry = entryObj.entry;
+                        if (entry.action === 'filterColumn' || entry.action === 'voidFilterColumn') {
+                            if (currentTable.columns.find((c) => c.name === entry.columnName)?.type === 'numerical') {
+                                if (entryObj.index > lastTabUpdateIndex) {
+                                    outdated = true;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return {
+                    ...t,
+                    outdated,
+                };
+            } else if (t.type !== 'empty') {
+                // Find out if one of the outdating entries was after the last time the tab was updated
+                const lastTabUpdateIndex = findLastTabUpdateIndex(t.id);
+
+                for (const entryObj of relevantFilterColumnEntries) {
+                    const entry = entryObj.entry;
+                    if (entry.action === 'filterColumn' || entry.action === 'voidFilterColumn') {
+                        if (t.columnNumber === 'one') {
+                            if (entry.columnName === t.content.columnName) {
+                                if (entryObj.index > lastTabUpdateIndex) {
+                                    outdated = true;
+                                }
+                            }
+                        } else if (t.columnNumber === 'two') {
+                            if (
+                                entry.columnName === t.content.xAxisColumnName ||
+                                entry.columnName === t.content.yAxisColumnName
+                            ) {
+                                if (entryObj.index > lastTabUpdateIndex) {
+                                    outdated = true;
+                                }
+                            }
+                        }
+                    }
+                }
+
                 return {
                     ...t,
                     outdated,
