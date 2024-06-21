@@ -1,8 +1,10 @@
 import {
     Base64Image,
+    CategoricalFilter,
     Column,
     ExternalHistoryEntry,
     HistoryEntry,
+    NumericalFilter,
     PossibleSorts,
     Profiling,
     ProfilingDetailStatistical,
@@ -235,8 +237,69 @@ export class RunnerApi {
                     sdsString: '',
                     placeholderName: overrideTablePlaceholder ?? this.tablePlaceholder,
                 };
+            case 'filterColumn':
+                return {
+                    sdsString: this.sdsStringForFilterColumn(
+                        historyEntry.columnName,
+                        historyEntry.filter,
+                        overrideTablePlaceholder ?? this.tablePlaceholder,
+                        newPlaceholderName,
+                    ),
+                    placeholderName: newPlaceholderName,
+                };
             default:
                 throw new Error('Unknown history entry action: ' + historyEntry.action);
+        }
+    }
+
+    private sdsStringForFilterColumn(
+        columnName: string,
+        filter: NumericalFilter | CategoricalFilter,
+        tablePlaceholder: string,
+        newPlaceholderName: string,
+    ) {
+        if (filter.type === 'specificValue') {
+            return (
+                'val ' +
+                newPlaceholderName +
+                ' = ' +
+                tablePlaceholder +
+                '.removeRowsByColumn("' +
+                columnName +
+                '", (cell) -> cell.eq(' +
+                (typeof filter.value === 'string' ? `"${filter.value}"` : filter.value) +
+                ').^not()); \n'
+            );
+        } else if (filter.type === 'searchString') {
+            return (
+                'val ' +
+                newPlaceholderName +
+                ' = ' +
+                tablePlaceholder +
+                '.removeRowsByColumn("' +
+                columnName +
+                '", (cell) -> cell.str.contains("' +
+                filter.searchString +
+                '").^not()); \n'
+            );
+        } else if (filter.type === 'valueRange') {
+            return (
+                'val ' +
+                newPlaceholderName +
+                ' = ' +
+                tablePlaceholder +
+                '.removeRowsByColumn("' +
+                columnName +
+                '", (cell) -> cell.ge(' +
+                filter.currentMin +
+                ').^not()).removeRowsByColumn("' +
+                columnName +
+                '", (cell) -> cell.le(' +
+                filter.currentMax +
+                ').^not()); \n'
+            );
+        } else {
+            throw new Error('Unknown filter type: ' + filter);
         }
     }
 

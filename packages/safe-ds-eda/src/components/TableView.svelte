@@ -1,7 +1,14 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { throttle } from 'lodash';
-    import { table, preventClicks, tableLoading, savedColumnWidths, showProfiling } from '../webviewState';
+    import {
+        table,
+        preventClicks,
+        tableLoading,
+        savedColumnWidths,
+        showProfiling,
+        possibleColumnFilters,
+    } from '../webviewState';
     import CaretIcon from '../icons/Caret.svelte';
     import ErrorIcon from '../icons/Error.svelte';
     import FilterIcon from '../icons/Filter.svelte';
@@ -506,7 +513,7 @@
         disableNonContextMenuEffects();
     };
 
-    const handleRightClickEnd = function (event: MouseEvent): void {
+    const handleRightClickEnd = function (event?: MouseEvent): void {
         const generalCleanup = function (): void {
             restoreNonContextMenuEffects();
             setTimeout(() => preventClicks.set(false), 100); // To give time for relevant click events to be prevented
@@ -522,7 +529,7 @@
             generalCleanup();
         }
         if (showingFilterContextMenu) {
-            if (event.target instanceof HTMLElement) {
+            if (event && event.target instanceof HTMLElement) {
                 let element = event.target;
 
                 const hasParentWithClass = (elementToScan: HTMLElement, className: string) => {
@@ -739,54 +746,6 @@
         }
         return false;
     });
-
-    const getPosiibleColumnFilters = function (columnIndex: number): PossibleColumnFilter[] {
-        if (!$table) return [];
-
-        const column = $table.columns[columnIndex];
-
-        const possibleColumnFilters: PossibleColumnFilter[] = [];
-
-        if (column.type === 'categorical') {
-            const distinctValues: string[] = [];
-            for (const value of column.values) {
-                if (!distinctValues.includes(value)) {
-                    distinctValues.push(value);
-                }
-                if (distinctValues.length > 5) {
-                    break;
-                }
-            }
-
-            if (distinctValues.length <= 5) {
-                possibleColumnFilters.push({
-                    type: 'specificValue',
-                    values: ['-'].concat(distinctValues),
-                });
-            } else {
-                possibleColumnFilters.push({
-                    type: 'searchString',
-                });
-            }
-        } else {
-            const colMax = column.values.reduce(
-                (acc: number, val: number) => Math.max(acc, val),
-                Number.NEGATIVE_INFINITY,
-            );
-            const colMin = column.values.reduce(
-                (acc: number, val: number) => Math.min(acc, val),
-                Number.NEGATIVE_INFINITY,
-            );
-
-            possibleColumnFilters.push({
-                type: 'valueRange',
-                min: colMin,
-                max: colMax,
-            });
-        }
-
-        return possibleColumnFilters;
-    };
     //#endregion
 
     //#region Lifecycle
@@ -854,7 +813,11 @@
                                         class="filterIconWrapper"
                                         on:mousedown={(event) => handleFilterContextMenu(event, index)}
                                     >
-                                        <FilterIcon />
+                                        <FilterIcon
+                                            color={column.appliedFilters.length > 0
+                                                ? 'var(--lightest-color)'
+                                                : 'var(--transparent-medium)'}
+                                        />
                                     </div>
                                     <div
                                         class="sortIconsWrapper"
@@ -1346,7 +1309,13 @@
     {/if}
     {#if showingFilterContextMenu}
         <div class="contextMenu" bind:this={filterContextMenuElement}>
-            <ColumnFilters possibleFilters={getPosiibleColumnFilters(filterColumnIndex)} />
+            <ColumnFilters
+                possibleFilters={possibleColumnFilters.get($table?.columns[filterColumnIndex].name ?? 'ERROR') ?? []}
+                appliedFilters={$table?.columns[filterColumnIndex].appliedFilters ?? []}
+                columnName={$table?.columns[filterColumnIndex].name ?? 'ERROR'}
+                columnType={$table?.columns[filterColumnIndex].type ?? 'categorical'}
+                on:done={() => handleRightClickEnd()}
+            />
         </div>
     {/if}
 </div>

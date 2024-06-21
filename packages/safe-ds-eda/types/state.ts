@@ -317,7 +317,7 @@ export interface PossibleSpecificValueFilter extends ColumnFilterBase {
 
 export interface SpecificValueFilter extends ColumnFilterBase {
     type: 'specificValue';
-    value: string;
+    value: string | number;
 }
 
 export type NumericalFilter = ValueRangeFilter;

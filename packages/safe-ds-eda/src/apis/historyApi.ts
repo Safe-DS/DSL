@@ -24,6 +24,7 @@ import {
     savedColumnWidths,
     restoreTableInitialState,
     rerender,
+    initialTable,
 } from '../webviewState';
 import { executeRunner, executeRunnerAll, executeRunnerAllFuture } from './extensionApi';
 
@@ -667,7 +668,7 @@ const deployResult = function (
                             historyEntry.filter as CategoricalFilter,
                         ]);
                     }
-                } else if (historyEntry.action !== 'filterColumn') {
+                } else if (historyEntry.action !== 'filterColumn' || newColumn.name !== historyEntry.columnName) {
                     newColumn.appliedFilters = existingColumn.appliedFilters;
                 }
 
@@ -677,6 +678,12 @@ const deployResult = function (
             return {
                 ...state,
                 columns: updatedColumns,
+                totalRows: initialTable?.totalRows ?? 0,
+                visibleRows:
+                    updatedColumns.reduce((acc, column) => {
+                        if (column.values.length > acc) return column.values.length;
+                        return acc;
+                    }, 0) ?? 0,
             };
         });
 
