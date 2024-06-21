@@ -36,7 +36,7 @@ export let currentHistoryIndex = writable<number>(-1); // -1 = last entry, 0 = f
 let relevantJumpedToHistoryId: number | undefined;
 export let undoEntry = writable<HistoryEntry | undefined>(undefined);
 export let redoEntry = writable<HistoryEntry | undefined>(undefined);
-let lastFocusedTab: Tab | undefined | null = null; // If set to not null and a multipleRunnerExecutionResult message comes in, the last focused tab will be updated if it is still there
+let jumpToTabOnHistoryChange: Tab | undefined | null = null; // If set to not null and a multipleRunnerExecutionResult message comes in, the last focused tab will be updated if it is still there
 
 export const getAndIncrementEntryId = function (): number {
     return entryIdCounter++;
@@ -150,22 +150,24 @@ window.addEventListener('message', (event) => {
             });
 
             // Set currentTabIndex
-            let overrideLastFocusedTab = false;
-            if (lastFocusedTab !== null) {
-                if (lastFocusedTab === undefined) {
+            let overridejumpToTabOnHistoryChange = false;
+            if (jumpToTabOnHistoryChange !== null) {
+                if (jumpToTabOnHistoryChange === undefined) {
                     currentTabIndex.set(undefined);
                 } else {
-                    const indexOfLastFocusedTab = get(tabs).findIndex((t) => t.id === lastFocusedTab!.id);
-                    if (indexOfLastFocusedTab !== -1) {
-                        currentTabIndex.set(indexOfLastFocusedTab);
+                    const indexOfjumpToTabOnHistoryChange = get(tabs).findIndex(
+                        (t) => t.id === jumpToTabOnHistoryChange!.id,
+                    );
+                    if (indexOfjumpToTabOnHistoryChange !== -1) {
+                        currentTabIndex.set(indexOfjumpToTabOnHistoryChange);
                     } else {
-                        overrideLastFocusedTab = true;
+                        overridejumpToTabOnHistoryChange = true;
                         // eslint-disable-next-line no-console
                         console.error('Last focused tab not found in tabs');
                     }
                 }
             }
-            if (lastFocusedTab === null || overrideLastFocusedTab) {
+            if (jumpToTabOnHistoryChange === null || overridejumpToTabOnHistoryChange) {
                 if (relevantJumpedToEntry!.type === 'internal') {
                     if (relevantJumpedToEntry!.action === 'emptyTab') {
                         currentTabIndex.set(get(tabs).findIndex((t) => t.id === relevantJumpedToEntry!.newTabId));
@@ -182,7 +184,7 @@ window.addEventListener('message', (event) => {
                     currentTabIndex.set(undefined);
                 }
             }
-            lastFocusedTab = null;
+            jumpToTabOnHistoryChange = null;
             relevantJumpedToHistoryId = undefined;
             tableLoading.set(false);
         }
@@ -362,7 +364,7 @@ export const setTabAsGenerating = function (tab: RealTab): void {
 //#region History navigation
 //#region Redo
 export const redoHistoryEntries = function (upToHistoryId: number): void {
-    lastFocusedTab = null; // In redo we always want to jump to the tab of the last relevant entry
+    jumpToTabOnHistoryChange = null; // In redo we always want to jump to the tab of the last relevant entry
 
     const currentHistory = get(history);
     const lastRelevantEntry = currentHistory.find((entry) => entry.id === upToHistoryId);
@@ -446,7 +448,7 @@ export const getRedoEntry = function (): HistoryEntry | undefined {
 };
 //#endregion
 //#region Undo
-export const undoHistoryEntries = function (upToHistoryId: number, changeFocus = true): void {
+export const undoHistoryEntries = function (upToHistoryId: number): void {
     const currentHistory = get(history);
     const lastRelevantEntry = currentHistory.find((entry) => entry.id === upToHistoryId);
     if (!lastRelevantEntry) throw new Error('Entry not found in history');
@@ -488,7 +490,7 @@ export const undoHistoryEntries = function (upToHistoryId: number, changeFocus =
         restoreTableInitialState();
         redoInternalHistory(currentHistory.slice(0, lastRelevantEntryIndex + 1));
 
-        if (changeFocus) {
+        if (jumpToTabOnHistoryChange === null) {
             if (lastRelevantEntry.action === 'emptyTab') {
                 currentTabIndex.set(get(tabs).findIndex((t) => t.id === lastRelevantEntry.newTabId));
             } else {
@@ -496,14 +498,8 @@ export const undoHistoryEntries = function (upToHistoryId: number, changeFocus =
             }
         }
 
+        jumpToTabOnHistoryChange = null;
         return;
-    }
-
-    if (!changeFocus) {
-        const currentTabIndexValue = get(currentTabIndex);
-        lastFocusedTab = currentTabIndexValue !== undefined ? get(tabs)[currentTabIndexValue] : undefined;
-    } else {
-        lastFocusedTab = null;
     }
 
     relevantJumpedToHistoryId = upToHistoryId;
@@ -553,24 +549,31 @@ export const undoLastHistoryEntry = function (): void {
     const currentTab = currentTabIndexValue !== undefined ? get(tabs)[currentTabIndexValue] : undefined;
 
     // Do not change forcus if the undone action is in table or in a tab that still exists after undo
-    let dontChangeFocus = false;
     if (lastEntry.type === 'external-manipulating') {
-        dontChangeFocus = currentTab === undefined;
+        jumpToTabOnHistoryChange = undefined;
     } else if (lastEntry.type === 'external-visualizing') {
         const tabId = lastEntry.existingTabId;
         if (tabId !== undefined) {
-            dontChangeFocus = currentTab?.id === tabId;
+            jumpToTabOnHistoryChange = get(tabs).find((t) => t.id === tabId) ?? null;
         } else {
-            dontChangeFocus = currentTab?.id !== lastEntry.newTabId; // If not existingTabId, it is a new tab and the current tab can only stay in focus if it is not that tab
+            if (currentTab?.id === lastEntry.newTabId) {
+                jumpToTabOnHistoryChange = null;
+            } else {
+                jumpToTabOnHistoryChange = currentTab;
+            } // If not existingTabId, it is a new tab and the current tab can only stay in focus if it is not that tab
         }
     } else {
         if (lastEntry.action === 'emptyTab') {
-            dontChangeFocus = currentTab?.id !== lastEntry.newTabId; // Current tab can only stay in focus if it is not that new tab
+            if (currentTab?.id === lastEntry.newTabId) {
+                jumpToTabOnHistoryChange = null;
+            } else {
+                jumpToTabOnHistoryChange = currentTab;
+            } // Current tab can only stay in focus if it is not that new tab
         } else {
-            dontChangeFocus = currentTab === undefined;
+            jumpToTabOnHistoryChange = undefined;
         }
     }
-    undoHistoryEntries(beforeLastEntry.id, !dontChangeFocus);
+    undoHistoryEntries(beforeLastEntry.id);
 };
 
 export const getUndoEntry = function (): HistoryEntry | undefined {
