@@ -826,7 +826,7 @@
                                             : 'none'}
                                     >
                                         <div
-                                            class="sortIconWrapper"
+                                            class="sortIconWrapper sortDesc"
                                             role="none"
                                             on:mousedown={(event) =>
                                                 sortByColumn(
@@ -843,7 +843,7 @@
                                             />
                                         </div>
                                         <div
-                                            class="sortIconWrapper rotate"
+                                            class="sortIconWrapper sortAsc rotate"
                                             role="none"
                                             on:mousedown={(event) =>
                                                 sortByColumn(event, index, column.appliedSort === 'asc' ? null : 'asc')}
@@ -1493,6 +1493,15 @@
         transform: translateY(2px);
     }
 
+    .filterIconWrapper::before {
+        content: '';
+        position: absolute;
+        top: -8px; /* Increase the hitbox area */
+        bottom: -8px;
+        left: -8px;
+        right: -8px;
+    }
+
     .sortIconsWrapper {
         display: inline-flex;
         flex-direction: column;
@@ -1511,6 +1520,24 @@
         justify-content: center;
         height: 100%;
         width: 11px;
+    }
+
+    .sortDesc::before {
+        content: '';
+        position: absolute;
+        top: -4px; /* Increase the hitbox area */
+        left: 0px;
+        right: 0px;
+        bottom: 11px;
+    }
+
+    .sortAsc::before {
+        content: '';
+        position: absolute;
+        top: -4px; /* Increase the hitbox area */
+        left: -8px;
+        right: -8px;
+        bottom: 0px;
     }
 
     .reorderHighlightedLeft {

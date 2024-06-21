@@ -51,7 +51,17 @@
 
     const handleSpecificValueFilterChange = (event: Event) => {
         specificValue = (event.target as HTMLSelectElement).value;
-        if (specificValue === '-') return;
+        if (specificValue === '-') {
+            executeExternalHistoryEntry({
+                type: 'external-manipulating',
+                action: 'voidFilterColumn',
+                alias: `Remove value filter on ${columnName}`,
+                columnName,
+                filterType: 'specificValue',
+            });
+            selectDone();
+            return;
+        }
 
         executeExternalHistoryEntry({
             type: 'external-manipulating',

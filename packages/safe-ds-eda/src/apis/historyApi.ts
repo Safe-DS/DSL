@@ -55,9 +55,11 @@ const generateOverrideId = function (entry: ExternalHistoryEntry | InternalHisto
         case 'sortByColumn':
             return entry.action; // Thus enforcing override sort
         case 'voidSortByColumn':
-            return 'sortByColumn'; // This overriding previous sorts
+            return 'sortByColumn'; // Thus overriding previous sorts
         case 'filterColumn':
-            return entry.columnName + entry.filter.type + '.' + entry.action;
+            return entry.columnName + '.' + entry.filter.type;
+        case 'voidFilterColumn':
+            return entry.columnName + '.' + entry.filterType; // Thus overriding previous filters
         case 'linePlot':
         case 'scatterPlot':
         case 'histogram':

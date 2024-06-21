@@ -237,6 +237,12 @@ export class RunnerApi {
                     sdsString: '',
                     placeholderName: overrideTablePlaceholder ?? this.tablePlaceholder,
                 };
+            case 'voidFilterColumn':
+                // This is a void action, no SDS code is generated and new placeholder is just previous one
+                return {
+                    sdsString: '',
+                    placeholderName: overrideTablePlaceholder ?? this.tablePlaceholder,
+                };
             case 'filterColumn':
                 return {
                     sdsString: this.sdsStringForFilterColumn(
