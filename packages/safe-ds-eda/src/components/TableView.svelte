@@ -745,21 +745,23 @@
 
         const column = $table.columns[columnIndex];
 
-        if (!column.profiling) return [];
-
         const possibleColumnFilters: PossibleColumnFilter[] = [];
 
         if (column.type === 'categorical') {
-            const profilingCategories: ProfilingDetailStatistical[] = column.profiling.other.filter(
-                (profilingItem: ProfilingDetail) =>
-                    profilingItem.type === 'numerical' && profilingItem.interpretation === 'category',
-            ) as ProfilingDetailStatistical[];
+            const distinctValues: string[] = [];
+            for (const value of column.values) {
+                if (!distinctValues.includes(value)) {
+                    distinctValues.push(value);
+                }
+                if (distinctValues.length > 5) {
+                    break;
+                }
+            }
 
-            // If there is distinct categories in profiling, use those as filter options, else use search string
-            if (profilingCategories.length > 0) {
+            if (distinctValues.length <= 5) {
                 possibleColumnFilters.push({
                     type: 'specificValue',
-                    values: ['-'].concat(profilingCategories.map((profilingItem) => profilingItem.name)),
+                    values: ['-'].concat(distinctValues),
                 });
             } else {
                 possibleColumnFilters.push({
