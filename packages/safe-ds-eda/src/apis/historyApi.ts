@@ -498,7 +498,7 @@ export const undoHistoryEntries = function (upToHistoryId: number, changeFocus =
 
     if (!changeFocus) {
         const currentTabIndexValue = get(currentTabIndex);
-        lastFocusedTab = currentTabIndexValue ? get(tabs)[currentTabIndexValue] : undefined;
+        lastFocusedTab = currentTabIndexValue !== undefined ? get(tabs)[currentTabIndexValue] : undefined;
     } else {
         lastFocusedTab = null;
     }
@@ -547,18 +547,22 @@ export const undoLastHistoryEntry = function (): void {
     const beforeLastEntry = currentHistory[currentHistoryIndexValue - 1];
     const lastEntry = currentHistory[currentHistoryIndexValue];
     const currentTabIndexValue = get(currentTabIndex);
-    const currentTab = currentTabIndexValue ? get(tabs)[currentTabIndexValue] : undefined;
+    const currentTab = currentTabIndexValue !== undefined ? get(tabs)[currentTabIndexValue] : undefined;
 
     // Do not change forcus if the undone action is in table or in a tab that still exists after undo
     let dontChangeFocus = false;
     if (lastEntry.type === 'external-manipulating') {
         dontChangeFocus = currentTab === undefined;
     } else if (lastEntry.type === 'external-visualizing') {
-        const tabId = lastEntry.existingTabId; // If not existingTabId, it is a new tab thus cannot stay in focus
-        dontChangeFocus = tabId !== undefined && currentTab?.id === tabId;
+        const tabId = lastEntry.existingTabId;
+        if (tabId !== undefined) {
+            dontChangeFocus = currentTab?.id === tabId;
+        } else {
+            dontChangeFocus = currentTab?.id !== lastEntry.newTabId; // If not existingTabId, it is a new tab and the current tab can only stay in focus if it is not that tab
+        }
     } else {
         if (lastEntry.action === 'emptyTab') {
-            dontChangeFocus = false;
+            dontChangeFocus = currentTab?.id !== lastEntry.newTabId; // Current tab can only stay in focus if it is not that new tab
         } else {
             dontChangeFocus = currentTab === undefined;
         }
