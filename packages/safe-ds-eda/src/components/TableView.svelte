@@ -1080,8 +1080,7 @@
                         type="button"
                         on:click={() => removeColumnFromSelection(rightClickedColumnIndex)}>Deselect Column</button
                     >
-                {/if}
-                {#if selectedColumnIndexes.length >= 1}
+                {:else if selectedColumnIndexes.length >= 1}
                     <button
                         class="contextItem"
                         type="button"
@@ -1090,7 +1089,7 @@
                 {/if}
                 {#if selectedColumnIndexes.length >= 1}
                     <button
-                        class="contextItem subMenuTrigger"
+                        class="contextItem subMenuTrigger newCategoryItem"
                         type="button"
                         on:mouseenter={() => subMenuHoverToggle(1)}
                         on:mouseleave={() => subMenuHoverToggle(1)}
@@ -1183,7 +1182,7 @@
                         <div class="subMenu contextMenu" style:display={subMenuHovered === 2 ? 'block' : 'none'}>
                             <div class="subMenuContainer">
                                 <button
-                                    class="contextItem newCategoryItem"
+                                    class="contextItem"
                                     type="button"
                                     on:click={() => toggleHideColumn([rightClickedColumnIndex])}>Hide Column</button
                                 >
