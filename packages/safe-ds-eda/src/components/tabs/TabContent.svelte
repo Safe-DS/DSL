@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { EmptyTab, ExternalVisualizingHistoryEntry, HistoryEntry, Tab } from '../../../types/state';
+    import type { EmptyTab, ExternalVisualizingHistoryEntry, Tab } from '../../../types/state';
     import ImageContent from './content/ImageContent.svelte';
     import DropDownButton from '../utilities/DropDownButton.svelte';
     import { cancelTabIdsWaiting, table } from '../../webviewState';
