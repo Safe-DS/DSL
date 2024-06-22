@@ -219,7 +219,7 @@ export const addInternalToHistory = function (entry: Exclude<InternalHistoryEntr
             id: getAndIncrementEntryId(),
             overrideId: generateOverrideId(entry),
             tabOrder: generateTabOrder(), // Based on that entry cannot be a new tab
-            profilingState: getCurrentProfiling(),
+            profilingState: state[state.length - 1].profilingState === null ? null : getCurrentProfiling(),
         };
         const newHistory = [...state, entryWithId];
         currentHistoryIndex.set(newHistory.length - 1);
@@ -249,7 +249,11 @@ export const executeExternalHistoryEntry = function (entry: ExternalHistoryEntry
             overrideId: generateOverrideId(entry),
             loading: true,
             tabOrder,
-            profilingState: doesEntryActionInvalidateProfiling(entry.action) ? null : getCurrentProfiling(),
+            profilingState: doesEntryActionInvalidateProfiling(entry.action)
+                ? null
+                : state[state.length - 1].profilingState === null
+                  ? null
+                  : getCurrentProfiling(),
         };
         const newHistory = [...state, entryWithId];
         currentHistoryIndex.set(newHistory.length - 1);
@@ -287,7 +291,12 @@ export const addAndDeployTabHistoryEntry = function (entry: TabHistoryEntry & { 
         currentHistoryIndex.set(state.length);
         return [
             ...state,
-            { ...entry, overrideId: generateOverrideId(entry), tabOrder, profilingState: getCurrentProfiling() },
+            {
+                ...entry,
+                overrideId: generateOverrideId(entry),
+                tabOrder,
+                profilingState: state[state.length - 1].profilingState === null ? null : getCurrentProfiling(),
+            },
         ];
     });
     currentTabIndex.set(get(tabs).indexOf(tab));
@@ -318,7 +327,12 @@ export const addEmptyTabHistoryEntry = function (): void {
         currentHistoryIndex.set(state.length);
         return [
             ...state,
-            { ...entry, overrideId: generateOverrideId(entry), tabOrder, profilingState: getCurrentProfiling() },
+            {
+                ...entry,
+                overrideId: generateOverrideId(entry),
+                tabOrder,
+                profilingState: state[state.length - 1].profilingState === null ? null : getCurrentProfiling(),
+            },
         ];
     });
     currentTabIndex.set(get(tabs).indexOf(tab));
