@@ -8,6 +8,9 @@
         savedColumnWidths,
         showProfiling,
         possibleColumnFilters,
+        profilingOutdated,
+        history,
+        profilingLoading,
     } from '../webviewState';
     import CaretIcon from '../icons/Caret.svelte';
     import ErrorIcon from '../icons/Error.svelte';
@@ -26,8 +29,9 @@
     import { derived, get } from 'svelte/store';
     import ColumnFilters from './column-filters/ColumnFilters.svelte';
     import { imageWidthToHeightRatio } from '../../consts.config';
-    import { addInternalToHistory, executeExternalHistoryEntry } from '../apis/historyApi';
+    import { addInternalToHistory, currentHistoryIndex, executeExternalHistoryEntry } from '../apis/historyApi';
     import { disableNonContextMenuEffects, restoreNonContextMenuEffects } from '../toggleNonContextMenuEffects';
+    import { refreshProfiling } from '../apis/extensionApi';
 
     export let sidebarWidth: number;
 
@@ -688,8 +692,8 @@
     let fullHeadBackground: HTMLElement;
     let profilingInfo: HTMLElement;
 
-    const toggleProfiling = function (): void {
-        if (!$preventClicks) {
+    const toggleProfiling = function (force = false): void {
+        if (force || (!$preventClicks && !$profilingOutdated)) {
             showProfiling.set(!$showProfiling);
             if ($showProfiling) {
                 setTimeout(() => {
@@ -746,6 +750,16 @@
         }
         return false;
     });
+
+    $: {
+        if ($profilingOutdated && $showProfiling) {
+            toggleProfiling(true);
+        }
+    }
+
+    const refreshProfilingRequest = function (): void {
+        refreshProfiling($history[$currentHistoryIndex].id);
+    };
     //#endregion
 
     //#region Lifecycle
@@ -933,24 +947,40 @@
                 <tr class="profilingBannerRow" style:height="{rowHeight}px" style:top="{scrollTop}px">
                     <td
                         class="borderColumn borderRight profilingBanner"
+                        class:profilingOutdated={$profilingOutdated}
                         on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
                     ></td>
                     <td
                         class="profilingBanner"
-                        on:click={toggleProfiling}
+                        class:outdatedProfiling={$profilingOutdated}
+                        on:click={() => toggleProfiling()}
                         on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
                         on:mouseup={handleReorderDragEnd}
                     >
                         <div>
-                            <span>{$showProfiling ? 'Hide Profiling' : 'Show Profiling'}</span>
-                            {#if $hasProfilingErrors}
+                            <span title={$profilingOutdated ? 'A manipulating action requires a refresh' : ''}
+                                >{$profilingOutdated
+                                    ? 'Profiling outdated'
+                                    : $showProfiling
+                                      ? 'Hide Profiling'
+                                      : 'Show Profiling'}</span
+                            >
+                            {#if $hasProfilingErrors && !$profilingOutdated}
                                 <div class="errorIconWrapper">
                                     <ErrorIcon />
                                 </div>
                             {/if}
-                            <div class="caretIconWrapper" class:rotate={!$showProfiling}>
-                                <CaretIcon />
-                            </div>
+                            {#if $profilingOutdated}
+                                <button
+                                    class="refreshProfiling"
+                                    title="A manipulating action requires a refresh"
+                                    on:click={refreshProfilingRequest}>Refresh</button
+                                >
+                            {:else}
+                                <div class="caretIconWrapper" class:rotate={!$showProfiling}>
+                                    <CaretIcon />
+                                </div>
+                            {/if}
                         </div>
                     </td>
                     {#each $table.columns as _column, index}
@@ -958,7 +988,8 @@
                             <td
                                 style=" {isReorderDragging && dragStartIndex === index + 1 ? 'display: none;' : ''}"
                                 class="profilingBanner"
-                                on:click={toggleProfiling}
+                                class:outdatedProfiling={$profilingOutdated}
+                                on:click={() => toggleProfiling()}
                                 on:mousemove={(event) => throttledHandleReorderDragOver(event, index + 1)}
                             >
                             </td>
@@ -966,6 +997,7 @@
                     {/each}
                     <td
                         class="borderColumn profilingBanner"
+                        class:profilingOutdated={$profilingOutdated}
                         on:mousemove={(event) => throttledHandleReorderDragOver(event, $table?.columns.length ?? 0)}
                     ></td>
                 </tr>
@@ -1628,6 +1660,27 @@
 
     .profilingBanner:hover {
         cursor: pointer;
+    }
+
+    .outdatedProfiling:hover {
+        cursor: default !important;
+    }
+
+    .refreshProfiling {
+        position: absolute;
+        left: 190px;
+        top: 4px;
+        background-color: var(--error-color);
+        width: 75px;
+        border-radius: 5px;
+        color: var(--lightest-color);
+        height: 65%;
+        font-size: 0.8em;
+        padding: 2px;
+    }
+
+    .refreshProfiling:hover {
+        color: var(--medium-color);
     }
 
     .hiddenColumnHeader {

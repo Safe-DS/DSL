@@ -18,6 +18,8 @@ const tabKey = writable<number>(0); // If changed will remount the tabs
 const possibleColumnFilters = new Map<string, PossibleColumnFilter[]>();
 
 const showProfiling = writable<boolean>(false);
+const profilingOutdated = writable<boolean>(false);
+const profilingLoading = writable<boolean>(false);
 
 // Define the stores, current state to default in case the extension never calls setWebviewState( Shouldn't happen)
 const table = writable<Table | undefined>();
@@ -45,7 +47,22 @@ window.addEventListener('message', (event) => {
             }
             break;
         case 'setProfiling':
-            if (get(table)) {
+            if (message.historyId !== undefined) {
+                setProfiling(message.value);
+                profilingLoading.set(false);
+                history.update((currentHistory) => {
+                    return currentHistory.map((entry) => {
+                        if (entry.id === message.historyId) {
+                            return {
+                                ...entry,
+                                profilingState: message.value,
+                            };
+                        } else {
+                            return entry;
+                        }
+                    });
+                });
+            } else if (get(table)) {
                 initialProfiling = message.value;
                 setProfiling(message.value);
             }
@@ -152,6 +169,8 @@ export {
     cancelTabIdsWaiting,
     tableLoading,
     savedColumnWidths,
+    profilingLoading,
+    profilingOutdated,
     restoreTableInitialState,
     rerender,
     possibleColumnFilters,

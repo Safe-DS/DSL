@@ -1,6 +1,6 @@
 import { get } from 'svelte/store';
 import type { HistoryEntry } from '../../types/state';
-import { table } from '../webviewState';
+import { profilingLoading, table, history, tableLoading } from '../webviewState';
 import type { ExecuteRunnerAllEntry } from '../../types/messaging';
 import { filterHistoryOnlyInternal } from './historyApi';
 
@@ -101,4 +101,16 @@ export const executeRunner = function (state: HistoryEntry[], entry: HistoryEntr
     } else {
         executeRunnerDefault(state, entry);
     }
+};
+
+export const refreshProfiling = function (historyId: number) {
+    profilingLoading.set(true);
+
+    window.injVscode.postMessage({
+        command: 'refreshProfiling',
+        value: {
+            historyEntries: get(history),
+            historyId,
+        },
+    });
 };

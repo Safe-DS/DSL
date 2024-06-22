@@ -137,6 +137,7 @@ interface ExtendedInfo {
     id: number;
     overrideId: string;
     tabOrder: string[];
+    profilingState: { columnName: string; profiling: Profiling | undefined }[] | null;
 }
 
 export type FullExternalVisualizingHistoryEntry = ExternalVisualizingHistoryEntry & ExtendedInfo;

@@ -475,14 +475,18 @@ export class RunnerApi {
     //#region Public API
 
     //#region Table fetching
-    public async getTableByPlaceholder(tableName: string, pipelineExecutionId: string): Promise<Table | undefined> {
+    public async getTableByPlaceholder(
+        tableName: string,
+        pipelineExecutionId: string,
+        sdsLinesOverride = '',
+    ): Promise<Table | undefined> {
         safeDsLogger.debug('Getting table by placeholder: ' + tableName);
 
         const pythonTableColumns = await this.getPlaceholderValue(tableName, pipelineExecutionId);
         if (pythonTableColumns) {
             // Get Column Types
             safeDsLogger.debug('Getting column types for table: ' + tableName);
-            let sdsLines = '';
+            let sdsLines = sdsLinesOverride;
             let placeholderNames: string[] = [];
             let columnNameToPlaceholderIsNumericNameMap = new Map<string, string>();
             for (const columnName of Object.keys(pythonTableColumns)) {
@@ -507,12 +511,15 @@ export class RunnerApi {
     //#endregion
 
     //#region Profiling
-    public async getProfiling(table: Table): Promise<{ columnName: string; profiling: Profiling }[]> {
+    public async getProfiling(
+        table: Table,
+        sdsLinesOverride = '',
+    ): Promise<{ columnName: string; profiling: Profiling }[]> {
         safeDsLogger.debug('Getting profiling for table: ' + table.name);
 
         const columns = table.columns;
 
-        let sdsStrings = '';
+        let sdsStrings = sdsLinesOverride;
 
         let placeholderNames: string[] = [];
 
@@ -731,6 +738,37 @@ export class RunnerApi {
         }
 
         return profiling;
+    }
+
+    public async getFreshProfiling(
+        historyEntries: HistoryEntry[],
+    ): Promise<{ columnName: string; profiling: Profiling }[]> {
+        let sdsLines = '';
+        const filteredEntries = this.filterPastEntries(historyEntries);
+        let placeholderOverride = this.tablePlaceholder;
+
+        for (const entry of filteredEntries) {
+            if (entry.type === 'external-manipulating') {
+                const sdsStringObj = this.sdsStringForHistoryEntry(entry, placeholderOverride);
+                sdsLines += sdsStringObj.sdsString;
+                placeholderOverride = sdsStringObj.placeholderName;
+            }
+        }
+
+        const pipelineExecutionId = crypto.randomUUID();
+        try {
+            await this.addToAndExecutePipeline(
+                pipelineExecutionId,
+                sdsLines,
+                placeholderOverride ? [placeholderOverride] : undefined,
+            );
+        } catch (e) {
+            throw e;
+        }
+
+        const table = await this.getTableByPlaceholder(placeholderOverride, pipelineExecutionId, sdsLines);
+        if (!table) throw new Error('Table not found');
+        return this.getProfiling(table, sdsLines);
     }
     //#endregion
 
@@ -1047,13 +1085,13 @@ export class RunnerApi {
         return results;
     }
 
-    filterPastEntries(pastEntries: HistoryEntry[], newEntry: HistoryEntry): HistoryEntry[] {
+    filterPastEntries(pastEntries: HistoryEntry[], newEntry?: HistoryEntry): HistoryEntry[] {
         // Keep only the last occurrence of each unique overrideId
         const lastOccurrenceMap = new Map<string, number>();
         const filteredPastEntries: HistoryEntry[] = [];
 
         // New entry's overrideId is never appended to filteredPastEntries but accounted for in lastOccurrenceMap to have it override other past entries
-        lastOccurrenceMap.set(newEntry.overrideId, pastEntries.length);
+        if (newEntry) lastOccurrenceMap.set(newEntry.overrideId, pastEntries.length);
 
         // Traverse from end to start to record the last occurrence of each unique overrideId
         for (let i = pastEntries.length - 1; i >= 0; i--) {

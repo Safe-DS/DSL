@@ -10,6 +10,7 @@ import type {
     InteralEmptyTabHistoryEntry,
     InternalHistoryEntry,
     NumericalFilter,
+    Profiling,
     RealTab,
     Tab,
     TabHistoryEntry,
@@ -25,6 +26,7 @@ import {
     restoreTableInitialState,
     rerender,
     initialTable,
+    profilingOutdated,
 } from '../webviewState';
 import { executeRunner, executeRunnerAll, executeRunnerAllFuture } from './extensionApi';
 
@@ -198,6 +200,17 @@ const overrideUndoneEntries = function (): void {
     }
 };
 
+const getCurrentProfiling = function (): { columnName: string; profiling: Profiling | undefined }[] {
+    return get(table)!.columns.map((column) => ({
+        columnName: column.name,
+        profiling: column.profiling,
+    }));
+};
+
+const doesEntryActionInvalidateProfiling = function (entryAction: HistoryEntry['action']): boolean {
+    return entryAction === 'filterColumn' || entryAction === 'voidFilterColumn';
+};
+
 export const addInternalToHistory = function (entry: Exclude<InternalHistoryEntry, InteralEmptyTabHistoryEntry>): void {
     overrideUndoneEntries();
     history.update((state) => {
@@ -206,6 +219,7 @@ export const addInternalToHistory = function (entry: Exclude<InternalHistoryEntr
             id: getAndIncrementEntryId(),
             overrideId: generateOverrideId(entry),
             tabOrder: generateTabOrder(), // Based on that entry cannot be a new tab
+            profilingState: getCurrentProfiling(),
         };
         const newHistory = [...state, entryWithId];
         currentHistoryIndex.set(newHistory.length - 1);
@@ -235,6 +249,7 @@ export const executeExternalHistoryEntry = function (entry: ExternalHistoryEntry
             overrideId: generateOverrideId(entry),
             loading: true,
             tabOrder,
+            profilingState: doesEntryActionInvalidateProfiling(entry.action) ? null : getCurrentProfiling(),
         };
         const newHistory = [...state, entryWithId];
         currentHistoryIndex.set(newHistory.length - 1);
@@ -270,7 +285,10 @@ export const addAndDeployTabHistoryEntry = function (entry: TabHistoryEntry & { 
     const tabOrder = generateTabOrder();
     history.update((state) => {
         currentHistoryIndex.set(state.length);
-        return [...state, { ...entry, overrideId: generateOverrideId(entry), tabOrder }];
+        return [
+            ...state,
+            { ...entry, overrideId: generateOverrideId(entry), tabOrder, profilingState: getCurrentProfiling() },
+        ];
     });
     currentTabIndex.set(get(tabs).indexOf(tab));
 };
@@ -298,7 +316,10 @@ export const addEmptyTabHistoryEntry = function (): void {
     const tabOrder = generateTabOrder();
     history.update((state) => {
         currentHistoryIndex.set(state.length);
-        return [...state, { ...entry, overrideId: generateOverrideId(entry), tabOrder }];
+        return [
+            ...state,
+            { ...entry, overrideId: generateOverrideId(entry), tabOrder, profilingState: getCurrentProfiling() },
+        ];
     });
     currentTabIndex.set(get(tabs).indexOf(tab));
 };
@@ -978,9 +999,27 @@ table.subscribe(async (_value) => {
 
 history.subscribe((_value) => {
     undoEntry.set(getUndoEntry());
+
+    const currentHistoryEntry = get(history)[get(currentHistoryIndex)];
+    if (currentHistoryEntry === undefined) return;
+
+    if (currentHistoryEntry.profilingState === null) {
+        profilingOutdated.set(true);
+    } else {
+        profilingOutdated.set(false);
+    }
 });
 
 currentHistoryIndex.subscribe((_value) => {
     undoEntry.set(getUndoEntry());
     redoEntry.set(getRedoEntry());
+
+    const currentHistoryEntry = get(history)[get(currentHistoryIndex)];
+    if (currentHistoryEntry === undefined) return;
+
+    if (currentHistoryEntry.profilingState === null) {
+        profilingOutdated.set(true);
+    } else {
+        profilingOutdated.set(false);
+    }
 });
