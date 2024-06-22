@@ -109,7 +109,7 @@ export const refreshProfiling = function (historyId: number) {
     window.injVscode.postMessage({
         command: 'refreshProfiling',
         value: {
-            historyEntries: get(history),
+            historyEntries: get(history).slice(0, historyId + 1),
             historyId,
         },
     });
