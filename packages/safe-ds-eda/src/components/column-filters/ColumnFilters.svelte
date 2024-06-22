@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Column, NumericalFilter, PossibleColumnFilter } from '../../../types/state.js';
+    import type { Column, PossibleColumnFilter } from '../../../types/state.js';
     import { executeExternalHistoryEntry } from '../../apis/historyApi.js';
     import { createEventDispatcher, onMount } from 'svelte';
 

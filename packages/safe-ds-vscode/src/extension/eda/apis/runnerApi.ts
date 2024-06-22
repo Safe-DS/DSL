@@ -927,7 +927,6 @@ export class RunnerApi {
         const filteredEntries: ExecuteRunnerAllEntry[] = this.filterPastEntriesForAllExecution(entries);
 
         const results: RunnerExecutionResultMessage['value'][] = [];
-        let lastManipulatingEntry: ExecuteRunnerAllEntry | undefined;
         for (const entry of filteredEntries) {
             if (entry.entry.type === 'external-visualizing') {
                 if (entry.entry.action === 'infoPanel') throw new Error('Not implemented');
@@ -957,7 +956,6 @@ export class RunnerApi {
                 placeholderNames.push(sdsStringObj.placeholderName);
                 entryIdToPlaceholderNames.set(entry.entry.id, sdsStringObj.placeholderName);
                 currentPlaceholderOverride = sdsStringObj.placeholderName;
-                lastManipulatingEntry = entry;
 
                 safeDsLogger.debug(`Running new entry ${entry.entry.id} with action ${entry.entry.action}`);
             }
@@ -1029,8 +1027,6 @@ export class RunnerApi {
                     });
                 }
             } else if (entry.entry.type === 'external-manipulating') {
-                if (lastManipulatingEntry?.entry.id !== entry.entry.id) continue; // Only last manipulating entry is of interest as we just need final table
-
                 const newTable = await this.getPlaceholderValue(
                     entryIdToPlaceholderNames.get(entry.entry.id)!,
                     pipelineExecutionId,

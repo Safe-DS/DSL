@@ -219,7 +219,8 @@ export const addInternalToHistory = function (entry: Exclude<InternalHistoryEntr
             id: getAndIncrementEntryId(),
             overrideId: generateOverrideId(entry),
             tabOrder: generateTabOrder(), // Based on that entry cannot be a new tab
-            profilingState: state[state.length - 1].profilingState === null ? null : getCurrentProfiling(),
+            profilingState:
+                state.length - 1 >= 0 && state[state.length - 1].profilingState === null ? null : getCurrentProfiling(),
         };
         const newHistory = [...state, entryWithId];
         currentHistoryIndex.set(newHistory.length - 1);
@@ -251,7 +252,7 @@ export const executeExternalHistoryEntry = function (entry: ExternalHistoryEntry
             tabOrder,
             profilingState: doesEntryActionInvalidateProfiling(entry.action)
                 ? null
-                : state[state.length - 1].profilingState === null
+                : state.length - 1 >= 0 && state[state.length - 1].profilingState === null
                   ? null
                   : getCurrentProfiling(),
         };
@@ -295,7 +296,10 @@ export const addAndDeployTabHistoryEntry = function (entry: TabHistoryEntry & { 
                 ...entry,
                 overrideId: generateOverrideId(entry),
                 tabOrder,
-                profilingState: state[state.length - 1].profilingState === null ? null : getCurrentProfiling(),
+                profilingState:
+                    state.length - 1 >= 0 && state[state.length - 1].profilingState === null
+                        ? null
+                        : getCurrentProfiling(),
             },
         ];
     });
@@ -331,7 +335,10 @@ export const addEmptyTabHistoryEntry = function (): void {
                 ...entry,
                 overrideId: generateOverrideId(entry),
                 tabOrder,
-                profilingState: state[state.length - 1].profilingState === null ? null : getCurrentProfiling(),
+                profilingState:
+                    state.length - 1 >= 0 && state[state.length - 1].profilingState === null
+                        ? null
+                        : getCurrentProfiling(),
             },
         ];
     });
@@ -700,13 +707,21 @@ const deployResult = function (
 
                 if (historyEntry.action === 'filterColumn' && newColumn.name === historyEntry.columnName) {
                     if (existingColumn.type === 'numerical') {
-                        newColumn.appliedFilters = existingColumn.appliedFilters.concat([
-                            historyEntry.filter as NumericalFilter,
-                        ]);
+                        if (existingColumn.appliedFilters.find((f) => f.type === historyEntry.filter.type)) {
+                            newColumn.appliedFilters = [historyEntry.filter as NumericalFilter];
+                        } else {
+                            newColumn.appliedFilters = existingColumn.appliedFilters.concat([
+                                historyEntry.filter as NumericalFilter,
+                            ]);
+                        }
                     } else if (existingColumn.type === 'categorical') {
-                        newColumn.appliedFilters = existingColumn.appliedFilters.concat([
-                            historyEntry.filter as CategoricalFilter,
-                        ]);
+                        if (existingColumn.appliedFilters.find((f) => f.type === historyEntry.filter.type)) {
+                            newColumn.appliedFilters = [historyEntry.filter as CategoricalFilter];
+                        } else {
+                            newColumn.appliedFilters = existingColumn.appliedFilters.concat([
+                                historyEntry.filter as CategoricalFilter,
+                            ]);
+                        }
                     }
                 } else if (
                     (historyEntry.action !== 'filterColumn' && historyEntry.action !== 'voidFilterColumn') ||
