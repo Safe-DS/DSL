@@ -10,7 +10,6 @@
         possibleColumnFilters,
         profilingOutdated,
         history,
-        profilingLoading,
     } from '../webviewState';
     import CaretIcon from '../icons/Caret.svelte';
     import ErrorIcon from '../icons/Error.svelte';
@@ -18,11 +17,9 @@
     import type {
         Column,
         OneColumnTabTypes,
-        PossibleColumnFilter,
         PossibleSorts,
         Profiling,
         ProfilingDetail,
-        ProfilingDetailStatistical,
         TwoColumnTabTypes,
     } from '../../types/state.js';
     import ProfilingInfo from './profiling/ProfilingInfo.svelte';

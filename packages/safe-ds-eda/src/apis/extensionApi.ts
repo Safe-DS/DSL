@@ -1,6 +1,6 @@
 import { get } from 'svelte/store';
 import type { HistoryEntry } from '../../types/state';
-import { profilingLoading, table, history, tableLoading } from '../webviewState';
+import { profilingLoading, table, history } from '../webviewState';
 import type { ExecuteRunnerAllEntry } from '../../types/messaging';
 import { filterHistoryOnlyInternal } from './historyApi';
 

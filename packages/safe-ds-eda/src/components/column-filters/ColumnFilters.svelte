@@ -114,7 +114,7 @@
     };
 
     const confirmValueRangeFilter = (totalMin: number, totalMax: number) => {
-        if (minValue == null || maxValue == null) return;
+        if (minValue === null || maxValue === null) return;
         if (isInvalidRange(minValue, maxValue, totalMin, totalMax)) return;
 
         if (minValue === totalMin && maxValue === totalMax) {
@@ -146,8 +146,8 @@
         selectDone();
     };
 
-    const isInvalidRange = (minValue: number, maxValue: number, totalMin: number, totalMax: number) => {
-        return minValue >= maxValue || minValue < totalMin || maxValue > totalMax;
+    const isInvalidRange = (minValueNow: number, maxValueNow: number, totalMin: number, totalMax: number) => {
+        return minValueNow >= maxValueNow || minValueNow < totalMin || maxValueNow > totalMax;
     };
 
     const removeFilters = () => {
