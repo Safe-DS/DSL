@@ -637,7 +637,7 @@
         }
 
         let columnIndex = passedColumnIndex;
-        if (!columnIndex) {
+        if (columnIndex === undefined) {
             if (selectedColumnIndexes.length !== 1) {
                 throw new Error('One column must be selected to generate a one column plot');
             }
