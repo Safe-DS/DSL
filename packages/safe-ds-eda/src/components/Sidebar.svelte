@@ -12,7 +12,7 @@
     export let width: number;
 
     $: {
-        if(width <= 150) {
+        if (width <= 150) {
             historyFocused = false;
         }
     }
