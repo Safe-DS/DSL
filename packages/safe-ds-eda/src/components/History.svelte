@@ -7,19 +7,19 @@
     {#if $history.length === 0}
         <span class="historyItem">No history</span>
     {/if}
-    {#each $history as historyItem, index}
+    {#each [...$history].reverse() as historyItem, index}
         <span
             class="historyItem"
             role="none"
             on:click={() =>
-                $currentHistoryIndex > index
+                $currentHistoryIndex > ($history.length - 1 - index)
                     ? undoHistoryEntries(historyItem.id)
-                    : $currentHistoryIndex < index
+                    : $currentHistoryIndex < ($history.length - 1 - index)
                       ? redoHistoryEntries(historyItem.id)
                       : null}
         >
-            <span class="historyText" class:inactiveItem={$currentHistoryIndex < index}
-                >{index + 1}. {historyItem.alias}</span
+            <span class="historyText" class:inactiveItem={$currentHistoryIndex < ($history.length - 1 - index)} class:currentItem={$currentHistoryIndex === ($history.length - 1 - index)}
+                >{($history.length - index)}. {historyItem.alias}</span
             >
             {#if historyItem.loading}
                 <span class="spinner"></span>
@@ -65,6 +65,10 @@
 
     .inactiveItem {
         color: var(--medium-color);
+    }
+
+    .currentItem {
+        font-weight: bold;
     }
 
     .spinner {

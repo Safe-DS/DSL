@@ -1,6 +1,5 @@
 <script lang="ts">
     import { table, currentTabIndex, preventClicks, tabs } from '../webviewState';
-    import CaretIcon from '../icons/Caret.svelte';
     import HistoryIcon from '../icons/History.svelte';
     import UndoIcon from '../icons/Undo.svelte';
     import TableIcon from '../icons/Table.svelte';
@@ -11,6 +10,12 @@
     import { redoEntry, redoLastHistoryEntry, undoEntry, undoLastHistoryEntry } from '../apis/historyApi';
 
     export let width: number;
+
+    $: {
+        if(width <= 150) {
+            historyFocused = false;
+        }
+    }
 
     let historyFocused = false;
 
@@ -26,7 +31,7 @@
         {#if width > 109}
             <span class="tableName"
                 >{$table?.name ?? 'Loading ...'}
-                <span class="caret"><CaretIcon /></span>
+                <!-- <span class="caret"><CaretIcon /></span> -->
             </span>
         {/if}
     </div>
