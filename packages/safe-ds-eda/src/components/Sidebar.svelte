@@ -8,6 +8,7 @@
     import ColumnCounts from './ColumnCounts.svelte';
     import History from './History.svelte';
     import { redoEntry, redoLastHistoryEntry, undoEntry, undoLastHistoryEntry } from '../apis/historyApi';
+    import { onMount, onDestroy } from 'svelte';
 
     export let width: number;
 
@@ -24,6 +25,24 @@
             currentTabIndex.update((_cs) => index);
         }
     };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+        if (event.ctrlKey && event.key === 'z') {
+            event.preventDefault();
+            undoLastHistoryEntry();
+        } else if (event.ctrlKey && event.key === 'y') {
+            event.preventDefault();
+            redoLastHistoryEntry();
+        }
+    };
+
+    onMount(() => {
+        window.addEventListener('keydown', handleKeyDown);
+    });
+
+    onDestroy(() => {
+        window.removeEventListener('keydown', handleKeyDown);
+    });
 </script>
 
 <div class="sidebar">
