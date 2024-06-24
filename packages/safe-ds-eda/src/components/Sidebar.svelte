@@ -7,8 +7,12 @@
     import SidebarTab from './tabs/SidebarTab.svelte';
     import NewTabButton from './NewTabButton.svelte';
     import ColumnCounts from './ColumnCounts.svelte';
+    import History from './History.svelte';
+    import { redoEntry, redoLastHistoryEntry, undoEntry, undoLastHistoryEntry } from '../apis/historyApi';
 
     export let width: number;
+
+    let historyFocused = false;
 
     const changeTab = function (index?: number) {
         if (!$preventClicks) {
@@ -28,34 +32,63 @@
     </div>
     {#if width > 50}
         <div class="historyBar" class:no-borders={width < 50}>
-            <span class="historyItem noSelect"
-                ><span class="icon historyIcon"><HistoryIcon /></span>{#if width > 200}History{/if}</span
+            <span
+                class="historyItem noSelect"
+                class:historyFocused
+                role="none"
+                on:click={() => (historyFocused = !historyFocused)}
+                ><span class="icon historyIcon"><HistoryIcon strokeWidth={historyFocused ? 20 : 1} /></span
+                >{#if width > 200}History{/if}</span
             >
-            <span class="historyItem noSelect"
-                ><span class="icon undoIcon"><UndoIcon /></span>{#if width > 200}Undo{/if}</span
+            <span
+                class="historyItem noSelect"
+                role="none"
+                class:inactive={$undoEntry === undefined}
+                on:click={() => undoLastHistoryEntry()}
+                title={$undoEntry?.alias ?? ''}
+                ><span class="icon undoIcon"
+                    ><UndoIcon color={$undoEntry ? 'var(--primary-color)' : 'var(--dark-color)'} /></span
+                >{#if width > 200}Undo{/if}</span
             >
-            <span class="historyItem noSelect"
-                ><span class="icon redoIcon"><UndoIcon /></span>{#if width > 200}Redo{/if}</span
+            <span
+                class="historyItem noSelect"
+                role="none"
+                class:inactive={$redoEntry === undefined}
+                on:click={() => redoLastHistoryEntry()}
+                title={$redoEntry?.alias ?? ''}
+                ><span class="icon redoIcon"
+                    ><UndoIcon color={$redoEntry ? 'var(--primary-color)' : 'var(--dark-color)'} /></span
+                >{#if width > 200}Redo{/if}</span
             >
         </div>
     {/if}
-    <div class="tabs">
-        {#if width > 50}
-            <button class="tab" class:tabActive={$currentTabIndex === undefined} on:click={() => changeTab(undefined)}>
-                <span class="icon tableIcon"><TableIcon /></span>{#if width > 109}Table{/if}
-            </button>
-            {#if $tabs}
-                {#each $tabs as tab, index}
-                    <button class="sidebarButton" on:click={() => changeTab(index)}>
-                        <SidebarTab tabObject={tab} active={$currentTabIndex === index} {width} />
-                    </button>
-                {/each}
+    {#if !historyFocused}
+        <div class="tabs">
+            {#if width > 50}
+                <button
+                    class="tab"
+                    class:tabActive={$currentTabIndex === undefined}
+                    on:click={() => changeTab(undefined)}
+                >
+                    <span class="icon tableIcon"><TableIcon /></span>{#if width > 109}Table{/if}
+                </button>
+                {#if $tabs}
+                    {#each $tabs as tab, index}
+                        <button class="sidebarButton" on:click={() => changeTab(index)}>
+                            <SidebarTab tabObject={tab} active={$currentTabIndex === index} {width} />
+                        </button>
+                    {/each}
+                {/if}
             {/if}
+        </div>
+        {#if width > 50}
+            <div class="newTab">
+                <NewTabButton />
+            </div>
         {/if}
-    </div>
-    {#if width > 50}
-        <div class="newTab">
-            <NewTabButton />
+    {:else if width > 150}
+        <div class="history">
+            <History />
         </div>
     {/if}
     {#if width > 109}
@@ -122,6 +155,11 @@
 
     .columnCount {
         cursor: pointer;
+    }
+
+    .historyFocused {
+        font-weight: bold;
+        font-size: 1.13rem;
     }
 
     .titleBar {
@@ -224,6 +262,11 @@
         top: 20px;
         left: 10px;
         margin-bottom: 100px;
+    }
+
+    .inactive {
+        color: var(--dark-color);
+        cursor: not-allowed;
     }
 
     @media (max-width: 300px) {
