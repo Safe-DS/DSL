@@ -12,14 +12,17 @@
             class="historyItem"
             role="none"
             on:click={() =>
-                $currentHistoryIndex > ($history.length - 1 - index)
+                $currentHistoryIndex > $history.length - 1 - index
                     ? undoHistoryEntries(historyItem.id)
-                    : $currentHistoryIndex < ($history.length - 1 - index)
+                    : $currentHistoryIndex < $history.length - 1 - index
                       ? redoHistoryEntries(historyItem.id)
                       : null}
         >
-            <span class="historyText" class:inactiveItem={$currentHistoryIndex < ($history.length - 1 - index)} class:currentItem={$currentHistoryIndex === ($history.length - 1 - index)}
-                >{($history.length - index)}. {historyItem.alias}</span
+            <span
+                class="historyText"
+                class:inactiveItem={$currentHistoryIndex < $history.length - 1 - index}
+                class:currentItem={$currentHistoryIndex === $history.length - 1 - index}
+                >{$history.length - index}. {historyItem.alias}</span
             >
             {#if historyItem.loading}
                 <span class="spinner"></span>
