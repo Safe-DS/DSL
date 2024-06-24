@@ -1,6 +1,8 @@
 import type { FromExtensionMessage } from '../types/messaging';
 import type { HistoryEntry, PossibleColumnFilter, Profiling, Tab, Table } from '../types/state';
 import { get, writable } from 'svelte/store';
+import { filterHistoryOnlyProfilingInvalidating } from './filterHistory';
+// import { filterHistoryOnlyProfilingInvalidating } from './filterHistory';
 
 const tabs = writable<Tab[]>([]);
 
@@ -10,7 +12,7 @@ const preventClicks = writable<boolean>(false);
 
 const cancelTabIdsWaiting = writable<string[]>([]);
 
-export let initialTable: Table | undefined;
+let initialTable: Table | undefined;
 const tableKey = writable<number>(0); // If changed will remount the table
 let initialProfiling: { columnName: string; profiling: Profiling }[] = [];
 const tabKey = writable<number>(0); // If changed will remount the tabs
@@ -51,8 +53,56 @@ window.addEventListener('message', (event) => {
                 setProfiling(message.value);
                 profilingLoading.set(false);
                 history.update((currentHistory) => {
+                    // Find index of the history entry
+                    const index = currentHistory.findIndex((entry) => entry.id === message.historyId);
+                    const filteredHistoryAtIndex = filterHistoryOnlyProfilingInvalidating(
+                        currentHistory.slice(0, index + 1),
+                    );
+                    // For all entries before index until there is a profilingState or different filterHistoryOnlyProfilingInvalidating, calculate the filteredHistory there
+                    const historyIdsWeCanSetProfilingStateForToo: number[] = [];
+                    for (let i = index - 1; i >= 0; i--) {
+                        const entry = currentHistory[i];
+                        if (entry.profilingState === null) {
+                            const filteredHistoryHere = filterHistoryOnlyProfilingInvalidating(
+                                currentHistory.slice(0, i + 1),
+                            );
+                            if (
+                                filteredHistoryHere.every((entryHere) => filteredHistoryAtIndex.includes(entryHere)) &&
+                                filteredHistoryAtIndex.every((entryAtIndex) =>
+                                    filteredHistoryHere.includes(entryAtIndex),
+                                )
+                            ) {
+                                historyIdsWeCanSetProfilingStateForToo.push(entry.id);
+                            } else {
+                                break;
+                            }
+                        }
+                    }
+                    // After index
+                    for (let i = index + 1; i < currentHistory.length; i++) {
+                        const entry = currentHistory[i];
+                        if (entry.profilingState === null) {
+                            const filteredHistoryHere = filterHistoryOnlyProfilingInvalidating(
+                                currentHistory.slice(0, i + 1),
+                            );
+                            if (
+                                filteredHistoryHere.every((entryHere) => filteredHistoryAtIndex.includes(entryHere)) &&
+                                filteredHistoryAtIndex.every((entryAtIndex) =>
+                                    filteredHistoryHere.includes(entryAtIndex),
+                                )
+                            ) {
+                                historyIdsWeCanSetProfilingStateForToo.push(entry.id);
+                            } else {
+                                break;
+                            }
+                        }
+                    }
+
                     return currentHistory.map((entry) => {
-                        if (entry.id === message.historyId) {
+                        if (
+                            entry.id === message.historyId ||
+                            historyIdsWeCanSetProfilingStateForToo.includes(entry.id)
+                        ) {
                             return {
                                 ...entry,
                                 profilingState: message.value,
@@ -168,6 +218,7 @@ export {
     preventClicks,
     cancelTabIdsWaiting,
     tableLoading,
+    initialTable,
     savedColumnWidths,
     profilingLoading,
     profilingOutdated,

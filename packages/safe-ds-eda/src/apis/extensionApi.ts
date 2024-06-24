@@ -2,7 +2,7 @@ import { get } from 'svelte/store';
 import type { HistoryEntry } from '../../types/state';
 import { profilingLoading, table, history } from '../webviewState';
 import type { ExecuteRunnerAllEntry } from '../../types/messaging';
-import { filterHistoryOnlyInternal } from './historyApi';
+import { filterHistoryOnlyInternal } from '../filterHistory';
 
 export const createInfoToast = function (message: string) {
     window.injVscode.postMessage({ command: 'setInfo', value: message });

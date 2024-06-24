@@ -5,7 +5,6 @@ import type {
     CategoricalFilter,
     EmptyTab,
     ExternalHistoryEntry,
-    FullInternalHistoryEntry,
     HistoryEntry,
     InteralEmptyTabHistoryEntry,
     InternalHistoryEntry,
@@ -29,6 +28,7 @@ import {
     profilingOutdated,
 } from '../webviewState';
 import { executeRunner, executeRunnerAll, executeRunnerAllFuture } from './extensionApi';
+import { doesEntryActionInvalidateProfiling, filterHistoryOnlyInternal } from '../filterHistory';
 
 // Wait for results to return from the server
 const asyncQueue: (ExternalHistoryEntry & { id: number })[] = [];
@@ -205,10 +205,6 @@ const getCurrentProfiling = function (): { columnName: string; profiling: Profil
         columnName: column.name,
         profiling: column.profiling,
     }));
-};
-
-const doesEntryActionInvalidateProfiling = function (entryAction: HistoryEntry['action']): boolean {
-    return entryAction === 'filterColumn' || entryAction === 'voidFilterColumn';
 };
 
 export const addInternalToHistory = function (entry: Exclude<InternalHistoryEntry, InteralEmptyTabHistoryEntry>): void {
@@ -893,34 +889,6 @@ const updateTabOutdated = function (): void {
 
         return newTabs;
     });
-};
-
-export const filterHistoryOnlyInternal = function (entries: HistoryEntry[]): FullInternalHistoryEntry[] {
-    // Keep only the last occurrence of each unique overrideId
-    const lastOccurrenceMap = new Map<string, number>();
-    const filteredEntries: HistoryEntry[] = [];
-
-    // Traverse from end to start to record the last occurrence of each unique overrideId
-    for (let i = entries.length - 1; i >= 0; i--) {
-        const entry = entries[i]!;
-        const overrideId = entry.overrideId;
-
-        if (!lastOccurrenceMap.has(overrideId)) {
-            lastOccurrenceMap.set(overrideId, i);
-        }
-    }
-
-    // Traverse from start to end to build the final result with only the last occurrences
-    for (let i = 0; i < entries.length; i++) {
-        const entry = entries[i]!;
-        const overrideId = entry.overrideId;
-
-        if (lastOccurrenceMap.get(overrideId) === i) {
-            filteredEntries.push(entry);
-        }
-    }
-
-    return filteredEntries.filter((entry) => entry.type === 'internal') as FullInternalHistoryEntry[];
 };
 
 const redoInternalHistory = function (historyEntries: HistoryEntry[]): void {
