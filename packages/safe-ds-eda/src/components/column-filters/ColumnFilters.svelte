@@ -38,8 +38,11 @@
             }
         });
         possibleFilters.forEach((filter) => {
-            if (filter.type === 'specificValue' && !specificValueApplied) {
-                specificValue = filter.values[0].toString();
+            if (filter.type === 'specificValue') {
+                filter.values.sort((a, b) => a.toString().localeCompare(b.toString(), undefined, { numeric: true }));
+                if (!specificValueApplied) {
+                    specificValue = filter.values[0].toString();
+                }
             } else if (filter.type === 'valueRange' && !valueRangeApplied) {
                 minValue = filter.min;
                 maxValue = filter.max;
