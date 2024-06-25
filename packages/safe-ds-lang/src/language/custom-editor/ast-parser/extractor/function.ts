@@ -3,7 +3,7 @@ import { Declaration } from "./declaration.js";
 import { Parameter } from "./parameter.js";
 import { Result } from "./result.js";
 
-export class Function extends Declaration {
+export class FunctionDeclaration extends Declaration {
     public static override LOGGING_TAG = "CustomEditor] [AstParser] [Function";
 
     private constructor(
@@ -11,24 +11,26 @@ export class Function extends Declaration {
         public readonly isStatic: Boolean,
         public readonly parameterList: Parameter[],
         public readonly resultList: Result[],
+        text?: string,
     ) {
-        super(name);
+        super(name, text);
     }
 
-    public static override default(): Function {
-        return new Function("unknown", false, [], []);
+    public static override default(): FunctionDeclaration {
+        return new FunctionDeclaration("unknown", false, [], []);
     }
 
-    public static override get(node: SdsFunction): Function {
+    public static override get(node: SdsFunction): FunctionDeclaration {
         const parameterList =
             node.parameterList?.parameters.map(Parameter.get) ?? [];
         const resultList = node.resultList?.results.map(Result.get) ?? [];
 
-        return new Function(
+        return new FunctionDeclaration(
             node.name,
             node.isStatic,
             parameterList,
             resultList,
+            node.$cstNode?.text,
         );
     }
 }

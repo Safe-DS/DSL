@@ -1,22 +1,30 @@
-import { AstNode, Reference } from "langium";
 import { Error } from "../../../../../safe-ds-editor/types/error.js";
 import { SafeDsMessagingProvider } from "../../communication/safe-ds-messaging-provider.js";
 import { SafeDsAstType } from "../../generated/ast.js";
 import { Call } from "./extractor/call.js";
 import { Edge } from "./extractor/edge.js";
+import { Placeholder } from "./extractor/placeholder.js";
+import {
+    GenericExpression,
+    GenericExpressionNode,
+} from "./parser/expression.js";
 
 export type TypeMap = SafeDsAstType;
 
 export class Utils {
     static logger: SafeDsMessagingProvider | undefined = undefined;
     static errorList: Error[] = [];
+    static placeholderList: Placeholder[] = [];
     static callList: Call[] = [];
+    static genericExpressionList: GenericExpressionNode[] = [];
     static edgeList: Edge[] = [];
 
     public static initialize(logger: SafeDsMessagingProvider) {
         Utils.logger = logger;
         Utils.errorList = [];
+        Utils.placeholderList = [];
         Utils.callList = [];
+        Utils.genericExpressionList = [];
         Utils.edgeList = [];
     }
 
@@ -43,33 +51,6 @@ export class Utils {
         Utils.logger?.error(constructedSource, message);
     }
 
-    public static assertType<T extends AstNode>(obj: AstNode): obj is T {
-        /* This is used to "inform" the typesystem that this node has the correct type */
-        /* This is valid, because the node type ALWAYS corresponds to the .$type attribute */
-        return true;
-    }
-
-    public static isDefined<T extends AstNode | Reference, K extends keyof T>(
-        node: T,
-        member: K,
-        source: string,
-        message?: string,
-    ): node is T & Record<K, Exclude<T[K], undefined>> {
-        const result = node[member] !== undefined;
-        const nodeType = "$type" in node ? node.$type : "Reference";
-        if (!result) {
-            if (message) {
-                Utils.pushError(source, message);
-            } else {
-                Utils.pushError(
-                    source,
-                    `${nodeType}: Undefined attribute <${String(member)}>`,
-                );
-            }
-        }
-        return result;
-    }
-
     public static getNewId = (() => {
         let lastNumber = 0;
         return () => lastNumber++;
@@ -85,4 +66,10 @@ export const zip = <A, B>(arrayA: A[], arrayB: B[]): [A, B][] => {
     }
 
     return result;
+};
+
+export const displayCombo = (element: Call | GenericExpression): string => {
+    return element instanceof Call
+        ? `${element.name}()`
+        : element.expression.toString();
 };

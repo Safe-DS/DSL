@@ -3,11 +3,15 @@ import {
     isSdsAssignment,
     isSdsExpressionStatement,
 } from "../../../generated/ast.js";
+import { Call } from "../extractor/call.js";
 import { Edge, Port } from "../extractor/edge.js";
-import { Placeholder } from "../extractor/placeholder.js";
 import { Utils, zip } from "../utils.js";
 import { parseAssignee } from "./assignee.js";
-import { parseExpression } from "./expression.js";
+import {
+    Expression,
+    GenericExpression,
+    GenericExpressionNode,
+} from "./expression.js";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const LOGGING_TAG = "CustomEditor] [AstParser] [Statement";
@@ -16,36 +20,38 @@ export const parseStatement = (statement: SdsStatement): void => {
     if (isSdsAssignment(statement)) {
         const assigneeList = statement.assigneeList
             ? statement.assigneeList.assignees.map(parseAssignee)
-            : ([] as Placeholder[]);
-
-        const expressionResult = statement.expression
-            ? parseExpression(statement.expression)
             : [];
 
-        if (!Port.isPortList(expressionResult)) return;
+        const expression = statement.expression
+            ? Expression.get(statement.expression)
+            : [];
 
-        if (assigneeList.length !== expressionResult.length) {
-            Utils.pushError(
-                LOGGING_TAG,
-                `${assigneeList.length < expressionResult.length ? "Assignees" : "Expression Result"} missing in line ${statement.expression?.$cstNode?.range.start.line}`,
+        if (expression instanceof Call) {
+            if (assigneeList.length !== expression.resultList.length) {
+                Utils.pushError(
+                    LOGGING_TAG,
+                    `${assigneeList.length < expression.resultList.length ? "Assignees" : "Expression Result"} missing in line ${statement.expression?.$cstNode?.range.start.line}`,
+                );
+            }
+
+            zip(assigneeList, expression.resultList).forEach(
+                ([assignee, result]) => {
+                    if (assignee) {
+                        Edge.create(
+                            Port.fromResult(result, expression.id),
+                            Port.fromPlaceholder(assignee),
+                        );
+                    }
+                },
             );
+        } else {
         }
-
-        zip(assigneeList, expressionResult).forEach(
-            ([assignee, expression]) => {
-                if (
-                    assignee instanceof Placeholder &&
-                    expression instanceof Port
-                ) {
-                    Utils.edgeList.push(
-                        new Edge(expression, Port.fromPlaceholder(assignee)),
-                    );
-                }
-            },
-        );
     }
 
     if (isSdsExpressionStatement(statement)) {
-        parseExpression(statement.expression);
+        const expression = Expression.get(statement.expression);
+        if (expression instanceof GenericExpression) {
+            GenericExpressionNode.createNode(expression);
+        }
     }
 };

@@ -1,11 +1,9 @@
 import { SdsMemberAccess } from "../../../generated/ast.js";
 import { Declaration } from "./declaration.js";
-import { parseExpression } from "../parser/expression.js";
-import { Utils } from "../utils.js";
-import { ClassDeclaration } from "./class.js";
-import { Port } from "./edge.js";
-import { Function } from "./function.js";
-import { Placeholder } from "./placeholder.js";
+import { Utils, displayCombo } from "../utils.js";
+import { FunctionDeclaration } from "./function.js";
+import { Expression, GenericExpression } from "../parser/expression.js";
+import { Call } from "./call.js";
 
 export class MemberAccess {
     public static readonly LOGGING_TAG =
@@ -13,11 +11,15 @@ export class MemberAccess {
 
     private constructor(
         public readonly member: Declaration,
-        public readonly receiver: string | Port,
+        public readonly receiver: GenericExpression | Call,
+        private readonly text?: string,
     ) {}
 
     public static default(): MemberAccess {
-        return new MemberAccess(Function.default(), "unknown");
+        return new MemberAccess(
+            FunctionDeclaration.default(),
+            new GenericExpression(Declaration.default()),
+        );
     }
 
     public static get(node: SdsMemberAccess): MemberAccess {
@@ -27,33 +29,19 @@ export class MemberAccess {
                 MemberAccess.LOGGING_TAG,
                 `Member is undefined or undeclared in line ${node.member?.$cstNode?.range.start.line}`,
             );
-            member = Function.default();
+            member = FunctionDeclaration.default();
         } else {
             const memberDeclaration = node.member.target.ref;
-            member = Declaration.get(memberDeclaration) ?? Function.default();
+            member =
+                Declaration.get(memberDeclaration) ??
+                FunctionDeclaration.default();
         }
 
-        const receiver = parseExpression(node.receiver);
-        if (!(receiver instanceof Declaration)) {
-            Utils.pushError(
-                MemberAccess.LOGGING_TAG,
-                `Receiver is undefined or undeclared in line ${node.receiver.$cstNode?.range.start.line}`,
-            );
-            return new MemberAccess(member, "unknown");
-        }
+        const receiver = Expression.get(node.receiver);
+        return new MemberAccess(member, receiver, node.$cstNode?.text);
+    }
 
-        if (receiver instanceof Placeholder) {
-            return new MemberAccess(member, Port.fromPlaceholder(receiver));
-        }
-
-        if (receiver instanceof ClassDeclaration) {
-            return new MemberAccess(member, receiver.name);
-        }
-
-        Utils.pushError(
-            MemberAccess.LOGGING_TAG,
-            `Unable to display receiver <${node.receiver.$type}>`,
-        );
-        return new MemberAccess(member, "unknown");
+    public toString(): string {
+        return `${displayCombo(this.receiver)}.${this.member.toString()}`;
     }
 }

@@ -36,7 +36,9 @@ const getAstHandler = async (
     // saveJson(documentToJson(document, 16), "currentDocument");
 
     const ast = JSON.stringify({
+        placeholder: Utils.placeholderList,
         calls: Utils.callList,
+        genericExpressions: Utils.genericExpressionList,
         edges: Utils.edgeList,
     });
 
@@ -45,7 +47,7 @@ const getAstHandler = async (
             {
                 action: "block",
                 source: `[${LOGGING_TAG}]`,
-                message: `The parsing of the Ast is not yet fully implemented.\nPlease keep calm, and have a cup of tea, with some biscuits.\nHere is how far we currenlty are:\n\n${ast}`,
+                message: `The parsing of the Ast is not yet fully implemented.\nPlease keep calm, and have a cup of tea.\nHere is how far we currenlty are:\n\n${ast}`,
             },
             ...Utils.errorList,
         ],

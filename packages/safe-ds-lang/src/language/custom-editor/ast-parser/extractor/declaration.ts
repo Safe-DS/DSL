@@ -5,7 +5,7 @@ import {
     isSdsPlaceholder,
 } from "../../../generated/ast.js";
 import { ClassDeclaration } from "./class.js";
-import { Function } from "./function.js";
+import { FunctionDeclaration } from "./function.js";
 import { Placeholder } from "./placeholder.js";
 import { Utils } from "../utils.js";
 
@@ -13,7 +13,10 @@ export class Declaration {
     public static readonly LOGGING_TAG: string =
         "CustomEditor] [AstParser] [Declaration";
 
-    protected constructor(public readonly name: string) {}
+    protected constructor(
+        public readonly name: string,
+        private readonly text?: string,
+    ) {}
 
     public static default(): Declaration {
         return new Declaration("unknown");
@@ -21,7 +24,7 @@ export class Declaration {
 
     public static get(node: SdsDeclaration): Declaration | undefined {
         if (isSdsFunction(node)) {
-            return Function.get(node);
+            return FunctionDeclaration.get(node);
         }
 
         if (isSdsPlaceholder(node)) {
@@ -59,5 +62,9 @@ export class Declaration {
                 );
         }
         return;
+    }
+
+    public toString(): string {
+        return this.name;
     }
 }

@@ -15,6 +15,7 @@ export class Datatype {
     private constructor(
         public readonly type: string,
         public readonly displayValue: string | string[],
+        private readonly text?: string,
     ) {}
 
     public static default(): Datatype {
@@ -22,14 +23,17 @@ export class Datatype {
     }
 
     public static get(node: SdsType): Datatype {
+        const text = node.$cstNode?.text;
+
         if (isSdsCallableType(node)) {
-            return new Datatype(node.$type, "");
+            return new Datatype(node.$type, "", text);
         }
 
         if (isSdsLiteralType(node)) {
             return new Datatype(
                 node.$type,
                 node.literalList.literals.map((literal) => literal.$type),
+                text,
             );
         }
 
@@ -38,7 +42,11 @@ export class Datatype {
         }
 
         if (isSdsNamedType(node)) {
-            return new Datatype(node.$type, node.declaration?.ref?.name ?? "");
+            return new Datatype(
+                node.$type,
+                node.declaration?.ref?.name ?? "",
+                text,
+            );
         }
 
         if (isSdsUnionType(node)) {
@@ -50,11 +58,12 @@ export class Datatype {
                             Datatype.get(typeArgument.value).displayValue,
                     )
                     .flat(),
+                text,
             );
         }
 
         if (isSdsUnknownType(node)) {
-            return new Datatype(node.$type, "unknown");
+            return new Datatype(node.$type, "unknown", text);
         }
 
         Utils.pushError(
@@ -63,5 +72,11 @@ export class Datatype {
         );
 
         return Datatype.default();
+    }
+
+    public toString(): string {
+        return Array.isArray(this.displayValue)
+            ? this.displayValue.join(" | ")
+            : this.displayValue;
     }
 }

@@ -1,3 +1,6 @@
+import { GenericExpressionNode } from "../parser/expression.js";
+import { Utils } from "../utils.js";
+import { Parameter } from "./parameter.js";
 import { Placeholder } from "./placeholder.js";
 import { Result } from "./result.js";
 
@@ -8,6 +11,10 @@ export class Edge {
         public readonly from: Port,
         public readonly to: Port,
     ) {}
+
+    public static create(from: Port, to: Port) {
+        Utils.edgeList.push(new Edge(from, to));
+    }
 }
 
 export class Port {
@@ -18,6 +25,10 @@ export class Port {
         public readonly portIdentifier: string,
     ) {}
 
+    public static fromName = (nodeId: number, name: string): Port => {
+        return new Port(nodeId, name);
+    };
+
     public static fromPlaceholder = (placeholder: Placeholder): Port => {
         return new Port(-1, placeholder.name);
     };
@@ -25,6 +36,20 @@ export class Port {
     public static fromResult = (result: Result, nodeId: number): Port => {
         return new Port(nodeId, result.name);
     };
+
+    public static fromParameter = (
+        parameter: Parameter,
+        nodeId: number,
+    ): Port => {
+        return new Port(nodeId, parameter.name);
+    };
+
+    public static fromGenericExpressionNode(
+        node: GenericExpressionNode,
+        input: boolean,
+    ) {
+        return new Port(node.id, input ? "input" : "output");
+    }
 
     public static isPortList(object: any): object is Port[] {
         return (

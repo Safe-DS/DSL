@@ -1,7 +1,7 @@
 import { SdsReference } from "../../../generated/ast.js";
 import { Declaration } from "../extractor/declaration.js";
 import { Utils } from "../utils.js";
-import { Function } from "../extractor/function.js";
+import { FunctionDeclaration } from "../extractor/function.js";
 
 const LOGGING_TAG = "CustomEditor] [AstParser] [Reference";
 
@@ -18,8 +18,9 @@ export const getReference = (node: SdsReference): Declaration => {
             `Unable to resolve reference in line ${node.$cstNode?.range.start.line}`,
         );
 
-        return Function.default();
+        return FunctionDeclaration.default();
     }
-    const declaration = Declaration.get(target) ?? Function.default();
+    const declaration =
+        Declaration.get(target) ?? FunctionDeclaration.default();
     return declaration;
 };

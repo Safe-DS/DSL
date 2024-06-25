@@ -8,6 +8,7 @@ export class Result {
     private constructor(
         public readonly name: string,
         public readonly datatype: Datatype,
+        private readonly text?: string,
     ) {}
 
     public static get(node: SdsResult): Result {
@@ -23,6 +24,10 @@ export class Result {
             ? Datatype.get(node.type)
             : Datatype.default();
 
-        return new Result(name, datatype);
+        return new Result(name, datatype, node.$cstNode?.text);
+    }
+
+    public toString(): string {
+        return this.name;
     }
 }

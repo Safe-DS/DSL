@@ -21,6 +21,7 @@ export class Literal {
     private constructor(
         public readonly datatype: string,
         public readonly value: string,
+        private readonly text?: string,
     ) {}
 
     public static default(): Literal {
@@ -28,36 +29,38 @@ export class Literal {
     }
 
     public static get(node: SdsLiteral): Literal {
+        const text = node.$cstNode?.text;
+
         if (isSdsString(node)) {
-            return new Literal(node.$type, node.value);
+            return new Literal(node.$type, node.value, text);
         }
 
         if (isSdsBoolean(node)) {
-            return new Literal(node.$type, node.value ? "true" : "false");
+            return new Literal(node.$type, node.value ? "true" : "false", text);
         }
 
         if (isSdsFloat(node)) {
-            return new Literal(node.$type, node.value.toString());
+            return new Literal(node.$type, node.value.toString(), text);
         }
 
         if (isSdsInt(node)) {
-            return new Literal(node.$type, node.value.toString());
+            return new Literal(node.$type, node.value.toString(), text);
         }
 
         if (isSdsNull(node)) {
-            return new Literal(node.$type, "NULL");
+            return new Literal(node.$type, "NULL", text);
         }
 
         if (isSdsList(node)) {
-            return new Literal(node.$type, node.$type); // Todo: This is a placeholder
+            return new Literal(node.$type, node.$type, text); // Todo: This is a placeholder
         }
 
         if (isSdsMap(node)) {
-            return new Literal(node.$type, node.$type); // Todo: This is a placeholder
+            return new Literal(node.$type, node.$type, text); // Todo: This is a placeholder
         }
 
         if (isSdsUnknown(node)) {
-            return new Literal(node.$type, "unknown");
+            return new Literal(node.$type, "unknown", text);
         }
 
         if (
@@ -66,7 +69,7 @@ export class Literal {
             isSdsTemplateStringPart(node) ||
             isSdsTemplateStringStart(node)
         ) {
-            return new Literal(node.$type, node.value);
+            return new Literal(node.$type, node.value, text);
         }
 
         Utils.pushError(
@@ -74,5 +77,9 @@ export class Literal {
             `Unexpected node type <${node.$type}>`,
         );
         return Literal.default();
+    }
+
+    public toString(): string {
+        return this.value;
     }
 }
