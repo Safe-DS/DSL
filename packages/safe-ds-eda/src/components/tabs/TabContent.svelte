@@ -600,7 +600,7 @@
     }
 
     .loading {
-        min-width: 600px;
+        min-width: 700px;
         margin: 0 auto;
         background-color: var(--light-color);
         position: absolute;
@@ -616,7 +616,7 @@
     .content {
         position: relative;
         z-index: 0;
-        min-width: 600px;
+        min-width: 700px;
     }
 
     .generateButton {
