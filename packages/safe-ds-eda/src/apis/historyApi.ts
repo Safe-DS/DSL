@@ -840,11 +840,9 @@ const updateTabOutdated = function (): void {
                 for (const entryObj of relevantFilterColumnEntries) {
                     const entry = entryObj.entry;
                     if (entry.action === 'filterColumn' || entry.action === 'voidFilterColumn') {
-                        if (currentTable.columns.find((c) => c.name === entry.columnName)?.type === 'numerical') {
-                            if (entryObj.index > lastTabUpdateIndex) {
-                                outdated = true;
-                                outdatedReasons.push(entry.alias);
-                            }
+                        if (entryObj.index > lastTabUpdateIndex) {
+                            outdated = true;
+                            outdatedReasons.push(entry.alias);
                         }
                     }
                 }
@@ -862,23 +860,9 @@ const updateTabOutdated = function (): void {
                 for (const entryObj of relevantFilterColumnEntries) {
                     const entry = entryObj.entry;
                     if (entry.action === 'filterColumn' || entry.action === 'voidFilterColumn') {
-                        if (t.columnNumber === 'one') {
-                            if (entry.columnName === t.content.columnName) {
-                                if (entryObj.index > lastTabUpdateIndex) {
-                                    outdated = true;
-                                    outdatedReasons.push(entry.alias);
-                                }
-                            }
-                        } else if (t.columnNumber === 'two') {
-                            if (
-                                entry.columnName === t.content.xAxisColumnName ||
-                                entry.columnName === t.content.yAxisColumnName
-                            ) {
-                                if (entryObj.index > lastTabUpdateIndex) {
-                                    outdated = true;
-                                    outdatedReasons.push(entry.alias);
-                                }
-                            }
+                        if (entryObj.index > lastTabUpdateIndex) {
+                            outdated = true;
+                            outdatedReasons.push(entry.alias);
                         }
                     }
                 }
