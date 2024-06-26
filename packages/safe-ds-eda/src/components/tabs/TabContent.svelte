@@ -1,15 +1,13 @@
 <script lang="ts">
-    import type { EmptyTab, ExternalVisualizingHistoryEntry, HistoryEntry, Tab } from '../../../types/state';
+    import type { EmptyTab, ExternalVisualizingHistoryEntry, Tab } from '../../../types/state';
     import ImageContent from './content/ImageContent.svelte';
     import DropDownButton from '../utilities/DropDownButton.svelte';
-    import { cancelTabIdsWaiting, table, history } from '../../webviewState';
+    import { cancelTabIdsWaiting, table } from '../../webviewState';
     import { imageWidthToHeightRatio } from '../../../consts.config';
-    import { currentHistoryIndex, executeExternalHistoryEntry, setTabAsGenerating } from '../../apis/historyApi';
+    import { executeExternalHistoryEntry, setTabAsGenerating } from '../../apis/historyApi';
     import SwapIcon from '../../icons/Swap.svelte';
     import { derived, writable } from 'svelte/store';
     import Undo from '../../icons/Undo.svelte';
-    import { doesEntryActionInvalidateProfiling, filterHistory } from '../../filterHistory';
-    import { entries } from 'lodash';
 
     export let tab: Tab | EmptyTab;
     export let sidebarWidth: number;
