@@ -1,13 +1,15 @@
 <script lang="ts">
-    import type { EmptyTab, ExternalVisualizingHistoryEntry, Tab } from '../../../types/state';
+    import type { EmptyTab, ExternalVisualizingHistoryEntry, HistoryEntry, Tab } from '../../../types/state';
     import ImageContent from './content/ImageContent.svelte';
     import DropDownButton from '../utilities/DropDownButton.svelte';
-    import { cancelTabIdsWaiting, table } from '../../webviewState';
+    import { cancelTabIdsWaiting, table, history } from '../../webviewState';
     import { imageWidthToHeightRatio } from '../../../consts.config';
-    import { executeExternalHistoryEntry, setTabAsGenerating } from '../../apis/historyApi';
+    import { currentHistoryIndex, executeExternalHistoryEntry, setTabAsGenerating } from '../../apis/historyApi';
     import SwapIcon from '../../icons/Swap.svelte';
     import { derived, writable } from 'svelte/store';
     import Undo from '../../icons/Undo.svelte';
+    import { doesEntryActionInvalidateProfiling, filterHistory } from '../../filterHistory';
+    import { entries } from 'lodash';
 
     export let tab: Tab | EmptyTab;
     export let sidebarWidth: number;
@@ -385,11 +387,11 @@
                         possibleOptions={possibleTableNames.map((name) => ({ name }))}
                         {changesDisabled}
                     />
-                    <span class="outdated"
-                        >{#if tab.type !== 'empty' && tab.outdated && !$isInBuildingState}
-                            Outdated!
-                        {/if}</span
-                    >
+                    {#if tab.type !== 'empty' && tab.outdated && !$isInBuildingState}
+                        <span class="outdated" title={'New invalidating actions:\n' + tab.outdatedReasons.join('\n')}>
+                            Outdated! <span class="infoIcon">&#8505;</span>
+                        </span>
+                    {/if}
                 </div>
                 <div class="leftInfoRow">
                     {#if tab.type !== 'empty' && tab.outdated && !$isInBuildingState}
@@ -573,6 +575,18 @@
         font-size: 16px;
         margin-left: 20px;
         align-self: flex-end;
+        cursor: default;
+    }
+
+    .infoIcon {
+        border-radius: 15px;
+        width: 1em;
+        height: 1em;
+        font-size: 0.9em;
+        background-color: var(--error-color);
+        display: inline-flex;
+        justify-content: center;
+        color: white;
     }
 
     .axis {

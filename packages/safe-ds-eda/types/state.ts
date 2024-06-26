@@ -160,6 +160,7 @@ interface TabObject {
     columnNumber: 'one' | 'two' | 'none';
     isInGeneration: boolean;
     outdated: boolean;
+    outdatedReasons: string[];
 }
 
 interface ImageTabObject extends TabObject {

@@ -827,22 +827,23 @@ const updateTabOutdated = function (): void {
             if (t.type !== 'empty' && t.columnNumber === 'none') {
                 // Find out if one of the outdating entries was after the last time the tab was updated
                 const lastTabUpdateIndex = findLastTabUpdateIndex(t.id);
+                const outdatedReasons = [];
 
                 for (const entry of relevantToggleColumnEntries) {
                     if (entry.index > lastTabUpdateIndex) {
                         // UPDATE the if in case there are none column tabs that do not depend on numerical columns
                         outdated = true;
+                        outdatedReasons.push(entry.entry.alias);
                     }
                 }
 
-                if (!outdated) {
-                    for (const entryObj of relevantFilterColumnEntries) {
-                        const entry = entryObj.entry;
-                        if (entry.action === 'filterColumn' || entry.action === 'voidFilterColumn') {
-                            if (currentTable.columns.find((c) => c.name === entry.columnName)?.type === 'numerical') {
-                                if (entryObj.index > lastTabUpdateIndex) {
-                                    outdated = true;
-                                }
+                for (const entryObj of relevantFilterColumnEntries) {
+                    const entry = entryObj.entry;
+                    if (entry.action === 'filterColumn' || entry.action === 'voidFilterColumn') {
+                        if (currentTable.columns.find((c) => c.name === entry.columnName)?.type === 'numerical') {
+                            if (entryObj.index > lastTabUpdateIndex) {
+                                outdated = true;
+                                outdatedReasons.push(entry.alias);
                             }
                         }
                     }
@@ -851,8 +852,10 @@ const updateTabOutdated = function (): void {
                 return {
                     ...t,
                     outdated,
+                    outdatedReasons,
                 };
             } else if (t.type !== 'empty') {
+                const outdatedReasons = [];
                 // Find out if one of the outdating entries was after the last time the tab was updated
                 const lastTabUpdateIndex = findLastTabUpdateIndex(t.id);
 
@@ -863,6 +866,7 @@ const updateTabOutdated = function (): void {
                             if (entry.columnName === t.content.columnName) {
                                 if (entryObj.index > lastTabUpdateIndex) {
                                     outdated = true;
+                                    outdatedReasons.push(entry.alias);
                                 }
                             }
                         } else if (t.columnNumber === 'two') {
@@ -872,6 +876,7 @@ const updateTabOutdated = function (): void {
                             ) {
                                 if (entryObj.index > lastTabUpdateIndex) {
                                     outdated = true;
+                                    outdatedReasons.push(entry.alias);
                                 }
                             }
                         }
@@ -881,6 +886,7 @@ const updateTabOutdated = function (): void {
                 return {
                     ...t,
                     outdated,
+                    outdatedReasons,
                 };
             } else {
                 return t;

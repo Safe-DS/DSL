@@ -854,6 +854,7 @@ export class RunnerApi {
                         id: newEntry.existingTabId ?? newEntry.newTabId,
                         content: { encodedImage: image },
                         outdated: false,
+                        outdatedReasons: [],
                     },
                 };
             } else if (newEntry.columnNumber === 'two') {
@@ -868,6 +869,7 @@ export class RunnerApi {
                         isInGeneration: false,
                         id: newEntry.existingTabId ?? newEntry.newTabId,
                         outdated: false,
+                        outdatedReasons: [],
                         content: {
                             encodedImage: image,
                             xAxisColumnName: newEntry.xAxisColumnName,
@@ -888,6 +890,7 @@ export class RunnerApi {
                         id: newEntry.existingTabId ?? newEntry.newTabId,
                         content: { encodedImage: image, columnName: newEntry.columnName },
                         outdated: false,
+                        outdatedReasons: [],
                     },
                 };
             }
@@ -989,6 +992,7 @@ export class RunnerApi {
                             id: entry.entry.existingTabId ?? entry.entry.newTabId,
                             content: { encodedImage: image },
                             outdated: false,
+                            outdatedReasons: [],
                         },
                     });
                 } else if (entry.entry.columnNumber === 'two') {
@@ -1003,6 +1007,7 @@ export class RunnerApi {
                             isInGeneration: false,
                             id: entry.entry.existingTabId ?? entry.entry.newTabId,
                             outdated: false,
+                            outdatedReasons: [],
                             content: {
                                 encodedImage: image,
                                 xAxisColumnName: entry.entry.xAxisColumnName,
@@ -1023,6 +1028,7 @@ export class RunnerApi {
                             id: entry.entry.existingTabId ?? entry.entry.newTabId,
                             content: { encodedImage: image, columnName: entry.entry.columnName },
                             outdated: false,
+                            outdatedReasons: [],
                         },
                     });
                 }

@@ -28,6 +28,34 @@ export const filterHistoryOnlyInternal = function (entries: HistoryEntry[]): Ful
     return filteredEntries.filter((entry) => entry.type === 'internal') as FullInternalHistoryEntry[];
 };
 
+export const filterHistory = function (entries: HistoryEntry[]): HistoryEntry[] {
+    // Keep only the last occurrence of each unique overrideId
+    const lastOccurrenceMap = new Map<string, number>();
+    const filteredEntries: HistoryEntry[] = [];
+
+    // Traverse from end to start to record the last occurrence of each unique overrideId
+    for (let i = entries.length - 1; i >= 0; i--) {
+        const entry = entries[i]!;
+        const overrideId = entry.overrideId;
+
+        if (!lastOccurrenceMap.has(overrideId)) {
+            lastOccurrenceMap.set(overrideId, i);
+        }
+    }
+
+    // Traverse from start to end to build the final result with only the last occurrences
+    for (let i = 0; i < entries.length; i++) {
+        const entry = entries[i]!;
+        const overrideId = entry.overrideId;
+
+        if (lastOccurrenceMap.get(overrideId) === i) {
+            filteredEntries.push(entry);
+        }
+    }
+
+    return filteredEntries;
+};
+
 export const filterHistoryOnlyProfilingInvalidating = function (entries: HistoryEntry[]): HistoryEntry[] {
     // Keep only the last occurrence of each unique overrideId
     const lastOccurrenceMap = new Map<string, number>();
