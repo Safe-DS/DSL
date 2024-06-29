@@ -1,6 +1,8 @@
 import type { FromExtensionMessage } from '../types/messaging';
-import type { HistoryEntry, Profiling, Tab, Table } from '../types/state';
+import type { HistoryEntry, PossibleColumnFilter, Profiling, Tab, Table } from '../types/state';
 import { get, writable } from 'svelte/store';
+import { filterHistoryOnlyProfilingInvalidating } from './filterHistory';
+// import { filterHistoryOnlyProfilingInvalidating } from './filterHistory';
 
 const tabs = writable<Tab[]>([]);
 
@@ -15,7 +17,11 @@ const tableKey = writable<number>(0); // If changed will remount the table
 let initialProfiling: { columnName: string; profiling: Profiling }[] = [];
 const tabKey = writable<number>(0); // If changed will remount the tabs
 
+const possibleColumnFilters = new Map<string, PossibleColumnFilter[]>();
+
 const showProfiling = writable<boolean>(false);
+const profilingOutdated = writable<boolean>(false);
+const profilingLoading = writable<boolean>(false);
 
 // Define the stores, current state to default in case the extension never calls setWebviewState( Shouldn't happen)
 const table = writable<Table | undefined>();
@@ -34,12 +40,79 @@ window.addEventListener('message', (event) => {
             if (!get(table)) {
                 table.set(message.value);
                 initialTable = message.value;
+
+                for (let i = 0; i < message.value.columns.length; i++) {
+                    possibleColumnFilters.set(message.value.columns[i].name, getPosiibleColumnFilters(i));
+                }
             } else {
                 throw new Error('setInitialTable called more than once');
             }
             break;
         case 'setProfiling':
-            if (get(table)) {
+            if (message.historyId !== undefined) {
+                setProfiling(message.value);
+                profilingLoading.set(false);
+                history.update((currentHistory) => {
+                    // Find index of the history entry
+                    const index = currentHistory.findIndex((entry) => entry.id === message.historyId);
+                    const filteredHistoryAtIndex = filterHistoryOnlyProfilingInvalidating(
+                        currentHistory.slice(0, index + 1),
+                    );
+                    // For all entries before index until there is a profilingState or different filterHistoryOnlyProfilingInvalidating, calculate the filteredHistory there
+                    const historyIdsWeCanSetProfilingStateForToo: number[] = [];
+                    for (let i = index - 1; i >= 0; i--) {
+                        const entry = currentHistory[i];
+                        if (entry.profilingState === null) {
+                            const filteredHistoryHere = filterHistoryOnlyProfilingInvalidating(
+                                currentHistory.slice(0, i + 1),
+                            );
+                            if (
+                                filteredHistoryHere.every((entryHere) => filteredHistoryAtIndex.includes(entryHere)) &&
+                                filteredHistoryAtIndex.every((entryAtIndex) =>
+                                    filteredHistoryHere.includes(entryAtIndex),
+                                )
+                            ) {
+                                historyIdsWeCanSetProfilingStateForToo.push(entry.id);
+                            } else {
+                                break;
+                            }
+                        }
+                    }
+                    // After index
+                    for (let i = index + 1; i < currentHistory.length; i++) {
+                        const entry = currentHistory[i];
+                        if (entry.profilingState === null) {
+                            const filteredHistoryHere = filterHistoryOnlyProfilingInvalidating(
+                                currentHistory.slice(0, i + 1),
+                            );
+                            if (
+                                filteredHistoryHere.every((entryHere) => filteredHistoryAtIndex.includes(entryHere)) &&
+                                filteredHistoryAtIndex.every((entryAtIndex) =>
+                                    filteredHistoryHere.includes(entryAtIndex),
+                                )
+                            ) {
+                                historyIdsWeCanSetProfilingStateForToo.push(entry.id);
+                            } else {
+                                break;
+                            }
+                        }
+                    }
+
+                    return currentHistory.map((entry) => {
+                        if (
+                            entry.id === message.historyId ||
+                            historyIdsWeCanSetProfilingStateForToo.includes(entry.id)
+                        ) {
+                            return {
+                                ...entry,
+                                profilingState: message.value,
+                            };
+                        } else {
+                            return entry;
+                        }
+                    });
+                });
+            } else if (get(table)) {
                 initialProfiling = message.value;
                 setProfiling(message.value);
             }
@@ -80,6 +153,63 @@ const rerender = () => {
     tabKey.update((key) => key + 1);
 };
 
+const getPosiibleColumnFilters = function (columnIndex: number): PossibleColumnFilter[] {
+    if (!get(table)) return [];
+
+    const column = get(table)!.columns[columnIndex];
+
+    const possibleColumnFiltersHere: PossibleColumnFilter[] = [];
+
+    const distinctValues: string[] = [];
+    for (const value of column.values) {
+        if (!distinctValues.includes(value)) {
+            distinctValues.push(value);
+        }
+        if (distinctValues.length > 5) {
+            break;
+        }
+    }
+
+    if (column.type === 'categorical') {
+        if (distinctValues.length <= 5) {
+            possibleColumnFiltersHere.push({
+                type: 'specificValue',
+                values: ['-'].concat(distinctValues),
+            });
+        } else {
+            possibleColumnFiltersHere.push({
+                type: 'searchString',
+            });
+        }
+    } else {
+        if (distinctValues.length <= 5) {
+            possibleColumnFiltersHere.push({
+                type: 'specificValue',
+                values: ['-'].concat(distinctValues),
+            });
+        }
+
+        if (distinctValues.length >= 4) {
+            const colMax = column.values.reduce(
+                (acc: number, val: number) => Math.max(acc, val),
+                Number.NEGATIVE_INFINITY,
+            );
+            const colMin = column.values.reduce(
+                (acc: number, val: number) => Math.min(acc, val),
+                Number.POSITIVE_INFINITY,
+            );
+
+            possibleColumnFiltersHere.push({
+                type: 'valueRange',
+                min: colMin,
+                max: colMax,
+            });
+        }
+    }
+
+    return possibleColumnFiltersHere;
+};
+
 export {
     history,
     tabs,
@@ -88,9 +218,13 @@ export {
     preventClicks,
     cancelTabIdsWaiting,
     tableLoading,
+    initialTable,
     savedColumnWidths,
+    profilingLoading,
+    profilingOutdated,
     restoreTableInitialState,
     rerender,
+    possibleColumnFilters,
     tableKey,
     tabKey,
     showProfiling,

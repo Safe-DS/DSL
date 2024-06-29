@@ -8,7 +8,8 @@ type ToExtensionCommand =
     | 'setError'
     | 'executeRunner'
     | 'executeRunnerAll'
-    | 'executeRunnerAllFuture';
+    | 'executeRunnerAllFuture'
+    | 'refreshProfiling';
 
 interface ToExtensionCommandMessage {
     command: ToExtensionCommand;
@@ -61,6 +62,14 @@ export interface ToExtensionExecuteAllFutureRunnerMessage extends ToExtensionCom
     };
 }
 
+export interface ToExtensionRefreshProfilingMessage extends ToExtensionCommandMessage {
+    command: 'refreshProfiling';
+    value: {
+        historyId: number;
+        historyEntries: defaultTypes.HistoryEntry[];
+    };
+}
+
 interface ToExtensionExecuteAllRunnerMessage extends ToExtensionCommandMessage {
     command: 'executeRunnerAll';
     value: { entries: ExecuteRunnerAllEntry[]; jumpedToHistoryId: number };
@@ -72,7 +81,8 @@ export type ToExtensionMessage =
     | ToExtensionExecuteRunnerMessage
     | ToExtensionExecuteRunnerExcludingHiddenColumnsMessage
     | ToExtensionExecuteAllRunnerMessage
-    | ToExtensionExecuteAllFutureRunnerMessage;
+    | ToExtensionExecuteAllFutureRunnerMessage
+    | ToExtensionRefreshProfilingMessage;
 
 // From extension
 type FromExtensionCommand =
@@ -94,6 +104,7 @@ interface FromExtensionSetInitialTableMessage extends FromExtensionCommandMessag
 interface FromExtensionSetProfilingMessage extends FromExtensionCommandMessage {
     command: 'setProfiling';
     value: { columnName: string; profiling: defaultTypes.Profiling }[];
+    historyId?: number;
 }
 
 interface RunnerExecutionResultBase {
