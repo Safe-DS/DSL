@@ -412,7 +412,7 @@
                                 executeExternalHistoryEntry(newTab);
                             }}
                         >
-                            Refresh In new Tab <Undo color="var(--dark-color)" />
+                            Refresh in New Tab <Undo color="var(--dark-color)" />
                         </button>
                     {/if}
                 </div>
