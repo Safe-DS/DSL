@@ -73,8 +73,8 @@ export class SafeDsCompletionProvider extends DefaultCompletionProvider {
         return true;
     }
 
-    private illegalKeywordsInPipelineFile = new Set(['annotation', 'class', 'enum', 'fun', 'schema']);
-    private illegalKeywordsInStubFile = new Set(['pipeline', 'internal', 'private', 'segment']);
+    private illegalKeywordsInModuleContextOfPipelineFile = new Set(['annotation', 'class', 'enum', 'fun', 'this']);
+    private illegalKeywordsInModuleContextOfStubFile = new Set(['pipeline', 'segment']);
 
     protected override filterKeyword(context: CompletionContext, keyword: Keyword): boolean {
         // Filter out keywords that do not contain any word character
@@ -84,12 +84,15 @@ export class SafeDsCompletionProvider extends DefaultCompletionProvider {
 
         if ((!context.node || isSdsModule(context.node)) && !getPackageName(context.node)) {
             return keyword.value === 'package';
-        } else if (isSdsModule(context.node) && isInPipelineFile(context.node)) {
-            return !this.illegalKeywordsInPipelineFile.has(keyword.value);
+        } else if (isInPipelineFile(context.node)) {
+            if (isSdsModule(context.node)) {
+                return !this.illegalKeywordsInModuleContextOfPipelineFile.has(keyword.value);
+            } else {
+                return keyword.value !== 'this';
+            }
         } else if (isSdsModule(context.node) && isInStubFile(context.node)) {
-            return !this.illegalKeywordsInStubFile.has(keyword.value);
+            return !this.illegalKeywordsInModuleContextOfStubFile.has(keyword.value);
         }
-
         return true;
     }
 

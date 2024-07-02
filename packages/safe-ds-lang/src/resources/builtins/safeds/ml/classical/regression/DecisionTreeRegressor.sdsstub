@@ -1,0 +1,49 @@
+package safeds.ml.classical.regression
+
+from safeds.data.labeled.containers import TabularDataset
+from safeds.data.tabular.containers import Table
+from safeds.ml.classical.regression import Regressor
+
+/**
+ * Decision tree regression.
+ *
+ * @param maxDepth The maximum depth of each tree. If null, the depth is not limited. Has to be greater than 0.
+ * @param minSampleCountInLeaves The minimum number of samples that must remain in the leaves of each tree. Has to be greater than 0.
+ *
+ * @example
+ * pipeline example {
+ *     val training = Table.fromCsvFile("training.csv").toTabularDataset("target");
+ *     val test = Table.fromCsvFile("test.csv").toTabularDataset("target");
+ *     val regressor = DecisionTreeRegressor().fit(training);
+ *     val meanSquaredError = regressor.meanSquaredError(test);
+ * }
+ */
+class DecisionTreeRegressor(
+    @PythonName("max_depth") maxDepth: Int? = null,
+    @PythonName("min_sample_count_in_leaves") const minSampleCountInLeaves: Int = 1
+) sub Regressor where {
+    minSampleCountInLeaves > 0
+} {
+    /**
+     * The maximum depth of the tree.
+     */
+    @PythonName("max_depth") attr maxDepth: Int?
+    /**
+     * The minimum number of samples that must remain in the leaves of the tree.
+     */
+    @PythonName("min_sample_count_in_leaves") attr minSampleCountInLeaves: Int
+
+    /**
+     * Create a copy of this regressor and fit it with the given training data.
+     *
+     * This regressor is not modified.
+     *
+     * @param trainingSet The training data containing the feature and target vectors.
+     *
+     * @result fittedRegressor The fitted regressor.
+     */
+    @Pure
+    fun fit(
+        @PythonName("training_set") trainingSet: TabularDataset
+    ) -> fittedRegressor: DecisionTreeRegressor
+}

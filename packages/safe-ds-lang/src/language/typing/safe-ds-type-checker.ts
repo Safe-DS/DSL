@@ -367,6 +367,24 @@ export class SafeDsTypeChecker {
     };
 
     /**
+     * Checks whether {@link type} can be printed.
+     */
+    canBePrinted = (type: Type): boolean => {
+        return (
+            !type.equals(this.coreTypes.Nothing) &&
+            !type.equals(this.coreTypes.NothingOrNull) &&
+            [
+                this.coreTypes.Boolean,
+                this.coreTypes.Float,
+                this.coreTypes.Int,
+                this.coreTypes.List(UnknownType),
+                this.coreTypes.Map(UnknownType, UnknownType),
+                this.coreTypes.String,
+            ].some((it) => this.isSubtypeOf(type, it, { ignoreTypeParameters: true }))
+        );
+    };
+
+    /**
      * Checks whether {@link type} is allowed as the type of a constant parameter.
      */
     canBeTypeOfConstantParameter = (type: Type): boolean => {
@@ -388,6 +406,21 @@ export class SafeDsTypeChecker {
             return type instanceof LiteralType || type === UnknownType;
         }
     };
+
+    /**
+     * Checks whether {@link type} is some kind of image.
+     */
+    isImage(type: Type): type is ClassType {
+        const imageOrNull = this.coreTypes.Image.withExplicitNullability(true);
+
+        return (
+            !type.equals(this.coreTypes.Nothing) &&
+            !type.equals(this.coreTypes.NothingOrNull) &&
+            this.isSubtypeOf(type, imageOrNull, {
+                ignoreTypeParameters: true,
+            })
+        );
+    }
 
     /**
      * Checks whether {@link type} is some kind of list (with any element type).
@@ -422,7 +455,7 @@ export class SafeDsTypeChecker {
     /**
      * Checks whether {@link type} represents a tabular data structure (i.e., a table).
      */
-    isTabular(type: Type): boolean {
+    isTable(type: Type): boolean {
         const tableOrNull = this.coreTypes.Table.withExplicitNullability(true);
 
         return (

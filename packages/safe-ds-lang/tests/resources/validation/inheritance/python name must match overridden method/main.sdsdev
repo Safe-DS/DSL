@@ -1,0 +1,59 @@
+package tests.validation.inheritance.pythonNameMustMatchOverriddenMethod
+
+class MyClass1 {
+    // $TEST$ no error "The Python name must match the overridden member."
+    attr »myAttribute1«: Int
+
+    // $TEST$ no error "The Python name must match the overridden member."
+    @PythonName("my_Attribute_2")
+    attr »myAttribute2«: Int
+
+    // $TEST$ no error "The Python name must match the overridden member."
+    @Pure
+    fun »myFunction1«()
+
+    // $TEST$ no error "The Python name must match the overridden member."
+    @Pure
+    @PythonName("my_function_2")
+    fun »myFunction2«()
+}
+
+class MyClass2 sub MyClass1 {
+    // $TEST$ no error "The Python name must match the overridden member."
+    @PythonName("myAttribute1")
+    attr »myAttribute1«: Int
+
+    // $TEST$ no error "The Python name must match the overridden member."
+    @PythonName("my_Attribute_2")
+    attr »myAttribute2«: Int
+
+    // $TEST$ no error "The Python name must match the overridden member."
+    @Pure
+    @PythonName("myFunction1")
+    fun »myFunction1«()
+
+    // $TEST$ no error "The Python name must match the overridden member."
+    @Pure
+    @PythonName("my_function_2")
+    fun »myFunction2«()
+}
+
+class MyClass3 sub MyClass1 {
+    // $TEST$ error "The Python name must match the overridden member."
+    @PythonName("anotherAttribute1")
+    attr »myAttribute1«: Int
+
+    // $TEST$ error "The Python name must match the overridden member."
+    @PythonName("another_attribute_2")
+    attr »myAttribute2«: Int
+
+    // $TEST$ error "The Python name must match the overridden member."
+    @Pure
+    @PythonName("anotherFunction1")
+    fun »myFunction1«()
+
+    // $TEST$ error "The Python name must match the overridden member."
+    @Pure
+    @PythonName("anotherFunction2")
+    fun »myFunction2«()
+}

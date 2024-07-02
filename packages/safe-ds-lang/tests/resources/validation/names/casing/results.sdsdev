@@ -6,7 +6,7 @@ fun myFunction2() -> (
     // $TEST$ no warning "Names of results should be lowerCamelCase."
     »resultLowercase1«: Int,
     // $TEST$ no warning "Names of results should be lowerCamelCase."
-    »`resultLowercase2`«: Int,
+    »^resultLowercase2«: Int,
     // $TEST$ warning "Names of results should be lowerCamelCase."
     »_resultUnderscore«: Int,
     // $TEST$ warning "Names of results should be lowerCamelCase."

@@ -1,0 +1,14 @@
+package tests.validation.types.checking.yields.parameterNamesOfCallableTypes
+
+segment mySegment() -> (
+    r1: (p: Int) -> (r: Int),
+    r2: (p: Int) -> (r: Int),
+) {
+    // $TEST$ no error r"Expected type .* but got .*\."
+    yield »r1« = (q) {
+        yield s = 1;
+    };
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    yield »r2« = (q) -> 1;
+}

@@ -3,5 +3,11 @@ package safeds.scoping.references.acrossFiles.toGlobalEnums
 // $TEST$ target safeds_MyEnum
 enum »MyEnum«
 
-// $TEST$ target safeds_EnumInSafeDsPackage
-enum »EnumInSafeDsPackage«
+// $TEST$ target safeds_PublicEnumInSafeDsPackage
+enum »PublicEnumInSafeDsPackage«
+
+// $TEST$ target safeds_InternalEnumInSafeDsPackage
+internal enum »InternalEnumInSafeDsPackage«
+
+// $TEST$ target safeds_privateSegmentInSafeDsPackage
+private enum »privateSegmentInSafeDsPackage«

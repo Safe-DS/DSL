@@ -1,0 +1,32 @@
+package tests.generation.markdown.examples
+
+/**
+ * @example
+ * Do not highlight.
+ */
+class MyClass1
+
+/**
+ * @example
+ * Highlight MyClass2.
+ */
+class MyClass2
+
+/**
+ * @example
+ * Highlight MyClass3.
+ * Highlight MyClass3.
+ */
+class MyClass3
+
+/**
+ * @example
+ * Do not hightligt PrefixMyClass4.
+ */
+class MyClass4
+
+/**
+ * @example
+ * Do not hightligt MyClass5Suffix.
+ */
+class MyClass5

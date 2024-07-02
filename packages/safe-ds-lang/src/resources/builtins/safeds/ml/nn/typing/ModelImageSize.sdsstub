@@ -1,0 +1,22 @@
+package safeds.ml.nn.typing
+
+from safeds.data.image.containers import Image
+
+/**
+ * A container for image size in neural networks.
+ */
+@Experimental
+class ModelImageSize {
+    /**
+     * Get the width of this `ImageSize` in pixels.
+     */
+    attr width: Int
+    /**
+     * Get the height of this `ImageSize` in pixels.
+     */
+    attr height: Int
+    /**
+     * Get the channel of this `ImageSize` in pixels.
+     */
+    attr channel: Int
+}

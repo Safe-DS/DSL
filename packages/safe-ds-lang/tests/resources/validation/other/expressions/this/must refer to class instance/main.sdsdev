@@ -1,0 +1,39 @@
+package tests.validation.other.expressions.^this.mustReferToClassInstance
+
+// $TEST$ error "The keyword 'this' must refer to a class instance."
+annotation MyAnnotation(p: Any? = »this«)
+
+// $TEST$ no error "The keyword 'this' must refer to a class instance."
+class MyClass(p: Any? = »this«) {
+
+    // $TEST$ no error "The keyword 'this' must refer to a class instance."
+    @Pure fun myInstanceMethod(p: Any? = »this«)
+
+    // $TEST$ error "The keyword 'this' must refer to a class instance."
+    @Pure static fun myStaticMethod(p: Any? = »this«)
+
+    // $TEST$ no error "The keyword 'this' must refer to a class instance."
+    class MyNestedClass(p: Any? = »this«) {
+
+        // $TEST$ no error "The keyword 'this' must refer to a class instance."
+        @Pure fun myInstanceMethod(p: Any? = »this«)
+    }
+
+    enum MyNestedEnum {
+        // $TEST$ error "The keyword 'this' must refer to a class instance."
+        MyEnumVariant(p: Any? = »this«)
+    }
+}
+
+enum MyEnum {
+    // $TEST$ error "The keyword 'this' must refer to a class instance."
+    MyEnumVariant(p: Any? = »this«)
+}
+
+pipeline myPipeline {
+    // $TEST$ error "The keyword 'this' must refer to a class instance."
+    »this«;
+}
+
+// $TEST$ error "The keyword 'this' must refer to a class instance."
+segment mySegment(p: Any? = »this«) {}

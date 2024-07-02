@@ -1,0 +1,429 @@
+package safeds.data.image.containers
+
+from safeds.data.image.typing import ImageSize
+
+/**
+ * A container for image data.
+ *
+ * @example
+ * pipeline example {
+ *     val image = Image.fromFile("example.png");
+ * }
+ */
+@Experimental
+class Image {
+    /**
+     * Get the width of the image in pixels.
+     */
+    attr width: Int
+    /**
+     * Get the height of the image in pixels.
+     */
+    attr height: Int
+    /**
+     * Get the number of channels of the image.
+     */
+    attr channel: Int
+    /**
+     * Get the `ImageSize` of the image.
+     */
+    attr size: ImageSize
+
+    /**
+     * Create an image from a file.
+     *
+     * @param path The path to the image file.
+     *
+     * @result image The image.
+     *
+     * @example
+     * pipeline example {
+     *     val image = Image.fromFile("example.png");
+     * }
+     */
+    @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
+    @PythonName("from_file")
+    static fun fromFile(
+        path: String
+    ) -> image: Image
+
+    /**
+     * Save the image as a JPEG file.
+     *
+     * @param path The path to the JPEG file.
+     *
+     * @example
+     * pipeline example {
+     *     val image = Image.fromFile("example.png");
+     *     image.toJpegFile("output.jpeg");
+     * }
+     */
+    @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
+    @PythonName("to_jpeg_file")
+    fun toJpegFile(
+        path: String
+    )
+
+    /**
+     * Save the image as a PNG file.
+     *
+     * @param path The path to the PNG file.
+     *
+     * @example
+     * pipeline example {
+     *     val image = Image.fromFile("example.png");
+     *     image.toPngFile("output.png");
+     * }
+     */
+    @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
+    @PythonName("to_png_file")
+    fun toPngFile(
+        path: String
+    )
+
+    /**
+     * Return a new `Image` that has the given number of channels.
+     *
+     * The original image is not modified.
+     *
+     * @param channel The new number of channels. 1 will result in a grayscale image.
+     *
+     * @result newImage The image with the given number of channels.
+     *
+     * @example
+     * pipeline example {
+     *     val image = Image.fromFile("example.png");
+     *     val newImage = image.changeChannel(channel = 1);
+     * }
+     */
+    @Pure
+    @PythonName("change_channel")
+    fun changeChannel(
+        channel: Int
+    ) -> newImage: Image
+
+    /**
+     * Return a new `Image` that has been resized to a given size.
+     *
+     * The original image is not modified.
+     *
+     * @param newWidth The new width of the image.
+     * @param newHeight The new height of the image.
+     *
+     * @result newImage The image with the given width and height.
+     *
+     * @example
+     * pipeline example {
+     *     val image = Image.fromFile("example.png");
+     *     val newImage = image.resize(newWidth = 100, newHeight = 50);
+     * }
+     */
+    @Pure
+    fun resize(
+        @PythonName("new_width") const newWidth: Int,
+        @PythonName("new_height") const newHeight: Int
+    ) -> newImage: Image where {
+        newWidth >= 0,
+        newHeight >= 0
+    }
+
+    /**
+     * Return a new `Image` that is converted to grayscale.
+     *
+     * The original image is not modified.
+     *
+     * @result newImage The grayscale image.
+     *
+     * @example
+     * pipeline example {
+     *     val image = Image.fromFile("example.png");
+     *     val newImage = image.convertToGrayscale();
+     * }
+     */
+    @Pure
+    @PythonName("convert_to_grayscale")
+    fun convertToGrayscale() -> newImage: Image
+
+    /**
+     * Return a new `Image` that has been cropped to a given bounding rectangle.
+     *
+     * The original image is not modified.
+     *
+     * @param x The x coordinate of the top-left corner of the bounding rectangle.
+     * @param y The y coordinate of the top-left corner of the bounding rectangle.
+     * @param width The width of the bounding rectangle.
+     * @param height The height of the bounding rectangle.
+     *
+     * @result newImage The cropped image.
+     *
+     * @example
+     * pipeline example {
+     *     val image = Image.fromFile("example.png");
+     *     val newImage = image.crop(20, 20, 80, 40);
+     * }
+     */
+    @Pure
+    fun crop(
+        const x: Int,
+        const y: Int,
+        const width: Int,
+        const height: Int
+    ) -> newImage: Image where {
+        x >= 0,
+        y >= 0,
+        width >= 0,
+        height >= 0
+    }
+
+    /**
+     * Return a new `Image` that is flipped vertically (horizontal axis, flips up-down and vice versa).
+     *
+     * The original image is not modified.
+     *
+     * @result newImage The flipped image.
+     *
+     * @example
+     * pipeline example {
+     *     val image = Image.fromFile("example.png");
+     *     val newImage = image.flipVertically();
+     * }
+     */
+    @Pure
+    @PythonName("flip_vertically")
+    fun flipVertically() -> newImage: Image
+
+    /**
+     * Return a new `Image` that is flipped horizontally (vertical axis, flips left-right and vice versa).
+     *
+     * The original image is not modified.
+     *
+     * @result newImage The flipped image.
+     *
+     * @example
+     * pipeline example {
+     *     val image = Image.fromFile("example.png");
+     *     val newImage = image.flipHorizontally();
+     * }
+     */
+    @Pure
+    @PythonName("flip_horizontally")
+    fun flipHorizontally() -> newImage: Image
+
+    /**
+     * Return a new `Image` with an adjusted brightness.
+     *
+     * The original image is not modified.
+     *
+     * @param factor The brightness factor.
+     * 1.0 will not change the brightness.
+     * Below 1.0 will result in a darker image.
+     * Above 1.0 will resolut in a brighter image.
+     * Has to be bigger than or equal to 0 (black).
+     *
+     * @result newImage The Image with adjusted brightness.
+     *
+     * @example
+     * pipeline example {
+     *     val image = Image.fromFile("example.png");
+     *     val newImage = image.adjustBrightness(factor = 2.0);
+     * }
+     */
+    @Pure
+    @PythonName("adjust_brightness")
+    fun adjustBrightness(
+        const factor: Float
+    ) -> newImage: Image where {
+        factor >= 0.0
+    }
+
+    /**
+     * Return a new `Image` with noise added to the image.
+     *
+     * The original image is not modified.
+     *
+     * @param standardDeviation The standard deviation of the normal distribution. Has to be bigger than or equal to 0.
+     *
+     * @result newImage The image with added noise.
+     *
+     * @example
+     * pipeline example {
+     *     val image = Image.fromFile("example.png");
+     *     val newImage = image.addNoise(standardDeviation = 1.0);
+     * }
+     */
+    @Pure
+    @PythonName("add_noise")
+    fun addNoise(
+        @PythonName("standard_deviation") const standardDeviation: Float
+    ) -> newImage: Image where {
+        standardDeviation >= 0.0
+    }
+
+    /**
+     * Return a new `Image` with adjusted contrast.
+     *
+     * The original image is not modified.
+     *
+     * @param factor If factor > 1, increase contrast of image.
+     * If factor = 1, no changes will be made.
+     * If factor < 1, make image greyer.
+     * Has to be bigger than or equal to 0 (gray).
+     *
+     * @result newImage New image with adjusted contrast.
+     *
+     * @example
+     * pipeline example {
+     *     val image = Image.fromFile("example.png");
+     *     val newImage = image.adjustContrast(factor = 2.0);
+     * }
+     */
+    @Pure
+    @PythonName("adjust_contrast")
+    fun adjustContrast(
+        const factor: Float
+    ) -> newImage: Image where {
+        factor >= 0.0
+    }
+
+    /**
+     * Return a new `Image` with adjusted color balance.
+     *
+     * The original image is not modified.
+     *
+     * @param factor Has to be bigger than or equal to 0.
+     * If 0 <= factor < 1, make image greyer.
+     * If factor = 1, no changes will be made.
+     * If factor > 1, increase color balance of image.
+     *
+     * @result newImage The new, adjusted image.
+     *
+     * @example
+     * pipeline example {
+     *     val image = Image.fromFile("example.png");
+     *     val newImage = image.adjustColorBalance(factor = 2.0);
+     * }
+     */
+    @Pure
+    @PythonName("adjust_color_balance")
+    fun adjustColorBalance(
+        const factor: Float
+    ) -> newImage: Image where {
+        factor >= 0.0
+    }
+
+    /**
+     * Return a blurred version of the image.
+     *
+     * The original image is not modified.
+     *
+     * @param radius Radius is directly proportional to the blur value. The radius is equal to the amount of pixels united in
+     * each direction. A radius of 1 will result in a united box of 9 pixels.
+     *
+     * @result newImage The blurred image.
+     *
+     * @example
+     * pipeline example {
+     *     val image = Image.fromFile("example.png");
+     *     val newImage = image.blur(radius = 50);
+     * }
+     */
+    @Pure
+    fun blur(
+        const radius: Int
+    ) -> newImage: Image where {
+        radius >= 0
+    }
+
+    /**
+     * Return a sharpened version of the image.
+     *
+     * The original image is not modified.
+     *
+     * @param factor If factor > 1, increase the sharpness of the image.
+     * If factor = 1, no changes will be made.
+     * If factor < 1, blur the image.
+     * Has to be bigger than or equal to 0 (blurred).
+     *
+     * @result newImage The image sharpened by the given factor.
+     *
+     * @example
+     * pipeline example {
+     *     val image = Image.fromFile("example.png");
+     *     val newImage = image.sharpen(factor = 5.0);
+     * }
+     */
+    @Pure
+    fun sharpen(
+        const factor: Float
+    ) -> newImage: Image where {
+        factor >= 0.0
+    }
+
+    /**
+     * Return a new `Image` with colors inverted.
+     *
+     * The original image is not modified.
+     *
+     * @result newImage The image with inverted colors.
+     *
+     * @example
+     * pipeline example {
+     *     val image = Image.fromFile("example.png");
+     *     val newImage = image.invertColors();
+     * }
+     */
+    @Pure
+    @PythonName("invert_colors")
+    fun invertColors() -> newImage: Image
+
+    /**
+     * Return a new `Image` that is rotated 90 degrees clockwise.
+     *
+     * The original image is not modified.
+     *
+     * @result newImage The image rotated 90 degrees clockwise.
+     *
+     * @example
+     * pipeline example {
+     *     val image = Image.fromFile("example.png");
+     *     val newImage = image.rotateRight();
+     * }
+     */
+    @Pure
+    @PythonName("rotate_right")
+    fun rotateRight() -> newImage: Image
+
+    /**
+     * Return a new `Image` that is rotated 90 degrees counter-clockwise.
+     *
+     * The original image is not modified.
+     *
+     * @result newImage The image rotated 90 degrees counter-clockwise.
+     *
+     * @example
+     * pipeline example {
+     *     val image = Image.fromFile("example.png");
+     *     val newImage = image.rotateLeft();
+     * }
+     */
+    @Pure
+    @PythonName("rotate_left")
+    fun rotateLeft() -> newImage: Image
+
+    /**
+     * Return a grayscale version of the image with the edges highlighted.
+     *
+     * The original image is not modified.
+     *
+     * @result newImage The image with edges found.
+     *
+     * @example
+     * pipeline example {
+     *     val image = Image.fromFile("example.png");
+     *     val newImage = image.findEdges();
+     * }
+     */
+    @Pure
+    @PythonName("find_edges")
+    fun findEdges() -> newImage: Image
+}

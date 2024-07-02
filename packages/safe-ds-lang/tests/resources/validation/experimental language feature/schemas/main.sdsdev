@@ -1,0 +1,4 @@
+package tests.validation.experimentalLanguageFeature.schemas
+
+// $TEST$ warning "Schemas are experimental and may change without prior notice."
+schema »MySchema« {}

@@ -1,0 +1,48 @@
+package safeds.ml.classical.classification
+
+from safeds.data.labeled.containers import TabularDataset
+from safeds.ml.classical.classification import Classifier
+
+/**
+ * Decision tree classification.
+ *
+ * @param maxDepth The maximum depth of each tree. If null, the depth is not limited. Has to be greater than 0.
+ * @param minSampleCountInLeaves The minimum number of samples that must remain in the leaves of each tree. Has to be greater than 0.
+ *
+ * @example
+ * pipeline example {
+ *     val training = Table.fromCsvFile("training.csv").toTabularDataset("target");
+ *     val test = Table.fromCsvFile("test.csv").toTabularDataset("target");
+ *     val classifier = DecisionTreeClassifier().fit(training);
+ *     val accuracy = classifier.accuracy(test);
+ * }
+ */
+class DecisionTreeClassifier(
+    @PythonName("max_depth") maxDepth: Int? = null,
+    @PythonName("min_sample_count_in_leaves") const minSampleCountInLeaves: Int = 1
+) sub Classifier where {
+    minSampleCountInLeaves > 0
+} {
+    /**
+     * The maximum depth of the tree.
+     */
+    @PythonName("max_depth") attr maxDepth: Int?
+    /**
+     * The minimum number of samples that must remain in the leaves of the tree.
+     */
+    @PythonName("min_sample_count_in_leaves") attr minSampleCountInLeaves: Int
+
+    /**
+     * Create a copy of this classifier and fit it with the given training data.
+     *
+     * This classifier is not modified.
+     *
+     * @param trainingSet The training data containing the feature and target vectors.
+     *
+     * @result fittedClassifier The fitted classifier.
+     */
+    @Pure
+    fun fit(
+        @PythonName("training_set") trainingSet: TabularDataset
+    ) -> fittedClassifier: DecisionTreeClassifier
+}

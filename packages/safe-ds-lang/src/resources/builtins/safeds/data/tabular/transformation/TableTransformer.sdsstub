@@ -1,0 +1,59 @@
+package safeds.data.tabular.transformation
+
+from safeds.data.tabular.containers import Table
+
+/**
+ * Learn a transformation for a set of columns in a `Table` and transform another `Table` with the same columns.
+ *
+ * @param columnNames The list of columns used to fit the transformer. If `None`, all suitable columns are used.
+ */
+class TableTransformer {
+    /**
+     * Whether the transformer is fitted.
+     */
+    @PythonName("is_fitted") attr isFitted: Boolean
+
+    /**
+     * Learn a transformation for a set of columns in a table.
+     *
+     * **Note:** This transformer is not modified.
+     *
+     * @param table The table used to fit the transformer.
+     *
+     * @result fittedTransformer The fitted transformer.
+     */
+    @Pure
+    fun fit(
+        table: Table
+    ) -> fittedTransformer: TableTransformer
+
+    /**
+     * Apply the learned transformation to a table.
+     *
+     * **Note:** The given table is not modified.
+     *
+     * @param table The table to which the learned transformation is applied.
+     *
+     * @result transformedTable The transformed table.
+     */
+    @Pure
+    fun transform(
+        table: Table
+    ) -> transformedTable: Table
+
+    /**
+     * Learn a transformation for a set of columns in a table and apply the learned transformation to the same table.
+     *
+     * **Note:** Neither this transformer nor the given table are modified.
+     *
+     * @param table The table used to fit the transformer. The transformer is then applied to this table.
+     *
+     * @result fittedTransformer The fitted transformer.
+     * @result transformedTable The transformed table.
+     */
+    @Pure
+    @PythonName("fit_and_transform")
+    fun fitAndTransform(
+        table: Table
+    ) -> (fittedTransformer: TableTransformer, transformedTable: Table)
+}

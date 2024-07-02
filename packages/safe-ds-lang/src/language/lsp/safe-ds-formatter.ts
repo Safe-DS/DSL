@@ -2,7 +2,7 @@ import { AstNode, CstNode, CstUtils, isAstNode } from 'langium';
 import { last } from '../../helpers/collections.js';
 import * as ast from '../generated/ast.js';
 import { getAnnotationCalls, getLiterals, getTypeArguments } from '../helpers/nodeProperties.js';
-import { AbstractFormatter, Formatting, FormattingAction, FormattingActionOptions } from 'langium/lsp';
+import { AbstractFormatter, Formatting, FormattingAction, FormattingActionOptions, NodeFormatter } from 'langium/lsp';
 import indent = Formatting.indent;
 import newLine = Formatting.newLine;
 import newLines = Formatting.newLines;
@@ -309,10 +309,7 @@ export class SafeDsFormatter extends AbstractFormatter {
     private formatSdsAnnotation(node: ast.SdsAnnotation): void {
         const formatter = this.getNodeFormatter(node);
 
-        if (getAnnotationCalls(node).length > 0) {
-            formatter.keyword('annotation').prepend(newLine());
-        }
-
+        this.formatVisibilityAndKeyword(formatter, node, 'annotation');
         formatter.property('name').prepend(oneSpace());
         formatter.property('parameterList').prepend(noSpace());
         formatter.property('constraintList').prepend(oneSpace());
@@ -337,10 +334,7 @@ export class SafeDsFormatter extends AbstractFormatter {
     private formatSdsClass(node: ast.SdsClass): void {
         const formatter = this.getNodeFormatter(node);
 
-        if (getAnnotationCalls(node).length > 0) {
-            formatter.keyword('class').prepend(newLine());
-        }
-
+        this.formatVisibilityAndKeyword(formatter, node, 'class');
         formatter.property('name').prepend(oneSpace());
         formatter.property('typeParameterList').prepend(noSpace());
         formatter.property('parameterList').prepend(noSpace());
@@ -383,10 +377,7 @@ export class SafeDsFormatter extends AbstractFormatter {
     private formatSdsEnum(node: ast.SdsEnum): void {
         const formatter = this.getNodeFormatter(node);
 
-        if (getAnnotationCalls(node).length > 0) {
-            formatter.keyword('enum').prepend(newLine());
-        }
-
+        this.formatVisibilityAndKeyword(formatter, node, 'enum');
         formatter.property('name').prepend(oneSpace());
         formatter.property('body').prepend(oneSpace());
     }
@@ -428,15 +419,15 @@ export class SafeDsFormatter extends AbstractFormatter {
     formatSdsFunction(node: ast.SdsFunction): void {
         const formatter = this.getNodeFormatter(node);
 
-        if (getAnnotationCalls(node).length > 0) {
-            if (node.isStatic) {
+        if (node.isStatic) {
+            // A static function cannot have a visibility modifier
+            if (getAnnotationCalls(node).length > 0) {
                 formatter.keyword('static').prepend(newLine());
-            } else {
-                formatter.keyword('fun').prepend(newLine());
             }
+            formatter.keyword('static').append(oneSpace());
+        } else {
+            this.formatVisibilityAndKeyword(formatter, node, 'fun');
         }
-
-        formatter.keyword('static').append(oneSpace());
         formatter.property('name').prepend(oneSpace());
         formatter.property('typeParameterList').prepend(noSpace());
         formatter.property('parameterList').prepend(noSpace());
@@ -447,12 +438,7 @@ export class SafeDsFormatter extends AbstractFormatter {
     private formatSdsPipeline(node: ast.SdsPipeline): void {
         const formatter = this.getNodeFormatter(node);
 
-        formatter.property('annotationCallList').prepend(noSpace());
-
-        if (getAnnotationCalls(node).length > 0) {
-            formatter.keyword('pipeline').prepend(newLine());
-        }
-
+        this.formatVisibilityAndKeyword(formatter, node, 'pipeline');
         formatter.property('name').prepend(oneSpace());
         formatter.node(node.body).prepend(oneSpace());
     }
@@ -460,24 +446,31 @@ export class SafeDsFormatter extends AbstractFormatter {
     private formatSdsSegment(node: ast.SdsSegment): void {
         const formatter = this.getNodeFormatter(node);
 
-        if (getAnnotationCalls(node).length === 0) {
-            if (node.visibility) {
-                formatter.keyword('segment').prepend(oneSpace());
-            }
-        } else {
-            if (node.visibility) {
-                formatter.property('visibility').prepend(newLine());
-                formatter.keyword('segment').prepend(oneSpace());
-            } else {
-                formatter.keyword('segment').prepend(newLine());
-            }
-        }
-
+        this.formatVisibilityAndKeyword(formatter, node, 'segment');
         formatter.property('name').prepend(oneSpace());
         formatter.property('parameterList').prepend(noSpace());
         formatter.property('resultList').prepend(oneSpace());
         formatter.property('constraintList').prepend(oneSpace());
         formatter.property('body').prepend(oneSpace());
+    }
+
+    private formatVisibilityAndKeyword(
+        formatter: NodeFormatter<ast.SdsModuleMember>,
+        node: ast.SdsModuleMember,
+        keyword: string,
+    ): void {
+        if (getAnnotationCalls(node).length === 0) {
+            if (node.visibility) {
+                formatter.keyword(keyword).prepend(oneSpace());
+            }
+        } else {
+            if (node.visibility) {
+                formatter.property('visibility').prepend(newLine());
+                formatter.keyword(keyword).prepend(oneSpace());
+            } else {
+                formatter.keyword(keyword).prepend(newLine());
+            }
+        }
     }
 
     // -----------------------------------------------------------------------------
@@ -815,6 +808,8 @@ export class SafeDsFormatter extends AbstractFormatter {
         const formatter = this.getNodeFormatter(node);
 
         formatter.keyword('as').surround(oneSpace());
+        formatter.keyword('(').append(noSpace());
+        formatter.keyword(')').prepend(noSpace());
     }
 
     /**
@@ -963,10 +958,7 @@ export class SafeDsFormatter extends AbstractFormatter {
     private formatSdsSchema(node: ast.SdsSchema) {
         const formatter = this.getNodeFormatter(node);
 
-        if (getAnnotationCalls(node).length > 0) {
-            formatter.keyword('schema').prepend(newLine());
-        }
-
+        this.formatVisibilityAndKeyword(formatter, node, 'schema');
         formatter.property('name').prepend(oneSpace());
         formatter.property('columnList').prepend(oneSpace());
     }

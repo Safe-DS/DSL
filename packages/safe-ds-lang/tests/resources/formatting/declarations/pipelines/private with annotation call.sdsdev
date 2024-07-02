@@ -1,0 +1,10 @@
+package test
+
+@Annotation  private  pipeline  myPipeline  { }
+
+// -----------------------------------------------------------------------------
+
+package test
+
+@Annotation
+private pipeline myPipeline {}

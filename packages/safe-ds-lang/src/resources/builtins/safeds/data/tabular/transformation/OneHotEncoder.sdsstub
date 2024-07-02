@@ -1,0 +1,83 @@
+package safeds.data.tabular.transformation
+
+from safeds.data.tabular.containers import Table
+from safeds.data.tabular.transformation import InvertibleTableTransformer
+
+/**
+ * A way to deal with categorical features that is particularly useful for unordered (i.e. nominal) data.
+ *
+ * It replaces a column with a set of columns, each representing a unique value in the original column. The value of
+ * each new column is 1 if the original column had that value, and 0 otherwise. Take the following table as an
+ * example:
+ *
+ * | col1 |
+ * |------|
+ * | "a"  |
+ * | "b"  |
+ * | "c"  |
+ * | "a"  |
+ *
+ * The one-hot encoding of this table is:
+ *
+ * | col1__a | col1__b | col1__c |
+ * |---------|---------|---------|
+ * | 1       | 0       | 0       |
+ * | 0       | 1       | 0       |
+ * | 0       | 0       | 1       |
+ * | 1       | 0       | 0       |
+ *
+ * The name "one-hot" comes from the fact that each row has exactly one 1 in it, and the rest of the values are 0s.
+ * One-hot encoding is closely related to dummy variable / indicator variables, which are used in statistics.
+ *
+ * @param columnNames The list of columns used to fit the transformer. If `None`, all non-numeric columns are used.
+ * @param separator The separator used to separate the original column name from the value in the new column names.
+ *
+ * @example
+ * pipeline example {
+ *    val table = Table({"a": ["z", "y"], "b": [3, 4]});
+ *    val encoder = OneHotEncoder(columnNames=["a"]).fit(table);
+ *    val transformedTable = encoder.transform(table);
+ *    // Table({"a__z": [1, 0], "a__y": [0, 1], "b": [3, 4]})
+ *    val originalTable = encoder.inverseTransform(transformedTable);
+ *    // Table({"a": ["z", "y"], "b": [3, 4]})
+ * }
+ */
+class OneHotEncoder(
+    @PythonName("column_names") columnNames: union<List<String>, String, Nothing?> = null,
+    separator: String = "__"
+) sub InvertibleTableTransformer {
+    /**
+     * The separator used to separate the original column name from the value in the new column names.
+     */
+    attr separator: String
+
+    /**
+     * Learn a transformation for a set of columns in a table.
+     *
+     * This transformer is not modified.
+     *
+     * @param table The table used to fit the transformer.
+     *
+     * @result fittedTransformer The fitted transformer.
+     */
+    @Pure
+    fun fit(
+        table: Table
+    ) -> fittedTransformer: OneHotEncoder
+
+    /**
+     * Learn a transformation for a set of columns in a table and apply the learned transformation to the same table.
+     *
+     * **Note:** Neither this transformer nor the given table are modified.
+     *
+     * @param table The table used to fit the transformer. The transformer is then applied to this table.
+     *
+     * @result fittedTransformer The fitted transformer.
+     * @result transformedTable The transformed table.
+     */
+    @Pure
+    @PythonName("fit_and_transform")
+    fun fitAndTransform(
+        table: Table
+    ) -> (fittedTransformer: OneHotEncoder, transformedTable: Table)
+}

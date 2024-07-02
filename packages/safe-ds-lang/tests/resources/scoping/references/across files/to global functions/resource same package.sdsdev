@@ -3,5 +3,11 @@ package tests.scoping.references.acrossFiles.toGlobalFunctions
 // $TEST$ target same_myFunction
 fun »myFunction«()
 
-// $TEST$ target same_functionInSamePackage
-fun »functionInSamePackage«()
+// $TEST$ target same_publicFunctionInSamePackage
+fun »publicFunctionInSamePackage«()
+
+// $TEST$ target same_internalFunctionInSamePackage
+internal fun »internalFunctionInSamePackage«()
+
+// $TEST$ target same_privateFunctionInSamePackage
+private fun »privateFunctionInSamePackage«()

@@ -6,7 +6,7 @@ segment mySegment(
     one: Contravariant<literal<1>>,
     oneOrNull: Contravariant<literal<1, null>>,
 
-    `union`: Contravariant<union<Boolean, String>>,
+    ^union: Contravariant<union<Boolean, String>>,
     unionOrNull: Contravariant<union<Boolean, String?>>,
 
     callable: Contravariant<() -> ()>,
@@ -14,10 +14,10 @@ segment mySegment(
     // Named tuple types and static types are also not handled, but we can't test them here
 ) {
     // $TEST$ serialization List<Contravariant<Nothing>>
-    »[one, `union`]«;
+    »[one, ^union]«;
 
     // $TEST$ serialization List<Contravariant<Nothing>>
-    »[oneOrNull, `union`]«;
+    »[oneOrNull, ^union]«;
 
     // $TEST$ serialization List<Contravariant<Nothing>>
     »[one, unionOrNull]«;

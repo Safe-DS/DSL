@@ -9,17 +9,45 @@ pipeline myPipeline {
     »MyAnnotation«;
 
 
-    // $TEST$ references same_AnnotationInSamePackage
-    »AnnotationInSamePackage«;
+    // $TEST$ references same_PublicAnnotationInSamePackage
+    »PublicAnnotationInSamePackage«;
 
-    // $TEST$ references safeds_AnnotationInSafeDsPackage
-    »AnnotationInSafeDsPackage«;
-
-    // $TEST$ unresolved
-    »AnnotationInAnotherPackage«;
+    // $TEST$ references same_InternalAnnotationInSamePackage
+    »InternalAnnotationInSamePackage«;
 
     // $TEST$ unresolved
-    »AnnotationWithoutPackage«;
+    »PrivateAnnotationInSamePackage«;
+
+
+    // $TEST$ references safeds_PublicAnnotationInSafeDsPackage
+    »PublicAnnotationInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »InternalAnnotationInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »PrivateAnnotationInSafeDsPackage«;
+
+
+    // $TEST$ unresolved
+    »PublicAnnotationInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »InternalAnnotationInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »PrivateAnnotationInAnotherPackage«;
+
+
+    // $TEST$ unresolved
+    »PublicAnnotationWithoutPackage«;
+
+    // $TEST$ unresolved
+    »InternalAnnotationWithoutPackage«;
+
+    // $TEST$ unresolved
+    »PrivateAnnotationWithoutPackage«;
+
 
     // $TEST$ references same_MyAnnotation
     »MyAnnotationInSamePackage«;

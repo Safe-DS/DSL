@@ -1,6 +1,6 @@
 {
     "name": "@safe-ds/lang",
-    "version": "0.11.0",
+    "version": "0.17.0",
     "description": "A language server for the Safe-DS DSL.",
     "author": {
         "name": "Lars Reimann",
@@ -44,20 +44,20 @@
     },
     "dependencies": {
         "chevrotain": "^11.0.3",
-        "glob": "^10.3.12",
+        "glob": "^10.4.2",
         "langium": "^3.0.0",
-        "semver": "^7.6.0",
+        "semver": "^7.6.2",
         "source-map-js": "^1.2.0",
         "tree-kill": "^1.2.2",
         "vscode-languageserver": "^9.0.1",
         "vscode-languageserver-textdocument": "^1.0.11",
-        "ws": "^8.16.0"
+        "ws": "^8.17.1"
     },
     "devDependencies": {
         "@types/node": "^18.18.12",
         "@types/ws": "^8.5.10",
-        "langium-cli": "^3.0.1",
-        "true-myth": "^7.1.0"
+        "langium-cli": "^3.0.3",
+        "true-myth": "^7.3.0"
     },
     "engines": {
         "node": ">=18.0.0"

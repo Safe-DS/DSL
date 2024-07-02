@@ -1,57 +1,69 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { throttle } from 'lodash';
-    import { currentState, preventClicks } from '../webviewState';
+    import { table, preventClicks, tableLoading, savedColumnWidths, showProfiling } from '../webviewState';
     import CaretIcon from '../icons/Caret.svelte';
     import ErrorIcon from '../icons/Error.svelte';
     import FilterIcon from '../icons/Filter.svelte';
     import type {
         Column,
+        OneColumnTabTypes,
         PossibleColumnFilter,
+        PossibleSorts,
         Profiling,
         ProfilingDetail,
         ProfilingDetailStatistical,
-    } from '../../types/state';
+        TwoColumnTabTypes,
+    } from '../../types/state.js';
     import ProfilingInfo from './profiling/ProfilingInfo.svelte';
-    import { derived, writable, get } from 'svelte/store';
-    import ColumnFilters from './columnFilters/ColumnFilters.svelte';
+    import { derived, get } from 'svelte/store';
+    import ColumnFilters from './column-filters/ColumnFilters.svelte';
+    import { imageWidthToHeightRatio } from '../../consts.config';
+    import { addInternalToHistory, executeExternalHistoryEntry } from '../apis/historyApi';
+    import { disableNonContextMenuEffects, restoreNonContextMenuEffects } from '../toggleNonContextMenuEffects';
 
     export let sidebarWidth: number;
 
     let profilingImageWidth = 200;
 
-    let showProfiling = false;
     let minTableWidth = 0;
     let numRows = 0;
     const headerElements: HTMLElement[] = [];
     let maxProfilingItemCount = 0;
-    let savedColumnWidths = writable(new Map<string, number>());
 
-    $: {
-        if ($currentState.table) {
-            minTableWidth = 0;
-            numRows = 0;
-            maxProfilingItemCount = 0;
-            $currentState.table.columns.forEach((column: [number, Column]) => {
-                if (column[1].values.length > numRows) {
-                    numRows = column[1].values.length;
-                }
-                minTableWidth += 100;
+    //#region Startup
+    $: if ($table) {
+        minTableWidth = 0;
+        numRows = 0;
+        maxProfilingItemCount = 0;
+        $table.columns.forEach((column: Column) => {
+            if (column.values.length > numRows) {
+                numRows = column.values.length;
+            }
+            minTableWidth += 100;
 
-                // Find which is the talles profiling type present in this table to adjust which profilings to give small height to, to have them adhere to good spacing
-                // (cannot give to tallest one, as then it will all be small)
-                if (column[1].profiling) {
-                    let profilingItemCount = 0;
-                    if (column[1].profiling.validRatio) profilingItemCount += 1;
-                    if (column[1].profiling.missingRatio) profilingItemCount += 1;
-                    for (const profilingItem of column[1].profiling.other) {
-                        profilingItemCount += calcProfilingItemValue(profilingItem);
-                    }
-                    if (profilingItemCount > maxProfilingItemCount) {
-                        maxProfilingItemCount = profilingItemCount;
-                    }
+            // Find which is the talles profiling type present in this table to adjust which profilings to give small height to, to have them adhere to good spacing
+            // (cannot give to tallest one, as then it will all be small)
+            if (column.profiling) {
+                let profilingItemCount = 0;
+                if (column.profiling.validRatio) profilingItemCount += 1;
+                if (column.profiling.missingRatio) profilingItemCount += 1;
+                for (const profilingItem of column.profiling.other) {
+                    profilingItemCount += calcProfilingItemValue(profilingItem);
                 }
-            });
+                if (profilingItemCount > maxProfilingItemCount) {
+                    maxProfilingItemCount = profilingItemCount;
+                }
+            }
+        });
+
+        if ($showProfiling) {
+            setTimeout(() => {
+                if ($showProfiling && fullHeadBackground && profilingInfo) {
+                    // To catch where we reninitialize the table and thus this is triggered after old one is gone already
+                    fullHeadBackground.style.height = 2 * rowHeight + profilingInfo.clientHeight + 'px'; // To also update when profiling info is initially coming and profiling was already open
+                }
+            }, 700); // 700ms is the transition time of the profiling info opening/incresing in height
         }
     }
 
@@ -78,15 +90,63 @@
 
         lastHeight = tableContainer.clientHeight; // For recalculateVisibleRowCount
     }
+    //#endregion
 
-    const handleMainCellClick = function (): void {
-        if (!$preventClicks) {
+    //#region Cell interaction
+    const handleMainCellClick = function (event: MouseEvent): void {
+        if (event.button === 2) {
+            handleCellContextMenu(event);
+        } else {
+            if ($preventClicks) return;
             selectedColumnIndexes = [];
             selectedRowIndexes = [];
         }
     };
+    //#endregion
 
-    // --- Column resizing ---
+    //#region Column interaction
+    let holdTimeout: NodeJS.Timeout;
+    let isClick = true; // Flag to distinguish between click and hold
+    let currentMouseUpHandler: ((event: MouseEvent) => void) | null = null; // For being able to properly remove the mouseup listener when col clicked and not held
+
+    const handleColumnInteractionStart = function (event: MouseEvent, columnIndex: number): void {
+        // Check if the left or right mouse button was pressed
+        if (event.button !== 0 && event.button !== 2) return;
+
+        if (event.button === 2) {
+            // Right click
+            handleColumnRightClick(event, columnIndex);
+            return;
+        }
+
+        // Right click still allowed to happen
+        if ($preventClicks) {
+            return;
+        }
+
+        isClick = true; // Assume it's a click initially
+
+        holdTimeout = setTimeout(() => handleReorderDragStart(columnIndex, event), 300); // milliseconds delay for hold detection
+
+        // Define the handler function
+        currentMouseUpHandler = (mouseUpEvent: MouseEvent) => {
+            handleColumnMouseUp(mouseUpEvent, columnIndex);
+        };
+
+        // Add mouseup listener to clear the timeout if the button is released
+        document.addEventListener('mouseup', currentMouseUpHandler);
+    };
+
+    const handleColumnMouseUp = function (event: MouseEvent, columnIndex: number): void {
+        clearTimeout(holdTimeout);
+        if (currentMouseUpHandler) document.removeEventListener('mouseup', currentMouseUpHandler);
+
+        if (isClick) {
+            handleColumnClick(event, columnIndex);
+        }
+    };
+
+    //#region Column resizing
     let isResizeDragging = false;
     let startWidth: number;
     let startX: number;
@@ -96,6 +156,7 @@
     const doResizeDrag = function (event: MouseEvent): void {
         if (isResizeDragging && targetColumn) {
             const currentWidth = startWidth + event.clientX - startX;
+            if (currentWidth < 20) return; // Minimum width
             requestAnimationFrame(() => {
                 targetColumn.style.width = `${currentWidth}px`;
                 savedColumnWidths.update((map) => {
@@ -116,6 +177,7 @@
         startX = event.clientX;
         startWidth = columnElement.offsetWidth;
         targetColumn = columnElement;
+        resizeWidthMap.set(targetColumn.innerText.trim(), startWidth);
         document.addEventListener('mousemove', throttledDoResizeDrag);
         document.addEventListener('mouseup', stopResizeDrag);
     };
@@ -124,19 +186,42 @@
         isResizeDragging = false;
         document.removeEventListener('mousemove', throttledDoResizeDrag);
         document.removeEventListener('mouseup', stopResizeDrag);
-    };
 
-    // --- Column reordering ---
+        addInternalToHistory({
+            action: 'resizeColumn',
+            alias: `Resize column ${targetColumn!.innerText.trim()}`,
+            type: 'internal',
+            columnName: targetColumn!.innerText.trim(),
+            value: resizeWidthMap.get(targetColumn!.innerText.trim())!,
+        });
+    };
+    //#endregion
+
+    //#region Column reordering
     let isReorderDragging = false;
     let dragStartIndex: number | null = null;
     let dragCurrentIndex: number | null = null;
     let draggedColumnName: string | null = null;
     let reorderPrototype: HTMLElement;
     let savedColumnWidthBeforeReorder = 0;
-    let holdTimeout: NodeJS.Timeout;
-    let isClick = true; // Flag to distinguish between click and hold
 
-    let currentMouseUpHandler: ((event: MouseEvent) => void) | null = null; // For being able to properly remove the mouseup listener when col clicked and not held
+    const handleReorderDragStart = function (columnIndex: number, event: MouseEvent): void {
+        isClick = false; // If timeout completes, it's a hold
+        document.addEventListener('mouseup', handleReorderDragEnd);
+        savedColumnWidthBeforeReorder = get(savedColumnWidths).get(headerElements[columnIndex].innerText.trim())!;
+        draggedColumnName = headerElements[columnIndex].innerText.trim();
+        isReorderDragging = true;
+        dragStartIndex = columnIndex;
+        dragCurrentIndex = columnIndex;
+        selectedColumnIndexes = []; // Clear so reordering doesn't interfere with selection
+
+        // First iteration in case user holds still
+        dragCurrentIndex = columnIndex;
+        requestAnimationFrame(() => {
+            reorderPrototype!.style.left = event.clientX + tableContainer.scrollLeft - sidebarWidth + 'px';
+            reorderPrototype!.style.top = event.clientY + scrollTop + 'px';
+        });
+    };
 
     const handleReorderDragOver = function (event: MouseEvent, columnIndex: number): void {
         if (isReorderDragging && dragStartIndex !== null && draggedColumnName) {
@@ -149,53 +234,6 @@
     };
 
     const throttledHandleReorderDragOver = throttle(handleReorderDragOver, 30);
-
-    const handleColumnInteractionStart = function (event: MouseEvent, columnIndex: number): void {
-        // Check if the left or right mouse button was pressed
-        if (event.button !== 0 && event.button !== 2) return;
-
-        if (event.button === 2) {
-            // Right click
-            handleColumnRightClick(event, columnIndex);
-            return;
-        }
-
-        // Right click still allowed to happen
-        if ($preventClicks) {
-            return;
-        }
-
-        isClick = true; // Assume it's a click initially
-
-        holdTimeout = setTimeout(() => {
-            // Reorder drag start
-            isClick = false; // If timeout completes, it's a hold
-            document.addEventListener('mouseup', handleReorderDragEnd);
-            savedColumnWidthBeforeReorder = get(savedColumnWidths).get(headerElements[columnIndex].innerText.trim())!;
-            draggedColumnName = headerElements[columnIndex].innerText.trim();
-            isReorderDragging = true;
-            dragStartIndex = columnIndex;
-            dragCurrentIndex = columnIndex;
-            selectedColumnIndexes = []; // Clear so reordering doesn't interfere with selection
-        }, 300); // milliseconds delay for hold detection
-
-        // Define the handler function
-        currentMouseUpHandler = (mouseUpEvent: MouseEvent) => {
-            handleColumnMouseUp(mouseUpEvent, columnIndex);
-        };
-
-        // Add mouseup listener to clear the timeout if the button is released
-        document.addEventListener('mouseup', currentMouseUpHandler);
-    };
-
-    const handleColumnMouseUp = function (event: MouseEvent, columnIndex: number): void {
-        clearTimeout(holdTimeout);
-        if (currentMouseUpHandler) document.removeEventListener('mouseup', currentMouseUpHandler);
-
-        if (isClick) {
-            handleColumnClick(event, columnIndex);
-        }
-    };
 
     const handleReorderDragEnd = function (): void {
         if (isReorderDragging && dragStartIndex !== null && dragCurrentIndex !== null) {
@@ -213,24 +251,31 @@
             if (dragCurrentIndex > dragStartIndex) {
                 dragCurrentIndex -= 1;
             }
-            currentState.update(($currentState) => {
-                const newColumns = [...$currentState.table!.columns];
+
+            table.update(($table) => {
+                const newColumns = [...$table!.columns];
                 const movedItem = newColumns.splice(dragStartIndex!, 1)[0];
                 newColumns.splice(dragCurrentIndex!, 0, movedItem);
-                // In newColumns also set the number of each column array to their new index
-                newColumns.forEach((column, index) => {
-                    column[0] = index;
+
+                addInternalToHistory({
+                    action: 'reorderColumns',
+                    alias: `Reorder column ${$table!.columns[dragStartIndex!].name}`,
+                    type: 'internal',
+                    columnOrder: newColumns.map((column) => column.name),
                 });
-                return { ...$currentState, table: { ...$currentState.table!, columns: newColumns } };
+
+                return { ...$table!, columns: newColumns };
             });
+
             document.removeEventListener('mouseup', handleReorderDragEnd);
             isReorderDragging = false;
             dragStartIndex = null;
             dragCurrentIndex = null;
         }
     };
+    //#endregion
 
-    // --- Column selecting ---
+    //#region Column selecting
     let selectedColumnIndexes: number[] = [];
 
     const handleColumnClick = function (event: MouseEvent, columnIndex: number): void {
@@ -295,8 +340,10 @@
         // Replace the current selection with a new array to trigger reactivity
         selectedColumnIndexes = [columnIndex];
     };
+    //#endregion
+    //#endregion // Column interaction
 
-    // --- Row selecting ---
+    //#region Row selecting
     let selectedRowIndexes: number[] = [];
 
     const handleRowClick = function (event: MouseEvent, rowIndex: number): void {
@@ -334,8 +381,9 @@
             }
         }
     };
+    //#endregion
 
-    // --- Scroll loading ---
+    //#region Scroll loading
     let tableContainer: HTMLElement; // Reference to the table container
     const rowHeight = 33; // Adjust based on your row height
     const buffer = 40; // Number of rows to render outside the viewport
@@ -343,6 +391,7 @@
     let visibleEnd = 0;
     let visibleRowCount = 10;
     let scrollTop = 0;
+    let scrollLeft = 0;
     let lastHeight = 0;
 
     const updateVisibleRows = function (): void {
@@ -357,6 +406,7 @@
             currentContextMenu.style.top = currentContextMenu.offsetTop - scrollTop + tableContainer.scrollTop + 'px';
         }
         scrollTop = tableContainer.scrollTop;
+        scrollLeft = tableContainer.scrollLeft;
     };
 
     const recalculateVisibleRowCount = function (): void {
@@ -370,9 +420,12 @@
     };
 
     const throttledRecalculateVisibleRowCount = throttle(recalculateVisibleRowCount, 20);
+    //#endregion
 
-    // --- Right clicks ---
+    //#region Right clicks
     let currentContextMenu: HTMLElement | null = null;
+
+    let subMenuHovered = -1;
 
     // Column header right click
     let showingColumnHeaderRightClickMenu = false;
@@ -380,6 +433,8 @@
     let rightClickColumnMenuElement: HTMLElement;
 
     const handleColumnRightClick = function (event: MouseEvent, columnIndex: number): void {
+        if ($preventClicks && !showingColumnHeaderRightClickMenu) return;
+
         // Logic for what happens when a header is right clicked
         doDefaultContextMenuSetup();
         showingColumnHeaderRightClickMenu = true;
@@ -417,6 +472,31 @@
 
         // Click anywhere else to close the menu, if not clicked in the menu
         window.addEventListener('mousedown', handleRightClickEnd);
+    };
+
+    // Cell context menu
+    let showingCellContextMenu = false;
+    let cellContextMenuElement: HTMLElement;
+
+    const handleCellContextMenu = function (event: MouseEvent): void {
+        if (event.button !== 2) return;
+        if (selectedColumnIndexes.length === 0) return;
+        if ($preventClicks && !showingCellContextMenu) return;
+
+        // Logic for what happens when a cell is right clicked
+        preventClicks.set(true);
+        event.preventDefault();
+        doDefaultContextMenuSetup();
+        showingCellContextMenu = true;
+
+        requestAnimationFrame(() => {
+            currentContextMenu = cellContextMenuElement; // So scrolling can edit the position, somehow assignment does only work in requestAnimationFrame, maybe bc of delay, could lead to bugs maybe in future, keep note of
+            cellContextMenuElement!.style.left = event.clientX + tableContainer.scrollLeft - sidebarWidth + 'px';
+            cellContextMenuElement!.style.top = event.clientY + scrollTop + 'px';
+        });
+
+        // Click anywhere else to close the menu
+        window.addEventListener('click', handleRightClickEnd);
     };
 
     // Scaling methods
@@ -468,64 +548,143 @@
             filterColumnIndex = -1;
             generalCleanup();
         }
-    };
-
-    const originalHoverStyles = new Map<CSSStyleRule, string>();
-    const originalCursorStyles = new Map<CSSStyleRule, string>();
-
-    const disableNonContextMenuEffects = function () {
-        const stylesheets = document.styleSheets;
-
-        for (let i = 0; i < stylesheets.length; i++) {
-            const rules = stylesheets[i].cssRules;
-            const ownerNode = stylesheets[i].ownerNode;
-            if (
-                !(ownerNode instanceof Element) ||
-                (ownerNode instanceof Element && ownerNode.id && !ownerNode.id.includes('svelte'))
-            ) {
-                // We only care for stylesheets that are svlete generated
-                continue;
-            }
-
-            for (let j = 0; j < rules.length; j++) {
-                // Remove all hover styles and cursor pointer styles from non context menu elements
-                const rule = rules[j] as CSSStyleRule;
-                if (rule.selectorText?.includes(':hover') && !rule.selectorText?.includes('contextMenu')) {
-                    // Store the original hover style
-                    originalHoverStyles.set(rule, rule.style.cssText);
-                    // Disable the hover style
-                    rule.style.cssText = '';
-                }
-                if (rule.style?.cursor === 'pointer' && !rule.selectorText?.includes('contextMenu')) {
-                    // Store the original pointer style
-                    originalCursorStyles.set(rule, rule.style.cssText);
-                    // Disable the cursor pointer
-                    rule.style.cursor = 'auto';
-                }
-            }
+        if (showingCellContextMenu) {
+            showingCellContextMenu = false;
+            generalCleanup();
         }
     };
 
-    const restoreNonContextMenuEffects = function () {
-        originalHoverStyles.forEach((style, rule) => {
-            rule.style.cssText = style;
-        });
-        originalHoverStyles.clear();
+    const subMenuHoverToggle = function (index: number): void {
+        if (subMenuHovered === index) {
+            subMenuHovered = -1;
+        } else {
+            subMenuHovered = index;
+        }
+    };
+    //#endregion // Right clicks
 
-        originalCursorStyles.forEach((style, rule) => {
-            rule.style.cssText = style;
+    //#region Column hiding
+    const toggleHideColumn = function (passedColumnIndices?: number[]): void {
+        const columnIndices = passedColumnIndices ?? selectedColumnIndexes;
+
+        // Find all columns and check that they have the same hidden state
+        $table!.columns.forEach((column, index) => {
+            if (columnIndices!.includes(index) && column.hidden !== $table!.columns[columnIndices![0]].hidden) {
+                throw new Error('Columns must have the same hidden state to be toggled together');
+            }
         });
-        originalCursorStyles.clear();
+
+        let visible = true;
+        table.update(($table) => {
+            return {
+                ...$table!,
+                columns: $table!.columns.map((column, index) => {
+                    if (columnIndices!.includes(index)) {
+                        visible = column.hidden;
+                        return {
+                            ...column,
+                            hidden: !column.hidden,
+                        };
+                    }
+                    return column;
+                }),
+            };
+        });
+
+        for (const columnIndex of columnIndices) {
+            addInternalToHistory({
+                action: visible ? 'showColumn' : 'hideColumn',
+                alias: `${visible ? 'Show' : 'Hide'} column ${$table!.columns[columnIndex].name}`,
+                type: 'internal',
+                columnName: $table!.columns[columnIndex].name,
+            });
+            selectedColumnIndexes = selectedColumnIndexes.filter((selectedIndex) => selectedIndex !== columnIndex);
+        }
+    };
+    //#endregion
+
+    //#region Plotting
+    const generateTwoColumnTab = function (type: TwoColumnTabTypes) {
+        if (selectedColumnIndexes.length !== 2) {
+            throw new Error('Two columns must be selected to generate a two column plot');
+        }
+        const xAxisColumnName = $table!.columns[selectedColumnIndexes[0]].name;
+        const yAxisColumnName = $table!.columns[selectedColumnIndexes[1]].name;
+
+        executeExternalHistoryEntry({
+            action: type,
+            alias: `${type === 'linePlot' ? 'Lineplot' : 'Scatterplot'} for ${xAxisColumnName} x ${yAxisColumnName}`,
+            type: 'external-visualizing',
+            columnNumber: 'two',
+            xAxisColumnName,
+            yAxisColumnName,
+            newTabId: crypto.randomUUID(),
+        });
+        return;
     };
 
-    // --- Profiling ---
+    const generateOneColumnTab = function (type: OneColumnTabTypes, passedColumnIndex?: number) {
+        if (type === 'infoPanel') {
+            throw new Error('Not implemented yet.');
+        }
+
+        let columnIndex = passedColumnIndex;
+        if (columnIndex === undefined) {
+            if (selectedColumnIndexes.length !== 1) {
+                throw new Error('One column must be selected to generate a one column plot');
+            }
+            columnIndex = selectedColumnIndexes[0];
+        }
+        const columnName = $table!.columns[columnIndex].name;
+
+        executeExternalHistoryEntry({
+            action: type,
+            alias: `${type === 'histogram' ? 'Histogram' : 'Boxplot'} for ${columnName}`,
+            type: 'external-visualizing',
+            columnNumber: 'one',
+            columnName,
+            newTabId: crypto.randomUUID(),
+        });
+        return;
+    };
+    //#endregion // Plotting
+
+    //#region Sorting
+    const sortByColumn = function (event: MouseEvent, columnIndex: number, direction: PossibleSorts | null) {
+        if (event.button !== 0 || $preventClicks) return;
+
+        event.stopPropagation();
+
+        const columnName = $table!.columns[columnIndex].name;
+
+        if (!direction) {
+            executeExternalHistoryEntry({
+                action: 'voidSortByColumn',
+                alias: `Remove sorting by ${columnName}`,
+                type: 'external-manipulating',
+                columnName,
+            });
+            return;
+        }
+
+        executeExternalHistoryEntry({
+            action: 'sortByColumn',
+            alias: `Sort by ${columnName} ${direction === 'asc' ? 'ascending' : 'descending'}`,
+            type: 'external-manipulating',
+            columnName,
+            sort: direction,
+        });
+    };
+    //#endregion // Sorting
+
+    //#region Profiling ---
     let fullHeadBackground: HTMLElement;
     let profilingInfo: HTMLElement;
 
     const toggleProfiling = function (): void {
         if (!$preventClicks) {
-            showProfiling = !showProfiling;
-            if (showProfiling) {
+            showProfiling.set(!$showProfiling);
+            if ($showProfiling) {
                 setTimeout(() => {
                     fullHeadBackground.style.height = 2 * rowHeight + profilingInfo.clientHeight + 'px';
                 }, 700); // 700ms is the transition time of the profiling info opening/incresing in height
@@ -555,24 +714,24 @@
     const calcProfilingItemValue = function (profilingItem: ProfilingDetail): number {
         // To edit when Profiling type scales/changes
         if (profilingItem.type === 'image') {
-            return 9; // Bigger than normal text line, should be set to 3x line height
+            return Math.floor(profilingImageWidth / imageWidthToHeightRatio / 15); // imageHeight / 15 which is the set line height in profilingInfo
         } else {
             return 1;
         }
     };
 
     // As store to update on profiling changes
-    const hasProfilingErrors = derived(currentState, ($currentState) => {
-        if (!$currentState.table) return false;
-        for (const column of $currentState.table!.columns) {
-            if (!column[1].profiling) return false;
+    const hasProfilingErrors = derived(table, ($table) => {
+        if (!$table) return false;
+        for (const column of $table.columns) {
+            if (!column.profiling || column.hidden) continue;
             if (
-                column[1].profiling.missingRatio?.interpretation === 'error' ||
-                column[1].profiling.validRatio?.interpretation === 'error'
+                column.profiling.missingRatio?.interpretation === 'error' ||
+                column.profiling.validRatio?.interpretation === 'error'
             ) {
                 return true;
             }
-            for (const profilingItem of column[1].profiling.other) {
+            for (const profilingItem of column.profiling.other) {
                 if (profilingItem.type === 'numerical' && profilingItem.interpretation === 'error') {
                     return true;
                 }
@@ -582,9 +741,9 @@
     });
 
     const getPosiibleColumnFilters = function (columnIndex: number): PossibleColumnFilter[] {
-        if (!$currentState.table) return [];
+        if (!$table) return [];
 
-        const column = $currentState.table.columns[columnIndex][1];
+        const column = $table.columns[columnIndex];
 
         if (!column.profiling) return [];
 
@@ -601,12 +760,10 @@
                 possibleColumnFilters.push({
                     type: 'specificValue',
                     values: ['-'].concat(profilingCategories.map((profilingItem) => profilingItem.name)),
-                    columnName: column.name,
                 });
             } else {
                 possibleColumnFilters.push({
                     type: 'searchString',
-                    columnName: column.name,
                 });
             }
         } else {
@@ -623,14 +780,14 @@
                 type: 'valueRange',
                 min: colMin,
                 max: colMax,
-                columnName: column.name,
             });
         }
 
         return possibleColumnFilters;
     };
+    //#endregion
 
-    // --- Lifecycle ---
+    //#region Lifecycle
     let interval: NodeJS.Timeout;
 
     onMount(() => {
@@ -648,20 +805,28 @@
             clearInterval(interval);
         };
     });
+    //#endregion
 </script>
 
 <div bind:this={tableContainer} class="tableContainer">
-    {#if !$currentState.table}
-        <span>Loading ...</span>
+    {#if !$table}
+        <div class="loadingScreen">
+            <span class="loading">Loading...</span>
+        </div>
     {:else}
-        <div
-            bind:this={fullHeadBackground}
-            class="fullHeadBackground"
-            style:top="{scrollTop}px"
-            style:height="{rowHeight * 2}px"
-        ></div>
+        {#if $tableLoading}
+            <div class="loadingScreen" style:top="{scrollTop}px" style:left="{scrollLeft}px">
+                <span class="loading">Loading...</span>
+            </div>
+        {/if}
         <div class="contentWrapper" style:height="{numRows * rowHeight}px">
             <table>
+                <div
+                    bind:this={fullHeadBackground}
+                    class="fullHeadBackground"
+                    style:top="{scrollTop}px"
+                    style:height="{rowHeight * 2}px"
+                ></div>
                 <!-- Table Headers, mainly Column name and first/last row for indices -->
                 <thead style="min-width: {minTableWidth}px; position: relative; top: {scrollTop}px;">
                     <tr class="headerRow" style:height="{rowHeight}px">
@@ -669,43 +834,85 @@
                             class="borderColumn borderColumnHeader"
                             on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}>#</th
                         >
-                        {#each $currentState.table.columns as column, index}
-                            <th
-                                bind:this={headerElements[index]}
-                                class:reorderHighlightedLeft={isReorderDragging && dragCurrentIndex === index}
-                                style="width: {$savedColumnWidths.get(
-                                    column[1].name,
-                                )}px; position: relative; {isReorderDragging && dragStartIndex === index
-                                    ? 'display: none;'
-                                    : ''}"
-                                on:mousedown={(event) => handleColumnInteractionStart(event, index)}
-                                on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
-                                >{column[1].name}
-                                <!-- svelte-ignore a11y-no-static-element-interactions -->
-                                <div
-                                    class="filterIconWrapper"
-                                    on:mousedown={(event) => handleFilterContextMenu(event, index)}
+                        {#each $table.columns as column, index}
+                            {#if !column.hidden}
+                                <th
+                                    bind:this={headerElements[index]}
+                                    class:reorderHighlightedLeft={isReorderDragging && dragCurrentIndex === index}
+                                    style="width: {$savedColumnWidths.get(
+                                        column.name,
+                                    )}px; position: relative; {isReorderDragging && dragStartIndex === index
+                                        ? 'display: none;'
+                                        : ''}"
+                                    on:mousedown={(event) => handleColumnInteractionStart(event, index)}
+                                    on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
+                                    >{column.name}
+                                    <div
+                                        role="none"
+                                        class="filterIconWrapper"
+                                        on:mousedown={(event) => handleFilterContextMenu(event, index)}
+                                    >
+                                        <FilterIcon />
+                                    </div>
+                                    <div
+                                        class="sortIconsWrapper"
+                                        style:display={($savedColumnWidths.get(column.name) ?? 0) > 60
+                                            ? 'inline-flex'
+                                            : 'none'}
+                                    >
+                                        <div
+                                            class="sortIconWrapper"
+                                            role="none"
+                                            on:mousedown={(event) =>
+                                                sortByColumn(
+                                                    event,
+                                                    index,
+                                                    column.appliedSort === 'desc' ? null : 'desc',
+                                                )}
+                                        >
+                                            <CaretIcon
+                                                color={column.appliedSort === 'desc'
+                                                    ? 'var(--lightest-color)'
+                                                    : 'var(--transparent-medium)'}
+                                                hoverColor="var(--transparent-light)"
+                                            />
+                                        </div>
+                                        <div
+                                            class="sortIconWrapper rotate"
+                                            role="none"
+                                            on:mousedown={(event) =>
+                                                sortByColumn(event, index, column.appliedSort === 'asc' ? null : 'asc')}
+                                        >
+                                            <CaretIcon
+                                                color={column.appliedSort === 'asc'
+                                                    ? 'var(--lightest-color)'
+                                                    : 'var(--transparent-medium)'}
+                                                hoverColor="var(--transparent-light)"
+                                            />
+                                        </div>
+                                    </div>
+                                    <button class="resizeHandle" on:mousedown={(event) => startResizeDrag(event, index)}
+                                    ></button>
+                                </th>
+                            {:else}
+                                <th
+                                    bind:this={headerElements[index]}
+                                    class:reorderHighlightedLeftHiddenColumn={isReorderDragging &&
+                                        dragCurrentIndex === index}
+                                    class="hiddenColumnHeader"
+                                    on:mousedown={(event) =>
+                                        event.button === 2 ? handleColumnRightClick(event, index) : null}
+                                    on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
                                 >
-                                    <FilterIcon />
-                                </div>
-                                <div class="sortIconsWrapper">
-                                    <div class="sortIconWrapper">
-                                        <CaretIcon color="var(--transparent)" />
-                                    </div>
-                                    <div class="sortIconWrapper rotate">
-                                        <CaretIcon color="var(--transparent)" />
-                                    </div>
-                                </div>
-                                <!-- svelte-ignore a11y-no-static-element-interactions -->
-                                <div class="resizeHandle" on:mousedown={(event) => startResizeDrag(event, index)}></div>
-                            </th>
+                                </th>
+                            {/if}
                         {/each}
                         <th
                             class="borderColumn borderColumnHeader"
                             class:reorderHighlightedLeft={isReorderDragging &&
-                                dragCurrentIndex === $currentState.table.columns.length}
-                            on:mousemove={(event) =>
-                                throttledHandleReorderDragOver(event, $currentState.table?.columns.length ?? 0)}>#</th
+                                dragCurrentIndex === $table.columns.length}
+                            on:mousemove={(event) => throttledHandleReorderDragOver(event, $table?.columns.length ?? 0)}
+                            >#</th
                         >
                     </tr>
                 </thead>
@@ -715,28 +922,46 @@
                         class="borderColumn borderRight profiling"
                         on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
                     ></td>
-                    {#each $currentState.table.columns as column, index}
-                        <td
-                            class="profiling"
-                            class:expanded={showProfiling}
-                            style="height: {showProfiling && column[1].profiling
-                                ? getOptionalProfilingHeight(column[1].profiling)
-                                : ''}; {isReorderDragging && dragStartIndex === index ? 'display: none;' : ''}"
-                            on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
-                        >
-                            <div class="content" class:expanded={showProfiling}>
-                                {#if !column[1].profiling}
-                                    <div>Loading ...</div>
-                                {:else}
-                                    <ProfilingInfo profiling={column[1].profiling} imageWidth={profilingImageWidth} />
-                                {/if}
-                            </div>
-                        </td>
+                    {#each $table.columns as column, index}
+                        {#if !column.hidden}
+                            <td
+                                class="profiling"
+                                class:expanded={$showProfiling}
+                                style="height: {$showProfiling && column.profiling
+                                    ? getOptionalProfilingHeight(column.profiling)
+                                    : ''}; {isReorderDragging && dragStartIndex === index ? 'display: none;' : ''}"
+                                on:mousedown={(event) =>
+                                    event.button === 2 ? handleColumnRightClick(event, index) : null}
+                                on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
+                            >
+                                <div class="content" class:expanded={$showProfiling}>
+                                    {#if !column.profiling}
+                                        <div>Loading ...</div>
+                                    {:else}
+                                        <ProfilingInfo
+                                            profiling={column.profiling}
+                                            columnName={column.name}
+                                            imageWidth={profilingImageWidth}
+                                        />
+                                    {/if}
+                                </div>
+                            </td>
+                        {:else}
+                            <td
+                                class="profiling"
+                                class:expanded={$showProfiling}
+                                style="height: {$showProfiling && column.profiling
+                                    ? getOptionalProfilingHeight(column.profiling)
+                                    : ''};"
+                                on:mousedown={(event) =>
+                                    event.button === 2 ? handleColumnRightClick(event, index) : null}
+                                on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
+                            >
+                            </td>{/if}
                     {/each}
                     <td
                         class="borderColumn profiling"
-                        on:mousemove={(event) =>
-                            throttledHandleReorderDragOver(event, $currentState.table?.columns.length ?? 0)}
+                        on:mousemove={(event) => throttledHandleReorderDragOver(event, $table?.columns.length ?? 0)}
                     ></td>
                 </tr>
                 <!-- Profiling banner, to toggle profiling info -->
@@ -752,19 +977,19 @@
                         on:mouseup={handleReorderDragEnd}
                     >
                         <div>
-                            <span>{showProfiling ? 'Hide Profiling' : 'Show Profiling'}</span>
+                            <span>{$showProfiling ? 'Hide Profiling' : 'Show Profiling'}</span>
                             {#if $hasProfilingErrors}
                                 <div class="errorIconWrapper">
                                     <ErrorIcon />
                                 </div>
                             {/if}
-                            <div class="caretIconWrapper" class:rotate={!showProfiling}>
+                            <div class="caretIconWrapper" class:rotate={!$showProfiling}>
                                 <CaretIcon />
                             </div>
                         </div>
                     </td>
-                    {#each $currentState.table.columns as _column, index}
-                        {#if index !== $currentState.table.columns.length - 1}
+                    {#each $table.columns as _column, index}
+                        {#if index !== $table.columns.length - 1}
                             <td
                                 style=" {isReorderDragging && dragStartIndex === index + 1 ? 'display: none;' : ''}"
                                 class="profilingBanner"
@@ -776,8 +1001,7 @@
                     {/each}
                     <td
                         class="borderColumn profilingBanner"
-                        on:mousemove={(event) =>
-                            throttledHandleReorderDragOver(event, $currentState.table?.columns.length ?? 0)}
+                        on:mousemove={(event) => throttledHandleReorderDragOver(event, $table?.columns.length ?? 0)}
                     ></td>
                 </tr>
                 <!-- Table contents -->
@@ -791,23 +1015,30 @@
                                 class:selectedColumn={selectedRowIndexes.includes(visibleStart + i)}
                                 >{visibleStart + i}</td
                             >
-                            {#each $currentState.table.columns as column, index}
-                                <td
-                                    style={isReorderDragging && dragStartIndex === index ? 'display: none;' : ''}
-                                    on:click={handleMainCellClick}
-                                    on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
-                                    class:selectedColumn={selectedColumnIndexes.includes(index) ||
-                                        selectedRowIndexes.includes(visibleStart + i)}
-                                    >{column[1].values[visibleStart + i] !== null &&
-                                    column[1].values[visibleStart + i] !== undefined
-                                        ? column[1].values[visibleStart + i]
-                                        : ''}</td
-                                >
+                            {#each $table.columns as column, index}
+                                {#if !column.hidden}
+                                    <td
+                                        style={isReorderDragging && dragStartIndex === index ? 'display: none;' : ''}
+                                        on:mousedown={(event) => handleMainCellClick(event)}
+                                        on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
+                                        class:selectedColumn={selectedColumnIndexes.includes(index) ||
+                                            selectedRowIndexes.includes(visibleStart + i)}
+                                        >{column.values[visibleStart + i] !== null &&
+                                        column.values[visibleStart + i] !== undefined
+                                            ? column.values[visibleStart + i]
+                                            : ''}</td
+                                    >
+                                {:else}
+                                    <td
+                                        on:mousedown={(event) => handleMainCellClick(event)}
+                                        on:mousemove={(event) => throttledHandleReorderDragOver(event, index)}
+                                    >
+                                    </td>{/if}
                             {/each}
                             <td
                                 class="borderColumn borderColumnEndIndex cursorPointer"
                                 on:mousemove={(event) =>
-                                    throttledHandleReorderDragOver(event, $currentState.table?.columns.length ?? 0)}
+                                    throttledHandleReorderDragOver(event, $table?.columns.length ?? 0)}
                                 on:click={(event) => handleRowClick(event, visibleStart + i)}
                                 class:selectedColumn={selectedRowIndexes.includes(visibleStart + i)}
                                 >{visibleStart + i}</td
@@ -835,23 +1066,279 @@
     <!-- Context menus -->
     {#if showingColumnHeaderRightClickMenu}
         <div class="contextMenu" bind:this={rightClickColumnMenuElement}>
-            {#if selectedColumnIndexes.includes(rightClickedColumnIndex)}
-                <button
-                    class="contextItem"
-                    type="button"
-                    on:click={() => removeColumnFromSelection(rightClickedColumnIndex)}>Deselect Column</button
+            {#if $table?.columns[rightClickedColumnIndex].hidden ?? false}
+                <button class="contextItem" type="button" on:click={() => toggleHideColumn([rightClickedColumnIndex])}
+                    >Show Column '{$table?.columns[rightClickedColumnIndex].name}'</button
                 >
             {:else}
-                {#if selectedColumnIndexes.length >= 1}
+                <button class="contextItem" type="button" on:click={() => setSelectionToColumn(rightClickedColumnIndex)}
+                    >Select Column</button
+                >
+                {#if selectedColumnIndexes.includes(rightClickedColumnIndex)}
+                    <button
+                        class="contextItem"
+                        type="button"
+                        on:click={() => removeColumnFromSelection(rightClickedColumnIndex)}>Deselect Column</button
+                    >
+                {:else if selectedColumnIndexes.length >= 1}
                     <button
                         class="contextItem"
                         type="button"
                         on:click={() => addColumnToSelection(rightClickedColumnIndex)}>Add To Selection</button
                     >
                 {/if}
-                <button class="contextItem" type="button" on:click={() => setSelectionToColumn(rightClickedColumnIndex)}
-                    >Select Column</button
+                {#if selectedColumnIndexes.length >= 1}
+                    <button
+                        class="contextItem subMenuTrigger newCategoryItem"
+                        type="button"
+                        on:mouseenter={() => subMenuHoverToggle(1)}
+                        on:mouseleave={() => subMenuHoverToggle(1)}
+                    >
+                        From Selection
+                        <span class="subMenuCaret"
+                            ><CaretIcon
+                                color={subMenuHovered === 1 ? 'var(--lightest-color)' : 'var(--dark-color)'}
+                            /></span
+                        >
+                        <div class="subMenu contextMenu" style:display={subMenuHovered === 1 ? 'block' : 'none'}>
+                            <div class="subMenuContainer">
+                                {#if selectedColumnIndexes.length > 1 && selectedColumnIndexes.every((index) => $table?.columns[index].hidden === $table?.columns[selectedColumnIndexes[0]].hidden)}
+                                    <button
+                                        class="contextItem newCategoryItem"
+                                        type="button"
+                                        on:click={() => toggleHideColumn()}>Hide Columns</button
+                                    >
+                                {:else if selectedColumnIndexes.length === 1}
+                                    <button
+                                        class="contextItem newCategoryItem"
+                                        type="button"
+                                        on:click={() => toggleHideColumn()}>Hide Column</button
+                                    >
+                                {/if}
+                                {#if selectedColumnIndexes.length === 1}
+                                    <button
+                                        class="contextItem"
+                                        type="button"
+                                        on:click={() => generateOneColumnTab('histogram')}>Plot Histogram</button
+                                    >
+                                    {#if $table?.columns[selectedColumnIndexes[0]].type === 'numerical'}
+                                        <button
+                                            class="contextItem"
+                                            type="button"
+                                            on:click={() => generateOneColumnTab('boxPlot')}
+                                        >
+                                            Plot Boxplot</button
+                                        >
+                                    {:else}
+                                        <button
+                                            class="contextItem inactiveItem"
+                                            title="Only possible for numerical column"
+                                        >
+                                            Plot Boxplot
+                                        </button>
+                                    {/if}
+                                    <button class="contextItem inactiveItem" title="Select two columns to plot">
+                                        Plot Scatterplot
+                                    </button>
+                                    <button class="contextItem inactiveItem" title="Select two columns to plot">
+                                        Plot Lineplot
+                                    </button>
+                                {:else if selectedColumnIndexes.length === 2 && $table?.columns[selectedColumnIndexes[0]].type === 'numerical' && $table?.columns[selectedColumnIndexes[1]].type === 'numerical'}
+                                    <button class="contextItem inactiveItem" title="Select just one columns to plot">
+                                        Plot Histogram
+                                    </button>
+                                    <button class="contextItem inactiveItem" title="Select just one columns to plot">
+                                        Plot Boxplot
+                                    </button>
+                                    <button
+                                        class="contextItem"
+                                        type="button"
+                                        on:click={() => generateTwoColumnTab('scatterPlot')}>Plot Scatterplot</button
+                                    >
+                                    <button
+                                        class="contextItem"
+                                        type="button"
+                                        on:click={() => generateTwoColumnTab('linePlot')}>Plot Lineplot</button
+                                    >
+                                {:else if selectedColumnIndexes.length === 2}
+                                    <button class="contextItem inactiveItem" title="Select just one columns to plot">
+                                        Plot Histogram
+                                    </button>
+                                    <button class="contextItem inactiveItem" title="Select just one columns to plot">
+                                        Plot Boxplot
+                                    </button>
+                                    <button
+                                        class="contextItem inactiveItem"
+                                        title="Only possible for numerical columns"
+                                    >
+                                        Plot Scatterplot
+                                    </button>
+                                    <button
+                                        class="contextItem inactiveItem"
+                                        title="Only possible for numerical columns"
+                                    >
+                                        Plot Lineplot
+                                    </button>
+                                {:else}
+                                    <button class="contextItem inactiveItem" title="Select just one columns to plot">
+                                        Plot Histogram
+                                    </button>
+                                    <button class="contextItem inactiveItem" title="Select just one columns to plot">
+                                        Plot Boxplot
+                                    </button>
+                                    <button class="contextItem inactiveItem" title="Select two columns to plot">
+                                        Plot Scatterplot
+                                    </button>
+                                    <button class="contextItem inactiveItem" title="Select two columns to plot">
+                                        Plot Lineplot
+                                    </button>
+                                {/if}
+                            </div>
+                        </div>
+                    </button>
+                {/if}
+                {#if selectedColumnIndexes.length > 0}
+                    <button
+                        class="contextItem subMenuTrigger"
+                        type="button"
+                        on:mouseenter={() => subMenuHoverToggle(2)}
+                        on:mouseleave={() => subMenuHoverToggle(2)}
+                    >
+                        From Click
+                        <span class="subMenuCaret"
+                            ><CaretIcon
+                                color={subMenuHovered === 2 ? 'var(--lightest-color)' : 'var(--dark-color)'}
+                            /></span
+                        >
+                        <div class="subMenu contextMenu" style:display={subMenuHovered === 2 ? 'block' : 'none'}>
+                            <div class="subMenuContainer">
+                                <button
+                                    class="contextItem"
+                                    type="button"
+                                    on:click={() => toggleHideColumn([rightClickedColumnIndex])}>Hide Column</button
+                                >
+                                <button
+                                    class="contextItem"
+                                    type="button"
+                                    on:click={() => generateOneColumnTab('histogram', rightClickedColumnIndex)}
+                                    >Plot Histogram</button
+                                >
+                                {#if $table?.columns[rightClickedColumnIndex].type === 'numerical'}
+                                    <button
+                                        class="contextItem"
+                                        type="button"
+                                        on:click={() => generateOneColumnTab('boxPlot', rightClickedColumnIndex)}
+                                    >
+                                        Plot Boxplot</button
+                                    >
+                                {:else}
+                                    <button class="contextItem inactiveItem" title="Only possible for numerical column">
+                                        Plot Boxplot
+                                    </button>
+                                {/if}
+                            </div>
+                        </div>
+                    </button>
+                {:else}
+                    <button
+                        class="contextItem newCategoryItem"
+                        type="button"
+                        on:click={() => toggleHideColumn([rightClickedColumnIndex])}>Hide Column</button
+                    >
+                    <button
+                        class="contextItem"
+                        type="button"
+                        on:click={() => generateOneColumnTab('histogram', rightClickedColumnIndex)}
+                        >Plot Histogram</button
+                    >
+                    {#if $table?.columns[rightClickedColumnIndex].type === 'numerical'}
+                        <button
+                            class="contextItem"
+                            type="button"
+                            on:click={() => generateOneColumnTab('boxPlot', rightClickedColumnIndex)}
+                        >
+                            Plot Boxplot</button
+                        >
+                    {:else}
+                        <button class="contextItem inactiveItem" title="Only possible for numerical column">
+                            Plot Boxplot
+                        </button>
+                    {/if}
+                {/if}
+            {/if}
+        </div>
+    {/if}
+    {#if showingCellContextMenu}
+        <div class="contextMenu" bind:this={cellContextMenuElement}>
+            {#if selectedColumnIndexes.length > 0}
+                <button
+                    class="contextItem subMenuTrigger"
+                    type="button"
+                    on:mouseenter={() => subMenuHoverToggle(3)}
+                    on:mouseleave={() => subMenuHoverToggle(3)}
                 >
+                    From Selection
+                    <span class="subMenuCaret"
+                        ><CaretIcon
+                            color={subMenuHovered === 3 ? 'var(--lightest-color)' : 'var(--dark-color)'}
+                        /></span
+                    >
+                    <div class="subMenu contextMenu" style:display={subMenuHovered === 3 ? 'block' : 'none'}>
+                        <div class="subMenuContainer">
+                            {#if selectedColumnIndexes.length > 1 && selectedColumnIndexes.every((index) => $table?.columns[index].hidden === $table?.columns[selectedColumnIndexes[0]].hidden)}
+                                <button
+                                    class="contextItem newCategoryItem"
+                                    type="button"
+                                    on:click={() => toggleHideColumn()}>Hide Columns</button
+                                >
+                            {:else if selectedColumnIndexes.length === 1}
+                                <button
+                                    class="contextItem newCategoryItem"
+                                    type="button"
+                                    on:click={() => toggleHideColumn()}>Hide Column</button
+                                >
+                            {/if}
+                            {#if selectedColumnIndexes.length === 1}
+                                <button
+                                    class="contextItem"
+                                    type="button"
+                                    on:click={() => generateOneColumnTab('histogram')}>Plot Histogram</button
+                                >
+                                {#if $table?.columns[selectedColumnIndexes[0]].type === 'numerical'}
+                                    <button
+                                        class="contextItem"
+                                        type="button"
+                                        on:click={() => generateOneColumnTab('boxPlot')}
+                                    >
+                                        Plot Boxplot</button
+                                    >
+                                {:else}
+                                    <button class="contextItem inactiveItem" title="Only possible for numerical column">
+                                        Plot Boxplot
+                                    </button>
+                                {/if}
+                            {:else if selectedColumnIndexes.length === 2 && $table?.columns[selectedColumnIndexes[0]].type === 'numerical' && $table?.columns[selectedColumnIndexes[1]].type === 'numerical'}
+                                <button
+                                    class="contextItem"
+                                    type="button"
+                                    on:click={() => generateTwoColumnTab('scatterPlot')}>Plot Scatterplot</button
+                                >
+                                <button
+                                    class="contextItem"
+                                    type="button"
+                                    on:click={() => generateTwoColumnTab('linePlot')}>Plot Lineplot</button
+                                >
+                            {:else if selectedColumnIndexes.length === 2}
+                                <button class="contextItem inactiveItem" title="Only possible for numerical columns">
+                                    Plot Scatterplot
+                                </button>
+                                <button class="contextItem inactiveItem" title="Only possible for numerical columns">
+                                    Plot Lineplot
+                                </button>
+                            {/if}
+                        </div>
+                    </div>
+                </button>
             {/if}
         </div>
     {/if}
@@ -863,10 +1350,28 @@
 </div>
 
 <style>
+    .loadingScreen {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        background-color: var(--transparent-medium);
+        z-index: 1000;
+    }
+
+    .loadingScreen .loading {
+        color: var(--medium-color);
+        font-weight: 600;
+        font-size: 2.5rem;
+        font-family: monospace;
+    }
+
     .tableContainer {
         overflow-y: auto;
-        height: 100%; /* Adjust based on your layout */
-        position: relative; /* Needed for absolute positioning inside */
+        height: 100%;
+        position: relative;
     }
 
     .contentWrapper {
@@ -874,14 +1379,14 @@
         top: 0;
         left: 0;
         right: 0;
-        background-color: var(--bg-dark);
+        background-color: var(--medium-light-color);
+        overflow: visible;
     }
 
     .fullHeadBackground {
         position: absolute;
         top: 0;
         left: 0;
-        right: 0;
         width: 100%;
         background-color: white;
         z-index: 2;
@@ -890,26 +1395,27 @@
     table {
         table-layout: fixed;
         width: 100.1%; /* To prevent lagging on vert scroll */
-        background-color: var(--bg-dark);
+        background-color: var(--medium-light-color);
         overflow-x: scroll;
+        position: relative;
     }
 
     .headerRow {
         position: relative;
         top: 0;
-        z-index: 1000;
+        z-index: 500;
     }
 
     thead tr:hover {
         background-color: transparent;
     }
     th {
-        border-left: 3px solid var(--bg-bright);
-        border-right: 2px solid var(--bg-bright);
-        border-bottom: 3px solid var(--bg-bright);
-        border-top: 3px solid var(--bg-bright);
+        border-left: 3px solid var(--lightest-color);
+        border-right: 2px solid var(--lightest-color);
+        border-bottom: 3px solid var(--lightest-color);
+        border-top: 3px solid var(--lightest-color);
         background-color: var(--primary-color);
-        color: var(--bg-bright);
+        color: var(--lightest-color);
         font-weight: 500;
         font-size: 1.1rem;
         overflow: hidden;
@@ -919,19 +1425,23 @@
         cursor: pointer;
     }
 
+    th:hover {
+        color: var(--medium-light-color);
+    }
+
     th,
     td {
         white-space: nowrap;
         overflow: hidden;
-        border-right: 2px solid var(--bg-dark);
+        border-right: 2px solid var(--medium-light-color);
     }
     tbody {
-        border-left: 3px solid var(--bg-bright);
+        border-left: 3px solid var(--lightest-color);
         z-index: 1;
     }
     tr {
-        border-bottom: 2px solid var(--bg-dark);
-        background-color: var(--bg-bright);
+        border-bottom: 2px solid var(--medium-light-color);
+        background-color: var(--lightest-color);
     }
     tr:hover {
         background-color: var(--primary-color-desaturated);
@@ -942,7 +1452,7 @@
     }
 
     .noHover:hover {
-        background-color: var(--bg-dark) !important;
+        background-color: var(--medium-light-color) !important;
     }
 
     .resizeHandle {
@@ -955,7 +1465,7 @@
     }
 
     .borderRight {
-        border-right: 2px solid var(--bg-bright);
+        border-right: 2px solid var(--lightest-color);
     }
     .hiddenProfilingWrapper {
         position: relative !important;
@@ -969,11 +1479,11 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         font-size: 0.8rem;
-        border-left: 3px solid var(--bg-bright) !important;
+        border-left: 3px solid var(--lightest-color) !important;
     }
 
     .borderColumnEndIndex {
-        border-left: 2px solid var(--bg-dark) !important;
+        border-left: 2px solid var(--medium-light-color) !important;
         text-align: right;
     }
 
@@ -1033,14 +1543,30 @@
     }
 
     .reorderHighlightedLeft {
-        background: linear-gradient(to left, #036ed1 0%, #036ed1 calc(100% - 4px), white calc(100% - 4px), white 100%);
+        background: linear-gradient(
+            to left,
+            var(--primary-color) 0%,
+            var(--primary-color) calc(100% - 4px),
+            var(--lightest-color) calc(100% - 4px),
+            var(--lightest-color) 100%
+        );
+    }
+
+    .reorderHighlightedLeftHiddenColumn {
+        background: linear-gradient(
+            to left,
+            var(--medium-light-color) 0%,
+            var(--medium-light-color) calc(100% - 4px),
+            var(--dark-color) calc(100% - 2px),
+            var(--dark-color) 100%
+        );
     }
 
     .dragging {
         position: absolute !important;
         pointer-events: none; /* Make it non-interactive */
         z-index: 1000; /* Ensure it's on top */
-        border: 3px solid var(--bg-dark);
+        border: 3px solid var(--medium-light-color);
         display: flex;
         flex-direction: column;
         align-items: start;
@@ -1049,34 +1575,10 @@
         text-overflow: ellipsis;
     }
 
-    .contextMenu {
-        position: absolute;
-        border: 2px solid var(--bg-dark);
-        background-color: var(--bg-bright);
-        z-index: 1000;
-        padding: 0;
-        color: var(--font-dark);
-        display: flex;
-        flex-direction: column;
-    }
-
-    .contextMenu button {
-        padding: 5px 15px;
-        cursor: pointer;
-        background-color: var(--bg-bright);
-        color: var(--font-dark);
-        text-align: left;
-    }
-
-    .contextMenu button:hover {
-        background-color: var(--primary-color);
-        color: var(--font-bright);
-    }
-
     .profilingBannerRow {
         position: relative;
         z-index: 10;
-        border-top: 2px solid var(--bg-bright);
+        border-top: 2px solid var(--lightest-color);
     }
 
     .profilingBannerRow * {
@@ -1087,9 +1589,9 @@
 
     .profiling {
         padding: 0;
-        border-right: 2px solid var(--bg-bright);
-        border-left: 3px solid var(--bg-bright);
-        background-color: var(--bg-dark) !important;
+        border-right: 2px solid var(--lightest-color);
+        border-left: 3px solid var(--lightest-color);
+        background-color: var(--medium-light-color) !important;
     }
 
     .profiling.expanded {
@@ -1105,7 +1607,7 @@
     }
 
     .profiling .content.expanded {
-        overflow-y: scroll;
+        overflow-y: auto;
         max-height: 500px;
         opacity: 1;
         transition:
@@ -1116,11 +1618,11 @@
     .profilingBanner {
         height: 35px;
         width: 100%;
-        background-color: var(--bg-dark);
+        background-color: var(--medium-light-color);
         font-size: 1.1rem;
-        border-top: 2px solid var(--bg-bright);
-        border-left: 3px solid var(--bg-bright);
-        border-bottom: 3px solid var(--bg-bright);
+        border-top: 2px solid var(--lightest-color);
+        border-left: 3px solid var(--lightest-color);
+        border-bottom: 3px solid var(--lightest-color);
         user-select: none;
         padding-left: 0;
         z-index: 10;
@@ -1128,5 +1630,81 @@
 
     .profilingBanner:hover {
         cursor: pointer;
+    }
+
+    .hiddenColumnHeader {
+        background-color: var(--medium-light-color);
+        width: 15px;
+        padding: 0px;
+        cursor: default;
+    }
+
+    .contextMenu {
+        position: absolute;
+        border: 2px solid var(--medium-light-color);
+        background-color: var(--lightest-color);
+        z-index: 1000;
+        padding: 0;
+        color: var(--darkest-color);
+        display: flex;
+        flex-direction: column;
+        width: max-content;
+    }
+
+    .contextMenu button {
+        padding: 5px 30px 5px 15px;
+        cursor: pointer;
+        background-color: var(--lightest-color);
+        color: var(--darkest-color);
+        text-align: left;
+        width: 100%;
+    }
+
+    .contextMenu button:hover {
+        background-color: var(--primary-color);
+        color: var(--light-color);
+    }
+
+    .contextItem {
+        position: relative;
+    }
+
+    .subMenu {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 98%;
+        width: 100%;
+        white-space: nowrap;
+    }
+
+    .subMenuContainer {
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+    }
+
+    .subMenuTrigger {
+        padding-right: 9px !important;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        position: relative;
+    }
+
+    .subMenuCaret {
+        transform: rotate(90deg);
+        margin-left: 10px;
+    }
+
+    .inactiveItem {
+        background-color: var(--lightest-color) !important;
+        color: var(--dark-color) !important;
+        cursor: default !important;
+    }
+
+    .newCategoryItem {
+        border-top: 1px solid var(--medium-color);
+        padding-top: 2px;
     }
 </style>

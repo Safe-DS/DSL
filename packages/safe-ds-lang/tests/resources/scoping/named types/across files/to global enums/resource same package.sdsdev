@@ -3,5 +3,11 @@ package tests.scoping.namedTypes.acrossFiles.toGlobalEnums
 // $TEST$ target same_MyEnum
 enum »MyEnum«
 
-// $TEST$ target same_EnumInSamePackage
-enum »EnumInSamePackage«
+// $TEST$ target same_PublicEnumInSamePackage
+enum »PublicEnumInSamePackage«
+
+// $TEST$ target same_InternalEnumInSamePackage
+internal enum »InternalEnumInSamePackage«
+
+// $TEST$ target same_PrivateEnumInSamePackage
+private enum »PrivateEnumInSamePackage«

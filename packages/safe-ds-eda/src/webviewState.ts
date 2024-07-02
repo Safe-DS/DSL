@@ -1,58 +1,97 @@
 import type { FromExtensionMessage } from '../types/messaging';
-import type { State } from '../types/state';
-import * as extensionApi from './apis/extensionApi';
+import type { HistoryEntry, Profiling, Tab, Table } from '../types/state';
 import { get, writable } from 'svelte/store';
 
-let currentTabIndex = writable<number>(0);
+const tabs = writable<Tab[]>([]);
 
-let preventClicks = writable<boolean>(false);
+const currentTabIndex = writable<number | undefined>(undefined);
+
+const preventClicks = writable<boolean>(false);
+
+const cancelTabIdsWaiting = writable<string[]>([]);
+
+let initialTable: Table | undefined;
+const tableKey = writable<number>(0); // If changed will remount the table
+let initialProfiling: { columnName: string; profiling: Profiling }[] = [];
+const tabKey = writable<number>(0); // If changed will remount the tabs
+
+const showProfiling = writable<boolean>(false);
 
 // Define the stores, current state to default in case the extension never calls setWebviewState( Shouldn't happen)
-let currentState = writable<State>({ tableIdentifier: undefined, history: [], defaultState: true });
+const table = writable<Table | undefined>();
 
-// Set Global states whenever updatedAllStates changes
-currentState.subscribe(($currentState) => {
-    if (!$currentState.defaultState) {
-        extensionApi.setCurrentGlobalState($currentState);
-    }
-});
+const history = writable<HistoryEntry[]>([]);
+const savedColumnWidths = writable(new Map<string, number>());
+
+const tableLoading = writable<boolean>(false);
 
 window.addEventListener('message', (event) => {
     const message = event.data as FromExtensionMessage;
     // eslint-disable-next-line no-console
     console.log(Date.now() + ': ' + message.command + ' called');
     switch (message.command) {
-        case 'setWebviewState':
-            // This should be fired immediately whenever the panel is created or made visible again
-            currentState.set(message.value);
+        case 'setInitialTable':
+            if (!get(table)) {
+                table.set(message.value);
+                initialTable = message.value;
+            } else {
+                throw new Error('setInitialTable called more than once');
+            }
             break;
         case 'setProfiling':
-            if (get(currentState) && get(currentState).table) {
-                currentState.update((state) => {
-                    return {
-                        ...state,
-                        table: {
-                            ...state.table!,
-                            columns: state.table!.columns.map((column) => {
-                                const profiling = message.value.find((p) => p.columnName === column[1].name);
-                                if (profiling) {
-                                    return [
-                                        column[0],
-                                        {
-                                            ...column[1],
-                                            profiling: profiling.profiling,
-                                        },
-                                    ];
-                                } else {
-                                    return column;
-                                }
-                            }),
-                        },
-                    };
-                });
+            if (get(table)) {
+                initialProfiling = message.value;
+                setProfiling(message.value);
             }
             break;
     }
 });
 
-export { currentState, currentTabIndex, preventClicks };
+const setProfiling = (profiling: { columnName: string; profiling: Profiling }[]) => {
+    table.update((currentTable) => {
+        return {
+            ...currentTable!,
+            columns: currentTable!.columns.map((column) => {
+                const newProfiling = profiling.find((p) => p.columnName === column.name);
+                if (newProfiling) {
+                    return {
+                        ...column,
+                        profiling: newProfiling.profiling,
+                    };
+                } else {
+                    return column;
+                }
+            }),
+        };
+    });
+};
+
+const restoreTableInitialState = () => {
+    table.set(initialTable);
+    tabs.set([]);
+    setProfiling(initialProfiling);
+    cancelTabIdsWaiting.set([]);
+    savedColumnWidths.set(new Map<string, number>());
+    rerender();
+};
+
+const rerender = () => {
+    tableKey.update((key) => key + 1);
+    tabKey.update((key) => key + 1);
+};
+
+export {
+    history,
+    tabs,
+    table,
+    currentTabIndex,
+    preventClicks,
+    cancelTabIdsWaiting,
+    tableLoading,
+    savedColumnWidths,
+    restoreTableInitialState,
+    rerender,
+    tableKey,
+    tabKey,
+    showProfiling,
+};

@@ -13,15 +13,15 @@ package tests.generator.runnerIntegration.expressions.calls.main
 ) -> result: Boolean
 
 @Impure([ImpurityReason.Other])
-@PythonCall("$param.i()")
+@PythonMacro("$param.i()")
 fun i(param: Any?)
 
 @Impure([ImpurityReason.Other])
-@PythonCall("$param.j($param2)")
+@PythonMacro("$param.j($param2)")
 fun j(param: Any?, param2: Any?)
 
 @Impure([ImpurityReason.Other])
-@PythonCall("k($param2, $param)")
+@PythonMacro("k($param2, $param)")
 fun k(param: Any?, param2: Any?)
 
 @Pure

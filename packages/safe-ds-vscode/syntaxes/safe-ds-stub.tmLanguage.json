@@ -12,11 +12,15 @@
         },
         {
             "name": "storage.modifier.safe-ds-stub",
-            "match": "\\b(const|in|out|static)\\b"
+            "match": "\\b(const|in|internal|out|private|static)\\b"
         },
         {
             "name": "keyword.operator.expression.safe-ds-stub",
             "match": "\\b(and|not|or|sub)\\b"
+        },
+        {
+            "name": "variable.language.safe-ds-dev",
+            "match": "\\b(this)\\b"
         }
     ]
 }

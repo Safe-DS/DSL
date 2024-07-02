@@ -3,8 +3,14 @@ package tests.scoping.references.acrossFiles.toGlobalClasses.other
 // $TEST$ target other_MyClass
 class »MyClass«
 
-// $TEST$ target other_ClassInAnotherPackage
-class »ClassInAnotherPackage«
+// $TEST$ target other_PublicClassInAnotherPackage
+class »PublicClassInAnotherPackage«
 
-// $TEST$ target other_Class2InAnotherPackage
-class »Class2InAnotherPackage«
+// $TEST$ target other_PublicClassInAnotherPackage2
+class »PublicClassInAnotherPackage2«
+
+// $TEST$ target other_InternalClassInAnotherPackage
+internal class »InternalClassInAnotherPackage«
+
+// $TEST$ target other_PrivateClassInAnotherPackage
+private class »PrivateClassInAnotherPackage«

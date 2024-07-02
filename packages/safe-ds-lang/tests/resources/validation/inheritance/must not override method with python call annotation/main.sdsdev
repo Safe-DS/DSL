@@ -1,0 +1,36 @@
+package tests.validation.inheritance.mustNotOverrideMethodWithPythonMacroAnnotation
+
+class MyClass1 {
+    attr myAttribute: Int
+
+    // $TEST$ no error "Cannot override a method that calls the '@PythonMacro' annotation."
+    @Pure
+    @PythonMacro("some_other_function")
+    fun »withPythonMacro«()
+
+    // $TEST$ no error "Cannot override a method that calls the '@PythonMacro' annotation."
+    @Pure
+    fun »withoutPythonMacro«()
+}
+
+class MyClass2 sub MyClass1 {
+    // $TEST$ no error "Cannot override a method that calls the '@PythonMacro' annotation."
+    @Pure
+    @PythonMacro("some_other_function")
+    fun »withPythonMacro«()
+
+    // $TEST$ no error "Cannot override a method that calls the '@PythonMacro' annotation."
+    @Pure
+    @PythonMacro("some_other_function")
+    fun »withoutPythonMacro«()
+}
+
+class MyClass3 sub MyClass1 {
+    // $TEST$ no error "Cannot override a method that calls the '@PythonMacro' annotation."
+    @Pure
+    fun »myAttribute«()
+
+    // $TEST$ error "Cannot override a method that calls the '@PythonMacro' annotation."
+    @Pure
+    fun »withPythonMacro«()
+}

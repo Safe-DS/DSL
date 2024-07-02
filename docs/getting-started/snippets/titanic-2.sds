@@ -1,0 +1,48 @@
+package classification
+
+pipeline titanic {
+    // Load data from a CSV file into a table
+    val rawData = Table.fromCsvFile("titanic.csv");
+
+    // Display the first 5 rows of the data
+    val _head = rawData.sliceRows(length = 5);
+
+    // Summarize the statistics of the data (e.g. max, min, missing value ratio, ...)
+    val _statistics = rawData.summarizeStatistics();
+
+    // Plot a correlation heatmap
+    val _plot = rawData.plot.correlationHeatmap();
+
+    // Drop columns that are not needed
+    val preprocessedBeforeSplit = rawData.removeColumns(["cabin", "ticket", "port_embarked"]);
+
+    // Split the data for training (70%) and testing (30%)
+    val rawTraining, val rawTest = preprocessedBeforeSplit.splitRows(percentageInFirst = 0.7);
+
+    // Fit an imputer to replace missing values with the median of the respective column
+    val imputer = SimpleImputer(SimpleImputer.Strategy.Median, columnNames = ["age", "fare"]).fit(rawTraining);
+
+    // Fit a one-hot encoder to convert nominal categorical data into numerical data
+    val encoder = OneHotEncoder(columnNames = ["sex"]).fit(rawTraining);
+
+    // Create training and test sets
+    val trainingSet = preprocessAfterSplit(rawTraining, imputer, encoder);
+    val testSet = preprocessAfterSplit(rawTest, imputer, encoder);
+
+    // Create and fit a gradient boosting classifier
+    val classifier = GradientBoostingClassifier(treeCount = 10, learningRate = 0.2).fit(trainingSet);
+
+    // Calculate the accuracy
+    val _accuracy = classifier.accuracy(testSet);
+}
+
+segment preprocessAfterSplit(
+    table: Table,
+    imputer: TableTransformer,
+    encoder: TableTransformer,
+) -> dataset: TabularDataset {
+    yield dataset = table
+        .transformTable(imputer)
+        .transformTable(encoder)
+        .toTabularDataset(targetName = "survived", extraNames = ["id", "name"]);
+}

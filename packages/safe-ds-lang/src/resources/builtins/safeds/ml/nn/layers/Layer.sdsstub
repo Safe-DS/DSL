@@ -1,0 +1,6 @@
+package safeds.ml.nn.layers
+
+from safeds.data.image.typing import ImageSize
+
+@Experimental
+class Layer

@@ -22,7 +22,7 @@ export const addLinePrefix = (text: string, prefix: string): string => {
     return text
         .trim()
         .split('\n')
-        .map((line) => `${prefix}${line}`)
+        .map((line) => (/^\s*$/u.test(line) ? line : `${prefix}${line}`))
         .join('\n');
 };
 

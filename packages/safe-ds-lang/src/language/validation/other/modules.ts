@@ -1,7 +1,7 @@
 import { ValidationAcceptor } from 'langium';
-import { isSdsDeclaration, SdsModule } from '../../generated/ast.js';
+import { SdsModule } from '../../generated/ast.js';
 import { isInPipelineFile, isInStubFile } from '../../helpers/fileExtensions.js';
-import { getModuleMembers, isImplementedDeclaration, isStubDeclaration } from '../../helpers/nodeProperties.js';
+import { getModuleMembers, isValidPipelineDeclaration, isValidStubDeclaration } from '../../helpers/nodeProperties.js';
 import { BUILTINS_ROOT_PACKAGE } from '../../builtins/packageNames.js';
 
 export const CODE_MODULE_FORBIDDEN_IN_PIPELINE_FILE = 'module/forbidden-in-pipeline-file';
@@ -10,11 +10,9 @@ export const CODE_MODULE_MISSING_PACKAGE = 'module/missing-package';
 export const CODE_MODULE_PIPELINE_FILE_IN_BUILTIN_PACKAGE = 'module/pipeline-file-in-builtin-package';
 
 export const moduleDeclarationsMustMatchFileKind = (node: SdsModule, accept: ValidationAcceptor): void => {
-    const declarations = node.members.filter(isSdsDeclaration);
-
     if (isInPipelineFile(node)) {
-        for (const declaration of declarations) {
-            if (!isImplementedDeclaration(declaration)) {
+        for (const declaration of getModuleMembers(node)) {
+            if (!isValidPipelineDeclaration(declaration)) {
                 accept('error', 'A pipeline file must only declare pipelines and segments.', {
                     node: declaration,
                     property: 'name',
@@ -23,8 +21,8 @@ export const moduleDeclarationsMustMatchFileKind = (node: SdsModule, accept: Val
             }
         }
     } else if (isInStubFile(node)) {
-        for (const declaration of declarations) {
-            if (!isStubDeclaration(declaration)) {
+        for (const declaration of getModuleMembers(node)) {
+            if (!isValidStubDeclaration(declaration)) {
                 accept('error', 'A stub file must not declare pipelines or segments.', {
                     node: declaration,
                     property: 'name',

@@ -3,14 +3,14 @@ import { SdsDeclaration, SdsFunction } from '../../generated/ast.js';
 import { SafeDsServices } from '../../safe-ds-module.js';
 import { findFirstAnnotationCallOf, hasAnnotationCallOf } from '../../helpers/nodeProperties.js';
 
-export const CODE_PYTHON_NAME_MUTUALLY_EXCLUSIVE_WITH_PYTHON_CALL = 'python-name/mutually-exclusive-with-python-call';
+export const CODE_PYTHON_NAME_MUTUALLY_EXCLUSIVE_WITH_PYTHON_MACRO = 'python-name/mutually-exclusive-with-python-macro';
 export const CODE_PYTHON_NAME_SAME_AS_SAFE_DS_NAME = 'python-name/same-as-safe-ds-name';
 
-export const pythonNameMustNotBeSetIfPythonCallIsSet = (services: SafeDsServices) => {
+export const pythonNameMustNotBeSetIfPythonMacroIsSet = (services: SafeDsServices) => {
     const builtinAnnotations = services.builtins.Annotations;
 
     return (node: SdsFunction, accept: ValidationAcceptor) => {
-        if (!hasAnnotationCallOf(node, builtinAnnotations.PythonCall)) {
+        if (!hasAnnotationCallOf(node, builtinAnnotations.PythonMacro)) {
             return;
         }
 
@@ -22,7 +22,7 @@ export const pythonNameMustNotBeSetIfPythonCallIsSet = (services: SafeDsServices
         accept('error', 'A Python name must not be set if a Python call is set.', {
             node: firstPythonName,
             property: 'annotation',
-            code: CODE_PYTHON_NAME_MUTUALLY_EXCLUSIVE_WITH_PYTHON_CALL,
+            code: CODE_PYTHON_NAME_MUTUALLY_EXCLUSIVE_WITH_PYTHON_MACRO,
         });
     };
 };

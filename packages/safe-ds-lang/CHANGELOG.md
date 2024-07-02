@@ -1,3 +1,125 @@
+## [0.17.0](https://github.com/Safe-DS/DSL/compare/v0.16.1...v0.17.0) (2024-05-29)
+
+
+### Features
+
+* hide columns in EDA ([#1181](https://github.com/Safe-DS/DSL/issues/1181)) ([15ccaac](https://github.com/Safe-DS/DSL/commit/15ccaac13ee29c8fa9ab22da53b16bf031fd39fe)), closes [#1171](https://github.com/Safe-DS/DSL/issues/1171)
+* infer column type using runner ([#1182](https://github.com/Safe-DS/DSL/issues/1182)) ([846f404](https://github.com/Safe-DS/DSL/commit/846f404f28e89399f79dd344c6d3d89a5018b2bd)), closes [#994](https://github.com/Safe-DS/DSL/issues/994)
+* integrate version 0.26.0 of the `safe-ds` Python library ([#1184](https://github.com/Safe-DS/DSL/issues/1184)) ([e79de17](https://github.com/Safe-DS/DSL/commit/e79de1797eb73c05a6d8e4448b5dc0988cf61896))
+* show symbol types in headings and table of contents ([#1178](https://github.com/Safe-DS/DSL/issues/1178)) ([b2f0966](https://github.com/Safe-DS/DSL/commit/b2f0966e8ca7f301d3a372c7e982b5b1552b24e7)), closes [#1164](https://github.com/Safe-DS/DSL/issues/1164)
+* sort rows in EDA ([#1183](https://github.com/Safe-DS/DSL/issues/1183)) ([ddd5186](https://github.com/Safe-DS/DSL/commit/ddd51868cb4dac6990129d826c6f1e994270f4b4)), closes [#1151](https://github.com/Safe-DS/DSL/issues/1151)
+
+## [0.16.1](https://github.com/Safe-DS/DSL/compare/v0.16.0...v0.16.1) (2024-05-17)
+
+
+### Bug Fixes
+
+* override `fit` in `Classifier` and `Regressor` ([#1176](https://github.com/Safe-DS/DSL/issues/1176)) ([7d79314](https://github.com/Safe-DS/DSL/commit/7d79314cb2004706eb70402f5bd981d7d24aec16))
+
+## [0.16.0](https://github.com/Safe-DS/DSL/compare/v0.15.0...v0.16.0) (2024-05-16)
+
+
+### Features
+
+* eda plot view ([#1161](https://github.com/Safe-DS/DSL/issues/1161)) ([a216743](https://github.com/Safe-DS/DSL/commit/a216743b8f0d8b70f9ceae647ae46698e1a7dfad)), closes [#955](https://github.com/Safe-DS/DSL/issues/955) [#986](https://github.com/Safe-DS/DSL/issues/986)
+* integrate version 0.25.0 of the `safe-ds` Python library ([#1174](https://github.com/Safe-DS/DSL/issues/1174)) ([f357c38](https://github.com/Safe-DS/DSL/commit/f357c38c28cc8eb941fa945cf5df39fedfc79683))
+* prefix keywords with `^` to treat them as identifiers ([#1172](https://github.com/Safe-DS/DSL/issues/1172)) ([90bd47c](https://github.com/Safe-DS/DSL/commit/90bd47c9f51b14427bf74610fd09225b773c168f))
+
+
+### Bug Fixes
+
+* potential stack overflow when computing types of lambda parameters ([#1173](https://github.com/Safe-DS/DSL/issues/1173)) ([d89511e](https://github.com/Safe-DS/DSL/commit/d89511eb112f24ec5ae70219d6c9d683cad02c57))
+
+## [0.15.0](https://github.com/Safe-DS/DSL/compare/v0.14.1...v0.15.0) (2024-05-09)
+
+
+### Features
+
+* adjust type cast syntax and restore old precedence ([#1158](https://github.com/Safe-DS/DSL/issues/1158)) ([07623fc](https://github.com/Safe-DS/DSL/commit/07623fc494a31e43c67b6d5808171c23cfe62d47)), closes [#1150](https://github.com/Safe-DS/DSL/issues/1150)
+* disable "unused" warning for placeholders whose name starts with an underscore ([#1155](https://github.com/Safe-DS/DSL/issues/1155)) ([25781a8](https://github.com/Safe-DS/DSL/commit/25781a87740cccd5bfe8bc64ea31e3b18413672b)), closes [#1154](https://github.com/Safe-DS/DSL/issues/1154)
+* give type casts the lowest precedence ([#1157](https://github.com/Safe-DS/DSL/issues/1157)) ([7549fa1](https://github.com/Safe-DS/DSL/commit/7549fa17974793b9d3af114d8b843150775b39ee)), closes [#1150](https://github.com/Safe-DS/DSL/issues/1150)
+* integrate version 0.24.0 of the `safe-ds` Python library ([#1162](https://github.com/Safe-DS/DSL/issues/1162)) ([1a24a18](https://github.com/Safe-DS/DSL/commit/1a24a18875a3ed80640581ad8292e893bec4467c))
+* remove warning that package is empty ([#1159](https://github.com/Safe-DS/DSL/issues/1159)) ([b13c5df](https://github.com/Safe-DS/DSL/commit/b13c5dfbe1b050620f561cde2a2cd35af0ddfc26)), closes [#1153](https://github.com/Safe-DS/DSL/issues/1153)
+* suggest adding assignment if statement does nothing ([#1156](https://github.com/Safe-DS/DSL/issues/1156)) ([11c81b3](https://github.com/Safe-DS/DSL/commit/11c81b32f8a279dcc59239150cdea3fe4f75cf42)), closes [#1142](https://github.com/Safe-DS/DSL/issues/1142)
+
+## [0.14.1](https://github.com/Safe-DS/DSL/compare/v0.14.0...v0.14.1) (2024-05-03)
+
+
+### Bug Fixes
+
+* generation of extra statements for parameters of expression lambdas ([#1137](https://github.com/Safe-DS/DSL/issues/1137)) ([4add401](https://github.com/Safe-DS/DSL/commit/4add401389abbdeea8bab7ff90fccac524bd901c)), closes [#1136](https://github.com/Safe-DS/DSL/issues/1136)
+
+## [0.14.0](https://github.com/Safe-DS/DSL/compare/v0.13.0...v0.14.0) (2024-05-02)
+
+
+### Features
+
+* `this` expression ([#1111](https://github.com/Safe-DS/DSL/issues/1111)) ([c7bd0fa](https://github.com/Safe-DS/DSL/commit/c7bd0fa5c9e21833ec31237f2e897e4d41dced29)), closes [#1107](https://github.com/Safe-DS/DSL/issues/1107) [#1110](https://github.com/Safe-DS/DSL/issues/1110)
+* allow literal types as upper bounds of type parameters ([#1102](https://github.com/Safe-DS/DSL/issues/1102)) ([c14159b](https://github.com/Safe-DS/DSL/commit/c14159be1c003f552ac8b2b37578face9e5aab30)), closes [#1081](https://github.com/Safe-DS/DSL/issues/1081)
+* Check truthiness of value ([#1131](https://github.com/Safe-DS/DSL/issues/1131)) ([0b059a1](https://github.com/Safe-DS/DSL/commit/0b059a19198465acd672662d9027048026586286))
+* check usages of `@PythonName` and `@PythonCall` on overriding methods ([#1100](https://github.com/Safe-DS/DSL/issues/1100)) ([3021166](https://github.com/Safe-DS/DSL/commit/302116672fbe1781ad4932af52c0f53370964499))
+* partial code generation for multiple targets ([#1114](https://github.com/Safe-DS/DSL/issues/1114)) ([5461a1b](https://github.com/Safe-DS/DSL/commit/5461a1bc591a4197a159d5f2a4fb0207cbc474b5)), closes [#1079](https://github.com/Safe-DS/DSL/issues/1079)
+* Stubs for `safe-ds` version 0.22.1 ([#1130](https://github.com/Safe-DS/DSL/issues/1130)) ([6f7100d](https://github.com/Safe-DS/DSL/commit/6f7100d2c4ee0a7d59d21a93443aba5bdb474429))
+* various methods to work with strings ([#1112](https://github.com/Safe-DS/DSL/issues/1112)) ([b6d4f16](https://github.com/Safe-DS/DSL/commit/b6d4f16c586d7390473dea3478f2318f8130fd88)), closes [#1108](https://github.com/Safe-DS/DSL/issues/1108)
+* visibility modifiers for any module member ([#1104](https://github.com/Safe-DS/DSL/issues/1104)) ([3d43d38](https://github.com/Safe-DS/DSL/commit/3d43d38fd3db9f442d5f79d5fe8bd5ce7c9dd7cf)), closes [#1083](https://github.com/Safe-DS/DSL/issues/1083)
+
+
+### Bug Fixes
+
+* also handle literal types when computing upper bound ([#1103](https://github.com/Safe-DS/DSL/issues/1103)) ([3f1ab6f](https://github.com/Safe-DS/DSL/commit/3f1ab6fe008f767f67ad5a678600441c92d55596)), closes [#1081](https://github.com/Safe-DS/DSL/issues/1081)
+
+## [0.13.0](https://github.com/Safe-DS/DSL/compare/v0.12.0...v0.13.0) (2024-04-24)
+
+
+### Features
+
+* allow schemas in pipeline files ([#1080](https://github.com/Safe-DS/DSL/issues/1080)) ([9508178](https://github.com/Safe-DS/DSL/commit/95081780b408262085410aa51005e5749bc70c6e)), closes [#1077](https://github.com/Safe-DS/DSL/issues/1077)
+* annotations `@Category` and `@Tags` ([#1061](https://github.com/Safe-DS/DSL/issues/1061)) ([e45a4c9](https://github.com/Safe-DS/DSL/commit/e45a4c97dfc05afaf03064593162c45422da5323)), closes [#1021](https://github.com/Safe-DS/DSL/issues/1021)
+* check if latest runner is installed ([#1097](https://github.com/Safe-DS/DSL/issues/1097)) ([93432bb](https://github.com/Safe-DS/DSL/commit/93432bb1602a43a99d525ba08dc3076ea95ae7fb)), closes [#1096](https://github.com/Safe-DS/DSL/issues/1096)
+* do not check whether optional type parameters of classes can be inferred ([#1090](https://github.com/Safe-DS/DSL/issues/1090)) ([31b8a28](https://github.com/Safe-DS/DSL/commit/31b8a2886084a654b1f5483d41faadbb37f5147f)), closes [#1084](https://github.com/Safe-DS/DSL/issues/1084) [#1084](https://github.com/Safe-DS/DSL/issues/1084)
+* generate nested functions for expression lambdas ([#1062](https://github.com/Safe-DS/DSL/issues/1062)) ([f79fd61](https://github.com/Safe-DS/DSL/commit/f79fd61dbd5abcb8714535468c8b1114b18ea766))
+* mark schemas as experimental ([#1089](https://github.com/Safe-DS/DSL/issues/1089)) ([09faaf0](https://github.com/Safe-DS/DSL/commit/09faaf0c58e1718c131ab0f4572f36843e6f6842)), closes [#1078](https://github.com/Safe-DS/DSL/issues/1078)
+* print values via code lens ([#1072](https://github.com/Safe-DS/DSL/issues/1072)) ([f338023](https://github.com/Safe-DS/DSL/commit/f3380234b68975bc7ccfdced8bbe819ce1732d32)), closes [#1032](https://github.com/Safe-DS/DSL/issues/1032)
+* run pipeline via code lens ([#1068](https://github.com/Safe-DS/DSL/issues/1068)) ([392154d](https://github.com/Safe-DS/DSL/commit/392154dbe051dd172e81904e2b2cedb39ffd47a1))
+* show image via code lens ([#1071](https://github.com/Safe-DS/DSL/issues/1071)) ([bd0946b](https://github.com/Safe-DS/DSL/commit/bd0946b9707798007fd4d80283b57a8e406ff2e6)), closes [#984](https://github.com/Safe-DS/DSL/issues/984)
+
+
+### Bug Fixes
+
+* import error when exploring tables in pipelines that call segments ([#1074](https://github.com/Safe-DS/DSL/issues/1074)) ([e34b3ff](https://github.com/Safe-DS/DSL/commit/e34b3ff071863a56e312805c07aa424aa83fd794))
+* pass optional arguments of memoized calls by name ([#1095](https://github.com/Safe-DS/DSL/issues/1095)) ([39d9e5a](https://github.com/Safe-DS/DSL/commit/39d9e5abcbb69f1947bd7526a39a8a913084de5e)), closes [#1087](https://github.com/Safe-DS/DSL/issues/1087)
+* possible restart loop after installing the runner ([#1073](https://github.com/Safe-DS/DSL/issues/1073)) ([7206d62](https://github.com/Safe-DS/DSL/commit/7206d626a89d65c67798734a4b44dc4ffd3d128c))
+* runner not shutting down when extension was closed ([#1094](https://github.com/Safe-DS/DSL/issues/1094)) ([77a0c1f](https://github.com/Safe-DS/DSL/commit/77a0c1fdf56548fe316796781a0575d516c0ba8a))
+* stub for `Table.transformColumn` ([#1065](https://github.com/Safe-DS/DSL/issues/1065)) ([aa43316](https://github.com/Safe-DS/DSL/commit/aa43316d01a54aca315c0e63df495eb6e4ffc586))
+* type check arguments of annotation calls ([#1060](https://github.com/Safe-DS/DSL/issues/1060)) ([09ca1cf](https://github.com/Safe-DS/DSL/commit/09ca1cfb274491a11cc1ee8b3a5b107353fe2c8d))
+
+## [0.12.0](https://github.com/Safe-DS/DSL/compare/v0.11.0...v0.12.0) (2024-04-18)
+
+
+### Features
+
+* better error if `+` is used for string concatenation ([#1044](https://github.com/Safe-DS/DSL/issues/1044)) ([8be49c5](https://github.com/Safe-DS/DSL/commit/8be49c5852ee5b5bc9c4e935262225cfe7dc2aa4))
+* collapse class/literal types in inlay hints ([#1053](https://github.com/Safe-DS/DSL/issues/1053)) ([7db2820](https://github.com/Safe-DS/DSL/commit/7db2820ce8f6d4f69d4bcfdbea93df943ea370d0)), closes [#1048](https://github.com/Safe-DS/DSL/issues/1048)
+* **deps:** require latest runner (`v0.11.0`) ([#1058](https://github.com/Safe-DS/DSL/issues/1058)) ([7ae1f6b](https://github.com/Safe-DS/DSL/commit/7ae1f6b6c1c6894d683fa24dcdfe196582fba3c6))
+* don't stop validation at syntax errors ([#1049](https://github.com/Safe-DS/DSL/issues/1049)) ([db0c5d7](https://github.com/Safe-DS/DSL/commit/db0c5d71aea5dfc58a8dd938a17d8afc091aca40))
+* error if name of static member equals name of inherited member ([#1054](https://github.com/Safe-DS/DSL/issues/1054)) ([b8e17af](https://github.com/Safe-DS/DSL/commit/b8e17af56994291f4e7d59286fcabe4c70f43b64))
+* hide classes that are only for typing from auto-completion ([#1056](https://github.com/Safe-DS/DSL/issues/1056)) ([50851d7](https://github.com/Safe-DS/DSL/commit/50851d7ec2f859c5a4efde32b2303012bf5455ef)), closes [#1026](https://github.com/Safe-DS/DSL/issues/1026)
+* ignore parameter names for default values and yields ([#1059](https://github.com/Safe-DS/DSL/issues/1059)) ([dde4de0](https://github.com/Safe-DS/DSL/commit/dde4de055b39b9b1609cfa4031e3d1458a4c5918))
+* ignore parameter names when type checking arguments ([#1052](https://github.com/Safe-DS/DSL/issues/1052)) ([a1e6717](https://github.com/Safe-DS/DSL/commit/a1e6717a0f6163560e4ddedcb0da162af836276d)), closes [#1046](https://github.com/Safe-DS/DSL/issues/1046)
+* installer for the runner ([#1038](https://github.com/Safe-DS/DSL/issues/1038)) ([2bde594](https://github.com/Safe-DS/DSL/commit/2bde594a9ff4204f25a991463d52807f764d14e5))
+* map literals are no longer experimental ([#1039](https://github.com/Safe-DS/DSL/issues/1039)) ([1d9af4b](https://github.com/Safe-DS/DSL/commit/1d9af4be0aca26c0ccb3c3321871197d4c59fd10))
+* separate VS Code languages for pipeline/stub/tests ([#1043](https://github.com/Safe-DS/DSL/issues/1043)) ([8147480](https://github.com/Safe-DS/DSL/commit/8147480dab78c28619a75b22670be4afba4d04cb))
+* support for examples in documentation comments ([#1045](https://github.com/Safe-DS/DSL/issues/1045)) ([3da6d6f](https://github.com/Safe-DS/DSL/commit/3da6d6fc54b9661a1b9e686297bc67bd659d9944)), closes [#1027](https://github.com/Safe-DS/DSL/issues/1027)
+* updater for the runner ([#1042](https://github.com/Safe-DS/DSL/issues/1042)) ([610d45b](https://github.com/Safe-DS/DSL/commit/610d45b663026226c63c512a517b5d13a4663b2c))
+
+
+### Bug Fixes
+
+* don't sync `safe-ds.runner.command` setting ([bb57481](https://github.com/Safe-DS/DSL/commit/bb574819ed26b4a6c779687e89f9c6058dbec765))
+* save all files before opening the EDA tool ([d6d0c22](https://github.com/Safe-DS/DSL/commit/d6d0c2283abc6fa0e94eac02597d3a098d74074b))
+* start runner if configuration did not change after installation ([#1040](https://github.com/Safe-DS/DSL/issues/1040)) ([b4f015a](https://github.com/Safe-DS/DSL/commit/b4f015a290c528b3d47c47775bd5883ff501beed))
+* substitute type parameters for lambda parameters ([#1050](https://github.com/Safe-DS/DSL/issues/1050)) ([46145dd](https://github.com/Safe-DS/DSL/commit/46145dda35030bc506331726f8515a41d23298d5)), closes [#1047](https://github.com/Safe-DS/DSL/issues/1047)
+
 ## [0.11.0](https://github.com/Safe-DS/DSL/compare/v0.10.0...v0.11.0) (2024-04-10)
 
 

@@ -25,7 +25,7 @@ import {
     SdsSegment,
     SdsTypeParameter,
 } from '../generated/ast.js';
-import { CODEGEN_PREFIX } from '../generation/safe-ds-python-generator.js';
+import { CODEGEN_PREFIX } from '../generation/python/constants.js';
 import { isInDevFile, isInPipelineFile, isInStubFile } from '../helpers/fileExtensions.js';
 import {
     getClassMembers,
@@ -38,9 +38,9 @@ import {
     getParameters,
     getResults,
     getTypeParameters,
-    isImplementedDeclaration,
     isStatic,
-    isStubDeclaration,
+    isValidPipelineDeclaration,
+    isValidStubDeclaration,
     streamBlockLambdaResults,
     streamPlaceholders,
 } from '../helpers/nodeProperties.js';
@@ -144,7 +144,12 @@ export const nameShouldHaveCorrectCasing = (services: SafeDsServices) => {
             case SdsPipeline:
                 return nameShouldBeLowerCamelCase(node, 'pipelines', accept);
             case SdsPlaceholder:
-                return nameShouldBeLowerCamelCase(node, 'placeholders', accept);
+                const usages = services.helpers.NodeMapper.placeholderToReferences(node as SdsPlaceholder);
+                if (usages.isEmpty()) {
+                    return nameShouldBeLowerCamelCaseWithOptionalLeadingUnderscore(node, 'unused placeholders', accept);
+                } else {
+                    return nameShouldBeLowerCamelCase(node, 'used placeholders', accept);
+                }
             case SdsResult:
                 return nameShouldBeLowerCamelCase(node, 'results', accept);
             case SdsSchema:
@@ -167,6 +172,21 @@ const nameShouldBeLowerCamelCase = (node: SdsDeclaration, nodeName: string, acce
 
 const isLowerCamelCase = (name: string): boolean => {
     return /^[a-z][a-zA-Z0-9]*$/gu.test(name);
+};
+
+const nameShouldBeLowerCamelCaseWithOptionalLeadingUnderscore = (
+    node: SdsDeclaration,
+    nodeName: string,
+    accept: ValidationAcceptor,
+): void => {
+    const name = node.name ?? '';
+    if (!isLowerCamelCaseWithOptionalLeadingUnderscore(name)) {
+        acceptCasingWarning(node, nodeName, 'lowerCamelCase with an optional leading underscore', accept);
+    }
+};
+
+const isLowerCamelCaseWithOptionalLeadingUnderscore = (name: string): boolean => {
+    return /^_?[a-z][a-zA-Z0-9]*$/gu.test(name);
 };
 
 const nameShouldBeUpperCamelCase = (node: SdsDeclaration, nodeName: string, accept: ValidationAcceptor): void => {
@@ -341,14 +361,14 @@ export const moduleMustContainUniqueNames = (node: SdsModule, accept: Validation
             getModuleMembers(node),
             (name) => `A declaration with name '${name}' exists already in this file.`,
             accept,
-            isImplementedDeclaration,
+            isValidPipelineDeclaration,
         );
     } else if (isInStubFile(node)) {
         namesMustBeUnique(
             getModuleMembers(node),
             (name) => `A declaration with name '${name}' exists already in this file.`,
             accept,
-            isStubDeclaration,
+            isValidStubDeclaration,
         );
     } else if (isInDevFile(node)) {
         namesMustBeUnique(

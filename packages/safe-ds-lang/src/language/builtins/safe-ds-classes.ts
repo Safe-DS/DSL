@@ -4,7 +4,8 @@ import { resourceNameToUri } from '../../helpers/resources.js';
 import { URI } from 'langium';
 
 const CORE_CLASSES_URI = resourceNameToUri('builtins/safeds/lang/coreClasses.sdsstub');
-const TABLE_URI = resourceNameToUri('builtins/safeds/data/tabular/containers/table.sdsstub');
+const IMAGE_URI = resourceNameToUri('builtins/safeds/data/image/containers/Image.sdsstub');
+const TABLE_URI = resourceNameToUri('builtins/safeds/data/tabular/containers/Table.sdsstub');
 
 export class SafeDsClasses extends SafeDsModuleMembers<SdsClass> {
     get Any(): SdsClass | undefined {
@@ -21,6 +22,10 @@ export class SafeDsClasses extends SafeDsModuleMembers<SdsClass> {
 
     get Int(): SdsClass | undefined {
         return this.getClass('Int');
+    }
+
+    get Image(): SdsClass | undefined {
+        return this.getClass('Image', IMAGE_URI);
     }
 
     get List(): SdsClass | undefined {

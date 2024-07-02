@@ -1,0 +1,30 @@
+package tests.typing.declarations.parameters.scopeProviderShouldNotCauseInfiniteRecursion
+
+/*
+ * This test is related to the first attempt to fix infinite recursion when computing the type of a lambda parameter.
+ * There, we passed a flag around as a parameter inside the type computer to indicate that we are currently computing
+ * type arguments for a call.
+ *
+ * However, this approach was not sufficient to fix the issue, since the type computer (implicitly) calls the scope
+ * provider, which in turn calls the type computer again. The flag was lost along the way, again opening the door for
+ * infinite recursion.
+ */
+
+class MyCell<out T = Any?> {
+    @Pure
+    fun ^not() -> result: MyCell<Boolean>
+}
+
+class MyColumn<out T = Any?>(values: List<T>) {
+    @Pure
+    fun transform<R>(
+        transformer: (cell: MyCell<T>) -> (transformedCell: MyCell<R>)
+    ) -> result: MyColumn<R>
+}
+
+pipeline myPipelines {
+    val column = MyColumn([1, 2, 3]);
+
+    // $TEST$ serialization MyColumn<Boolean>
+    val »transformedColumn« = column.transform((cell) -> cell.^not());
+}

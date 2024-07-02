@@ -1,0 +1,10 @@
+package test
+
+@Annotation  private  class  MyClass
+
+// -----------------------------------------------------------------------------
+
+package test
+
+@Annotation
+private class MyClass

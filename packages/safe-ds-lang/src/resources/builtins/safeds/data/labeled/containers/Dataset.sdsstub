@@ -1,0 +1,9 @@
+package safeds.data.labeled.containers
+
+/**
+ * A dataset is used as input to machine learning models.
+ *
+ * @typeParam I The type of the input data.
+ * @typeParam O The type of the output data.
+ */
+class Dataset<out I, out O>

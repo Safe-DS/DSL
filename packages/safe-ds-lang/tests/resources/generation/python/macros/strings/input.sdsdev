@@ -1,0 +1,22 @@
+package tests.generation.python.macros.strings
+
+pipeline myPipeline {
+    val contains = "Hello, world!".contains("world");
+    val endsWith = "Hello, world!".endsWith("world!");
+    val indexOf = "Hello, world!".indexOf("o");
+    val lastIndexOf = "Hello, world!".lastIndexOf("o");
+    val length = "Hello, world!".length();
+    val repeat = "Hello, world!".repeat(2);
+    val replace = "Hello, world!".replace("world", "planet");
+    val split = "Hello, world!".split(", ");
+    val startsWith = "Hello, world!".startsWith("Hello");
+    val substring = "Hello, world!".substring(7);
+    val casefolded = "Hello, world!".toCasefolded();
+    val float = "3.14".toFloat();
+    val int = "42".toInt();
+    val lowercase = "Hello, world!".toLowercase();
+    val uppercase = "Hello, world!".toUppercase();
+    val trimmed = "  Hello, world!  ".trim();
+    val trimmedEnd = "  Hello, world!  ".trimEnd();
+    val trimmedStart = "  Hello, world!  ".trimStart();
+}

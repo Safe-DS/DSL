@@ -1,0 +1,61 @@
+package safeds.data.tabular.transformation
+
+from safeds.data.tabular.containers import Table
+from safeds.data.tabular.transformation import InvertibleTableTransformer
+
+/**
+ * The LabelEncoder encodes one or more given columns into labels.
+ *
+ * @param columnNames The list of columns used to fit the transformer. If `None`, all non-numeric columns are used.
+ * @param partialOrder The partial order of the labels. The labels are encoded in the order of the given list. Additional values are
+ * assigned labels in the order they are encountered during fitting.
+ *
+ * @example
+ * pipeline example {
+ *    val table = Table({"a": ["z", "y"], "b": [3, 4]});
+ *    val encoder = LabelEncoder(columnNames = "a").fit(table);
+ *    val transformedTable = encoder.transform(table);
+ *    // Table({"a": [1, 0], "b": [3, 4]})
+ *    val originalTable = encoder.inverseTransform(transformedTable);
+ *    // Table({"a": ["z", "y"], "b": [3, 4]})
+ * }
+ */
+class LabelEncoder(
+    @PythonName("column_names") columnNames: union<List<String>, String, Nothing?> = null,
+    @PythonName("partial_order") partialOrder: List<Any?> = []
+) sub InvertibleTableTransformer {
+    /**
+     * The partial order of the labels.
+     */
+    @PythonName("partial_order") attr partialOrder: List<Any>
+
+    /**
+     * Learn a transformation for a set of columns in a table.
+     *
+     * This transformer is not modified.
+     *
+     * @param table The table used to fit the transformer.
+     *
+     * @result fittedTransformer The fitted transformer.
+     */
+    @Pure
+    fun fit(
+        table: Table
+    ) -> fittedTransformer: LabelEncoder
+
+    /**
+     * Learn a transformation for a set of columns in a table and apply the learned transformation to the same table.
+     *
+     * **Note:** Neither this transformer nor the given table are modified.
+     *
+     * @param table The table used to fit the transformer. The transformer is then applied to this table.
+     *
+     * @result fittedTransformer The fitted transformer.
+     * @result transformedTable The transformed table.
+     */
+    @Pure
+    @PythonName("fit_and_transform")
+    fun fitAndTransform(
+        table: Table
+    ) -> (fittedTransformer: LabelEncoder, transformedTable: Table)
+}

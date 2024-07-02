@@ -1,0 +1,94 @@
+package safeds.data.labeled.containers
+
+from safeds.data.image.containers import ImageList
+from safeds.data.image.typing import ImageSize
+from safeds.data.labeled.containers import Dataset
+from safeds.data.tabular.containers import Table
+
+/**
+ * A Dataset for ImageLists as input and ImageLists, Tables or Columns as output.
+ *
+ * @param inputData The input ImageList
+ * @param outputData The output data
+ * @param batchSize The batch size used for training
+ * @param shuffle Whether the data should be shuffled after each epoch of training
+ *
+ * @example
+ * pipeline example {
+ *     val image = Image.fromFile("example.png");
+ *     val imageList = ImageList.fromImages([image]);
+ *     val labels = Column("label", ["example"]);
+ *     val dataset = ImageDataset(imageList, labels);
+ * }
+ */
+@Experimental
+class ImageDataset<out O>(
+    @PythonName("input_data") inputData: ImageList,
+    @PythonName("output_data") outputData: O,
+    @PythonName("batch_size") batchSize: Int = 1,
+    shuffle: Boolean = false
+) sub Dataset<ImageList, O> {
+    /**
+     * Get the input `ImageSize` of this dataset.
+     */
+    @PythonName("input_size") attr inputSize: ImageSize
+    /**
+     * Get the output size of this dataset.
+     */
+    @PythonName("output_size") attr outputSize: ImageSize
+
+    /**
+     * Get the input data of this dataset.
+     *
+     * @result input the input data of this dataset
+     *
+     * @example
+     * pipeline example {
+     *     val image = Image.fromFile("example.png");
+     *     val imageList = ImageList.fromImages([image]);
+     *     val labels = Column("label", ["example"]);
+     *     val dataset = ImageDataset(imageList, labels);
+     *     val input = dataset.getInput();
+     * }
+     */
+    @Pure
+    @PythonName("get_input")
+    fun getInput() -> input: ImageList
+
+    /**
+     * Get the output data of this dataset.
+     *
+     * @result output the output data of this dataset
+     *
+     * @example
+     * pipeline example {
+     *     val image = Image.fromFile("example.png");
+     *     val imageList = ImageList.fromImages([image]);
+     *     val labels = Column("label", ["example"]);
+     *     val dataset = ImageDataset(imageList, labels);
+     *     val output = dataset.getOutput();
+     * }
+     */
+    @Pure
+    @PythonName("get_output")
+    fun getOutput() -> output: O
+
+    /**
+     * Return a new `ImageDataset` with shuffled data.
+     *
+     * The original dataset list is not modified.
+     *
+     * @result imageDataset the shuffled `ImageDataset`
+     *
+     * @example
+     * pipeline example {
+     *     val image = Image.fromFile("example.png");
+     *     val imageList = ImageList.fromImages([image]);
+     *     val labels = Column("label", ["example"]);
+     *     val dataset = ImageDataset(imageList, labels);
+     *     val shuffledDataset = dataset.shuffle();
+     * }
+     */
+    @Pure
+    fun shuffle() -> imageDataset: ImageDataset<O>
+}

@@ -7,9 +7,12 @@ import type { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsModuleMembers } from './safe-ds-module-members.js';
 
 const ANNOTATION_USAGE_URI = resourceNameToUri('builtins/safeds/lang/annotationUsage.sdsstub');
+const IDE_INTEGRATION_URI = resourceNameToUri('builtins/safeds/lang/ideIntegration.sdsstub');
 const PURITY_URI = resourceNameToUri('builtins/safeds/lang/purity.sdsstub');
 
 export class SafeDsEnums extends SafeDsModuleMembers<SdsEnum> {
+    // AnnotationTarget ------------------------------------------------------------------------------------------------
+
     get AnnotationTarget(): SdsEnum | undefined {
         return this.getEnum(ANNOTATION_USAGE_URI, 'AnnotationTarget');
     }
@@ -18,6 +21,18 @@ export class SafeDsEnums extends SafeDsModuleMembers<SdsEnum> {
         node instanceof EvaluatedEnumVariant &&
         AstUtils.getContainerOfType(node.variant, isSdsEnum) === this.AnnotationTarget;
 
+    // DataScienceCategory ---------------------------------------------------------------------------------------------
+
+    get DataScienceCategory(): SdsEnum | undefined {
+        return this.getEnum(IDE_INTEGRATION_URI, 'DataScienceCategory');
+    }
+
+    isEvaluatedDataScienceCategory = (node: EvaluatedNode): node is EvaluatedEnumVariant =>
+        node instanceof EvaluatedEnumVariant &&
+        AstUtils.getContainerOfType(node.variant, isSdsEnum) === this.DataScienceCategory;
+
+    // ImpurityReason --------------------------------------------------------------------------------------------------
+
     get ImpurityReason(): SdsEnum | undefined {
         return this.getEnum(PURITY_URI, 'ImpurityReason');
     }
@@ -25,6 +40,8 @@ export class SafeDsEnums extends SafeDsModuleMembers<SdsEnum> {
     isEvaluatedImpurityReason = (node: EvaluatedNode): node is EvaluatedEnumVariant =>
         node instanceof EvaluatedEnumVariant &&
         AstUtils.getContainerOfType(node.variant, isSdsEnum) === this.ImpurityReason;
+
+    // Helpers ---------------------------------------------------------------------------------------------------------
 
     private getEnum(uri: URI, name: string): SdsEnum | undefined {
         return this.getModuleMember(uri, name, isSdsEnum);

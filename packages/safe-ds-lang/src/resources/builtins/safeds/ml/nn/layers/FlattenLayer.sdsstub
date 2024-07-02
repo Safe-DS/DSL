@@ -1,0 +1,19 @@
+package safeds.ml.nn.layers
+
+from safeds.ml.nn.layers import Layer
+from safeds.ml.nn.typing import ModelImageSize
+
+/**
+ * A flatten layer.
+ */
+@Experimental
+class FlattenLayer() sub Layer {
+    /**
+     * Get the input_size of this layer.
+     */
+    @PythonName("input_size") attr inputSize: ModelImageSize
+    /**
+     * Get the output_size of this layer.
+     */
+    @PythonName("output_size") attr outputSize: Int
+}

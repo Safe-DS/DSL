@@ -23,6 +23,7 @@ import {
     isSdsPipeline,
     isSdsPlaceholder,
     isSdsQualifiedImport,
+    isSdsSchema,
     isSdsSegment,
     isSdsTypeArgumentList,
     isSdsTypeParameter,
@@ -85,11 +86,11 @@ export const hasAnnotationCallOf = (
 };
 
 export const isInternal = (node: SdsDeclaration | undefined): boolean => {
-    return isSdsSegment(node) && node.visibility === 'internal';
+    return isSdsModuleMember(node) && node.visibility === 'internal';
 };
 
 export const isPrivate = (node: SdsDeclaration | undefined): boolean => {
-    return isSdsSegment(node) && node.visibility === 'private';
+    return isSdsModuleMember(node) && node.visibility === 'private';
 };
 
 export namespace Argument {
@@ -196,17 +197,17 @@ export namespace TypeParameter {
 }
 
 /**
- * Checks whether the declaration has an implementation.
+ * Checks whether the declaration is valid in a pipeline file.
  */
-export const isImplementedDeclaration = (declaration: SdsDeclaration): boolean => {
-    return isSdsPipeline(declaration) || isSdsSegment(declaration);
+export const isValidPipelineDeclaration = (node: SdsDeclaration): boolean => {
+    return isSdsPipeline(node) || isSdsSchema(node) || isSdsSegment(node);
 };
 
 /**
- * Checks whether the declaration is just a stub.
+ * Checks whether the declaration is valid in a stub file.
  */
-export const isStubDeclaration = (declaration: SdsDeclaration): boolean => {
-    return !isSdsPipeline(declaration) && !isSdsSegment(declaration);
+export const isValidStubDeclaration = (node: SdsDeclaration): boolean => {
+    return isSdsAnnotation(node) || isSdsClass(node) || isSdsEnum(node) || isSdsFunction(node) || isSdsSchema(node);
 };
 
 // -------------------------------------------------------------------------------------------------

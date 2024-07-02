@@ -1,0 +1,84 @@
+package safeds.ml.classical.regression
+
+from safeds.data.labeled.containers import TabularDataset
+from safeds.data.tabular.containers import Table
+from safeds.ml.classical.regression import Regressor
+
+/**
+ * Support vector machine for regression.
+ *
+ * @param c The strength of regularization. Must be greater than 0.
+ * @param kernel The type of kernel to be used. Defaults to a radial basis function kernel.
+ *
+ * @example
+ * pipeline example {
+ *     val training = Table.fromCsvFile("training.csv").toTabularDataset("target");
+ *     val test = Table.fromCsvFile("test.csv").toTabularDataset("target");
+ *     val regressor = SupportVectorRegressor(
+ *         kernel = SupportVectorRegressor.Kernel.Linear
+ *     ).fit(training);
+ *     val meanSquaredError = regressor.meanSquaredError(test);
+ * }
+ */
+class SupportVectorRegressor(
+    const c: Float = 1.0,
+    kernel: SupportVectorRegressor.Kernel = SupportVectorRegressor.Kernel.RadialBasisFunction
+) sub Regressor where {
+    c > 0.0
+} {
+    /**
+     * The kernel functions that can be used in the support vector machine.
+     */
+    enum Kernel {
+        /**
+         * A linear kernel.
+         */
+        @PythonName("linear")
+        Linear
+
+        /**
+         * A polynomial kernel.
+         *
+         * @param degree The degree of the polynomial.
+         */
+        @PythonName("polynomial")
+        Polynomial(const degree: Int) where {
+            degree > 0
+        }
+
+        /**
+         * A sigmoid kernel.
+         */
+        @PythonName("sigmoid")
+        Sigmoid
+
+        /**
+         * A radial basis function kernel.
+         */
+        @PythonName("radial_basis_function")
+        RadialBasisFunction
+    }
+
+    /**
+     * The regularization strength.
+     */
+    attr c: Float
+    /**
+     * The type of kernel used.
+     */
+    attr kernel: SupportVectorRegressor.Kernel
+
+    /**
+     * Create a copy of this regressor and fit it with the given training data.
+     *
+     * This regressor is not modified.
+     *
+     * @param trainingSet The training data containing the feature and target vectors.
+     *
+     * @result fittedRegressor The fitted regressor.
+     */
+    @Pure
+    fun fit(
+        @PythonName("training_set") trainingSet: TabularDataset
+    ) -> fittedRegressor: SupportVectorRegressor
+}

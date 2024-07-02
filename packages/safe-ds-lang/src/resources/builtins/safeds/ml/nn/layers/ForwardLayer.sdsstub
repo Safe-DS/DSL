@@ -1,0 +1,22 @@
+package safeds.ml.nn.layers
+
+from safeds.ml.nn.layers import Layer
+
+/**
+ * A fully connected forward layer.
+ *
+ * @param neuronCount The number of neurons in this layer
+ */
+@Experimental
+class ForwardLayer(
+    @PythonName("neuron_count") neuronCount: Int
+) sub Layer {
+    /**
+     * Get the input_size of this layer.
+     */
+    @PythonName("input_size") attr inputSize: Int
+    /**
+     * Get the output_size of this layer.
+     */
+    @PythonName("output_size") attr outputSize: Int
+}

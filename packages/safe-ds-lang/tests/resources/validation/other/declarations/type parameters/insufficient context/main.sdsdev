@@ -22,6 +22,8 @@ class MyClass8<»T«>(param: () -> (r: (p: T) -> ()))
 class MyClass9<»T«>(param: union<T>)
 // $TEST$ error "Insufficient context to infer this type parameter."
 class MyClass10<»T«>(param: union<T, Int>)
+// $TEST$ no error "Insufficient context to infer this type parameter."
+class MyClass11<»T« = Int>()
 
 // $TEST$ error "Insufficient context to infer this type parameter."
 fun myFunction1<»T« sub Int>()
@@ -39,3 +41,5 @@ fun myFunction6<»T«>(param: () -> (r: (p: T) -> ()))
 fun myFunction7<»T«>(param: union<T>)
 // $TEST$ error "Insufficient context to infer this type parameter."
 fun myFunction8<»T«>(param: union<T, Int>)
+// $TEST$ error "Insufficient context to infer this type parameter."
+fun myFunction9<»T« = Int>()

@@ -1,0 +1,60 @@
+package safeds.data.tabular.transformation
+
+from safeds.data.tabular.containers import Table
+from safeds.data.tabular.transformation import TableTransformer
+
+/**
+ * The Discretizer bins continuous data into intervals.
+ *
+ * @param binCount The number of bins to be created.
+ * @param columnNames The list of columns used to fit the transformer. If `None`, all numeric columns are used.
+ *
+ * @example
+ * pipeline example {
+ *     val table = Table({"a": [1, 2, 3, 4]});
+ *     val discretizer = Discretizer(2, columnNames = "a").fit(table);
+ *     val transformedTable = discretizer.transform(table);
+ *     // Table({"a": [0, 0, 1, 1]})
+ * }
+ */
+class Discretizer(
+    @PythonName("bin_count") const binCount: Int = 5,
+    @PythonName("column_names") columnNames: union<List<String>, String, Nothing?> = null
+) sub TableTransformer where {
+    binCount >= 2
+} {
+    /**
+     * The number of bins to be created.
+     */
+    @PythonName("bin_count") attr binCount: Int
+
+    /**
+     * Learn a transformation for a set of columns in a table.
+     *
+     * This transformer is not modified.
+     *
+     * @param table The table used to fit the transformer.
+     *
+     * @result fittedTransformer The fitted transformer.
+     */
+    @Pure
+    fun fit(
+        table: Table
+    ) -> fittedTransformer: Discretizer
+
+    /**
+     * Learn a transformation for a set of columns in a table and apply the learned transformation to the same table.
+     *
+     * **Note:** Neither this transformer nor the given table are modified.
+     *
+     * @param table The table used to fit the transformer. The transformer is then applied to this table.
+     *
+     * @result fittedTransformer The fitted transformer.
+     * @result transformedTable The transformed table.
+     */
+    @Pure
+    @PythonName("fit_and_transform")
+    fun fitAndTransform(
+        table: Table
+    ) -> (fittedTransformer: Discretizer, transformedTable: Table)
+}

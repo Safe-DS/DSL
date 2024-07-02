@@ -1,0 +1,10 @@
+package test
+
+@Annotation  internal  class  MyClass
+
+// -----------------------------------------------------------------------------
+
+package test
+
+@Annotation
+internal class MyClass

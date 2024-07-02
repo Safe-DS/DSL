@@ -42,6 +42,23 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         this.partialEvaluator = services.evaluation.PartialEvaluator;
     }
 
+    // Category --------------------------------------------------------------------------------------------------------
+
+    getCategory(node: SdsAnnotatedObject | undefined): SdsEnumVariant | undefined {
+        const value = this.getParameterValue(node, this.Category, 'category');
+        if (this.builtinEnums.isEvaluatedDataScienceCategory(value)) {
+            return value.variant;
+        } else {
+            return undefined;
+        }
+    }
+
+    private get Category(): SdsAnnotation | undefined {
+        return this.getAnnotation(IDE_INTEGRATION_URI, 'Category');
+    }
+
+    // Deprecated ------------------------------------------------------------------------------------------------------
+
     callsDeprecated(node: SdsAnnotatedObject | undefined): boolean {
         return hasAnnotationCallOf(node, this.Deprecated);
     }
@@ -68,6 +85,8 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         return this.getAnnotation(MATURITY_URI, 'Deprecated');
     }
 
+    // Experimental ----------------------------------------------------------------------------------------------------
+
     callsExperimental(node: SdsAnnotatedObject | undefined): boolean {
         return hasAnnotationCallOf(node, this.Experimental);
     }
@@ -76,6 +95,8 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         return this.getAnnotation(MATURITY_URI, 'Experimental');
     }
 
+    // Expert ----------------------------------------------------------------------------------------------------------
+
     callsExpert(node: SdsParameter | undefined): boolean {
         return hasAnnotationCallOf(node, this.Expert);
     }
@@ -83,6 +104,8 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
     private get Expert(): SdsAnnotation | undefined {
         return this.getAnnotation(IDE_INTEGRATION_URI, 'Expert');
     }
+
+    // Impure ----------------------------------------------------------------------------------------------------------
 
     callsImpure(node: SdsFunction | undefined): boolean {
         return hasAnnotationCallOf(node, this.Impure);
@@ -103,6 +126,8 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         return this.getAnnotation(PURITY_URI, 'Impure');
     }
 
+    // Pure ------------------------------------------------------------------------------------------------------------
+
     callsPure(node: SdsFunction | undefined): boolean {
         return hasAnnotationCallOf(node, this.Pure);
     }
@@ -111,8 +136,10 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         return this.getAnnotation(PURITY_URI, 'Pure');
     }
 
-    getPythonCall(node: SdsFunction | undefined): string | undefined {
-        const value = this.getParameterValue(node, this.PythonCall, 'callSpecification');
+    // Python ----------------------------------------------------------------------------------------------------------
+
+    getPythonMacro(node: SdsFunction | undefined): string | undefined {
+        const value = this.getParameterValue(node, this.PythonMacro, 'template');
         if (value instanceof StringConstant) {
             return value.value;
         } else {
@@ -120,9 +147,11 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         }
     }
 
-    get PythonCall(): SdsAnnotation | undefined {
-        return this.getAnnotation(CODE_GENERATION_URI, 'PythonCall');
+    get PythonMacro(): SdsAnnotation | undefined {
+        return this.getAnnotation(CODE_GENERATION_URI, 'PythonMacro');
     }
+
+    // PythonModule ----------------------------------------------------------------------------------------------------
 
     getPythonModule(node: SdsModule | undefined): string | undefined {
         const value = this.getParameterValue(node, this.PythonModule, 'qualifiedName');
@@ -137,6 +166,8 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         return this.getAnnotation(CODE_GENERATION_URI, 'PythonModule');
     }
 
+    // PythonName ------------------------------------------------------------------------------------------------------
+
     getPythonName(node: SdsAnnotatedObject | undefined): string | undefined {
         const value = this.getParameterValue(node, this.PythonName, 'name');
         if (value instanceof StringConstant) {
@@ -150,6 +181,8 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         return this.getAnnotation(CODE_GENERATION_URI, 'PythonName');
     }
 
+    // Repeatable ------------------------------------------------------------------------------------------------------
+
     callsRepeatable(node: SdsAnnotation | undefined): boolean {
         return hasAnnotationCallOf(node, this.Repeatable);
     }
@@ -158,14 +191,37 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
         return this.getAnnotation(ANNOTATION_USAGE_URI, 'Repeatable');
     }
 
+    // Tags ------------------------------------------------------------------------------------------------------------
+
+    getTags(node: SdsAnnotatedObject | undefined): string[] {
+        const value = this.getParameterValue(node, this.Tags, 'tags');
+        if (!(value instanceof EvaluatedList)) {
+            return [];
+        }
+
+        return value.elements.flatMap((it) => {
+            if (it instanceof StringConstant) {
+                return it.value;
+            } else {
+                return [];
+            }
+        });
+    }
+
+    get Tags(): SdsAnnotation | undefined {
+        return this.getAnnotation(IDE_INTEGRATION_URI, 'Tags');
+    }
+
+    // Targets ---------------------------------------------------------------------------------------------------------
+
     streamValidTargets(node: SdsAnnotation | undefined): Stream<SdsEnumVariant> {
         // If no targets are specified, every target is valid
-        if (!hasAnnotationCallOf(node, this.Target)) {
+        if (!hasAnnotationCallOf(node, this.Targets)) {
             return stream(getEnumVariants(this.builtinEnums.AnnotationTarget));
         }
 
         // If targets are specified, but we could not evaluate them to a list, no target is valid
-        const value = this.getParameterValue(node, this.Target, 'targets');
+        const value = this.getParameterValue(node, this.Targets, 'targets');
         if (!(value instanceof EvaluatedList)) {
             return EMPTY_STREAM;
         }
@@ -176,9 +232,11 @@ export class SafeDsAnnotations extends SafeDsModuleMembers<SdsAnnotation> {
             .map((it) => it.variant);
     }
 
-    get Target(): SdsAnnotation | undefined {
-        return this.getAnnotation(ANNOTATION_USAGE_URI, 'Target');
+    get Targets(): SdsAnnotation | undefined {
+        return this.getAnnotation(ANNOTATION_USAGE_URI, 'Targets');
     }
+
+    // Helpers ---------------------------------------------------------------------------------------------------------
 
     private getAnnotation(uri: URI, name: string): SdsAnnotation | undefined {
         return this.getModuleMember(uri, name, isSdsAnnotation);

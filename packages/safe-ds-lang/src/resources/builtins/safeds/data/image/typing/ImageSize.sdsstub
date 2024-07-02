@@ -1,0 +1,15 @@
+package safeds.data.image.typing
+
+from safeds.data.image.containers import Image
+from safeds.ml.nn.typing import ConstantImageSize
+
+
+/**
+ * A container for image size data.
+ *
+ * @param width the width of the image
+ * @param height the height of the image
+ * @param channel the channel of the image
+ */
+@Experimental
+class ImageSize sub ConstantImageSize

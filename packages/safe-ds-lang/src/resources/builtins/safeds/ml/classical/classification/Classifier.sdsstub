@@ -1,0 +1,116 @@
+package safeds.ml.classical.classification
+
+from safeds.data.labeled.containers import TabularDataset
+from safeds.data.tabular.containers import Table
+from safeds.ml.classical import SupervisedModel
+
+/**
+ * A model for classification tasks.
+ */
+class Classifier sub SupervisedModel {
+    /**
+     * Create a copy of this model and fit it with the given training data.
+     *
+     * **Note:** This model is not modified.
+     *
+     * @param trainingSet The training data containing the features and target.
+     *
+     * @result fittedModel The fitted model.
+     */
+    @Pure
+    fun fit(
+        @PythonName("training_set") trainingSet: TabularDataset
+    ) -> fittedModel: Classifier
+
+    /**
+     * Summarize the classifier's metrics on the given data.
+     *
+     * **Note:** The model must be fitted.
+     *
+     * @param validationOrTestSet The validation or test set.
+     * @param positiveClass The class to be considered positive. All other classes are considered negative.
+     *
+     * @result metrics A table containing the classifier's metrics.
+     */
+    @Pure
+    @PythonName("summarize_metrics")
+    fun summarizeMetrics(
+        @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>,
+        @PythonName("positive_class") positiveClass: Any
+    ) -> metrics: Table
+
+    /**
+     * Compute the accuracy of the classifier on the given data.
+     *
+     * The accuracy is the proportion of predicted target values that were correct. The **higher** the accuracy, the
+     * better. Results range from 0.0 to 1.0.
+     *
+     * **Note:** The model must be fitted.
+     *
+     * @param validationOrTestSet The validation or test set.
+     *
+     * @result accuracy The classifier's accuracy.
+     */
+    @Pure
+    fun accuracy(
+        @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
+    ) -> accuracy: Float
+
+    /**
+     * Compute the classifier's F₁ score on the given data.
+     *
+     * The F₁ score is the harmonic mean of precision and recall. The **higher** the F₁ score, the better the
+     * classifier. Results range from 0.0 to 1.0.
+     *
+     * **Note:** The model must be fitted.
+     *
+     * @param validationOrTestSet The validation or test set.
+     * @param positiveClass The class to be considered positive. All other classes are considered negative.
+     *
+     * @result f1Score The classifier's F₁ score.
+     */
+    @Pure
+    @PythonName("f1_score")
+    fun f1Score(
+        @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>,
+        @PythonName("positive_class") positiveClass: Any
+    ) -> f1Score: Float
+
+    /**
+     * Compute the classifier's precision on the given data.
+     *
+     * The precision is the proportion of positive predictions that were correct. The **higher** the precision, the
+     * better the classifier. Results range from 0.0 to 1.0.
+     *
+     * **Note:** The model must be fitted.
+     *
+     * @param validationOrTestSet The validation or test set.
+     * @param positiveClass The class to be considered positive. All other classes are considered negative.
+     *
+     * @result precision The classifier's precision.
+     */
+    @Pure
+    fun precision(
+        @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>,
+        @PythonName("positive_class") positiveClass: Any
+    ) -> precision: Float
+
+    /**
+     * Compute the classifier's recall on the given data.
+     *
+     * The recall is the proportion of actual positives that were predicted correctly. The **higher** the recall, the
+     * better the classifier. Results range from 0.0 to 1.0.
+     *
+     * **Note:** The model must be fitted.
+     *
+     * @param validationOrTestSet The validation or test set.
+     * @param positiveClass The class to be considered positive. All other classes are considered negative.
+     *
+     * @result recall The classifier's recall.
+     */
+    @Pure
+    fun recall(
+        @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>,
+        @PythonName("positive_class") positiveClass: Any
+    ) -> recall: Float
+}

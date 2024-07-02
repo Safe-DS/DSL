@@ -14,17 +14,35 @@ nav:
     - README.md
   - Getting Started:
     - Installation: getting-started/installation.md
-    - First Program: getting-started/first-program.md
+    - First Classification Program: getting-started/first-classification-program.md
+    - First Regression Program: getting-started/first-regression-program.md
   - Language Reference:
     - pipeline-language/README.md
-    - Packages: pipeline-language/packages.md
-    - Pipelines: pipeline-language/pipelines.md
-    - Statements: pipeline-language/statements.md
-    - Expressions: pipeline-language/expressions.md
-    - Segments: pipeline-language/segments.md
-    - Types: pipeline-language/types.md
-    - Comments: pipeline-language/comments.md
-    - Imports: pipeline-language/imports.md
+    - Basic Structure:
+      - Packages: pipeline-language/packages.md
+      - Pipelines: pipeline-language/pipelines.md
+    - Statements:
+      - pipeline-language/statements/README.md
+      - Expression Statements: pipeline-language/statements/expression-statements.md
+      - Assignments: pipeline-language/statements/assignments.md
+    - Expressions:
+      - pipeline-language/expressions/README.md
+      - Literals: pipeline-language/expressions/literals.md
+      - Template Strings: pipeline-language/expressions/template-strings.md
+      - Operations: pipeline-language/expressions/operations.md
+      - References: pipeline-language/expressions/references.md
+      - Member Accesses: pipeline-language/expressions/member-accesses.md
+      - Indexed Accesses: pipeline-language/expressions/indexed-accesses.md
+      - Calls: pipeline-language/expressions/calls.md
+      - Chaining: pipeline-language/expressions/chaining.md
+      - Lambdas: pipeline-language/expressions/lambdas.md
+      - Type Casts: pipeline-language/expressions/type-casts.md
+      - Precedence: pipeline-language/expressions/precedence.md
+    - Advanced:
+      - Segments: pipeline-language/segments.md
+      - Types: pipeline-language/types.md
+      - Comments: pipeline-language/comments.md
+      - Imports: pipeline-language/imports.md
   - API Reference: api/
   - Integrating New Libraries:
     - stub-language/README.md
@@ -56,6 +74,7 @@ nav:
 
 theme:
   name: material
+  custom_dir: src/overrides
   logo: https://raw.githubusercontent.com/Safe-DS/.github/main/branding/safe-ds_logo_rounded.svg
   favicon: https://raw.githubusercontent.com/Safe-DS/.github/main/branding/safe-ds_logo_rounded.svg
   palette:

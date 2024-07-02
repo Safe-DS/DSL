@@ -1,0 +1,10 @@
+package tests.generator.runnerIntegration.expressions.^this
+
+class MyClass() {
+    @Pure
+    fun myFunction(p: MyClass = this) -> r: Int
+}
+
+pipeline myPipeline {
+    val a = MyClass().myFunction();
+}

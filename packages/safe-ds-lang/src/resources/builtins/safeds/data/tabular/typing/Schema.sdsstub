@@ -1,0 +1,66 @@
+package safeds.data.tabular.typing
+
+from safeds.data.tabular.typing import DataType
+
+/**
+ * The schema of a row or table.
+ */
+class Schema {
+    /**
+     * Return a list of all column names contained in this schema.
+     */
+    @PythonName("column_names") attr columnNames: List<String>
+
+    /**
+     * Return the type of the given column.
+     *
+     * @param name The name of the column.
+     *
+     * @result type The type of the column.
+     *
+     * @example
+     * pipeline example {
+     *     val table = Table({"A": [1, 2, 3], "B": ["a", "b", "c"]});
+     *     val type = table.^schema.getColumnType("A");
+     * }
+     */
+    @Pure
+    @PythonName("get_column_type")
+    fun getColumnType(
+        name: String
+    ) -> type: DataType
+
+    /**
+     * Return whether the schema contains a given column.
+     *
+     * @param name The name of the column.
+     *
+     * @result contains True if the schema contains the column.
+     *
+     * @example
+     * pipeline example {
+     *     val table = Table({"A": [1, 2, 3], "B": ["a", "b", "c"]});
+     *     val contains = table.^schema.hasColumn("A"); // true
+     * }
+     */
+    @Pure
+    @PythonName("has_column")
+    fun hasColumn(
+        name: String
+    ) -> contains: Boolean
+
+    /**
+     * Return a dictionary that maps column names to column types.
+     *
+     * @result data Dictionary representation of the schema.
+     *
+     * @example
+     * pipeline example {
+     *     val table = Table({"A": [1, 2, 3], "B": ["a", "b", "c"]});
+     *     val map = table.^schema.toMap();
+     * }
+     */
+    @Pure
+    @PythonName("to_dict")
+    fun toMap() -> data: Map<String, DataType>
+}

@@ -1,0 +1,10 @@
+package tests.validation.types.checking.defaultValues.parameterNamesOfCallableTypes
+
+// $TEST$ no error r"Expected type .* but got .*\."
+@Pure fun f(callback: (p: Int) -> (r: Int) = »(q) {
+        yield s = 1;
+    }«
+)
+
+// $TEST$ no error r"Expected type .* but got .*\."
+@Pure fun g(callback: (p: Int) -> (r: Int) = »(q) -> 1«)

@@ -1,23 +1,23 @@
 package safeds.lang
 
 /**
- * The specification of a corresponding function call in Python. By default, the function is called as specified in the
- * stub.
+ * The specification of the corresponding Python code. By default, the function is called as specified in the stubs.
  *
  * The specification can contain template expressions, which are replaced by the corresponding arguments of the function
  * call. `$this` is replaced by the receiver of the call. `$param` is replaced by the value of the parameter called
  * `param`. Otherwise, the string is used as-is.
  */
 @Experimental
-@Target([AnnotationTarget.Function])
-annotation PythonCall(
-    callSpecification: String
+@Targets([AnnotationTarget.Function])
+annotation PythonMacro(
+    template: String
 )
 
 /**
- * The qualified name of the corresponding Python module. By default, this is the qualified name of the package.
+ * The qualified name of the corresponding Python module. By default, this is the qualified name of the package in the
+ * stubs.
  */
-@Target([AnnotationTarget.Module])
+@Targets([AnnotationTarget.Module])
 annotation PythonModule(
     qualifiedName: String
 )
@@ -25,7 +25,7 @@ annotation PythonModule(
 /**
  * The name of the corresponding API element in Python. By default, this is the name of the declaration in the stubs.
  */
-@Target([
+@Targets([
     AnnotationTarget.Attribute,
     AnnotationTarget.Class,
     AnnotationTarget.Enum,

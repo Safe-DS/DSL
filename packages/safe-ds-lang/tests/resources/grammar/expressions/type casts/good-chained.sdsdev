@@ -1,5 +1,5 @@
 // $TEST$ no_syntax_error
 
 pipeline myPipeline {
-    1 as Int as String;
+    1 as (Int) as (String);
 }

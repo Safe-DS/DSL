@@ -10,6 +10,7 @@ import {
     isSdsPipeline,
     isSdsReference,
     isSdsSchema,
+    SdsAbstractCall,
     SdsAttribute,
     SdsCall,
     SdsIndexedAccess,
@@ -37,12 +38,12 @@ export const CODE_TYPE_MISSING_TYPE_HINT = 'type/missing-type-hint';
 // Type checking
 // -----------------------------------------------------------------------------
 
-export const callArgumentTypesMustMatchParameterTypes = (services: SafeDsServices) => {
+export const argumentTypesMustMatchParameterTypes = (services: SafeDsServices) => {
     const nodeMapper = services.helpers.NodeMapper;
     const typeChecker = services.typing.TypeChecker;
     const typeComputer = services.typing.TypeComputer;
 
-    return (node: SdsCall, accept: ValidationAcceptor) => {
+    return (node: SdsAbstractCall, accept: ValidationAcceptor) => {
         const substitutions = typeComputer.computeSubstitutionsForCall(node);
 
         for (const argument of getArguments(node)) {
@@ -320,7 +321,7 @@ export const parameterDefaultValueTypeMustMatchParameterType = (services: SafeDs
         const defaultValueType = typeComputer.computeType(defaultValue);
         const parameterType = typeComputer.computeType(node);
 
-        if (!typeChecker.isSubtypeOf(defaultValueType, parameterType)) {
+        if (!typeChecker.isSubtypeOf(defaultValueType, parameterType, { ignoreParameterNames: true })) {
             accept('error', `Expected type '${parameterType}' but got '${defaultValueType}'.`, {
                 node,
                 property: 'defaultValue',
@@ -425,7 +426,7 @@ export const yieldTypeMustMatchResultType = (services: SafeDsServices) => {
         const yieldType = typeComputer.computeType(node);
         const resultType = typeComputer.computeType(result);
 
-        if (!typeChecker.isSubtypeOf(yieldType, resultType)) {
+        if (!typeChecker.isSubtypeOf(yieldType, resultType, { ignoreParameterNames: true })) {
             accept('error', `Expected type '${resultType}' but got '${yieldType}'.`, {
                 node,
                 property: 'result',

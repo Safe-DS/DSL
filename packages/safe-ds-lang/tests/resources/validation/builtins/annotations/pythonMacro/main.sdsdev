@@ -1,0 +1,39 @@
+package tests.validation.builtins.pythonMacro
+
+class MyClass {
+    // $TEST$ no error r"The template expressions? .* cannot be interpreted."
+    @»PythonMacro«("myMethod1($param)")
+    fun myMethod1(param: Int)
+
+    // $TEST$ no error r"The template expressions? .* cannot be interpreted."
+    @»PythonMacro«("myMethod2($this)")
+    fun myMethod2(^this: Int)
+
+    // $TEST$ no error "The template expression '$this' cannot be interpreted."
+    @»PythonMacro«("myMethod3($this)")
+    fun myMethod3()
+
+    // $TEST$ error "The template expressions '$param1', '$param2' cannot be interpreted."
+    @»PythonMacro«("myMethod4($param1, $param2)")
+    fun myMethod4()
+
+    // $TEST$ error r"The template expressions? .* cannot be interpreted."
+    @»PythonMacro«("myMethod2($this)")
+    static fun myMethod5()
+}
+
+// $TEST$ no error r"The template expressions? .* cannot be interpreted."
+@»PythonMacro«("myFunction1($param)")
+fun myFunction1(param: Int)
+
+// $TEST$ no error r"The template expressions? .* cannot be interpreted."
+@»PythonMacro«("myFunction2($this)")
+fun myFunction2(^this: Int)
+
+// $TEST$ error "The template expression '$this' cannot be interpreted."
+@»PythonMacro«("myFunction3($this)")
+fun myFunction3()
+
+// $TEST$ error "The template expressions '$param1', '$param2' cannot be interpreted."
+@»PythonMacro«("myFunction4($param1, $param2)")
+fun myFunction4()

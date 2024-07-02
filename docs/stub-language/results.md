@@ -68,4 +68,4 @@ Since Python results do not have a name, the names of Safe-DS results can be arb
 [types-python]: types.md#corresponding-python-code
 [callable-types]: types.md#callable-types
 [segments]: ../pipeline-language/segments.md
-[calls]: ../pipeline-language/expressions.md#calls
+[calls]: ../pipeline-language/expressions/calls.md#calls

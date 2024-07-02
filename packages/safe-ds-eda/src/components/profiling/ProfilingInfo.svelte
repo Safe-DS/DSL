@@ -1,8 +1,42 @@
 <script lang="ts">
-    import type { Profiling } from '../../../types/state';
+    import type { Profiling, ProfilingDetailImage } from '../../../types/state';
+    import { addAndDeployTabHistoryEntry, getAndIncrementEntryId } from '../../apis/historyApi.js';
+    import ZoomIcon from '../../icons/Zoom.svelte';
 
     export let profiling: Profiling;
     export let imageWidth: number = 200;
+    export let columnName: string;
+
+    let hoveringImage = false;
+
+    const zoomIntoImage = function (profilingItem: ProfilingDetailImage) {
+        const entryId = getAndIncrementEntryId();
+        const tabId = crypto.randomUUID();
+        addAndDeployTabHistoryEntry(
+            {
+                action: 'histogram',
+                alias: `Histogram for ${columnName}`,
+                type: 'external-visualizing',
+                columnName,
+                id: entryId,
+                columnNumber: 'one',
+                newTabId: tabId,
+            },
+            {
+                type: 'histogram',
+                tabComment: columnName,
+                content: {
+                    columnName,
+                    encodedImage: profilingItem.value,
+                },
+                id: tabId,
+                imageTab: true,
+                columnNumber: 'one',
+                isInGeneration: false,
+                outdated: false,
+            },
+        );
+    };
 </script>
 
 <div class="wrapper">
@@ -28,7 +62,23 @@
                     <span class={profilingItem.interpretation}>{profilingItem.value}</span>
                 </div>
             {:else if profilingItem.type === 'image'}
-                <div class="profilingItem">
+                <div
+                    role="none"
+                    class="zoomIconWrapper"
+                    class:hoveringImage
+                    style:left={imageWidth - 37 + 'px'}
+                    on:click={() => zoomIntoImage(profilingItem)}
+                >
+                    <ZoomIcon />
+                </div>
+                <div
+                    role="none"
+                    class="profilingItem"
+                    on:click={() => zoomIntoImage(profilingItem)}
+                    on:mouseover={() => (hoveringImage = true)}
+                    on:focus={() => (hoveringImage = true)}
+                    on:mouseleave={() => (hoveringImage = false)}
+                >
                     <img
                         style:width="{imageWidth}px"
                         class="profilingImage"
@@ -53,6 +103,8 @@
         display: flex;
         justify-content: space-between;
         margin-bottom: 1px;
+        user-select: none;
+        line-height: 15px;
     }
 
     .profilingItemKey {
@@ -66,12 +118,14 @@
 
     .profilingItemsBottom {
         width: 100%;
+        position: relative;
     }
 
     .profilingImage {
         height: 150px; /* default height, profiling height calculation works off this value */
         object-fit: cover;
         object-position: left;
+        cursor: pointer;
     }
 
     .good {
@@ -87,14 +141,33 @@
     }
 
     .important {
-        color: var(--font-dark);
+        color: var(--darkest-color);
     }
 
     .default {
-        color: var(--font-light);
+        color: var(--dark-color);
     }
 
     .category {
-        color: var(--font-light);
+        color: var(--dark-color);
+    }
+
+    .zoomIconWrapper {
+        height: 17px;
+        width: 17px;
+        position: absolute;
+        top: 30px;
+        cursor: pointer;
+        border-radius: 50%;
+    }
+
+    .zoomIconWrapper:hover {
+        height: 25px;
+        width: 25px;
+    }
+
+    .zoomIconWrapper.hoveringImage {
+        height: 25px;
+        width: 25px;
     }
 </style>

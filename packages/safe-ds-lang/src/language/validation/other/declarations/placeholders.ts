@@ -39,6 +39,12 @@ export const placeholdersMustNotBeAnAlias = (node: SdsPlaceholder, accept: Valid
 
 export const placeholderShouldBeUsed =
     (services: SafeDsServices) => (node: SdsPlaceholder, accept: ValidationAcceptor) => {
+        // Don't a warning if the placeholder's name starts with an underscore
+        if (!node.name || node.name.startsWith('_')) {
+            return;
+        }
+
+        // Check if the placeholder is used
         const usages = services.helpers.NodeMapper.placeholderToReferences(node);
         if (!usages.isEmpty()) {
             return;
@@ -52,10 +58,14 @@ export const placeholderShouldBeUsed =
             return;
         }
 
-        accept('warning', 'This placeholder is unused and can be removed.', {
-            node,
-            property: 'name',
-            code: CODE_PLACEHOLDER_UNUSED,
-            tags: [DiagnosticTag.Unnecessary],
-        });
+        accept(
+            'warning',
+            'This placeholder is unused and can be removed. Prefix its name with an underscore to disable this warning.',
+            {
+                node,
+                property: 'name',
+                code: CODE_PLACEHOLDER_UNUSED,
+                tags: [DiagnosticTag.Unnecessary],
+            },
+        );
     };

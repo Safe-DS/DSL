@@ -1,0 +1,62 @@
+package tests.validation.builtins.annotations.targets.duplicateTarget
+
+@Targets([
+    // $TEST$ no warning "The target 'Annotation' was set already."
+    »AnnotationTarget.Annotation«
+])
+
+/*
+ * We already show another error if the `@Targets` annotation is called multiple times.
+ */
+
+@Targets([
+    // $TEST$ no warning "The target 'Annotation' was set already."
+    »AnnotationTarget.Annotation«,
+    // $TEST$ no warning "The target 'Annotation' was set already."
+    »AnnotationTarget.Annotation«,
+])
+annotation TestAnnotation1
+
+@Targets([
+    // $TEST$ no warning "The target 'Annotation' was set already."
+    »AnnotationTarget.Annotation«,
+    // $TEST$ warning "The target 'Annotation' was set already."
+    »AnnotationTarget.Annotation«,
+])
+annotation TestAnnotation2
+
+@Targets([
+    // $TEST$ no warning "The target 'Class' was set already."
+    »AnnotationTarget.Class«,
+    // $TEST$ warning "The target 'Class' was set already."
+    »AnnotationTarget.Class«,
+    // $TEST$ warning "The target 'Class' was set already."
+    »AnnotationTarget.Class«,
+    // $TEST$ no warning "The target 'Annotation' was set already."
+    »AnnotationTarget.Annotation«,
+    // $TEST$ warning "The target 'Annotation' was set already."
+    »AnnotationTarget.Annotation«,
+    // $TEST$ warning "The target 'Annotation' was set already."
+    »AnnotationTarget.Annotation«,
+])
+annotation TestAnnotation3
+
+/*
+ * We already show another error if an annotation is called with arguments of invalid type.
+ */
+
+@Targets(
+    // $TEST$ no warning "The target 'Class' was set already."
+    »AnnotationTarget.Class«,
+    // $TEST$ no warning "The target 'Class' was set already."
+    »AnnotationTarget.Class«
+)
+annotation TestAnnotation4
+
+@Targets([
+    // $TEST$ no warning r"The target '.*' was set already\."
+    »1«,
+    // $TEST$ no warning r"The target '.*' was set already\."
+    »1«,
+])
+annotation TestAnnotation5

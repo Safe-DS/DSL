@@ -3,8 +3,14 @@ package tests.scoping.references.acrossFiles.toAnnotations.other
 // $TEST$ target other_MyAnnotation
 annotation »MyAnnotation«
 
-// $TEST$ target other_AnnotationInAnotherPackage
-annotation »AnnotationInAnotherPackage«
+// $TEST$ target other_PublicAnnotationInAnotherPackage
+annotation »PublicAnnotationInAnotherPackage«
 
-// $TEST$ target other_Annotation2InAnotherPackage
-annotation »Annotation2InAnotherPackage«
+// $TEST$ target other_PublicAnnotationInAnotherPackage2
+annotation »PublicAnnotationInAnotherPackage2«
+
+// $TEST$ target other_InternalAnnotationInAnotherPackage
+internal annotation »InternalAnnotationInAnotherPackage«
+
+// $TEST$ target other_PrivateAnnotationInAnotherPackage
+private annotation »PrivateAnnotationInAnotherPackage«

@@ -6,15 +6,43 @@ pipeline myPipeline {
     // $TEST$ references safeds_myFunction
     »myFunction«;
 
-    // $TEST$ references same_functionInSamePackage
-    »functionInSamePackage«;
 
-    // $TEST$ references safeds_functionInSafeDsPackage
-    »functionInSafeDsPackage«;
+    // $TEST$ references same_publicFunctionInSamePackage
+    »publicFunctionInSamePackage«;
 
-    // $TEST$ unresolved
-    »functionInAnotherPackage«;
+    // $TEST$ references same_internalFunctionInSamePackage
+    »internalFunctionInSamePackage«;
 
     // $TEST$ unresolved
-    »functionWithoutPackage«;
+    »privateFunctionInSamePackage«;
+
+
+    // $TEST$ references safeds_publicFunctionInSafeDsPackage
+    »publicFunctionInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »internalFunctionInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »privateFunctionInSafeDsPackage«;
+
+
+    // $TEST$ unresolved
+    »publicFunctionInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »internalFunctionInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »privateFunctionInAnotherPackage«;
+
+
+    // $TEST$ unresolved
+    »publicFunctionWithoutPackage«;
+
+    // $TEST$ unresolved
+    »internalFunctionWithoutPackage«;
+
+    // $TEST$ unresolved
+    »privateFunctionWithoutPackage«;
 }

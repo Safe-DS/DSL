@@ -17,7 +17,7 @@ import {
 import { isStatic, TypeParameter } from '../../../helpers/nodeProperties.js';
 import { SafeDsServices } from '../../../safe-ds-module.js';
 import { SafeDsNodeMapper } from '../../../helpers/safe-ds-node-mapper.js';
-import { NamedType, UnknownType } from '../../../typing/model.js';
+import { UnknownType } from '../../../typing/model.js';
 
 export const CODE_TYPE_PARAMETER_INSUFFICIENT_CONTEXT = 'type-parameter/insufficient-context';
 export const CODE_TYPE_PARAMETER_UPPER_BOUND = 'type-parameter/upper-bound';
@@ -32,8 +32,12 @@ export const typeParameterMustHaveSufficientContext = (node: SdsTypeParameter, a
     }
     /* c8 ignore stop */
 
-    // Classes without constructor can only be used as named types, where type arguments are manifest
-    if (isSdsClass(containingCallable) && !containingCallable.parameterList) {
+    // Optional type parameters of classes get initialized to their default value if there is insufficient context in
+    // the constructor. Elsewhere, the class might be used as a named type, where type arguments are manifest, so having
+    // the type parameter is beneficial. This is not the case for functions, where type parameters only get inferred.
+    //
+    // Classes without constructor can only be used as named types, where type arguments are manifest.
+    if (isSdsClass(containingCallable) && (TypeParameter.isOptional(node) || !containingCallable.parameterList)) {
         return;
     }
 
@@ -62,14 +66,16 @@ export const typeParameterMustHaveSufficientContext = (node: SdsTypeParameter, a
     }
 };
 
-export const typeParameterUpperBoundMustBeNamedType = (services: SafeDsServices) => {
+export const typeParameterUpperBoundMustNotBeUnknown = (services: SafeDsServices) => {
     const typeComputer = services.typing.TypeComputer;
 
     return (node: SdsTypeParameter, accept: ValidationAcceptor) => {
-        const boundType = typeComputer.computeType(node.upperBound);
+        if (!node.upperBound) {
+            return;
+        }
 
-        if (boundType !== UnknownType && !(boundType instanceof NamedType)) {
-            accept('error', 'The upper bound of a type parameter must be a named type.', {
+        if (typeComputer.computeType(node.upperBound) === UnknownType) {
+            accept('error', 'The upper bound of a type parameter must not have an unknown type.', {
                 node,
                 property: 'upperBound',
                 code: CODE_TYPE_PARAMETER_UPPER_BOUND,

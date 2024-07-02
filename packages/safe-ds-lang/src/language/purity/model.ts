@@ -22,6 +22,7 @@ export abstract class ImpurityReason {
 
     /**
      * Returns whether this impurity reason can affect a future impurity reason.
+     *
      * @param future Future Impurity reason to test, if this reason may have an effect on it.
      */
     abstract canAffectFutureImpurityReason(future: ImpurityReason): boolean;

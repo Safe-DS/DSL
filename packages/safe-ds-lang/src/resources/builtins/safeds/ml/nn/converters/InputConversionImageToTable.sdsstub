@@ -1,0 +1,12 @@
+package safeds.ml.nn.converters
+
+from safeds.ml.nn.typing import ModelImageSize
+
+/**
+ * The input conversion for a neural network, defines the input parameters for the neural network.
+ *
+ * @param imageSize the size of the input images
+ */
+class InputConversionImageToTable(
+    @PythonName("image_size") imageSize: ModelImageSize
+)  sub InputConversion<ImageDataset<Table>, ImageList>

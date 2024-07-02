@@ -3,5 +3,11 @@ package safeds.scoping.references.acrossFiles.toPipelines
 // $TEST$ target safeds_myPipeline
 pipeline »myPipeline« {}
 
-// $TEST$ target safeds_pipelineInSafeDsPackage
-pipeline »pipelineInSafeDsPackage« {}
+// $TEST$ target safeds_publicPipelineInSafeDsPackage
+pipeline »publicPipelineInSafeDsPackage« {}
+
+// $TEST$ target safeds_internalPipelineInSafeDsPackage
+internal pipeline »internalPipelineInSafeDsPackage« {}
+
+// $TEST$ target safeds_privatePipelineInSafeDsPackage
+private pipeline »privatePipelineInSafeDsPackage« {}

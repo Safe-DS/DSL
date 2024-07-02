@@ -10,6 +10,8 @@ class MyClass<T>(param: T) sub MySuperclass<T> {
 
 @Pure fun myFunction<T>(p: T, callback: (p: T) -> ())
 
+@Pure fun myFunction2<T>(callback: (p: T) -> (r: T))
+
 segment mySegment() {
     // $TEST$ serialization literal<1>
     MyClass(1).myMethod((»p«) {});
@@ -19,4 +21,7 @@ segment mySegment() {
 
     // $TEST$ serialization literal<1>
     myFunction(1, (»p«) {});
+
+    // $TEST$ serialization literal<"">
+    myFunction2((»p«) -> "");
 }

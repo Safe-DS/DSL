@@ -1,5 +1,11 @@
 // $TEST$ target without_MyEnum
 enum »MyEnum«
 
-// $TEST$ target without_EnumWithoutPackage
-enum »EnumWithoutPackage«
+// $TEST$ target without_PublicEnumWithoutPackage
+enum »PublicEnumWithoutPackage«
+
+// $TEST$ target without_InternalEnumInSamePackage
+internal enum »InternalEnumInSamePackage«
+
+// $TEST$ target without_PrivateSegmentInSamePackage
+private enum »PrivateSegmentInSamePackage«

@@ -1,0 +1,5 @@
+internal  pipeline  myPipeline  { }
+
+// -----------------------------------------------------------------------------
+
+internal pipeline myPipeline {}

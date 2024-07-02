@@ -1,0 +1,72 @@
+package safeds.data.tabular.plotting
+
+from safeds.data.image.containers import Image
+
+/**
+ * A class that contains plotting methods for a column.
+ *
+ * @param column The column to plot.
+ *
+ * @example
+ * pipeline example {
+ *     val column = Column("test", [1, 2, 3]);
+ *     val plotter = column.plot;
+ * }
+ */
+class ColumnPlotter(
+    column: Column<Any>
+) {
+    /**
+     * Create a box plot for the values in the column. This is only possible for numeric columns.
+     *
+     * @result plot The box plot as an image.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("test", [1, 2, 3]);
+     *     val boxplot = column.plot.boxPlot();
+     * }
+     */
+    @Pure
+    @PythonName("box_plot")
+    fun boxPlot() -> plot: Image
+
+    /**
+     * Create a histogram for the values in the column.
+     *
+     * @param maxBinCount The maximum number of bins to use in the histogram. Default is 10.
+     *
+     * @result plot The plot as an image.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("test", [1, 2, 3]);
+     *     val histogram = column.plot.histogram();
+     * }
+     */
+    @Pure
+    fun histogram(
+        @PythonName("max_bin_count") const maxBinCount: Int = 10
+    ) -> plot: Image where {
+        maxBinCount > 0
+    }
+
+    /**
+     * Create a lag plot for the values in the column.
+     *
+     * @param lag The amount of lag.
+     *
+     * @result plot The plot as an image.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("values", [1, 2, 3, 4]);
+     *     val image = column.plot.lagPlot(2);
+     * }
+     */
+    @Pure
+    @PythonName("lag_plot")
+    fun lagPlot(
+        lag: Int
+    ) -> plot: Image
+}

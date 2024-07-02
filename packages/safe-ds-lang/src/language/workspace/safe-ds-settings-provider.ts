@@ -6,7 +6,7 @@ import { DeepPartial, Disposable } from 'langium';
 export class SafeDsSettingsProvider {
     private readonly configurationProvider: SafeDsConfigurationProvider;
 
-    private cachedSettings: DeepPartial<Settings> = {};
+    private cachedSettings: DeepPartial<SafeDsSettings> = {};
     private watchers = new Set<SettingsWatcher<any>>();
 
     constructor(services: SafeDsServices) {
@@ -37,15 +37,14 @@ export class SafeDsSettingsProvider {
         return this.cachedSettings.inlayHints?.collapseLiteralTypes ?? true;
     }
 
-    shouldShowParameterNameInlayHints(): InlayHintsSettings['parameterNames']['enabled'] {
+    shouldShowParameterNameInlayHints(): SafeDsInlayHintsSettings['parameterNames']['enabled'] {
         return this.cachedSettings.inlayHints?.parameterNames?.enabled ?? 'onlyLiterals';
     }
 
-    /* c8 ignore start */
     getRunnerCommand(): string {
+        /* c8 ignore next 2 */
         return this.cachedSettings.runner?.command ?? 'safe-ds-runner';
     }
-    /* c8 ignore stop */
 
     onRunnerCommandUpdate(callback: (newValue: string | undefined) => void): Disposable {
         const watcher: SettingsWatcher<string | undefined> = {
@@ -77,7 +76,7 @@ export class SafeDsSettingsProvider {
         return this.cachedSettings.validation?.nameConvention?.enabled ?? true;
     }
 
-    private async updateCachedSettings(newSettings: Settings): Promise<void> {
+    private async updateCachedSettings(newSettings: SafeDsSettings): Promise<void> {
         const oldSettings = this.cachedSettings;
         this.cachedSettings = newSettings;
 
@@ -92,13 +91,13 @@ export class SafeDsSettingsProvider {
     }
 }
 
-export interface Settings {
-    inlayHints: InlayHintsSettings;
-    runner: RunnerSettings;
-    validation: ValidationSettings;
+export interface SafeDsSettings {
+    inlayHints: SafeDsInlayHintsSettings;
+    runner: SafeDsRunnerSettings;
+    validation: SafeDsValidationSettings;
 }
 
-export interface InlayHintsSettings {
+export interface SafeDsInlayHintsSettings {
     assigneeTypes: {
         enabled: boolean;
     };
@@ -112,11 +111,11 @@ export interface InlayHintsSettings {
     };
 }
 
-export interface RunnerSettings {
+export interface SafeDsRunnerSettings {
     command: string;
 }
 
-export interface ValidationSettings {
+export interface SafeDsValidationSettings {
     codeStyle: {
         enabled: boolean;
     };
@@ -132,6 +131,6 @@ export interface ValidationSettings {
 }
 
 interface SettingsWatcher<T> {
-    accessor: (settings: DeepPartial<Settings>) => T;
+    accessor: (settings: DeepPartial<SafeDsSettings>) => T;
     callback: (newValue: T) => void;
 }

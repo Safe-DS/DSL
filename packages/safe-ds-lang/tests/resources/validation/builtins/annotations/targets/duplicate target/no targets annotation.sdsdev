@@ -1,0 +1,5 @@
+package tests.validation.builtins.annotations.targets.duplicateTarget
+
+// $TEST$ no warning r"The target '.*' was already set\."
+
+annotation TestAnnotation6
