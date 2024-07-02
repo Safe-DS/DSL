@@ -1,4 +1,4 @@
-import { GenericExpressionNode } from "../parser/expression.js";
+import { GenericExpression } from "../parser/expression.js";
 import { Utils } from "../utils.js";
 import { Parameter } from "./parameter.js";
 import { Placeholder } from "./placeholder.js";
@@ -44,8 +44,8 @@ export class Port {
         return new Port(nodeId, parameter.name);
     };
 
-    public static fromGenericExpressionNode(
-        node: GenericExpressionNode,
+    public static fromGenericExpression(
+        node: GenericExpression,
         input: boolean,
     ) {
         return new Port(node.id, input ? "input" : "output");

@@ -54,8 +54,8 @@ const getDefaultValue = (
     }
 
     const tmp = Expression.get(defaultValue);
-    if (tmp instanceof GenericExpression && tmp.expression instanceof Literal) {
-        return tmp.expression;
+    if (tmp instanceof GenericExpression && tmp.node instanceof Literal) {
+        return tmp.node;
     }
 
     return Literal.default();

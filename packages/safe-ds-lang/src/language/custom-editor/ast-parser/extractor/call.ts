@@ -6,11 +6,7 @@ import { Parameter } from "./parameter.js";
 import { Edge, Port } from "./edge.js";
 import { FunctionDeclaration } from "./function.js";
 import { MemberAccess } from "./memberAccess.js";
-import {
-    Expression,
-    GenericExpression,
-    GenericExpressionNode,
-} from "../parser/expression.js";
+import { Expression, GenericExpression } from "../parser/expression.js";
 import { ClassDeclaration } from "./class.js";
 import { Placeholder } from "./placeholder.js";
 
@@ -60,11 +56,9 @@ export class Call {
         if (receiver instanceof Call) {
             Utils.pushError(Call.LOGGING_TAG, `Invalid Call receiver`);
         } else if (receiver instanceof GenericExpression) {
-            if (receiver.expression instanceof MemberAccess) {
-                if (
-                    !(receiver.expression.member instanceof FunctionDeclaration)
-                ) {
-                    Utils.pushError(Call.LOGGING_TAG, `Calling not a Function`);
+            if (receiver.node instanceof MemberAccess) {
+                if (!(receiver.node.member instanceof FunctionDeclaration)) {
+                    Utils.pushError(Call.LOGGING_TAG, `Calling Not-A-Function`);
                     const call = Call.default(
                         id,
                         undefined,
@@ -76,22 +70,23 @@ export class Call {
                     return call;
                 }
 
-                name = receiver.expression.member.name;
-                parameterList = receiver.expression.member.parameterList;
-                resultList = receiver.expression.member.resultList;
+                name = receiver.node.member.name;
+                parameterList = receiver.node.member.parameterList;
+                resultList = receiver.node.member.resultList;
 
-                const tmp = receiver.expression.receiver;
+                const tmp = receiver.node.receiver;
 
-                if (tmp instanceof ClassDeclaration) {
-                    self = tmp.name;
-                }
-                if (tmp instanceof Placeholder) {
-                    Edge.create(
-                        Port.fromPlaceholder(tmp),
-                        Port.fromName(id, "self"),
-                    );
-                }
-                if (tmp instanceof Call) {
+                if (tmp instanceof GenericExpression) {
+                    if (tmp.node instanceof ClassDeclaration) {
+                        self = tmp.node.name;
+                    }
+                    if (tmp.node instanceof Placeholder) {
+                        Edge.create(
+                            Port.fromPlaceholder(tmp.node),
+                            Port.fromName(id, "self"),
+                        );
+                    }
+                } else if (tmp instanceof Call) {
                     if (!isOfSizeOne(tmp.resultList)) {
                         const call = Call.default(
                             id,
@@ -103,7 +98,7 @@ export class Call {
                         Utils.callList.push(call);
                         return call;
                     }
-                    const result = tmp.resultList[0]!;
+                    const result = tmp.resultList[0];
 
                     Edge.create(
                         Port.fromResult(result, id),
@@ -134,10 +129,8 @@ export class Call {
                                 argument.value.id,
                             );
                         } else {
-                            from = Port.fromGenericExpressionNode(
-                                GenericExpressionNode.createNode(
-                                    argument.value,
-                                ),
+                            from = Port.fromGenericExpression(
+                                argument.value,
                                 false,
                             );
                         }

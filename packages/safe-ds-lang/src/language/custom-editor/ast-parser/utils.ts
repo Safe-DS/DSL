@@ -4,10 +4,7 @@ import { SafeDsAstType } from "../../generated/ast.js";
 import { Call } from "./extractor/call.js";
 import { Edge } from "./extractor/edge.js";
 import { Placeholder } from "./extractor/placeholder.js";
-import {
-    GenericExpression,
-    GenericExpressionNode,
-} from "./parser/expression.js";
+import { GenericExpression } from "./parser/expression.js";
 
 export type TypeMap = SafeDsAstType;
 
@@ -16,7 +13,7 @@ export class Utils {
     static errorList: Error[] = [];
     static placeholderList: Placeholder[] = [];
     static callList: Call[] = [];
-    static genericExpressionList: GenericExpressionNode[] = [];
+    static genericExpressionList: GenericExpression[] = [];
     static edgeList: Edge[] = [];
 
     public static initialize(logger: SafeDsMessagingProvider) {
@@ -71,5 +68,5 @@ export const zip = <A, B>(arrayA: A[], arrayB: B[]): [A, B][] => {
 export const displayCombo = (element: Call | GenericExpression): string => {
     return element instanceof Call
         ? `${element.name}()`
-        : element.expression.toString();
+        : element.node?.toString() ?? "";
 };

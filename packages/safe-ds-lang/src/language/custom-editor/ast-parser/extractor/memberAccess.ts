@@ -1,29 +1,22 @@
 import { SdsMemberAccess } from "../../../generated/ast.js";
-import { Declaration } from "./declaration.js";
 import { Utils, displayCombo } from "../utils.js";
 import { FunctionDeclaration } from "./function.js";
 import { Expression, GenericExpression } from "../parser/expression.js";
 import { Call } from "./call.js";
+import { Declaration, DeclarationType } from "../parser/declaration.js";
 
 export class MemberAccess {
     public static readonly LOGGING_TAG =
         "CustomEditor] [AstParser] [MemberAccess";
 
     private constructor(
-        public readonly member: Declaration,
+        public readonly member: DeclarationType,
         public readonly receiver: GenericExpression | Call,
         private readonly text?: string,
     ) {}
 
-    public static default(): MemberAccess {
-        return new MemberAccess(
-            FunctionDeclaration.default(),
-            new GenericExpression(Declaration.default()),
-        );
-    }
-
     public static get(node: SdsMemberAccess): MemberAccess {
-        let member: Declaration;
+        let member: DeclarationType;
         if (!node.member || !node.member.target.ref) {
             Utils.pushError(
                 MemberAccess.LOGGING_TAG,

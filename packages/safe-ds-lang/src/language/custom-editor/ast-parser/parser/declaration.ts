@@ -4,25 +4,20 @@ import {
     isSdsFunction,
     isSdsPlaceholder,
 } from "../../../generated/ast.js";
-import { ClassDeclaration } from "./class.js";
-import { FunctionDeclaration } from "./function.js";
-import { Placeholder } from "./placeholder.js";
+import { ClassDeclaration } from "../extractor/class.js";
+import { FunctionDeclaration } from "../extractor/function.js";
+import { Placeholder } from "../extractor/placeholder.js";
 import { Utils } from "../utils.js";
 
-export class Declaration {
-    public static readonly LOGGING_TAG: string =
-        "CustomEditor] [AstParser] [Declaration";
+const LOGGING_TAG: string = "CustomEditor] [AstParser] [Declaration";
 
-    protected constructor(
-        public readonly name: string,
-        private readonly text?: string,
-    ) {}
+export type DeclarationType =
+    | FunctionDeclaration
+    | Placeholder
+    | ClassDeclaration;
 
-    public static default(): Declaration {
-        return new Declaration("unknown");
-    }
-
-    public static get(node: SdsDeclaration): Declaration | undefined {
+export const Declaration = {
+    get(node: SdsDeclaration): DeclarationType | undefined {
         if (isSdsFunction(node)) {
             return FunctionDeclaration.get(node);
         }
@@ -56,15 +51,11 @@ export class Declaration {
             case "SdsSchema":
             case "SdsSegment":
             case "SdsTypeParameter":
-                Utils.pushError(
-                    Declaration.LOGGING_TAG,
-                    `Unable to parse <${node.$type}>`,
-                );
+                Utils.pushError(LOGGING_TAG, `Unable to parse <${node.$type}>`);
         }
         return;
-    }
-
-    public toString(): string {
-        return this.name;
-    }
-}
+    },
+    default(): DeclarationType {
+        return FunctionDeclaration.default();
+    },
+};

@@ -32,6 +32,12 @@ const getAstHandler = async (
     await sharedServices.workspace.DocumentBuilder.build([document]);
 
     // Todo: Merge main, Fix the Test pipeline, Create Tests
+
+    // Question: Is there a better way to get the line of a certain start that includes empty lines and comments
+    // Answer:
+    //   rangeToString
+    //   locationToString
+    // Todo:
     parseDocument(document);
     // saveJson(documentToJson(document, 16), "currentDocument");
 

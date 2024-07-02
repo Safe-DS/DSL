@@ -7,11 +7,7 @@ import { Call } from "../extractor/call.js";
 import { Edge, Port } from "../extractor/edge.js";
 import { Utils, zip } from "../utils.js";
 import { parseAssignee } from "./assignee.js";
-import {
-    Expression,
-    GenericExpression,
-    GenericExpressionNode,
-} from "./expression.js";
+import { Expression } from "./expression.js";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const LOGGING_TAG = "CustomEditor] [AstParser] [Statement";
@@ -49,9 +45,6 @@ export const parseStatement = (statement: SdsStatement): void => {
     }
 
     if (isSdsExpressionStatement(statement)) {
-        const expression = Expression.get(statement.expression);
-        if (expression instanceof GenericExpression) {
-            GenericExpressionNode.createNode(expression);
-        }
+        Expression.get(statement.expression);
     }
 };

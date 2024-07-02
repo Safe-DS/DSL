@@ -1,138 +1,99 @@
 import {
+    SdsCall,
     SdsExpression,
     isSdsArgument,
     isSdsCall,
-    isSdsIndexedAccess,
-    isSdsInfixOperation,
-    isSdsLambda,
-    isSdsLiteral,
     isSdsMemberAccess,
-    isSdsParenthesizedExpression,
-    isSdsPrefixOperation,
+    isSdsPlaceholder,
     isSdsReference,
-    isSdsTemplateString,
-    isSdsTypeCast,
 } from "../../../generated/ast.js";
-import { Literal } from "../extractor/literal.js";
 import { MemberAccess } from "../extractor/memberAccess.js";
-import { getReference } from "./reference.js";
+import { Reference } from "./reference.js";
 import { Utils } from "../utils.js";
-import { Declaration } from "../extractor/declaration.js";
-import { Lambda } from "../extractor/lambda.js";
+import { DeclarationType } from "./declaration.js";
 import { Call } from "../extractor/call.js";
-import { IndexedAccess } from "../extractor/indexedAccess.js";
 import { Argument } from "../extractor/argument.js";
-import { InfixOperation } from "../extractor/infixOperation.js";
-import { PrefixOperation } from "../extractor/prefixOperation.js";
-import { TypeCast } from "../extractor/typecast.js";
-import { ParenthesizedExpression } from "../extractor/parenthesizedExpression.js";
+import { AstUtils } from "langium";
+import { Edge, Port } from "../extractor/edge.js";
 
-export class GenericExpressionNode {
+export type ExpressionType = Argument | DeclarationType | MemberAccess;
+
+export class GenericExpression {
     public static readonly LOGGING_TAG =
         "CustomEditor] [AstParser] [GenericExpressionNode";
 
     private constructor(
         public readonly id: number,
         private readonly text: string,
-        public readonly node: GenericExpression["expression"],
+        public readonly node?: ExpressionType,
     ) {}
 
-    public static createNode(expression: GenericExpression) {
-        const id = Utils.getNewId();
-        const text = expression.expression.toString();
-
-        const node = new GenericExpressionNode(id, text, expression.expression);
-        Utils.genericExpressionList.push(node);
-        return node;
-    }
-}
-
-export class GenericExpression {
-    public static readonly LOGGING_TAG =
-        "CustomEditor] [AstParser] [GenericExpression";
-
-    public constructor(
-        public readonly expression:
-            | Argument
-            | Literal
-            | Lambda
-            | Declaration
-            | MemberAccess
-            | IndexedAccess
-            | InfixOperation
-            | PrefixOperation
-            | TypeCast
-            | ParenthesizedExpression,
-    ) {}
-}
-
-export class Expression {
-    public static readonly LOGGING_TAG =
-        "CustomEditor] [AstParser] [Expression";
-
-    private constructor() {
-        // This class doesn't get instanciated
-    }
-
-    public static get(node: SdsExpression): GenericExpression | Call {
-        let expression: GenericExpression["expression"] | undefined = undefined;
-
-        if (isSdsLiteral(node)) {
-            expression = Literal.get(node);
-        }
+    public static createNode(node: Exclude<SdsExpression, SdsCall>) {
+        let parsedExpression: ExpressionType | undefined = undefined;
 
         if (isSdsArgument(node)) {
-            expression = Argument.get(node);
+            parsedExpression = Argument.get(node);
         }
-
         if (isSdsMemberAccess(node)) {
-            expression = MemberAccess.get(node);
+            parsedExpression = MemberAccess.get(node);
         }
-
-        if (isSdsIndexedAccess(node)) {
-            expression = IndexedAccess.get(node);
-        }
-
         if (isSdsReference(node)) {
-            expression = getReference(node);
+            parsedExpression = Reference.get(node);
         }
 
+        const id = Utils.getNewId();
+        const text = node.$cstNode?.text ?? "";
+        const tmp = new GenericExpression(id, text, parsedExpression);
+        Utils.genericExpressionList.push(tmp);
+
+        const children = AstUtils.streamAst(node).iterator();
+        for (const child of children) {
+            if (isSdsPlaceholder(child)) {
+                Edge.create(
+                    Port.fromPlaceholder(child),
+                    Port.fromGenericExpression(tmp, true),
+                );
+            }
+        }
+
+        return tmp;
+    }
+}
+
+export const Expression = {
+    LOGGING_TAG: "CustomEditor] [AstParser] [Expression",
+
+    get(node: SdsExpression): GenericExpression | Call {
         if (isSdsCall(node)) {
             return Call.get(node);
         }
+        return GenericExpression.createNode(node);
 
-        if (isSdsLambda(node)) {
-            expression = Lambda.get(node);
-        }
-
-        if (isSdsInfixOperation(node)) {
-            expression = InfixOperation.get(node);
-        }
-
-        if (isSdsPrefixOperation(node)) {
-            expression = PrefixOperation.get(node);
-        }
-
-        if (isSdsTypeCast(node)) {
-            expression = TypeCast.get(node);
-        }
-
-        if (isSdsParenthesizedExpression(node)) {
-            expression = ParenthesizedExpression.get(node);
-        }
-
-        if (isSdsTemplateString(node)) {
-            expression = Literal.default();
-            // Todo: Handle Template Strings
-        }
-
-        if (!expression) {
-            Utils.pushError(
-                Expression.LOGGING_TAG,
-                `Unexpected node type <${node.$type}>`,
-            );
-        }
-
-        return new GenericExpression(expression!);
-    }
-}
+        // if (
+        //     isSdsLiteral(node) ||
+        //     isSdsIndexedAccess(node) ||
+        //     isSdsLambda(node) ||
+        //     isSdsInfixOperation(node) ||
+        //     isSdsPrefixOperation(node) ||
+        //     isSdsTypeCast(node) ||
+        //     isSdsParenthesizedExpression(node) ||
+        //     isSdsTemplateString(node)
+        // ) {
+        //     expression = Literal.get(node);
+        //     expression = IndexedAccess.get(node);
+        //     expression = Lambda.get(node);
+        //     expression = InfixOperation.get(node);
+        //     expression = PrefixOperation.get(node);
+        //     expression = TypeCast.get(node);
+        //     expression = ParenthesizedExpression.get(node);
+        //     expression = Literal.default();
+        // }
+        //
+        // if (!expression) {
+        //     Utils.pushError(
+        //         Expression.LOGGING_TAG,
+        //         `Unexpected node type <${node.$type}>`,
+        //     );
+        // }
+    },
+};
