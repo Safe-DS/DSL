@@ -252,13 +252,6 @@
             }
         ],
         "menus": {
-            "editor/title/run": [
-                {
-                    "command": "safe-ds.runPipelineFile",
-                    "when": "resourceLangId == safe-ds",
-                    "group": "navigation@1"
-                }
-            ],
             "editor/title": [
                 {
                     "command": "safe-ds.custom-editor.open",
@@ -313,6 +306,7 @@
         "deploy": "vsce publish"
     },
     "dependencies": {
+        "langium": "^3.0.0",
         "semver": "^7.6.2",
         "vscode-languageclient": "^9.0.1"
     },

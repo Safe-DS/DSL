@@ -1,6 +1,5 @@
 import { Disposable, Uri, Webview } from 'vscode';
 import { ExtensionToWebview, WebviewToExtension } from './message-types.js';
-import { logOutput } from '../../../extension/output.js';
 import { LanguageClient, RequestType } from 'vscode-languageclient/node.js';
 import * as vscode from 'vscode';
 import { GetAst } from '$lang/language/custom-editor/getAst.js';
@@ -31,7 +30,8 @@ export class MessageHandler {
                 return vscodeWebview.onDidReceiveMessage(async (message: WebviewToExtension) => {
                     switch (message.command) {
                         case 'test':
-                            logOutput(message.value);
+                            // Todo: Update print
+                            // logOutput(message.value);
                             break;
                         case 'RequestAst':
                             // Todo: Set the vscode application state as "loading AST" in the bottom bar

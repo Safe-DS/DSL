@@ -4,7 +4,6 @@ import fs from 'fs';
 
 import { MessageHandler } from './messaging/messageHandler.js';
 import { LanguageClient } from 'vscode-languageclient/node.js';
-import { logOutput } from '../output.ts';
 
 /**
  * Provider for the Safe-DS custom visual editor.
@@ -62,9 +61,10 @@ export class SafeDSCustomEditorProvider implements vscode.CustomTextEditorProvid
                     command.callback,
                 ),
             );
-            logOutput(
-                `Registered ${command.name} | Full Command: ${SafeDSCustomEditorProvider.viewType}.${command.name}`,
-            );
+            // Todo: Replace with new Logging
+            // logOutput(
+            //     `Registered ${command.name} | Full Command: ${SafeDSCustomEditorProvider.viewType}.${command.name}`,
+            // );
         });
     }
 
