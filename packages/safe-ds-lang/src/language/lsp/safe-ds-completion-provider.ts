@@ -24,7 +24,7 @@ import { classTypeParameterIsUsedInCorrectPosition } from '../validation/other/d
 
 export class SafeDsCompletionProvider extends DefaultCompletionProvider {
     private readonly builtinAnnotations: SafeDsAnnotations;
-    private readonly documentationProvider: SafeDsDocumentationProvider;
+    protected override readonly documentationProvider: SafeDsDocumentationProvider;
 
     readonly completionOptions = {
         triggerCharacters: ['.', '@'],

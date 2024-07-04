@@ -50,7 +50,6 @@ import {
     SafeDsMessagingProvider,
     type SafeDsUserInteractionProvider,
 } from './communication/safe-ds-messaging-provider.js';
-import { SafeDsConfigurationProvider } from './workspace/safe-ds-configuration-provider.js';
 import { SafeDsCodeLensProvider } from './lsp/safe-ds-code-lens-provider.js';
 import { SafeDsExecuteCommandHandler } from './lsp/safe-ds-execute-command-handler.js';
 import { SafeDsServiceRegistry } from './safe-ds-service-registry.js';
@@ -112,9 +111,6 @@ export type SafeDsAddedServices = {
 
 export type SafeDsAddedSharedServices = {
     ServiceRegistry: SafeDsServiceRegistry;
-    workspace: {
-        ConfigurationProvider: SafeDsConfigurationProvider;
-    };
 };
 
 /**
@@ -209,7 +205,6 @@ export const SafeDsSharedModule: Module<SafeDsSharedServices, DeepPartial<SafeDs
         NodeKindProvider: () => new SafeDsNodeKindProvider(),
     },
     workspace: {
-        ConfigurationProvider: (sharedServices) => new SafeDsConfigurationProvider(sharedServices),
         WorkspaceManager: (sharedServices) => new SafeDsWorkspaceManager(sharedServices),
     },
 };
