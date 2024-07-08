@@ -10,7 +10,6 @@ export class FunctionDeclaration {
         public readonly isStatic: Boolean,
         public readonly parameterList: Parameter[],
         public readonly resultList: Result[],
-        public readonly text?: string,
     ) {}
 
     public static default(): FunctionDeclaration {
@@ -27,7 +26,6 @@ export class FunctionDeclaration {
             node.isStatic,
             parameterList,
             resultList,
-            node.$cstNode?.text,
         );
     }
 }

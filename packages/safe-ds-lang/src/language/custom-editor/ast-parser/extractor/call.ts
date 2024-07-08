@@ -4,11 +4,11 @@ import { Argument } from "./argument.js";
 import { Result } from "./result.js";
 import { Parameter } from "./parameter.js";
 import { Edge, Port } from "./edge.js";
-import { FunctionDeclaration } from "./function.js";
 import { MemberAccess } from "./memberAccess.js";
 import { Expression, GenericExpression } from "../parser/expression.js";
-import { ClassDeclaration } from "./class.js";
 import { Placeholder } from "./placeholder.js";
+import { FunctionDeclaration } from "./functionDeclaration.js";
+import { ClassDeclaration } from "./classDeclaration.js";
 
 export class Call {
     public static readonly LOGGING_TAG = "CustomEditor] [AstParser] [Call";

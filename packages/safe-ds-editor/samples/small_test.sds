@@ -1,0 +1,19 @@
+package smallTest
+
+pipeline smallTest {
+    val labeledImages = Table.fromCsvFile("beginner_classification/train.csv");
+    val subsetImages = labeledImages.sliceRows(0, 5000);
+    val train, val validate = subsetImages.splitRows(0.8);
+
+    val modelUntrained = SupportVectorClassifier();
+    val modelTrained = modelUntrained.fit(
+        train.toTabularDataset(targetName = "target")
+    );
+    val score = modelTrained.accuracy(validate);
+
+    val testdata = Table.fromCsvFile("beginner_classification/test.csv");
+    val testdataTransformed = testdata.transformColumn("pixel0", (row) -> row.add(1));
+    val resultTable = modelTrained.predict(testdataTransformed);
+
+    resultTable.toTable().toCsvFile("output/beginner_classification.csv");
+}

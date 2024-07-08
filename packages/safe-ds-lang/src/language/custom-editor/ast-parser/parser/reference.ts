@@ -1,7 +1,7 @@
 import { SdsReference } from "../../../generated/ast.js";
 import { Declaration, DeclarationType } from "./declaration.js";
 import { Utils } from "../utils.js";
-import { FunctionDeclaration } from "../extractor/function.js";
+import { FunctionDeclaration } from "../extractor/functionDeclaration.js";
 
 export const Reference = {
     LOGGING_TAG: "CustomEditor] [AstParser] [Reference",

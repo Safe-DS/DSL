@@ -17,6 +17,9 @@
         "src/**/*.ts",
         "src/**/*.svelte",
         "types/**/*.d.ts",
-        "src/lib/components/nodes/utils.tsx"
+        "src/lib/components/nodes/utils.tsx",
+        "types/error.d.ts",
+        "types/assets.d.ts",
+        "types/model.d.ts"
     ]
 }

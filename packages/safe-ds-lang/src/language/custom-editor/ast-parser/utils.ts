@@ -42,8 +42,7 @@ export class Utils {
             : source;
         Utils.errorList.push({
             action,
-            source: `[${constructedSource}]`,
-            message,
+            message: `[${constructedSource}] ` + message,
         });
         Utils.logger?.error(constructedSource, message);
     }

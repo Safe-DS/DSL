@@ -1,5 +1,4 @@
-export type Error = {
-    action: 'block' | 'notify';
-    source: string;
-    message: string;
-};
+export class Error {
+    public action: 'block' | 'notify';
+    public message: string;
+}

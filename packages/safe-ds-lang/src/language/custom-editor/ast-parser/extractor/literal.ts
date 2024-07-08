@@ -52,11 +52,11 @@ export class Literal {
         }
 
         if (isSdsList(node)) {
-            return new Literal(node.$type, node.$type, text); // Todo: This is a placeholder
+            return new Literal(node.$type, node.$type, text);
         }
 
         if (isSdsMap(node)) {
-            return new Literal(node.$type, node.$type, text); // Todo: This is a placeholder
+            return new Literal(node.$type, node.$type, text);
         }
 
         if (isSdsUnknown(node)) {

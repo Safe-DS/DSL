@@ -26,7 +26,7 @@
                     criticalErrorList.push(error);
                 case 'notify':
                     // Todo: Use the Vs Code Notification instead
-                    console.log(`[${error.source}] ${error.message}`);
+                    console.log(error.message);
             }
         });
     }
@@ -42,7 +42,7 @@
                     <div
                         class="select-text whitespace-pre-wrap text-xl font-bold text-red-600"
                     >
-                        {error.source}
+                        {"AstParser"}
                     </div>
                     <div class="select-text whitespace-pre-wrap text-sm text-gray-300">
                         {error.message}

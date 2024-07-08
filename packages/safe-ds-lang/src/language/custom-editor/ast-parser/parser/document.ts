@@ -11,7 +11,6 @@ import { parseStatement } from "./statement.js";
 const LOGGING_TAG = "CustomEditor] [AstParser] [Document";
 
 export const parseDocument = (document: LangiumDocument<AstNode>): void => {
-    // Todo: properly use these errors
     document.parseResult.lexerErrors.forEach((error) => {
         Utils.log(
             [LOGGING_TAG, "LexerError"],

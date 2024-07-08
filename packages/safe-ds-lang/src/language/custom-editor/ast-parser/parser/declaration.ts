@@ -4,8 +4,8 @@ import {
     isSdsFunction,
     isSdsPlaceholder,
 } from "../../../generated/ast.js";
-import { ClassDeclaration } from "../extractor/class.js";
-import { FunctionDeclaration } from "../extractor/function.js";
+import { ClassDeclaration } from "../extractor/classDeclaration.js";
+import { FunctionDeclaration } from "../extractor/functionDeclaration.js";
 import { Placeholder } from "../extractor/placeholder.js";
 import { Utils } from "../utils.js";
 
