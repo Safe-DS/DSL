@@ -1,7 +1,8 @@
 package smallTest
 
 pipeline smallTest {
-    val labeledImages = Table.fromCsvFile("beginner_classification/train.csv");
+    val path = "beginner_classification/train.csv";
+    val labeledImages = Table.fromCsvFile(path);
     val subsetImages = labeledImages.sliceRows(0, 5000);
     val train, val validate = subsetImages.splitRows(0.8);
 

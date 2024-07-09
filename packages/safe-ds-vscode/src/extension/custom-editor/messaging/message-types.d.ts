@@ -5,7 +5,7 @@
  * in other places.
  */
 
-import { AstInterface } from './getAst.js';
+import { AstInterface } from './global.js';
 
 interface Message {
     command: string;

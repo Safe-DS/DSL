@@ -45,45 +45,18 @@ export class Call {
         }
 
         if (isSdsMemberAccess(node.receiver)) {
+            let self = Call.parseSelf(node.receiver, id);
+            if (self instanceof CustomError) return self;
+
             const functionDeclaration = node.receiver.member.target.ref;
+
             const name = functionDeclaration.name;
 
-            let self: string | undefined = undefined;
-            if (isSdsCall(node.receiver.receiver)) {
-                const call = Call.parse(node.receiver.receiver);
-                if (call instanceof CustomError) return call;
-
-                if (call.resultList.length > 1)
-                    return Utils.pushError(
-                        "To many result",
-                        node.receiver.receiver,
-                    );
-                if (call.resultList.length < 1)
-                    return Utils.pushError(
-                        "Missing result",
-                        node.receiver.receiver,
-                    );
-
-                Edge.create(
-                    Port.fromResult(call.resultList[0]!, call.id),
-                    Port.fromName(id, "self"),
-                );
-            } else if (isSdsReference(node.receiver.receiver)) {
-                const receiver = node.receiver.receiver.target.ref;
-
-                if (isSdsClass(receiver)) {
-                    self = receiver.name;
-                } else if (isSdsPlaceholder(receiver)) {
-                    const placeholder = Placeholder.parse(receiver);
-                    Edge.create(
-                        Port.fromPlaceholder(placeholder),
-                        Port.fromName(id, "self"),
-                    );
-                }
-            }
-
-            const resultListRaw = functionDeclaration.resultList?.results ?? [];
-            const resultList = filterErrors(resultListRaw.map(Result.parse));
+            const resultList = filterErrors(
+                (functionDeclaration.resultList?.results ?? []).map(
+                    Result.parse,
+                ),
+            );
             if (!functionDeclaration.parameterList) {
                 return Utils.pushError(
                     "ParameterList undefined",
@@ -100,13 +73,18 @@ export class Call {
                 );
             for (let i = 0; i < parameterList.length; i++) {
                 const parameter = parameterList[i]!;
-                const argumentIndexMatched = argumentList[i];
-
                 if (parameter instanceof CustomError) return parameter;
+                if (parameter.isConstant)
+                    return Utils.pushError(
+                        "Unexpected constant Parameter",
+                        node.receiver.member.target.ref,
+                    );
+
+                const argumentIndexMatched = argumentList[i];
                 if (argumentIndexMatched instanceof CustomError)
                     return argumentIndexMatched;
 
-                const argumentNameMatch = argumentList.find(
+                const argumentNameMatched = argumentList.find(
                     (argument) =>
                         !(argument instanceof CustomError) &&
                         argument.parameterName === parameter.name,
@@ -114,20 +92,14 @@ export class Call {
 
                 if (
                     argumentIndexMatched &&
-                    argumentNameMatch &&
-                    argumentIndexMatched !== argumentNameMatch
+                    argumentNameMatched &&
+                    argumentIndexMatched !== argumentNameMatched
                 )
                     return Utils.pushError(
                         `To many matches for ${parameter.name}`,
                         node.argumentList,
                     );
-                const argument = argumentIndexMatched ?? argumentNameMatch;
-
-                if (parameter.isConstant)
-                    return Utils.pushError(
-                        "Unexpected constant Parameter",
-                        node.receiver.member.target.ref,
-                    );
+                const argument = argumentIndexMatched ?? argumentNameMatched;
 
                 if (argument) {
                     parameter.argumentText = argument.text;
@@ -204,6 +176,38 @@ export class Call {
         }
 
         return Utils.pushError("Unexpected Error during Call parsing", node);
+    }
+
+    private static parseSelf(node: CallReceiver, id: number) {
+        if (isSdsMemberAccess(node)) {
+            if (isSdsCall(node.receiver)) {
+                const call = Call.parse(node.receiver);
+                if (call instanceof CustomError) return call;
+
+                if (call.resultList.length > 1)
+                    return Utils.pushError("To many result", node.receiver);
+                if (call.resultList.length < 1)
+                    return Utils.pushError("Missing result", node.receiver);
+
+                Edge.create(
+                    Port.fromResult(call.resultList[0]!, call.id),
+                    Port.fromName(id, "self"),
+                );
+            } else if (isSdsReference(node.receiver)) {
+                const receiver = node.receiver.target.ref;
+
+                if (isSdsClass(receiver)) {
+                    return receiver.name;
+                } else if (isSdsPlaceholder(receiver)) {
+                    const placeholder = Placeholder.parse(receiver);
+                    Edge.create(
+                        Port.fromPlaceholder(placeholder),
+                        Port.fromName(id, "self"),
+                    );
+                }
+            }
+        }
+        return undefined;
     }
 }
 

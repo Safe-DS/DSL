@@ -9,7 +9,7 @@
         "allowJs": false,
         "checkJs": false,
         "paths": {
-            "$lib/*": ["src/lib/*"],
+            "$lib/*": ["src/pages/lib/*"],
             "$vscode/*": ["../safe-ds-vscode/src/extension/custom-editor/*"]
         }
     },
@@ -17,8 +17,8 @@
         "src/**/*.ts",
         "src/**/*.svelte",
         "types/**/*.d.ts",
-        "src/lib/components/nodes/utils.tsx",
-        "types/error.d.ts",
+        "src/pages/lib/components/nodes/utils.tsx",
+        "types/global.d.ts",
         "types/assets.d.ts",
         "types/model.d.ts"
     ]

@@ -1,14 +1,12 @@
 import { SafeDsServices } from "../safe-ds-module.js";
 import { GenericRequestType } from "./types.js";
 import { LangiumSharedServices } from "langium/lsp";
-import { AstInterface } from "../../../../safe-ds-vscode/src/extension/custom-editor/messaging/getAst.js";
 import { extname } from "path";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { documentToJson, saveJson } from "./ast-parser/tools/debug-utils.js";
-import { parseDocumentNew } from "./ast-parser-new/main.js";
-import { Utils } from "./ast-parser-new/utils.js";
-
-const LOGGING_TAG = "CustomEditor] [AstParser";
+import { parseDocumentNew } from "./ast-parser/main.js";
+import { Utils } from "./ast-parser/utils.js";
+import { AstInterface } from "./global.js";
 
 const getAstHandler = async (
     message: AstInterface.Message,
@@ -16,48 +14,39 @@ const getAstHandler = async (
     safeDsServices: SafeDsServices,
 ): Promise<AstInterface.Response> => {
     const logger = safeDsServices.communication.MessagingProvider;
+    Utils.initialize(logger, message.uri);
     logger.info("AstParser", `Received request for ${message.uri.fsPath}`);
 
-    const fileExtension = extname(message.uri.path);
     const parseableExtensions = [".sds", ".sdsdev"];
-    if (!parseableExtensions.includes(fileExtension)) {
+    if (!parseableExtensions.includes(extname(message.uri.path))) {
         Utils.log(`Unknown file type <${message.uri.path}>`);
         return { errorList: Utils.errorList };
     }
 
-    logger.info("DEBUG", message.uri.fsPath);
     const document =
         await sharedServices.workspace.LangiumDocuments.getOrCreateDocument(
             message.uri,
         );
-    logger.info("DEBUG", document.uri.fsPath);
+    logger.info("DEBUG Path: ", message.uri.path);
+    logger.info("DEBUG Path: ", document.uri.fsPath);
     await sharedServices.workspace.DocumentBuilder.build([document]);
 
     document.parseResult.lexerErrors.forEach(Utils.pushLexerErrors);
     document.parseResult.parserErrors.forEach(Utils.pushParserErrors);
     if (Utils.errorList.length === 0) {
-        logger.info("AstParser", `Parsing: ${document.uri.fsPath}`);
         parseDocumentNew(document);
         //saveJson(documentToJson(document, 16), "currentDocument");
     }
 
     const ast = JSON.stringify({
-        placeholder: Utils.placeholderList,
-        calls: Utils.callList,
-        genericExpressions: Utils.genericExpressionList,
-        edges: Utils.edgeList,
+        placeholderList: Utils.placeholderList,
+        callList: Utils.callList,
+        genericExpressionList: Utils.genericExpressionList,
+        edgeList: Utils.edgeList,
     });
 
-    return {
-        errorList: [
-            {
-                action: "block",
-                source: `[${LOGGING_TAG}]`,
-                message: `The parsing of the Ast is not yet fully implemented.\nPlease keep calm, and have a cup of tea.\nHere is how far we currenlty are:\n\n${ast}`,
-            },
-            ...Utils.errorList,
-        ],
-    };
+    if (Utils.errorList.length > 0) return { errorList: Utils.errorList };
+    return { ast };
 };
 
 export const GetAst: GenericRequestType = {

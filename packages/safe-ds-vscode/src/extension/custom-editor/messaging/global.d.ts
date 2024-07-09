@@ -1,8 +1,9 @@
-import { Error } from '$editor/types/error.d.ts';
+import { Error } from '$editor/types/error.ts';
+import { Uri } from 'vscode';
 
 export namespace AstInterface {
     export type Message = {
-        uri: vscode.Uri;
+        uri: Uri;
     };
     export type Response = { ast: string; errorList?: never } | { errorList: Error[]; ast?: never };
 }

@@ -34,7 +34,7 @@ export type Datatype =
     | "Unknown"
     | "Union"
     | NamedType
-    | LiteralType;
+    | LiteralDatatype;
 
 export const Type = {
     parse(node: SdsType): Datatype | CustomError {
@@ -76,6 +76,7 @@ export const Type = {
             );
         }
         if (isSdsUnionType(node)) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const parseResult = filterErrors(
                 node.typeArgumentList.typeArguments.map((type) => {
                     return Type.parse(type.value);
@@ -89,7 +90,7 @@ export const Type = {
     },
 };
 
-export type LiteralType =
+export type LiteralDatatype =
     | "Boolean"
     | "Float"
     | "Int"
@@ -100,7 +101,7 @@ export type LiteralType =
     | "Unknown";
 
 export const LiteralType = {
-    parse(node: SdsLiteral): LiteralType {
+    parse(node: SdsLiteral): LiteralDatatype {
         if (isSdsBoolean(node))
             if (
                 isSdsBoolean(node) ||
@@ -111,7 +112,7 @@ export const LiteralType = {
                 isSdsNull(node) ||
                 isSdsString(node)
             ) {
-                return node.$type.slice(3) as unknown as LiteralType;
+                return node.$type.slice(3) as unknown as LiteralDatatype;
             }
         return "Unknown";
     },
