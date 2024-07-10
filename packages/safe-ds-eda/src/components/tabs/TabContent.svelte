@@ -416,6 +416,31 @@
                         </button>
                     {/if}
                 </div>
+                <div class="leftInfoRow">
+                    {#if tab.type !== 'empty' && tab.outdated && !$isInBuildingState}
+                        <button
+                            class="refreshButton"
+                            on:click={() => {
+                                const newTab = getRefreshTabEntry();
+                                if (!newTab) return;
+                                setTabAsGenerating(tab);
+                                executeExternalHistoryEntry(newTab);
+                            }}
+                        >
+                            Refresh <Undo color="var(--dark-color)" />
+                        </button>
+                        <button
+                            class="refreshButton"
+                            on:click={() => {
+                                const newTab = getNewTabEntry();
+                                if (!newTab) return;
+                                executeExternalHistoryEntry(newTab);
+                            }}
+                        >
+                            Refresh in New Tab <Undo color="var(--dark-color)" />
+                        </button>
+                    {/if}
+                </div>
             </div>
             <div class="rightInfo">
                 {#if $tabInfo.type !== 'empty' && ($tabInfo.columnNumber === 'one' || $tabInfo.columnNumber === 'two')}
