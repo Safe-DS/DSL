@@ -385,11 +385,36 @@
                         possibleOptions={possibleTableNames.map((name) => ({ name }))}
                         {changesDisabled}
                     />
-                    <span class="outdated"
-                        >{#if tab.type !== 'empty' && tab.outdated && !$isInBuildingState}
-                            Outdated!
-                        {/if}</span
-                    >
+                    {#if tab.type !== 'empty' && tab.outdated && !$isInBuildingState}
+                        <span class="outdated" title={'New invalidating actions:\n' + tab.outdatedReasons.join('\n')}>
+                            Outdated! <span class="infoIcon">&#8505;</span>
+                        </span>
+                    {/if}
+                </div>
+                <div class="leftInfoRow">
+                    {#if tab.type !== 'empty' && tab.outdated && !$isInBuildingState}
+                        <button
+                            class="refreshButton"
+                            on:click={() => {
+                                const newTab = getRefreshTabEntry();
+                                if (!newTab) return;
+                                setTabAsGenerating(tab);
+                                executeExternalHistoryEntry(newTab);
+                            }}
+                        >
+                            Refresh <Undo color="var(--dark-color)" />
+                        </button>
+                        <button
+                            class="refreshButton"
+                            on:click={() => {
+                                const newTab = getNewTabEntry();
+                                if (!newTab) return;
+                                executeExternalHistoryEntry(newTab);
+                            }}
+                        >
+                            Refresh In new Tab <Undo color="var(--dark-color)" />
+                        </button>
+                    {/if}
                 </div>
                 <div class="leftInfoRow">
                     {#if tab.type !== 'empty' && tab.outdated && !$isInBuildingState}
@@ -573,6 +598,18 @@
         font-size: 16px;
         margin-left: 20px;
         align-self: flex-end;
+        cursor: default;
+    }
+
+    .infoIcon {
+        border-radius: 15px;
+        width: 1em;
+        height: 1em;
+        font-size: 0.9em;
+        background-color: var(--error-color);
+        display: inline-flex;
+        justify-content: center;
+        color: white;
     }
 
     .axis {
@@ -588,7 +625,7 @@
     }
 
     .loading {
-        min-width: 600px;
+        min-width: 700px;
         margin: 0 auto;
         background-color: var(--light-color);
         position: absolute;
@@ -604,7 +641,7 @@
     .content {
         position: relative;
         z-index: 0;
-        min-width: 600px;
+        min-width: 700px;
     }
 
     .generateButton {

@@ -36,8 +36,6 @@
                     Generating...
                 {:else if tabObject.isInGeneration}
                     ...
-                {:else if tabObject.outdated}
-                    Outdated
                 {:else if tabObject.type === 'histogram'}
                     Histogram
                 {:else if tabObject.type === 'boxPlot'}

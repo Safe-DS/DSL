@@ -1,26 +1,34 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { throttle } from 'lodash';
-    import { table, preventClicks, tableLoading, savedColumnWidths, showProfiling } from '../webviewState';
+    import {
+        table,
+        preventClicks,
+        tableLoading,
+        savedColumnWidths,
+        showProfiling,
+        possibleColumnFilters,
+        profilingOutdated,
+        history,
+    } from '../webviewState';
     import CaretIcon from '../icons/Caret.svelte';
     import ErrorIcon from '../icons/Error.svelte';
     import FilterIcon from '../icons/Filter.svelte';
     import type {
         Column,
         OneColumnTabTypes,
-        PossibleColumnFilter,
         PossibleSorts,
         Profiling,
         ProfilingDetail,
-        ProfilingDetailStatistical,
         TwoColumnTabTypes,
     } from '../../types/state.js';
     import ProfilingInfo from './profiling/ProfilingInfo.svelte';
     import { derived, get } from 'svelte/store';
     import ColumnFilters from './column-filters/ColumnFilters.svelte';
     import { imageWidthToHeightRatio } from '../../consts.config';
-    import { addInternalToHistory, executeExternalHistoryEntry } from '../apis/historyApi';
+    import { addInternalToHistory, currentHistoryIndex, executeExternalHistoryEntry } from '../apis/historyApi';
     import { disableNonContextMenuEffects, restoreNonContextMenuEffects } from '../toggleNonContextMenuEffects';
+    import { refreshProfiling } from '../apis/extensionApi';
 
     export let sidebarWidth: number;
 
@@ -506,7 +514,7 @@
         disableNonContextMenuEffects();
     };
 
-    const handleRightClickEnd = function (event: MouseEvent): void {
+    const handleRightClickEnd = function (event?: MouseEvent): void {
         const generalCleanup = function (): void {
             restoreNonContextMenuEffects();
             setTimeout(() => preventClicks.set(false), 100); // To give time for relevant click events to be prevented
@@ -522,7 +530,7 @@
             generalCleanup();
         }
         if (showingFilterContextMenu) {
-            if (event.target instanceof HTMLElement) {
+            if (event && event.target instanceof HTMLElement) {
                 let element = event.target;
 
                 const hasParentWithClass = (elementToScan: HTMLElement, className: string) => {
@@ -681,8 +689,8 @@
     let fullHeadBackground: HTMLElement;
     let profilingInfo: HTMLElement;
 
-    const toggleProfiling = function (): void {
-        if (!$preventClicks) {
+    const toggleProfiling = function (force = false): void {
+        if (force || (!$preventClicks && !$profilingOutdated)) {
             showProfiling.set(!$showProfiling);
             if ($showProfiling) {
                 setTimeout(() => {
@@ -740,50 +748,14 @@
         return false;
     });
 
-    const getPosiibleColumnFilters = function (columnIndex: number): PossibleColumnFilter[] {
-        if (!$table) return [];
-
-        const column = $table.columns[columnIndex];
-
-        if (!column.profiling) return [];
-
-        const possibleColumnFilters: PossibleColumnFilter[] = [];
-
-        if (column.type === 'categorical') {
-            const profilingCategories: ProfilingDetailStatistical[] = column.profiling.other.filter(
-                (profilingItem: ProfilingDetail) =>
-                    profilingItem.type === 'numerical' && profilingItem.interpretation === 'category',
-            ) as ProfilingDetailStatistical[];
-
-            // If there is distinct categories in profiling, use those as filter options, else use search string
-            if (profilingCategories.length > 0) {
-                possibleColumnFilters.push({
-                    type: 'specificValue',
-                    values: ['-'].concat(profilingCategories.map((profilingItem) => profilingItem.name)),
-                });
-            } else {
-                possibleColumnFilters.push({
-                    type: 'searchString',
-                });
-            }
-        } else {
-            const colMax = column.values.reduce(
-                (acc: number, val: number) => Math.max(acc, val),
-                Number.NEGATIVE_INFINITY,
-            );
-            const colMin = column.values.reduce(
-                (acc: number, val: number) => Math.min(acc, val),
-                Number.NEGATIVE_INFINITY,
-            );
-
-            possibleColumnFilters.push({
-                type: 'valueRange',
-                min: colMin,
-                max: colMax,
-            });
+    $: {
+        if ($profilingOutdated && $showProfiling) {
+            toggleProfiling(true);
         }
+    }
 
-        return possibleColumnFilters;
+    const refreshProfilingRequest = function (): void {
+        refreshProfiling($history[$currentHistoryIndex].id);
     };
     //#endregion
 
@@ -852,7 +824,11 @@
                                         class="filterIconWrapper"
                                         on:mousedown={(event) => handleFilterContextMenu(event, index)}
                                     >
-                                        <FilterIcon />
+                                        <FilterIcon
+                                            color={column.appliedFilters.length > 0
+                                                ? 'var(--lightest-color)'
+                                                : 'var(--transparent-medium)'}
+                                        />
                                     </div>
                                     <div
                                         class="sortIconsWrapper"
@@ -861,7 +837,7 @@
                                             : 'none'}
                                     >
                                         <div
-                                            class="sortIconWrapper"
+                                            class="sortIconWrapper sortDesc"
                                             role="none"
                                             on:mousedown={(event) =>
                                                 sortByColumn(
@@ -878,7 +854,7 @@
                                             />
                                         </div>
                                         <div
-                                            class="sortIconWrapper rotate"
+                                            class="sortIconWrapper sortAsc rotate"
                                             role="none"
                                             on:mousedown={(event) =>
                                                 sortByColumn(event, index, column.appliedSort === 'asc' ? null : 'asc')}
@@ -968,24 +944,40 @@
                 <tr class="profilingBannerRow" style:height="{rowHeight}px" style:top="{scrollTop}px">
                     <td
                         class="borderColumn borderRight profilingBanner"
+                        class:profilingOutdated={$profilingOutdated}
                         on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
                     ></td>
                     <td
                         class="profilingBanner"
-                        on:click={toggleProfiling}
+                        class:outdatedProfiling={$profilingOutdated}
+                        on:click={() => toggleProfiling()}
                         on:mousemove={(event) => throttledHandleReorderDragOver(event, 0)}
                         on:mouseup={handleReorderDragEnd}
                     >
                         <div>
-                            <span>{$showProfiling ? 'Hide Profiling' : 'Show Profiling'}</span>
-                            {#if $hasProfilingErrors}
+                            <span title={$profilingOutdated ? 'A manipulating action requires a refresh' : ''}
+                                >{$profilingOutdated
+                                    ? 'Profiling outdated'
+                                    : $showProfiling
+                                      ? 'Hide Profiling'
+                                      : 'Show Profiling'}</span
+                            >
+                            {#if $hasProfilingErrors && !$profilingOutdated}
                                 <div class="errorIconWrapper">
                                     <ErrorIcon />
                                 </div>
                             {/if}
-                            <div class="caretIconWrapper" class:rotate={!$showProfiling}>
-                                <CaretIcon />
-                            </div>
+                            {#if $profilingOutdated}
+                                <button
+                                    class="refreshProfiling"
+                                    title="A manipulating action requires a refresh"
+                                    on:click={refreshProfilingRequest}>Refresh</button
+                                >
+                            {:else}
+                                <div class="caretIconWrapper" class:rotate={!$showProfiling}>
+                                    <CaretIcon />
+                                </div>
+                            {/if}
                         </div>
                     </td>
                     {#each $table.columns as _column, index}
@@ -993,7 +985,8 @@
                             <td
                                 style=" {isReorderDragging && dragStartIndex === index + 1 ? 'display: none;' : ''}"
                                 class="profilingBanner"
-                                on:click={toggleProfiling}
+                                class:outdatedProfiling={$profilingOutdated}
+                                on:click={() => toggleProfiling()}
                                 on:mousemove={(event) => throttledHandleReorderDragOver(event, index + 1)}
                             >
                             </td>
@@ -1001,6 +994,7 @@
                     {/each}
                     <td
                         class="borderColumn profilingBanner"
+                        class:profilingOutdated={$profilingOutdated}
                         on:mousemove={(event) => throttledHandleReorderDragOver(event, $table?.columns.length ?? 0)}
                     ></td>
                 </tr>
@@ -1344,7 +1338,13 @@
     {/if}
     {#if showingFilterContextMenu}
         <div class="contextMenu" bind:this={filterContextMenuElement}>
-            <ColumnFilters possibleFilters={getPosiibleColumnFilters(filterColumnIndex)} />
+            <ColumnFilters
+                possibleFilters={possibleColumnFilters.get($table?.columns[filterColumnIndex].name ?? 'ERROR') ?? []}
+                appliedFilters={$table?.columns[filterColumnIndex].appliedFilters ?? []}
+                columnName={$table?.columns[filterColumnIndex].name ?? 'ERROR'}
+                columnType={$table?.columns[filterColumnIndex].type ?? 'categorical'}
+                on:done={() => handleRightClickEnd()}
+            />
         </div>
     {/if}
 </div>
@@ -1388,7 +1388,7 @@
         top: 0;
         left: 0;
         width: 100%;
-        background-color: white;
+        background-color: var(--lightest-color);
         z-index: 2;
     }
 
@@ -1522,6 +1522,15 @@
         transform: translateY(2px);
     }
 
+    .filterIconWrapper::before {
+        content: '';
+        position: absolute;
+        top: -8px; /* Increase the hitbox area */
+        bottom: -8px;
+        left: -8px;
+        right: -8px;
+    }
+
     .sortIconsWrapper {
         display: inline-flex;
         flex-direction: column;
@@ -1540,6 +1549,24 @@
         justify-content: center;
         height: 100%;
         width: 11px;
+    }
+
+    .sortDesc::before {
+        content: '';
+        position: absolute;
+        top: -4px; /* Increase the hitbox area */
+        left: 0px;
+        right: 0px;
+        bottom: 11px;
+    }
+
+    .sortAsc::before {
+        content: '';
+        position: absolute;
+        top: -4px; /* Increase the hitbox area */
+        left: -8px;
+        right: -8px;
+        bottom: 0px;
     }
 
     .reorderHighlightedLeft {
@@ -1630,6 +1657,27 @@
 
     .profilingBanner:hover {
         cursor: pointer;
+    }
+
+    .outdatedProfiling:hover {
+        cursor: default !important;
+    }
+
+    .refreshProfiling {
+        position: absolute;
+        left: 190px;
+        top: 4px;
+        background-color: var(--error-color);
+        width: 75px;
+        border-radius: 5px;
+        color: var(--lightest-color);
+        height: 65%;
+        font-size: 0.8em;
+        padding: 2px;
+    }
+
+    .refreshProfiling:hover {
+        color: var(--medium-color);
     }
 
     .hiddenColumnHeader {

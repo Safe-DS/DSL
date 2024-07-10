@@ -1,6 +1,5 @@
 <script lang="ts">
     import { table, currentTabIndex, preventClicks, tabs } from '../webviewState';
-    import CaretIcon from '../icons/Caret.svelte';
     import HistoryIcon from '../icons/History.svelte';
     import UndoIcon from '../icons/Undo.svelte';
     import TableIcon from '../icons/Table.svelte';
@@ -9,8 +8,15 @@
     import ColumnCounts from './ColumnCounts.svelte';
     import History from './History.svelte';
     import { redoEntry, redoLastHistoryEntry, undoEntry, undoLastHistoryEntry } from '../apis/historyApi';
+    import { onMount, onDestroy } from 'svelte';
 
     export let width: number;
+
+    $: {
+        if (width <= 150) {
+            historyFocused = false;
+        }
+    }
 
     let historyFocused = false;
 
@@ -19,6 +25,24 @@
             currentTabIndex.update((_cs) => index);
         }
     };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+        if (event.ctrlKey && event.key === 'z') {
+            event.preventDefault();
+            undoLastHistoryEntry();
+        } else if (event.ctrlKey && event.key === 'y') {
+            event.preventDefault();
+            redoLastHistoryEntry();
+        }
+    };
+
+    onMount(() => {
+        window.addEventListener('keydown', handleKeyDown);
+    });
+
+    onDestroy(() => {
+        window.removeEventListener('keydown', handleKeyDown);
+    });
 </script>
 
 <div class="sidebar">
@@ -26,7 +50,7 @@
         {#if width > 109}
             <span class="tableName"
                 >{$table?.name ?? 'Loading ...'}
-                <span class="caret"><CaretIcon /></span>
+                <!-- <span class="caret"><CaretIcon /></span> -->
             </span>
         {/if}
     </div>
