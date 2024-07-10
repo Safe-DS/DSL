@@ -907,7 +907,10 @@ export class RunnerApi {
                     this.tablePlaceholder,
                     newTable,
                     new Map<string, boolean>(
-                        Object.keys(newTable).map((col) => [col, typeof newTable[col][0] === 'number']),
+                        Object.keys(newTable).map((col) => [
+                            col,
+                            typeof newTable[col].find((c: any) => c) === 'number',
+                        ]),
                     ), // temp until schema works as otherwise we would need another execution to get column names
                 ),
             };

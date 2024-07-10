@@ -1388,7 +1388,7 @@
         top: 0;
         left: 0;
         width: 100%;
-        background-color: white;
+        background-color: var(--lightest-color);
         z-index: 2;
     }
 
