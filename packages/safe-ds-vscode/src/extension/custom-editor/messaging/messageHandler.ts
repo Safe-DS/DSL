@@ -1,9 +1,8 @@
 import { Disposable, Uri, Webview } from 'vscode';
-import { ExtensionToWebview, WebviewToExtension } from './message-types.js';
 import { LanguageClient, RequestType } from 'vscode-languageclient/node.js';
 import * as vscode from 'vscode';
 import { GetAst } from '$lang/language/custom-editor/getAst.js';
-import { AstInterface } from './global.ts';
+import { AstInterface, ExtensionToWebview, WebviewToExtension } from '$lang/language/custom-editor/global.ts';
 
 // Todo: This class can technically be reworked a bit
 // maybe just having two static spaces, with messageListener is enough

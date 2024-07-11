@@ -5,11 +5,12 @@ import {
     isSdsExpressionStatement,
     isSdsPlaceholder,
 } from "../../generated/ast.js";
+import { CustomError } from "../global.js";
 import { Call } from "./call.js";
 import { Edge, Port } from "./edge.js";
 import { Expression, GenericExpression } from "./expression.js";
 import { Placeholder } from "./placeholder.js";
-import { CustomError, Utils, zip } from "./utils.js";
+import { Utils, zip } from "./utils.js";
 
 export class Statement {
     public static parse(node: SdsStatement) {

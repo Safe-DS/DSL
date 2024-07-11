@@ -8,4 +8,6 @@ declare module '*.png' {
     export default content;
 }
 
-export type SvgComponent = typeof import('*.svelte');
+declare module '$types/assets' {
+    export type SvgComponent = typeof import('*.svelte');
+}

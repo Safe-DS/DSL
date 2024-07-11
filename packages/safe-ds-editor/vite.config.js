@@ -33,9 +33,10 @@ export default defineConfig({
     },
     resolve: {
         alias: {
-            $lib: path.resolve('./src/lib'),
-            src: path.resolve('./src'),
-            types: path.resolve('./types'),
+            $pages: path.resolve('./src/pages'),
+            $global: path.resolve(
+                '../safe-ds-lang/src/language/custom-editor/global.ts',
+            ),
         },
     },
 });

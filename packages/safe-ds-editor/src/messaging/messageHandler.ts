@@ -1,9 +1,9 @@
-import type { AstInterface } from '$vscode/messaging/global';
 import type {
+    AstInterface,
+    CustomError,
     ExtensionToWebview,
     WebviewToExtension,
-} from '$vscode/messaging/message-types';
-import type { CustomError } from 'types/global';
+} from '$global';
 import type { Ast } from '../../../safe-ds-lang/src/language/custom-editor/global';
 
 export default class MessageHandler {

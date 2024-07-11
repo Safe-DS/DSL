@@ -1,6 +1,7 @@
 import { SdsResult } from "../../generated/ast.js";
+import { CustomError } from "../global.js";
 import { Datatype, Type } from "./type.js";
-import { CustomError, Utils } from "./utils.js";
+import { Utils } from "./utils.js";
 
 export class Result {
     constructor(

@@ -1,7 +1,8 @@
 import { SdsArgument } from "../../generated/ast.js";
+import { CustomError } from "../global.js";
 import { Call } from "./call.js";
 import { Expression, GenericExpression } from "./expression.js";
-import { CustomError, Utils } from "./utils.js";
+import { Utils } from "./utils.js";
 
 export class Argument {
     constructor(

@@ -8,18 +8,11 @@
         "baseUrl": ".",
         "allowJs": false,
         "checkJs": false,
+        "verbatimModuleSyntax": false,
         "paths": {
-            "$lib/*": ["src/pages/lib/*"],
-            "$vscode/*": ["../safe-ds-vscode/src/extension/custom-editor/*"]
+            "$pages/*": ["./src/pages/*"],
+            "$global": ["../safe-ds-lang/src/language/custom-editor/global.ts"]
         }
     },
-    "include": [
-        "src/**/*.ts",
-        "src/**/*.svelte",
-        "types/**/*.d.ts",
-        "src/pages/lib/components/nodes/utils.tsx",
-        "types/global.d.ts",
-        "types/assets.d.ts",
-        "types/model.d.ts"
-    ]
+    "include": ["src/main.ts", "src/**/*.{ts,svelte,tsx}", "types/**/*.d.ts"]
 }

@@ -14,7 +14,8 @@ import {
     SdsLiteral,
     SdsType,
 } from "../../generated/ast.js";
-import { CustomError, filterErrors, Utils } from "./utils.js";
+import { CustomError } from "../global.js";
+import { filterErrors, Utils } from "./utils.js";
 
 // Todo: This file is a mess
 
@@ -41,14 +42,14 @@ export const Type = {
         if (isSdsCallableType(node)) {
             return "Callable";
         }
+        if (isSdsMemberType(node)) {
+            return "Member";
+        }
         if (isSdsLiteralType(node)) {
             const literalList = node.literalList.literals;
             if (literalList.length !== 1)
                 return Utils.pushError("Unknown Literal", node);
             return LiteralType.parse(literalList[0]!);
-        }
-        if (isSdsMemberType(node)) {
-            return "Member";
         }
         if (isSdsNamedType(node)) {
             // Question: Ist es richtig, dass Int, String usw Named Types sind? Wofür sind dasn LiteralTypes?

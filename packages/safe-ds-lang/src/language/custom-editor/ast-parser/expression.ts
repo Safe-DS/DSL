@@ -10,10 +10,11 @@ import {
     isSdsTypeCast,
 } from "../../generated/ast.js";
 import { Call } from "./call.js";
-import { CustomError, Utils } from "./utils.js";
+import { Utils } from "./utils.js";
 import { Edge, Port } from "./edge.js";
 import { Placeholder } from "./placeholder.js";
 import { Datatype, LiteralType, Type } from "./type.js";
+import { CustomError } from "../global.js";
 
 export class GenericExpression {
     public constructor(

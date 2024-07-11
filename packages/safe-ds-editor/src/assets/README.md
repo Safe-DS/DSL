@@ -4,7 +4,7 @@ Bei der Verwendung von .svg Dateien besteht das Problem, dass es sich hier um as
 
 ## Lösungsansatz
 
-Da hier allerdings keine gute Lösung gefunden wurde, werden diese als .svelte Dateien abgespeichert und als Komponenten behandelt. Diese werden jeweils in Objekte gebündelt, wodurch der Wechsel zwischen verschiedenen Asset Gruppen (wie denen für Dark und Light mode) einfacher zu gestalten ist.
+Die Lösung die hier gefunden wurde ist, dass diese als .svelte Dateien abgespeichert und als Komponenten behandelt werden. Diese werden jeweils in Objekte gebündelt, wodurch der Wechsel zwischen verschiedenen Asset Gruppen (wie denen für Dark und Light mode) einfacher zu gestalten ist.
 
 ## Verwendung
 

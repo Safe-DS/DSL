@@ -1,5 +1,4 @@
 import { SafeDsServices } from "../safe-ds-module.js";
-import { GenericRequestType } from "./types.js";
 import { LangiumSharedServices } from "langium/lsp";
 import { extname } from "path";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -7,6 +6,7 @@ import { documentToJson, saveJson } from "./ast-parser/tools/debug-utils.js";
 import { parseDocumentNew } from "./ast-parser/main.js";
 import { Utils } from "./ast-parser/utils.js";
 import { AstInterface } from "./global.js";
+import { GenericRequestType } from "./types.js";
 
 const getAstHandler = async (
     message: AstInterface.Message,

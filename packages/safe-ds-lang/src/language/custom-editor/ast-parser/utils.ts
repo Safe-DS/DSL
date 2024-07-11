@@ -5,13 +5,7 @@ import { Edge } from "./edge.js";
 import { Placeholder } from "./placeholder.js";
 import { GenericExpression } from "./expression.js";
 import { ILexingError, IRecognitionException } from "chevrotain";
-
-export class CustomError {
-    constructor(
-        public readonly action: "block" | "notify",
-        public readonly message: string,
-    ) {}
-}
+import { CustomError } from "../global.js";
 
 export class Utils {
     static lastId: number;

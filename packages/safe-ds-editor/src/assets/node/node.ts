@@ -1,4 +1,4 @@
-import type { SvgComponent } from 'types/assets';
+import type { SvgComponent } from '$types/assets';
 import Extension from './assets/extension.svelte';
 import Warning from './assets/warning.svelte';
 import ExpressionIcon from './assets/expression-icon-old.svelte';

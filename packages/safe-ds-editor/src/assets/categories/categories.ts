@@ -1,4 +1,4 @@
-import type { SvgComponent } from 'types/assets';
+import type { SvgComponent } from '$types/assets';
 import Evaluation from './assets/evaluation.svelte';
 import Export from './assets/export.svelte';
 import Import from './assets/import.svelte';

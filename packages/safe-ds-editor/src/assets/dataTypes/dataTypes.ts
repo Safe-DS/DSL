@@ -1,4 +1,4 @@
-import type { SvgComponent } from 'types/assets';
+import type { SvgComponent } from '$types/assets';
 import Table from './assets/table.svelte';
 import Lambda from './assets/lambda.svelte';
 import Number from './assets/number.svelte';

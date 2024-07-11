@@ -1,4 +1,4 @@
-import type { SvgComponent } from 'types/assets';
+import type { SvgComponent } from '$types/assets';
 import Expand from './assets/expand.svelte';
 import TooltipArrow from './assets/tooltip-arrow.svelte';
 import Edit from './assets/edit.svelte';

@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { ScrollArea } from '$lib/components/ui/scroll-area';
-    import type { CustomError } from '../../../safe-ds-lang/src/language/custom-editor/ast-parser/utils';
+    import type { CustomError } from '$global';
+    import { ScrollArea } from '$pages/components/ui/scroll-area';
     export let errorList: CustomError[];
 </script>
 

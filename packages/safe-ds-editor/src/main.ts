@@ -1,8 +1,8 @@
-import App from './pages/App.svelte';
 import '@xyflow/svelte/dist/style.css'; /* This is for svelte-flow and needs to be imported before tailwind.css */
 import './tailwind.css';
 import MessageHandler from './messaging/messageHandler';
 import type { Ast } from '../../safe-ds-lang/src/language/custom-editor/global';
+import App from '$pages/App.svelte';
 
 const initApp = async () => {
     MessageHandler.initialize();

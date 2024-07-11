@@ -13,6 +13,7 @@ import {
     isSdsPlaceholder,
     isSdsReference,
 } from "../../generated/ast.js";
+import { CustomError } from "../global.js";
 import { Argument } from "./argument.js";
 import { Edge, Port } from "./edge.js";
 import { GenericExpression } from "./expression.js";
@@ -20,7 +21,7 @@ import { Parameter } from "./parameter.js";
 import { Placeholder } from "./placeholder.js";
 import { Result } from "./result.js";
 import { Datatype } from "./type.js";
-import { CustomError, filterErrors, Utils } from "./utils.js";
+import { filterErrors, Utils } from "./utils.js";
 
 // Todo: Some portions of this code should get extracted to increase readability.
 // Absolute mess at the moment
