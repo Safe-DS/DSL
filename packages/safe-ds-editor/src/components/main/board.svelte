@@ -5,121 +5,51 @@
         Controls,
         MiniMap,
         Background,
-        Panel,
         BackgroundVariant,
+        type Edge as XYEdge,
     } from '@xyflow/svelte';
-    import { customColors as colors } from '../../../../tailwind.config';
-    import type { NodeCustom } from './node-types';
-    import NodePlaceholder from '../nodes/node-placeholder.svelte';
-    import NodeStatement from '../nodes/node-statement.svelte';
-    import NodeExpression from '../nodes/node-expression.svelte';
-    import NodeExtension from '../nodes/node-extension.svelte';
-    import { getIconFromDatatype } from 'src/assets/dataTypes/dataTypes';
-    import { categorys } from 'src/assets/categories/categories';
+    import { customColors as colors } from '$/tailwind.config';
+    import NodePlaceholder from '$src/components/nodes/node-placeholder.svelte';
+    import NodeCall from '$src/components/nodes/node-call.svelte';
+    import NodeGenericExpression from '$src/components/nodes/node-generic-expression.svelte';
+    import type { Ast } from '$global';
+    import type { NodeCustom } from '$/src/components/main/customNodeType';
 
-    const parameters: Parameter<DataType>[] = [
-        {
-            name: 'Text Parameter',
-            type: { type: 'string', icon: getIconFromDatatype('string') },
-            value: 'Das hier ist ein String!',
-            optional: false,
-        },
-        {
-            name: 'Zahlen Parameter',
-            type: { type: 'number', icon: getIconFromDatatype('number') },
-            value: '420',
-            optional: false,
-        },
-        {
-            name: 'Lambda Parameter',
-            type: { type: 'lambda', icon: getIconFromDatatype('lambda') },
-            value: '',
-            optional: false,
-        },
-        {
-            name: 'Tabelle Parameter',
-            type: { type: 'table', icon: getIconFromDatatype('table') },
-            value: 'Eingangsfunktion.VariablenName',
-            optional: false,
-        },
-    ];
-
-    const testStatement: Statement = {
-        name: 'getReferenceByNameOrDate',
-        category: { name: 'Modeling', icon: categorys.modeling },
-        parameters: parameters,
-        status: 'done',
-    };
-
-    const testPlaceholder: Placeholder = {
-        name: 'Test',
-        type: { type: 'table', icon: getIconFromDatatype('table') },
-        status: 'done',
-    };
-
-    const testPlaceholder2: Placeholder = {
-        name: 'LongNameThatGetsCutOff',
-        type: { type: 'undefined', icon: undefined },
-        status: 'done',
-    };
-
-    const testExpression: Expression = {
-        status: 'done',
-        text: 'TestvariablenName\n*\n(\n    1\n    +\n    3\n)',
-    };
-
-    const testExtension: Extension = {
-        name: 'testExtension',
-        parameters: parameters,
-        status: 'done',
-    };
-
-    const nodes: Writable<NodeCustom[]> = writable([
-        {
-            id: '0',
-            type: 'statement',
-            data: { statement: testStatement },
-            position: { x: 0, y: 0 },
-        },
-        {
-            id: '1',
-            type: 'placeholder',
-            data: { placeholder: testPlaceholder },
-            position: { x: 0, y: 150 },
-        },
-        {
-            id: '3',
-            type: 'placeholder',
-            data: { placeholder: testPlaceholder2 },
-            position: { x: 0, y: 250 },
-        },
-        {
-            id: '4',
-            type: 'expression',
-            data: { expression: testExpression },
-            position: { x: 300, y: 0 },
-        },
-        {
-            id: '5',
-            type: 'extension',
-            data: { extension: testExtension },
-            position: { x: 300, y: 250 },
-        },
-    ]);
-
-    const edges = writable([]);
+    export let ast: Writable<Ast>;
 
     const nodeTypes = {
-        statement: NodeStatement,
+        call: NodeCall,
         placeholder: NodePlaceholder,
-        expression: NodeExpression,
-        extension: NodeExtension,
+        genericExpression: NodeGenericExpression,
     };
+
+    const nodes = writable<NodeCustom[]>([]);
+    ast.subscribe((ast) => {
+        const nodeList: NodeCustom[] = $ast.callList.map((call) => {
+            return {
+                id: call.id.toString(),
+                type: 'call',
+                data: { call: call },
+                position: { x: 0, y: 0 },
+            };
+        });
+        nodes.set(nodeList);
+    });
+
+    console.log($ast.callList.length);
+
+    const edges = writable<XYEdge[]>([]);
 
     const snapGrid: [number, number] = [20, 20];
 </script>
 
 <div class=" h-full">
+    <button
+        class="pl-52"
+        on:mousedown={(event) => {
+            console.log($ast.callList.length);
+        }}>CLICK ME</button
+    >
     <SvelteFlow
         {nodes}
         {edges}
@@ -127,7 +57,7 @@
         {snapGrid}
         fitView
         proOptions={{ hideAttribution: true }}
-        nodesDraggable={false}
+        nodesDraggable={true}
         on:nodeclick={(event) =>
             console.log('on node click', event.detail.node)}
         on:edgeclick={(event) =>

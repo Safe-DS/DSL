@@ -1,10 +1,8 @@
 import type {
     AstInterface,
-    CustomError,
     ExtensionToWebview,
     WebviewToExtension,
 } from '$global';
-import type { Ast } from '../../../safe-ds-lang/src/language/custom-editor/global';
 
 export default class MessageHandler {
     public static vsocde: {
@@ -20,7 +18,7 @@ export default class MessageHandler {
             const message = event.data as ExtensionToWebview;
             switch (message.command) {
                 case 'SendAst':
-                    // This Message is handled somewhere else
+                    // This Message is handled elsewere
                     break;
                 case 'test':
                     console.log(message.value);
@@ -38,7 +36,7 @@ export default class MessageHandler {
         MessageHandler.vsocde.postMessage(messageObject);
     }
 
-    public static async getAst(): Promise<CustomError[] | Ast> {
+    public static async getAst(): Promise<AstInterface.Response> {
         const response = await new Promise<AstInterface.Response>((resolve) => {
             const responseHandler = (event: any) => {
                 const message = event.data as ExtensionToWebview;
@@ -59,7 +57,6 @@ export default class MessageHandler {
             MessageHandler.vsocde.postMessage(messageObject);
         });
 
-        if (response.errorList) return response.errorList;
-        return response.ast as unknown as Ast;
+        return response;
     }
 }

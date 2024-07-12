@@ -16,7 +16,7 @@
     "devDependencies": {
         "@sveltejs/vite-plugin-svelte": "^3.0.2",
         "@tsconfig/svelte": "^5.0.2",
-        "@xyflow/svelte": "^0.0.36",
+        "@xyflow/svelte": "^0.1.11",
         "autoprefixer": "^10.4.17",
         "clsx": "^2.1.0",
         "concurrently": "^8.2.2",
@@ -39,6 +39,7 @@
         "vite": "^5.0.12"
     },
     "dependencies": {
+        "@safe-ds/lang": ">=0.3.0",
         "bits-ui": "^0.21.7",
         "flatten": "^1.0.3",
         "svelte-radix": "^1.0.1"

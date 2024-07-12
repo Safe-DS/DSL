@@ -11,9 +11,8 @@
     import { Call } from '$global';
 
     type $$Props = NodeProps;
-
-    export let data: { call: Call };
-    const { call } = data;
+    export let data: $$Props['data'];
+    const { call } = data as CallProps;
 
     let expanded: boolean = true;
 </script>

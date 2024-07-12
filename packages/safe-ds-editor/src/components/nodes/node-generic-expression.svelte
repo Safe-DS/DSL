@@ -15,9 +15,8 @@
     import { GenericExpression } from '$global';
 
     type $$Props = NodeProps;
-
-    export let data: { genericExpression: GenericExpression };
-    const { genericExpression } = data;
+    export let data: $$Props['data'];
+    const { genericExpression } = data as GenericExpressionProps;
 
     let expanded: boolean = false;
 </script>

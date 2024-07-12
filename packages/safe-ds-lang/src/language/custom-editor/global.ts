@@ -9,20 +9,20 @@ export { Call } from "./ast-parser/call.js";
 export { GenericExpression } from "./ast-parser/expression.js";
 export { Edge } from "./ast-parser/edge.js";
 
-export type Ast = {
-    placeholderList: Placeholder[];
-    callList: Call[];
-    genericExpressionList: GenericExpression[];
-    edgeList: Edge[];
-};
+export class Ast {
+    constructor(
+        public readonly placeholderList: Placeholder[] = [],
+        public readonly callList: Call[] = [],
+        public readonly genericExpressionList: GenericExpression[] = [],
+        public readonly edgeList: Edge[] = [],
+    ) {}
+}
 
 export namespace AstInterface {
     export type Message = {
         uri: Uri;
     };
-    export type Response =
-        | { ast: string; errorList?: never }
-        | { errorList: CustomError[]; ast?: never };
+    export type Response = { ast: Ast; errorList: CustomError[] };
 }
 
 export class CustomError {

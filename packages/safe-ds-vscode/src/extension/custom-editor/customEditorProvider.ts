@@ -143,7 +143,7 @@ export class SafeDSCustomEditorProvider implements vscode.CustomTextEditorProvid
                     return `<link href="${cssUri}" rel="stylesheet" />`;
                 })}
                 <link href="${styleResetUri}" rel="stylesheet" />
-                <link href="${styleVSCodeUri}" rel="stylesheet" />
+                <!-- <link href="${styleVSCodeUri}" rel="stylesheet" /> -->
 
 				<title>"${title}"</title>
 			</head>

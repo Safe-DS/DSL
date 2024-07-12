@@ -5,7 +5,7 @@ import { extname } from "path";
 import { documentToJson, saveJson } from "./ast-parser/tools/debug-utils.js";
 import { parseDocumentNew } from "./ast-parser/main.js";
 import { Utils } from "./ast-parser/utils.js";
-import { AstInterface } from "./global.js";
+import { Ast, AstInterface } from "./global.js";
 import { GenericRequestType } from "./types.js";
 
 const getAstHandler = async (
@@ -20,15 +20,17 @@ const getAstHandler = async (
     const parseableExtensions = [".sds", ".sdsdev"];
     if (!parseableExtensions.includes(extname(message.uri.path))) {
         Utils.log(`Unknown file type <${message.uri.path}>`);
-        return { errorList: Utils.errorList };
+        return { ast: new Ast(), errorList: Utils.errorList };
     }
 
     const document =
         await sharedServices.workspace.LangiumDocuments.getOrCreateDocument(
             message.uri,
         );
-    logger.info("DEBUG Path: ", message.uri.path);
-    logger.info("DEBUG Path: ", document.uri.fsPath);
+    // logger.info("DEBUG Path: ", message.uri.path);
+    // logger.info("DEBUG Path: ", document.uri.fsPath);
+    // Question: it appears that I am using the getOrCreateDocument method wrong
+    // Use example above
     await sharedServices.workspace.DocumentBuilder.build([document]);
 
     document.parseResult.lexerErrors.forEach(Utils.pushLexerErrors);
@@ -38,15 +40,13 @@ const getAstHandler = async (
         //saveJson(documentToJson(document, 16), "currentDocument");
     }
 
-    const ast = JSON.stringify({
+    const ast: Ast = {
         placeholderList: Utils.placeholderList,
         callList: Utils.callList,
         genericExpressionList: Utils.genericExpressionList,
         edgeList: Utils.edgeList,
-    });
-
-    if (Utils.errorList.length > 0) return { errorList: Utils.errorList };
-    return { ast };
+    };
+    return { ast, errorList: Utils.errorList };
 };
 
 export const GetAst: GenericRequestType = {

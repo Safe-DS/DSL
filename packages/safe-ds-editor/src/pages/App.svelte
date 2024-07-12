@@ -1,34 +1,47 @@
 <script lang="ts">
     import PrimarySidebar from '$src/components/sidebars/PrimarySidebar.svelte';
     import Board from '$src/components/main/board.svelte';
-    import { CustomError, type Ast } from '$global';
-    import { setContext } from 'svelte';
+    import { Ast, CustomError } from '$global';
+    import { onMount, setContext } from 'svelte';
     import ErrorPage from '$pages/ErrorPage.svelte';
+    import MessageHandler from '../messaging/messageHandler';
+    import { writable } from 'svelte/store';
 
-    export let errorList: CustomError[];
-    export let ast: Ast | undefined;
+    MessageHandler.initialize();
+    MessageHandler.listenToMessages();
 
-    function handleError(error: CustomError[]) {
-        error.forEach((error) => {
-            switch (error.action) {
-                case 'block':
-                    errorList.push(error);
-                case 'notify':
-                    // Todo: Use the Vs Code Notification instead
-                    console.log(error.message);
-            }
-        });
+    let ast = writable<Ast>(new Ast());
+    let errorList = writable<CustomError[]>([]);
+
+    async function fetchAst() {
+        const response = await MessageHandler.getAst();
+        errorList.set(response.errorList);
+        ast.set(response.ast);
+    }
+    onMount(async () => {
+        await fetchAst();
+    });
+
+    function handleError(error: CustomError) {
+        if (error.action === 'block')
+            errorList.update((array) => {
+                array.push(error);
+                return array;
+            });
+
+        if (error.action === 'notify') console.log(error.message);
     }
     setContext('handleError', handleError);
 </script>
 
-{#if errorList.length > 0}
-    <ErrorPage {errorList} />
+{#if $errorList.length > 0}
+    <ErrorPage bind:errorList />
 {:else}
     <div class="relative h-full w-full">
-        <PrimarySidebar class="absolute left-0 top-0 z-30" />
+        <div class="absolute left-0 top-0 z-50">{$ast.callList.length}</div>
+        <PrimarySidebar class="absolute left-0 top-10 z-30" />
         <main class="absolute left-0 top-0 h-full w-full">
-            <!-- <Board /> -->
+            <Board {ast} />
         </main>
     </div>
 {/if}

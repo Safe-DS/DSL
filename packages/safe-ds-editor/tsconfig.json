@@ -16,5 +16,5 @@
             "$global": ["../safe-ds-lang/src/language/custom-editor/global.ts"]
         }
     },
-    "include": ["src/**/*.{ts,svelte,tsx}", "types/**/*.d.ts", "src/main.ts"]
+    "include": ["src/**/*.ts", "src/**/*.svelte", "types/**/*.d.ts"]
 }

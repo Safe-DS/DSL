@@ -26,14 +26,16 @@ export default defineConfig({
         rollupOptions: {
             input: '/src/main.ts',
             output: {
+                format: 'cjs',
                 entryFileNames: `custom-editor.js`,
             },
         },
-        // ...unminifyExportedJs, /* Uncomment this to get unmangled and readable js for debugging */
+        //...unminifyExportedJs /* Uncomment this to get unmangled and readable js for debugging */,
     },
     resolve: {
         alias: {
             $: path.resolve('.'),
+            $src: path.resolve('./src'),
             $assets: path.resolve('./src/assets'),
             $pages: path.resolve('./src/pages'),
             $global: path.resolve(
