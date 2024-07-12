@@ -1,21 +1,24 @@
 <script context="module" lang="ts">
-    export type ExpressionProps = { expression: Expression };
+    export type GenericExpressionProps = {
+        genericExpression: GenericExpression;
+    };
 </script>
 
 <script lang="ts">
     import tooltip from '$pages/traits/tooltip';
 
-    import { Handle, Position, type NodeProps } from '@xyflow/svelte';
+    import { Handle, Position, NodeProps } from '@xyflow/svelte';
     import ChevonRight from 'svelte-radix/ChevronRight.svelte';
     import Port from './port.svelte';
     import statusIndicator from '$pages/traits/status-indicator';
-    import { node } from 'src/assets/node/node';
+    import NodeIcon from '$assets/node/nodeIcon.svelte';
     import { split } from 'postcss/lib/list';
+    import { GenericExpression } from '$global';
 
     type $$Props = NodeProps;
 
-    export let data: { expression: Expression };
-    const { expression } = data;
+    export let data: { genericExpression: GenericExpression };
+    const { genericExpression } = data;
 
     let expanded: boolean = false;
 </script>
@@ -26,7 +29,7 @@
     <Port nameNode="expressions-dummy" type="both"></Port>
     <div
         class="w-1 rounded-l-sm"
-        use:statusIndicator={{ status: expression.status }}
+        use:statusIndicator={{ status: 'done' }}
     ></div>
     <div class=" flex-grow">
         <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -40,14 +43,14 @@
                 if (event.key === 'Enter') expanded = !expanded;
             }}
         >
-            <svelte:component
-                this={node.expressionIcon}
-                className="h-12 w-12 stroke-text_main p-1"
+            <NodeIcon
+                className="stroke-text_main h-12 w-12 p-1"
+                name={'genericExpressionIcon'}
             />
         </div>
         {#if expanded}
             <div class=" bg-background_dark grid p-1 pr-3">
-                {#each expression.text.split('\n') as line}
+                {#each genericExpression.text.split('\n') as line}
                     <span class="text-text_secondary whitespace-pre text-sm"
                         >{line}</span
                     >

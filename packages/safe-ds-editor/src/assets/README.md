@@ -4,17 +4,20 @@ Bei der Verwendung von .svg Dateien besteht das Problem, dass es sich hier um as
 
 ## Lösungsansatz
 
-Die Lösung die hier gefunden wurde ist, dass diese als .svelte Dateien abgespeichert und als Komponenten behandelt werden. Diese werden jeweils in Objekte gebündelt, wodurch der Wechsel zwischen verschiedenen Asset Gruppen (wie denen für Dark und Light mode) einfacher zu gestalten ist.
+Die Lösung die hier gefunden wurde ist, dass diese als .svelte Dateien abgespeichert und als Komponenten behandelt werden. Diese werden dann über eine zentrale Komponente zugänglich gemacht, um dynamisch die korrekte SVG Komponente auswählen zu können.
 
 ## Verwendung
 
-Diese Asset Bündel können dann an entsprechender Stelle in Svelte Komponenten importiert werden und mittels des folgenden Syntax verwendet werden:
+Diese Komponente muss mit dem Namen der SVG Komponente konfiguriert werden.
 
-```typescript
-<svelte:component
-    this={categorysDark.evaluation}
-    className="h-5 w-5"
-/>
+```svelte
+<script lang="ts">
+    import CategoryIcon from 'assets/category/categoryIcon.svelte'
+</script>
+
+<div>
+    <CategoryIcon name={"Svg Name"}>
+</div>
 ```
 
 ## Theming

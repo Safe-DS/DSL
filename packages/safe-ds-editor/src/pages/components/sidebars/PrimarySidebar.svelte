@@ -7,11 +7,11 @@
     import { cn } from '../../utils';
     import type { ClassValue } from 'clsx';
     import { Input } from '../ui/input';
-    import { menu } from 'src/assets/menu/menu';
+    import MenuIcon from '$assets/menu/menuIcon.svelte';
+    import { functions } from '$/src/dummyData/functions';
 
     export let className: ClassValue;
     export { className as class };
-    export let categories: [];
 </script>
 
 <div class={cn('h-full', className)}>
@@ -49,7 +49,7 @@
                             </div>
                         </div>
                         <Accordion.Root multiple={true} class="grid gap-2">
-                            {#each categories as category, index}
+                            {#each Object.keys(functions) as categoryName, index}
                                 <Accordion.Item value={index.toString()}>
                                     <Accordion.Trigger
                                         class="text-text_main hover:bg-background_light gap-2 whitespace-nowrap pl-2 text-base font-bold hover:no-underline"
@@ -58,7 +58,7 @@
                                             this={category.icon}
                                             className="h-5 w-5 flex-shrink-0 stroke-text_main"
                                         /> -->
-                                        {'category.name'}
+                                        {categoryName}
                                         <span
                                             class="text-text_secondary text-xs"
                                             >(3)</span
@@ -67,9 +67,9 @@
                                     <Accordion.Content
                                         class=" text-text_main py-2 pl-8"
                                     >
-                                        Item 1<br />
-                                        Item 2<br />
-                                        Item 3<br />
+                                        {#each functions[categoryName] as functionName}
+                                            {functionName}<br />
+                                        {/each}
                                     </Accordion.Content>
                                 </Accordion.Item>
                             {/each}
@@ -96,9 +96,9 @@
                                         >Open</Button.Button
                                     >
                                     <Button.Button variant="destructive">
-                                        <svelte:component
-                                            this={menu.delete}
-                                            className="h-7 w-7 stroke-text_main p-1"
+                                        <MenuIcon
+                                            name={'delete'}
+                                            className={'h-7 w-7 stroke-text_main p-1'}
                                         />
                                     </Button.Button>
                                 </div>
@@ -118,9 +118,9 @@
                                         >Open</Button.Button
                                     >
                                     <Button.Button variant="destructive">
-                                        <svelte:component
-                                            this={menu.delete}
-                                            className="h-7 w-7 stroke-text_main py-1"
+                                        <MenuIcon
+                                            name={'delete'}
+                                            className={'h-7 w-7 stroke-text_main py-1'}
                                         />
                                     </Button.Button>
                                 </div>

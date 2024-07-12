@@ -29,10 +29,13 @@ export default defineConfig({
                 entryFileNames: `custom-editor.js`,
             },
         },
-        // ...unminifyExportedJs, /* Uncomment this to get unmangled and readable js for debugging */
+        target: 'esnext',
+        ...unminifyExportedJs /* Uncomment this to get unmangled and readable js for debugging */,
     },
     resolve: {
         alias: {
+            $: path.resolve('.'),
+            $assets: path.resolve('./src/assets'),
             $pages: path.resolve('./src/pages'),
             $global: path.resolve(
                 '../safe-ds-lang/src/language/custom-editor/global.ts',

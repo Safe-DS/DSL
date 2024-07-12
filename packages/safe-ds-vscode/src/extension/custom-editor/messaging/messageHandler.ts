@@ -3,6 +3,7 @@ import { LanguageClient, RequestType } from 'vscode-languageclient/node.js';
 import * as vscode from 'vscode';
 import { GetAst } from '$lang/language/custom-editor/getAst.js';
 import { AstInterface, ExtensionToWebview, WebviewToExtension } from '$lang/language/custom-editor/global.ts';
+import { safeDsLogger } from '../../helpers/logging.ts';
 
 // Todo: This class can technically be reworked a bit
 // maybe just having two static spaces, with messageListener is enough
@@ -29,8 +30,7 @@ export class MessageHandler {
                 return vscodeWebview.onDidReceiveMessage(async (message: WebviewToExtension) => {
                     switch (message.command) {
                         case 'test':
-                            // Todo: Update print
-                            // logOutput(message.value);
+                            safeDsLogger.info(message.value);
                             break;
                         case 'RequestAst':
                             // Todo: Set the vscode application state as "loading AST" in the bottom bar

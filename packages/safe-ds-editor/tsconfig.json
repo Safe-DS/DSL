@@ -10,9 +10,11 @@
         "checkJs": false,
         "verbatimModuleSyntax": false,
         "paths": {
+            "$/*": ["./*"],
+            "$assets/*": ["./src/assets/*"],
             "$pages/*": ["./src/pages/*"],
             "$global": ["../safe-ds-lang/src/language/custom-editor/global.ts"]
         }
     },
-    "include": ["src/main.ts", "src/**/*.{ts,svelte,tsx}", "types/**/*.d.ts"]
+    "include": ["src/**/*.{ts,svelte,tsx}", "types/**/*.d.ts", "src/main.ts"]
 }

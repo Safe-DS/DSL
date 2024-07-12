@@ -1,8 +1,6 @@
 <script lang="ts">
-    import { categorys } from '../assets/categories/categories';
     import PrimarySidebar from './components/sidebars/PrimarySidebar.svelte';
-    import Grid from './components/main/flow.svelte';
-    import { node } from '../assets/node/node';
+    import Board from './components/main/board.svelte';
     import { CustomError } from '$global';
     import { setContext } from 'svelte';
     import type { Ast } from '../../../safe-ds-lang/src/language/custom-editor/global';
@@ -29,10 +27,9 @@
     <ErrorPage {errorList} />
 {:else}
     <div class="relative h-full w-full">
-        <!-- <PrimarySidebar class="absolute left-0 top-0 z-30" categories={[]}
-        ></PrimarySidebar> -->
+        <PrimarySidebar class="absolute left-0 top-0 z-30" />
         <main class="absolute left-0 top-0 h-full w-full">
-            <!-- <Grid /> -->
+            <!-- <Board /> -->
         </main>
     </div>
 {/if}

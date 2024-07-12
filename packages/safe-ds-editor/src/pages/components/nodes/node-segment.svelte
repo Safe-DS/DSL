@@ -1,26 +1,27 @@
-<script context="module" lang="ts">
-    export type ExtensionProps = { extension: Extension };
-</script>
+<!-- <script context="module" lang="ts">
+    export type ExtensionProps = { extension: Segment };
+</script> -->
 
 <script lang="ts">
-    import tooltip from '$pages/traits/tooltip';
+    // import tooltip from '$pages/traits/tooltip';
 
     import { type NodeProps } from '@xyflow/svelte';
-    import ChevonRight from 'svelte-radix/ChevronRight.svelte';
-    import Port from './port.svelte';
-    import statusIndicator from '$pages/traits/status-indicator';
-    import { menu } from 'src/assets/menu/menu';
-    import Button from '../ui/button/button.svelte';
+    // import ChevonRight from 'svelte-radix/ChevronRight.svelte';
+    // import Port from './port.svelte';
+    // import statusIndicator from '$pages/traits/status-indicator';
+    // import { menu } from 'src/assets/menu/menuIcon.svelte';
+    // import Button from '../ui/button/button.svelte';
 
     type $$Props = NodeProps;
 
-    export let data: { extension: Extension };
-    const { extension } = data;
-    const statement = extension;
-    let expanded: boolean = true;
+    // export let data: { extension: Extension };
+    // const { extension } = data;
+    // const statement = extension;
+    // let expanded: boolean = true;
 </script>
 
-<div
+<div></div>
+<!-- <div
     use:tooltip={{ content: statement.name, delay: 150 }}
     class=" bg-node_main shadow-node w-[160px] cursor-default rounded-sm"
 >
@@ -28,7 +29,6 @@
         use:statusIndicator={{ status: statement.status }}
         class="rounded-sm p-1"
     >
-        <!-- svelte-ignore a11y-no-static-element-interactions -->
         <div
             data-state={expanded ? 'open' : 'closed'}
             class="bg-node_main flex cursor-pointer flex-row items-center p-1 [&[data-state=open]>svg:last-of-type]:rotate-90"
@@ -52,9 +52,9 @@
                     className="h-6 w-6 flex-shrink-0"
                 />
             </Button>
-            <!-- <ChevonRight
+            <ChevonRight
                 class="duration-35 text-text_main mr-1 h-4 w-4 shrink-0 transition-transform focus:outline-none"
-            /> -->
+            /> 
             <span class="text-text_main truncate">{statement.name}</span>
         </div>
 
@@ -112,4 +112,4 @@
             <Port nameNode="testfunction" type="both" margin={2.5}></Port>
         {/if}
     </div>
-</div>
+</div> -->

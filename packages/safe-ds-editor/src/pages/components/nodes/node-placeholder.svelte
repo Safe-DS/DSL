@@ -8,6 +8,7 @@
     import { type NodeProps } from '@xyflow/svelte';
     import Port from './port.svelte';
     import statusIndicator from '$pages/traits/status-indicator';
+    import { Placeholder } from '$global';
 
     type $$Props = NodeProps;
 
@@ -24,18 +25,18 @@
         >{placeholder.name}</span
     >
     <div
-        use:statusIndicator={{ status: placeholder.status }}
+        use:statusIndicator={{ status: 'done' }}
         class=" rounded-placeholderFrame shadow-node justify-center py-1"
     >
         <div class="rounded-placeholderCore bg-node_main relative">
-            {#if placeholder.type.icon}
+            <!-- {#if placeholder.type.icon}
                 <svelte:component
                     this={placeholder.type.icon}
                     className="h-14 w-14 stroke-text_main p-1"
                 />
-            {:else}
-                <div class="h-14 w-14"></div>
-            {/if}
+            {:else} -->
+            <div class="h-14 w-14"></div>
+            <!-- {/if} -->
             <Port nameNode={placeholder.name} type="both"></Port>
         </div>
     </div>

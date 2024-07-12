@@ -7,7 +7,6 @@
     "references": [
         { "path": "./packages/safe-ds-cli/tsconfig.src.json" },
         { "path": "./packages/safe-ds-cli/tsconfig.test.json" },
-        { "path": "./packages/safe-ds-editor/tsconfig.json" },
         { "path": "./packages/safe-ds-eda/tsconfig.json" },
         { "path": "./packages/safe-ds-lang/tsconfig.src.json" },
         { "path": "./packages/safe-ds-lang/tsconfig.test.json" },

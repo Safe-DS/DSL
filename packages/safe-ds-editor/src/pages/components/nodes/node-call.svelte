@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-    export type StatementProps = { statement: Statement };
+    export type CallProps = { call: Call };
 </script>
 
 <script lang="ts">
@@ -9,17 +9,18 @@
     import ChevonRight from 'svelte-radix/ChevronRight.svelte';
     import Port from './port.svelte';
     import statusIndicator from '$pages/traits/status-indicator';
+    import { Call } from '$global';
 
     type $$Props = NodeProps;
 
-    export let data: { statement: Statement };
-    const { statement } = data;
+    export let data: { call: Call };
+    const { call } = data;
 
     let expanded: boolean = true;
 </script>
 
 <div
-    use:tooltip={{ content: statement.name, delay: 150 }}
+    use:tooltip={{ content: call.name, delay: 150 }}
     class=" bg-node_main shadow-node w-[160px] cursor-default rounded-sm"
 >
     <!-- [&[data-state=open]>svg:last-of-type]:rotate-90 -->
@@ -32,19 +33,16 @@
             expanded = !expanded;
         }}
     >
-        <svelte:component
+        <!-- <svelte:component
             this={statement.category.icon}
             className="h-6 w-6 flex-shrink-0 stroke-text_main mr-1"
-        />
+        /> -->
         <!-- <ChevonRight
             class="duration-35 text-text_main mr-1 h-4 w-4 shrink-0 transition-transform focus:outline-none"
         /> -->
-        <span class="text-text_main truncate">{statement.name}</span>
+        <span class="text-text_main truncate">{call.name}</span>
     </div>
-    <div
-        use:statusIndicator={{ status: statement.status }}
-        class=" h-1 w-full"
-    ></div>
+    <div use:statusIndicator={{ status: 'done' }} class=" h-1 w-full"></div>
     {#if expanded}
         <div class=" bg-background_dark grid py-1">
             <div
