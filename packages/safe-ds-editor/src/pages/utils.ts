@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable func-style */
+/* eslint-disable @typescript-eslint/no-shadow */
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { cubicOut } from 'svelte/easing';

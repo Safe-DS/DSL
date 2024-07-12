@@ -1,10 +1,9 @@
 <script lang="ts">
-    import PrimarySidebar from './components/sidebars/PrimarySidebar.svelte';
-    import Board from './components/main/board.svelte';
-    import { CustomError } from '$global';
+    import PrimarySidebar from '$src/components/sidebars/PrimarySidebar.svelte';
+    import Board from '$src/components/main/board.svelte';
+    import { CustomError, type Ast } from '$global';
     import { setContext } from 'svelte';
-    import type { Ast } from '../../../safe-ds-lang/src/language/custom-editor/global';
-    import ErrorPage from './ErrorPage.svelte';
+    import ErrorPage from '$pages/ErrorPage.svelte';
 
     export let errorList: CustomError[];
     export let ast: Ast | undefined;

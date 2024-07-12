@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { CustomError } from '$global';
-    import { ScrollArea } from '$pages/components/ui/scroll-area';
+    import { ScrollArea } from '$src/components/ui/scroll-area';
     export let errorList: CustomError[];
 </script>
 

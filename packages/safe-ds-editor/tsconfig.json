@@ -8,9 +8,9 @@
         "baseUrl": ".",
         "allowJs": false,
         "checkJs": false,
-        "verbatimModuleSyntax": false,
         "paths": {
             "$/*": ["./*"],
+            "$src/*": ["./src/*"],
             "$assets/*": ["./src/assets/*"],
             "$pages/*": ["./src/pages/*"],
             "$global": ["../safe-ds-lang/src/language/custom-editor/global.ts"]

@@ -29,8 +29,7 @@ export default defineConfig({
                 entryFileNames: `custom-editor.js`,
             },
         },
-        target: 'esnext',
-        ...unminifyExportedJs /* Uncomment this to get unmangled and readable js for debugging */,
+        // ...unminifyExportedJs, /* Uncomment this to get unmangled and readable js for debugging */
     },
     resolve: {
         alias: {

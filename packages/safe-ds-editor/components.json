@@ -3,11 +3,11 @@
     "style": "new-york",
     "tailwind": {
         "config": "tailwind.config.js",
-        "css": "src/tailwind.css",
+        "css": "src/global.css",
         "baseColor": "slate"
     },
     "aliases": {
-        "components": "$pages/components",
+        "components": "$src/components",
         "utils": "$pages/utils"
     },
     "typescript": true
