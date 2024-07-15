@@ -3,12 +3,12 @@
 </script>
 
 <script lang="ts">
+    import { Handle, Position, type NodeProps } from '@xyflow/svelte';
     import tooltip from '$src/traits/tooltip';
-    import { type NodeProps } from '@xyflow/svelte';
-    import ChevonRight from 'svelte-radix/ChevronRight.svelte';
-    import Port from '$src/components/nodes/port.svelte';
     import statusIndicator from '$src/traits/status-indicator';
     import { Call } from '$global';
+    import CategoryIcon from '$assets/category/categoryIcon.svelte';
+    import { getCategory } from './utils';
 
     type $$Props = NodeProps;
     export let data: $$Props['data'];
@@ -19,75 +19,59 @@
 
 <div
     use:tooltip={{ content: call.name, delay: 150 }}
-    class=" bg-node_main shadow-node w-[160px] cursor-default rounded-sm"
+    class=" bg-node-normal shadow-node w-[260px] cursor-default rounded-sm pb-2"
 >
-    <!-- [&[data-state=open]>svg:last-of-type]:rotate-90 -->
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <div
-        data-state={expanded ? 'open' : 'closed'}
-        class=" flex cursor-pointer flex-row items-center p-1"
-        on:click={() => {
+    <button
+        class=" flex w-full cursor-pointer flex-row items-center p-1"
+        on:mousedown={() => {
             expanded = !expanded;
         }}
     >
-        <!-- <svelte:component
-            this={statement.category.icon}
-            className="h-6 w-6 flex-shrink-0 stroke-text_main mr-1"
-        /> -->
-        <!-- <ChevonRight
-            class="duration-35 text-text_main mr-1 h-4 w-4 shrink-0 transition-transform focus:outline-none"
-        /> -->
-        <span class="text-text_main truncate">{call.name}</span>
-    </div>
+        <CategoryIcon name={getCategory(call)} className={' w-12 h-12 mr-2 stroke-text-normal '} />
+        <div class="flex flex-col">
+            <span class="text-text-muted truncate text-left text-lg">{call.self}</span>
+            <span class="text-text-normal truncate text-left text-2xl font-bold">{call.name}</span>
+        </div>
+        {#if !call.self}
+            <Handle
+                type="target"
+                position={Position.Left}
+                id="self"
+                class=" absolute top-3 -ml-2.5 h-3 w-3"
+            />
+        {/if}
+    </button>
     <div use:statusIndicator={{ status: 'done' }} class=" h-1 w-full"></div>
     {#if expanded}
-        <div class=" bg-background_dark grid py-1">
-            <div
-                class="text-text_secondary relative w-full justify-center px-1 text-right text-sm"
-            >
-                Testparameter1
-                <Port
-                    nameNode="testfunction"
-                    namePort="Testparameter1"
-                    type="source"
-                ></Port>
-            </div>
-            <div
-                class="text-text_secondary relative w-full justify-center px-1 text-sm"
-            >
-                Testparameter2
-                <Port
-                    nameNode="testfunction"
-                    namePort="Testparameter2"
-                    type="target"
-                ></Port>
-            </div>
-            <div
-                class="text-text_secondary relative w-full justify-center px-1 text-sm"
-            >
-                Testparameter3
-                <Port
-                    nameNode="testfunction"
-                    namePort="Testparameter3"
-                    type="target"
-                ></Port>
-            </div>
-            <div
-                class="text-text_secondary relative w-full justify-center px-1 text-sm"
-            >
-                Testparameter4
-                <Port
-                    nameNode="testfunction"
-                    namePort="Testparameter4"
-                    type="target"
-                    optional={true}
-                ></Port>
-            </div>
+        <div class=" bg-node-dark flex w-full flex-col py-2">
+            {#each call.resultList as result}
+                <div class="text-text-muted relative w-full px-1 text-right text-lg">
+                    {result.name}
+                    <Handle
+                        type="source"
+                        position={Position.Right}
+                        id={result.name}
+                        class=" absolute -mr-2.5 h-3 w-3"
+                    />
+                </div>
+            {/each}
+            {#each call.parameterList as parameter}
+                <div class="text-text-muted relative w-full px-1 text-lg">
+                    {parameter.name}
+                    <Handle
+                        type="target"
+                        position={Position.Left}
+                        id={parameter.name}
+                        class=" absolute -ml-2.5 h-3 w-3"
+                    />
+                </div>
+            {/each}
         </div>
     {/if}
-    <div class="bg-node_main min-h-2 rounded-b-sm"></div>
-    {#if !expanded}
-        <Port nameNode="testfunction" type="both"></Port>
+    {#if !expanded && call.parameterList.length > 0}
+        <Handle type="target" position={Position.Left} class=" absolute -ml-2.5 h-3 w-3" />
+    {/if}
+    {#if !expanded && call.resultList.length > 0}
+        <Handle type="source" position={Position.Right} class=" absolute -mr-2.5 h-3 w-3" />
     {/if}
 </div>

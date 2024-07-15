@@ -1,3 +1,6 @@
+export type NodeStatus = 'ready' | 'queued' | 'done' | 'error';
+
+/* eslint-disable func-style */
 function getStyle(status: NodeStatus): string {
     let className: string;
     switch (status) {
@@ -16,13 +19,10 @@ function getStyle(status: NodeStatus): string {
     }
 }
 
-type statusProps = {
+type StatusProps = {
     status: NodeStatus;
 };
 
-export default function statusIndicator(
-    element: HTMLElement,
-    { status }: statusProps,
-) {
+export default function statusIndicator(element: HTMLElement, { status }: StatusProps) {
     element.className += getStyle(status);
 }

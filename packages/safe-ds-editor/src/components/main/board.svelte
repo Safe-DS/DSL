@@ -8,24 +8,24 @@
         BackgroundVariant,
         type Edge as XYEdge,
     } from '@xyflow/svelte';
-    import { customColors as colors } from '$/tailwind.config';
+    import { colorPallet as colors } from '$/tailwind.config';
     import NodePlaceholder from '$src/components/nodes/node-placeholder.svelte';
     import NodeCall from '$src/components/nodes/node-call.svelte';
     import NodeGenericExpression from '$src/components/nodes/node-generic-expression.svelte';
     import type { Ast } from '$global';
     import type { NodeCustom } from '$/src/components/main/customNodeType';
 
-    export let ast: Writable<Ast>;
+    export let astWritable: Writable<Ast>;
 
     const nodeTypes = {
         call: NodeCall,
-        placeholder: NodePlaceholder,
         genericExpression: NodeGenericExpression,
+        placeholder: NodePlaceholder,
     };
 
     const nodes = writable<NodeCustom[]>([]);
-    ast.subscribe((ast) => {
-        const nodeList: NodeCustom[] = $ast.callList.map((call) => {
+    astWritable.subscribe((ast) => {
+        const callList: NodeCustom[] = ast.callList.map((call) => {
             return {
                 id: call.id.toString(),
                 type: 'call',
@@ -33,10 +33,31 @@
                 position: { x: 0, y: 0 },
             };
         });
-        nodes.set(nodeList);
+        const placeholderList: NodeCustom[] = ast.placeholderList.map((placeholder) => {
+            return {
+                id: placeholder.name,
+                type: 'placeholder',
+                data: { placeholder: placeholder },
+                position: { x: 0, y: 600 },
+            };
+        });
+        const genericExpressionList: NodeCustom[] = ast.genericExpressionList.map(
+            (genericExpression) => {
+                return {
+                    id: genericExpression.id.toString(),
+                    type: 'genericExpression',
+                    data: { genericExpression: genericExpression },
+                    position: { x: 0, y: 300 },
+                };
+            },
+        );
+        nodes.set(
+            ([] as NodeCustom[])
+                .concat(callList.slice(0, 1))
+                .concat(placeholderList.slice(0, 1))
+                .concat(genericExpressionList.slice(0, 1)),
+        );
     });
-
-    console.log($ast.callList.length);
 
     const edges = writable<XYEdge[]>([]);
 
@@ -44,12 +65,7 @@
 </script>
 
 <div class=" h-full">
-    <button
-        class="pl-52"
-        on:mousedown={(event) => {
-            console.log($ast.callList.length);
-        }}>CLICK ME</button
-    >
+    <div class=" text-xl">{$nodes.length}</div>
     <SvelteFlow
         {nodes}
         {edges}
@@ -58,20 +74,18 @@
         fitView
         proOptions={{ hideAttribution: true }}
         nodesDraggable={true}
-        on:nodeclick={(event) =>
-            console.log('on node click', event.detail.node)}
-        on:edgeclick={(event) =>
-            console.log('on edge click', event.detail.edge)}
+        on:nodeclick={(event) => console.log('on node click', event.detail.node)}
+        on:edgeclick={(event) => console.log('on edge click', event.detail.edge)}
     >
         <Controls position="bottom-right" />
         <Background
-            class="bg-background_dark"
-            patternColor="rgba(255, 255, 255, 0)"
+            class=" bg-menu-700"
+            patternColor={colors.grid.patternColor}
             variant={BackgroundVariant.Cross}
         />
         <MiniMap
-            bgColor={colors.grid_background}
-            maskColor={colors.grid_minimap_mask}
+            bgColor={colors.grid.background}
+            maskColor={colors.grid.minimapMask}
             position="top-right"
         />
     </SvelteFlow>

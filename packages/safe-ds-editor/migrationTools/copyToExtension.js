@@ -26,3 +26,5 @@ setTimeout(() => {
             process.exit(1);
         });
 }, 2500);
+
+// old npm run watch script: "watch": "concurrently -n Vite,Nodemon -c blue,red \"vite build --watch\" \"npx nodemon --quiet --watch dist migrationTools/copyToExtension.js\"",

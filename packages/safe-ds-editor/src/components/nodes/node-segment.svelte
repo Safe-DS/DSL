@@ -23,7 +23,7 @@
 <div></div>
 <!-- <div
     use:tooltip={{ content: statement.name, delay: 150 }}
-    class=" bg-node_main shadow-node w-[160px] cursor-default rounded-sm"
+    class=" bg-node-normal shadow-node w-[160px] cursor-default rounded-sm"
 >
     <div
         use:statusIndicator={{ status: statement.status }}
@@ -31,7 +31,7 @@
     >
         <div
             data-state={expanded ? 'open' : 'closed'}
-            class="bg-node_main flex cursor-pointer flex-row items-center p-1 [&[data-state=open]>svg:last-of-type]:rotate-90"
+            class="bg-node-normal flex cursor-pointer flex-row items-center p-1 [&[data-state=open]>svg:last-of-type]:rotate-90"
             on:click={() => {
                 expanded = !expanded;
             }}
@@ -40,7 +40,7 @@
             }}
         >
             <Button
-                class="text-text_main mr-1 h-6 w-6 px-4"
+                class="text-text-normal mr-1 h-6 w-6 px-4"
                 variant="ghost"
                 size="icon"
                 on:click={(event) => {
@@ -53,15 +53,15 @@
                 />
             </Button>
             <ChevonRight
-                class="duration-35 text-text_main mr-1 h-4 w-4 shrink-0 transition-transform focus:outline-none"
+                class="duration-35 text-text-normal mr-1 h-4 w-4 shrink-0 transition-transform focus:outline-none"
             /> 
-            <span class="text-text_main truncate">{statement.name}</span>
+            <span class="text-text-normal truncate">{statement.name}</span>
         </div>
 
         {#if expanded}
-            <div class=" bg-background_dark grid py-1">
+            <div class=" bg-menu-700 grid py-1">
                 <div
-                    class="text-text_secondary relative w-full justify-center px-1 text-right text-sm"
+                    class="text-text-muted relative w-full justify-center px-1 text-right text-sm"
                 >
                     Testparameter1
                     <Port
@@ -72,7 +72,7 @@
                     ></Port>
                 </div>
                 <div
-                    class="text-text_secondary relative w-full justify-center px-1 text-sm"
+                    class="text-text-muted relative w-full justify-center px-1 text-sm"
                 >
                     Testparameter2
                     <Port
@@ -83,7 +83,7 @@
                     ></Port>
                 </div>
                 <div
-                    class="text-text_secondary relative w-full justify-center px-1 text-sm"
+                    class="text-text-muted relative w-full justify-center px-1 text-sm"
                 >
                     Testparameter3
                     <Port
@@ -94,7 +94,7 @@
                     ></Port>
                 </div>
                 <div
-                    class="text-text_secondary relative w-full justify-center px-1 text-sm"
+                    class="text-text-muted relative w-full justify-center px-1 text-sm"
                 >
                     Testparameter4
                     <Port
@@ -107,7 +107,7 @@
                 </div>
             </div>
         {/if}
-        <div class="bg-node_main min-h-2 rounded-b-sm"></div>
+        <div class="bg-node-normal min-h-2 rounded-b-sm"></div>
         {#if !expanded}
             <Port nameNode="testfunction" type="both" margin={2.5}></Port>
         {/if}

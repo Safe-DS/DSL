@@ -24,5 +24,5 @@
 {#if SvgComponent}
     <SvgComponent {className} />
 {:else}
-    <div></div>
+    <div>Category Undefined</div>
 {/if}

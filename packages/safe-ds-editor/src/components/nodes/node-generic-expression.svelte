@@ -7,53 +7,26 @@
 <script lang="ts">
     import tooltip from '$src/traits/tooltip';
     import { Handle, Position, type NodeProps } from '@xyflow/svelte';
-    import ChevonRight from 'svelte-radix/ChevronRight.svelte';
-    import Port from '$src/components/nodes/port.svelte';
     import statusIndicator from '$src/traits/status-indicator';
-    import NodeIcon from '$assets/node/nodeIcon.svelte';
-    import { split } from 'postcss/lib/list';
     import { GenericExpression } from '$global';
 
     type $$Props = NodeProps;
     export let data: $$Props['data'];
     const { genericExpression } = data as GenericExpressionProps;
-
-    let expanded: boolean = false;
 </script>
 
 <div
-    class=" bg-node_main shadow-node flex cursor-default flex-row gap-1 rounded-sm"
+    use:tooltip={{ content: genericExpression.text, delay: 150 }}
+    class=" bg-node-normal shadow-node flex h-20 w-[260px] cursor-default flex-row rounded-sm"
 >
-    <Port nameNode="expressions-dummy" type="both"></Port>
-    <div
-        class="w-1 rounded-l-sm"
-        use:statusIndicator={{ status: 'done' }}
-    ></div>
-    <div class=" flex-grow">
-        <!-- svelte-ignore a11y-no-static-element-interactions -->
-        <div
-            data-state={expanded ? 'open' : 'closed'}
-            class=" flex cursor-pointer flex-row"
-            on:click={() => {
-                expanded = !expanded;
-            }}
-            on:keypress={(event) => {
-                if (event.key === 'Enter') expanded = !expanded;
-            }}
-        >
-            <NodeIcon
-                className="stroke-text_main h-12 w-12 p-1"
-                name={'genericExpressionIcon'}
-            />
+    <Handle type="target" position={Position.Left} class=" absolute -ml-2.5 h-3 w-3" />
+    <Handle type="source" position={Position.Right} class=" absolute -mr-2.5 h-3 w-3" />
+    <div class="w-1 rounded-l-sm" use:statusIndicator={{ status: 'done' }}></div>
+    <div class="flex h-full flex-grow items-center">
+        <div class=" bg-node-dark m-2 w-full p-1 py-3">
+            <span class="text-text-muted w-full whitespace-pre text-left text-lg"
+                >{genericExpression.text}</span
+            >
         </div>
-        {#if expanded}
-            <div class=" bg-background_dark grid p-1 pr-3">
-                {#each genericExpression.text.split('\n') as line}
-                    <span class="text-text_secondary whitespace-pre text-sm"
-                        >{line}</span
-                    >
-                {/each}
-            </div>
-        {/if}
     </div>
 </div>

@@ -38,10 +38,10 @@
     <ErrorPage bind:errorList />
 {:else}
     <div class="relative h-full w-full">
-        <div class="absolute left-0 top-0 z-50">{$ast.callList.length}</div>
+        <!-- <div class="absolute left-0 top-0 z-50">{$ast.callList.length}</div> -->
         <PrimarySidebar class="absolute left-0 top-10 z-30" />
         <main class="absolute left-0 top-0 h-full w-full">
-            <Board {ast} />
+            <Board astWritable={ast} />
         </main>
     </div>
 {/if}

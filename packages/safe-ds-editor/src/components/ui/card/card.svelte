@@ -10,10 +10,7 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
-    class={cn(
-        'bg-background_light text-text_main rounded-lg border shadow',
-        className,
-    )}
+    class={cn('bg-menu-400 text-text-normal rounded-lg border shadow', className)}
     {...$$restProps}
     on:click
     on:focusin

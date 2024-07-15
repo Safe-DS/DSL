@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-shadow */
+/* eslint-disable func-style */
 function getStyle(): string {
     const className =
-        'absolute bg-neutral-700 text-text_main p-1 -top-12 left-1/2 transform -translate-x-1/2';
+        'absolute bg-menu-200 text-text-normal text-3xl p-1 -top-16 left-1/2 transform -translate-x-1/2';
     return className;
 }
 
@@ -17,17 +19,14 @@ type TooltipProps = {
     delay: number;
 };
 
-export default function tooltip(
-    element: HTMLSpanElement,
-    { content, delay = 0 }: TooltipProps,
-) {
+export default function tooltip(element: HTMLSpanElement, { content, delay = 0 }: TooltipProps) {
     const tooltip: HTMLElement = createTooltip(content);
     element.appendChild(tooltip);
 
     let timeoutId: number | null = null;
     let dragging: boolean = false;
 
-    function mouseEnter(event: MouseEvent) {
+    function mouseEnter() {
         if (dragging) {
             return;
         }
@@ -36,7 +35,7 @@ export default function tooltip(
         }, delay);
     }
 
-    function mouseLeave(event: MouseEvent) {
+    function mouseLeave() {
         if (timeoutId) {
             clearTimeout(timeoutId);
             timeoutId = null;
@@ -44,7 +43,7 @@ export default function tooltip(
         tooltip.style.display = 'none';
     }
 
-    function mouseDown(event: MouseEvent) {
+    function mouseDown() {
         dragging = true;
         if (timeoutId) {
             clearTimeout(timeoutId);
@@ -53,7 +52,7 @@ export default function tooltip(
         tooltip.style.display = 'none';
     }
 
-    function pointerUp(event: MouseEvent) {
+    function pointerUp() {
         dragging = false;
     }
 
@@ -94,7 +93,7 @@ transform="rotate(180)"
     >
         <g
             id="drop"
-            class="fill-neutral-700"
+            class="fill-menu-200"
             transform="translate(32.000000, 42.666667)"
         >
             <path

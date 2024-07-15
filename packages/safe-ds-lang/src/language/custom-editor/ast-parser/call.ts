@@ -151,8 +151,8 @@ export class Call {
 
         if (isSdsReference(node.receiver)) {
             const classDeclaration = node.receiver.target.ref;
-            const self = undefined;
-            const name = classDeclaration.name;
+            const self = classDeclaration.name;
+            const name = "new";
 
             // Question: Ist die ParameterList einer Class Declaration die Parameterlist für den Konstruktor?
             if (!classDeclaration.parameterList)

@@ -1,6 +1,7 @@
-type direction = 'top' | 'right' | 'left' | 'bottom';
+/* eslint-disable func-style */
+type Direction = 'top' | 'right' | 'left' | 'bottom';
 
-function getStyle(direction: direction): string {
+function getStyle(direction: Direction): string {
     switch (direction) {
         case 'top':
             return 'absolute z-50 w-full h-3 cursor-ns-resize -top-1 left-0';
@@ -13,12 +14,12 @@ function getStyle(direction: direction): string {
     }
 }
 
-type resizeProps = {
-    sides: direction[];
+type ResizeProps = {
+    sides: Direction[];
 };
 
-export default function resize(element: HTMLElement, { sides }: resizeProps) {
-    function createDiv(direction: direction): HTMLDivElement {
+export default function resize(element: HTMLElement, { sides }: ResizeProps) {
+    function createDiv(direction: Direction): HTMLDivElement {
         const div = document.createElement('div');
         div.dataset.direction = direction;
         div.className = getStyle(direction);
@@ -70,7 +71,7 @@ export default function resize(element: HTMLElement, { sides }: resizeProps) {
     function onMove(event: MouseEvent) {
         if (!active) return;
 
-        const direction: direction = active.dataset.direction! as direction;
+        const direction: Direction = active.dataset.direction! as Direction;
         let delta;
 
         switch (direction) {

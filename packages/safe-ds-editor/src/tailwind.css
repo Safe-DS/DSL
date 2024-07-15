@@ -73,7 +73,7 @@
         @apply border-border;
     }
     body {
-        @apply bg-background_dark text-text_main;
+        @apply bg-menu-700 text-text-normal;
         width: 100vw;
         height: 100vh;
     }

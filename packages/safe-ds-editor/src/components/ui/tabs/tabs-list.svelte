@@ -10,7 +10,7 @@
 
 <TabsPrimitive.List
     class={cn(
-        'bg-background_light text-text_secondary inline-flex h-9 items-center justify-center rounded-lg p-1',
+        'bg-menu-400 text-text-muted inline-flex h-9 items-center justify-center rounded-lg p-1',
         className,
     )}
     {...$$restProps}

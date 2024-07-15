@@ -1,18 +1,35 @@
 import { fontFamily } from 'tailwindcss/defaultTheme';
 
-export const customColors = {
-    background_dark: 'rgba(30, 30, 30, 1)',
-    background_mid: 'rgba(37, 37, 38, 1)',
-    background_light: 'rgba(42, 45, 46, 1)',
+export const colorPallet = {
+    grid: {
+        background: 'rgba(30, 30, 30, 1)',
+        minimapMask: 'rgba(42, 45, 46, 0.5)',
+        patternColor: 'rgba(255, 255, 255, 0)',
+    },
 
-    grid_background: 'rgba(30, 30, 30, 1)',
-    grid_minimap_mask: 'rgba(42, 45, 46, 0.5)',
+    node: {
+        normal: '#404040',
+        dark: '#1E1E1E',
+    },
 
-    node_main: 'rgba(64, 64, 64, 1)',
-    node_secondary: 'rgba(30, 30, 30, 1)',
+    menu: {
+        50: '#a7a7a8',
+        100: '#7c7c7c',
+        200: '#505051',
+        300: '#3a3a3b',
+        400: '#2a2d2e', // VsCode Light
+        500: '#252526', // VsCode Mid
+        600: '#212122',
+        700: '#1E1E1E', // VsCode Dark
+        800: '#161616',
+        900: '#0f0f0f',
+    },
 
-    text_main: 'rgba(204, 204, 204, 1)',
-    text_secondary: 'rgba(170, 170, 170, 1)',
+    text: {
+        highligh: '#DDDDDD',
+        normal: '#CCCCCC',
+        muted: '#AAAAAA',
+    },
 };
 
 /** @type {import('tailwindcss').Config} */
@@ -36,7 +53,7 @@ const config = {
                 35: '35ms',
             },
             colors: {
-                ...customColors,
+                ...colorPallet,
                 border: 'hsl(var(--border) / <alpha-value>)',
                 input: 'hsl(var(--input) / <alpha-value>)',
                 ring: 'hsl(var(--ring) / <alpha-value>)',
@@ -44,18 +61,15 @@ const config = {
                 foreground: 'hsl(var(--foreground) / <alpha-value>)',
                 primary: {
                     DEFAULT: 'hsl(var(--primary) / <alpha-value>)',
-                    foreground:
-                        'hsl(var(--primary-foreground) / <alpha-value>)',
+                    foreground: 'hsl(var(--primary-foreground) / <alpha-value>)',
                 },
                 secondary: {
                     DEFAULT: 'hsl(var(--secondary) / <alpha-value>)',
-                    foreground:
-                        'hsl(var(--secondary-foreground) / <alpha-value>)',
+                    foreground: 'hsl(var(--secondary-foreground) / <alpha-value>)',
                 },
                 destructive: {
                     DEFAULT: 'hsl(var(--destructive) / <alpha-value>)',
-                    foreground:
-                        'hsl(var(--destructive-foreground) / <alpha-value>)',
+                    foreground: 'hsl(var(--destructive-foreground) / <alpha-value>)',
                 },
                 muted: {
                     DEFAULT: 'hsl(var(--muted) / <alpha-value>)',
@@ -67,8 +81,7 @@ const config = {
                 },
                 popover: {
                     DEFAULT: 'hsl(var(--popover) / <alpha-value>)',
-                    foreground:
-                        'hsl(var(--popover-foreground) / <alpha-value>)',
+                    foreground: 'hsl(var(--popover-foreground) / <alpha-value>)',
                 },
                 card: {
                     DEFAULT: 'hsl(var(--card) / <alpha-value>)',
