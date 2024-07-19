@@ -41,6 +41,7 @@
     "dependencies": {
         "@safe-ds/lang": ">=0.3.0",
         "bits-ui": "^0.21.7",
+        "elkjs": "^0.9.3",
         "flatten": "^1.0.3",
         "svelte-radix": "^1.0.1"
     }

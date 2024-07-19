@@ -1,8 +1,4 @@
-import type {
-    AstInterface,
-    ExtensionToWebview,
-    WebviewToExtension,
-} from '$global';
+import type { AstInterface, ExtensionToWebview, WebviewToExtension } from '$global';
 
 export default class MessageHandler {
     public static vsocde: {

@@ -7,6 +7,7 @@ import {
     isSdsLiteral,
     isSdsPlaceholder,
     isSdsPrefixOperation,
+    isSdsReference,
     isSdsTypeCast,
 } from "../../generated/ast.js";
 import { Call } from "./call.js";
@@ -26,8 +27,10 @@ export class GenericExpression {
 
 export class Expression {
     public static parse(node: SdsExpression) {
-        if (isSdsCall(node)) {
-            return Call.parse(node);
+        if (isSdsCall(node)) return Call.parse(node);
+
+        if (isSdsReference(node) && isSdsPlaceholder(node.target.ref)) {
+            return Placeholder.parse(node.target.ref);
         }
 
         if (!node.$cstNode) return Utils.pushError("Missing CstNode", node);
@@ -43,7 +46,7 @@ export class Expression {
         for (const child of children) {
             if (isSdsPlaceholder(child)) {
                 Edge.create(
-                    Port.fromPlaceholder(Placeholder.parse(child)),
+                    Port.fromPlaceholder(Placeholder.parse(child), false),
                     Port.fromGenericExpression(genericExpression, true),
                 );
             }
@@ -55,6 +58,7 @@ export class Expression {
 }
 
 // Question: Ask if there already exists a solution for this
+// safe-ds-type-computer
 const getType = (node: Exclude<SdsExpression, SdsClass>): Datatype => {
     if (isSdsLiteral(node)) return LiteralType.parse(node);
     if (isSdsInfixOperation(node)) return "Float";

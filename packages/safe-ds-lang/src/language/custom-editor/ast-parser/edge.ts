@@ -19,34 +19,37 @@ export class Port {
     public static readonly LOGGING_TAG = "CustomEditor] [AstParser] [Port";
 
     private constructor(
-        public readonly nodeId: number,
+        public readonly nodeId: string,
         public readonly portIdentifier: string,
     ) {}
 
     public static fromName = (nodeId: number, name: string): Port => {
-        return new Port(nodeId, name);
+        return new Port(nodeId.toString(), name);
     };
 
-    public static fromPlaceholder = (placeholder: Placeholder): Port => {
-        return new Port(-1, placeholder.name);
+    public static fromPlaceholder = (
+        placeholder: Placeholder,
+        input: boolean,
+    ): Port => {
+        return new Port(placeholder.name, input ? "target" : "source");
     };
 
     public static fromResult = (result: Result, nodeId: number): Port => {
-        return new Port(nodeId, result.name);
+        return new Port(nodeId.toString(), result.name);
     };
 
     public static fromParameter = (
         parameter: Parameter,
         nodeId: number,
     ): Port => {
-        return new Port(nodeId, parameter.name);
+        return new Port(nodeId.toString(), parameter.name);
     };
 
     public static fromGenericExpression(
         node: GenericExpression,
         input: boolean,
     ) {
-        return new Port(node.id, input ? "input" : "output");
+        return new Port(node.id.toString(), input ? "target" : "source");
     }
 
     public static isPortList(object: any): object is Port[] {

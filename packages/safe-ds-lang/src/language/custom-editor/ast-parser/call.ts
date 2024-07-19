@@ -112,7 +112,7 @@ export class Call {
                                 node.argumentList,
                             );
                         Edge.create(
-                            Port.fromResult(call.resultList[0]!, id),
+                            Port.fromResult(call.resultList[0]!, call.id),
                             Port.fromParameter(parameter, id),
                         );
                     }
@@ -120,6 +120,13 @@ export class Call {
                         const experession = argument.reference;
                         Edge.create(
                             Port.fromGenericExpression(experession, false),
+                            Port.fromParameter(parameter, id),
+                        );
+                    }
+                    if (argument.reference instanceof Placeholder) {
+                        const placeholder = argument.reference;
+                        Edge.create(
+                            Port.fromPlaceholder(placeholder, false),
                             Port.fromParameter(parameter, id),
                         );
                     }
@@ -154,7 +161,6 @@ export class Call {
             const self = classDeclaration.name;
             const name = "new";
 
-            // Question: Ist die ParameterList einer Class Declaration die Parameterlist für den Konstruktor?
             if (!classDeclaration.parameterList)
                 return Utils.pushError(
                     "Missing constructor parameters",
@@ -164,7 +170,9 @@ export class Call {
                 Parameter.parse,
             );
             // Todo: This typecast is technically invalid, but it shouldn't matter, as all the classes should by part of the datatype namedtype type
-            const resultList = [new Result("new", name as Datatype)];
+            const resultList = [
+                new Result("new", classDeclaration.name as Datatype),
+            ];
             const call = new Call(
                 id,
                 name,
@@ -202,7 +210,7 @@ export class Call {
                 } else if (isSdsPlaceholder(receiver)) {
                     const placeholder = Placeholder.parse(receiver);
                     Edge.create(
-                        Port.fromPlaceholder(placeholder),
+                        Port.fromPlaceholder(placeholder, false),
                         Port.fromName(id, "self"),
                     );
                 }

@@ -1,13 +1,18 @@
-import { SdsArgument } from "../../generated/ast.js";
+import { isSdsLiteral, SdsArgument } from "../../generated/ast.js";
 import { CustomError } from "../global.js";
 import { Call } from "./call.js";
+import { Placeholder } from "./placeholder.js";
 import { Expression, GenericExpression } from "./expression.js";
 import { Utils } from "./utils.js";
 
 export class Argument {
     constructor(
         public readonly text: string,
-        public readonly reference: GenericExpression | Call | undefined,
+        public readonly reference:
+            | GenericExpression
+            | Call
+            | Placeholder
+            | undefined,
         public readonly parameterName?: string,
     ) {}
 
@@ -15,7 +20,10 @@ export class Argument {
         if (!node.value.$cstNode)
             return Utils.pushError("CstNode missing", node.value);
         const text = node.value.$cstNode.text;
-        const expression = Expression.parse(node.value);
+
+        let expression;
+        if (!isSdsLiteral(node.value))
+            expression = Expression.parse(node.value);
         if (expression instanceof CustomError) return expression;
 
         if (node.parameter && !node.parameter.ref)

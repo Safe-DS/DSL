@@ -4,17 +4,17 @@
     import Segment from './segment.svelte';
     import Warning from './warning.svelte';
 
-    const svgMap: { [key: string]: typeof Warning } = {
+    const svgMap: { [key: string]: typeof GenericExpression } = {
         expressionIcon: GenericExpression,
         expressionIconOld: GenericExpressionOld,
         warning: Warning,
         extension: Segment,
     };
 
-    export let name;
+    export let name: string;
     export let className = '';
 
-    $: SvgComponent = svgMap[name];
+    const SvgComponent = svgMap[name.toLowerCase()];
 </script>
 
 {#if SvgComponent}

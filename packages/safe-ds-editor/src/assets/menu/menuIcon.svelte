@@ -13,10 +13,10 @@
         tooltipArrow: TooltipArrow,
     };
 
-    export let name;
+    export let name: string;
     export let className = '';
 
-    $: SvgComponent = svgMap[name];
+    const SvgComponent = svgMap[name.toLowerCase()];
 </script>
 
 {#if SvgComponent}

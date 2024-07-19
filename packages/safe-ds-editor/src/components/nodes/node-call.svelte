@@ -29,7 +29,7 @@
     >
         <CategoryIcon name={getCategory(call)} className={' w-12 h-12 mr-2 stroke-text-normal '} />
         <div class="flex flex-col">
-            <span class="text-text-muted truncate text-left text-lg">{call.self}</span>
+            <span class="text-text-muted truncate text-left text-lg">{call.self ?? ''}</span>
             <span class="text-text-normal truncate text-left text-2xl font-bold">{call.name}</span>
         </div>
         {#if !call.self}

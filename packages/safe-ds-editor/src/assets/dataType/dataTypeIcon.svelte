@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { cn } from '$/src/pages/utils';
     import Lambda from './lambda.svelte';
     import Number from './number.svelte';
     import String from './string.svelte';
@@ -11,14 +12,16 @@
         table: Table,
     };
 
-    export let name;
+    export let name: string;
     export let className = '';
 
-    $: SvgComponent = svgMap[name];
+    const SvgComponent = svgMap[name.toLowerCase()];
 </script>
 
 {#if SvgComponent}
     <SvgComponent {className} />
 {:else}
-    <div></div>
+    <div class={cn(' flex h-full w-full items-center justify-center text-center', className)}>
+        {name}
+    </div>
 {/if}

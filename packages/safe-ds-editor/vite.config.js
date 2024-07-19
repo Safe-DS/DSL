@@ -38,9 +38,7 @@ export default defineConfig({
             $src: path.resolve('./src'),
             $assets: path.resolve('./src/assets'),
             $pages: path.resolve('./src/pages'),
-            $global: path.resolve(
-                '../safe-ds-lang/src/language/custom-editor/global.ts',
-            ),
+            $global: path.resolve('../safe-ds-lang/src/language/custom-editor/global.ts'),
         },
     },
 });

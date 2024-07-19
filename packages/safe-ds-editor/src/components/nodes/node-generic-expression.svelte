@@ -19,8 +19,8 @@
     use:tooltip={{ content: genericExpression.text, delay: 150 }}
     class=" bg-node-normal shadow-node flex h-20 w-[260px] cursor-default flex-row rounded-sm"
 >
-    <Handle type="target" position={Position.Left} class=" absolute -ml-2.5 h-3 w-3" />
-    <Handle type="source" position={Position.Right} class=" absolute -mr-2.5 h-3 w-3" />
+    <Handle type="target" id="target" position={Position.Left} class=" absolute -ml-2.5 h-3 w-3" />
+    <Handle type="source" id="source" position={Position.Right} class=" absolute -mr-2.5 h-3 w-3" />
     <div class="w-1 rounded-l-sm" use:statusIndicator={{ status: 'done' }}></div>
     <div class="flex h-full flex-grow items-center">
         <div class=" bg-node-dark m-2 w-full p-1 py-3">

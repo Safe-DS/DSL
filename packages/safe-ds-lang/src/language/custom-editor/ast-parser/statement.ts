@@ -45,7 +45,7 @@ export class Statement {
                     ([result, assignee]) => {
                         Edge.create(
                             Port.fromResult(result, expression.id),
-                            Port.fromPlaceholder(assignee),
+                            Port.fromPlaceholder(assignee, true),
                         );
                         assignee.type = result.type;
                     },
@@ -60,7 +60,20 @@ export class Statement {
                 const assignee = assigneeList[0]!;
                 Edge.create(
                     Port.fromGenericExpression(expression, false),
-                    Port.fromPlaceholder(assignee),
+                    Port.fromPlaceholder(assignee, true),
+                );
+                assignee.type = expression.type;
+            }
+            if (expression instanceof Placeholder) {
+                if (assigneeList.length > 1)
+                    return Utils.pushError(
+                        "To many assignees",
+                        node.assigneeList,
+                    );
+                const assignee = assigneeList[0]!;
+                Edge.create(
+                    Port.fromPlaceholder(expression, false),
+                    Port.fromPlaceholder(assignee, true),
                 );
                 assignee.type = expression.type;
             }

@@ -9,6 +9,11 @@ export class Placeholder {
     ) {}
 
     public static parse(node: SdsPlaceholder) {
+        const match = Utils.placeholderList.find(
+            (placeholder) => placeholder.name === node.name,
+        );
+        if (match) return match;
+
         const placeholder = new Placeholder(node.name, "Unknown");
         Utils.placeholderList.push(placeholder);
         return placeholder;

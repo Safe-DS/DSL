@@ -7,6 +7,7 @@
     import { Handle, Position, type NodeProps } from '@xyflow/svelte';
     import statusIndicator from '$src/traits/status-indicator';
     import { Placeholder } from '$global';
+    import DataTypeIcon from '$/src/assets/dataType/dataTypeIcon.svelte';
 
     type $$Props = NodeProps;
     export let data: $$Props['data'];
@@ -26,23 +27,26 @@
     <span
         class="text-text-normal relative -left-6 block w-[120px] {isHovered
             ? ''
-            : 'truncate'} text-center text-xl font-bold">testdataTransformed</span
+            : 'truncate'} text-center text-xl font-bold">{placeholder.name}</span
     >
     <div
         use:statusIndicator={{ status: 'done' }}
         class=" rounded-placeholderFrame shadow-node justify-center py-1"
     >
         <div class="rounded-placeholderCore bg-node-normal relative">
-            <!-- {#if placeholder.type.icon}
-                <svelte:component
-                    this={placeholder.type.icon}
-                    className="h-14 w-14 stroke-text-normal p-1"
-                />
-            {:else} -->
-            <div class="h-20 w-24"></div>
-            <!-- {/if} -->
-            <Handle type="target" position={Position.Left} class=" absolute -ml-2.5 h-3 w-3" />
-            <Handle type="source" position={Position.Right} class=" absolute -mr-2.5 h-3 w-3" />
+            <DataTypeIcon name={placeholder.type} className={'h-20 w-24 stroke-text-normal p-1'} />
+            <Handle
+                type="target"
+                id="target"
+                position={Position.Left}
+                class=" absolute -ml-2.5 h-3 w-3"
+            />
+            <Handle
+                type="source"
+                id="source"
+                position={Position.Right}
+                class=" absolute -mr-2.5 h-3 w-3"
+            />
         </div>
     </div>
 </div>
