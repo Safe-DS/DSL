@@ -16,8 +16,6 @@ export class Edge {
 }
 
 export class Port {
-    public static readonly LOGGING_TAG = "CustomEditor] [AstParser] [Port";
-
     private constructor(
         public readonly nodeId: string,
         public readonly portIdentifier: string,

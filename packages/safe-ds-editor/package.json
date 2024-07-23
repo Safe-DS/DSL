@@ -39,6 +39,7 @@
         "vite": "^5.0.12"
     },
     "dependencies": {
+        "@rollup/rollup-linux-x64-gnu": "^4.19.0",
         "@safe-ds/lang": ">=0.3.0",
         "bits-ui": "^0.21.7",
         "elkjs": "^0.9.3",

@@ -17,7 +17,7 @@
 <div class={cn('h-full', className)}>
     <div class="relative z-10 h-full w-[270px]" use:resize={{ sides: ['right'] }}>
         <div class=" bg-menu-500 flex h-full w-full flex-col gap-3 overflow-hidden px-2">
-            <h2 class="text-text-normal text-2xl font-bold">Functions</h2>
+            <!-- <h2 class="text-text-normal text-2xl font-bold">Functions</h2> -->
 
             <Tabs.Root value="nodes" class="w-full">
                 <Tabs.List class="w-full">

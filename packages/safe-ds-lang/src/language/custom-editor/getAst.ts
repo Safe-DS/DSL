@@ -27,8 +27,8 @@ const getAstHandler = async (
         await sharedServices.workspace.LangiumDocuments.getOrCreateDocument(
             message.uri,
         );
-    logger.info("DEBUG Path: ", message.uri.path);
-    logger.info("DEBUG Path: ", document.uri.fsPath);
+    // logger.info("DEBUG Path: ", message.uri.path);
+    // logger.info("DEBUG Path: ", document.uri.fsPath);
     // Question: it appears that I am using the getOrCreateDocument method wrong
     // Use example above
     await sharedServices.workspace.DocumentBuilder.build([document]);
@@ -49,7 +49,6 @@ const getAstHandler = async (
         genericExpressionList: Utils.genericExpressionList,
         edgeList: Utils.edgeList,
     };
-    logger.warn("someTag", Utils.errorList[0]!.message);
     return { ast, errorList: Utils.errorList };
 };
 

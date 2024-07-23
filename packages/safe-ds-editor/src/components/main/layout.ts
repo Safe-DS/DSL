@@ -1,8 +1,9 @@
-import ELK, { type ElkNode } from 'elkjs/lib/elk.bundled.js';
+import ELK, { type ElkNode, type ElkPort } from 'elkjs/lib/elk.bundled.js';
 import { Position, type Node as XYNode, type Edge as XYEdge } from '@xyflow/svelte';
 
 import '@xyflow/svelte/dist/style.css';
 import type { NodeCustom } from './utils.';
+import { Call, GenericExpression, Placeholder } from '$global';
 
 export const calculateLayout = async (
     nodeList: XYNode[],
@@ -18,8 +19,7 @@ export const calculateLayout = async (
     const options = {
         'elk.algorithm': 'layered',
         'elk.layered.spacing.nodeNodeBetweenLayers': '200',
-        'elk.spacing.nodeNode': '50',
-        'elk.portConstraints': 'FIXED_ORDER',
+        'elk.spacing.nodeNode': '100',
     };
 
     const graph: ElkNode = {
@@ -27,41 +27,26 @@ export const calculateLayout = async (
         layoutOptions: options,
         children: nodeList.map((node) => ({
             ...node,
-            targetPosition: Position.Left,
-            sourcePosition: Position.Right,
-            // targetPosition: node.data instanceof Call ? undefined : Position.Left,
-            // sourcePosition: node.data instanceof Call ? undefined : Position.Right,
-            // // ports: !(node.data instanceof Call)
-            //     ? undefined
-            //     : [
-            //           ...node.data.resultList.map((result) => {
-            //               return {
-            //                   id: result.name,
-            //                   layoutOptions: { 'elk.core.options.PortSide': 'EAST' },
-            //               };
-            //           }),
-            //           ...node.data.parameterList.reverse().map((parameter) => {
-            //               return {
-            //                   id: parameter.name,
-            //                   layoutOptions: { 'elk.core.options.PortSide': 'WEST' },
-            //               };
-            //           }),
-            //       ],
+            ports: getPorts(node),
+            layoutOptions: {
+                'org.eclipse.elk.portConstraints': 'FIXED_ORDER',
+            },
         })),
         edges: edgeList.map((edge) => {
             return {
                 ...edge,
-                sources: [edge.source],
-                targets: [edge.target],
+                sources: [`${edge.source}_${edge.sourceHandle}`],
+                targets: [`${edge.target}_${edge.targetHandle}`],
             };
         }),
     };
 
-    const layout = await elk.layout(graph);
-
     // nodeList.forEach((child) => {
     //     console.log('NODE: ' + JSON.stringify(child) + '\n');
     // });
+    console.log(graph)
+    const layout = await elk.layout(graph);
+    
     // layout.children?.forEach((child) => {
     //     console.log('LAYOUT: ' + JSON.stringify(child) + '\n');
     // });
@@ -89,3 +74,73 @@ export const calculateLayout = async (
     );
     return nodeListLayouted as NodeCustom[];
 };
+
+
+const getPorts = (node: XYNode): ElkPort[] => {
+    const key = Object.keys(node.data).pop()
+    
+    if (key === 'call') {
+        const data = node.data[key] as Call
+        const targetPorts = data.parameterList.map((parameter) => {
+            return {
+                id: `${data.id}_${parameter.name}`,
+                layoutOptions: {
+                    side: "EAST"
+                }
+            }
+        })
+        const sourcePorts = data.resultList.map((result) => {
+            return {
+                id: `${data.id}_${result.name}`,
+                layoutOptions: {
+                    side: "WEST"
+                }
+            }
+        })
+        const self = {
+            id: `${data.id}_self`,
+            layoutOptions: {
+                side: "WEST"
+            }
+        }
+        
+        return [self, ...targetPorts, ...sourcePorts]
+
+    }
+    if (key === "placeholder") {
+        const data = node.data[key] as Placeholder
+        return [
+            {
+                id: `${data.name}_source`,
+                layoutOptions: {
+                    side: "EAST"
+                }
+            },
+            {
+                id: `${data.name}_target`,
+                layoutOptions: {
+                    side: "WEST"
+                }
+            }
+        ]
+    }
+    if (key === "genericExpression") {
+        const data = node.data[key] as GenericExpression
+        return [
+            {
+                id: `${data.id}_source`,
+                layoutOptions: {
+                    side: "EAST"
+                }
+            },
+            {
+                id: `${data.id}_target`,
+                layoutOptions: {
+                    side: "WEST"
+                }
+            }
+        ]
+    }
+
+    return []
+}
