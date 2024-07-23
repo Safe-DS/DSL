@@ -40,7 +40,7 @@ const getAstHandler = async (
         //saveJson(documentToJson(document, 16), "currentDocument");
     }
     // Question: Wo war nochmal das Beispiel um alle Klassen + Globale Funktionen zu requesten?
-    // Question: Gibt es Globale Funktionen?
+    // Question: Gibt es Globale Funktionen? Ja
     // use :safe-ds-markdown-generator
 
     const ast: Ast = {
