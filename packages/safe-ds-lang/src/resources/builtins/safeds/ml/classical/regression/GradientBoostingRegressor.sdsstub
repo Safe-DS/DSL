@@ -46,6 +46,7 @@ class GradientBoostingRegressor(
      * @result fittedRegressor The fitted regressor.
      */
     @Pure
+    @Category(DataScienceCategory.Modeling)
     fun fit(
         @PythonName("training_set") trainingSet: TabularDataset
     ) -> fittedRegressor: GradientBoostingRegressor

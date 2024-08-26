@@ -2,8 +2,16 @@ import { Disposable, Uri, Webview } from 'vscode';
 import { LanguageClient, RequestType } from 'vscode-languageclient/node.js';
 import * as vscode from 'vscode';
 import { GetAst } from '$lang/language/custom-editor/getAst.js';
-import { AstInterface, ExtensionToWebview, WebviewToExtension } from '$lang/language/custom-editor/global.ts';
+import {
+    AstInterface,
+    ExtensionToWebview,
+    GlobalReferenceInterface,
+    NodeDescriptionInterface,
+    WebviewToExtension,
+} from '$lang/language/custom-editor/global.ts';
 import { safeDsLogger } from '../../helpers/logging.ts';
+import { GetGlobalReferences } from '$lang/language/custom-editor/getGlobalReferences.ts';
+import { GetNodeDesciption } from '$lang/language/custom-editor/getNodeDescription.ts';
 
 // Todo: This class can technically be reworked a bit
 // maybe just having two static spaces, with messageListener is enough
@@ -28,22 +36,50 @@ export class MessageHandler {
         return {
             listenToMessages(): Disposable {
                 return vscodeWebview.onDidReceiveMessage(async (message: WebviewToExtension) => {
-                    switch (message.command) {
-                        case 'test':
-                            safeDsLogger.info(message.value);
-                            break;
-                        case 'RequestAst':
-                            // Todo: Set the vscode application state as "loading AST" in the bottom bar
-                            const response = await client.sendRequest(
-                                new RequestType<AstInterface.Message, AstInterface.Response, void>(GetAst.method),
-                                { uri: documentUri },
-                            );
-                            const messageObject: ExtensionToWebview = {
-                                command: 'SendAst',
-                                value: response,
-                            };
-                            vscodeWebview.postMessage(messageObject);
-                            break;
+                    if (message.command === 'test') {
+                        safeDsLogger.info(message.value);
+                    }
+
+                    if (message.command === 'RequestAst') {
+                        // Todo: Set the vscode application state as "loading AST" in the bottom bar
+                        const response = await client.sendRequest(
+                            new RequestType<AstInterface.Message, AstInterface.Response, void>(GetAst.method),
+                            { uri: documentUri },
+                        );
+                        const messageObject: ExtensionToWebview = {
+                            command: 'SendAst',
+                            value: response,
+                        };
+                        vscodeWebview.postMessage(messageObject);
+                    }
+
+                    if (message.command === 'RequestGlobalReferences') {
+                        // Todo: Set the vscode application state as "loading AST" in the bottom bar
+                        const response = await client.sendRequest(
+                            new RequestType<GlobalReferenceInterface.Message, GlobalReferenceInterface.Response, void>(
+                                GetGlobalReferences.method,
+                            ),
+                            { uri: documentUri },
+                        );
+                        const messageObject: ExtensionToWebview = {
+                            command: 'SendGlobalReferences',
+                            value: response,
+                        };
+                        vscodeWebview.postMessage(messageObject);
+                    }
+
+                    if (message.command === 'RequestNodeDescription') {
+                        const response = await client.sendRequest(
+                            new RequestType<NodeDescriptionInterface.Message, NodeDescriptionInterface.Response, void>(
+                                GetNodeDesciption.method,
+                            ),
+                            { uri: documentUri, uniquePath: message.value },
+                        );
+                        const messageObject: ExtensionToWebview = {
+                            command: 'SendNodeDescription',
+                            value: response,
+                        };
+                        vscodeWebview.postMessage(messageObject);
                     }
                 });
             },

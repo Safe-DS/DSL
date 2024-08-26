@@ -71,6 +71,7 @@ class Table(
      */
     @Pure
     @PythonName("from_columns")
+    @Category(DataScienceCategory.DataImport)
     static fun fromColumns(
         columns: union<Column, List<Column>>
     ) -> table: Table
@@ -90,6 +91,7 @@ class Table(
      */
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
     @PythonName("from_csv_file")
+    @Category(DataScienceCategory.DataImport)
     static fun fromCsvFile(
         path: String,
         separator: String = ","
@@ -110,6 +112,7 @@ class Table(
      */
     @Pure
     @PythonName("from_dict")
+    @Category(DataScienceCategory.DataImport)
     static fun fromMap(
         data: Map<String, List<Any>>
     ) -> table: Table
@@ -128,6 +131,7 @@ class Table(
      */
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
     @PythonName("from_json_file")
+    @Category(DataScienceCategory.DataImport)
     static fun fromJsonFile(
         path: String
     ) -> table: Table
@@ -146,6 +150,7 @@ class Table(
      */
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
     @PythonName("from_parquet_file")
+    @Category(DataScienceCategory.DataImport)
     static fun fromParquetFile(
         path: String
     ) -> table: Table
@@ -171,6 +176,7 @@ class Table(
      */
     @Pure
     @PythonName("add_columns")
+    @Category(DataScienceCategory.DataProcessing)
     fun addColumns(
         columns: union<Column, List<Column>>
     ) -> newTable: Table
@@ -193,6 +199,7 @@ class Table(
      */
     @Pure
     @PythonName("add_computed_column")
+    @Category(DataScienceCategory.DataProcessing)
     fun addComputedColumn(
         name: String,
         computer: (row: Row) -> computedCell: Cell
@@ -285,6 +292,7 @@ class Table(
      */
     @Pure
     @PythonName("remove_columns")
+    @Category(DataScienceCategory.DataProcessing)
     fun removeColumns(
         names: union<List<String>, String>
     ) -> newTable: Table
@@ -305,6 +313,7 @@ class Table(
      */
     @Pure
     @PythonName("remove_columns_except")
+    @Category(DataScienceCategory.DataProcessing)
     fun removeColumnsExcept(
         names: union<List<String>, String>
     ) -> newTable: Table
@@ -328,6 +337,7 @@ class Table(
      */
     @Pure
     @PythonName("remove_columns_with_missing_values")
+    @Category(DataScienceCategory.DataProcessing)
     fun removeColumnsWithMissingValues() -> newTable: Table
 
     /**
@@ -346,6 +356,7 @@ class Table(
      */
     @Pure
     @PythonName("remove_non_numeric_columns")
+    @Category(DataScienceCategory.DataProcessing)
     fun removeNonNumericColumns() -> newTable: Table
 
     /**
@@ -367,6 +378,7 @@ class Table(
      */
     @Pure
     @PythonName("rename_column")
+    @Category(DataScienceCategory.DataProcessing)
     fun renameColumn(
         @PythonName("old_name") oldName: String,
         @PythonName("new_name") newName: String
@@ -391,6 +403,7 @@ class Table(
      */
     @Pure
     @PythonName("replace_column")
+    @Category(DataScienceCategory.DataProcessing)
     fun replaceColumn(
         @PythonName("old_name") oldName: String,
         @PythonName("new_columns") newColumns: union<Column, List<Column>, Table>
@@ -415,6 +428,7 @@ class Table(
      */
     @Pure
     @PythonName("transform_column")
+    @Category(DataScienceCategory.DataProcessing)
     fun transformColumn(
         name: String,
         transformer: (cell: Cell) -> transformedCell: Cell
@@ -475,6 +489,7 @@ class Table(
      */
     @Pure
     @PythonName("remove_duplicate_rows")
+    @Category(DataScienceCategory.DataProcessing)
     fun removeDuplicateRows() -> newTable: Table
 
     /**
@@ -495,6 +510,7 @@ class Table(
      */
     @Pure
     @PythonName("remove_rows")
+    @Category(DataScienceCategory.DataProcessing)
     fun removeRows(
         query: (row: Row) -> shouldRemoveRow: Cell<Boolean>
     ) -> newTable: Table
@@ -518,6 +534,7 @@ class Table(
      */
     @Pure
     @PythonName("remove_rows_by_column")
+    @Category(DataScienceCategory.DataProcessing)
     fun removeRowsByColumn(
         name: String,
         query: (cell: Cell) -> shouldRemoveRow: Cell<Boolean>
@@ -541,6 +558,7 @@ class Table(
      */
     @Pure
     @PythonName("remove_rows_with_missing_values")
+    @Category(DataScienceCategory.DataProcessing)
     fun removeRowsWithMissingValues(
         @PythonName("column_names") columnNames: List<String>? = null
     ) -> newTable: Table
@@ -580,6 +598,7 @@ class Table(
      */
     @Pure
     @PythonName("remove_rows_with_outliers")
+    @Category(DataScienceCategory.DataProcessing)
     fun removeRowsWithOutliers(
         @PythonName("column_names") columnNames: List<String>? = null,
         @PythonName("z_score_threshold") zScoreThreshold: Float = 3.0
@@ -601,6 +620,7 @@ class Table(
      */
     @Pure
     @PythonName("shuffle_rows")
+    @Category(DataScienceCategory.DataProcessing)
     fun shuffleRows() -> newTable: Table
 
     /**
@@ -630,6 +650,7 @@ class Table(
      */
     @Pure
     @PythonName("slice_rows")
+    @Category(DataScienceCategory.DataProcessing)
     fun sliceRows(
         start: Int = 0,
         length: Int? = null
@@ -654,6 +675,7 @@ class Table(
      */
     @Pure
     @PythonName("sort_rows")
+    @Category(DataScienceCategory.DataProcessing)
     fun sortRows(
         @PythonName("key_selector") keySelector: (row: Row) -> key: Cell,
         descending: Boolean = false
@@ -678,6 +700,7 @@ class Table(
      */
     @Pure
     @PythonName("sort_rows_by_column")
+    @Category(DataScienceCategory.DataProcessing)
     fun sortRowsByColumn(
         name: String,
         descending: Boolean = false
@@ -708,6 +731,7 @@ class Table(
      */
     @Pure
     @PythonName("split_rows")
+    @Category(DataScienceCategory.DataProcessing)
     fun splitRows(
         @PythonName("percentage_in_first") percentageInFirst: Float,
         shuffle: Boolean = true
@@ -735,6 +759,7 @@ class Table(
      */
     @Pure
     @PythonName("add_table_as_columns")
+    @Category(DataScienceCategory.DataProcessing)
     fun addTableAsColumns(
         other: Table
     ) -> newTable: Table
@@ -761,6 +786,7 @@ class Table(
      */
     @Pure
     @PythonName("add_table_as_rows")
+    @Category(DataScienceCategory.DataProcessing)
     fun addTableAsRows(
         other: Table
     ) -> newTable: Table
@@ -787,6 +813,7 @@ class Table(
      */
     @Pure
     @PythonName("inverse_transform_table")
+    @Category(DataScienceCategory.DataProcessing)
     fun inverseTransformTable(
         @PythonName("fitted_transformer") fittedTransformer: InvertibleTableTransformer
     ) -> newTable: Table
@@ -813,6 +840,7 @@ class Table(
      */
     @Pure
     @PythonName("transform_table")
+    @Category(DataScienceCategory.DataProcessing)
     fun transformTable(
         @PythonName("fitted_transformer") fittedTransformer: TableTransformer
     ) -> newTable: Table
@@ -830,6 +858,7 @@ class Table(
      */
     @Pure
     @PythonName("summarize_statistics")
+    @Category(DataScienceCategory.DataExploration)
     fun summarizeStatistics() -> statistics: Table
 
     /**
@@ -845,6 +874,7 @@ class Table(
      */
     @Pure
     @PythonName("to_columns")
+    @Category(DataScienceCategory.DataExport)
     fun toColumns() -> columns: List<Column>
 
     /**
@@ -863,6 +893,7 @@ class Table(
      */
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_csv_file")
+    @Category(DataScienceCategory.DataExport)
     fun toCsvFile(
         path: String
     )
@@ -881,6 +912,7 @@ class Table(
      */
     @Pure
     @PythonName("to_dict")
+    @Category(DataScienceCategory.DataExport)
     fun toMap() -> map: Map<String, List<Any>>
 
     /**
@@ -904,6 +936,7 @@ class Table(
      */
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_json_file")
+    @Category(DataScienceCategory.DataExport)
     fun toJsonFile(
         path: String,
         orientation: literal<"column", "row"> = "column"
@@ -925,6 +958,7 @@ class Table(
      */
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_parquet_file")
+    @Category(DataScienceCategory.DataExport)
     fun toParquetFile(
         path: String
     )

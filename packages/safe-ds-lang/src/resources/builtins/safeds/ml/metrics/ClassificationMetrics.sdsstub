@@ -17,6 +17,7 @@ class ClassificationMetrics {
      * @result metrics A table containing the classification metrics.
      */
     @Pure
+    @Category(DataScienceCategory.ModelEvaluation)
     static fun summarize(
         predicted: union<Column<Any>, TabularDataset>,
         expected: union<Column<Any>, TabularDataset>,
@@ -35,6 +36,7 @@ class ClassificationMetrics {
      * @result accuracy The calculated accuracy.
      */
     @Pure
+    @Category(DataScienceCategory.ModelEvaluation)
     static fun accuracy(
         predicted: union<Column<Any>, TabularDataset>,
         expected: union<Column<Any>, TabularDataset>
@@ -54,6 +56,7 @@ class ClassificationMetrics {
      */
     @Pure
     @PythonName("f1_score")
+    @Category(DataScienceCategory.ModelEvaluation)
     static fun f1Score(
         predicted: union<Column<Any>, TabularDataset>,
         expected: union<Column<Any>, TabularDataset>,
@@ -73,6 +76,7 @@ class ClassificationMetrics {
      * @result precision The calculated precision.
      */
     @Pure
+    @Category(DataScienceCategory.ModelEvaluation)
     static fun precision(
         predicted: union<Column<Any>, TabularDataset>,
         expected: union<Column<Any>, TabularDataset>,
@@ -92,6 +96,7 @@ class ClassificationMetrics {
      * @result recall The calculated recall.
      */
     @Pure
+    @Category(DataScienceCategory.ModelEvaluation)
     static fun recall(
         predicted: union<Column<Any>, TabularDataset>,
         expected: union<Column<Any>, TabularDataset>,

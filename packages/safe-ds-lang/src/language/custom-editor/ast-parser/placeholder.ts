@@ -6,6 +6,7 @@ export class Placeholder {
     private constructor(
         public readonly name: string,
         public type: Datatype,
+        public readonly uniquePath: string,
     ) {}
 
     public static parse(node: SdsPlaceholder) {
@@ -14,7 +15,11 @@ export class Placeholder {
         );
         if (match) return match;
 
-        const placeholder = new Placeholder(node.name, "Unknown");
+        const placeholder = new Placeholder(
+            node.name,
+            "Unknown",
+            Utils.safeDsServices.workspace.AstNodeLocator.getAstNodePath(node),
+        );
         Utils.placeholderList.push(placeholder);
         return placeholder;
     }

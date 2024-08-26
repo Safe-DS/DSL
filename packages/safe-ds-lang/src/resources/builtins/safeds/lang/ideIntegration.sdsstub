@@ -30,19 +30,19 @@ enum DataScienceCategory {
     DataImport
 
     /**
-     * Prepare your data for analysis.
+     * Save your data for later use.
      */
-    DataPreparation
+    DataExport
+
+    /**
+     * Process your data before analysis.
+     */
+    DataProcessing
 
     /**
      * Explore your data.
      */
     DataExploration
-
-    /**
-     * Save your data for later use.
-     */
-    DataExport
 
     /**
      * Configure a model and train it on your data.

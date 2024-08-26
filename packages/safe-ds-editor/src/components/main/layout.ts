@@ -44,7 +44,7 @@ export const calculateLayout = async (
     // nodeList.forEach((child) => {
     //     console.log('NODE: ' + JSON.stringify(child) + '\n');
     // });
-    console.log(graph);
+    // console.log(graph);
     const layout = await elk.layout(graph);
 
     // layout.children?.forEach((child) => {

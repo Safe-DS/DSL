@@ -8,6 +8,7 @@ export { Placeholder } from "./ast-parser/placeholder.js";
 export { Call } from "./ast-parser/call.js";
 export { GenericExpression } from "./ast-parser/expression.js";
 export { Edge } from "./ast-parser/edge.js";
+export { Datatype } from "./ast-parser/type.js";
 
 export class Ast {
     constructor(
@@ -19,10 +20,26 @@ export class Ast {
 }
 
 export namespace AstInterface {
-    export type Message = {
-        uri: Uri;
-    };
+    export type Message = { uri: Uri };
     export type Response = { ast: Ast; errorList: CustomError[] };
+}
+
+export class GlobalReference {
+    constructor(
+        public readonly name: string,
+        public readonly parent: string | undefined,
+        public readonly category: string,
+    ) {}
+}
+
+export namespace GlobalReferenceInterface {
+    export type Message = { uri: Uri };
+    export type Response = { globalReferences: GlobalReference[] };
+}
+
+export namespace NodeDescriptionInterface {
+    export type Message = { uri: Uri; uniquePath: string };
+    export type Response = { description: string };
 }
 
 export class CustomError {
@@ -47,11 +64,23 @@ namespace NsExtensionToWebview {
         command: "SendAst";
         value: AstInterface.Response;
     };
+
+    export type SendGlobalReferences = Message & {
+        command: "SendGlobalReferences";
+        value: GlobalReferenceInterface.Response;
+    };
+
+    export type SendNodeDescription = Message & {
+        command: "SendNodeDescription";
+        value: NodeDescriptionInterface.Response;
+    };
 }
 
 export type ExtensionToWebview =
     | NsExtensionToWebview.Test
-    | NsExtensionToWebview.SendAst;
+    | NsExtensionToWebview.SendAst
+    | NsExtensionToWebview.SendGlobalReferences
+    | NsExtensionToWebview.SendNodeDescription;
 
 namespace NsWebviewToExtension {
     export type Test = Message & {
@@ -62,8 +91,19 @@ namespace NsWebviewToExtension {
         command: "RequestAst";
         value: string;
     };
+    export type RequestGlobalReferences = Message & {
+        command: "RequestGlobalReferences";
+        value: string;
+    };
+
+    export type RequestNodeDescription = Message & {
+        command: "RequestNodeDescription";
+        value: string;
+    };
 }
 
 export type WebviewToExtension =
     | NsWebviewToExtension.Test
-    | NsWebviewToExtension.RequestAst;
+    | NsWebviewToExtension.RequestAst
+    | NsWebviewToExtension.RequestGlobalReferences
+    | NsWebviewToExtension.RequestNodeDescription;

@@ -12,12 +12,13 @@
 
     type $$Props = NodeProps;
     export let data: $$Props['data'];
+    export let selected: $$Props['selected'] = undefined;
     const { genericExpression } = data as GenericExpressionProps;
 </script>
 
 <div
     use:tooltip={{ content: genericExpression.text, delay: 150 }}
-    class=" bg-node-normal shadow-node flex h-20 w-[260px] cursor-default flex-row rounded-sm"
+    class={` bg-node-normal ${selected ? 'shadow-highlight' : 'shadow-node'} flex h-20 w-[260px] cursor-default flex-row rounded-sm `}
 >
     <Handle type="target" id="target" position={Position.Left} class=" absolute -ml-2.5 h-3 w-3" />
     <Handle type="source" id="source" position={Position.Right} class=" absolute -mr-2.5 h-3 w-3" />

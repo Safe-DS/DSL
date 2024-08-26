@@ -59,5 +59,6 @@ export const edgeToEdge = (edge: Edge, index: number): XYEdge => {
         sourceHandle: edge.from.portIdentifier,
         target: edge.to.nodeId,
         targetHandle: edge.to.portIdentifier,
+        selectable: false,
     };
 };

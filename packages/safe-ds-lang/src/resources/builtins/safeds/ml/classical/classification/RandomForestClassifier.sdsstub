@@ -50,6 +50,7 @@ class RandomForestClassifier(
      * @result fittedClassifier The fitted classifier.
      */
     @Pure
+    @Category(DataScienceCategory.Modeling)
     fun fit(
         @PythonName("training_set") trainingSet: TabularDataset
     ) -> fittedClassifier: RandomForestClassifier

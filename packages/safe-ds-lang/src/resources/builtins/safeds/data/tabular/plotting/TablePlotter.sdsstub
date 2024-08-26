@@ -30,6 +30,7 @@ class TablePlotter(
      */
     @Pure
     @PythonName("box_plots")
+    @Category(DataScienceCategory.DataExploration)
     fun boxPlots() -> plot: Image
 
     /**
@@ -45,6 +46,7 @@ class TablePlotter(
      */
     @Pure
     @PythonName("correlation_heatmap")
+    @Category(DataScienceCategory.DataExploration)
     fun correlationHeatmap() -> plot: Image
 
     /**
@@ -61,6 +63,7 @@ class TablePlotter(
      * }
      */
     @Pure
+    @Category(DataScienceCategory.DataExploration)
     fun histograms(
         @PythonName("max_bin_count") const maxBinCount: Int = 10
     ) -> plot: Image where {
@@ -88,6 +91,7 @@ class TablePlotter(
      */
     @Pure
     @PythonName("line_plot")
+    @Category(DataScienceCategory.DataExploration)
     fun linePlot(
         @PythonName("x_name") xName: String,
         @PythonName("y_name") yName: String
@@ -114,6 +118,7 @@ class TablePlotter(
      */
     @Pure
     @PythonName("scatter_plot")
+    @Category(DataScienceCategory.DataExploration)
     fun scatterPlot(
         @PythonName("x_name") xName: String,
         @PythonName("y_name") yName: String

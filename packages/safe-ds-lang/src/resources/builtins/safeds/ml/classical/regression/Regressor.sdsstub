@@ -18,6 +18,7 @@ class Regressor sub SupervisedModel {
      * @result fittedModel The fitted model.
      */
     @Pure
+    @Category(DataScienceCategory.Modeling)
     fun fit(
         @PythonName("training_set") trainingSet: TabularDataset
     ) -> fittedModel: Regressor
@@ -33,6 +34,7 @@ class Regressor sub SupervisedModel {
      */
     @Pure
     @PythonName("summarize_metrics")
+    @Category(DataScienceCategory.ModelEvaluation)
     fun summarizeMetrics(
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
     ) -> metrics: Table
@@ -64,6 +66,7 @@ class Regressor sub SupervisedModel {
      */
     @Pure
     @PythonName("coefficient_of_determination")
+    @Category(DataScienceCategory.ModelEvaluation)
     fun coefficientOfDetermination(
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
     ) -> coefficientOfDetermination: Float
@@ -84,6 +87,7 @@ class Regressor sub SupervisedModel {
      */
     @Pure
     @PythonName("mean_absolute_error")
+    @Category(DataScienceCategory.ModelEvaluation)
     fun meanAbsoluteError(
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
     ) -> meanAbsoluteError: Float
@@ -108,6 +112,7 @@ class Regressor sub SupervisedModel {
      */
     @Pure
     @PythonName("mean_directional_accuracy")
+    @Category(DataScienceCategory.ModelEvaluation)
     fun meanDirectionalAccuracy(
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
     ) -> meanDirectionalAccuracy: Float
@@ -130,6 +135,7 @@ class Regressor sub SupervisedModel {
      */
     @Pure
     @PythonName("mean_squared_error")
+    @Category(DataScienceCategory.ModelEvaluation)
     fun meanSquaredError(
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
     ) -> meanSquaredError: Float
@@ -150,6 +156,7 @@ class Regressor sub SupervisedModel {
      */
     @Pure
     @PythonName("median_absolute_deviation")
+    @Category(DataScienceCategory.ModelEvaluation)
     fun medianAbsoluteDeviation(
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
     ) -> medianAbsoluteDeviation: Float

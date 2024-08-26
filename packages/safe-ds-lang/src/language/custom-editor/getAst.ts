@@ -14,7 +14,7 @@ const getAstHandler = async (
     safeDsServices: SafeDsServices,
 ): Promise<AstInterface.Response> => {
     const logger = safeDsServices.communication.MessagingProvider;
-    Utils.initialize(logger, message.uri);
+    Utils.initialize(logger, message.uri, safeDsServices);
     logger.info("AstParser", `Received request for ${message.uri.fsPath}`);
 
     const parseableExtensions = [".sds", ".sdsdev"];
@@ -39,9 +39,6 @@ const getAstHandler = async (
         parseDocumentNew(document);
         //saveJson(documentToJson(document, 16), "currentDocument");
     }
-    // Question: Wo war nochmal das Beispiel um alle Klassen + Globale Funktionen zu requesten?
-    // Question: Gibt es Globale Funktionen? Ja
-    // use :safe-ds-markdown-generator
 
     const ast: Ast = {
         placeholderList: Utils.placeholderList,

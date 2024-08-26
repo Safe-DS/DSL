@@ -47,7 +47,8 @@ const config = {
         },
         extend: {
             boxShadow: {
-                node: '1px 1px 6px #000000',
+                node: '4px 7px 9px 2px #000000',
+                highlight: '0px 0px 9px 3px #0AC6FF',
             },
             transitionDuration: {
                 35: '35ms',

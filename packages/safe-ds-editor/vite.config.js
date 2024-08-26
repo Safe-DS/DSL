@@ -30,6 +30,7 @@ export default defineConfig({
                 entryFileNames: `custom-editor.js`,
             },
         },
+        chunkSizeWarningLimit: 3000,
         //...unminifyExportedJs /* Uncomment this to get unmangled and readable js for debugging */,
     },
     resolve: {

@@ -1,0 +1,63 @@
+<script lang="ts">
+    import { cn } from '$pages/utils';
+    import type { ClassValue } from 'clsx';
+    import type { GlobalReference } from '$global';
+    import type { Writable } from 'svelte/store';
+    import * as Resizable from '$src/components/ui/resizable';
+    import { type Node as XYNode } from '@xyflow/svelte';
+    import SidebarSection from '$/src/components/sidebars/sidebar-section.svelte';
+    import SectionElements from './section-elements.svelte';
+    import SectionSegments from './section-segments.svelte';
+    import SectionDocumentation from './section-documentation.svelte';
+    import SectionParameter from './section-parameter.svelte';
+
+    export let className: ClassValue;
+    export { className as class };
+    export let globalReferences: Writable<GlobalReference[]>;
+    export let selectedNodeList: XYNode[];
+
+    let paneElements = false;
+    let paneSegments = false;
+    let paneParameters = true;
+    let paneDocumentation = false;
+
+    const LORE =
+        'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.';
+</script>
+
+<div class={cn('h-full w-full', className)}>
+    <Resizable.PaneGroup class="h-full w-full" direction="vertical">
+        <SidebarSection
+            name={'Elemente'}
+            order={0}
+            bind:showPane={paneElements}
+            showResizeHandle={paneSegments || paneDocumentation || paneParameters}
+        >
+            <SectionElements class="pl-3" />
+        </SidebarSection>
+        <SidebarSection
+            name={'Segmente'}
+            order={1}
+            bind:showPane={paneSegments}
+            showResizeHandle={paneDocumentation || paneParameters}
+        >
+            <SectionSegments class="pl-3" />
+        </SidebarSection>
+        <SidebarSection
+            name={'Parameter'}
+            order={2}
+            bind:showPane={paneParameters}
+            showResizeHandle={paneDocumentation}
+        >
+            <SectionParameter {selectedNodeList} class="pl-3" />
+        </SidebarSection>
+        <SidebarSection
+            name={'Dokumentation'}
+            order={3}
+            bind:showPane={paneDocumentation}
+            showResizeHandle={false}
+        >
+            <SectionDocumentation {selectedNodeList} class="pl-3" />
+        </SidebarSection>
+    </Resizable.PaneGroup>
+</div>

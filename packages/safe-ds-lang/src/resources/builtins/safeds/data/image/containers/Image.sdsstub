@@ -43,6 +43,7 @@ class Image {
      */
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
     @PythonName("from_file")
+    @Category(DataScienceCategory.DataImport)
     static fun fromFile(
         path: String
     ) -> image: Image
@@ -60,6 +61,7 @@ class Image {
      */
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_jpeg_file")
+    @Category(DataScienceCategory.DataExport)
     fun toJpegFile(
         path: String
     )
@@ -77,6 +79,7 @@ class Image {
      */
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_png_file")
+    @Category(DataScienceCategory.DataExport)
     fun toPngFile(
         path: String
     )
@@ -98,6 +101,7 @@ class Image {
      */
     @Pure
     @PythonName("change_channel")
+    @Category(DataScienceCategory.DataProcessing)
     fun changeChannel(
         channel: Int
     ) -> newImage: Image
@@ -119,6 +123,7 @@ class Image {
      * }
      */
     @Pure
+    @Category(DataScienceCategory.DataProcessing)
     fun resize(
         @PythonName("new_width") const newWidth: Int,
         @PythonName("new_height") const newHeight: Int
@@ -142,6 +147,7 @@ class Image {
      */
     @Pure
     @PythonName("convert_to_grayscale")
+    @Category(DataScienceCategory.DataProcessing)
     fun convertToGrayscale() -> newImage: Image
 
     /**
@@ -163,6 +169,7 @@ class Image {
      * }
      */
     @Pure
+    @Category(DataScienceCategory.DataProcessing)
     fun crop(
         const x: Int,
         const y: Int,
@@ -190,6 +197,7 @@ class Image {
      */
     @Pure
     @PythonName("flip_vertically")
+    @Category(DataScienceCategory.DataProcessing)
     fun flipVertically() -> newImage: Image
 
     /**
@@ -207,6 +215,7 @@ class Image {
      */
     @Pure
     @PythonName("flip_horizontally")
+    @Category(DataScienceCategory.DataProcessing)
     fun flipHorizontally() -> newImage: Image
 
     /**
@@ -230,6 +239,7 @@ class Image {
      */
     @Pure
     @PythonName("adjust_brightness")
+    @Category(DataScienceCategory.DataProcessing)
     fun adjustBrightness(
         const factor: Float
     ) -> newImage: Image where {
@@ -253,6 +263,7 @@ class Image {
      */
     @Pure
     @PythonName("add_noise")
+    @Category(DataScienceCategory.DataProcessing)
     fun addNoise(
         @PythonName("standard_deviation") const standardDeviation: Float
     ) -> newImage: Image where {
@@ -279,6 +290,7 @@ class Image {
      */
     @Pure
     @PythonName("adjust_contrast")
+    @Category(DataScienceCategory.DataProcessing)
     fun adjustContrast(
         const factor: Float
     ) -> newImage: Image where {
@@ -305,6 +317,7 @@ class Image {
      */
     @Pure
     @PythonName("adjust_color_balance")
+    @Category(DataScienceCategory.DataProcessing)
     fun adjustColorBalance(
         const factor: Float
     ) -> newImage: Image where {
@@ -328,6 +341,7 @@ class Image {
      * }
      */
     @Pure
+    @Category(DataScienceCategory.DataProcessing)
     fun blur(
         const radius: Int
     ) -> newImage: Image where {
@@ -353,6 +367,7 @@ class Image {
      * }
      */
     @Pure
+    @Category(DataScienceCategory.DataProcessing)
     fun sharpen(
         const factor: Float
     ) -> newImage: Image where {
@@ -374,6 +389,7 @@ class Image {
      */
     @Pure
     @PythonName("invert_colors")
+    @Category(DataScienceCategory.DataProcessing)
     fun invertColors() -> newImage: Image
 
     /**
@@ -391,6 +407,7 @@ class Image {
      */
     @Pure
     @PythonName("rotate_right")
+    @Category(DataScienceCategory.DataProcessing)
     fun rotateRight() -> newImage: Image
 
     /**
@@ -408,6 +425,7 @@ class Image {
      */
     @Pure
     @PythonName("rotate_left")
+    @Category(DataScienceCategory.DataProcessing)
     fun rotateLeft() -> newImage: Image
 
     /**
@@ -425,5 +443,6 @@ class Image {
      */
     @Pure
     @PythonName("find_edges")
+    @Category(DataScienceCategory.DataProcessing)
     fun findEdges() -> newImage: Image
 }

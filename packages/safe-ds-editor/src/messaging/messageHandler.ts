@@ -1,4 +1,10 @@
-import type { AstInterface, ExtensionToWebview, WebviewToExtension } from '$global';
+import type {
+    AstInterface,
+    ExtensionToWebview,
+    GlobalReferenceInterface,
+    NodeDescriptionInterface,
+    WebviewToExtension,
+} from '$global';
 
 export default class MessageHandler {
     public static vsocde: {
@@ -36,12 +42,9 @@ export default class MessageHandler {
         const response = await new Promise<AstInterface.Response>((resolve) => {
             const responseHandler = (event: any) => {
                 const message = event.data as ExtensionToWebview;
-                switch (message.command) {
-                    case 'SendAst':
-                        window.removeEventListener('message', responseHandler);
-                        resolve(message.value);
-                    default:
-                        return;
+                if (message.command === 'SendAst') {
+                    window.removeEventListener('message', responseHandler);
+                    resolve(message.value);
                 }
             };
 
@@ -49,6 +52,50 @@ export default class MessageHandler {
             const messageObject: WebviewToExtension = {
                 command: 'RequestAst',
                 value: '',
+            };
+            MessageHandler.vsocde.postMessage(messageObject);
+        });
+
+        return response;
+    }
+
+    public static async getGlobalReferences(): Promise<GlobalReferenceInterface.Response> {
+        const response = await new Promise<GlobalReferenceInterface.Response>((resolve) => {
+            const responseHandler = (event: any) => {
+                const message = event.data as ExtensionToWebview;
+                if (message.command === 'SendGlobalReferences') {
+                    window.removeEventListener('message', responseHandler);
+                    resolve(message.value);
+                }
+            };
+
+            window.addEventListener('message', responseHandler);
+            const messageObject: WebviewToExtension = {
+                command: 'RequestGlobalReferences',
+                value: '',
+            };
+            MessageHandler.vsocde.postMessage(messageObject);
+        });
+
+        return response;
+    }
+
+    public static async getNodeDescription(
+        uniquePath: string,
+    ): Promise<NodeDescriptionInterface.Response> {
+        const response = await new Promise<NodeDescriptionInterface.Response>((resolve) => {
+            const responseHandler = (event: any) => {
+                const message = event.data as ExtensionToWebview;
+                if (message.command === 'SendNodeDescription') {
+                    window.removeEventListener('message', responseHandler);
+                    resolve(message.value);
+                }
+            };
+
+            window.addEventListener('message', responseHandler);
+            const messageObject: WebviewToExtension = {
+                command: 'RequestNodeDescription',
+                value: uniquePath,
             };
             MessageHandler.vsocde.postMessage(messageObject);
         });

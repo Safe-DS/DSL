@@ -12,23 +12,27 @@
 
     type $$Props = NodeProps;
     export let data: $$Props['data'];
+    export let selected: $$Props['selected'] = undefined;
     const { call } = data as CallProps;
 
     let expanded: boolean = true;
 </script>
 
-<div
+<button
     use:tooltip={{ content: call.name, delay: 150 }}
-    class=" bg-node-normal shadow-node w-[260px] cursor-default rounded-sm pb-2"
->
-    <button
-        class=" flex w-full cursor-pointer flex-row items-center p-1"
-        on:mousedown={() => {
+    class={` bg-node-normal ${selected ? 'shadow-highlight' : 'shadow-node'} relative w-[260px] cursor-default rounded-sm pb-2 focus-visible:outline-none`}
+    on:mousedown={(event) => {
+        if (event.shiftKey) {
             expanded = !expanded;
-        }}
-    >
-        <CategoryIcon name={getCategory(call)} className={' w-12 h-12 mr-2 stroke-text-normal '} />
-        <div class="flex flex-col">
+        }
+    }}
+>
+    <div class=" flex w-full flex-row items-center p-1">
+        <CategoryIcon
+            name={getCategory(call)}
+            className={' w-14 h-14 p-1 pr-4 stroke-text-normal '}
+        />
+        <div class="flex h-16 flex-col justify-center">
             <span class="text-text-muted truncate text-left text-lg">{call.self ?? ''}</span>
             <span class="text-text-normal truncate text-left text-2xl font-bold">{call.name}</span>
         </div>
@@ -40,7 +44,7 @@
                 class=" absolute top-3 -ml-2.5 h-3 w-3"
             />
         {/if}
-    </button>
+    </div>
     <div use:statusIndicator={{ status: 'done' }} class=" h-1 w-full"></div>
     {#if expanded}
         <div class=" bg-node-dark flex w-full flex-col py-2">
@@ -56,7 +60,7 @@
                 </div>
             {/each}
             {#each call.parameterList as parameter}
-                <div class="text-text-muted relative w-full px-1 text-lg">
+                <div class="text-text-muted relative w-full px-1 text-left text-lg">
                     {parameter.name}
                     <Handle
                         type="target"
@@ -74,4 +78,4 @@
     {#if !expanded && call.resultList.length > 0}
         <Handle type="source" position={Position.Right} class=" absolute -mr-2.5 h-3 w-3" />
     {/if}
-</div>
+</button>

@@ -33,6 +33,7 @@ export class Call {
         public readonly self: string | undefined,
         public readonly parameterList: Parameter[],
         public readonly resultList: Result[],
+        public readonly uniquePath: string,
     ) {}
 
     public static parse(node: SdsCall): Call | CustomError {
@@ -134,7 +135,7 @@ export class Call {
                 }
 
                 if (!argument && parameter.defaultValue) {
-                    parameter.argumentText = parameter.defaultValue;
+                    // parameter.argumentText = parameter.defaultValue;
                     continue;
                 }
 
@@ -151,6 +152,9 @@ export class Call {
                 self,
                 parameterList as Parameter[],
                 resultList,
+                Utils.safeDsServices.workspace.AstNodeLocator.getAstNodePath(
+                    node,
+                ),
             );
             Utils.callList.push(call);
             return call;
@@ -173,12 +177,16 @@ export class Call {
             const resultList = [
                 new Result("new", classDeclaration.name as Datatype),
             ];
+
             const call = new Call(
                 id,
                 name,
                 self,
                 parameterList as Parameter[],
                 resultList,
+                Utils.safeDsServices.workspace.AstNodeLocator.getAstNodePath(
+                    node,
+                ),
             );
             Utils.callList.push(call);
             return call;

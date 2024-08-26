@@ -19,11 +19,12 @@
         placeholderToNode,
         type NodeCustom,
     } from '$/src/components/main/utils.';
-    import { getContext } from 'svelte';
+    import { createEventDispatcher, getContext } from 'svelte';
     import { calculateLayout } from './layout';
 
     export let astWritable: Writable<Ast>;
 
+    const dispatch = createEventDispatcher();
     const handleError = getContext('handleError') as (error: CustomError) => void;
     const { fitView } = useSvelteFlow();
 
@@ -55,6 +56,12 @@
         fitView();
         window.requestAnimationFrame(() => fitView());
     });
+
+    const triggerSelection = (event: CustomEvent) => {
+        const selectedNodeList =
+            event.type === 'paneclick' ? [] : $nodes.filter((node) => node.selected);
+        dispatch('selectionChange', selectedNodeList);
+    };
 </script>
 
 <div class=" h-full">
@@ -80,8 +87,9 @@
         minZoom={0.1}
         proOptions={{ hideAttribution: true }}
         nodesDraggable={true}
-        on:nodeclick={(event) => console.log('on node click', event.detail.node)}
-        on:edgeclick={(event) => console.log('on edge click', event.detail.edge)}
+        selectionOnDrag={false}
+        on:nodeclick={triggerSelection}
+        on:paneclick={triggerSelection}
     >
         <Controls position="bottom-right" />
         <Background

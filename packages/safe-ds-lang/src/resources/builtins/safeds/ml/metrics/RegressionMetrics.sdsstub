@@ -16,6 +16,7 @@ class RegressionMetrics {
      * @result metrics A table containing the regression metrics.
      */
     @Pure
+    @Category(DataScienceCategory.ModelEvaluation)
     static fun summarize(
         predicted: union<Column<Any>, TabularDataset>,
         expected: union<Column<Any>, TabularDataset>
@@ -46,6 +47,7 @@ class RegressionMetrics {
      */
     @Pure
     @PythonName("coefficient_of_determination")
+    @Category(DataScienceCategory.ModelEvaluation)
     static fun coefficientOfDetermination(
         predicted: union<Column<Any>, TabularDataset>,
         expected: union<Column<Any>, TabularDataset>
@@ -65,6 +67,7 @@ class RegressionMetrics {
      */
     @Pure
     @PythonName("mean_absolute_error")
+    @Category(DataScienceCategory.ModelEvaluation)
     static fun meanAbsoluteError(
         predicted: union<Column<Any>, TabularDataset>,
         expected: union<Column<Any>, TabularDataset>
@@ -88,6 +91,7 @@ class RegressionMetrics {
      */
     @Pure
     @PythonName("mean_directional_accuracy")
+    @Category(DataScienceCategory.ModelEvaluation)
     static fun meanDirectionalAccuracy(
         predicted: union<Column<Any>, TabularDataset>,
         expected: union<Column<Any>, TabularDataset>
@@ -109,6 +113,7 @@ class RegressionMetrics {
      */
     @Pure
     @PythonName("mean_squared_error")
+    @Category(DataScienceCategory.ModelEvaluation)
     static fun meanSquaredError(
         predicted: union<Column<Any>, TabularDataset>,
         expected: union<Column<Any>, TabularDataset>
@@ -128,6 +133,7 @@ class RegressionMetrics {
      */
     @Pure
     @PythonName("median_absolute_deviation")
+    @Category(DataScienceCategory.ModelEvaluation)
     static fun medianAbsoluteDeviation(
         predicted: union<Column<Any>, TabularDataset>,
         expected: union<Column<Any>, TabularDataset>

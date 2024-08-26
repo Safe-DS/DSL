@@ -22,6 +22,7 @@ export class GenericExpression {
         public readonly id: number,
         public readonly text: string,
         public readonly type: Datatype,
+        public readonly uniquePath: string,
     ) {}
 }
 
@@ -40,6 +41,7 @@ export class Expression {
             id,
             node.$cstNode.text,
             getType(node),
+            Utils.safeDsServices.workspace.AstNodeLocator.getAstNodePath(node),
         );
 
         const children = AstUtils.streamAst(node).iterator();

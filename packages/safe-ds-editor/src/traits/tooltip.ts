@@ -2,7 +2,7 @@
 /* eslint-disable func-style */
 function getStyle(): string {
     const className =
-        'absolute bg-menu-200 text-text-normal text-3xl p-1 -top-16 left-1/2 transform -translate-x-1/2';
+        'absolute z-50 bg-menu-200 text-text-normal text-3xl p-1 -top-16 left-1/2 transform -translate-x-1/2';
     return className;
 }
 

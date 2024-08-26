@@ -6,6 +6,7 @@ import { Placeholder } from "./placeholder.js";
 import { GenericExpression } from "./expression.js";
 import { ILexingError, IRecognitionException } from "chevrotain";
 import { CustomError } from "../global.js";
+import { SafeDsServices } from "../../safe-ds-module.js";
 
 export class Utils {
     static lastId: number;
@@ -16,10 +17,12 @@ export class Utils {
     static callList: Call[];
     static genericExpressionList: GenericExpression[];
     static edgeList: Edge[];
+    static safeDsServices: SafeDsServices;
 
     public static initialize(
         logger: SafeDsMessagingProvider,
         documentUri: URI,
+        safeDsServices: SafeDsServices,
     ) {
         Utils.errorList = [];
         Utils.placeholderList = [];
@@ -29,6 +32,7 @@ export class Utils {
         Utils.lastId = 0;
         Utils.logger = logger;
         Utils.documentUri = documentUri;
+        Utils.safeDsServices = safeDsServices;
     }
 
     private static constructErrorMessage(message: string, origin?: AstNode) {

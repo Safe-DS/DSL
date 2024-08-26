@@ -11,6 +11,7 @@
 
     type $$Props = NodeProps;
     export let data: $$Props['data'];
+    export let selected: $$Props['selected'] = undefined;
     const { placeholder } = data as PlaceholderProps;
     let isHovered = false;
 </script>
@@ -31,7 +32,7 @@
     >
     <div
         use:statusIndicator={{ status: 'done' }}
-        class=" rounded-placeholderFrame shadow-node justify-center py-1"
+        class={`rounded-placeholderFrame ${selected ? 'shadow-highlight' : 'shadow-node'} justify-center py-1`}
     >
         <div class="rounded-placeholderCore bg-node-normal relative">
             <DataTypeIcon name={placeholder.type} className={'h-20 w-24 stroke-text-normal p-1'} />

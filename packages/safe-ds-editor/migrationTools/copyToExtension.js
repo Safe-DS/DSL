@@ -14,17 +14,12 @@ console.log(`Removing old files from <safe-ds-vscode>...`);
 fs.ensureDirSync(distDir);
 fs.emptyDirSync(targetDir);
 
-/* Adding a delay ensures, that the build process is finished before we start copying
- * Currently 2500 ms seems to be enough (build takes abouit 2000 ms)
- */
 console.log(`Copying webview from <safe-ds-editor> to <safe-ds-vscode>...`);
-setTimeout(() => {
-    fs.copy(sourceDir, targetDir, { overwrite: true })
-        .then(() => console.log('Done'))
-        .catch((err) => {
-            console.error('Error during copying:', err);
-            process.exit(1);
-        });
-}, 12000);
+fs.copy(sourceDir, targetDir, { overwrite: true })
+    .then(() => console.log('Done'))
+    .catch((err) => {
+        console.error('Error during copying:', err);
+        process.exit(1);
+    });
 
-// old npm run watch script: "watch": "concurrently -n Vite,Nodemon -c blue,red \"vite build --watch\" \"npx nodemon --quiet --watch dist migrationTools/copyToExtension.js\"",
+// npm run watch script: "watch": "concurrently -n Vite,Nodemon -c blue,red \"vite build --watch\" \"npx nodemon --quiet --watch dist migrationTools/copyToExtension.js\"",
