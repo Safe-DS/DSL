@@ -29,7 +29,7 @@
     {name}
 </button>
 {#if showPane}
-    <Resizable.Pane {order} minSize={5}>
+    <Resizable.Pane class="h-full w-full" {order} minSize={5}>
         <ScrollArea class="h-full w-full p-1"><slot /></ScrollArea>
     </Resizable.Pane>
 {/if}

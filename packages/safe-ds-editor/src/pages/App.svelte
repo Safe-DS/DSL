@@ -8,7 +8,7 @@
     import type { PaneAPI } from 'paneforge';
     import * as Resizable from '$src/components/ui/resizable';
     import Sidebar from '$/src/components/sidebars/sidebar.svelte';
-    import Flow from '$/src/components/main/flow.svelte';
+    import Flow from '$/src/components/flow/flow.svelte';
     import Button from '../components/ui/button/button.svelte';
     import { HamburgerMenu } from 'svelte-radix';
 

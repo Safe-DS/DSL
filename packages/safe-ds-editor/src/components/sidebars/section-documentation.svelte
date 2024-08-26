@@ -15,6 +15,6 @@
     }
 </script>
 
-<div class={cn('flex select-text flex-col gap-3 text-wrap p-2', className)}>
+<div class={cn('flex h-full w-full select-text flex-col gap-3 text-wrap p-2', className)}>
     {@html marked(description)}
 </div>

@@ -18,7 +18,7 @@
         nodeTypes,
         placeholderToNode,
         type NodeCustom,
-    } from '$/src/components/main/utils.';
+    } from '$/src/components/flow/utils.';
     import { createEventDispatcher, getContext } from 'svelte';
     import { calculateLayout } from './layout';
 
