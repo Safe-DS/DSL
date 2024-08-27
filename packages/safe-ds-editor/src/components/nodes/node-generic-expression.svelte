@@ -9,6 +9,7 @@
     import { Handle, Position, type NodeProps } from '@xyflow/svelte';
     import statusIndicator from '$src/traits/status-indicator';
     import { GenericExpression } from '$global';
+    import StatusIndicator from './status-indicator.svelte';
 
     type $$Props = NodeProps;
     export let data: $$Props['data'];
@@ -22,7 +23,7 @@
 >
     <Handle type="target" id="target" position={Position.Left} class=" absolute -ml-2.5 h-3 w-3" />
     <Handle type="source" id="source" position={Position.Right} class=" absolute -mr-2.5 h-3 w-3" />
-    <div class="w-1 rounded-l-sm" use:statusIndicator={{ status: 'done' }}></div>
+    <StatusIndicator status={'done'} class="w-1 rounded-l-sm" />
     <div class="flex h-full flex-grow items-center">
         <div class=" bg-node-dark m-2 w-full p-1 py-3">
             <span class="text-text-muted w-full whitespace-pre text-left text-lg"

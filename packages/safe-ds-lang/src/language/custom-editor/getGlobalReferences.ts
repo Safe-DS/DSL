@@ -62,7 +62,10 @@ const getGlobalReferencesHandler = async (
             );
             resultList.push({
                 name: element.node.name,
-                category: "// Question: ??",
+                category:
+                    safeDsServices.builtins.Annotations.getCategory(
+                        element.node,
+                    )?.name ?? "",
                 parent: undefined,
             });
         } else {

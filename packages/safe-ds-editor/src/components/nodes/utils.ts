@@ -1,19 +1,4 @@
-import type { Call, GenericExpression } from '$global';
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getCategory = (call: Call) => {
-    // Todo: Proper mapping method
-    const categoryList = [
-        'modelevaluation',
-        'dataexport',
-        'dataimport',
-        'modeling',
-        'dataprocessing',
-        'dataexploration',
-    ];
-    const i = Math.floor(Math.random() * categoryList.length);
-    return categoryList[i];
-};
+import type { GenericExpression } from '$global';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getType = (genericExpression: GenericExpression) => {

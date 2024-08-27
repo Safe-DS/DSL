@@ -8,6 +8,7 @@
     import statusIndicator from '$src/traits/status-indicator';
     import { Placeholder } from '$global';
     import DataTypeIcon from '$/src/assets/dataType/dataTypeIcon.svelte';
+    import StatusIndicator from './status-indicator.svelte';
 
     type $$Props = NodeProps;
     export let data: $$Props['data'];
@@ -30,8 +31,8 @@
             ? ''
             : 'truncate'} text-center text-xl font-bold">{placeholder.name}</span
     >
-    <div
-        use:statusIndicator={{ status: 'done' }}
+    <StatusIndicator
+        status={'done'}
         class={`rounded-placeholderFrame ${selected ? 'shadow-highlight' : 'shadow-node'} justify-center py-1`}
     >
         <div class="rounded-placeholderCore bg-node-normal relative">
@@ -49,5 +50,5 @@
                 class=" absolute -mr-2.5 h-3 w-3"
             />
         </div>
-    </div>
+    </StatusIndicator>
 </div>

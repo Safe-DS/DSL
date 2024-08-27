@@ -8,7 +8,7 @@
     import statusIndicator from '$src/traits/status-indicator';
     import { Call } from '$global';
     import CategoryIcon from '$assets/category/categoryIcon.svelte';
-    import { getCategory } from './utils';
+    import StatusIndicator from './status-indicator.svelte';
 
     type $$Props = NodeProps;
     export let data: $$Props['data'];
@@ -28,10 +28,7 @@
     }}
 >
     <div class=" flex w-full flex-row items-center p-1">
-        <CategoryIcon
-            name={getCategory(call)}
-            className={' w-14 h-14 p-1 pr-4 stroke-text-normal '}
-        />
+        <CategoryIcon name={call.category} className={' w-14 h-14 p-1 pr-4 stroke-text-normal '} />
         <div class="flex h-16 flex-col justify-center">
             <span class="text-text-muted truncate text-left text-lg">{call.self ?? ''}</span>
             <span class="text-text-normal truncate text-left text-2xl font-bold">{call.name}</span>
@@ -45,7 +42,7 @@
             />
         {/if}
     </div>
-    <div use:statusIndicator={{ status: 'done' }} class=" h-1 w-full"></div>
+    <StatusIndicator status={'done'} class=" h-1 w-full" />
     {#if expanded}
         <div class=" bg-node-dark flex w-full flex-col py-2">
             {#each call.resultList as result}

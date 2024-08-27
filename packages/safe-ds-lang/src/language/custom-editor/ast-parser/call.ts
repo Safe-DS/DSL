@@ -33,6 +33,7 @@ export class Call {
         public readonly self: string | undefined,
         public readonly parameterList: Parameter[],
         public readonly resultList: Result[],
+        public readonly category: string,
         public readonly uniquePath: string,
     ) {}
 
@@ -53,6 +54,10 @@ export class Call {
             const functionDeclaration = node.receiver.member.target.ref;
 
             const name = functionDeclaration.name;
+            const category =
+                Utils.safeDsServices.builtins.Annotations.getCategory(
+                    functionDeclaration,
+                )?.name ?? "";
 
             const resultList = filterErrors(
                 (functionDeclaration.resultList?.results ?? []).map(
@@ -152,6 +157,7 @@ export class Call {
                 self,
                 parameterList as Parameter[],
                 resultList,
+                category,
                 Utils.safeDsServices.workspace.AstNodeLocator.getAstNodePath(
                     node,
                 ),
@@ -184,6 +190,7 @@ export class Call {
                 self,
                 parameterList as Parameter[],
                 resultList,
+                "Modeling",
                 Utils.safeDsServices.workspace.AstNodeLocator.getAstNodePath(
                     node,
                 ),

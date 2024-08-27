@@ -25,6 +25,7 @@
     use:tooltip={{ content: statement.name, delay: 150 }}
     class=" bg-node-normal shadow-node w-[160px] cursor-default rounded-sm"
 >
+    <StatusIndicator status={'done'} class="w-1 rounded-l-sm" />
     <div
         use:statusIndicator={{ status: statement.status }}
         class="rounded-sm p-1"
