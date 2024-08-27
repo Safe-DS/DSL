@@ -15,7 +15,7 @@
 
 <button
     class={cn(
-        'hover:bg-menu-500 flex flex-row items-center whitespace-nowrap p-1 text-left hover:underline [&[data-state=open]>svg:first-of-type]:rotate-90',
+        `border-menu-400 ${showResizeHandle && showPane ? 'border-t-0' : 'border-t-[1px]'} flex flex-row items-center whitespace-nowrap p-1 text-left first:border-t-0 [&[data-state=open]>svg:first-of-type]:rotate-90`,
         className,
     )}
     data-state={showPane ? 'open' : 'closed'}
@@ -30,10 +30,10 @@
 </button>
 {#if showPane}
     <Resizable.Pane class="h-full w-full" {order} minSize={5}>
-        <ScrollArea class="h-full w-full p-1"><slot /></ScrollArea>
+        <ScrollArea class="h-full w-full"><slot /></ScrollArea>
     </Resizable.Pane>
 {/if}
 
 {#if showResizeHandle && showPane}
-    <Resizable.Handle class=" bg-menu-400 z-10 after:h-2" />
+    <Resizable.Handle class=" z-10 bg-transparent after:h-2" />
 {/if}

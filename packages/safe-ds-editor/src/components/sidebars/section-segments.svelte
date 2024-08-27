@@ -9,7 +9,7 @@
     export { className as class };
 </script>
 
-<div class={cn('grid gap-2', className)}>
+<div class={cn('grid gap-2 pl-3', className)}>
     <Button class="bg-menu-500 text-text-normal hover:bg-menu-400 w-full rounded-lg border"
         >+</Button
     >

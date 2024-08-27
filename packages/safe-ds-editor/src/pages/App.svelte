@@ -28,7 +28,6 @@
     async function fetchGlobalReferences() {
         const response = await MessageHandler.getGlobalReferences();
         globalReferences.set(response.globalReferences);
-        console.log(response.globalReferences);
     }
 
     onMount(async () => {
@@ -39,9 +38,7 @@
     function handleError(error: CustomError) {
         if (error.action === 'block')
             errorList.update((array) => {
-                console.log('ErrorList before: ' + array.length);
                 array.push(error);
-                console.log('ErrorList after: ' + array.length);
                 return array;
             });
 
@@ -58,7 +55,7 @@
 {#if $errorList.length > 0}
     <ErrorPage bind:errorList />
 {:else}
-    <div class=" border-menu-400 relative box-border h-full w-full border-t-2">
+    <div class=" border-menu-400 relative box-border h-full w-full border-t-[1px]">
         <main class="h-full w-full">
             <Resizable.PaneGroup direction="horizontal">
                 <Resizable.Pane

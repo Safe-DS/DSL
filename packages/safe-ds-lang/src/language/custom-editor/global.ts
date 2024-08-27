@@ -28,7 +28,14 @@ export class GlobalReference {
     constructor(
         public readonly name: string,
         public readonly parent: string | undefined,
-        public readonly category: string,
+        public readonly category:
+            | "DataImport"
+            | "DataExport"
+            | "DataProcessing"
+            | "DataExploration"
+            | "Modeling"
+            | "ModelEvaluation"
+            | (string & Record<never, never>),
     ) {}
 }
 

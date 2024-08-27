@@ -16,9 +16,9 @@
     export let globalReferences: Writable<GlobalReference[]>;
     export let selectedNodeList: XYNode[];
 
-    let paneElements = false;
+    let paneElements = true;
     let paneSegments = false;
-    let paneParameters = true;
+    let paneParameters = false;
     let paneDocumentation = false;
 
     const LORE =
@@ -33,7 +33,7 @@
             bind:showPane={paneElements}
             showResizeHandle={paneSegments || paneDocumentation || paneParameters}
         >
-            <SectionElements class="pl-3" />
+            <SectionElements {globalReferences} />
         </SidebarSection>
         <SidebarSection
             name={'Segmente'}
@@ -41,7 +41,7 @@
             bind:showPane={paneSegments}
             showResizeHandle={paneDocumentation || paneParameters}
         >
-            <SectionSegments class="pl-3" />
+            <SectionSegments />
         </SidebarSection>
         <SidebarSection
             name={'Parameter'}
@@ -49,7 +49,7 @@
             bind:showPane={paneParameters}
             showResizeHandle={paneDocumentation}
         >
-            <SectionParameter {selectedNodeList} class="pl-3" />
+            <SectionParameter {selectedNodeList} />
         </SidebarSection>
         <SidebarSection
             name={'Dokumentation'}
@@ -57,7 +57,7 @@
             bind:showPane={paneDocumentation}
             showResizeHandle={false}
         >
-            <SectionDocumentation {selectedNodeList} class="pl-3" />
+            <SectionDocumentation {selectedNodeList} />
         </SidebarSection>
     </Resizable.PaneGroup>
 </div>

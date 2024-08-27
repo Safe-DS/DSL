@@ -1,28 +1,29 @@
 <script lang="ts">
-    import Evaluation from './evaluation.svelte';
-    import Export from './export.svelte';
-    import Import from './import.svelte';
-    import Modelling from './modelling.svelte';
-    import Preparation1 from './preparation1.svelte';
-    import Preparation2 from './preparation2.svelte';
+    import ModelEvaluation from './ModelEvaluation.svelte';
+    import DataExport from './DataExport.svelte';
+    import DataImport from './DataImport.svelte';
+    import Modeling from './modeling.svelte';
+    import DataProcessing from './DataProcessing.svelte';
+    import DataExploration from './DataExploration.svelte';
 
-    const svgMap: { [key: string]: typeof Evaluation } = {
-        evaluation: Evaluation,
-        export: Export,
-        import: Import,
-        modelling: Modelling,
-        preparation1: Preparation1,
-        preparation2: Preparation2,
+    const svgMap: { [key: string]: typeof ModelEvaluation } = {
+        modelevaluation: ModelEvaluation,
+        dataexport: DataExport,
+        dataimport: DataImport,
+        modeling: Modeling,
+        dataprocessing: DataProcessing,
+        dataexploration: DataExploration,
     };
 
     export let name: string;
     export let className = '';
 
     const SvgComponent = svgMap[name.toLowerCase()];
+    if (!SvgComponent) console.log(`Unable to retrieve Icon for Category <${name}>`);
 </script>
 
 {#if SvgComponent}
     <SvgComponent {className} />
 {:else}
-    <div>Category Undefined</div>
+    <div class="mr-2">-</div>
 {/if}

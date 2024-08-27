@@ -52,7 +52,7 @@ const getGlobalReferencesHandler = async (
             functionList.push({
                 parent: name,
                 name: "new",
-                category: "Modelling",
+                category: "Modeling",
             });
             resultList.push(...functionList);
         } else if (isSdsFunction(element.node)) {

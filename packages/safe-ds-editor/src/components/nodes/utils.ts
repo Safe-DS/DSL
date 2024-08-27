@@ -4,12 +4,12 @@ import type { Call, GenericExpression } from '$global';
 export const getCategory = (call: Call) => {
     // Todo: Proper mapping method
     const categoryList = [
-        'evaluation',
-        'export',
-        'import',
-        'modelling',
-        'preparation1',
-        'preparation2',
+        'modelevaluation',
+        'dataexport',
+        'dataimport',
+        'modeling',
+        'dataprocessing',
+        'dataexploration',
     ];
     const i = Math.floor(Math.random() * categoryList.length);
     return categoryList[i];

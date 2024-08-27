@@ -22,7 +22,7 @@
     $: parameterList = intersect(selectedNodeList.map(getParameterList));
 </script>
 
-<div class={cn('flex flex-col gap-2 p-2', className)}>
+<div class={cn('flex flex-col gap-2 p-2 pl-3', className)}>
     <h2 class="text-text-highligh truncate text-xl font-bold">{name}</h2>
     <div class="p-1">
         {#each parameterList as parameter}

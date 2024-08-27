@@ -2,11 +2,11 @@
 import type { Node as XYNode } from '@xyflow/svelte';
 import type { CallProps } from '../nodes/node-call.svelte';
 import type { PlaceholderProps } from '../nodes/node-placeholder.svelte';
-import type { Parameter } from './SecondarySidebar.svelte';
 import type { GenericExpressionProps } from '../nodes/node-generic-expression.svelte';
 import type { CustomError, Datatype } from '$global';
 import MessageHandler from '$/src/messaging/messageHandler';
 import { getContext } from 'svelte';
+import type { Parameter } from './section-parameter.svelte';
 
 export const getName = (xyNodeList: XYNode[]) => {
     if (xyNodeList.length === 0) return '';
@@ -58,7 +58,6 @@ export const getDescription = async (xyNodeList: XYNode[]): Promise<string> => {
     }
 
     const response = await MessageHandler.getNodeDescription(uniquePath);
-    console.log(response);
     return response.description;
 };
 
