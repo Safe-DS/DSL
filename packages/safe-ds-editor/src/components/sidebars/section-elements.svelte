@@ -64,7 +64,9 @@
             Expression
         </div>
     </div>
-    <div class="mx-3"><Input placeholder="Search..." bind:value={searchValue} /></div>
+    <div class=" mx-3 border-none">
+        <Input placeholder="Search..." bind:value={searchValue} />
+    </div>
     <ScrollArea>
         {#each categories as [categoryName, references] (categoryName)}
             <Accordion class="pl-3" name={categoryName ? categoryName : 'Undefined'}>
