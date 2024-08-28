@@ -16,26 +16,28 @@
     let isHovered = false;
 </script>
 
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+
 <div
-    role="group"
-    use:tooltip={{ content: placeholder.name, delay: 150 }}
-    class="w-24 cursor-default"
+    data-state={selected ? 'selected' : ''}
+    class="shadow-node [&[data-state=selected]]:shadow-highlight h-24 w-24 cursor-default rounded-xl"
     on:mouseover={() => (isHovered = true)}
     on:mouseout={() => (isHovered = false)}
-    on:focus={() => {}}
-    on:blur={() => {}}
 >
     <span
-        class="text-text-normal relative -left-6 block w-[120px] {isHovered
-            ? ''
-            : 'truncate'} text-center text-xl font-bold">{placeholder.name}</span
+        data-state={isHovered ? 'full' : 'truncated'}
+        class="text-text-normal absolute -left-6 -top-2 block w-36 -translate-y-full text-center text-2xl font-bold [&[data-state=truncated]]:truncate"
     >
-    <StatusIndicator
-        status={'done'}
-        class={`rounded-placeholderFrame ${selected ? 'shadow-highlight' : 'shadow-node'} justify-center py-1`}
-    >
-        <div class="rounded-placeholderCore bg-node-normal relative">
-            <DataTypeIcon name={placeholder.type} className={'h-20 w-24 stroke-text-normal p-1'} />
+        {placeholder.name}
+    </span>
+    <StatusIndicator status={'done'} class={`h-full w-full rounded-xl py-1`}>
+        <div class="bg-node-normal relative h-full w-full rounded-xl">
+            <DataTypeIcon
+                name={placeholder.type}
+                className={'overflow-hidden h-full w-full stroke-text-normal p-2'}
+            />
             <Handle
                 type="target"
                 id="target"

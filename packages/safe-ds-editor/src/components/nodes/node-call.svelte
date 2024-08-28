@@ -3,12 +3,12 @@
 </script>
 
 <script lang="ts">
+    // Todo: Handle the minimizing of nodes properly -> edges need to be rerouted
     import { Handle, Position, type NodeProps } from '@xyflow/svelte';
     import tooltip from '$src/traits/tooltip';
-    import statusIndicator from '$src/traits/status-indicator';
     import { Call } from '$global';
     import CategoryIcon from '$assets/category/categoryIcon.svelte';
-    import StatusIndicator from './status-indicator.svelte';
+    import StatusIndicator from '$src/components/ui/status-indicator/status-indicator.svelte';
 
     type $$Props = NodeProps;
     export let data: $$Props['data'];
@@ -20,15 +20,16 @@
 
 <button
     use:tooltip={{ content: call.name, delay: 150 }}
-    class={` bg-node-normal ${selected ? 'shadow-highlight' : 'shadow-node'} relative w-[260px] cursor-default rounded-sm pb-2 focus-visible:outline-none`}
+    data-state={selected ? 'selected' : ''}
+    class={` bg-node-normal [&[data-state=selected]]:shadow-highlight shadow-node relative w-[260px] cursor-default rounded-sm pb-2 focus-visible:outline-none`}
     on:mousedown={(event) => {
         if (event.shiftKey) {
             expanded = !expanded;
         }
     }}
 >
-    <div class=" flex w-full flex-row items-center p-1">
-        <CategoryIcon name={call.category} className={' w-14 h-14 p-1 pr-4 stroke-text-normal '} />
+    <div class="flex w-full flex-row items-center p-1">
+        <CategoryIcon name={call.category} className="w-14 h-14 p-1 pr-4 stroke-text-normal" />
         <div class="flex h-16 flex-col justify-center">
             <span class="text-text-muted truncate text-left text-lg">{call.self ?? ''}</span>
             <span class="text-text-normal truncate text-left text-2xl font-bold">{call.name}</span>
@@ -42,7 +43,7 @@
             />
         {/if}
     </div>
-    <StatusIndicator status={'done'} class=" h-1 w-full" />
+    <StatusIndicator status={'done'} class="h-1 w-full" />
     {#if expanded}
         <div class=" bg-node-dark flex w-full flex-col py-2">
             {#each call.resultList as result}

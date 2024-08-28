@@ -3,7 +3,7 @@ import type { CallProps } from '$src/components/nodes/node-call.svelte';
 import type { PlaceholderProps } from '$src/components/nodes/node-placeholder.svelte';
 import type { GenericExpressionProps } from '$src/components/nodes/node-generic-expression.svelte';
 import type { Call, Edge, GenericExpression, Placeholder } from '$global';
-import NodePlaceholder from '$src/components/nodes/node-placeholder.svelte';
+import NodePlaceholder from '$src/components/nodes/node-placeholder-new.svelte';
 import NodeCall from '$src/components/nodes/node-call.svelte';
 import NodeGenericExpression from '$src/components/nodes/node-generic-expression.svelte';
 

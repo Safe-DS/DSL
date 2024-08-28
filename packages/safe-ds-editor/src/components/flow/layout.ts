@@ -18,8 +18,8 @@ export const calculateLayout = async (
     const elk = new ELK();
     const options = {
         'elk.algorithm': 'layered',
-        'elk.layered.spacing.nodeNodeBetweenLayers': '200',
-        'elk.spacing.nodeNode': '50',
+        'elk.layered.spacing.nodeNodeBetweenLayers': '300',
+        'elk.spacing.nodeNode': '80',
     };
 
     const graph: ElkNode = {

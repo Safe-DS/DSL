@@ -10,7 +10,7 @@
     // import Port from './port.svelte';
     // import statusIndicator from '$pages/traits/status-indicator';
     // import { menu } from 'src/assets/menu/menuIcon.svelte';
-    // import Button from '../ui/button/button.svelte';
+    // import Button from '$src/components/ui/button/button.svelte';
 
     type $$Props = NodeProps;
 

@@ -3,7 +3,7 @@ import type { Node as XYNode } from '@xyflow/svelte';
 import type { CallProps } from '../nodes/node-call.svelte';
 import type { PlaceholderProps } from '../nodes/node-placeholder.svelte';
 import type { GenericExpressionProps } from '../nodes/node-generic-expression.svelte';
-import type { CustomError, Datatype } from '$global';
+import type { CustomError } from '$global';
 import MessageHandler from '$/src/messaging/messageHandler';
 import { getContext } from 'svelte';
 import type { Parameter } from './section-parameter.svelte';
@@ -88,11 +88,21 @@ export const intersect = (list: Parameter[][]) => {
 
     const compareParameter = (a: Parameter, b: Parameter) => a.name === b.name;
 
-    const intersection = list[0].filter((parameter) =>
-        list.every((parameterList) =>
-            parameterList.some((otherParameter) => compareParameter(parameter, otherParameter)),
-        ),
-    );
+    const intersection = list[0]
+        .filter((parameter) =>
+            list.every((parameterList) =>
+                parameterList.some((otherParameter) => compareParameter(parameter, otherParameter)),
+            ),
+        )
+        .map((parameter) => {
+            const match = list.some((parameterList) =>
+                parameterList.some(
+                    (otherParameter) => otherParameter.argumentText !== parameter.argumentText,
+                ),
+            );
+            if (match) return { ...parameter, argumentText: '...' };
+            return parameter;
+        });
 
     return intersection;
 };
