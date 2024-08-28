@@ -1,13 +1,11 @@
 import { SdsParameter } from "../../generated/ast.js";
-import { CustomError } from "../global.js";
-import { Datatype, Type } from "./type.js";
 import { Utils } from "./utils.js";
 
 export class Parameter {
     private constructor(
         public readonly name: string,
         public readonly isConstant: boolean,
-        public readonly type: Datatype,
+        public readonly type: string,
         public argumentText?: string,
         public readonly defaultValue?: string,
     ) {}
@@ -17,8 +15,10 @@ export class Parameter {
         const isConstant = node.isConstant;
 
         if (!node.type) return Utils.pushError("Undefined Type", node);
-        const type = Type.parse(node.type);
-        if (type instanceof CustomError) return type;
+        const type =
+            Utils.safeDsServices.typing.TypeComputer.computeType(
+                node,
+            ).toString();
 
         const defaultValue = node.defaultValue?.$cstNode?.text;
 

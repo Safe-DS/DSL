@@ -20,11 +20,7 @@ import { GenericExpression } from "./expression.js";
 import { Parameter } from "./parameter.js";
 import { Placeholder } from "./placeholder.js";
 import { Result } from "./result.js";
-import { Datatype } from "./type.js";
 import { filterErrors, Utils } from "./utils.js";
-
-// Todo: Some portions of this code should get extracted to increase readability.
-// Absolute mess at the moment
 
 export class Call {
     private constructor(
@@ -179,10 +175,7 @@ export class Call {
             const parameterList = classDeclaration.parameterList.parameters.map(
                 Parameter.parse,
             );
-            // Todo: This typecast is technically invalid, but it shouldn't matter, as all the classes should by part of the datatype namedtype type
-            const resultList = [
-                new Result("new", classDeclaration.name as Datatype),
-            ];
+            const resultList = [new Result("new", classDeclaration.name)];
 
             const call = new Call(
                 id,

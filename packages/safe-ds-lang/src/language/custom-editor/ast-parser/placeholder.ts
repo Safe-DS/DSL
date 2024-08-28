@@ -1,11 +1,10 @@
 import { SdsPlaceholder } from "../../generated/ast.js";
-import { Datatype } from "./type.js";
 import { Utils } from "./utils.js";
 
 export class Placeholder {
     private constructor(
         public readonly name: string,
-        public type: Datatype,
+        public type: string,
         public readonly uniquePath: string,
     ) {}
 
@@ -17,7 +16,9 @@ export class Placeholder {
 
         const placeholder = new Placeholder(
             node.name,
-            "Unknown",
+            Utils.safeDsServices.typing.TypeComputer.computeType(
+                node,
+            ).toString(),
             Utils.safeDsServices.workspace.AstNodeLocator.getAstNodePath(node),
         );
         Utils.placeholderList.push(placeholder);

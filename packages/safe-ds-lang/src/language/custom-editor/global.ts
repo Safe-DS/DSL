@@ -8,7 +8,6 @@ export { Placeholder } from "./ast-parser/placeholder.js";
 export { Call } from "./ast-parser/call.js";
 export { GenericExpression } from "./ast-parser/expression.js";
 export { Edge } from "./ast-parser/edge.js";
-export { Datatype } from "./ast-parser/type.js";
 
 export class Ast {
     constructor(
