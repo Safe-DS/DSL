@@ -16,15 +16,14 @@
     let isHovered = false;
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions -->
-<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-<!-- svelte-ignore a11y-mouse-events-have-key-events -->
-
 <div
+    role="tooltip"
     data-state={selected ? 'selected' : ''}
     class="shadow-node [&[data-state=selected]]:shadow-highlight h-24 w-24 cursor-default rounded-xl"
     on:mouseover={() => (isHovered = true)}
     on:mouseout={() => (isHovered = false)}
+    on:focus={() => {}}
+    on:blur={() => {}}
 >
     <span
         data-state={isHovered ? 'full' : 'truncated'}
@@ -32,24 +31,29 @@
     >
         {placeholder.name}
     </span>
-    <StatusIndicator status={'done'} class={`h-full w-full rounded-xl py-1`}>
-        <div class="bg-node-normal relative h-full w-full rounded-xl">
-            <DataTypeIcon
-                name={placeholder.type}
-                className={'overflow-hidden h-full w-full stroke-text-normal p-2'}
-            />
-            <Handle
-                type="target"
-                id="target"
-                position={Position.Left}
-                class=" absolute -ml-2.5 h-3 w-3"
-            />
-            <Handle
-                type="source"
-                id="source"
-                position={Position.Right}
-                class=" absolute -mr-2.5 h-3 w-3"
-            />
+    <div class="flex h-full w-full flex-col bg-transparent">
+        <StatusIndicator status={'done'} class={`h-4 w-full rounded-t-xl`} />
+        <div class="bg-node-normal flex-grow"></div>
+        <StatusIndicator status={'done'} class={`h-4 w-full rounded-b-xl`} />
+        <div class="absolute left-0 top-0 h-24 w-24 rounded-xl bg-transparent py-1">
+            <div class="bg-node-normal h-full w-full rounded-xl">
+                <DataTypeIcon
+                    name={placeholder.type}
+                    className={'overflow-hidden h-full w-full stroke-text-normal p-2'}
+                />
+                <Handle
+                    type="target"
+                    id="target"
+                    position={Position.Left}
+                    class=" absolute -ml-2.5 h-3 w-3"
+                />
+                <Handle
+                    type="source"
+                    id="source"
+                    position={Position.Right}
+                    class=" absolute -mr-2.5 h-3 w-3"
+                />
+            </div>
         </div>
-    </StatusIndicator>
+    </div>
 </div>
