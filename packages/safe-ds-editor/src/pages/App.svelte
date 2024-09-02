@@ -27,7 +27,12 @@
 
     async function fetchGlobalReferences() {
         const response = await MessageHandler.getGlobalReferences();
-        console.log(response.globalReferences.map((ref) => ref.parent + '.' + ref.name));
+        console.log(
+            response.globalReferences
+                .map((ref) => ref.parent + '.' + ref.name)
+                .sort()
+                .join('\n'),
+        );
         globalReferences.set(response.globalReferences);
     }
 

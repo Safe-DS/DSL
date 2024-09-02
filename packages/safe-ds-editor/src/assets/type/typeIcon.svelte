@@ -23,7 +23,12 @@
 {#if SvgComponent}
     <SvgComponent {className} />
 {:else}
-    <div class={cn(' flex h-full w-full items-center justify-center text-center', className)}>
+    <div
+        class={cn(
+            ' flex h-full w-full items-center justify-center text-center font-bold',
+            className,
+        )}
+    >
         {name}
     </div>
 {/if}
