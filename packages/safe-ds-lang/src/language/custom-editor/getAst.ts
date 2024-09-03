@@ -27,17 +27,19 @@ const getAstHandler = async (
         await sharedServices.workspace.LangiumDocuments.getOrCreateDocument(
             message.uri,
         );
-    // logger.info("DEBUG Path: ", message.uri.path);
-    // logger.info("DEBUG Path: ", document.uri.fsPath);
-    // Question: it appears that I am using the getOrCreateDocument method wrong
-    // Use example above
+
+    // Todo: Find out why restarting with a different document doesnt work as intended
     await sharedServices.workspace.DocumentBuilder.build([document]);
 
-    document.parseResult.lexerErrors.forEach(Utils.pushLexerErrors);
-    document.parseResult.parserErrors.forEach(Utils.pushParserErrors);
-    if (Utils.errorList.length === 0) {
-        parseDocumentNew(document);
-        //saveJson(documentToJson(document, 16), "currentDocument");
+    if (false) {
+        saveJson(documentToJson(document, 16), "currentDocument");
+    } else {
+        document.parseResult.lexerErrors.forEach(Utils.pushLexerErrors);
+        document.parseResult.parserErrors.forEach(Utils.pushParserErrors);
+        if (Utils.errorList.length === 0) {
+            parseDocumentNew(document);
+            saveJson(documentToJson(document, 16), "currentDocument");
+        }
     }
 
     const ast: Ast = {
