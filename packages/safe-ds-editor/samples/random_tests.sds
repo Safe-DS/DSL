@@ -1,5 +1,0 @@
-package randomTest
-
-pipeline randomTest {
-    val test = ImageDataset();
-}

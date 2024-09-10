@@ -4,7 +4,7 @@ import { Utils } from "./utils.js";
 export class Result {
     constructor(
         public readonly name: string,
-        public readonly type: string,
+        public type: string,
     ) {}
 
     public static parse(node: SdsResult) {

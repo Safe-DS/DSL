@@ -5,7 +5,7 @@ import { Edge } from "./edge.js";
 import { Placeholder } from "./placeholder.js";
 import { GenericExpression } from "./expression.js";
 import { ILexingError, IRecognitionException } from "chevrotain";
-import { CustomError } from "../global.js";
+import { Ast, CustomError } from "../global.js";
 import { SafeDsServices } from "../../safe-ds-module.js";
 
 export class Utils {
@@ -20,9 +20,9 @@ export class Utils {
     static safeDsServices: SafeDsServices;
 
     public static initialize(
-        logger: SafeDsMessagingProvider,
-        documentUri: URI,
-        safeDsServices: SafeDsServices,
+        documentUri?: URI,
+        safeDsServices?: SafeDsServices,
+        logger?: SafeDsMessagingProvider,
     ) {
         Utils.errorList = [];
         Utils.placeholderList = [];
@@ -30,9 +30,11 @@ export class Utils {
         Utils.genericExpressionList = [];
         Utils.edgeList = [];
         Utils.lastId = 0;
-        Utils.logger = logger;
-        Utils.documentUri = documentUri;
-        Utils.safeDsServices = safeDsServices;
+        Utils.logger = logger ? logger : Utils.logger;
+        Utils.documentUri = documentUri ? documentUri : Utils.documentUri;
+        Utils.safeDsServices = safeDsServices
+            ? safeDsServices
+            : Utils.safeDsServices;
     }
 
     private static constructErrorMessage(message: string, origin?: AstNode) {
@@ -95,6 +97,16 @@ export class Utils {
 
     public static getNewId() {
         return Utils.lastId++;
+    }
+
+    public static collectAst(): Ast {
+        const ast = {
+            placeholderList: Utils.placeholderList,
+            callList: Utils.callList,
+            genericExpressionList: Utils.genericExpressionList,
+            edgeList: Utils.edgeList,
+        };
+        return ast;
     }
 }
 

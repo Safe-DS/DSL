@@ -28,8 +28,9 @@ const getNodeDescription = async (
     await sharedServices.workspace.DocumentBuilder.build([document]);
     // Question: Lars hatte gesagt, dass es hier mittelerweile eine bessere Lösung gibt.
 
+    const root = document.parseResult.value;
     const node = safeDsServices.workspace.AstNodeLocator.getAstNode(
-        document.parseResult.value,
+        root,
         message.uniquePath,
     );
     if (!node) {

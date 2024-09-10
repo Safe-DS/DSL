@@ -3,13 +3,10 @@ import { GenericRequestType } from "./types.js";
 import { GlobalReference, GlobalReferenceInterface } from "./global.js";
 import { SafeDsServices } from "../safe-ds-module.js";
 import { isPrivate } from "../helpers/nodeProperties.js";
-import { isSdsClass, isSdsFunction } from "../generated/ast.js";
-// Todo: import { CstUtils } from "langium"; // comment a node and get it somehow
-// For description:
-// safeDsServices.workspace.AstNodeLocator.getAstNodePath()
-// safeDsServices.workspace.AstNodeLocator.getAstNode()
+import { isSdsClass, isSdsFunction, isSdsSegment } from "../generated/ast.js";
 
 const getGlobalReferencesHandler = async (
+    message: GlobalReferenceInterface.Message,
     sharedServices: LangiumSharedServices,
     safeDsServices: SafeDsServices,
 ): Promise<GlobalReferenceInterface.Response> => {
@@ -30,10 +27,6 @@ const getGlobalReferencesHandler = async (
         }
 
         if (isSdsClass(element.node)) {
-            logger.info(
-                "GlobRef",
-                `Found global reference - Class <${element.node.name}>`,
-            );
             const name = element.node.name;
 
             const classMemberList = element.node.body?.members ?? [];
@@ -49,17 +42,23 @@ const getGlobalReferencesHandler = async (
                         category: category?.name ?? "",
                     };
                 });
-            functionList.push({
-                parent: name,
-                name: "new",
-                category: "Modeling",
-            });
+
+            if (element.node.parameterList) {
+                logger.info(
+                    "GlobRef",
+                    `Class <${element.node.name}> no constructor`,
+                );
+            }
+            if (element.node.parameterList) {
+                functionList.push({
+                    parent: name,
+                    name: "new",
+                    category: "Modeling",
+                });
+            }
+
             resultList.push(...functionList);
         } else if (isSdsFunction(element.node)) {
-            logger.warn(
-                "GlobRef",
-                `Found global reference - Function <${element.node.name}>`,
-            );
             resultList.push({
                 name: element.node.name,
                 category:
@@ -68,6 +67,8 @@ const getGlobalReferencesHandler = async (
                     )?.name ?? "",
                 parent: undefined,
             });
+        } else if (isSdsSegment(element.node)) {
+            // Do nothing
         } else {
             logger.warn(
                 "GlobRef",
@@ -89,7 +90,6 @@ export const GetGlobalReferences: GenericRequestType = {
             sharedServices: LangiumSharedServices,
             safeDsServices: SafeDsServices,
         ) =>
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         (message: GlobalReferenceInterface.Message) =>
-            getGlobalReferencesHandler(sharedServices, safeDsServices),
+            getGlobalReferencesHandler(message, sharedServices, safeDsServices),
 };

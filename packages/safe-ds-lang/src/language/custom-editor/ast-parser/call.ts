@@ -6,12 +6,14 @@ import {
     SdsMemberAccess,
     SdsPlaceholder,
     SdsReference,
+    SdsSegment,
     isSdsCall,
     isSdsClass,
     isSdsFunction,
     isSdsMemberAccess,
     isSdsPlaceholder,
     isSdsReference,
+    isSdsSegment,
 } from "../../generated/ast.js";
 import { CustomError } from "../global.js";
 import { Argument } from "./argument.js";
@@ -47,8 +49,11 @@ export class Call {
             let self = Call.parseSelf(node.receiver, id);
             if (self instanceof CustomError) return self;
 
-            const functionDeclaration = node.receiver.member.target.ref;
+            const argumentList = node.argumentList.arguments.map(
+                Argument.parse,
+            );
 
+            const functionDeclaration = node.receiver.member.target.ref;
             const name = functionDeclaration.name;
             const category =
                 Utils.safeDsServices.builtins.Annotations.getCategory(
@@ -60,23 +65,13 @@ export class Call {
                     Result.parse,
                 ),
             );
-            if (!functionDeclaration.parameterList) {
-                return Utils.pushError(
-                    "ParameterList undefined",
-                    node.receiver.member,
-                );
-            }
-
-            const argumentList = node.argumentList.arguments.map(
-                Argument.parse,
-            );
-            const parameterList =
-                functionDeclaration.parameterList.parameters.map(
+            const parameterList = filterErrors(
+                (functionDeclaration.parameterList?.parameters ?? []).map(
                     Parameter.parse,
-                );
-            for (let i = 0; i < parameterList.length; i++) {
-                const parameter = parameterList[i]!;
-                if (parameter instanceof CustomError) return parameter;
+                ),
+            );
+
+            for (const [i, parameter] of parameterList.entries()) {
                 if (parameter.isConstant)
                     return Utils.pushError(
                         "Unexpected constant Parameter",
@@ -132,11 +127,17 @@ export class Call {
                             Port.fromParameter(parameter, id),
                         );
                     }
+                    if (argument.reference instanceof Parameter) {
+                        const segmentParameter = argument.reference;
+                        Edge.create(
+                            Port.fromParameter(segmentParameter, -1),
+                            Port.fromParameter(parameter, id),
+                        );
+                    }
                     continue;
                 }
 
                 if (!argument && parameter.defaultValue) {
-                    // parameter.argumentText = parameter.defaultValue;
                     continue;
                 }
 
@@ -162,7 +163,10 @@ export class Call {
             return call;
         }
 
-        if (isSdsReference(node.receiver)) {
+        if (
+            isSdsReference(node.receiver) &&
+            isSdsClass(node.receiver.target.ref)
+        ) {
             const classDeclaration = node.receiver.target.ref;
             const self = classDeclaration.name;
             const name = "new";
@@ -184,6 +188,40 @@ export class Call {
                 parameterList as Parameter[],
                 resultList,
                 "Modeling",
+                Utils.safeDsServices.workspace.AstNodeLocator.getAstNodePath(
+                    node,
+                ),
+            );
+            Utils.callList.push(call);
+            return call;
+        }
+
+        if (
+            isSdsReference(node.receiver) &&
+            isSdsSegment(node.receiver.target.ref)
+        ) {
+            const segmentDeclaration = node.receiver.target.ref;
+            const self = "";
+            const name = segmentDeclaration.name;
+
+            const resultList = filterErrors(
+                (segmentDeclaration.resultList?.results ?? []).map(
+                    Result.parse,
+                ),
+            );
+            const parameterList = filterErrors(
+                (segmentDeclaration.parameterList?.parameters ?? []).map(
+                    Parameter.parse,
+                ),
+            );
+
+            const call = new Call(
+                id,
+                name,
+                self,
+                parameterList,
+                resultList,
+                "Segemnt",
                 Utils.safeDsServices.workspace.AstNodeLocator.getAstNodePath(
                     node,
                 ),
@@ -229,7 +267,7 @@ export class Call {
 }
 
 type CallReceiver =
-    | (SdsReference & { target: { ref: SdsClass } })
+    | (SdsReference & { target: { ref: SdsClass | SdsSegment } })
     | (SdsMemberAccess & {
           member: {
               target: { ref: SdsFunction };
@@ -250,7 +288,9 @@ const isValidCallReceiver = (
                 (isSdsClass(receiver.receiver.target.ref) ||
                     isSdsPlaceholder(receiver.receiver.target.ref))) ||
                 isSdsCall(receiver.receiver))) ||
-        (isSdsReference(receiver) && isSdsClass(receiver.target.ref))
+        (isSdsReference(receiver) &&
+            (isSdsClass(receiver.target.ref) ||
+                isSdsSegment(receiver.target.ref)))
     );
 };
 
@@ -273,7 +313,11 @@ const debugInvalidCallReceiver = (receiver: SdsExpression): string => {
             return "MemberAccess: Reference Receiver is not Class of Placeholder";
     }
     if (isSdsReference(receiver)) {
-        if (!isSdsClass(receiver.target.ref)) return "Reference: Not a class";
+        if (
+            !isSdsClass(receiver.target.ref) &&
+            !isSdsSegment(receiver.target.ref)
+        )
+            return "Reference: Not a class or segment";
     }
 
     return receiver.$type;

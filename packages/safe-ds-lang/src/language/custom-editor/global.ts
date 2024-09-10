@@ -3,7 +3,9 @@ import { GenericExpression } from "./ast-parser/expression.js";
 import { Edge } from "./ast-parser/edge.js";
 import { Uri } from "vscode";
 import { Placeholder } from "./ast-parser/placeholder.js";
+import { Segment } from "./ast-parser/segment.js";
 
+export { SegmentYieldId, SegmentParameterId } from "./ast-parser/segment.js";
 export { Placeholder } from "./ast-parser/placeholder.js";
 export { Call } from "./ast-parser/call.js";
 export { GenericExpression } from "./ast-parser/expression.js";
@@ -20,7 +22,11 @@ export class Ast {
 
 export namespace AstInterface {
     export type Message = { uri: Uri };
-    export type Response = { ast: Ast; errorList: CustomError[] };
+    export type Response = {
+        ast: Ast;
+        errorList: CustomError[];
+        segmentList: Segment[];
+    };
 }
 
 export class GlobalReference {

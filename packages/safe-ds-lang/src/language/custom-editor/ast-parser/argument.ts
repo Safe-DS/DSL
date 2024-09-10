@@ -4,6 +4,7 @@ import { Call } from "./call.js";
 import { Placeholder } from "./placeholder.js";
 import { Expression, GenericExpression } from "./expression.js";
 import { Utils } from "./utils.js";
+import { Parameter } from "./parameter.js";
 
 export class Argument {
     constructor(
@@ -12,6 +13,7 @@ export class Argument {
             | GenericExpression
             | Call
             | Placeholder
+            | Parameter
             | undefined,
         public readonly parameterName?: string,
     ) {}

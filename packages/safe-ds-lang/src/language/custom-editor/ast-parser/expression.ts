@@ -2,6 +2,7 @@ import { AstUtils } from "langium";
 import {
     SdsExpression,
     isSdsCall,
+    isSdsParameter,
     isSdsPlaceholder,
     isSdsReference,
 } from "../../generated/ast.js";
@@ -9,6 +10,7 @@ import { Call } from "./call.js";
 import { Utils } from "./utils.js";
 import { Edge, Port } from "./edge.js";
 import { Placeholder } from "./placeholder.js";
+import { Parameter } from "./parameter.js";
 
 export class GenericExpression {
     public constructor(
@@ -25,6 +27,9 @@ export class Expression {
 
         if (isSdsReference(node) && isSdsPlaceholder(node.target.ref)) {
             return Placeholder.parse(node.target.ref);
+        }
+        if (isSdsReference(node) && isSdsParameter(node.target.ref)) {
+            return Parameter.parse(node.target.ref);
         }
 
         if (!node.$cstNode) return Utils.pushError("Missing CstNode", node);
