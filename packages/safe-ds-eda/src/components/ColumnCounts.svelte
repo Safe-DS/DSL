@@ -75,7 +75,7 @@
         <div class="contextMenu">
             {#each $table.columns.filter((col) => col.hidden) as column}
                 <button class="contextItem" on:click={() => selectOption(() => showColumn(column.name))}
-                    >Show {column.name}</button
+                    >Show Column '{column.name}''</button
                 >
             {/each}
             {#if $table.columns.filter((col) => col.hidden).length === 0}
