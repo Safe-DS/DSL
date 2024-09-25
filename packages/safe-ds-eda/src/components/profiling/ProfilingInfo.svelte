@@ -34,6 +34,7 @@
                 columnNumber: 'one',
                 isInGeneration: false,
                 outdated: false,
+                outdatedReasons: [],
             },
         );
     };
