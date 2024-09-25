@@ -553,7 +553,11 @@ export class SafeDsFormatter extends AbstractFormatter {
 
         const lastAnnotationCall = last(getAnnotationCalls(node));
         if (lastAnnotationCall) {
-            formatter.node(lastAnnotationCall).append(newLine());
+            if (node.isConstant) {
+                formatter.keyword('const').prepend(newLine());
+            } else {
+                formatter.property('name').prepend(newLine());
+            }
         }
 
         formatter.keyword('const').append(oneSpace());
