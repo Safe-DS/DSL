@@ -54,13 +54,13 @@
         "ws": "^8.18.0"
     },
     "devDependencies": {
-        "@types/node": "^18.18.12",
+        "@types/node": "^20.16.7",
         "@types/ws": "^8.5.12",
         "langium-cli": "^3.2.0",
         "true-myth": "^8.0.1"
     },
     "engines": {
-        "node": ">=18.0.0"
+        "node": ">=20.0.0"
     },
     "publishConfig": {
         "provenance": true

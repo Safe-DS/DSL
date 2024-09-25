@@ -38,6 +38,7 @@
     "dependencies": {
         "@safe-ds/cli": "^0.17.0",
         "@safe-ds/eda": "^0.0.0",
+        "@types/vscode": "^1.93.0",
         "svelte-check": "^4.0.2",
         "true-myth": "^8.0.1"
     }

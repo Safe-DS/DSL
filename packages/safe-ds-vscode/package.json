@@ -283,13 +283,13 @@
         "vscode-languageclient": "^9.0.1"
     },
     "devDependencies": {
-        "@types/node": "^18.18.12",
+        "@types/node": "^20.16.7",
         "@types/vscode": "^1.87.0",
         "@vscode/vsce": "^3.1.0",
         "esbuild": "^0.24.0",
         "esbuild-plugin-copy": "^2.1.1"
     },
     "engines": {
-        "vscode": "^1.87.0"
+        "vscode": "^1.93.0"
     }
 }
