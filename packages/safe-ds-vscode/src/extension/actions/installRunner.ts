@@ -1,4 +1,4 @@
-import vscode, { ExtensionContext, Uri } from 'vscode';
+import vscode, { Uri } from 'vscode';
 import child_process from 'node:child_process';
 import semver from 'semver';
 import { dependencies, rpc } from '@safe-ds/lang';
@@ -11,7 +11,7 @@ const LOWEST_SUPPORTED_PYTHON_VERSION = '3.11.0';
 const LOWEST_UNSUPPORTED_PYTHON_VERSION = '3.13.0';
 const npmVersionRange = `>=${LOWEST_SUPPORTED_PYTHON_VERSION} <${LOWEST_UNSUPPORTED_PYTHON_VERSION}`;
 
-export const installRunner = (context: ExtensionContext, client: LanguageClient) => {
+export const installRunner = (client: LanguageClient) => {
     return async () => {
         // If the runner is already started, do nothing
         if (await client.sendRequest(rpc.IsRunnerReadyRequest.type)) {
@@ -19,8 +19,20 @@ export const installRunner = (context: ExtensionContext, client: LanguageClient)
             return;
         }
 
+        // Ask the user where the virtual environment should be created
+        const runnerVirtualEnvironmentUris = await vscode.window.showOpenDialog({
+            canSelectFolders: true,
+            canSelectMany: false,
+            title: 'Location for the runner installation',
+        });
+
+        if (!runnerVirtualEnvironmentUris || runnerVirtualEnvironmentUris.length === 0) {
+            return;
+        }
+        const runnerVirtualEnvironmentUri = runnerVirtualEnvironmentUris[0]!;
+
         // Install the runner if it is not already installed
-        const success = await doInstallRunner(context);
+        const success = await doInstallRunner(runnerVirtualEnvironmentUri);
         if (!success) {
             return;
         }
@@ -28,7 +40,11 @@ export const installRunner = (context: ExtensionContext, client: LanguageClient)
         // Set the runner command in the configuration
         await vscode.workspace
             .getConfiguration()
-            .update('safe-ds.runner.command', getRunnerCommand(context), vscode.ConfigurationTarget.Global);
+            .update(
+                'safe-ds.runner.command',
+                getRunnerCommand(runnerVirtualEnvironmentUri),
+                vscode.ConfigurationTarget.Global,
+            );
 
         // Start the runner (needed if the configuration did not change, so no event is fired)
         await client.sendNotification(rpc.StartRunnerNotification.type);
@@ -41,7 +57,7 @@ export const installRunner = (context: ExtensionContext, client: LanguageClient)
 /**
  * Installs the runner in a virtual environment. Returns true if the installation was successful.
  */
-const doInstallRunner = async (context: ExtensionContext): Promise<boolean> => {
+const doInstallRunner = async (runnerVirtualEnvironmentUri: Uri): Promise<boolean> => {
     // Check if a matching Python interpreter is available
     const pythonCommand = await getPythonCommand();
     if (!pythonCommand) {
@@ -58,7 +74,7 @@ const doInstallRunner = async (context: ExtensionContext): Promise<boolean> => {
         },
         async () => {
             try {
-                await createRunnerVirtualEnvironment(context, pythonCommand);
+                await createRunnerVirtualEnvironment(runnerVirtualEnvironmentUri, pythonCommand);
                 return true;
             } catch (error) {
                 vscode.window.showErrorMessage('Failed to create a virtual environment.');
@@ -79,7 +95,7 @@ const doInstallRunner = async (context: ExtensionContext): Promise<boolean> => {
         },
         async () => {
             try {
-                await installRunnerInVirtualEnvironment(getPipCommand(context));
+                await installRunnerInVirtualEnvironment(getPipCommand(runnerVirtualEnvironmentUri));
                 return true;
             } catch (error) {
                 vscode.window.showErrorMessage('Failed to install the runner.');
@@ -116,9 +132,12 @@ const isMatchingPython = async (pythonCommand: string): Promise<boolean> => {
     });
 };
 
-const createRunnerVirtualEnvironment = async (context: ExtensionContext, pythonCommand: string): Promise<void> => {
+const createRunnerVirtualEnvironment = async (
+    runnerVirtualEnvironmentUri: Uri,
+    pythonCommand: string,
+): Promise<void> => {
     return new Promise((resolve, reject) => {
-        child_process.exec(`${pythonCommand} -m venv ${runnerVirtualEnvironmentUri(context).fsPath}`, (error) => {
+        child_process.exec(`"${pythonCommand}" -m venv "${runnerVirtualEnvironmentUri.fsPath}"`, (error) => {
             if (error) {
                 reject(error);
             } else {
@@ -130,7 +149,7 @@ const createRunnerVirtualEnvironment = async (context: ExtensionContext, pythonC
 
 export const installRunnerInVirtualEnvironment = async (pipCommand: string): Promise<void> => {
     return new Promise((resolve, reject) => {
-        const installCommand = `${pipCommand} install --upgrade "safe-ds-runner${dependencies['safe-ds-runner'].pipVersionRange}"`;
+        const installCommand = `"${pipCommand}" install --upgrade "safe-ds-runner${dependencies['safe-ds-runner'].pipVersionRange}"`;
         const process = child_process.spawn(installCommand, { shell: true });
 
         process.stdout.on('data', (data: Buffer) => {
@@ -153,22 +172,18 @@ export const installRunnerInVirtualEnvironment = async (pipCommand: string): Pro
     });
 };
 
-const getPipCommand = (context: ExtensionContext): string => {
+const getPipCommand = (runnerVirtualEnvironmentUri: Uri): string => {
     if (process.platform === 'win32') {
-        return `${runnerVirtualEnvironmentUri(context).fsPath}\\Scripts\\pip.exe`;
+        return `${runnerVirtualEnvironmentUri.fsPath}\\Scripts\\pip.exe`;
     } else {
-        return `${runnerVirtualEnvironmentUri(context).fsPath}/bin/pip`;
+        return `${runnerVirtualEnvironmentUri.fsPath}/bin/pip`;
     }
 };
 
-const getRunnerCommand = (context: ExtensionContext): string => {
+const getRunnerCommand = (runnerVirtualEnvironmentUri: Uri): string => {
     if (process.platform === 'win32') {
-        return `${runnerVirtualEnvironmentUri(context).fsPath}\\Scripts\\safe-ds-runner.exe`;
+        return `${runnerVirtualEnvironmentUri.fsPath}\\Scripts\\safe-ds-runner.exe`;
     } else {
-        return `${runnerVirtualEnvironmentUri(context).fsPath}/bin/safe-ds-runner`;
+        return `${runnerVirtualEnvironmentUri.fsPath}/bin/safe-ds-runner`;
     }
-};
-
-const runnerVirtualEnvironmentUri = (context: ExtensionContext): Uri => {
-    return vscode.Uri.joinPath(context.globalStorageUri, 'runnerVenv');
 };
