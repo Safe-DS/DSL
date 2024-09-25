@@ -55,6 +55,14 @@ pipeline example {
         fun fit(
             @PythonName("training_set") trainingSet: TabularDataset
         ) -> fittedClassifier: DecisionTreeClassifier
+
+        /**
+         * Get the image of the decision tree.
+         *
+         * @result plot The decision tree figure as an image.
+         */
+        @Pure
+        fun plot() -> plot: Image
     }
     ```
 
@@ -244,6 +252,23 @@ Return the type of the target column.
     @Pure
     @PythonName("get_target_type")
     fun getTargetType() -> targetType: DataType
+    ```
+
+## <code class="doc-symbol doc-symbol-function"></code> `plot` {#safeds.ml.classical.classification.DecisionTreeClassifier.plot data-toc-label='[function] plot'}
+
+Get the image of the decision tree.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `plot` | [`Image`][safeds.data.image.containers.Image] | The decision tree figure as an image. |
+
+??? quote "Stub code in `DecisionTreeClassifier.sdsstub`"
+
+    ```sds linenums="54"
+    @Pure
+    fun plot() -> plot: Image
     ```
 
 ## <code class="doc-symbol doc-symbol-function"></code> `precision` {#safeds.ml.classical.classification.DecisionTreeClassifier.precision data-toc-label='[function] precision'}

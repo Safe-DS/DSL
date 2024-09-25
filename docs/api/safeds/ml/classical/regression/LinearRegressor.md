@@ -6,6 +6,12 @@ Linear regression.
 
 **Parent type:** [`Regressor`][safeds.ml.classical.regression.Regressor]
 
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `penalty` | [`Penalty?`][safeds.ml.classical.regression.LinearRegressor.Penalty] | The type of penalty to be used. Defaults to a simple linear regression. | `#!sds null` |
+
 **Examples:**
 
 ```sds hl_lines="4"
@@ -19,8 +25,67 @@ pipeline example {
 
 ??? quote "Stub code in `LinearRegressor.sdsstub`"
 
-    ```sds linenums="18"
-    class LinearRegressor() sub Regressor {
+    ```sds linenums="20"
+    class LinearRegressor(
+        penalty: LinearRegressor.Penalty? = null
+    ) sub Regressor {
+        /**
+         * Possible penalties for the linear regressor.
+         */
+        enum Penalty {
+            /**
+             * A linear penalty.
+             */
+            @PythonName("linear")
+            Linear
+
+            /**
+             * A lasso (L1) penalty.
+             *
+             * @param alpha Controls the regularization of the model. The higher the value, the more regularized it becomes.
+             */
+            @PythonName("lasso")
+            Lasso(
+                const alpha: Float = 1.0
+            ) where {
+                alpha >= 0.0
+            }
+
+            /**
+             * A ridge (L2) penalty.
+             *
+             * @param alpha Controls the regularization of the model. The higher the value, the more regularized it becomes.
+             */
+            @PythonName("ridge")
+            Ridge(
+                const alpha: Float = 1.0
+            ) where {
+                alpha >= 0.0
+            }
+
+            /**
+             * An elastic net penalty, which applies a mix of lasso (L1) and ridge (L2) penalties.
+             *
+             * @param alpha Controls the regularization of the model. The higher the value, the more regularized it becomes.
+             * @param lassoRatio Number between 0 and 1 that controls the ratio between lasso and ridge penalty. If
+             * 0, only ridge penalty is used. If 1, only lasso penalty is used.
+             */
+            @PythonName("elastic_net")
+            ElasticNet(
+                const alpha: Float = 1.0,
+                @PythonName("lasso_ratio") const lassoRatio: Float = 0.5
+            ) where {
+                alpha >= 0.0,
+                lassoRatio >= 0.0,
+                lassoRatio <= 1.0
+            }
+        }
+
+        /**
+         * The regularization of the model.
+         */
+        attr penalty: LinearRegressor.Penalty?
+
         /**
          * Create a copy of this regressor and fit it with the given training data.
          *
@@ -42,6 +107,12 @@ pipeline example {
 Whether the model is fitted.
 
 **Type:** [`Boolean`][safeds.lang.Boolean]
+
+## <code class="doc-symbol doc-symbol-attribute"></code> `penalty` {#safeds.ml.classical.regression.LinearRegressor.penalty data-toc-label='[attribute] penalty'}
+
+The regularization of the model.
+
+**Type:** [`Penalty?`][safeds.ml.classical.regression.LinearRegressor.Penalty]
 
 ## <code class="doc-symbol doc-symbol-function"></code> `coefficientOfDetermination` {#safeds.ml.classical.regression.LinearRegressor.coefficientOfDetermination data-toc-label='[function] coefficientOfDetermination'}
 
@@ -107,7 +178,7 @@ This regressor is not modified.
 
 ??? quote "Stub code in `LinearRegressor.sdsstub`"
 
-    ```sds linenums="28"
+    ```sds linenums="89"
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TabularDataset
@@ -386,3 +457,95 @@ Summarize the regressor's metrics on the given data.
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
     ) -> metrics: Table
     ```
+
+## <code class="doc-symbol doc-symbol-enum"></code> `Penalty` {#safeds.ml.classical.regression.LinearRegressor.Penalty data-toc-label='[enum] Penalty'}
+
+Possible penalties for the linear regressor.
+
+??? quote "Stub code in `LinearRegressor.sdsstub`"
+
+    ```sds linenums="26"
+    enum Penalty {
+        /**
+         * A linear penalty.
+         */
+        @PythonName("linear")
+        Linear
+
+        /**
+         * A lasso (L1) penalty.
+         *
+         * @param alpha Controls the regularization of the model. The higher the value, the more regularized it becomes.
+         */
+        @PythonName("lasso")
+        Lasso(
+            const alpha: Float = 1.0
+        ) where {
+            alpha >= 0.0
+        }
+
+        /**
+         * A ridge (L2) penalty.
+         *
+         * @param alpha Controls the regularization of the model. The higher the value, the more regularized it becomes.
+         */
+        @PythonName("ridge")
+        Ridge(
+            const alpha: Float = 1.0
+        ) where {
+            alpha >= 0.0
+        }
+
+        /**
+         * An elastic net penalty, which applies a mix of lasso (L1) and ridge (L2) penalties.
+         *
+         * @param alpha Controls the regularization of the model. The higher the value, the more regularized it becomes.
+         * @param lassoRatio Number between 0 and 1 that controls the ratio between lasso and ridge penalty. If
+         * 0, only ridge penalty is used. If 1, only lasso penalty is used.
+         */
+        @PythonName("elastic_net")
+        ElasticNet(
+            const alpha: Float = 1.0,
+            @PythonName("lasso_ratio") const lassoRatio: Float = 0.5
+        ) where {
+            alpha >= 0.0,
+            lassoRatio >= 0.0,
+            lassoRatio <= 1.0
+        }
+    }
+    ```
+
+### <code class="doc-symbol doc-symbol-variant"></code> `ElasticNet` {#safeds.ml.classical.regression.LinearRegressor.Penalty.ElasticNet data-toc-label='[variant] ElasticNet'}
+
+An elastic net penalty, which applies a mix of lasso (L1) and ridge (L2) penalties.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `alpha` | [`Float`][safeds.lang.Float] | Controls the regularization of the model. The higher the value, the more regularized it becomes. | `#!sds 1.0` |
+| `lassoRatio` | [`Float`][safeds.lang.Float] | Number between 0 and 1 that controls the ratio between lasso and ridge penalty. If 0, only ridge penalty is used. If 1, only lasso penalty is used. | `#!sds 0.5` |
+
+### <code class="doc-symbol doc-symbol-variant"></code> `Lasso` {#safeds.ml.classical.regression.LinearRegressor.Penalty.Lasso data-toc-label='[variant] Lasso'}
+
+A lasso (L1) penalty.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `alpha` | [`Float`][safeds.lang.Float] | Controls the regularization of the model. The higher the value, the more regularized it becomes. | `#!sds 1.0` |
+
+### <code class="doc-symbol doc-symbol-variant"></code> `Linear` {#safeds.ml.classical.regression.LinearRegressor.Penalty.Linear data-toc-label='[variant] Linear'}
+
+A linear penalty.
+
+### <code class="doc-symbol doc-symbol-variant"></code> `Ridge` {#safeds.ml.classical.regression.LinearRegressor.Penalty.Ridge data-toc-label='[variant] Ridge'}
+
+A ridge (L2) penalty.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `alpha` | [`Float`][safeds.lang.Float] | Controls the regularization of the model. The higher the value, the more regularized it becomes. | `#!sds 1.0` |

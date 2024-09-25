@@ -100,7 +100,7 @@ class ImageList {
      *
      * @param image the image to check
      *
-     * @result hasImage Weather the given image is in this image list
+     * @result hasImage Whether the given image is in this image list
      */
     @Pure
     @PythonName("has_image")
@@ -299,6 +299,9 @@ class ImageList {
 
     /**
      * Return a new `ImageList` with all images converted to grayscale.
+     *
+     * The new image will have the same amount of channels as the original image. If you want to change the amount of
+     * channels used, please use the method [changeChannel][safeds.data.image.containers.ImageList.changeChannel].
      *
      * The original image list is not modified.
      *

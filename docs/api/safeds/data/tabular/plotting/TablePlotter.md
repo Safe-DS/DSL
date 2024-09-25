@@ -26,9 +26,11 @@ pipeline example {
         table: Table
     ) {
         /**
-         * Plot a boxplot for every numerical column.
+         * Create a box plot for every numerical column.
          *
-         * @result plot The plot as an image.
+         * @param theme The color theme of the plot. Default is "light".
+         *
+         * @result plot The box plot(s) as an image.
          *
          * @example
          * pipeline example {
@@ -38,10 +40,33 @@ pipeline example {
          */
         @Pure
         @PythonName("box_plots")
-        fun boxPlots() -> plot: Image
+        fun boxPlots(
+            theme: literal<"dark", "light"> = "light"
+        ) -> plot: Image
+
+        /**
+         * Create a violin plot for every numerical column.
+         *
+         * @param theme The color theme of the plot. Default is "light".
+         *
+         * @result plot The violin plot(s) as an image.
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table({"a": [1, 2], "b": [3, 42]});
+         *     val image = table.plot.violinPlots();
+         * }
+         */
+        @Pure
+        @PythonName("violin_plots")
+        fun violinPlots(
+            theme: literal<"dark", "light"> = "light"
+        ) -> plot: Image
 
         /**
          * Plot a correlation heatmap for all numerical columns of this `Table`.
+         *
+         * @param theme The color theme of the plot. Default is "light".
          *
          * @result plot The plot as an image.
          *
@@ -53,12 +78,15 @@ pipeline example {
          */
         @Pure
         @PythonName("correlation_heatmap")
-        fun correlationHeatmap() -> plot: Image
+        fun correlationHeatmap(
+            theme: literal<"dark", "light"> = "light"
+        ) -> plot: Image
 
         /**
          * Plot a histogram for every column.
          *
          * @param maxBinCount The maximum number of bins to use in the histogram. Default is 10.
+         * @param theme The color theme of the plot. Default is "light".
          *
          * @result plot The plot as an image.
          *
@@ -70,7 +98,8 @@ pipeline example {
          */
         @Pure
         fun histograms(
-            @PythonName("max_bin_count") const maxBinCount: Int = 10
+            @PythonName("max_bin_count") const maxBinCount: Int = 10,
+            theme: literal<"dark", "light"> = "light"
         ) -> plot: Image where {
             maxBinCount > 0
         }
@@ -79,7 +108,9 @@ pipeline example {
          * Create a line plot for two columns in the table.
          *
          * @param xName The name of the column to be plotted on the x-axis.
-         * @param yName The name of the column to be plotted on the y-axis.
+         * @param yNames The name(s) of the column(s) to be plotted on the y-axis.
+         * @param showConfidenceInterval Whether a confidence interval is shown.
+         * @param theme The color theme of the plot. Default is "light".
          *
          * @result plot The plot as an image.
          *
@@ -91,21 +122,24 @@ pipeline example {
          *             "b": [2, 3, 4, 5, 6],
          *         }
          *     );
-         *     val image = table.plot.linePlot("a", "b");
+         *     val image = table.plot.linePlot("a", ["b"]);
          * }
          */
         @Pure
         @PythonName("line_plot")
         fun linePlot(
             @PythonName("x_name") xName: String,
-            @PythonName("y_name") yName: String
+            @PythonName("y_names") yNames: List<String>,
+            @PythonName("show_confidence_interval") showConfidenceInterval: Boolean = true,
+            theme: literal<"dark", "light"> = "light"
         ) -> plot: Image
 
         /**
          * Create a scatter plot for two columns in the table.
          *
          * @param xName The name of the column to be plotted on the x-axis.
-         * @param yName The name of the column to be plotted on the y-axis.
+         * @param yNames The name(s) of the column(s) to be plotted on the y-axis.
+         * @param theme The color theme of the plot. Default is "light".
          *
          * @result plot The plot as an image.
          *
@@ -117,27 +151,96 @@ pipeline example {
          *             "b": [2, 3, 4, 5, 6],
          *         }
          *     );
-         *     val image = table.plot.scatterPlot("a", "b");
+         *     val image = table.plot.scatterPlot("a", ["b"]);
          * }
          */
         @Pure
         @PythonName("scatter_plot")
         fun scatterPlot(
             @PythonName("x_name") xName: String,
-            @PythonName("y_name") yName: String
+            @PythonName("y_names") yNames: List<String>,
+            theme: literal<"dark", "light"> = "light"
+        ) -> plot: Image
+
+        /**
+         * Create a moving average plot for the y column and plot it by the x column in the table.
+         *
+         * @param xName The name of the column to be plotted on the x-axis.
+         * @param yName The name of the column to be plotted on the y-axis.
+         * @param windowSize The size of the moving average window
+         * @param theme The color theme of the plot. Default is "light".
+         *
+         * @result plot The plot as an image.
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table(
+         *         {
+         *             "a": [1, 2, 3, 4, 5],
+         *             "b": [2, 3, 4, 5, 6],
+         *         }
+         *     );
+         *     val image = table.plot.movingAveragePlot("a", "b", windowSize = 2);
+         * }
+         */
+        @Pure
+        @PythonName("moving_average_plot")
+        fun movingAveragePlot(
+            @PythonName("x_name") xName: String,
+            @PythonName("y_name") yName: String,
+            @PythonName("window_size") windowSize: Int,
+            theme: literal<"dark", "light"> = "light"
+        ) -> plot: Image
+
+        /**
+         * Create a 2D histogram for two columns in the table.
+         *
+         * @param xName The name of the column to be plotted on the x-axis.
+         * @param yName The name of the column to be plotted on the y-axis.
+         * @param xMaxBinCount The maximum number of bins to use in the histogram for the x-axis. Default is 10.
+         * @param yMaxBinCount The maximum number of bins to use in the histogram for the y-axis. Default is 10.
+         * @param theme The color theme of the plot. Default is "light".
+         *
+         * @result plot The plot as an image.
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table(
+         *         {
+         *             "a": [1, 2, 3, 4, 5],
+         *             "b": [2, 3, 4, 5, 6],
+         *         }
+         *     );
+         *     val image = table.plot.histogram2d("a", "b");
+         * }
+         */
+        @Pure
+        @PythonName("histogram_2d")
+        fun histogram2d(
+            @PythonName("x_name") xName: String,
+            @PythonName("y_name") yName: String,
+            @PythonName("x_max_bin_count") xMaxBinCount: Int = 10,
+            @PythonName("y_max_bin_count") yMaxBinCount: Int = 10,
+            theme: literal<"dark", "light"> = "light"
         ) -> plot: Image
     }
     ```
 
 ## <code class="doc-symbol doc-symbol-function"></code> `boxPlots` {#safeds.data.tabular.plotting.TablePlotter.boxPlots data-toc-label='[function] boxPlots'}
 
-Plot a boxplot for every numerical column.
+Create a box plot for every numerical column.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `theme` | `#!sds literal<"dark", "light">` | The color theme of the plot. Default is "light". | `#!sds "light"` |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `plot` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
+| `plot` | [`Image`][safeds.data.image.containers.Image] | The box plot(s) as an image. |
 
 **Examples:**
 
@@ -150,15 +253,23 @@ pipeline example {
 
 ??? quote "Stub code in `TablePlotter.sdsstub`"
 
-    ```sds linenums="31"
+    ```sds linenums="33"
     @Pure
     @PythonName("box_plots")
-    fun boxPlots() -> plot: Image
+    fun boxPlots(
+        theme: literal<"dark", "light"> = "light"
+    ) -> plot: Image
     ```
 
 ## <code class="doc-symbol doc-symbol-function"></code> `correlationHeatmap` {#safeds.data.tabular.plotting.TablePlotter.correlationHeatmap data-toc-label='[function] correlationHeatmap'}
 
 Plot a correlation heatmap for all numerical columns of this `Table`.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `theme` | `#!sds literal<"dark", "light">` | The color theme of the plot. Default is "light". | `#!sds "light"` |
 
 **Results:**
 
@@ -177,10 +288,60 @@ pipeline example {
 
 ??? quote "Stub code in `TablePlotter.sdsstub`"
 
-    ```sds linenums="46"
+    ```sds linenums="71"
     @Pure
     @PythonName("correlation_heatmap")
-    fun correlationHeatmap() -> plot: Image
+    fun correlationHeatmap(
+        theme: literal<"dark", "light"> = "light"
+    ) -> plot: Image
+    ```
+
+## <code class="doc-symbol doc-symbol-function"></code> `histogram2d` {#safeds.data.tabular.plotting.TablePlotter.histogram2d data-toc-label='[function] histogram2d'}
+
+Create a 2D histogram for two columns in the table.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `xName` | [`String`][safeds.lang.String] | The name of the column to be plotted on the x-axis. | - |
+| `yName` | [`String`][safeds.lang.String] | The name of the column to be plotted on the y-axis. | - |
+| `xMaxBinCount` | [`Int`][safeds.lang.Int] | The maximum number of bins to use in the histogram for the x-axis. Default is 10. | `#!sds 10` |
+| `yMaxBinCount` | [`Int`][safeds.lang.Int] | The maximum number of bins to use in the histogram for the y-axis. Default is 10. | `#!sds 10` |
+| `theme` | `#!sds literal<"dark", "light">` | The color theme of the plot. Default is "light". | `#!sds "light"` |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `plot` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
+
+**Examples:**
+
+```sds hl_lines="8"
+pipeline example {
+    val table = Table(
+        {
+            "a": [1, 2, 3, 4, 5],
+            "b": [2, 3, 4, 5, 6],
+        }
+    );
+    val image = table.plot.histogram2d("a", "b");
+}
+```
+
+??? quote "Stub code in `TablePlotter.sdsstub`"
+
+    ```sds linenums="209"
+    @Pure
+    @PythonName("histogram_2d")
+    fun histogram2d(
+        @PythonName("x_name") xName: String,
+        @PythonName("y_name") yName: String,
+        @PythonName("x_max_bin_count") xMaxBinCount: Int = 10,
+        @PythonName("y_max_bin_count") yMaxBinCount: Int = 10,
+        theme: literal<"dark", "light"> = "light"
+    ) -> plot: Image
     ```
 
 ## <code class="doc-symbol doc-symbol-function"></code> `histograms` {#safeds.data.tabular.plotting.TablePlotter.histograms data-toc-label='[function] histograms'}
@@ -192,6 +353,7 @@ Plot a histogram for every column.
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `maxBinCount` | [`Int`][safeds.lang.Int] | The maximum number of bins to use in the histogram. Default is 10. | `#!sds 10` |
+| `theme` | `#!sds literal<"dark", "light">` | The color theme of the plot. Default is "light". | `#!sds "light"` |
 
 **Results:**
 
@@ -210,10 +372,11 @@ pipeline example {
 
 ??? quote "Stub code in `TablePlotter.sdsstub`"
 
-    ```sds linenums="63"
+    ```sds linenums="91"
     @Pure
     fun histograms(
-        @PythonName("max_bin_count") const maxBinCount: Int = 10
+        @PythonName("max_bin_count") const maxBinCount: Int = 10,
+        theme: literal<"dark", "light"> = "light"
     ) -> plot: Image where {
         maxBinCount > 0
     }
@@ -228,7 +391,9 @@ Create a line plot for two columns in the table.
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `xName` | [`String`][safeds.lang.String] | The name of the column to be plotted on the x-axis. | - |
-| `yName` | [`String`][safeds.lang.String] | The name of the column to be plotted on the y-axis. | - |
+| `yNames` | [`List<String>`][safeds.lang.List] | The name(s) of the column(s) to be plotted on the y-axis. | - |
+| `showConfidenceInterval` | [`Boolean`][safeds.lang.Boolean] | Whether a confidence interval is shown. | `#!sds true` |
+| `theme` | `#!sds literal<"dark", "light">` | The color theme of the plot. Default is "light". | `#!sds "light"` |
 
 **Results:**
 
@@ -246,18 +411,66 @@ pipeline example {
             "b": [2, 3, 4, 5, 6],
         }
     );
-    val image = table.plot.linePlot("a", "b");
+    val image = table.plot.linePlot("a", ["b"]);
 }
 ```
 
 ??? quote "Stub code in `TablePlotter.sdsstub`"
 
-    ```sds linenums="89"
+    ```sds linenums="120"
     @Pure
     @PythonName("line_plot")
     fun linePlot(
         @PythonName("x_name") xName: String,
-        @PythonName("y_name") yName: String
+        @PythonName("y_names") yNames: List<String>,
+        @PythonName("show_confidence_interval") showConfidenceInterval: Boolean = true,
+        theme: literal<"dark", "light"> = "light"
+    ) -> plot: Image
+    ```
+
+## <code class="doc-symbol doc-symbol-function"></code> `movingAveragePlot` {#safeds.data.tabular.plotting.TablePlotter.movingAveragePlot data-toc-label='[function] movingAveragePlot'}
+
+Create a moving average plot for the y column and plot it by the x column in the table.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `xName` | [`String`][safeds.lang.String] | The name of the column to be plotted on the x-axis. | - |
+| `yName` | [`String`][safeds.lang.String] | The name of the column to be plotted on the y-axis. | - |
+| `windowSize` | [`Int`][safeds.lang.Int] | The size of the moving average window | - |
+| `theme` | `#!sds literal<"dark", "light">` | The color theme of the plot. Default is "light". | `#!sds "light"` |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `plot` | [`Image`][safeds.data.image.containers.Image] | The plot as an image. |
+
+**Examples:**
+
+```sds hl_lines="8"
+pipeline example {
+    val table = Table(
+        {
+            "a": [1, 2, 3, 4, 5],
+            "b": [2, 3, 4, 5, 6],
+        }
+    );
+    val image = table.plot.movingAveragePlot("a", "b", windowSize = 2);
+}
+```
+
+??? quote "Stub code in `TablePlotter.sdsstub`"
+
+    ```sds linenums="178"
+    @Pure
+    @PythonName("moving_average_plot")
+    fun movingAveragePlot(
+        @PythonName("x_name") xName: String,
+        @PythonName("y_name") yName: String,
+        @PythonName("window_size") windowSize: Int,
+        theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
     ```
 
@@ -270,7 +483,8 @@ Create a scatter plot for two columns in the table.
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `xName` | [`String`][safeds.lang.String] | The name of the column to be plotted on the x-axis. | - |
-| `yName` | [`String`][safeds.lang.String] | The name of the column to be plotted on the y-axis. | - |
+| `yNames` | [`List<String>`][safeds.lang.List] | The name(s) of the column(s) to be plotted on the y-axis. | - |
+| `theme` | `#!sds literal<"dark", "light">` | The color theme of the plot. Default is "light". | `#!sds "light"` |
 
 **Results:**
 
@@ -288,17 +502,53 @@ pipeline example {
             "b": [2, 3, 4, 5, 6],
         }
     );
-    val image = table.plot.scatterPlot("a", "b");
+    val image = table.plot.scatterPlot("a", ["b"]);
 }
 ```
 
 ??? quote "Stub code in `TablePlotter.sdsstub`"
 
-    ```sds linenums="115"
+    ```sds linenums="149"
     @Pure
     @PythonName("scatter_plot")
     fun scatterPlot(
         @PythonName("x_name") xName: String,
-        @PythonName("y_name") yName: String
+        @PythonName("y_names") yNames: List<String>,
+        theme: literal<"dark", "light"> = "light"
+    ) -> plot: Image
+    ```
+
+## <code class="doc-symbol doc-symbol-function"></code> `violinPlots` {#safeds.data.tabular.plotting.TablePlotter.violinPlots data-toc-label='[function] violinPlots'}
+
+Create a violin plot for every numerical column.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `theme` | `#!sds literal<"dark", "light">` | The color theme of the plot. Default is "light". | `#!sds "light"` |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `plot` | [`Image`][safeds.data.image.containers.Image] | The violin plot(s) as an image. |
+
+**Examples:**
+
+```sds hl_lines="3"
+pipeline example {
+    val table = Table({"a": [1, 2], "b": [3, 42]});
+    val image = table.plot.violinPlots();
+}
+```
+
+??? quote "Stub code in `TablePlotter.sdsstub`"
+
+    ```sds linenums="52"
+    @Pure
+    @PythonName("violin_plots")
+    fun violinPlots(
+        theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
     ```

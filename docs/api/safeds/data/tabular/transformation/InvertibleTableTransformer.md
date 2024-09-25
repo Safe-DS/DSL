@@ -11,6 +11,8 @@ A `TableTransformer` that can also undo the learned transformation after it has 
 - [`LabelEncoder`][safeds.data.tabular.transformation.LabelEncoder]
 - [`OneHotEncoder`][safeds.data.tabular.transformation.OneHotEncoder]
 - [`RangeScaler`][safeds.data.tabular.transformation.RangeScaler]
+- [`RobustScaler`][safeds.data.tabular.transformation.RobustScaler]
+- [`SequentialTableTransformer`][safeds.data.tabular.transformation.SequentialTableTransformer]
 - [`StandardScaler`][safeds.data.tabular.transformation.StandardScaler]
 
 ??? quote "Stub code in `InvertibleTableTransformer.sdsstub`"

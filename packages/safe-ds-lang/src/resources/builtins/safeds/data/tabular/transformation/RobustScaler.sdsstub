@@ -1,0 +1,45 @@
+package safeds.data.tabular.transformation
+
+from safeds.data.tabular.containers import Table
+from safeds.data.tabular.transformation import InvertibleTableTransformer
+
+/**
+ * The RobustScaler transforms column values to a range by removing the median and scaling to the interquartile range.
+ *
+ * Currently, for columns with high stability (IQR == 0), it will only substract the median and not scale to avoid dividing by zero.
+ *
+ * @param columnNames The list of columns used to fit the transformer. If `None`, all numeric columns are used.
+ */
+class RobustScaler(
+    @PythonName("column_names") columnNames: union<List<String>, String, Nothing?> = null
+) sub InvertibleTableTransformer {
+    /**
+     * Learn a transformation for a set of columns in a table.
+     *
+     * **Note:** This transformer is not modified.
+     *
+     * @param table The table used to fit the transformer.
+     *
+     * @result fittedTransformer The fitted transformer.
+     */
+    @Pure
+    fun fit(
+        table: Table
+    ) -> fittedTransformer: RobustScaler
+
+    /**
+     * Learn a transformation for a set of columns in a table and apply the learned transformation to the same table.
+     *
+     * **Note:** Neither this transformer nor the given table are modified.
+     *
+     * @param table The table used to fit the transformer. The transformer is then applied to this table.
+     *
+     * @result fittedTransformer The fitted transformer.
+     * @result transformedTable The transformed table.
+     */
+    @Pure
+    @PythonName("fit_and_transform")
+    fun fitAndTransform(
+        table: Table
+    ) -> (fittedTransformer: RobustScaler, transformedTable: Table)
+}

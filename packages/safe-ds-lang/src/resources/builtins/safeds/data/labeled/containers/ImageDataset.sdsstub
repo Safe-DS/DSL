@@ -76,7 +76,7 @@ class ImageDataset<out O>(
     /**
      * Return a new `ImageDataset` with shuffled data.
      *
-     * The original dataset list is not modified.
+     * The original dataset is not modified.
      *
      * @result imageDataset the shuffled `ImageDataset`
      *
@@ -91,4 +91,25 @@ class ImageDataset<out O>(
      */
     @Pure
     fun shuffle() -> imageDataset: ImageDataset<O>
+
+    /**
+     * Create two image datasets by splitting the data of the current dataset.
+     *
+     * The first dataset contains a percentage of the data specified by `percentage_in_first`, and the second dataset
+     * contains the remaining data. By default, the data is shuffled before splitting. You can disable this by setting
+     * `shuffle` to False.
+     *
+     * The original dataset is not modified.
+     *
+     * @param percentageInFirst The percentage of data to include in the first dataset. Must be between 0 and 1.
+     * @param shuffle Whether to shuffle the data before splitting.
+     *
+     * @result firstDataset The first dataset.
+     * @result secondDataset The second dataset.
+     */
+    @Pure
+    fun split(
+        @PythonName("percentage_in_first") percentageInFirst: Float,
+        shuffle: Boolean = true
+    ) -> (firstDataset: ImageDataset<O>, secondDataset: ImageDataset<O>)
 }
