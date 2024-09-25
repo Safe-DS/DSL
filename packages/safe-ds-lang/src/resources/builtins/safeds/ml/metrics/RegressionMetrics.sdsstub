@@ -17,8 +17,8 @@ class RegressionMetrics {
      */
     @Pure
     static fun summarize(
-        predicted: union<Column<Any>, TabularDataset>,
-        expected: union<Column<Any>, TabularDataset>
+        predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
+        expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
     ) -> metrics: Table
 
     /**
@@ -47,8 +47,8 @@ class RegressionMetrics {
     @Pure
     @PythonName("coefficient_of_determination")
     static fun coefficientOfDetermination(
-        predicted: union<Column<Any>, TabularDataset>,
-        expected: union<Column<Any>, TabularDataset>
+        predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
+        expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
     ) -> coefficientOfDetermination: Float
 
     /**
@@ -66,8 +66,8 @@ class RegressionMetrics {
     @Pure
     @PythonName("mean_absolute_error")
     static fun meanAbsoluteError(
-        predicted: union<Column<Any>, TabularDataset>,
-        expected: union<Column<Any>, TabularDataset>
+        predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
+        expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
     ) -> meanAbsoluteError: Float
 
     /**
@@ -89,8 +89,8 @@ class RegressionMetrics {
     @Pure
     @PythonName("mean_directional_accuracy")
     static fun meanDirectionalAccuracy(
-        predicted: union<Column<Any>, TabularDataset>,
-        expected: union<Column<Any>, TabularDataset>
+        predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
+        expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
     ) -> meanDirectionalAccuracy: Float
 
     /**
@@ -110,8 +110,8 @@ class RegressionMetrics {
     @Pure
     @PythonName("mean_squared_error")
     static fun meanSquaredError(
-        predicted: union<Column<Any>, TabularDataset>,
-        expected: union<Column<Any>, TabularDataset>
+        predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
+        expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
     ) -> meanSquaredError: Float
 
     /**
@@ -129,7 +129,7 @@ class RegressionMetrics {
     @Pure
     @PythonName("median_absolute_deviation")
     static fun medianAbsoluteDeviation(
-        predicted: union<Column<Any>, TabularDataset>,
-        expected: union<Column<Any>, TabularDataset>
+        predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
+        expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
     ) -> medianAbsoluteDeviation: Float
 }

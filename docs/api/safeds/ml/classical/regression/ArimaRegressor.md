@@ -40,12 +40,12 @@ pipeline example {
          *
          * @param timeSeries The test dataset of the time series.
          *
-         * @result timeSeries A timeseries containing the predicted target vector and a time dummy as time column.
+         * @result prediction A timeseries containing the predicted target vector and a time dummy as time column.
          */
         @Pure
         fun predict(
             @PythonName("time_series") timeSeries: TimeSeriesDataset
-        ) -> timeSeries: TimeSeriesDataset
+        ) -> prediction: Table
 
         /**
          * Plot the predictions of the trained model to the given target of the time series. So you can see the predictions and the actual values in one plot.
@@ -135,7 +135,7 @@ Predict a target vector using a time series target column. The model has to be t
 
 | Name | Type | Description |
 |------|------|-------------|
-| `timeSeries` | [`TimeSeriesDataset`][safeds.data.labeled.containers.TimeSeriesDataset] | A timeseries containing the predicted target vector and a time dummy as time column. |
+| `prediction` | [`Table`][safeds.data.tabular.containers.Table] | A timeseries containing the predicted target vector and a time dummy as time column. |
 
 ??? quote "Stub code in `ArimaRegressor.sdsstub`"
 
@@ -143,5 +143,5 @@ Predict a target vector using a time series target column. The model has to be t
     @Pure
     fun predict(
         @PythonName("time_series") timeSeries: TimeSeriesDataset
-    ) -> timeSeries: TimeSeriesDataset
+    ) -> prediction: Table
     ```

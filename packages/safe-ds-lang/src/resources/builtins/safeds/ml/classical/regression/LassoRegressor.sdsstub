@@ -17,6 +17,10 @@ from safeds.ml.classical.regression import Regressor
  *     val meanSquaredError = regressor.meanSquaredError(test);
  * }
  */
+@Deprecated(
+    alternative="Use a LinearRegressor and set the penalty to Lasso.",
+    reason="Consistency with other regressors, where penalty is also just a parameter."
+)
 class LassoRegressor(
     const alpha: Float = 1.0
 ) sub Regressor where {

@@ -11,12 +11,14 @@ A fully connected forward layer.
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `neuronCount` | [`Int`][safeds.lang.Int] | The number of neurons in this layer | - |
+| `activationFunction` | `#!sds literal<"sigmoid", "relu", "softmax", "none", "notset">` | The activation function used in the forward layer, if not set the activation will be set automatically. | `#!sds "notset"` |
 
 ??? quote "Stub code in `ForwardLayer.sdsstub`"
 
-    ```sds linenums="11"
+    ```sds linenums="12"
     class ForwardLayer(
-        @PythonName("neuron_count") neuronCount: Int
+        @PythonName("neuron_count") neuronCount: Int,
+        @PythonName("overwrite_activation_function") activationFunction: literal<"sigmoid", "relu", "softmax", "none", "notset"> = "notset"
     ) sub Layer {
         /**
          * Get the input_size of this layer.

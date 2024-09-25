@@ -1,0 +1,49 @@
+package safeds.ml.classical.classification
+
+from safeds.data.labeled.containers import TabularDataset
+
+/**
+ * Baseline Classifier.
+ *
+ * Get a baseline by fitting data on multiple different models and comparing the best metrics.
+ *
+ * @param extendedSearch If set to true, an extended set of models will be used to fit the classifier.
+ * This might result in significantly higher runtime.
+ */
+@Experimental
+class BaselineClassifier(
+    @PythonName("extended_search") extendedSearch: Boolean = false
+) {
+    /**
+     * Whether the model is fitted.
+     */
+    @PythonName("is_fitted") attr isFitted: Boolean
+
+    /**
+     * Train the Classifier with given training data.
+     *
+     * The original model is not modified.
+     *
+     * @param trainData The data the network should be trained on.
+     *
+     * @result trainedClassifier The trained Classifier
+     */
+    @Pure
+    fun fit(
+        @PythonName("train_data") trainData: TabularDataset
+    ) -> trainedClassifier: BaselineClassifier
+
+    /**
+     * Make a prediction for the given test data and calculate the best metrics.
+     *
+     * The original Model is not modified.
+     *
+     * @param testData The data the Classifier should predict.
+     *
+     * @result bestMetrics A dictionary with the best metrics that were achieved.
+     */
+    @Pure
+    fun predict(
+        @PythonName("test_data") testData: TabularDataset
+    ) -> bestMetrics: Map<String, Float>
+}

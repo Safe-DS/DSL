@@ -10,6 +10,25 @@ class Cell<out T = Any?> {
      * Namespace for operations on strings.
      */
     attr str: StringCell
+    /**
+     * Namespace for operations on date time values.
+     */
+    @Experimental
+    attr dt: TemporalCell
+
+    /**
+     * Return the first cell from the given list that is not None.
+     *
+     * @param cells The list of cells to be searched.
+     *
+     * @result cell Returns the contents of the first cell that is not None.
+     * If all cells in the list are None or the list is empty returns None.
+     */
+    @Pure
+    @PythonName("first_not_none")
+    static fun firstNotNone(
+        cells: List<Cell<Any?>>
+    ) -> cell: Cell<Any?>
 
     /**
      * Negate a boolean. This WILL LATER BE equivalent to the ^not operator.

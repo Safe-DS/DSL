@@ -261,13 +261,11 @@ pipeline example {
         /**
          * Return a new table without the specified columns.
          *
-         * **Notes:**
-         *
-         * - The original table is not modified.
-         * - This method does not raise if a column does not exist. You can use it to ensure that the resulting table does
-         *   not contain certain columns.
+         * **Note:** The original table is not modified.
          *
          * @param names The names of the columns to remove.
+         * @param ignoreUnknownNames If set to True, columns that are not present in the table will be ignored. If set to
+         * False, an error will be raised if any of the specified columns do not exist.
          *
          * @result newTable The table with the columns removed.
          *
@@ -288,7 +286,8 @@ pipeline example {
         @Pure
         @PythonName("remove_columns")
         fun removeColumns(
-            names: union<List<String>, String>
+            names: union<List<String>, String>,
+            @PythonName("ignore_unknown_names") ignoreUnknownNames: Boolean = false
         ) -> newTable: Table
 
         /**
@@ -389,6 +388,30 @@ pipeline example {
          *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
          *     val result = table.replaceColumn("a", []);
          *     // Table({"b": [4, 5, 6]})
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+         *     val column1 = Column("c", [7, 8, 9]);
+         *     val result = table.replaceColumn("a", column1);
+         *     // Table({
+         *     //     "c": [7, 8, 9],
+         *     //     "b": [4, 5, 6]
+         *     // })
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+         *     val column1 = Column("c", [7, 8, 9]);
+         *     val column2 = Column("d", [10, 11, 12]);
+         *     val result = table.replaceColumn("a", [column1, column2]);
+         *     // Table({
+         *     //     "c": [7, 8, 9],
+         *     //     "d": [10, 11, 12],
+         *     //     "b": [4, 5, 6]
+         *     // })
          * }
          */
         @Pure
@@ -794,6 +817,32 @@ pipeline example {
         ) -> newTable: Table
 
         /**
+         * Join a table with the current table and return the result.
+         *
+         * @param rightTable The other table which is to be joined to the current table.
+         * @param leftNames Name or list of names of columns from the current table on which to join right_table.
+         * @param rightNames Name or list of names of columns from right_table on which to join the current table.
+         * @param mode Specify which type of join you want to use. Options include 'inner', 'outer', 'left', 'right'.
+         *
+         * @result newTable The table with the joined table.
+         *
+         * @example
+         * pipeline example {
+         *     // from safeds.data.tabular.containers import Table
+         *     // table1 = Table({"a": [1, 2], "b": [3, 4]})
+         *     // table2 = Table({"d": [1, 5], "e": [5, 6]})
+         *     // table1.join(table2, "a", "d", mode="left")
+         * }
+         */
+        @Pure
+        fun join(
+            @PythonName("right_table") rightTable: Table,
+            @PythonName("left_names") leftNames: union<List<String>, String>,
+            @PythonName("right_names") rightNames: union<List<String>, String>,
+            mode: literal<"inner", "left", "outer"> = "inner"
+        ) -> newTable: Table
+
+        /**
          * Return a new table transformed by a **fitted** transformer.
          *
          * **Notes:**
@@ -894,9 +943,6 @@ pipeline example {
          * **Note:** This operation must fully load the data into memory, which can be expensive.
          *
          * @param path The path to the JSON file. If the file extension is omitted, it is assumed to be ".json".
-         * @param orientation The orientation of the JSON file. If "column", the JSON file will be structured as a list of columns. If
-         * "row", the JSON file will be structured as a list of rows. Row orientation is more human-readable, but
-         * slower and less memory-efficient.
          *
          * @example
          * pipeline example {
@@ -907,8 +953,7 @@ pipeline example {
         @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
         @PythonName("to_json_file")
         fun toJsonFile(
-            path: String,
-            orientation: literal<"column", "row"> = "column"
+            path: String
         )
 
         /**
@@ -973,11 +1018,11 @@ pipeline example {
          * The original table is not modified.
          *
          * @param targetName The name of the target column.
-         * @param timeName The name of the time column.
          * @param windowSize The number of consecutive sample to use as input for prediction.
          * @param extraNames Names of the columns that are neither features nor target. If None, no extra columns are used, i.e. all but
          * the target column are used as features.
          * @param forecastHorizon The number of time steps to predict into the future.
+         * @param continuous Whether or not to continue the forecast in the steps before forecast horizon.
          *
          * @result dataset A new time series dataset with the given target and feature names.
          *
@@ -990,17 +1035,17 @@ pipeline example {
          *             "amount_bought": [74, 72, 51],
          *         }
          *     );
-         *     val dataset = table.toTimeSeriesDataset(targetName="amount_bought", timeName= "day", windowSize=2);
+         *     val dataset = table.toTimeSeriesDataset(targetName="amount_bought", windowSize=2);
          * }
          */
         @Pure
         @PythonName("to_time_series_dataset")
         fun toTimeSeriesDataset(
             @PythonName("target_name") targetName: String,
-            @PythonName("time_name") timeName: String,
             @PythonName("window_size") windowSize: Int,
             @PythonName("extra_names") extraNames: List<String>? = null,
-            @PythonName("forecast_horizon") forecastHorizon: Int = 1
+            @PythonName("forecast_horizon") forecastHorizon: Int = 1,
+            continuous: Boolean = false
         ) -> dataset: TimeSeriesDataset
     }
     ```
@@ -1151,7 +1196,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="736"
+    ```sds linenums="759"
     @Pure
     @PythonName("add_table_as_columns")
     fun addTableAsColumns(
@@ -1193,7 +1238,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="762"
+    ```sds linenums="785"
     @Pure
     @PythonName("add_table_as_rows")
     fun addTableAsRows(
@@ -1247,7 +1292,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="455"
+    ```sds linenums="478"
     @Pure
     @PythonName("count_row_if")
     fun countRowIf(
@@ -1396,7 +1441,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="788"
+    ```sds linenums="811"
     @Pure
     @PythonName("inverse_transform_table")
     fun inverseTransformTable(
@@ -1404,21 +1449,60 @@ pipeline example {
     ) -> newTable: Table
     ```
 
+## <code class="doc-symbol doc-symbol-function"></code> `join` {#safeds.data.tabular.containers.Table.join data-toc-label='[function] join'}
+
+Join a table with the current table and return the result.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `rightTable` | [`Table`][safeds.data.tabular.containers.Table] | The other table which is to be joined to the current table. | - |
+| `leftNames` | `#!sds union<List<String>, String>` | Name or list of names of columns from the current table on which to join right_table. | - |
+| `rightNames` | `#!sds union<List<String>, String>` | Name or list of names of columns from right_table on which to join the current table. | - |
+| `mode` | `#!sds literal<"inner", "left", "outer">` | Specify which type of join you want to use. Options include 'inner', 'outer', 'left', 'right'. | `#!sds "inner"` |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `newTable` | [`Table`][safeds.data.tabular.containers.Table] | The table with the joined table. |
+
+**Examples:**
+
+```sds hl_lines="5"
+pipeline example {
+    // from safeds.data.tabular.containers import Table
+    // table1 = Table({"a": [1, 2], "b": [3, 4]})
+    // table2 = Table({"d": [1, 5], "e": [5, 6]})
+    // table1.join(table2, "a", "d", mode="left")
+}
+```
+
+??? quote "Stub code in `Table.sdsstub`"
+
+    ```sds linenums="835"
+    @Pure
+    fun join(
+        @PythonName("right_table") rightTable: Table,
+        @PythonName("left_names") leftNames: union<List<String>, String>,
+        @PythonName("right_names") rightNames: union<List<String>, String>,
+        mode: literal<"inner", "left", "outer"> = "inner"
+    ) -> newTable: Table
+    ```
+
 ## <code class="doc-symbol doc-symbol-function"></code> `removeColumns` {#safeds.data.tabular.containers.Table.removeColumns data-toc-label='[function] removeColumns'}
 
 Return a new table without the specified columns.
 
-**Notes:**
-
-- The original table is not modified.
-- This method does not raise if a column does not exist. You can use it to ensure that the resulting table does
-  not contain certain columns.
+**Note:** The original table is not modified.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `names` | `#!sds union<List<String>, String>` | The names of the columns to remove. | - |
+| `ignoreUnknownNames` | [`Boolean`][safeds.lang.Boolean] | If set to True, columns that are not present in the table will be ignored. If set to False, an error will be raised if any of the specified columns do not exist. | `#!sds false` |
 
 **Results:**
 
@@ -1445,11 +1529,12 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="286"
+    ```sds linenums="284"
     @Pure
     @PythonName("remove_columns")
     fun removeColumns(
-        names: union<List<String>, String>
+        names: union<List<String>, String>,
+        @PythonName("ignore_unknown_names") ignoreUnknownNames: Boolean = false
     ) -> newTable: Table
     ```
 
@@ -1481,7 +1566,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="306"
+    ```sds linenums="305"
     @Pure
     @PythonName("remove_columns_except")
     fun removeColumnsExcept(
@@ -1516,7 +1601,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="329"
+    ```sds linenums="328"
     @Pure
     @PythonName("remove_columns_with_missing_values")
     fun removeColumnsWithMissingValues() -> newTable: Table
@@ -1546,7 +1631,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="476"
+    ```sds linenums="499"
     @Pure
     @PythonName("remove_duplicate_rows")
     fun removeDuplicateRows() -> newTable: Table
@@ -1576,7 +1661,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="347"
+    ```sds linenums="346"
     @Pure
     @PythonName("remove_non_numeric_columns")
     fun removeNonNumericColumns() -> newTable: Table
@@ -1612,7 +1697,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="496"
+    ```sds linenums="519"
     @Pure
     @PythonName("remove_rows")
     fun removeRows(
@@ -1651,7 +1736,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="519"
+    ```sds linenums="542"
     @Pure
     @PythonName("remove_rows_by_column")
     fun removeRowsByColumn(
@@ -1690,7 +1775,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="542"
+    ```sds linenums="565"
     @Pure
     @PythonName("remove_rows_with_missing_values")
     fun removeRowsWithMissingValues(
@@ -1745,7 +1830,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="581"
+    ```sds linenums="604"
     @Pure
     @PythonName("remove_rows_with_outliers")
     fun removeRowsWithOutliers(
@@ -1785,7 +1870,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="368"
+    ```sds linenums="367"
     @Pure
     @PythonName("rename_column")
     fun renameColumn(
@@ -1822,10 +1907,34 @@ pipeline example {
     // Table({"b": [4, 5, 6]})
 }
 ```
+```sds hl_lines="4"
+pipeline example {
+    val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+    val column1 = Column("c", [7, 8, 9]);
+    val result = table.replaceColumn("a", column1);
+    // Table({
+    //     "c": [7, 8, 9],
+    //     "b": [4, 5, 6]
+    // })
+}
+```
+```sds hl_lines="5"
+pipeline example {
+    val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
+    val column1 = Column("c", [7, 8, 9]);
+    val column2 = Column("d", [10, 11, 12]);
+    val result = table.replaceColumn("a", [column1, column2]);
+    // Table({
+    //     "c": [7, 8, 9],
+    //     "d": [10, 11, 12],
+    //     "b": [4, 5, 6]
+    // })
+}
+```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="392"
+    ```sds linenums="415"
     @Pure
     @PythonName("replace_column")
     fun replaceColumn(
@@ -1858,7 +1967,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="602"
+    ```sds linenums="625"
     @Pure
     @PythonName("shuffle_rows")
     fun shuffleRows() -> newTable: Table
@@ -1902,7 +2011,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="631"
+    ```sds linenums="654"
     @Pure
     @PythonName("slice_rows")
     fun sliceRows(
@@ -1942,7 +2051,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="655"
+    ```sds linenums="678"
     @Pure
     @PythonName("sort_rows")
     fun sortRows(
@@ -1982,7 +2091,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="679"
+    ```sds linenums="702"
     @Pure
     @PythonName("sort_rows_by_column")
     fun sortRowsByColumn(
@@ -2028,7 +2137,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="709"
+    ```sds linenums="732"
     @Pure
     @PythonName("split_rows")
     fun splitRows(
@@ -2058,7 +2167,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="831"
+    ```sds linenums="880"
     @Pure
     @PythonName("summarize_statistics")
     fun summarizeStatistics() -> statistics: Table
@@ -2085,7 +2194,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="846"
+    ```sds linenums="895"
     @Pure
     @PythonName("to_columns")
     fun toColumns() -> columns: List<Column>
@@ -2115,7 +2224,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="864"
+    ```sds linenums="913"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_csv_file")
     fun toCsvFile(
@@ -2137,7 +2246,6 @@ will be overwritten.
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `path` | [`String`][safeds.lang.String] | The path to the JSON file. If the file extension is omitted, it is assumed to be ".json". | - |
-| `orientation` | `#!sds literal<"column", "row">` | The orientation of the JSON file. If "column", the JSON file will be structured as a list of columns. If "row", the JSON file will be structured as a list of rows. Row orientation is more human-readable, but slower and less memory-efficient. | `#!sds "column"` |
 
 **Examples:**
 
@@ -2150,12 +2258,11 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="905"
+    ```sds linenums="951"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_json_file")
     fun toJsonFile(
-        path: String,
-        orientation: literal<"column", "row"> = "column"
+        path: String
     )
     ```
 
@@ -2181,7 +2288,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="882"
+    ```sds linenums="931"
     @Pure
     @PythonName("to_dict")
     fun toMap() -> map: Map<String, List<Any>>
@@ -2211,7 +2318,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="926"
+    ```sds linenums="971"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_parquet_file")
     fun toParquetFile(
@@ -2261,7 +2368,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="961"
+    ```sds linenums="1006"
     @Pure
     @PythonName("to_tabular_dataset")
     fun toTabularDataset(
@@ -2281,10 +2388,10 @@ The original table is not modified.
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `targetName` | [`String`][safeds.lang.String] | The name of the target column. | - |
-| `timeName` | [`String`][safeds.lang.String] | The name of the time column. | - |
 | `windowSize` | [`Int`][safeds.lang.Int] | The number of consecutive sample to use as input for prediction. | - |
 | `extraNames` | [`List<String>?`][safeds.lang.List] | Names of the columns that are neither features nor target. If None, no extra columns are used, i.e. all but the target column are used as features. | `#!sds null` |
 | `forecastHorizon` | [`Int`][safeds.lang.Int] | The number of time steps to predict into the future. | `#!sds 1` |
+| `continuous` | [`Boolean`][safeds.lang.Boolean] | Whether or not to continue the forecast in the steps before forecast horizon. | `#!sds false` |
 
 **Results:**
 
@@ -2303,21 +2410,21 @@ pipeline example {
             "amount_bought": [74, 72, 51],
         }
     );
-    val dataset = table.toTimeSeriesDataset(targetName="amount_bought", timeName= "day", windowSize=2);
+    val dataset = table.toTimeSeriesDataset(targetName="amount_bought", windowSize=2);
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="994"
+    ```sds linenums="1039"
     @Pure
     @PythonName("to_time_series_dataset")
     fun toTimeSeriesDataset(
         @PythonName("target_name") targetName: String,
-        @PythonName("time_name") timeName: String,
         @PythonName("window_size") windowSize: Int,
         @PythonName("extra_names") extraNames: List<String>? = null,
-        @PythonName("forecast_horizon") forecastHorizon: Int = 1
+        @PythonName("forecast_horizon") forecastHorizon: Int = 1,
+        continuous: Boolean = false
     ) -> dataset: TimeSeriesDataset
     ```
 
@@ -2352,7 +2459,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="416"
+    ```sds linenums="439"
     @Pure
     @PythonName("transform_column")
     fun transformColumn(
@@ -2395,7 +2502,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="814"
+    ```sds linenums="863"
     @Pure
     @PythonName("transform_table")
     fun transformTable(

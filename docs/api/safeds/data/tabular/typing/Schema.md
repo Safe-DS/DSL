@@ -49,6 +49,12 @@ The schema of a row or table.
          *     val table = Table({"A": [1, 2, 3], "B": ["a", "b", "c"]});
          *     val contains = table.^schema.hasColumn("A"); // true
          * }
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table({"A": [1, 2, 3], "B": ["a", "b", "c"]});
+         *     val contains = table.^schema.hasColumn("C"); // false
+         * }
          */
         @Pure
         @PythonName("has_column")
@@ -138,10 +144,16 @@ pipeline example {
     val contains = table.^schema.hasColumn("A"); // true
 }
 ```
+```sds hl_lines="3"
+pipeline example {
+    val table = Table({"A": [1, 2, 3], "B": ["a", "b", "c"]});
+    val contains = table.^schema.hasColumn("C"); // false
+}
+```
 
 ??? quote "Stub code in `Schema.sdsstub`"
 
-    ```sds linenums="46"
+    ```sds linenums="52"
     @Pure
     @PythonName("has_column")
     fun hasColumn(
@@ -170,7 +182,7 @@ pipeline example {
 
 ??? quote "Stub code in `Schema.sdsstub`"
 
-    ```sds linenums="63"
+    ```sds linenums="69"
     @Pure
     @PythonName("to_dict")
     fun toMap() -> data: Map<String, DataType>
