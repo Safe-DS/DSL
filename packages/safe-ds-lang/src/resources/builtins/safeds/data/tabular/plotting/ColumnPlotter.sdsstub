@@ -19,6 +19,8 @@ class ColumnPlotter(
     /**
      * Create a box plot for the values in the column. This is only possible for numeric columns.
      *
+     * @param theme The color theme of the plot. Default is "light".
+     *
      * @result plot The box plot as an image.
      *
      * @example
@@ -29,12 +31,34 @@ class ColumnPlotter(
      */
     @Pure
     @PythonName("box_plot")
-    fun boxPlot() -> plot: Image
+    fun boxPlot(
+        theme: literal<"dark", "light"> = "light"
+    ) -> plot: Image
+
+    /**
+     * Create a violin plot for the values in the column. This is only possible for numeric columns.
+     *
+     * @param theme The color theme of the plot. Default is "light".
+     *
+     * @result plot The violin plot as an image.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("test", [1, 2, 3]);
+     *     val violinplot = column.plot.violinPlot();
+     * }
+     */
+    @Pure
+    @PythonName("violin_plot")
+    fun violinPlot(
+        theme: literal<"dark", "light"> = "light"
+    ) -> plot: Image
 
     /**
      * Create a histogram for the values in the column.
      *
      * @param maxBinCount The maximum number of bins to use in the histogram. Default is 10.
+     * @param theme The color theme of the plot. Default is "light".
      *
      * @result plot The plot as an image.
      *
@@ -46,7 +70,8 @@ class ColumnPlotter(
      */
     @Pure
     fun histogram(
-        @PythonName("max_bin_count") const maxBinCount: Int = 10
+        @PythonName("max_bin_count") const maxBinCount: Int = 10,
+        theme: literal<"dark", "light"> = "light"
     ) -> plot: Image where {
         maxBinCount > 0
     }
@@ -55,6 +80,7 @@ class ColumnPlotter(
      * Create a lag plot for the values in the column.
      *
      * @param lag The amount of lag.
+     * @param theme The color theme of the plot. Default is "light".
      *
      * @result plot The plot as an image.
      *
@@ -67,6 +93,7 @@ class ColumnPlotter(
     @Pure
     @PythonName("lag_plot")
     fun lagPlot(
-        lag: Int
+        lag: Int,
+        theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
 }

@@ -19,6 +19,10 @@ from safeds.ml.classical.regression import Regressor
  *     val meanSquaredError = regressor.meanSquaredError(test);
  * }
  */
+@Deprecated(
+    alternative="Use a LinearRegressor and set the penalty to ElasticNet.",
+    reason="Consistency with other regressors, where penalty is also just a parameter."
+)
 class ElasticNetRegressor(
     const alpha: Float = 1.0,
     @PythonName("lasso_ratio") const lassoRatio: Float = 0.5
