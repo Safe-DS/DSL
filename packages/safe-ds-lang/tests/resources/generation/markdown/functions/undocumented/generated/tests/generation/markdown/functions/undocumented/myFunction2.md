@@ -20,7 +20,8 @@
 
 ??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="7"
+    ```sds linenums="6"
+    @Pure
     fun myFunction2<TypeParam1, TypeParam2 sub Int, TypeParam3 = Int>(
         param1: TypeParam1,
         param2: TypeParam2,

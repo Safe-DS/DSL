@@ -8,6 +8,7 @@
 
 ??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="8"
+    ```sds linenums="7"
+    @Targets([AnnotationTarget.Annotation])
     annotation MyAnnotation3
     ```

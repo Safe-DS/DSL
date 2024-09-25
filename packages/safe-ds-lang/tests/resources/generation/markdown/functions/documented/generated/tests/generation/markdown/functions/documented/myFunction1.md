@@ -6,6 +6,7 @@ Description of myFunction1.
 
 ??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="7"
+    ```sds linenums="6"
+    @Pure
     fun myFunction1()
     ```

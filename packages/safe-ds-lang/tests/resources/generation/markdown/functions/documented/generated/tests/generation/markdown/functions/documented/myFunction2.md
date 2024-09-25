@@ -22,7 +22,8 @@ Description of myFunction2.
 
 ??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="17"
+    ```sds linenums="16"
+    @Pure
     fun myFunction2<TypeParam1, TypeParam2 sub MyClass1, TypeParam3 = MyClass1>(
         param1: TypeParam1,
         param2: TypeParam2,

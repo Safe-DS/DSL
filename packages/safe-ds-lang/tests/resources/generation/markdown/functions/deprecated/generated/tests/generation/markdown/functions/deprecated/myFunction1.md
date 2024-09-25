@@ -8,6 +8,8 @@
 
 ??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="5"
+    ```sds linenums="3"
+    @Deprecated
+    @Pure
     fun myFunction1()
     ```
