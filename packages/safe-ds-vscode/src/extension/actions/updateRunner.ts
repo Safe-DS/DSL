@@ -17,7 +17,7 @@ export const updateRunner = (context: ExtensionContext, client: LanguageClient) 
 
         // If the runner executable cannot be found at all, install it from scratch
         if (!fs.existsSync(await getRunnerCommand())) {
-            await installRunner(context, client)();
+            await installRunner(client)();
             return;
         }
 
