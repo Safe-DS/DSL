@@ -1,3 +1,17 @@
+## [0.18.0](https://github.com/Safe-DS/DSL/compare/v0.17.0...v0.18.0) (2024-09-25)
+
+### Features
+
+* eda history basic setup ([#1212](https://github.com/Safe-DS/DSL/issues/1212)) ([597672b](https://github.com/Safe-DS/DSL/commit/597672b6aea59ced375517cf7c03a04b0943e7ce)), closes [#1211](https://github.com/Safe-DS/DSL/issues/1211)
+* eda refresh outdated view ([#1215](https://github.com/Safe-DS/DSL/issues/1215)) ([2295d80](https://github.com/Safe-DS/DSL/commit/2295d80f77b88d24bcdc846ff26bb2ca7ac87d83)), closes [#1214](https://github.com/Safe-DS/DSL/issues/1214)
+* **eda:** filter by column ([#1217](https://github.com/Safe-DS/DSL/issues/1217)) ([77ad26c](https://github.com/Safe-DS/DSL/commit/77ad26c1dd7691922d31ca0dca9d759828fa6043)), closes [#1216](https://github.com/Safe-DS/DSL/issues/1216)
+* integrate version 0.28.0 of the `safe-ds` Python library ([#1237](https://github.com/Safe-DS/DSL/issues/1237)) ([1b742e7](https://github.com/Safe-DS/DSL/commit/1b742e72afe5eb3b12f5465dafda1710ea6f299b))
+* select path for runner when installing ([#1238](https://github.com/Safe-DS/DSL/issues/1238)) ([3d9d4db](https://github.com/Safe-DS/DSL/commit/3d9d4db0cbf2dc5b8cdb0893cdef6a114581a87c)), closes [#1144](https://github.com/Safe-DS/DSL/issues/1144)
+
+### Bug Fixes
+
+* eda table right click improvements ([#1213](https://github.com/Safe-DS/DSL/issues/1213)) ([cf440e3](https://github.com/Safe-DS/DSL/commit/cf440e3ca2b2de20536c248792ea4b835e3a6e17)), closes [#1180](https://github.com/Safe-DS/DSL/issues/1180)
+
 ## [0.17.0](https://github.com/Safe-DS/DSL/compare/v0.16.1...v0.17.0) (2024-05-29)
 
 
