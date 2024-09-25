@@ -8,6 +8,7 @@
 
 ??? quote "Implementation code in `main.sds`"
 
-    ```sds linenums="4"
+    ```sds linenums="3"
+    @Deprecated
     segment mySegment1() {}
     ```

@@ -4,6 +4,7 @@
 
 ??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="4"
+    ```sds linenums="3"
+    @Experimental
     schema MySchema1 {}
     ```

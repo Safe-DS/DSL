@@ -4,6 +4,7 @@
 
 ??? quote "Implementation code in `main.sds`"
 
-    ```sds linenums="4"
+    ```sds linenums="3"
+    @Experimental
     segment mySegment1() {}
     ```

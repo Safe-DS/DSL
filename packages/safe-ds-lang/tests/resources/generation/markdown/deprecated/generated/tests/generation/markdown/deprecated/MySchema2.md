@@ -10,6 +10,9 @@
 
 ??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="9"
+    ```sds linenums="6"
+    @Deprecated(
+        alternative = "Something else",
+    )
     schema MySchema2 {}
     ```

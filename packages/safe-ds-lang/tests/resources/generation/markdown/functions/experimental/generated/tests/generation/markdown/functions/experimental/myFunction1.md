@@ -4,6 +4,8 @@
 
 ??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="5"
+    ```sds linenums="3"
+    @Experimental
+    @Pure
     fun myFunction1()
     ```

@@ -13,6 +13,7 @@ Description of myFunction3.
 
 ??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="30"
+    ```sds linenums="29"
+    @Pure
     fun myFunction3(param1: MyClass1, param2: Float = 1.0)
     ```

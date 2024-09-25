@@ -441,7 +441,7 @@ export class EvaluatedNamedTuple extends EvaluatedNode {
      */
     override unwrap(): EvaluatedNode {
         if (this.entries.size === 1) {
-            return this.entries.values().next().value;
+            return this.entries.values().next().value!;
         } else {
             return this;
         }
