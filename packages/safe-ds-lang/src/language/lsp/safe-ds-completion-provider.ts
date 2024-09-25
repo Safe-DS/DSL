@@ -26,7 +26,7 @@ export class SafeDsCompletionProvider extends DefaultCompletionProvider {
     private readonly builtinAnnotations: SafeDsAnnotations;
     protected override readonly documentationProvider: SafeDsDocumentationProvider;
 
-    readonly completionOptions = {
+    override readonly completionOptions = {
         triggerCharacters: ['.', '@'],
     };
 
