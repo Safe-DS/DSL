@@ -19,8 +19,8 @@ A collection of classification metrics.
          */
         @Pure
         static fun summarize(
-            predicted: union<Column<Any>, TabularDataset>,
-            expected: union<Column<Any>, TabularDataset>,
+            predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
+            expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
             @PythonName("positive_class") positiveClass: Any
         ) -> metrics: Table
 
@@ -37,8 +37,8 @@ A collection of classification metrics.
          */
         @Pure
         static fun accuracy(
-            predicted: union<Column<Any>, TabularDataset>,
-            expected: union<Column<Any>, TabularDataset>
+            predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
+            expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
         ) -> accuracy: Float
 
         /**
@@ -56,8 +56,8 @@ A collection of classification metrics.
         @Pure
         @PythonName("f1_score")
         static fun f1Score(
-            predicted: union<Column<Any>, TabularDataset>,
-            expected: union<Column<Any>, TabularDataset>,
+            predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
+            expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
             @PythonName("positive_class") positiveClass: Any
         ) -> f1Score: Float
 
@@ -75,8 +75,8 @@ A collection of classification metrics.
          */
         @Pure
         static fun precision(
-            predicted: union<Column<Any>, TabularDataset>,
-            expected: union<Column<Any>, TabularDataset>,
+            predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
+            expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
             @PythonName("positive_class") positiveClass: Any
         ) -> precision: Float
 
@@ -94,8 +94,8 @@ A collection of classification metrics.
          */
         @Pure
         static fun recall(
-            predicted: union<Column<Any>, TabularDataset>,
-            expected: union<Column<Any>, TabularDataset>,
+            predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
+            expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
             @PythonName("positive_class") positiveClass: Any
         ) -> recall: Float
     }
@@ -112,8 +112,8 @@ better. Results range from 0.0 to 1.0.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `predicted` | `#!sds union<Column<Any>, TabularDataset>` | The predicted target values produced by the classifier. | - |
-| `expected` | `#!sds union<Column<Any>, TabularDataset>` | The expected target values. | - |
+| `predicted` | `#!sds union<Column<Any>, TabularDataset, TimeSeriesDataset>` | The predicted target values produced by the classifier. | - |
+| `expected` | `#!sds union<Column<Any>, TabularDataset, TimeSeriesDataset>` | The expected target values. | - |
 
 **Results:**
 
@@ -126,8 +126,8 @@ better. Results range from 0.0 to 1.0.
     ```sds linenums="37"
     @Pure
     static fun accuracy(
-        predicted: union<Column<Any>, TabularDataset>,
-        expected: union<Column<Any>, TabularDataset>
+        predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
+        expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
     ) -> accuracy: Float
     ```
 
@@ -142,8 +142,8 @@ classifier. Results range from 0.0 to 1.0.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `predicted` | `#!sds union<Column<Any>, TabularDataset>` | The predicted target values produced by the classifier. | - |
-| `expected` | `#!sds union<Column<Any>, TabularDataset>` | The expected target values. | - |
+| `predicted` | `#!sds union<Column<Any>, TabularDataset, TimeSeriesDataset>` | The predicted target values produced by the classifier. | - |
+| `expected` | `#!sds union<Column<Any>, TabularDataset, TimeSeriesDataset>` | The expected target values. | - |
 | `positiveClass` | [`Any`][safeds.lang.Any] | The class to be considered positive. All other classes are considered negative. | - |
 
 **Results:**
@@ -158,8 +158,8 @@ classifier. Results range from 0.0 to 1.0.
     @Pure
     @PythonName("f1_score")
     static fun f1Score(
-        predicted: union<Column<Any>, TabularDataset>,
-        expected: union<Column<Any>, TabularDataset>,
+        predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
+        expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
         @PythonName("positive_class") positiveClass: Any
     ) -> f1Score: Float
     ```
@@ -175,8 +175,8 @@ better the classifier. Results range from 0.0 to 1.0.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `predicted` | `#!sds union<Column<Any>, TabularDataset>` | The predicted target values produced by the classifier. | - |
-| `expected` | `#!sds union<Column<Any>, TabularDataset>` | The expected target values. | - |
+| `predicted` | `#!sds union<Column<Any>, TabularDataset, TimeSeriesDataset>` | The predicted target values produced by the classifier. | - |
+| `expected` | `#!sds union<Column<Any>, TabularDataset, TimeSeriesDataset>` | The expected target values. | - |
 | `positiveClass` | [`Any`][safeds.lang.Any] | The class to be considered positive. All other classes are considered negative. | - |
 
 **Results:**
@@ -190,8 +190,8 @@ better the classifier. Results range from 0.0 to 1.0.
     ```sds linenums="75"
     @Pure
     static fun precision(
-        predicted: union<Column<Any>, TabularDataset>,
-        expected: union<Column<Any>, TabularDataset>,
+        predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
+        expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
         @PythonName("positive_class") positiveClass: Any
     ) -> precision: Float
     ```
@@ -207,8 +207,8 @@ better the classifier. Results range from 0.0 to 1.0.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `predicted` | `#!sds union<Column<Any>, TabularDataset>` | The predicted target values produced by the classifier. | - |
-| `expected` | `#!sds union<Column<Any>, TabularDataset>` | The expected target values. | - |
+| `predicted` | `#!sds union<Column<Any>, TabularDataset, TimeSeriesDataset>` | The predicted target values produced by the classifier. | - |
+| `expected` | `#!sds union<Column<Any>, TabularDataset, TimeSeriesDataset>` | The expected target values. | - |
 | `positiveClass` | [`Any`][safeds.lang.Any] | The class to be considered positive. All other classes are considered negative. | - |
 
 **Results:**
@@ -222,8 +222,8 @@ better the classifier. Results range from 0.0 to 1.0.
     ```sds linenums="94"
     @Pure
     static fun recall(
-        predicted: union<Column<Any>, TabularDataset>,
-        expected: union<Column<Any>, TabularDataset>,
+        predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
+        expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
         @PythonName("positive_class") positiveClass: Any
     ) -> recall: Float
     ```
@@ -236,8 +236,8 @@ Summarize classification metrics on the given data.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `predicted` | `#!sds union<Column<Any>, TabularDataset>` | The predicted target values produced by the classifier. | - |
-| `expected` | `#!sds union<Column<Any>, TabularDataset>` | The expected target values. | - |
+| `predicted` | `#!sds union<Column<Any>, TabularDataset, TimeSeriesDataset>` | The predicted target values produced by the classifier. | - |
+| `expected` | `#!sds union<Column<Any>, TabularDataset, TimeSeriesDataset>` | The expected target values. | - |
 | `positiveClass` | [`Any`][safeds.lang.Any] | The class to be considered positive. All other classes are considered negative. | - |
 
 **Results:**
@@ -251,8 +251,8 @@ Summarize classification metrics on the given data.
     ```sds linenums="19"
     @Pure
     static fun summarize(
-        predicted: union<Column<Any>, TabularDataset>,
-        expected: union<Column<Any>, TabularDataset>,
+        predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
+        expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
         @PythonName("positive_class") positiveClass: Any
     ) -> metrics: Table
     ```

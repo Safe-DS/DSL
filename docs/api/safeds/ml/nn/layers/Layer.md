@@ -11,8 +11,10 @@ search:
 
 - [`AveragePooling2DLayer`][safeds.ml.nn.layers.AveragePooling2DLayer]
 - [`Convolutional2DLayer`][safeds.ml.nn.layers.Convolutional2DLayer]
+- [`DropoutLayer`][safeds.ml.nn.layers.DropoutLayer]
 - [`FlattenLayer`][safeds.ml.nn.layers.FlattenLayer]
 - [`ForwardLayer`][safeds.ml.nn.layers.ForwardLayer]
+- [`GRULayer`][safeds.ml.nn.layers.GRULayer]
 - [`LSTMLayer`][safeds.ml.nn.layers.LSTMLayer]
 - [`MaxPooling2DLayer`][safeds.ml.nn.layers.MaxPooling2DLayer]
 

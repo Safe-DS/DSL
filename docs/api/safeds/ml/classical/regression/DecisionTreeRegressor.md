@@ -55,6 +55,14 @@ pipeline example {
         fun fit(
             @PythonName("training_set") trainingSet: TabularDataset
         ) -> fittedRegressor: DecisionTreeRegressor
+
+        /**
+         * Get the image of the decision tree.
+         *
+         * @result plot The decision tree figure as an image.
+         */
+        @Pure
+        fun plot() -> plot: Image
     }
     ```
 
@@ -363,6 +371,23 @@ positive infinity.
     fun medianAbsoluteDeviation(
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
     ) -> medianAbsoluteDeviation: Float
+    ```
+
+## <code class="doc-symbol doc-symbol-function"></code> `plot` {#safeds.ml.classical.regression.DecisionTreeRegressor.plot data-toc-label='[function] plot'}
+
+Get the image of the decision tree.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `plot` | [`Image`][safeds.data.image.containers.Image] | The decision tree figure as an image. |
+
+??? quote "Stub code in `DecisionTreeRegressor.sdsstub`"
+
+    ```sds linenums="55"
+    @Pure
+    fun plot() -> plot: Image
     ```
 
 ## <code class="doc-symbol doc-symbol-function"></code> `predict` {#safeds.ml.classical.regression.DecisionTreeRegressor.predict data-toc-label='[function] predict'}

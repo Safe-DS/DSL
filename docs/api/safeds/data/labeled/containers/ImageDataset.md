@@ -89,7 +89,7 @@ pipeline example {
         /**
          * Return a new `ImageDataset` with shuffled data.
          *
-         * The original dataset list is not modified.
+         * The original dataset is not modified.
          *
          * @result imageDataset the shuffled `ImageDataset`
          *
@@ -104,6 +104,27 @@ pipeline example {
          */
         @Pure
         fun shuffle() -> imageDataset: ImageDataset<O>
+
+        /**
+         * Create two image datasets by splitting the data of the current dataset.
+         *
+         * The first dataset contains a percentage of the data specified by `percentage_in_first`, and the second dataset
+         * contains the remaining data. By default, the data is shuffled before splitting. You can disable this by setting
+         * `shuffle` to False.
+         *
+         * The original dataset is not modified.
+         *
+         * @param percentageInFirst The percentage of data to include in the first dataset. Must be between 0 and 1.
+         * @param shuffle Whether to shuffle the data before splitting.
+         *
+         * @result firstDataset The first dataset.
+         * @result secondDataset The second dataset.
+         */
+        @Pure
+        fun split(
+            @PythonName("percentage_in_first") percentageInFirst: Float,
+            shuffle: Boolean = true
+        ) -> (firstDataset: ImageDataset<O>, secondDataset: ImageDataset<O>)
     }
     ```
 
@@ -183,7 +204,7 @@ pipeline example {
 
 Return a new `ImageDataset` with shuffled data.
 
-The original dataset list is not modified.
+The original dataset is not modified.
 
 **Results:**
 
@@ -208,4 +229,38 @@ pipeline example {
     ```sds linenums="92"
     @Pure
     fun shuffle() -> imageDataset: ImageDataset<O>
+    ```
+
+## <code class="doc-symbol doc-symbol-function"></code> `split` {#safeds.data.labeled.containers.ImageDataset.split data-toc-label='[function] split'}
+
+Create two image datasets by splitting the data of the current dataset.
+
+The first dataset contains a percentage of the data specified by `percentage_in_first`, and the second dataset
+contains the remaining data. By default, the data is shuffled before splitting. You can disable this by setting
+`shuffle` to False.
+
+The original dataset is not modified.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `percentageInFirst` | [`Float`][safeds.lang.Float] | The percentage of data to include in the first dataset. Must be between 0 and 1. | - |
+| `shuffle` | [`Boolean`][safeds.lang.Boolean] | Whether to shuffle the data before splitting. | `#!sds true` |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `firstDataset` | [`ImageDataset<O>`][safeds.data.labeled.containers.ImageDataset] | The first dataset. |
+| `secondDataset` | [`ImageDataset<O>`][safeds.data.labeled.containers.ImageDataset] | The second dataset. |
+
+??? quote "Stub code in `ImageDataset.sdsstub`"
+
+    ```sds linenums="110"
+    @Pure
+    fun split(
+        @PythonName("percentage_in_first") percentageInFirst: Float,
+        shuffle: Boolean = true
+    ) -> (firstDataset: ImageDataset<O>, secondDataset: ImageDataset<O>)
     ```

@@ -6,6 +6,12 @@ Regularized logistic regression.
 
 **Parent type:** [`Classifier`][safeds.ml.classical.classification.Classifier]
 
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `c` | [`Float`][safeds.lang.Float] | The regularization strength. Lower values imply stronger regularization. Must be greater than 0. | `#!sds 1.0` |
+
 **Examples:**
 
 ```sds hl_lines="4"
@@ -19,8 +25,17 @@ pipeline example {
 
 ??? quote "Stub code in `LogisticClassifier.sdsstub`"
 
-    ```sds linenums="18"
-    class LogisticClassifier() sub Classifier {
+    ```sds linenums="20"
+    class LogisticClassifier(
+        const c: Float = 1.0
+    ) sub Classifier where {
+        c > 0
+    } {
+        /**
+         * The regularization strength. Lower values imply stronger regularization.
+         */
+        attr c: Float
+
         /**
          * Create a copy of this classifier and fit it with the given training data.
          *
@@ -36,6 +51,12 @@ pipeline example {
         ) -> fittedClassifier: LogisticClassifier
     }
     ```
+
+## <code class="doc-symbol doc-symbol-attribute"></code> `c` {#safeds.ml.classical.classification.LogisticClassifier.c data-toc-label='[attribute] c'}
+
+The regularization strength. Lower values imply stronger regularization.
+
+**Type:** [`Float`][safeds.lang.Float]
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `isFitted` {#safeds.ml.classical.classification.LogisticClassifier.isFitted data-toc-label='[attribute] isFitted'}
 
@@ -126,7 +147,7 @@ This classifier is not modified.
 
 ??? quote "Stub code in `LogisticClassifier.sdsstub`"
 
-    ```sds linenums="28"
+    ```sds linenums="39"
     @Pure
     fun fit(
         @PythonName("training_set") trainingSet: TabularDataset
