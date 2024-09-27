@@ -1,6 +1,6 @@
 package segmentTest
 
-segment doStuffs(
+segment doStuff(
     inputPath: String,
     ouputPath: String,
     sliceSize: Int
@@ -25,7 +25,7 @@ segment doStuffs(
 pipeline smallTest {
 
     val path = "beginner_classification/train.csv";
-    val score = doStuffs(
+    val score = doStuff(
         path,
         "output/beginner_classification.csv",
         5000

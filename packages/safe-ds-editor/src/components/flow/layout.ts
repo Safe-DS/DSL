@@ -3,17 +3,15 @@ import { type Node as XYNode, type Edge as XYEdge } from '@xyflow/svelte';
 
 import '@xyflow/svelte/dist/style.css';
 import type { NodeCustom } from './utils.';
-import { Call, GenericExpression, Placeholder } from '$global';
+import { Call, GenericExpression, Placeholder, SegmentGroupId } from '$global';
 
 export const calculateLayout = async (
     nodeList: XYNode[],
     edgeList: XYEdge[],
-    index: number,
+    isSegemnt: boolean,
 ): Promise<NodeCustom[] | undefined> => {
     if (nodeList.length === 0) return [];
-    console.time(
-        `calculateLayout - ${index} Call with ${nodeList.length} nodes and ${edgeList.length} edges`,
-    );
+    console.time(`calculateLayout - With ${nodeList.length} nodes and ${edgeList.length} edges`);
 
     const elk = new ELK();
     const options = {
@@ -41,37 +39,83 @@ export const calculateLayout = async (
         }),
     };
 
-    // nodeList.forEach((child) => {
-    //     console.log('NODE: ' + JSON.stringify(child) + '\n');
-    // });
-    // console.log(graph);
-    const layout = await elk.layout(graph);
-
-    // layout.children?.forEach((child) => {
-    //     console.log('LAYOUT: ' + JSON.stringify(child) + '\n');
-    // });
-
-    const positionList = layout.children?.map((node) => {
-        return { id: node.id, x: node.x, y: node.y };
-    });
-
-    if (
-        !positionList ||
-        positionList?.some((node) => node.x === undefined || node.y === undefined)
-    ) {
-        return undefined;
+    let layout;
+    try {
+        layout = await elk.layout(graph);
+    } catch (e) {
+        console.log(e);
+    } finally {
+        if (!layout) return undefined;
+        if (!layout.children) return undefined;
     }
 
-    const nodeListLayouted = nodeList.map((node, i) => {
-        const nodePosition = positionList[i];
+    const positionList = layout.children
+        .map((node) => {
+            return { id: node.id, x: node.x, y: node.y };
+        })
+        .filter((node) => node.x !== undefined || node.y !== undefined);
+
+    if (positionList.length < nodeList.length) return undefined;
+
+    let nodeListLayouted = nodeList.map((node, index) => {
+        const nodePosition = positionList[index];
         node.position.x = nodePosition.x as number;
         node.position.y = nodePosition.y as number;
         return node;
     });
 
-    console.timeEnd(
-        `calculateLayout - ${index} Call with ${nodeList.length} nodes and ${edgeList.length} edges`,
-    );
+    if (isSegemnt) {
+        const segmentIndex = positionList.findIndex(
+            (node) => node.id === SegmentGroupId.toString(),
+        );
+        if (segmentIndex < 0) return undefined;
+
+        const boundingBox = nodeListLayouted
+            .filter((_, index) => index !== segmentIndex)
+            .reduce(
+                (acc, node) => ({
+                    minX: Math.min(acc.minX, node.position.x),
+                    maxX: Math.max(acc.maxX, node.position.x + (node.width ?? 0)),
+                    minY: Math.min(acc.minY, node.position.y),
+                    maxY: Math.max(acc.maxY, node.position.y + (node.height ?? 0)),
+                }),
+                {
+                    minX: Infinity,
+                    maxX: -Infinity,
+                    minY: Infinity,
+                    maxY: -Infinity,
+                },
+            );
+
+        const offset = 300;
+        const dimensions = {
+            x: boundingBox.minX - offset,
+            y: boundingBox.minY - offset,
+            width: boundingBox.maxX - boundingBox.minX + offset + offset,
+            height: boundingBox.maxY - boundingBox.minY + offset + offset,
+        };
+
+        nodeListLayouted = nodeListLayouted.map((node, index) => {
+            if (index === segmentIndex) {
+                return {
+                    ...nodeListLayouted[segmentIndex],
+                    position: { x: dimensions.x, y: dimensions.y },
+                    width: dimensions.width,
+                    height: dimensions.height,
+                };
+            } else {
+                return {
+                    ...node,
+                    position: {
+                        x: node.position.x - boundingBox.minX + offset,
+                        y: node.position.y - boundingBox.minY + offset,
+                    },
+                };
+            }
+        });
+    }
+
+    console.timeEnd(`calculateLayout - With ${nodeList.length} nodes and ${edgeList.length} edges`);
     return nodeListLayouted as NodeCustom[];
 };
 
@@ -139,6 +183,10 @@ const getPorts = (node: XYNode): ElkPort[] => {
             },
         ];
     }
+    if (key === 'segment') {
+        return [];
+    }
 
+    console.log(`Unknown key: ${key}`);
     return [];
 };

@@ -4,7 +4,7 @@ import { extname } from "path";
 import { documentToJson, saveJson } from "./ast-parser/tools/debug-utils.js";
 import { parseDocument } from "./ast-parser/main.js";
 import { Utils } from "./ast-parser/utils.js";
-import { Ast, AstInterface } from "./global.js";
+import { AstInterface, Graph } from "./global.js";
 import { GenericRequestType } from "./types.js";
 
 const getAstHandler = async (
@@ -19,7 +19,11 @@ const getAstHandler = async (
     const parseableExtensions = [".sds", ".sdsdev"];
     if (!parseableExtensions.includes(extname(message.uri.path))) {
         Utils.pushError(`Unknown file type <${message.uri.path}>`);
-        return { ast: new Ast(), errorList: Utils.errorList, segmentList: [] };
+        return {
+            pipeline: new Graph("pipeline"),
+            errorList: Utils.errorList,
+            segmentList: [],
+        };
     }
 
     // Todo: Find out why restarting with a different document doesnt work as intended
@@ -32,15 +36,15 @@ const getAstHandler = async (
     document.parseResult.parserErrors.forEach(Utils.pushParserErrors);
     if (Utils.errorList.length > 0) {
         return {
-            ast: Utils.collectAst(),
+            pipeline: new Graph("pipeline", Utils.collectAst()),
             errorList: Utils.errorList,
             segmentList: [],
         };
     }
 
     saveJson(documentToJson(document, 16), "currentDocument");
-    const [ast, segmentList] = parseDocument(document);
-    return { ast, errorList: Utils.errorList, segmentList };
+    const [graph, segmentList] = parseDocument(document);
+    return { pipeline: graph, errorList: Utils.errorList, segmentList };
 };
 
 export const GetAst: GenericRequestType = {

@@ -1,7 +1,7 @@
 <script lang="ts">
     import { cn } from '$pages/utils';
     import type { ClassValue } from 'clsx';
-    import type { GlobalReference } from '$global';
+    import type { GlobalReference, Segment } from '$global';
     import type { Writable } from 'svelte/store';
     import * as Resizable from '$src/components/ui/resizable';
     import { type Node as XYNode } from '@xyflow/svelte';
@@ -10,16 +10,20 @@
     import SectionSegments from './section-segments.svelte';
     import SectionDocumentation from './section-documentation.svelte';
     import SectionParameter from './section-parameter.svelte';
+    import { createEventDispatcher } from 'svelte';
 
     export let className: ClassValue;
     export { className as class };
+    export let segmentList: Writable<Segment[]>;
     export let globalReferences: Writable<GlobalReference[]>;
     export let selectedNodeList: XYNode[];
 
-    let paneElements = true;
-    let paneSegments = false;
+    let paneElements = false;
+    let paneSegments = true;
     let paneParameters = false;
     let paneDocumentation = false;
+
+    const dispatch = createEventDispatcher();
 
     const LORE =
         'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.';
@@ -41,7 +45,12 @@
             bind:showPane={paneSegments}
             showResizeHandle={paneDocumentation || paneParameters}
         >
-            <SectionSegments />
+            <SectionSegments
+                {segmentList}
+                on:editSegment={(event) => {
+                    dispatch('editSegment', event.detail);
+                }}
+            />
         </SidebarSection>
         <SidebarSection
             name={'Parameter'}

@@ -3,6 +3,7 @@
         name: string;
         argumentText: string | undefined;
         defaultValue: string | undefined;
+        isConstant: boolean;
         type: string;
     };
 </script>
@@ -26,7 +27,9 @@
     <div class="p-1">
         {#each parameterList as parameter}
             <div class="flex flex-row items-center gap-2 rounded-sm p-1">
-                <div class=" w-32 flex-shrink-0 truncate">{parameter.name}</div>
+                <div class=" w-32 flex-shrink-0 truncate">
+                    {parameter.name}
+                </div>
                 <input
                     class={`text-text-normal placeholder:text-text-muted bg-menu-400 flex-grow truncate rounded-md p-1`}
                     type="text"

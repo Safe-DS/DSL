@@ -70,6 +70,7 @@ export const getParameterList = (xyNode: XYNode) => {
                 argumentText: parameter.argumentText,
                 defaultValue: parameter.defaultValue,
                 type: parameter.type,
+                isConstant: parameter.isConstant,
             };
         });
 

@@ -5,16 +5,16 @@ import { Result } from "./result.js";
 import { Statement } from "./statement.js";
 import { filterErrors, Utils } from "./utils.js";
 
-export const SegmentParameterId = -1;
-export const SegmentYieldId = -2;
+export const SegmentGroupId = -1;
 
 export class Segment {
     private constructor(
-        public readonly name: string,
         public readonly parameterList: Parameter[],
         public readonly resultList: Result[],
-        public readonly ast: Ast,
-        public readonly uniquePath: string,
+        public readonly ast: Ast = new Ast(),
+        public readonly uniquePath: string = "",
+        public readonly name: string = "",
+        public readonly type: "segment" = "segment",
     ) {}
 
     public static parse(node: SdsSegment): Segment {
@@ -31,11 +31,11 @@ export class Segment {
 
         const ast = Utils.collectAst();
         const segment = new Segment(
-            name,
             parameterList,
             resultList,
             ast,
             Utils.safeDsServices.workspace.AstNodeLocator.getAstNodePath(node),
+            name,
         );
         return segment;
     }

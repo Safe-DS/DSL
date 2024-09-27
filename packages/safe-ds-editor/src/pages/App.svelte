@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Ast, CustomError, GlobalReference } from '$global';
+    import { CustomError, GlobalReference, Graph, Segment } from '$global';
     import { onMount, setContext } from 'svelte';
     import ErrorPage from '$pages/ErrorPage.svelte';
     import MessageHandler from '$src/messaging/messageHandler';
@@ -15,29 +15,28 @@
     MessageHandler.initialize();
     MessageHandler.listenToMessages();
 
-    let ast = writable<Ast>(new Ast());
+    let currentGraph = writable<Graph | Segment>(new Graph('pipeline'));
+    let pipeline = writable<Graph>(new Graph('pipeline'));
+    let segmentList = writable<Segment[]>([]);
     let errorList = writable<CustomError[]>([]);
     let globalReferences = writable<GlobalReference[]>([]);
 
-    async function fetchAst() {
+    async function fetchParsedDocument() {
         const response = await MessageHandler.getAst();
         errorList.set(response.errorList);
-        ast.set(response.ast);
+        pipeline.set(response.pipeline);
+        currentGraph.set(response.pipeline);
+        segmentList.set(response.segmentList);
+        console.log(response.segmentList);
     }
 
     async function fetchGlobalReferences() {
         const response = await MessageHandler.getGlobalReferences();
-        console.log(
-            response.globalReferences
-                .map((ref) => ref.parent + '.' + ref.name)
-                .sort()
-                .join('\n'),
-        );
         globalReferences.set(response.globalReferences);
     }
 
     onMount(async () => {
-        await fetchAst();
+        await fetchParsedDocument();
         await fetchGlobalReferences();
     });
 
@@ -56,6 +55,12 @@
 
     let mainSidebar: PaneAPI;
     let isCollapsed = false;
+
+    function handleEditSegment(event: CustomEvent<number>) {
+        const index: number = event.detail;
+        const segment = $segmentList[index];
+        currentGraph.set(segment);
+    }
 </script>
 
 {#if $errorList.length > 0}
@@ -73,7 +78,12 @@
                     onCollapse={() => (isCollapsed = true)}
                     onExpand={() => (isCollapsed = false)}
                 >
-                    <Sidebar {globalReferences} {selectedNodeList} />
+                    <Sidebar
+                        on:editSegment={handleEditSegment}
+                        {segmentList}
+                        {globalReferences}
+                        {selectedNodeList}
+                    />
                 </Resizable.Pane>
 
                 {#if isCollapsed}
@@ -81,6 +91,7 @@
                         class="bg-menu-400 absolute left-2 top-2 p-2"
                         on:click={() => {
                             mainSidebar.expand();
+                            mainSidebar.resize(25);
                         }}
                     >
                         <HamburgerMenu size={20} />
@@ -92,10 +103,13 @@
                 <Resizable.Pane>
                     <SvelteFlowProvider>
                         <Flow
+                            on:editPipeline={() => {
+                                currentGraph.set($pipeline);
+                            }}
                             on:selectionChange={(event) => {
                                 selectedNodeList = event.detail;
                             }}
-                            astWritable={ast}
+                            pipeline={currentGraph}
                         />
                     </SvelteFlowProvider>
                 </Resizable.Pane>

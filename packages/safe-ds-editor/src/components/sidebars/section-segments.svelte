@@ -1,48 +1,26 @@
 <script lang="ts">
-    import MenuIcon from '$src/assets/menu/menuIcon.svelte';
     import type { ClassValue } from 'clsx';
-    import { Button } from '../ui/button';
-    import * as Card from '../ui/card';
     import { cn } from '$src/pages/utils';
+    import type { Writable } from 'svelte/store';
+    import type { Segment } from '$global';
+    import { createEventDispatcher } from 'svelte';
 
     export let className: ClassValue;
     export { className as class };
+    export let segmentList: Writable<Segment[]>;
+
+    const dispatch = createEventDispatcher();
 </script>
 
-<div class={cn('grid gap-2 pl-3', className)}>
-    <!-- <Button class="bg-menu-500 text-text-normal hover:bg-menu-400 w-full rounded-lg border"
-        >+</Button
-    >
-    <Card.Root>
-        <Card.Header>
-            <Card.Title>textSegment</Card.Title>
-        </Card.Header>
-        <Card.Content class="text-text-muted">Segment Documentation can go here.</Card.Content>
-        <Card.Footer>
-            <div class="flex w-full flex-row gap-2">
-                <Button class="bg-menu-700 text-text-normal hover:bg-menu-700/90 flex-grow shadow"
-                    >Open</Button
-                >
-                <Button variant="destructive">
-                    <MenuIcon name={'delete'} className={'h-7 w-7 stroke-text-normal p-1'} />
-                </Button>
-            </div>
-        </Card.Footer>
-    </Card.Root>
-    <Card.Root>
-        <Card.Header>
-            <Card.Title>AnotherSegment</Card.Title>
-        </Card.Header>
-        <Card.Content class="text-text-muted">Segment Documentation can go here.</Card.Content>
-        <Card.Footer>
-            <div class="flex w-full flex-row gap-2">
-                <Button class="bg-menu-700 text-text-normal hover:bg-menu-700/90 flex-grow shadow"
-                    >Open</Button
-                >
-                <Button variant="destructive">
-                    <MenuIcon name={'delete'} className={'h-7 w-7 stroke-text-normal py-1'} />
-                </Button>
-            </div>
-        </Card.Footer>
-    </Card.Root> -->
+<div class={cn('flex h-full w-full flex-col p-2 pl-3', className)}>
+    {#each $segmentList as segment, index}
+        <div class=" flex flex-row p-2">
+            <span class="  cursor-grab">{segment.name}</span>
+            <div class=" flex-grow" />
+            <button
+                class=" bg-menu-400 hover:bg-menu-300 rounded p-1"
+                on:mousedown={() => dispatch('editSegment', index)}>Edit</button
+            >
+        </div>
+    {/each}
 </div>

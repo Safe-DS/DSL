@@ -20,6 +20,8 @@ export default class MessageHandler {
             const message = event.data as ExtensionToWebview;
             switch (message.command) {
                 case 'SendAst':
+                case 'SendGlobalReferences':
+                case 'SendNodeDescription':
                     // This Message is handled elsewere
                     break;
                 case 'test':

@@ -6,7 +6,7 @@ pipeline smallTest {
     val subsetImages = labeledImages.sliceRows(0, 5000);
     val train, val validate = subsetImages.splitRows(0.8);
 
-    val modelUntrained = SupportVectorClassifier();
+    val modelUntrained = SupportVectorClassifier(2.0);
     val modelTrained = modelUntrained.fit(
         train.toTabularDataset(targetName = "target")
     );

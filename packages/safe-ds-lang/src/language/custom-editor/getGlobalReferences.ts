@@ -3,7 +3,13 @@ import { GenericRequestType } from "./types.js";
 import { GlobalReference, GlobalReferenceInterface } from "./global.js";
 import { SafeDsServices } from "../safe-ds-module.js";
 import { isPrivate } from "../helpers/nodeProperties.js";
-import { isSdsClass, isSdsFunction, isSdsSegment } from "../generated/ast.js";
+import {
+    isSdsAnnotation,
+    isSdsClass,
+    isSdsEnum,
+    isSdsFunction,
+    isSdsSegment,
+} from "../generated/ast.js";
 
 const getGlobalReferencesHandler = async (
     message: GlobalReferenceInterface.Message,
@@ -69,6 +75,12 @@ const getGlobalReferencesHandler = async (
             });
         } else if (isSdsSegment(element.node)) {
             // Do nothing
+        } else if (isSdsAnnotation(element.node) || isSdsEnum(element.node)) {
+            // Expected
+            logger.info(
+                "GlobRef",
+                `Unable to parse global reference of type <${element.node.$type}>`,
+            );
         } else {
             logger.warn(
                 "GlobRef",
@@ -78,7 +90,7 @@ const getGlobalReferencesHandler = async (
         }
         counter++;
     }
-    logger.warn("GlobRef", `Found ${counter} exported Elements`);
+    logger.info("GlobRef", `Found ${counter} exported Elements`);
 
     return { globalReferences: resultList };
 };

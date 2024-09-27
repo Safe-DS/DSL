@@ -2,7 +2,7 @@ import { GenericExpression } from "./expression.js";
 import { Parameter } from "./parameter.js";
 import { Placeholder } from "./placeholder.js";
 import { Result } from "./result.js";
-import { SegmentYieldId } from "./segment.js";
+import { SegmentGroupId } from "./segment.js";
 import { Utils } from "./utils.js";
 
 export class Edge {
@@ -58,7 +58,7 @@ export class Port {
         if (node instanceof Placeholder) {
             return new Port(node.name, input ? "target" : "source");
         }
-        return new Port(SegmentYieldId.toString(), node.name);
+        return new Port(SegmentGroupId.toString(), node.name);
     };
 
     public static isPortList(object: any): object is Port[] {

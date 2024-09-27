@@ -1,8 +1,9 @@
 <script lang="ts">
+    import Segment from './Segment.svelte';
     import ModelEvaluation from './ModelEvaluation.svelte';
     import DataExport from './DataExport.svelte';
     import DataImport from './DataImport.svelte';
-    import Modeling from './modeling.svelte';
+    import Modeling from './Modeling.svelte';
     import DataProcessing from './DataProcessing.svelte';
     import DataExploration from './DataExploration.svelte';
 
@@ -13,6 +14,7 @@
         modeling: Modeling,
         dataprocessing: DataProcessing,
         dataexploration: DataExploration,
+        segment: Segment,
     };
 
     export let name: string;

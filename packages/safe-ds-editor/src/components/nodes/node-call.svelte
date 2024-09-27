@@ -34,7 +34,7 @@
             <span class="text-text-muted truncate text-left text-lg">{call.self ?? ''}</span>
             <span class="text-text-normal truncate text-left text-2xl font-bold">{call.name}</span>
         </div>
-        {#if !call.self}
+        {#if !call.self && !(call.category == 'Segment')}
             <Handle
                 type="target"
                 position={Position.Left}
@@ -64,7 +64,7 @@
                         type="target"
                         position={Position.Left}
                         id={parameter.name}
-                        class=" absolute -ml-2.5 h-3 w-3"
+                        class="absolute -ml-2.5 h-3 w-3"
                     />
                 </div>
             {/each}

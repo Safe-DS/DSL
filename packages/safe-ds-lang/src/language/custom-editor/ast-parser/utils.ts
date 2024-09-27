@@ -29,7 +29,7 @@ export class Utils {
         Utils.callList = [];
         Utils.genericExpressionList = [];
         Utils.edgeList = [];
-        Utils.lastId = 0;
+        Utils.lastId = Utils.lastId ?? 0;
         Utils.logger = logger ? logger : Utils.logger;
         Utils.documentUri = documentUri ? documentUri : Utils.documentUri;
         Utils.safeDsServices = safeDsServices

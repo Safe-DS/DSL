@@ -5,11 +5,23 @@ import { Uri } from "vscode";
 import { Placeholder } from "./ast-parser/placeholder.js";
 import { Segment } from "./ast-parser/segment.js";
 
-export { SegmentYieldId, SegmentParameterId } from "./ast-parser/segment.js";
+export { SegmentGroupId } from "./ast-parser/segment.js";
+export { Segment } from "./ast-parser/segment.js";
 export { Placeholder } from "./ast-parser/placeholder.js";
 export { Call } from "./ast-parser/call.js";
 export { GenericExpression } from "./ast-parser/expression.js";
 export { Edge } from "./ast-parser/edge.js";
+export { Parameter } from "./ast-parser/parameter.js";
+export { Result } from "./ast-parser/result.js";
+
+export class Graph {
+    constructor(
+        public readonly type: "segment" | "pipeline",
+        public readonly ast: Ast = new Ast(),
+        public readonly uniquePath: string = "",
+        public readonly name: string = "",
+    ) {}
+}
 
 export class Ast {
     constructor(
@@ -23,7 +35,7 @@ export class Ast {
 export namespace AstInterface {
     export type Message = { uri: Uri };
     export type Response = {
-        ast: Ast;
+        pipeline: Graph;
         errorList: CustomError[];
         segmentList: Segment[];
     };

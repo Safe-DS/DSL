@@ -45,122 +45,39 @@ export class Call {
             );
         }
 
-        if (isSdsMemberAccess(node.receiver)) {
-            let self = Call.parseSelf(node.receiver, id);
-            if (self instanceof CustomError) return self;
+        let name = "";
+        let self: string | undefined = undefined;
+        let category = "";
+        let argumentList: Argument[] = [];
+        let parameterList: Parameter[] = [];
+        let resultList: Result[] = [];
 
-            const argumentList = node.argumentList.arguments.map(
-                Argument.parse,
-            );
+        argumentList = filterErrors(
+            node.argumentList.arguments.map(Argument.parse),
+        );
+
+        if (isSdsMemberAccess(node.receiver)) {
+            const tmp = Call.parseSelf(node.receiver, id);
+            if (tmp instanceof CustomError) return tmp;
+            self = tmp;
 
             const functionDeclaration = node.receiver.member.target.ref;
-            const name = functionDeclaration.name;
-            const category =
+            name = functionDeclaration.name;
+            category =
                 Utils.safeDsServices.builtins.Annotations.getCategory(
                     functionDeclaration,
                 )?.name ?? "";
 
-            const resultList = filterErrors(
+            resultList = filterErrors(
                 (functionDeclaration.resultList?.results ?? []).map(
                     Result.parse,
                 ),
             );
-            const parameterList = filterErrors(
+            parameterList = filterErrors(
                 (functionDeclaration.parameterList?.parameters ?? []).map(
                     Parameter.parse,
                 ),
             );
-
-            for (const [i, parameter] of parameterList.entries()) {
-                if (parameter.isConstant)
-                    return Utils.pushError(
-                        "Unexpected constant Parameter",
-                        node.receiver.member.target.ref,
-                    );
-
-                const argumentIndexMatched = argumentList[i];
-                if (argumentIndexMatched instanceof CustomError)
-                    return argumentIndexMatched;
-
-                const argumentNameMatched = argumentList.find(
-                    (argument) =>
-                        !(argument instanceof CustomError) &&
-                        argument.parameterName === parameter.name,
-                ) as Argument | undefined;
-
-                if (
-                    argumentIndexMatched &&
-                    argumentNameMatched &&
-                    argumentIndexMatched !== argumentNameMatched
-                )
-                    return Utils.pushError(
-                        `To many matches for ${parameter.name}`,
-                        node.argumentList,
-                    );
-                const argument = argumentIndexMatched ?? argumentNameMatched;
-
-                if (argument) {
-                    parameter.argumentText = argument.text;
-                    if (argument.reference instanceof Call) {
-                        const call = argument.reference;
-                        if (call.resultList.length !== 1)
-                            return Utils.pushError(
-                                "Type missmatch",
-                                node.argumentList,
-                            );
-                        Edge.create(
-                            Port.fromResult(call.resultList[0]!, call.id),
-                            Port.fromParameter(parameter, id),
-                        );
-                    }
-                    if (argument.reference instanceof GenericExpression) {
-                        const experession = argument.reference;
-                        Edge.create(
-                            Port.fromGenericExpression(experession, false),
-                            Port.fromParameter(parameter, id),
-                        );
-                    }
-                    if (argument.reference instanceof Placeholder) {
-                        const placeholder = argument.reference;
-                        Edge.create(
-                            Port.fromPlaceholder(placeholder, false),
-                            Port.fromParameter(parameter, id),
-                        );
-                    }
-                    if (argument.reference instanceof Parameter) {
-                        const segmentParameter = argument.reference;
-                        Edge.create(
-                            Port.fromParameter(segmentParameter, -1),
-                            Port.fromParameter(parameter, id),
-                        );
-                    }
-                    continue;
-                }
-
-                if (!argument && parameter.defaultValue) {
-                    continue;
-                }
-
-                if (!argument && !parameter.defaultValue) {
-                    return Utils.pushError(
-                        `Missing Argument for ${parameter.name}`,
-                        node,
-                    );
-                }
-            }
-            const call = new Call(
-                id,
-                name,
-                self,
-                parameterList as Parameter[],
-                resultList,
-                category,
-                Utils.safeDsServices.workspace.AstNodeLocator.getAstNodePath(
-                    node,
-                ),
-            );
-            Utils.callList.push(call);
-            return call;
         }
 
         if (
@@ -168,32 +85,20 @@ export class Call {
             isSdsClass(node.receiver.target.ref)
         ) {
             const classDeclaration = node.receiver.target.ref;
-            const self = classDeclaration.name;
-            const name = "new";
+
+            name = "new";
+            self = classDeclaration.name;
+            category = "Modeling";
 
             if (!classDeclaration.parameterList)
                 return Utils.pushError(
                     "Missing constructor parameters",
                     classDeclaration,
                 );
-            const parameterList = classDeclaration.parameterList.parameters.map(
-                Parameter.parse,
+            parameterList = filterErrors(
+                classDeclaration.parameterList.parameters.map(Parameter.parse),
             );
-            const resultList = [new Result("new", classDeclaration.name)];
-
-            const call = new Call(
-                id,
-                name,
-                self,
-                parameterList as Parameter[],
-                resultList,
-                "Modeling",
-                Utils.safeDsServices.workspace.AstNodeLocator.getAstNodePath(
-                    node,
-                ),
-            );
-            Utils.callList.push(call);
-            return call;
+            resultList = [new Result("new", classDeclaration.name)];
         }
 
         if (
@@ -201,36 +106,43 @@ export class Call {
             isSdsSegment(node.receiver.target.ref)
         ) {
             const segmentDeclaration = node.receiver.target.ref;
-            const self = "";
-            const name = segmentDeclaration.name;
 
-            const resultList = filterErrors(
+            self = "";
+            name = segmentDeclaration.name;
+            category = "Segment";
+
+            resultList = filterErrors(
                 (segmentDeclaration.resultList?.results ?? []).map(
                     Result.parse,
                 ),
             );
-            const parameterList = filterErrors(
+            parameterList = filterErrors(
                 (segmentDeclaration.parameterList?.parameters ?? []).map(
                     Parameter.parse,
                 ),
             );
-
-            const call = new Call(
-                id,
-                name,
-                self,
-                parameterList,
-                resultList,
-                "Segemnt",
-                Utils.safeDsServices.workspace.AstNodeLocator.getAstNodePath(
-                    node,
-                ),
-            );
-            Utils.callList.push(call);
-            return call;
         }
 
-        return Utils.pushError("Unexpected Error during Call parsing", node);
+        const parameterListCompleted = matchArgumentsToParameter(
+            parameterList,
+            argumentList,
+            node,
+            id,
+        );
+        if (parameterListCompleted instanceof CustomError)
+            return parameterListCompleted;
+
+        const call = new Call(
+            id,
+            name,
+            self,
+            parameterListCompleted,
+            resultList,
+            category,
+            Utils.safeDsServices.workspace.AstNodeLocator.getAstNodePath(node),
+        );
+        Utils.callList.push(call);
+        return call;
     }
 
     private static parseSelf(node: CallReceiver, id: number) {
@@ -262,9 +174,89 @@ export class Call {
                 }
             }
         }
-        return undefined;
+        return "";
     }
 }
+
+const matchArgumentsToParameter = (
+    parameterList: Parameter[],
+    argumentList: Argument[],
+    callNode: SdsCall,
+    id: number,
+): Parameter[] | CustomError => {
+    for (const [i, parameter] of parameterList.entries()) {
+        const argumentIndexMatched = argumentList[i];
+        if (argumentIndexMatched instanceof CustomError)
+            return argumentIndexMatched;
+
+        const argumentNameMatched = argumentList.find(
+            (argument) =>
+                !(argument instanceof CustomError) &&
+                argument.parameterName === parameter.name,
+        ) as Argument | undefined;
+
+        if (
+            argumentIndexMatched &&
+            argumentNameMatched &&
+            argumentIndexMatched !== argumentNameMatched
+        )
+            return Utils.pushError(
+                `To many matches for ${parameter.name}`,
+                callNode.argumentList,
+            );
+        const argument = argumentIndexMatched ?? argumentNameMatched;
+
+        if (argument) {
+            parameter.argumentText = argument.text;
+            if (argument.reference instanceof Call) {
+                const call = argument.reference;
+                if (call.resultList.length !== 1)
+                    return Utils.pushError(
+                        "Type missmatch",
+                        callNode.argumentList,
+                    );
+                Edge.create(
+                    Port.fromResult(call.resultList[0]!, call.id),
+                    Port.fromParameter(parameter, id),
+                );
+            }
+            if (argument.reference instanceof GenericExpression) {
+                const experession = argument.reference;
+                Edge.create(
+                    Port.fromGenericExpression(experession, false),
+                    Port.fromParameter(parameter, id),
+                );
+            }
+            if (argument.reference instanceof Placeholder) {
+                const placeholder = argument.reference;
+                Edge.create(
+                    Port.fromPlaceholder(placeholder, false),
+                    Port.fromParameter(parameter, id),
+                );
+            }
+            if (argument.reference instanceof Parameter) {
+                const segmentParameter = argument.reference;
+                Edge.create(
+                    Port.fromParameter(segmentParameter, -1),
+                    Port.fromParameter(parameter, id),
+                );
+            }
+            continue;
+        }
+
+        if (!argument && parameter.defaultValue) {
+            continue;
+        }
+
+        if (!argument && !parameter.defaultValue) {
+            return Utils.pushError(
+                `Missing Argument for ${parameter.name}`,
+                callNode,
+            );
+        }
+    }
+    return parameterList;
+};
 
 type CallReceiver =
     | (SdsReference & { target: { ref: SdsClass | SdsSegment } })
