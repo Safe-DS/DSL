@@ -51,5 +51,5 @@
             </div>
         </div>
     </div>
-    <div class=" absolute -left-96 -top-96"></div>
+    <div class="absolute -left-96 -top-96"></div>
 </div>

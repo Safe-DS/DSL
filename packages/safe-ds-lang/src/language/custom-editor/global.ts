@@ -32,15 +32,6 @@ export class Ast {
     ) {}
 }
 
-export namespace AstInterface {
-    export type Message = { uri: Uri };
-    export type Response = {
-        pipeline: Graph;
-        errorList: CustomError[];
-        segmentList: Segment[];
-    };
-}
-
 export class GlobalReference {
     constructor(
         public readonly name: string,
@@ -56,6 +47,15 @@ export class GlobalReference {
     ) {}
 }
 
+export namespace AstInterface {
+    export type Message = { uri: Uri };
+    export type Response = {
+        pipeline: Graph;
+        errorList: CustomError[];
+        segmentList: Segment[];
+    };
+}
+
 export namespace GlobalReferenceInterface {
     export type Message = { uri: Uri };
     export type Response = { globalReferences: GlobalReference[] };
@@ -64,6 +64,14 @@ export namespace GlobalReferenceInterface {
 export namespace NodeDescriptionInterface {
     export type Message = { uri: Uri; uniquePath: string };
     export type Response = { description: string };
+}
+
+export namespace SyncHandlerInterface {
+    export type Response = {
+        pipeline: Graph;
+        errorList: CustomError[];
+        segmentList: Segment[];
+    };
 }
 
 export class CustomError {

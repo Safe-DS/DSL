@@ -4,6 +4,7 @@ import { GetAst } from "./getAst.js";
 import { LangiumSharedServices } from "langium/lsp";
 import { GetGlobalReferences } from "./getGlobalReferences.js";
 import { GetNodeDesciption } from "./getNodeDescription.js";
+import { SYNC_TRIGGER_STATE, SyncEventHandler } from "./getSyncHandler.js";
 
 export const addDiagramHandler = function (
     connection: Connection,
@@ -21,5 +22,10 @@ export const addDiagramHandler = function (
     connection.onRequest(
         GetNodeDesciption.method,
         GetNodeDesciption.handler(sharedServices, safeDsServices),
+    );
+
+    sharedServices.workspace.DocumentBuilder.onBuildPhase(
+        SYNC_TRIGGER_STATE,
+        SyncEventHandler.handler(sharedServices, safeDsServices, connection),
     );
 };
