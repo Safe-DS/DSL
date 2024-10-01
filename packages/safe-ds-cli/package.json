@@ -45,7 +45,7 @@
         "commander": "^12.1.0",
         "glob": "^10.4.2",
         "langium": "^3.0.0",
-        "true-myth": "^7.4.0"
+        "true-myth": "^8.0.1"
     },
     "devDependencies": {
         "@types/node": "^18.18.12",
