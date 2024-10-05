@@ -81,6 +81,7 @@ export class SafeDSCustomEditorProvider implements vscode.CustomTextEditorProvid
         };
         const messageHandler = new MessageHandler(webviewPanel.webview, this.client, document.uri);
         this.context.subscriptions.push(messageHandler.webview.listenToMessages());
+        this.context.subscriptions.push(messageHandler.languageServer.forwardSyncEvents());
         webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview, document.fileName);
 
         // messageHandler.webview.sendMessageTest('Hi from Extension');

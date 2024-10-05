@@ -66,11 +66,13 @@ export namespace NodeDescriptionInterface {
     export type Response = { description: string };
 }
 
-export namespace SyncHandlerInterface {
+export namespace SyncChannelInterface {
+    export type Message = { uri: Uri; action: "open" | "close" };
     export type Response = {
-        pipeline: Graph;
-        errorList: CustomError[];
-        segmentList: Segment[];
+        test: string;
+        // pipeline: Graph;
+        // errorList: CustomError[];
+        // segmentList: Segment[];
     };
 }
 
@@ -106,13 +108,19 @@ namespace NsExtensionToWebview {
         command: "SendNodeDescription";
         value: NodeDescriptionInterface.Response;
     };
+
+    export type SendSyncEvent = Message & {
+        command: "SendSyncEvent";
+        value: SyncChannelInterface.Response;
+    };
 }
 
 export type ExtensionToWebview =
     | NsExtensionToWebview.Test
     | NsExtensionToWebview.SendAst
     | NsExtensionToWebview.SendGlobalReferences
-    | NsExtensionToWebview.SendNodeDescription;
+    | NsExtensionToWebview.SendNodeDescription
+    | NsExtensionToWebview.SendSyncEvent;
 
 namespace NsWebviewToExtension {
     export type Test = Message & {
@@ -132,10 +140,16 @@ namespace NsWebviewToExtension {
         command: "RequestNodeDescription";
         value: string;
     };
+
+    export type ManageSyncChannel = Message & {
+        command: "ManageSyncChannel";
+        value: string;
+    };
 }
 
 export type WebviewToExtension =
     | NsWebviewToExtension.Test
     | NsWebviewToExtension.RequestAst
     | NsWebviewToExtension.RequestGlobalReferences
-    | NsWebviewToExtension.RequestNodeDescription;
+    | NsWebviewToExtension.RequestNodeDescription
+    | NsWebviewToExtension.ManageSyncChannel;

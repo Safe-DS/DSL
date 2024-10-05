@@ -1,5 +1,5 @@
 import { Disposable, Uri, Webview } from 'vscode';
-import { LanguageClient, RequestType } from 'vscode-languageclient/node.js';
+import { LanguageClient, NotificationType, RequestType } from 'vscode-languageclient/node.js';
 import * as vscode from 'vscode';
 import { GetAst } from '$lang/language/custom-editor/getAst.js';
 import {
@@ -7,11 +7,13 @@ import {
     ExtensionToWebview,
     GlobalReferenceInterface,
     NodeDescriptionInterface,
+    SyncChannelInterface,
     WebviewToExtension,
 } from '$lang/language/custom-editor/global.ts';
 import { safeDsLogger } from '../../helpers/logging.ts';
 import { GetGlobalReferences } from '$lang/language/custom-editor/getGlobalReferences.ts';
 import { GetNodeDesciption } from '$lang/language/custom-editor/getNodeDescription.ts';
+import { SyncChannelHandler } from '$lang/language/custom-editor/getSyncChannel.ts';
 
 // Todo: This class can technically be reworked a bit
 // maybe just having two static spaces, with messageListener is enough
@@ -81,6 +83,15 @@ export class MessageHandler {
                         };
                         vscodeWebview.postMessage(messageObject);
                     }
+
+                    if (message.command === 'ManageSyncChannel') {
+                        await client.sendRequest(
+                            new RequestType<SyncChannelInterface.Message, SyncChannelInterface.Response, void>(
+                                SyncChannelHandler.method,
+                            ),
+                            { uri: documentUri, action: message.value },
+                        );
+                    }
                 });
             },
             sendMessageTest(message: string) {
@@ -95,7 +106,21 @@ export class MessageHandler {
 
     public get languageServer() {
         const client = this.client;
+        const vscodeWebview = this.vscodeWebview;
+
         return {
+            forwardSyncEvents(): Disposable {
+                return client.onNotification(
+                    new NotificationType<SyncChannelInterface.Response>(SyncChannelHandler.method),
+                    (message: SyncChannelInterface.Response) => {
+                        const messageObject: ExtensionToWebview = {
+                            command: 'SendSyncEvent',
+                            value: message.test,
+                        };
+                        vscodeWebview.postMessage(messageObject);
+                    },
+                );
+            },
             async getAst_DEPRECATED(documentUri: vscode.Uri): Promise<AstInterface.Response> {
                 // await client.onReady(); // Todo: properly look for this -> Ensure the client is ready before sending requests // This is suggested in every tutorial, but the method doesn't exist?
                 const response = await client.sendRequest(

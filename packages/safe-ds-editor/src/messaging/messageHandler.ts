@@ -13,6 +13,12 @@ export default class MessageHandler {
 
     public static initialize() {
         MessageHandler.vsocde = window.injVscode;
+
+        const messageObject: WebviewToExtension = {
+            command: 'ManageSyncChannel',
+            value: 'open',
+        };
+        MessageHandler.vsocde.postMessage(messageObject);
     }
 
     public static listenToMessages() {
@@ -24,6 +30,8 @@ export default class MessageHandler {
                 case 'SendNodeDescription':
                     // This Message is handled elsewere
                     break;
+                case 'SendSyncEvent':
+                    console.log(message.value);
                 case 'test':
                     console.log(message.value);
                     break;
