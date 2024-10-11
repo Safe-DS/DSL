@@ -3,6 +3,7 @@ import type {
     ExtensionToWebview,
     GlobalReferenceInterface,
     NodeDescriptionInterface,
+    SyncChannelInterface,
     WebviewToExtension,
 } from '$global';
 
@@ -28,10 +29,9 @@ export default class MessageHandler {
                 case 'SendAst':
                 case 'SendGlobalReferences':
                 case 'SendNodeDescription':
-                    // This Message is handled elsewere
-                    break;
                 case 'SendSyncEvent':
-                    console.log(message.value);
+                    // These message types are handled elsewhere
+                    break;
                 case 'test':
                     console.log(message.value);
                     break;
@@ -111,5 +111,15 @@ export default class MessageHandler {
         });
 
         return response;
+    }
+
+    public static handleSyncEvent(
+        handler: (elements: SyncChannelInterface.Response) => void,
+    ): void {
+        window.addEventListener('message', (event) => {
+            const message = event.data as ExtensionToWebview;
+            if (message.command === 'SendSyncEvent')
+                handler(message.value as SyncChannelInterface.Response);
+        });
     }
 }

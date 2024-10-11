@@ -39,7 +39,7 @@
             <div class="absolute left-full top-1/2 flex -translate-y-1/2 flex-col gap-5">
                 {#each segment.resultList as result}
                     <div class="text-text-muted relative h-9 w-full px-1 text-lg">
-                        <p class="absolute right-full mr-2.5">{result.name}</p>
+                        <p class="absolute left-full mr-2.5">{result.name}</p>
                         <Handle
                             type="target"
                             position={Position.Left}

@@ -69,10 +69,9 @@ export namespace NodeDescriptionInterface {
 export namespace SyncChannelInterface {
     export type Message = { uri: Uri; action: "open" | "close" };
     export type Response = {
-        test: string;
-        // pipeline: Graph;
-        // errorList: CustomError[];
-        // segmentList: Segment[];
+        pipeline: Graph;
+        errorList: CustomError[];
+        segmentList: Segment[];
     };
 }
 

@@ -1,7 +1,6 @@
 import { SafeDsServices } from "../safe-ds-module.js";
 import { LangiumSharedServices } from "langium/lsp";
 import { extname } from "path";
-import { documentToJson, saveJson } from "./ast-parser/tools/debug-utils.js";
 import { parseDocument } from "./ast-parser/main.js";
 import { Utils } from "./ast-parser/utils.js";
 import { AstInterface, Graph } from "./global.js";
@@ -32,19 +31,9 @@ const getAstHandler = async (
             message.uri,
         );
     await sharedServices.workspace.DocumentBuilder.build([document]);
-    document.parseResult.lexerErrors.forEach(Utils.pushLexerErrors);
-    document.parseResult.parserErrors.forEach(Utils.pushParserErrors);
-    if (Utils.errorList.length > 0) {
-        return {
-            pipeline: new Graph("pipeline", Utils.collectAst()),
-            errorList: Utils.errorList,
-            segmentList: [],
-        };
-    }
 
-    saveJson(documentToJson(document, 16), "currentDocument");
-    const [graph, segmentList] = parseDocument(document);
-    return { pipeline: graph, errorList: Utils.errorList, segmentList };
+    const [graph, errorList, segmentList] = parseDocument(document);
+    return { pipeline: graph, errorList, segmentList };
 };
 
 export const GetAst: GenericRequestType = {

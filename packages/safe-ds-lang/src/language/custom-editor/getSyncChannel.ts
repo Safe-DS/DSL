@@ -1,10 +1,14 @@
-import { DocumentBuildListener, DocumentState, LangiumDocument } from "langium";
+import { Disposable, DocumentState, URI } from "langium";
 import { LangiumSharedServices } from "langium/lsp";
-import { CancellationToken, Connection } from "vscode-languageserver";
+import {
+    Connection,
+    DidSaveTextDocumentParams,
+    NotificationHandler,
+} from "vscode-languageserver";
 import { SafeDsServices } from "../safe-ds-module.js";
 import { GenericRequestType } from "./types.js";
 import { SyncChannelInterface } from "./global.js";
-import { Disposable } from "langium";
+import { parseDocument } from "./ast-parser/main.js";
 
 export const SYNC_TRIGGER_STATE: DocumentState = 6;
 const openChannel = new Map<string, Disposable>();
@@ -15,27 +19,52 @@ const getSyncHandler = (
     safeDsServices: SafeDsServices,
     connection: Connection,
 ): void => {
+    const logger = safeDsServices.communication.MessagingProvider;
+
     if (message.action === "close") closeChannel(message);
     if (message.action === "open") {
         closeChannel(message);
 
-        const syncHandler: DocumentBuildListener = (
-            built: LangiumDocument[],
-            _: CancellationToken,
-        ) => {
-            const logger = safeDsServices.communication.MessagingProvider;
-            // logger.warn("SYNC", JSON.stringify(built));
+        const syncHandlerSave: NotificationHandler<
+            DidSaveTextDocumentParams
+        > = async (params) => {
+            logger.error("Sync", params.textDocument.uri);
+
+            const document =
+                await sharedServices.workspace.LangiumDocuments.getOrCreateDocument(
+                    URI.parse(params.textDocument.uri),
+                );
+            await sharedServices.workspace.DocumentBuilder.build([document]);
+
+            const [pipeline, errorList, segmentList] = parseDocument(document);
+
+            const response: SyncChannelInterface.Response = {
+                pipeline,
+                errorList,
+                segmentList,
+            };
+            connection.sendNotification(SyncChannelHandler.method, response);
+        };
+
+        const channelHandle = connection.onDidSaveTextDocument(syncHandlerSave);
+
+        /*
+        Man könnte über diese Methode ein Update des Graphen bei jedem Keystroke triggern.
+        Dieses Verhalten speziell ist vermutlich zu viel, aber eine debouncte Version könnte 
+        interessant sein.
+        
+        const syncHandler: DocumentBuildListener = () => {
             const response: SyncChannelInterface.Response = {
                 test: "THIS is a sync event",
             };
             connection.sendNotification(SyncChannelHandler.method, response);
         };
-
-        const channelHandle =
-            sharedServices.workspace.DocumentBuilder.onBuildPhase(
-                SYNC_TRIGGER_STATE,
-                syncHandler,
-            );
+        
+        sharedServices.workspace.DocumentBuilder.onBuildPhase(
+            SYNC_TRIGGER_STATE,
+            syncHandler,
+        );
+        */
 
         openChannel.set(message.uri.toString(), channelHandle);
     }

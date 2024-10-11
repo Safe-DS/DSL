@@ -115,7 +115,7 @@ export class MessageHandler {
                     (message: SyncChannelInterface.Response) => {
                         const messageObject: ExtensionToWebview = {
                             command: 'SendSyncEvent',
-                            value: message.test,
+                            value: message,
                         };
                         vscodeWebview.postMessage(messageObject);
                     },

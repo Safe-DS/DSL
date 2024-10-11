@@ -30,6 +30,19 @@
         console.log(response.segmentList);
     }
 
+    MessageHandler.handleSyncEvent((elements) => {
+        pipeline.set(elements.pipeline);
+        errorList.set(elements.errorList);
+        segmentList.set(elements.segmentList);
+
+        const match = [elements.pipeline, ...elements.segmentList].find(
+            (e) => e.type === $currentGraph.type && e.name === $currentGraph.name,
+        );
+
+        if (match) return;
+        currentGraph.set(elements.pipeline);
+    });
+
     async function fetchGlobalReferences() {
         const response = await MessageHandler.getGlobalReferences();
         globalReferences.set(response.globalReferences);
