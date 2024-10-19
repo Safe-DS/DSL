@@ -1,5 +1,10 @@
 type InternalAction = 'reorderColumns' | 'resizeColumn' | 'hideColumn' | 'showColumn' | 'highlightColumn' | 'emptyTab';
-type ExternalManipulatingAction = 'filterColumn' | 'sortByColumn' | 'voidSortByColumn' | TableFilterTypes;
+type ExternalManipulatingAction =
+    | 'filterColumn'
+    | 'voidFilterColumn'
+    | 'sortByColumn'
+    | 'voidSortByColumn'
+    | TableFilterTypes;
 type ExternalVisualizingAction = TabType;
 type Action = InternalAction | ExternalManipulatingAction | ExternalVisualizingAction;
 
@@ -67,6 +72,12 @@ export interface ExternalManipulatingColumnFilterHistoryEntry extends ExternalMa
     filter: NumericalFilter | CategoricalFilter;
 }
 
+export interface ExternalManipulatingColumnFilterVoidHistoryEntry extends ExternalManipulatingHistoryEntryBase {
+    action: 'voidFilterColumn';
+    columnName: string;
+    filterType: NumericalFilter['type'] | CategoricalFilter['type'];
+}
+
 export interface ExternalManipulatingTableFilterHistoryEntry extends ExternalManipulatingHistoryEntryBase {
     action: TableFilterTypes;
 }
@@ -112,6 +123,7 @@ export type InternalHistoryEntry =
 export type ExternalManipulatingHistoryEntry =
     | ExternalManipulatingColumnFilterHistoryEntry
     | ExternalManipulatingTableFilterHistoryEntry
+    | ExternalManipulatingColumnFilterVoidHistoryEntry
     | ExternalManipulatingColumnSortHistoryEntry
     | ExternalManipulatingColumnSortVoidHistoryEntry;
 export type ExternalVisualizingHistoryEntry =
@@ -125,6 +137,7 @@ interface ExtendedInfo {
     id: number;
     overrideId: string;
     tabOrder: string[];
+    profilingState: { columnName: string; profiling: Profiling | undefined }[] | null;
 }
 
 export type FullExternalVisualizingHistoryEntry = ExternalVisualizingHistoryEntry & ExtendedInfo;
@@ -147,6 +160,7 @@ interface TabObject {
     columnNumber: 'one' | 'two' | 'none';
     isInGeneration: boolean;
     outdated: boolean;
+    outdatedReasons: string[];
 }
 
 interface ImageTabObject extends TabObject {
@@ -317,7 +331,7 @@ export interface PossibleSpecificValueFilter extends ColumnFilterBase {
 
 export interface SpecificValueFilter extends ColumnFilterBase {
     type: 'specificValue';
-    value: string;
+    value: string | number;
 }
 
 export type NumericalFilter = ValueRangeFilter;

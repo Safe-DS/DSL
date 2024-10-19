@@ -134,6 +134,9 @@ pipeline example {
         /**
          * Return a new `Image` that is converted to grayscale.
          *
+         * The new image will have the same amount of channels as the original image. If you want to change the amount of
+         * channels used, please use the method [changeChannel][safeds.data.image.containers.Image.changeChannel].
+         *
          * The original image is not modified.
          *
          * @result newImage The grayscale image.
@@ -486,7 +489,7 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="254"
+    ```sds linenums="257"
     @Pure
     @PythonName("add_noise")
     fun addNoise(
@@ -525,7 +528,7 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="231"
+    ```sds linenums="234"
     @Pure
     @PythonName("adjust_brightness")
     fun adjustBrightness(
@@ -564,7 +567,7 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="306"
+    ```sds linenums="309"
     @Pure
     @PythonName("adjust_color_balance")
     fun adjustColorBalance(
@@ -603,7 +606,7 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="280"
+    ```sds linenums="283"
     @Pure
     @PythonName("adjust_contrast")
     fun adjustContrast(
@@ -642,7 +645,7 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="330"
+    ```sds linenums="333"
     @Pure
     fun blur(
         const radius: Int
@@ -692,6 +695,9 @@ pipeline example {
 
 Return a new `Image` that is converted to grayscale.
 
+The new image will have the same amount of channels as the original image. If you want to change the amount of
+channels used, please use the method [changeChannel][safeds.data.image.containers.Image.changeChannel].
+
 The original image is not modified.
 
 **Results:**
@@ -711,7 +717,7 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="143"
+    ```sds linenums="146"
     @Pure
     @PythonName("convert_to_grayscale")
     fun convertToGrayscale() -> newImage: Image
@@ -749,7 +755,7 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="165"
+    ```sds linenums="168"
     @Pure
     fun crop(
         const x: Int,
@@ -787,7 +793,7 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="426"
+    ```sds linenums="429"
     @Pure
     @PythonName("find_edges")
     fun findEdges() -> newImage: Image
@@ -816,7 +822,7 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="208"
+    ```sds linenums="211"
     @Pure
     @PythonName("flip_horizontally")
     fun flipHorizontally() -> newImage: Image
@@ -845,7 +851,7 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="191"
+    ```sds linenums="194"
     @Pure
     @PythonName("flip_vertically")
     fun flipVertically() -> newImage: Image
@@ -874,7 +880,7 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="375"
+    ```sds linenums="378"
     @Pure
     @PythonName("invert_colors")
     fun invertColors() -> newImage: Image
@@ -944,7 +950,7 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="409"
+    ```sds linenums="412"
     @Pure
     @PythonName("rotate_left")
     fun rotateLeft() -> newImage: Image
@@ -973,7 +979,7 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="392"
+    ```sds linenums="395"
     @Pure
     @PythonName("rotate_right")
     fun rotateRight() -> newImage: Image
@@ -1008,7 +1014,7 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="355"
+    ```sds linenums="358"
     @Pure
     fun sharpen(
         const factor: Float

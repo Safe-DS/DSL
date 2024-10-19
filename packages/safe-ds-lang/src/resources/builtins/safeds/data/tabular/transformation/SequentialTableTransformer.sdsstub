@@ -1,0 +1,41 @@
+package safeds.data.tabular.transformation
+
+from safeds.data.tabular.containers import Table
+from safeds.data.tabular.transformation import InvertibleTableTransformer
+
+/**
+ * The SequentialTableTransformer transforms a table using multiple transformers in sequence.
+ *
+ * @param transformers The list of transformers used to transform the table. Used in the order as they are supplied in the list.
+ */
+class SequentialTableTransformer(
+    transformers: List<TableTransformer>
+) sub InvertibleTableTransformer {
+    /**
+     * Fits all the transformers in order.
+     *
+     * @param table The table used to fit the transformers.
+     *
+     * @result fittedTransformer The fitted transformer.
+     */
+    @Pure
+    fun fit(
+        table: Table
+    ) -> fittedTransformer: SequentialTableTransformer
+
+    /**
+     * Learn a transformation for a set of columns in a table and apply the learned transformation to the same table.
+     *
+     * **Note:** Neither this transformer nor the given table are modified.
+     *
+     * @param table The table used to fit the transformer. The transformer is then applied to this table.
+     *
+     * @result fittedTransformer The fitted transformer.
+     * @result transformedTable The transformed table.
+     */
+    @Pure
+    @PythonName("fit_and_transform")
+    fun fitAndTransform(
+        table: Table
+    ) -> (fittedTransformer: SequentialTableTransformer, transformedTable: Table)
+}

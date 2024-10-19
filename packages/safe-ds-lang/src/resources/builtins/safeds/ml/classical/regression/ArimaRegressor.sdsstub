@@ -39,13 +39,13 @@ class ArimaRegressor() {
      *
      * @param timeSeries The test dataset of the time series.
      *
-     * @result timeSeries A timeseries containing the predicted target vector and a time dummy as time column.
+     * @result prediction A timeseries containing the predicted target vector and a time dummy as time column.
      */
     @Pure
     @Category(DataScienceCategory.Modeling)
     fun predict(
         @PythonName("time_series") timeSeries: TimeSeriesDataset
-    ) -> timeSeries: TimeSeriesDataset
+    ) -> prediction: Table
 
     /**
      * Plot the predictions of the trained model to the given target of the time series. So you can see the predictions and the actual values in one plot.

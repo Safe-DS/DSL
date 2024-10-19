@@ -26,15 +26,20 @@ search:
                 - [Row](safeds/data/tabular/containers/Row.md)
                 - [StringCell](safeds/data/tabular/containers/StringCell.md)
                 - [Table](safeds/data/tabular/containers/Table.md)
+                - [TemporalCell](safeds/data/tabular/containers/TemporalCell.md)
             - plotting
                 - [ColumnPlotter](safeds/data/tabular/plotting/ColumnPlotter.md)
                 - [TablePlotter](safeds/data/tabular/plotting/TablePlotter.md)
             - transformation
                 - [Discretizer](safeds/data/tabular/transformation/Discretizer.md)
+                - [FunctionalTableTransformer](safeds/data/tabular/transformation/FunctionalTableTransformer.md)
                 - [InvertibleTableTransformer](safeds/data/tabular/transformation/InvertibleTableTransformer.md)
+                - [KNearestNeighborsImputer](safeds/data/tabular/transformation/KNearestNeighborsImputer.md)
                 - [LabelEncoder](safeds/data/tabular/transformation/LabelEncoder.md)
                 - [OneHotEncoder](safeds/data/tabular/transformation/OneHotEncoder.md)
                 - [RangeScaler](safeds/data/tabular/transformation/RangeScaler.md)
+                - [RobustScaler](safeds/data/tabular/transformation/RobustScaler.md)
+                - [SequentialTableTransformer](safeds/data/tabular/transformation/SequentialTableTransformer.md)
                 - [SimpleImputer](safeds/data/tabular/transformation/SimpleImputer.md)
                 - [StandardScaler](safeds/data/tabular/transformation/StandardScaler.md)
                 - [TableTransformer](safeds/data/tabular/transformation/TableTransformer.md)
@@ -70,6 +75,7 @@ search:
         - classical
             - classification
                 - [AdaBoostClassifier](safeds/ml/classical/classification/AdaBoostClassifier.md)
+                - [BaselineClassifier](safeds/ml/classical/classification/BaselineClassifier.md)
                 - [Classifier](safeds/ml/classical/classification/Classifier.md)
                 - [DecisionTreeClassifier](safeds/ml/classical/classification/DecisionTreeClassifier.md)
                 - [GradientBoostingClassifier](safeds/ml/classical/classification/GradientBoostingClassifier.md)
@@ -80,6 +86,7 @@ search:
             - regression
                 - [AdaBoostRegressor](safeds/ml/classical/regression/AdaBoostRegressor.md)
                 - [ArimaRegressor](safeds/ml/classical/regression/ArimaRegressor.md)
+                - [BaselineRegressor](safeds/ml/classical/regression/BaselineRegressor.md)
                 - [DecisionTreeRegressor](safeds/ml/classical/regression/DecisionTreeRegressor.md)
                 - [ElasticNetRegressor](safeds/ml/classical/regression/ElasticNetRegressor.md)
                 - [GradientBoostingRegressor](safeds/ml/classical/regression/GradientBoostingRegressor.md)
@@ -106,8 +113,10 @@ search:
                 - [AveragePooling2DLayer](safeds/ml/nn/layers/AveragePooling2DLayer.md)
                 - [Convolutional2DLayer](safeds/ml/nn/layers/Convolutional2DLayer.md)
                 - [ConvolutionalTranspose2DLayer](safeds/ml/nn/layers/ConvolutionalTranspose2DLayer.md)
+                - [DropoutLayer](safeds/ml/nn/layers/DropoutLayer.md)
                 - [FlattenLayer](safeds/ml/nn/layers/FlattenLayer.md)
                 - [ForwardLayer](safeds/ml/nn/layers/ForwardLayer.md)
+                - [GRULayer](safeds/ml/nn/layers/GRULayer.md)
                 - [Layer](safeds/ml/nn/layers/Layer.md)
                 - [LSTMLayer](safeds/ml/nn/layers/LSTMLayer.md)
                 - [MaxPooling2DLayer](safeds/ml/nn/layers/MaxPooling2DLayer.md)

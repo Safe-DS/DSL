@@ -5,11 +5,11 @@ import type {
     CategoricalFilter,
     EmptyTab,
     ExternalHistoryEntry,
-    FullInternalHistoryEntry,
     HistoryEntry,
     InteralEmptyTabHistoryEntry,
     InternalHistoryEntry,
     NumericalFilter,
+    Profiling,
     RealTab,
     Tab,
     TabHistoryEntry,
@@ -24,8 +24,11 @@ import {
     savedColumnWidths,
     restoreTableInitialState,
     rerender,
+    initialTable,
+    profilingOutdated,
 } from '../webviewState';
 import { executeRunner, executeRunnerAll, executeRunnerAllFuture } from './extensionApi';
+import { doesEntryActionInvalidateProfiling, filterHistoryOnlyInternal } from '../filterHistory';
 
 // Wait for results to return from the server
 const asyncQueue: (ExternalHistoryEntry & { id: number })[] = [];
@@ -54,9 +57,11 @@ const generateOverrideId = function (entry: ExternalHistoryEntry | InternalHisto
         case 'sortByColumn':
             return entry.action; // Thus enforcing override sort
         case 'voidSortByColumn':
-            return 'sortByColumn'; // This overriding previous sorts
+            return 'sortByColumn'; // Thus overriding previous sorts
         case 'filterColumn':
-            return entry.columnName + entry.filter.type + '.' + entry.action;
+            return entry.columnName + '.' + entry.filter.type;
+        case 'voidFilterColumn':
+            return entry.columnName + '.' + entry.filterType; // Thus overriding previous filters
         case 'linePlot':
         case 'scatterPlot':
         case 'histogram':
@@ -195,6 +200,13 @@ const overrideUndoneEntries = function (): void {
     }
 };
 
+const getCurrentProfiling = function (): { columnName: string; profiling: Profiling | undefined }[] {
+    return get(table)!.columns.map((column) => ({
+        columnName: column.name,
+        profiling: column.profiling,
+    }));
+};
+
 export const addInternalToHistory = function (entry: Exclude<InternalHistoryEntry, InteralEmptyTabHistoryEntry>): void {
     overrideUndoneEntries();
     history.update((state) => {
@@ -203,6 +215,8 @@ export const addInternalToHistory = function (entry: Exclude<InternalHistoryEntr
             id: getAndIncrementEntryId(),
             overrideId: generateOverrideId(entry),
             tabOrder: generateTabOrder(), // Based on that entry cannot be a new tab
+            profilingState:
+                state.length - 1 >= 0 && state[state.length - 1].profilingState === null ? null : getCurrentProfiling(),
         };
         const newHistory = [...state, entryWithId];
         currentHistoryIndex.set(newHistory.length - 1);
@@ -232,6 +246,11 @@ export const executeExternalHistoryEntry = function (entry: ExternalHistoryEntry
             overrideId: generateOverrideId(entry),
             loading: true,
             tabOrder,
+            profilingState: doesEntryActionInvalidateProfiling(entry.action)
+                ? null
+                : state.length - 1 >= 0 && state[state.length - 1].profilingState === null
+                  ? null
+                  : getCurrentProfiling(),
         };
         const newHistory = [...state, entryWithId];
         currentHistoryIndex.set(newHistory.length - 1);
@@ -267,7 +286,18 @@ export const addAndDeployTabHistoryEntry = function (entry: TabHistoryEntry & { 
     const tabOrder = generateTabOrder();
     history.update((state) => {
         currentHistoryIndex.set(state.length);
-        return [...state, { ...entry, overrideId: generateOverrideId(entry), tabOrder }];
+        return [
+            ...state,
+            {
+                ...entry,
+                overrideId: generateOverrideId(entry),
+                tabOrder,
+                profilingState:
+                    state.length - 1 >= 0 && state[state.length - 1].profilingState === null
+                        ? null
+                        : getCurrentProfiling(),
+            },
+        ];
     });
     currentTabIndex.set(get(tabs).indexOf(tab));
 };
@@ -295,7 +325,18 @@ export const addEmptyTabHistoryEntry = function (): void {
     const tabOrder = generateTabOrder();
     history.update((state) => {
         currentHistoryIndex.set(state.length);
-        return [...state, { ...entry, overrideId: generateOverrideId(entry), tabOrder }];
+        return [
+            ...state,
+            {
+                ...entry,
+                overrideId: generateOverrideId(entry),
+                tabOrder,
+                profilingState:
+                    state.length - 1 >= 0 && state[state.length - 1].profilingState === null
+                        ? null
+                        : getCurrentProfiling(),
+            },
+        ];
     });
     currentTabIndex.set(get(tabs).indexOf(tab));
 };
@@ -662,15 +703,26 @@ const deployResult = function (
 
                 if (historyEntry.action === 'filterColumn' && newColumn.name === historyEntry.columnName) {
                     if (existingColumn.type === 'numerical') {
-                        newColumn.appliedFilters = existingColumn.appliedFilters.concat([
-                            historyEntry.filter as NumericalFilter,
-                        ]);
+                        if (existingColumn.appliedFilters.find((f) => f.type === historyEntry.filter.type)) {
+                            newColumn.appliedFilters = [historyEntry.filter as NumericalFilter];
+                        } else {
+                            newColumn.appliedFilters = existingColumn.appliedFilters.concat([
+                                historyEntry.filter as NumericalFilter,
+                            ]);
+                        }
                     } else if (existingColumn.type === 'categorical') {
-                        newColumn.appliedFilters = existingColumn.appliedFilters.concat([
-                            historyEntry.filter as CategoricalFilter,
-                        ]);
+                        if (existingColumn.appliedFilters.find((f) => f.type === historyEntry.filter.type)) {
+                            newColumn.appliedFilters = [historyEntry.filter as CategoricalFilter];
+                        } else {
+                            newColumn.appliedFilters = existingColumn.appliedFilters.concat([
+                                historyEntry.filter as CategoricalFilter,
+                            ]);
+                        }
                     }
-                } else if (historyEntry.action !== 'filterColumn') {
+                } else if (
+                    (historyEntry.action !== 'filterColumn' && historyEntry.action !== 'voidFilterColumn') ||
+                    newColumn.name !== historyEntry.columnName
+                ) {
                     newColumn.appliedFilters = existingColumn.appliedFilters;
                 }
 
@@ -680,6 +732,12 @@ const deployResult = function (
             return {
                 ...state,
                 columns: updatedColumns,
+                totalRows: initialTable?.totalRows ?? 0,
+                visibleRows:
+                    updatedColumns.reduce((acc, column) => {
+                        if (column.values.length > acc) return column.values.length;
+                        return acc;
+                    }, 0) ?? 0,
             };
         });
 
@@ -738,35 +796,81 @@ const updateTabOutdated = function (): void {
             return { entry: e, index: currentHistory.indexOf(e) };
         });
 
+    const relevantFilterColumnEntries = currentHistory
+        .filter((e) => e.action === 'filterColumn' || e.action === 'voidFilterColumn')
+        .map((e) => {
+            return { entry: e, index: currentHistory.indexOf(e) };
+        });
+
+    const findLastTabUpdateIndex = function (tabId: string): number {
+        let lastTabUpdateIndex = -1;
+        for (let i = currentHistory.length - 1; i >= 0; i--) {
+            const currentEntry = currentHistory[i];
+            if (
+                currentEntry.type === 'external-visualizing' &&
+                (currentEntry.existingTabId ?? currentEntry.newTabId) === tabId
+            ) {
+                lastTabUpdateIndex = i;
+                break;
+            }
+        }
+        if (lastTabUpdateIndex === -1) {
+            throw new Error('Tab not found in history');
+        }
+        return lastTabUpdateIndex;
+    };
+
     tabs.update((state) => {
         const newTabs = state.map((t) => {
             let outdated = false;
 
             if (t.type !== 'empty' && t.columnNumber === 'none') {
+                // Find out if one of the outdating entries was after the last time the tab was updated
+                const lastTabUpdateIndex = findLastTabUpdateIndex(t.id);
+                const outdatedReasons = [];
+
                 for (const entry of relevantToggleColumnEntries) {
-                    // Find out if one of the outdating entries was after the last time the tab was updated
-                    let lastTabUpdateIndex = -1;
-                    for (let i = currentHistory.length - 1; i >= 0; i--) {
-                        const currentEntry = currentHistory[i];
-                        if (
-                            currentEntry.type === 'external-visualizing' &&
-                            (currentEntry.existingTabId ?? currentEntry.newTabId) === t.id
-                        ) {
-                            lastTabUpdateIndex = i;
-                            break;
-                        }
-                    }
-                    if (lastTabUpdateIndex === -1) {
-                        throw new Error('Tab not found in history');
-                    }
                     if (entry.index > lastTabUpdateIndex) {
                         // UPDATE the if in case there are none column tabs that do not depend on numerical columns
                         outdated = true;
+                        outdatedReasons.push(entry.entry.alias);
                     }
                 }
+
+                for (const entryObj of relevantFilterColumnEntries) {
+                    const entry = entryObj.entry;
+                    if (entry.action === 'filterColumn' || entry.action === 'voidFilterColumn') {
+                        if (entryObj.index > lastTabUpdateIndex) {
+                            outdated = true;
+                            outdatedReasons.push(entry.alias);
+                        }
+                    }
+                }
+
                 return {
                     ...t,
                     outdated,
+                    outdatedReasons,
+                };
+            } else if (t.type !== 'empty') {
+                const outdatedReasons = [];
+                // Find out if one of the outdating entries was after the last time the tab was updated
+                const lastTabUpdateIndex = findLastTabUpdateIndex(t.id);
+
+                for (const entryObj of relevantFilterColumnEntries) {
+                    const entry = entryObj.entry;
+                    if (entry.action === 'filterColumn' || entry.action === 'voidFilterColumn') {
+                        if (entryObj.index > lastTabUpdateIndex) {
+                            outdated = true;
+                            outdatedReasons.push(entry.alias);
+                        }
+                    }
+                }
+
+                return {
+                    ...t,
+                    outdated,
+                    outdatedReasons,
                 };
             } else {
                 return t;
@@ -775,34 +879,6 @@ const updateTabOutdated = function (): void {
 
         return newTabs;
     });
-};
-
-export const filterHistoryOnlyInternal = function (entries: HistoryEntry[]): FullInternalHistoryEntry[] {
-    // Keep only the last occurrence of each unique overrideId
-    const lastOccurrenceMap = new Map<string, number>();
-    const filteredEntries: HistoryEntry[] = [];
-
-    // Traverse from end to start to record the last occurrence of each unique overrideId
-    for (let i = entries.length - 1; i >= 0; i--) {
-        const entry = entries[i]!;
-        const overrideId = entry.overrideId;
-
-        if (!lastOccurrenceMap.has(overrideId)) {
-            lastOccurrenceMap.set(overrideId, i);
-        }
-    }
-
-    // Traverse from start to end to build the final result with only the last occurrences
-    for (let i = 0; i < entries.length; i++) {
-        const entry = entries[i]!;
-        const overrideId = entry.overrideId;
-
-        if (lastOccurrenceMap.get(overrideId) === i) {
-            filteredEntries.push(entry);
-        }
-    }
-
-    return filteredEntries.filter((entry) => entry.type === 'internal') as FullInternalHistoryEntry[];
 };
 
 const redoInternalHistory = function (historyEntries: HistoryEntry[]): void {
@@ -910,9 +986,27 @@ table.subscribe(async (_value) => {
 
 history.subscribe((_value) => {
     undoEntry.set(getUndoEntry());
+
+    const currentHistoryEntry = get(history)[get(currentHistoryIndex)];
+    if (currentHistoryEntry === undefined) return;
+
+    if (currentHistoryEntry.profilingState === null) {
+        profilingOutdated.set(true);
+    } else {
+        profilingOutdated.set(false);
+    }
 });
 
 currentHistoryIndex.subscribe((_value) => {
     undoEntry.set(getUndoEntry());
     redoEntry.set(getRedoEntry());
+
+    const currentHistoryEntry = get(history)[get(currentHistoryIndex)];
+    if (currentHistoryEntry === undefined) return;
+
+    if (currentHistoryEntry.profilingState === null) {
+        profilingOutdated.set(true);
+    } else {
+        profilingOutdated.set(false);
+    }
 });

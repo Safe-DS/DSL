@@ -7,6 +7,8 @@ from safeds.ml.classical.classification import Classifier
 /**
  * Regularized logistic regression.
  *
+ * @param c The regularization strength. Lower values imply stronger regularization. Must be greater than 0.
+ *
  * @example
  * pipeline example {
  *     val training = Table.fromCsvFile("training.csv").toTabularDataset("target");
@@ -15,7 +17,16 @@ from safeds.ml.classical.classification import Classifier
  *     val accuracy = classifier.accuracy(test);
  * }
  */
-class LogisticClassifier() sub Classifier {
+class LogisticClassifier(
+    const c: Float = 1.0
+) sub Classifier where {
+    c > 0
+} {
+    /**
+     * The regularization strength. Lower values imply stronger regularization.
+     */
+    attr c: Float
+
     /**
      * Create a copy of this classifier and fit it with the given training data.
      *

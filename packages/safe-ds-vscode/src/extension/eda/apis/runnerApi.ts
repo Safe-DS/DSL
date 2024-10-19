@@ -1,8 +1,10 @@
 import {
     Base64Image,
+    CategoricalFilter,
     Column,
     ExternalHistoryEntry,
     HistoryEntry,
+    NumericalFilter,
     PossibleSorts,
     Profiling,
     ProfilingDetailStatistical,
@@ -235,8 +237,75 @@ export class RunnerApi {
                     sdsString: '',
                     placeholderName: overrideTablePlaceholder ?? this.tablePlaceholder,
                 };
+            case 'voidFilterColumn':
+                // This is a void action, no SDS code is generated and new placeholder is just previous one
+                return {
+                    sdsString: '',
+                    placeholderName: overrideTablePlaceholder ?? this.tablePlaceholder,
+                };
+            case 'filterColumn':
+                return {
+                    sdsString: this.sdsStringForFilterColumn(
+                        historyEntry.columnName,
+                        historyEntry.filter,
+                        overrideTablePlaceholder ?? this.tablePlaceholder,
+                        newPlaceholderName,
+                    ),
+                    placeholderName: newPlaceholderName,
+                };
             default:
                 throw new Error('Unknown history entry action: ' + historyEntry.action);
+        }
+    }
+
+    private sdsStringForFilterColumn(
+        columnName: string,
+        filter: NumericalFilter | CategoricalFilter,
+        tablePlaceholder: string,
+        newPlaceholderName: string,
+    ) {
+        if (filter.type === 'specificValue') {
+            return (
+                'val ' +
+                newPlaceholderName +
+                ' = ' +
+                tablePlaceholder +
+                '.removeRowsByColumn("' +
+                columnName +
+                '", (cell) -> cell.eq(' +
+                (typeof filter.value === 'string' ? `"${filter.value}"` : filter.value) +
+                ').^not()); \n'
+            );
+        } else if (filter.type === 'searchString') {
+            return (
+                'val ' +
+                newPlaceholderName +
+                ' = ' +
+                tablePlaceholder +
+                '.removeRowsByColumn("' +
+                columnName +
+                '", (cell) -> cell.str.contains("' +
+                filter.searchString +
+                '").^not()); \n'
+            );
+        } else if (filter.type === 'valueRange') {
+            return (
+                'val ' +
+                newPlaceholderName +
+                ' = ' +
+                tablePlaceholder +
+                '.removeRowsByColumn("' +
+                columnName +
+                '", (cell) -> cell.ge(' +
+                filter.currentMin +
+                ').^not()).removeRowsByColumn("' +
+                columnName +
+                '", (cell) -> cell.le(' +
+                filter.currentMax +
+                ').^not()); \n'
+            );
+        } else {
+            throw new Error('Unknown filter type: ' + filter);
         }
     }
 
@@ -406,14 +475,18 @@ export class RunnerApi {
     //#region Public API
 
     //#region Table fetching
-    public async getTableByPlaceholder(tableName: string, pipelineExecutionId: string): Promise<Table | undefined> {
+    public async getTableByPlaceholder(
+        tableName: string,
+        pipelineExecutionId: string,
+        sdsLinesOverride = '',
+    ): Promise<Table | undefined> {
         safeDsLogger.debug('Getting table by placeholder: ' + tableName);
 
         const pythonTableColumns = await this.getPlaceholderValue(tableName, pipelineExecutionId);
         if (pythonTableColumns) {
             // Get Column Types
             safeDsLogger.debug('Getting column types for table: ' + tableName);
-            let sdsLines = '';
+            let sdsLines = sdsLinesOverride;
             let placeholderNames: string[] = [];
             let columnNameToPlaceholderIsNumericNameMap = new Map<string, string>();
             for (const columnName of Object.keys(pythonTableColumns)) {
@@ -438,12 +511,15 @@ export class RunnerApi {
     //#endregion
 
     //#region Profiling
-    public async getProfiling(table: Table): Promise<{ columnName: string; profiling: Profiling }[]> {
+    public async getProfiling(
+        table: Table,
+        sdsLinesOverride = '',
+    ): Promise<{ columnName: string; profiling: Profiling }[]> {
         safeDsLogger.debug('Getting profiling for table: ' + table.name);
 
         const columns = table.columns;
 
-        let sdsStrings = '';
+        let sdsStrings = sdsLinesOverride;
 
         let placeholderNames: string[] = [];
 
@@ -663,6 +739,37 @@ export class RunnerApi {
 
         return profiling;
     }
+
+    public async getFreshProfiling(
+        historyEntries: HistoryEntry[],
+    ): Promise<{ columnName: string; profiling: Profiling }[]> {
+        let sdsLines = '';
+        const filteredEntries = this.filterPastEntries(historyEntries);
+        let placeholderOverride = this.tablePlaceholder;
+
+        for (const entry of filteredEntries) {
+            if (entry.type === 'external-manipulating') {
+                const sdsStringObj = this.sdsStringForHistoryEntry(entry, placeholderOverride);
+                sdsLines += sdsStringObj.sdsString;
+                placeholderOverride = sdsStringObj.placeholderName;
+            }
+        }
+
+        const pipelineExecutionId = crypto.randomUUID();
+        try {
+            await this.addToAndExecutePipeline(
+                pipelineExecutionId,
+                sdsLines,
+                placeholderOverride ? [placeholderOverride] : undefined,
+            );
+        } catch (e) {
+            throw e;
+        }
+
+        const table = await this.getTableByPlaceholder(placeholderOverride, pipelineExecutionId, sdsLines);
+        if (!table) throw new Error('Table not found');
+        return this.getProfiling(table, sdsLines);
+    }
     //#endregion
 
     //#region History
@@ -747,6 +854,7 @@ export class RunnerApi {
                         id: newEntry.existingTabId ?? newEntry.newTabId,
                         content: { encodedImage: image },
                         outdated: false,
+                        outdatedReasons: [],
                     },
                 };
             } else if (newEntry.columnNumber === 'two') {
@@ -761,6 +869,7 @@ export class RunnerApi {
                         isInGeneration: false,
                         id: newEntry.existingTabId ?? newEntry.newTabId,
                         outdated: false,
+                        outdatedReasons: [],
                         content: {
                             encodedImage: image,
                             xAxisColumnName: newEntry.xAxisColumnName,
@@ -781,6 +890,7 @@ export class RunnerApi {
                         id: newEntry.existingTabId ?? newEntry.newTabId,
                         content: { encodedImage: image, columnName: newEntry.columnName },
                         outdated: false,
+                        outdatedReasons: [],
                     },
                 };
             }
@@ -797,7 +907,10 @@ export class RunnerApi {
                     this.tablePlaceholder,
                     newTable,
                     new Map<string, boolean>(
-                        Object.keys(newTable).map((col) => [col, typeof newTable[col][0] === 'number']),
+                        Object.keys(newTable).map((col) => [
+                            col,
+                            typeof newTable[col].find((c: any) => c) === 'number',
+                        ]),
                     ), // temp until schema works as otherwise we would need another execution to get column names
                 ),
             };
@@ -820,7 +933,6 @@ export class RunnerApi {
         const filteredEntries: ExecuteRunnerAllEntry[] = this.filterPastEntriesForAllExecution(entries);
 
         const results: RunnerExecutionResultMessage['value'][] = [];
-        let lastManipulatingEntry: ExecuteRunnerAllEntry | undefined;
         for (const entry of filteredEntries) {
             if (entry.entry.type === 'external-visualizing') {
                 if (entry.entry.action === 'infoPanel') throw new Error('Not implemented');
@@ -850,7 +962,6 @@ export class RunnerApi {
                 placeholderNames.push(sdsStringObj.placeholderName);
                 entryIdToPlaceholderNames.set(entry.entry.id, sdsStringObj.placeholderName);
                 currentPlaceholderOverride = sdsStringObj.placeholderName;
-                lastManipulatingEntry = entry;
 
                 safeDsLogger.debug(`Running new entry ${entry.entry.id} with action ${entry.entry.action}`);
             }
@@ -884,6 +995,7 @@ export class RunnerApi {
                             id: entry.entry.existingTabId ?? entry.entry.newTabId,
                             content: { encodedImage: image },
                             outdated: false,
+                            outdatedReasons: [],
                         },
                     });
                 } else if (entry.entry.columnNumber === 'two') {
@@ -898,6 +1010,7 @@ export class RunnerApi {
                             isInGeneration: false,
                             id: entry.entry.existingTabId ?? entry.entry.newTabId,
                             outdated: false,
+                            outdatedReasons: [],
                             content: {
                                 encodedImage: image,
                                 xAxisColumnName: entry.entry.xAxisColumnName,
@@ -918,12 +1031,11 @@ export class RunnerApi {
                             id: entry.entry.existingTabId ?? entry.entry.newTabId,
                             content: { encodedImage: image, columnName: entry.entry.columnName },
                             outdated: false,
+                            outdatedReasons: [],
                         },
                     });
                 }
             } else if (entry.entry.type === 'external-manipulating') {
-                if (lastManipulatingEntry?.entry.id !== entry.entry.id) continue; // Only last manipulating entry is of interest as we just need final table
-
                 const newTable = await this.getPlaceholderValue(
                     entryIdToPlaceholderNames.get(entry.entry.id)!,
                     pipelineExecutionId,
@@ -978,13 +1090,13 @@ export class RunnerApi {
         return results;
     }
 
-    filterPastEntries(pastEntries: HistoryEntry[], newEntry: HistoryEntry): HistoryEntry[] {
+    filterPastEntries(pastEntries: HistoryEntry[], newEntry?: HistoryEntry): HistoryEntry[] {
         // Keep only the last occurrence of each unique overrideId
         const lastOccurrenceMap = new Map<string, number>();
         const filteredPastEntries: HistoryEntry[] = [];
 
         // New entry's overrideId is never appended to filteredPastEntries but accounted for in lastOccurrenceMap to have it override other past entries
-        lastOccurrenceMap.set(newEntry.overrideId, pastEntries.length);
+        if (newEntry) lastOccurrenceMap.set(newEntry.overrideId, pastEntries.length);
 
         // Traverse from end to start to record the last occurrence of each unique overrideId
         for (let i = pastEntries.length - 1; i >= 0; i--) {

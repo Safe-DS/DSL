@@ -100,7 +100,7 @@ To create an `ImageList` call one of the following static methods:
          *
          * @param image the image to check
          *
-         * @result hasImage Weather the given image is in this image list
+         * @result hasImage Whether the given image is in this image list
          */
         @Pure
         @PythonName("has_image")
@@ -299,6 +299,9 @@ To create an `ImageList` call one of the following static methods:
 
         /**
          * Return a new `ImageList` with all images converted to grayscale.
+         *
+         * The new image will have the same amount of channels as the original image. If you want to change the amount of
+         * channels used, please use the method [changeChannel][safeds.data.image.containers.ImageList.changeChannel].
          *
          * The original image list is not modified.
          *
@@ -627,7 +630,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="388"
+    ```sds linenums="391"
     @Pure
     @PythonName("add_noise")
     fun addNoise(
@@ -657,7 +660,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="371"
+    ```sds linenums="374"
     @Pure
     @PythonName("adjust_brightness")
     fun adjustBrightness(
@@ -687,7 +690,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="428"
+    ```sds linenums="431"
     @Pure
     @PythonName("adjust_color_balance")
     fun adjustColorBalance(
@@ -717,7 +720,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="408"
+    ```sds linenums="411"
     @Pure
     @PythonName("adjust_contrast")
     fun adjustContrast(
@@ -747,7 +750,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="446"
+    ```sds linenums="449"
     @Pure
     fun blur(
         const radius: Int
@@ -788,6 +791,9 @@ The original image list is not modified.
 
 Return a new `ImageList` with all images converted to grayscale.
 
+The new image will have the same amount of channels as the original image. If you want to change the amount of
+channels used, please use the method [changeChannel][safeds.data.image.containers.ImageList.changeChannel].
+
 The original image list is not modified.
 
 **Results:**
@@ -798,7 +804,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="307"
+    ```sds linenums="310"
     @Pure
     @PythonName("convert_to_grayscale")
     fun convertToGrayscale() -> imageList: ImageList
@@ -827,7 +833,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="323"
+    ```sds linenums="326"
     @Pure
     fun crop(
         const x: Int,
@@ -856,7 +862,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="512"
+    ```sds linenums="515"
     @Pure
     @PythonName("find_edges")
     fun findEdges() -> imageList: ImageList
@@ -876,7 +882,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="354"
+    ```sds linenums="357"
     @Pure
     @PythonName("flip_horizontally")
     fun flipHorizontally() -> imageList: ImageList
@@ -896,7 +902,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="343"
+    ```sds linenums="346"
     @Pure
     @PythonName("flip_vertically")
     fun flipVertically() -> imageList: ImageList
@@ -942,7 +948,7 @@ Return whether the given image is in this image list.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `hasImage` | [`Boolean`][safeds.lang.Boolean] | Weather the given image is in this image list |
+| `hasImage` | [`Boolean`][safeds.lang.Boolean] | Whether the given image is in this image list |
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
@@ -995,7 +1001,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="479"
+    ```sds linenums="482"
     @Pure
     @PythonName("invert_colors")
     fun invertColors() -> imageList: ImageList
@@ -1187,7 +1193,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="501"
+    ```sds linenums="504"
     @Pure
     @PythonName("rotate_left")
     fun rotateLeft() -> imageList: ImageList
@@ -1207,7 +1213,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="490"
+    ```sds linenums="493"
     @Pure
     @PythonName("rotate_right")
     fun rotateRight() -> imageList: ImageList
@@ -1233,7 +1239,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="465"
+    ```sds linenums="468"
     @Pure
     fun sharpen(
         const factor: Float

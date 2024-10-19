@@ -42,6 +42,12 @@ class Schema {
      *     val table = Table({"A": [1, 2, 3], "B": ["a", "b", "c"]});
      *     val contains = table.^schema.hasColumn("A"); // true
      * }
+     *
+     * @example
+     * pipeline example {
+     *     val table = Table({"A": [1, 2, 3], "B": ["a", "b", "c"]});
+     *     val contains = table.^schema.hasColumn("C"); // false
+     * }
      */
     @Pure
     @PythonName("has_column")

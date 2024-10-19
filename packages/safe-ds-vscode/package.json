@@ -1,6 +1,6 @@
 {
     "name": "safe-ds",
-    "version": "0.17.0",
+    "version": "0.18.0",
     "private": true,
     "description": "Statically checked Data Science programs.",
     "author": {
@@ -306,8 +306,7 @@
         "deploy": "vsce publish"
     },
     "dependencies": {
-        "langium": "^3.0.0",
-        "semver": "^7.6.2",
+        "semver": "^7.6.3",
         "vscode-languageclient": "^9.0.1"
     },
     "devDependencies": {

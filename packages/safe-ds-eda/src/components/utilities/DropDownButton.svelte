@@ -155,7 +155,7 @@
     }
 
     .dropdownButton:hover {
-        background-color: #e0e0e0;
+        background-color: var(--medium-color);
     }
 
     .disabledButton:hover {
@@ -196,6 +196,6 @@
     }
 
     .dropdownItem:hover {
-        background-color: #e0e0e0;
+        background-color: var(--medium-color);
     }
 </style>

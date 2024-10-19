@@ -7,6 +7,8 @@ from safeds.ml.classical.regression import Regressor
 /**
  * Linear regression.
  *
+ * @param penalty The type of penalty to be used. Defaults to a simple linear regression.
+ *
  * @example
  * pipeline example {
  *     val training = Table.fromCsvFile("training.csv").toTabularDataset("target");
@@ -15,7 +17,66 @@ from safeds.ml.classical.regression import Regressor
  *     val meanSquaredError = regressor.meanSquaredError(test);
  * }
  */
-class LinearRegressor() sub Regressor {
+class LinearRegressor(
+    penalty: LinearRegressor.Penalty? = null
+) sub Regressor {
+    /**
+     * Possible penalties for the linear regressor.
+     */
+    enum Penalty {
+        /**
+         * A linear penalty.
+         */
+        @PythonName("linear")
+        Linear
+
+        /**
+         * A lasso (L1) penalty.
+         *
+         * @param alpha Controls the regularization of the model. The higher the value, the more regularized it becomes.
+         */
+        @PythonName("lasso")
+        Lasso(
+            const alpha: Float = 1.0
+        ) where {
+            alpha >= 0.0
+        }
+
+        /**
+         * A ridge (L2) penalty.
+         *
+         * @param alpha Controls the regularization of the model. The higher the value, the more regularized it becomes.
+         */
+        @PythonName("ridge")
+        Ridge(
+            const alpha: Float = 1.0
+        ) where {
+            alpha >= 0.0
+        }
+
+        /**
+         * An elastic net penalty, which applies a mix of lasso (L1) and ridge (L2) penalties.
+         *
+         * @param alpha Controls the regularization of the model. The higher the value, the more regularized it becomes.
+         * @param lassoRatio Number between 0 and 1 that controls the ratio between lasso and ridge penalty. If
+         * 0, only ridge penalty is used. If 1, only lasso penalty is used.
+         */
+        @PythonName("elastic_net")
+        ElasticNet(
+            const alpha: Float = 1.0,
+            @PythonName("lasso_ratio") const lassoRatio: Float = 0.5
+        ) where {
+            alpha >= 0.0,
+            lassoRatio >= 0.0,
+            lassoRatio <= 1.0
+        }
+    }
+
+    /**
+     * The regularization of the model.
+     */
+    attr penalty: LinearRegressor.Penalty?
+
     /**
      * Create a copy of this regressor and fit it with the given training data.
      *

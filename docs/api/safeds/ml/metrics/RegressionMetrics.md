@@ -18,8 +18,8 @@ A collection of regression metrics.
          */
         @Pure
         static fun summarize(
-            predicted: union<Column<Any>, TabularDataset>,
-            expected: union<Column<Any>, TabularDataset>
+            predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
+            expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
         ) -> metrics: Table
 
         /**
@@ -48,8 +48,8 @@ A collection of regression metrics.
         @Pure
         @PythonName("coefficient_of_determination")
         static fun coefficientOfDetermination(
-            predicted: union<Column<Any>, TabularDataset>,
-            expected: union<Column<Any>, TabularDataset>
+            predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
+            expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
         ) -> coefficientOfDetermination: Float
 
         /**
@@ -67,8 +67,8 @@ A collection of regression metrics.
         @Pure
         @PythonName("mean_absolute_error")
         static fun meanAbsoluteError(
-            predicted: union<Column<Any>, TabularDataset>,
-            expected: union<Column<Any>, TabularDataset>
+            predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
+            expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
         ) -> meanAbsoluteError: Float
 
         /**
@@ -90,8 +90,8 @@ A collection of regression metrics.
         @Pure
         @PythonName("mean_directional_accuracy")
         static fun meanDirectionalAccuracy(
-            predicted: union<Column<Any>, TabularDataset>,
-            expected: union<Column<Any>, TabularDataset>
+            predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
+            expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
         ) -> meanDirectionalAccuracy: Float
 
         /**
@@ -111,8 +111,8 @@ A collection of regression metrics.
         @Pure
         @PythonName("mean_squared_error")
         static fun meanSquaredError(
-            predicted: union<Column<Any>, TabularDataset>,
-            expected: union<Column<Any>, TabularDataset>
+            predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
+            expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
         ) -> meanSquaredError: Float
 
         /**
@@ -130,8 +130,8 @@ A collection of regression metrics.
         @Pure
         @PythonName("median_absolute_deviation")
         static fun medianAbsoluteDeviation(
-            predicted: union<Column<Any>, TabularDataset>,
-            expected: union<Column<Any>, TabularDataset>
+            predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
+            expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
         ) -> medianAbsoluteDeviation: Float
     }
     ```
@@ -159,8 +159,8 @@ to 1.0. You can interpret the coefficient of determination as follows:
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `predicted` | `#!sds union<Column<Any>, TabularDataset>` | The predicted target values produced by the regressor. | - |
-| `expected` | `#!sds union<Column<Any>, TabularDataset>` | The expected target values. | - |
+| `predicted` | `#!sds union<Column<Any>, TabularDataset, TimeSeriesDataset>` | The predicted target values produced by the regressor. | - |
+| `expected` | `#!sds union<Column<Any>, TabularDataset, TimeSeriesDataset>` | The expected target values. | - |
 
 **Results:**
 
@@ -174,8 +174,8 @@ to 1.0. You can interpret the coefficient of determination as follows:
     @Pure
     @PythonName("coefficient_of_determination")
     static fun coefficientOfDetermination(
-        predicted: union<Column<Any>, TabularDataset>,
-        expected: union<Column<Any>, TabularDataset>
+        predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
+        expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
     ) -> coefficientOfDetermination: Float
     ```
 
@@ -191,8 +191,8 @@ infinity.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `predicted` | `#!sds union<Column<Any>, TabularDataset>` | The predicted target values produced by the regressor. | - |
-| `expected` | `#!sds union<Column<Any>, TabularDataset>` | The expected target values. | - |
+| `predicted` | `#!sds union<Column<Any>, TabularDataset, TimeSeriesDataset>` | The predicted target values produced by the regressor. | - |
+| `expected` | `#!sds union<Column<Any>, TabularDataset, TimeSeriesDataset>` | The expected target values. | - |
 
 **Results:**
 
@@ -206,8 +206,8 @@ infinity.
     @Pure
     @PythonName("mean_absolute_error")
     static fun meanAbsoluteError(
-        predicted: union<Column<Any>, TabularDataset>,
-        expected: union<Column<Any>, TabularDataset>
+        predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
+        expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
     ) -> meanAbsoluteError: Float
     ```
 
@@ -227,8 +227,8 @@ for other types of data. Because of this, it is not included in the `summarize` 
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `predicted` | `#!sds union<Column<Any>, TabularDataset>` | The predicted target values produced by the regressor. | - |
-| `expected` | `#!sds union<Column<Any>, TabularDataset>` | The expected target values. | - |
+| `predicted` | `#!sds union<Column<Any>, TabularDataset, TimeSeriesDataset>` | The predicted target values produced by the regressor. | - |
+| `expected` | `#!sds union<Column<Any>, TabularDataset, TimeSeriesDataset>` | The expected target values. | - |
 
 **Results:**
 
@@ -242,8 +242,8 @@ for other types of data. Because of this, it is not included in the `summarize` 
     @Pure
     @PythonName("mean_directional_accuracy")
     static fun meanDirectionalAccuracy(
-        predicted: union<Column<Any>, TabularDataset>,
-        expected: union<Column<Any>, TabularDataset>
+        predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
+        expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
     ) -> meanDirectionalAccuracy: Float
     ```
 
@@ -261,8 +261,8 @@ infinity.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `predicted` | `#!sds union<Column<Any>, TabularDataset>` | The predicted target values produced by the regressor. | - |
-| `expected` | `#!sds union<Column<Any>, TabularDataset>` | The expected target values. | - |
+| `predicted` | `#!sds union<Column<Any>, TabularDataset, TimeSeriesDataset>` | The predicted target values produced by the regressor. | - |
+| `expected` | `#!sds union<Column<Any>, TabularDataset, TimeSeriesDataset>` | The expected target values. | - |
 
 **Results:**
 
@@ -276,8 +276,8 @@ infinity.
     @Pure
     @PythonName("mean_squared_error")
     static fun meanSquaredError(
-        predicted: union<Column<Any>, TabularDataset>,
-        expected: union<Column<Any>, TabularDataset>
+        predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
+        expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
     ) -> meanSquaredError: Float
     ```
 
@@ -293,8 +293,8 @@ positive infinity.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `predicted` | `#!sds union<Column<Any>, TabularDataset>` | The predicted target values produced by the regressor. | - |
-| `expected` | `#!sds union<Column<Any>, TabularDataset>` | The expected target values. | - |
+| `predicted` | `#!sds union<Column<Any>, TabularDataset, TimeSeriesDataset>` | The predicted target values produced by the regressor. | - |
+| `expected` | `#!sds union<Column<Any>, TabularDataset, TimeSeriesDataset>` | The expected target values. | - |
 
 **Results:**
 
@@ -308,8 +308,8 @@ positive infinity.
     @Pure
     @PythonName("median_absolute_deviation")
     static fun medianAbsoluteDeviation(
-        predicted: union<Column<Any>, TabularDataset>,
-        expected: union<Column<Any>, TabularDataset>
+        predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
+        expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
     ) -> medianAbsoluteDeviation: Float
     ```
 
@@ -321,8 +321,8 @@ Summarize regression metrics on the given data.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `predicted` | `#!sds union<Column<Any>, TabularDataset>` | The predicted target values produced by the regressor. | - |
-| `expected` | `#!sds union<Column<Any>, TabularDataset>` | The expected target values. | - |
+| `predicted` | `#!sds union<Column<Any>, TabularDataset, TimeSeriesDataset>` | The predicted target values produced by the regressor. | - |
+| `expected` | `#!sds union<Column<Any>, TabularDataset, TimeSeriesDataset>` | The expected target values. | - |
 
 **Results:**
 
@@ -335,7 +335,7 @@ Summarize regression metrics on the given data.
     ```sds linenums="18"
     @Pure
     static fun summarize(
-        predicted: union<Column<Any>, TabularDataset>,
-        expected: union<Column<Any>, TabularDataset>
+        predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
+        expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
     ) -> metrics: Table
     ```

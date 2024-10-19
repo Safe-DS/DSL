@@ -2,9 +2,9 @@
 
 # :test_tube:{ title="Experimental" } <code class="doc-symbol doc-symbol-class"></code> `TimeSeriesDataset` {#safeds.data.labeled.containers.TimeSeriesDataset data-toc-label='[class] TimeSeriesDataset'}
 
-A time series dataset maps feature and time columns to a target column.
+A time series dataset maps feature to a target column. It can be used to train machine learning models.
 
-Unlike a TabularDataset, a TimeSeries needs to contain one target and one time column, but can have empty features.
+Data can be segmented into windows when loading it into the models.
 
 **Parent type:** [`Dataset<Table, Column<Any?>>`][safeds.data.labeled.containers.Dataset]
 
@@ -14,10 +14,10 @@ Unlike a TabularDataset, a TimeSeries needs to contain one target and one time c
 |------|------|-------------|---------|
 | `data` | `#!sds union<Map<String, List<Any>>, Table>` | The data. | - |
 | `targetName` | [`String`][safeds.lang.String] | The name of the target column. | - |
-| `timeName` | [`String`][safeds.lang.String] | The name of the time column. | - |
 | `windowSize` | [`Int`][safeds.lang.Int] | The number of consecutive sample to use as input for prediction. | - |
 | `extraNames` | [`List<String>?`][safeds.lang.List] | Names of the columns that are neither features nor target. If None, no extra columns are used, i.e. all but the target column are used as features. | `#!sds null` |
 | `forecastHorizon` | [`Int`][safeds.lang.Int] | The number of time steps to predict into the future. | `#!sds 1` |
+| `continuous` | [`Boolean`][safeds.lang.Boolean] | Whether or not to continue the forecast in the steps before forecast horizon. | `#!sds false` |
 
 **Examples:**
 
@@ -26,7 +26,6 @@ pipeline example {
     val dataset = TimeSeriesDataset(
         {"time": [1, 2, 3], "feature": [4, 5, 6], "target": [1, 2, 3], "id": [1, 2, 3]},
         targetName = "target",
-        timeName = "time",
         windowSize = 1,
         extraNames = ["id"]
     );
@@ -35,14 +34,14 @@ pipeline example {
 
 ??? quote "Stub code in `TimeSeriesDataset.sdsstub`"
 
-    ```sds linenums="30"
+    ```sds linenums="29"
     class TimeSeriesDataset(
         data: union<Map<String, List<Any>>, Table>,
         @PythonName("target_name") targetName: String,
-        @PythonName("time_name") timeName: String,
         @PythonName("window_size") windowSize: Int,
         @PythonName("extra_names") extraNames: List<String>? = null,
-        @PythonName("forecast_horizon") forecastHorizon: Int = 1
+        @PythonName("forecast_horizon") forecastHorizon: Int = 1,
+        continuous: Boolean = false
     ) sub Dataset<Table, Column> {
         /**
          * The feature columns of the time series dataset.
@@ -53,10 +52,6 @@ pipeline example {
          */
         attr target: Column<Any>
         /**
-         * The time column of the time series dataset.
-         */
-        attr time: Column<Any>
-        /**
          * The number of consecutive sample to use as input for prediction.
          */
         @PythonName("window_size") attr windowSize: Int
@@ -65,25 +60,28 @@ pipeline example {
          */
         @PythonName("forecast_horizon") attr forecastHorizon: Int
         /**
-         * Additional columns of the time series dataset that are neither features, target nor time.
+         * True if the time series will make a continuous prediction.
+         */
+        attr continuous: Boolean
+        /**
+         * Additional columns of the time series dataset that are neither features nor target.
          *
          * These can be used to store additional information about instances, such as IDs.
          */
         attr extras: Table
 
         /**
-         * Return a new `Table` containing the feature columns, the target column, the time column and the extra columns.
+         * Return a new `Table` containing the feature columns, the target column and the extra columns.
          *
          * The original `TimeSeriesDataset` is not modified.
          *
-         * @result table A table containing the feature columns, the target column, the time column and the extra columns.
+         * @result table A table containing the feature columns, the target column and the extra columns.
          *
          * @example
          * pipeline example {
          *     val dataset = TimeSeriesDataset(
          *         {"time": [1, 2, 3], "feature": [4, 5, 6], "target": [1, 2, 3], "id": [1, 2, 3]},
          *         targetName = "target",
-         *         timeName = "time",
          *         windowSize = 1,
          *         extraNames = ["id"]
          *     );
@@ -96,9 +94,15 @@ pipeline example {
     }
     ```
 
+## <code class="doc-symbol doc-symbol-attribute"></code> `continuous` {#safeds.data.labeled.containers.TimeSeriesDataset.continuous data-toc-label='[attribute] continuous'}
+
+True if the time series will make a continuous prediction.
+
+**Type:** [`Boolean`][safeds.lang.Boolean]
+
 ## <code class="doc-symbol doc-symbol-attribute"></code> `extras` {#safeds.data.labeled.containers.TimeSeriesDataset.extras data-toc-label='[attribute] extras'}
 
-Additional columns of the time series dataset that are neither features, target nor time.
+Additional columns of the time series dataset that are neither features nor target.
 
 These can be used to store additional information about instances, such as IDs.
 
@@ -122,12 +126,6 @@ The target column of the time series dataset.
 
 **Type:** [`Column<Any>`][safeds.data.tabular.containers.Column]
 
-## <code class="doc-symbol doc-symbol-attribute"></code> `time` {#safeds.data.labeled.containers.TimeSeriesDataset.time data-toc-label='[attribute] time'}
-
-The time column of the time series dataset.
-
-**Type:** [`Column<Any>`][safeds.data.tabular.containers.Column]
-
 ## <code class="doc-symbol doc-symbol-attribute"></code> `windowSize` {#safeds.data.labeled.containers.TimeSeriesDataset.windowSize data-toc-label='[attribute] windowSize'}
 
 The number of consecutive sample to use as input for prediction.
@@ -136,7 +134,7 @@ The number of consecutive sample to use as input for prediction.
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toTable` {#safeds.data.labeled.containers.TimeSeriesDataset.toTable data-toc-label='[function] toTable'}
 
-Return a new `Table` containing the feature columns, the target column, the time column and the extra columns.
+Return a new `Table` containing the feature columns, the target column and the extra columns.
 
 The original `TimeSeriesDataset` is not modified.
 
@@ -144,16 +142,15 @@ The original `TimeSeriesDataset` is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `table` | [`Table`][safeds.data.tabular.containers.Table] | A table containing the feature columns, the target column, the time column and the extra columns. |
+| `table` | [`Table`][safeds.data.tabular.containers.Table] | A table containing the feature columns, the target column and the extra columns. |
 
 **Examples:**
 
-```sds hl_lines="9"
+```sds hl_lines="8"
 pipeline example {
     val dataset = TimeSeriesDataset(
         {"time": [1, 2, 3], "feature": [4, 5, 6], "target": [1, 2, 3], "id": [1, 2, 3]},
         targetName = "target",
-        timeName = "time",
         windowSize = 1,
         extraNames = ["id"]
     );
@@ -163,7 +160,7 @@ pipeline example {
 
 ??? quote "Stub code in `TimeSeriesDataset.sdsstub`"
 
-    ```sds linenums="84"
+    ```sds linenums="82"
     @Pure
     @PythonName("to_table")
     fun toTable() -> table: Table

@@ -28,6 +28,8 @@ pipeline example {
         /**
          * Create a box plot for the values in the column. This is only possible for numeric columns.
          *
+         * @param theme The color theme of the plot. Default is "light".
+         *
          * @result plot The box plot as an image.
          *
          * @example
@@ -38,12 +40,34 @@ pipeline example {
          */
         @Pure
         @PythonName("box_plot")
-        fun boxPlot() -> plot: Image
+        fun boxPlot(
+            theme: literal<"dark", "light"> = "light"
+        ) -> plot: Image
+
+        /**
+         * Create a violin plot for the values in the column. This is only possible for numeric columns.
+         *
+         * @param theme The color theme of the plot. Default is "light".
+         *
+         * @result plot The violin plot as an image.
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("test", [1, 2, 3]);
+         *     val violinplot = column.plot.violinPlot();
+         * }
+         */
+        @Pure
+        @PythonName("violin_plot")
+        fun violinPlot(
+            theme: literal<"dark", "light"> = "light"
+        ) -> plot: Image
 
         /**
          * Create a histogram for the values in the column.
          *
          * @param maxBinCount The maximum number of bins to use in the histogram. Default is 10.
+         * @param theme The color theme of the plot. Default is "light".
          *
          * @result plot The plot as an image.
          *
@@ -55,7 +79,8 @@ pipeline example {
          */
         @Pure
         fun histogram(
-            @PythonName("max_bin_count") const maxBinCount: Int = 10
+            @PythonName("max_bin_count") const maxBinCount: Int = 10,
+            theme: literal<"dark", "light"> = "light"
         ) -> plot: Image where {
             maxBinCount > 0
         }
@@ -64,6 +89,7 @@ pipeline example {
          * Create a lag plot for the values in the column.
          *
          * @param lag The amount of lag.
+         * @param theme The color theme of the plot. Default is "light".
          *
          * @result plot The plot as an image.
          *
@@ -76,7 +102,8 @@ pipeline example {
         @Pure
         @PythonName("lag_plot")
         fun lagPlot(
-            lag: Int
+            lag: Int,
+            theme: literal<"dark", "light"> = "light"
         ) -> plot: Image
     }
     ```
@@ -84,6 +111,12 @@ pipeline example {
 ## <code class="doc-symbol doc-symbol-function"></code> `boxPlot` {#safeds.data.tabular.plotting.ColumnPlotter.boxPlot data-toc-label='[function] boxPlot'}
 
 Create a box plot for the values in the column. This is only possible for numeric columns.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `theme` | `#!sds literal<"dark", "light">` | The color theme of the plot. Default is "light". | `#!sds "light"` |
 
 **Results:**
 
@@ -102,10 +135,12 @@ pipeline example {
 
 ??? quote "Stub code in `ColumnPlotter.sdsstub`"
 
-    ```sds linenums="30"
+    ```sds linenums="32"
     @Pure
     @PythonName("box_plot")
-    fun boxPlot() -> plot: Image
+    fun boxPlot(
+        theme: literal<"dark", "light"> = "light"
+    ) -> plot: Image
     ```
 
 ## <code class="doc-symbol doc-symbol-function"></code> `histogram` {#safeds.data.tabular.plotting.ColumnPlotter.histogram data-toc-label='[function] histogram'}
@@ -117,6 +152,7 @@ Create a histogram for the values in the column.
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `maxBinCount` | [`Int`][safeds.lang.Int] | The maximum number of bins to use in the histogram. Default is 10. | `#!sds 10` |
+| `theme` | `#!sds literal<"dark", "light">` | The color theme of the plot. Default is "light". | `#!sds "light"` |
 
 **Results:**
 
@@ -135,10 +171,11 @@ pipeline example {
 
 ??? quote "Stub code in `ColumnPlotter.sdsstub`"
 
-    ```sds linenums="47"
+    ```sds linenums="71"
     @Pure
     fun histogram(
-        @PythonName("max_bin_count") const maxBinCount: Int = 10
+        @PythonName("max_bin_count") const maxBinCount: Int = 10,
+        theme: literal<"dark", "light"> = "light"
     ) -> plot: Image where {
         maxBinCount > 0
     }
@@ -153,6 +190,7 @@ Create a lag plot for the values in the column.
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `lag` | [`Int`][safeds.lang.Int] | The amount of lag. | - |
+| `theme` | `#!sds literal<"dark", "light">` | The color theme of the plot. Default is "light". | `#!sds "light"` |
 
 **Results:**
 
@@ -171,10 +209,46 @@ pipeline example {
 
 ??? quote "Stub code in `ColumnPlotter.sdsstub`"
 
-    ```sds linenums="67"
+    ```sds linenums="93"
     @Pure
     @PythonName("lag_plot")
     fun lagPlot(
-        lag: Int
+        lag: Int,
+        theme: literal<"dark", "light"> = "light"
+    ) -> plot: Image
+    ```
+
+## <code class="doc-symbol doc-symbol-function"></code> `violinPlot` {#safeds.data.tabular.plotting.ColumnPlotter.violinPlot data-toc-label='[function] violinPlot'}
+
+Create a violin plot for the values in the column. This is only possible for numeric columns.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `theme` | `#!sds literal<"dark", "light">` | The color theme of the plot. Default is "light". | `#!sds "light"` |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `plot` | [`Image`][safeds.data.image.containers.Image] | The violin plot as an image. |
+
+**Examples:**
+
+```sds hl_lines="3"
+pipeline example {
+    val column = Column("test", [1, 2, 3]);
+    val violinplot = column.plot.violinPlot();
+}
+```
+
+??? quote "Stub code in `ColumnPlotter.sdsstub`"
+
+    ```sds linenums="51"
+    @Pure
+    @PythonName("violin_plot")
+    fun violinPlot(
+        theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
     ```
