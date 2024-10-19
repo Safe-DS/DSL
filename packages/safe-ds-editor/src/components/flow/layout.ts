@@ -120,7 +120,10 @@ export const calculateLayout = async (
 };
 
 const getPorts = (node: XYNode): ElkPort[] => {
-    const key = Object.keys(node.data).pop();
+    const ignoreList = ['runUntilHere', 'isSegment', 'status'];
+    const key = Object.keys(node.data)
+        .filter((k) => !ignoreList.includes(k))
+        .pop();
 
     if (key === 'call') {
         const data = node.data[key] as Call;

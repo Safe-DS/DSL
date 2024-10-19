@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-    export type CallProps = { call: Call };
+    export type CallProps = { call: Call; status: Status };
 </script>
 
 <script lang="ts">
@@ -8,12 +8,15 @@
     import tooltip from '$src/traits/tooltip';
     import { Call } from '$global';
     import CategoryIcon from '$assets/category/categoryIcon.svelte';
-    import StatusIndicator from '$src/components/ui/status-indicator/status-indicator.svelte';
+    import StatusIndicator, {
+        type Status,
+    } from '$src/components/ui/status-indicator/status-indicator.svelte';
 
     type $$Props = NodeProps;
     export let data: $$Props['data'];
     export let selected: $$Props['selected'] = undefined;
-    const { call } = data as CallProps;
+    const { call, status } = data as CallProps;
+    console.log('status call: ' + status);
 
     let expanded: boolean = true;
 </script>
@@ -43,7 +46,7 @@
             />
         {/if}
     </div>
-    <StatusIndicator status={'done'} class="h-1 w-full" />
+    <StatusIndicator {status} class="h-1 w-full" />
     {#if expanded}
         <div class=" bg-node-dark flex w-full flex-col py-2">
             {#each call.resultList as result}

@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-    export type SegmentProps = { segment: Segment };
+    export type SegmentProps = { segment: Segment; status: Status };
 </script>
 
 <script lang="ts">
@@ -8,11 +8,12 @@
     import { type NodeProps } from '@xyflow/svelte';
     import type { Segment } from '$global';
     import { Handle, Position } from '@xyflow/svelte';
+    import type { Status } from '../ui/status-indicator/status-indicator.svelte';
 
     type $$Props = NodeProps;
     export let data: $$Props['data'];
     export let selected: $$Props['selected'] = undefined;
-    const { segment } = data as SegmentProps;
+    const { segment, status } = data as SegmentProps;
 </script>
 
 <div

@@ -1,6 +1,6 @@
 package segmentTest
 
-segment doStufff(
+segment doStuff(
     inputPath: String,
     ouputPath: String,
     sliceSize: Int
@@ -22,7 +22,7 @@ segment doStufff(
     resultTable.toTable().toCsvFile(ouputPath);
 }
 
-pipeline smallTestt {
+pipeline smallTest {
 
     val path = "beginner_classification/train.csv";
     val score = doStuff(

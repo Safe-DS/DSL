@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-    export type NodeStatus = 'ready' | 'queued' | 'done' | 'processing' | 'error';
+    export type Status = 'done' | 'processing' | 'waiting' | 'none';
 </script>
 
 <script lang="ts">
@@ -8,18 +8,17 @@
 
     export let className: ClassValue;
     export { className as class };
-    export let status: NodeStatus;
+    export let status: Status;
 
-    const getStyle = (status: NodeStatus): string => {
+    const getStyle = (status: Status): string => {
         switch (status) {
-            case 'ready':
+            case 'none':
                 return ' bg-neutral-400';
-            case 'queued':
+            case 'processing':
+            case 'waiting':
                 return ' bg-yellow-500';
             case 'done':
                 return ' bg-green-400';
-            case 'error':
-                return ' bg-red-600';
             default:
                 return '';
         }

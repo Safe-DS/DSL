@@ -1,6 +1,7 @@
 <script context="module" lang="ts">
     export type GenericExpressionProps = {
         genericExpression: GenericExpression;
+        status: Status;
     };
 </script>
 
@@ -8,12 +9,14 @@
     import tooltip from '$src/traits/tooltip';
     import { Handle, Position, type NodeProps } from '@xyflow/svelte';
     import { GenericExpression } from '$global';
-    import StatusIndicator from '$src/components/ui/status-indicator/status-indicator.svelte';
+    import StatusIndicator, {
+        type Status,
+    } from '$src/components/ui/status-indicator/status-indicator.svelte';
 
     type $$Props = NodeProps;
     export let data: $$Props['data'];
     export let selected: $$Props['selected'] = undefined;
-    const { genericExpression } = data as GenericExpressionProps;
+    const { genericExpression, status } = data as GenericExpressionProps;
 </script>
 
 <div
@@ -23,7 +26,7 @@
 >
     <Handle type="target" id="target" position={Position.Left} class=" absolute -ml-2.5 h-3 w-3" />
     <Handle type="source" id="source" position={Position.Right} class=" absolute -mr-2.5 h-3 w-3" />
-    <StatusIndicator status={'done'} class="w-1 rounded-l-sm" />
+    <StatusIndicator {status} class="w-1 rounded-l-sm" />
     <div class="flex h-full flex-grow items-center p-2">
         <div class=" bg-node-dark w-full p-1 py-4">
             <span class="text-text-muted w-full whitespace-pre text-left text-xl"

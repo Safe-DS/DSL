@@ -3,7 +3,6 @@ import type { CallProps } from '$src/components/nodes/node-call.svelte';
 import type { PlaceholderProps } from '$src/components/nodes/node-placeholder.svelte';
 import type { GenericExpressionProps } from '$src/components/nodes/node-generic-expression.svelte';
 import type { SegmentProps } from '$src/components/nodes/node-segment.svelte';
-
 import {
     SegmentGroupId,
     type Call,
@@ -12,7 +11,7 @@ import {
     type Placeholder,
     type Segment,
 } from '$global';
-import NodePlaceholder from '$src/components/nodes/node-placeholder-new.svelte';
+import NodePlaceholder from '$/src/components/nodes/node-placeholder.svelte';
 import NodeCall from '$src/components/nodes/node-call.svelte';
 import NodeGenericExpression from '$src/components/nodes/node-generic-expression.svelte';
 import SegmentCustonNode from '$/src/components/nodes/node-segment.svelte';
@@ -37,20 +36,24 @@ export const callToNode = (call: Call, isSegment: boolean): NodeCustom => {
         parentId: isSegment ? SegmentGroupId.toString() : undefined,
         extent: isSegment ? 'parent' : undefined,
         type: 'call',
-        data: { call },
+        data: { call, status: 'none' },
         position: { x: 0, y: 0 },
         width: 260,
         height: 75 + (call.parameterList.length + call.resultList.length) * 24,
     };
 };
 
-export const placeholderToNode = (placeholder: Placeholder, isSegment: boolean): NodeCustom => {
+export const placeholderToNode = (
+    placeholder: Placeholder,
+    isSegment: boolean,
+    runUntilHere: (id: string) => void,
+): NodeCustom => {
     return {
         id: placeholder.name,
         parentId: isSegment ? SegmentGroupId.toString() : undefined,
         extent: isSegment ? 'parent' : undefined,
         type: 'placeholder',
-        data: { placeholder },
+        data: { placeholder, runUntilHere, isSegment, status: 'none' },
         position: { x: 0, y: 0 },
         width: 120,
         height: 95,
@@ -66,7 +69,7 @@ export const genericExpressionToNode = (
         parentId: isSegment ? SegmentGroupId.toString() : undefined,
         extent: isSegment ? 'parent' : undefined,
         type: 'genericExpression',
-        data: { genericExpression },
+        data: { genericExpression, status: 'none' },
         position: { x: 0, y: 300 },
         width: 260,
         height: 65,
@@ -89,7 +92,7 @@ export const segmentToNode = (segment: Segment): NodeCustom => {
         id: SegmentGroupId.toString(),
         draggable: true,
         type: 'segment',
-        data: { segment },
+        data: { segment, status: 'none' },
         position: { x: 0, y: 0 },
         width: 1000,
         height: 1000,

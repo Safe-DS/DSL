@@ -27,7 +27,6 @@
         pipeline.set(response.pipeline);
         currentGraph.set(response.pipeline);
         segmentList.set(response.segmentList);
-        console.log(response.segmentList);
     }
 
     MessageHandler.handleSyncEvent((elements) => {
@@ -35,12 +34,17 @@
         errorList.set(elements.errorList);
         segmentList.set(elements.segmentList);
 
-        const match = [elements.pipeline, ...elements.segmentList].find(
+        const match = elements.segmentList.find(
             (e) => e.type === $currentGraph.type && e.name === $currentGraph.name,
         );
 
-        if (match) return;
-        currentGraph.set(elements.pipeline);
+        if (match) {
+            currentGraph.set(new Graph('pipeline'));
+            setTimeout(() => currentGraph.set(match), 0);
+        } else {
+            currentGraph.set(new Graph('pipeline'));
+            setTimeout(() => currentGraph.set(elements.pipeline), 0);
+        }
     });
 
     async function fetchGlobalReferences() {
@@ -122,7 +126,7 @@
                             on:selectionChange={(event) => {
                                 selectedNodeList = event.detail;
                             }}
-                            pipeline={currentGraph}
+                            pipeline={$currentGraph}
                         />
                     </SvelteFlowProvider>
                 </Resizable.Pane>
