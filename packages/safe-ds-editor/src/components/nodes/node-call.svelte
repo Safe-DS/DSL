@@ -1,9 +1,8 @@
 <script context="module" lang="ts">
-    export type CallProps = { call: Call; status: Status };
+    export type CallProps = { call: Call; status: Status; openSegmentEditor: () => void };
 </script>
 
 <script lang="ts">
-    // Todo: Handle the minimizing of nodes properly -> edges need to be rerouted
     import { Handle, Position, type NodeProps } from '@xyflow/svelte';
     import tooltip from '$src/traits/tooltip';
     import { Call } from '$global';
@@ -15,7 +14,7 @@
     type $$Props = NodeProps;
     export let data: $$Props['data'];
     export let selected: $$Props['selected'] = undefined;
-    $: ({ call, status } = data as CallProps);
+    $: ({ call, status, openSegmentEditor } = data as CallProps);
     let expanded: boolean = true;
 </script>
 
@@ -23,10 +22,18 @@
     use:tooltip={{ content: call.name, delay: 150 }}
     data-state={selected ? 'selected' : ''}
     class={` bg-node-normal [&[data-state=selected]]:shadow-highlight shadow-node relative w-[260px] cursor-default rounded-sm pb-2 focus-visible:outline-none`}
+    on:dblclick={() => openSegmentEditor()}
     on:mousedown={(event) => {
+        /*
+        Currenlty its not really helping to minimize nodes
+        (vertical screen space is not a limiting facotr)
+        Because of that this feature was not fully implemented.
+        
         if (event.shiftKey) {
             expanded = !expanded;
         }
+        
+        */
     }}
 >
     <div class="flex w-full flex-row items-center p-1">

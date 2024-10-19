@@ -15,11 +15,6 @@ import { GetGlobalReferences } from '$lang/language/custom-editor/getGlobalRefer
 import { GetNodeDesciption } from '$lang/language/custom-editor/getNodeDescription.ts';
 import { SyncChannelHandler } from '$lang/language/custom-editor/getSyncChannel.ts';
 
-// Todo: This class can technically be reworked a bit
-// maybe just having two static spaces, with messageListener is enough
-// It should still be possible ot initiate messages from the extension, but for now that's
-// almost not necessary
-
 export class MessageHandler {
     private vscodeWebview: Webview;
     private client: LanguageClient;
@@ -43,7 +38,6 @@ export class MessageHandler {
                     }
 
                     if (message.command === 'RequestAst') {
-                        // Todo: Set the vscode application state as "loading AST" in the bottom bar
                         const response = await client.sendRequest(
                             new RequestType<AstInterface.Message, AstInterface.Response, void>(GetAst.method),
                             { uri: documentUri },
@@ -56,7 +50,6 @@ export class MessageHandler {
                     }
 
                     if (message.command === 'RequestGlobalReferences') {
-                        // Todo: Set the vscode application state as "loading AST" in the bottom bar
                         const response = await client.sendRequest(
                             new RequestType<GlobalReferenceInterface.Message, GlobalReferenceInterface.Response, void>(
                                 GetGlobalReferences.method,
@@ -120,14 +113,6 @@ export class MessageHandler {
                         vscodeWebview.postMessage(messageObject);
                     },
                 );
-            },
-            async getAst_DEPRECATED(documentUri: vscode.Uri): Promise<AstInterface.Response> {
-                // await client.onReady(); // Todo: properly look for this -> Ensure the client is ready before sending requests // This is suggested in every tutorial, but the method doesn't exist?
-                const response = await client.sendRequest(
-                    new RequestType<AstInterface.Message, AstInterface.Response, void>(GetAst.method),
-                    { uri: documentUri },
-                );
-                return response;
             },
         };
     }

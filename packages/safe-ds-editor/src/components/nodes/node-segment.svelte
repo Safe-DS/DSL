@@ -3,8 +3,6 @@
 </script>
 
 <script lang="ts">
-    // Todo: Doppelklick soll auf das Graph Edit öffnen
-
     import { type NodeProps } from '@xyflow/svelte';
     import type { Segment } from '$global';
     import { Handle, Position } from '@xyflow/svelte';

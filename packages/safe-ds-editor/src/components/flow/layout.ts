@@ -120,7 +120,7 @@ export const calculateLayout = async (
 };
 
 const getPorts = (node: XYNode): ElkPort[] => {
-    const ignoreList = ['runUntilHere', 'isSegment', 'status'];
+    const ignoreList = ['runUntilHere', 'isSegment', 'status', 'openSegmentEditor'];
     const key = Object.keys(node.data)
         .filter((k) => !ignoreList.includes(k))
         .pop();
@@ -191,5 +191,8 @@ const getPorts = (node: XYNode): ElkPort[] => {
     }
 
     console.log(`Unknown key: ${key}`);
+    console.log(
+        'You probably forgot to add a new Node Data key to the ignore list for the layout node parsing in the getPorts() function.',
+    );
     return [];
 };

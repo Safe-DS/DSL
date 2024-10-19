@@ -132,7 +132,13 @@
         const currentCall = ++latestCall;
         const isSegment = pipeline.type == 'segment';
         const nodeList = ([] as NodeCustom[])
-            .concat(pipeline.ast.callList.map((call) => callToNode(call, isSegment)))
+            .concat(
+                pipeline.ast.callList.map((call) =>
+                    callToNode(call, isSegment, () => {
+                        dispatch('editSegment', call.name);
+                    }),
+                ),
+            )
             .concat(
                 pipeline.ast.placeholderList.map((placeholder) =>
                     placeholderToNode(placeholder, isSegment, runUntilHere),
@@ -167,13 +173,8 @@
             return;
         }
 
-        console.log(nodeListLayouted);
-        console.log(edgeList);
-
         nodes.set(nodeListLayouted);
         edges.set(edgeList);
-        fitView();
-        window.requestAnimationFrame(() => fitView());
         setTimeout(() => fitView(), 0);
     }
 

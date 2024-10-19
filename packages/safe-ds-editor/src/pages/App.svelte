@@ -73,9 +73,9 @@
     let mainSidebar: PaneAPI;
     let isCollapsed = false;
 
-    function handleEditSegment(event: CustomEvent<number>) {
-        const index: number = event.detail;
-        const segment = $segmentList[index];
+    function handleEditSegment(event: CustomEvent<string>) {
+        const name: string = event.detail;
+        const segment = $segmentList.find((segment) => segment.name === name)!;
         currentGraph.set(segment);
     }
 </script>
@@ -123,6 +123,7 @@
                             on:editPipeline={() => {
                                 currentGraph.set($pipeline);
                             }}
+                            on:editSegment={handleEditSegment}
                             on:selectionChange={(event) => {
                                 selectedNodeList = event.detail;
                             }}

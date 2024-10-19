@@ -13,13 +13,13 @@
 </script>
 
 <div class={cn('flex h-full w-full flex-col p-2 pl-3', className)}>
-    {#each $segmentList as segment, index}
+    {#each $segmentList as segment}
         <div class=" flex flex-row p-2">
             <span class="  cursor-grab">{segment.name}</span>
             <div class=" flex-grow" />
             <button
                 class=" bg-menu-400 hover:bg-menu-300 rounded p-1"
-                on:mousedown={() => dispatch('editSegment', index)}>Edit</button
+                on:mousedown={() => dispatch('editSegment', segment.name)}>Edit</button
             >
         </div>
     {/each}

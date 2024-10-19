@@ -30,13 +30,17 @@ export const nodeTypes = {
     segment: SegmentCustonNode,
 };
 
-export const callToNode = (call: Call, isSegment: boolean): NodeCustom => {
+export const callToNode = (
+    call: Call,
+    isSegment: boolean,
+    openSegmentEditor: () => void,
+): NodeCustom => {
     return {
         id: call.id.toString(),
         parentId: isSegment ? SegmentGroupId.toString() : undefined,
         extent: isSegment ? 'parent' : undefined,
         type: 'call',
-        data: { call, status: 'none' },
+        data: { call, status: 'none', openSegmentEditor },
         position: { x: 0, y: 0 },
         width: 260,
         height: 75 + (call.parameterList.length + call.resultList.length) * 24,

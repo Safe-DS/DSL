@@ -61,10 +61,6 @@ export class SafeDSCustomEditorProvider implements vscode.CustomTextEditorProvid
                     command.callback,
                 ),
             );
-            // Todo: Replace with new Logging
-            // logOutput(
-            //     `Registered ${command.name} | Full Command: ${SafeDSCustomEditorProvider.viewType}.${command.name}`,
-            // );
         });
     }
 
