@@ -20,7 +20,7 @@
     export let data: $$Props['data'];
     export let id: $$Props['id'];
     export let selected: $$Props['selected'] = undefined;
-    const { placeholder, runUntilHere, isSegment, status } = data as PlaceholderProps;
+    $: ({ placeholder, runUntilHere, isSegment, status } = data as PlaceholderProps);
     let isHovered = false;
 </script>
 
@@ -37,7 +37,7 @@
         >
             <span
                 data-state={isHovered ? 'full' : 'truncated'}
-                class="text-text-normal absolute -left-6 -top-2 block w-36 -translate-y-full text-center text-2xl font-bold [&[data-state=truncated]]:truncate"
+                class="text-text-normal absolute -left-6 -top-2 block w-36 -translate-y-full text-center text-2xl font-bold data-[state=truncated]:truncate"
             >
                 {placeholder.name}
             </span>

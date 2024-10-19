@@ -16,7 +16,7 @@
     type $$Props = NodeProps;
     export let data: $$Props['data'];
     export let selected: $$Props['selected'] = undefined;
-    const { genericExpression, status } = data as GenericExpressionProps;
+    $: ({ genericExpression, status } = data as GenericExpressionProps);
 </script>
 
 <div

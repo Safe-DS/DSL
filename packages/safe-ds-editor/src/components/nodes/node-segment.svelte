@@ -13,7 +13,7 @@
     type $$Props = NodeProps;
     export let data: $$Props['data'];
     export let selected: $$Props['selected'] = undefined;
-    const { segment, status } = data as SegmentProps;
+    $: ({ segment, status } = data as SegmentProps);
 </script>
 
 <div

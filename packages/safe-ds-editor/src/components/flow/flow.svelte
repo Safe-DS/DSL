@@ -29,14 +29,12 @@
 
     const dispatch = createEventDispatcher();
     const handleError = getContext('handleError') as (error: CustomError) => void;
-    const { fitView, updateNodeData, updateNode } = useSvelteFlow();
+    const { fitView, updateNodeData } = useSvelteFlow();
 
     const nodes = writable<NodeCustom[]>([]);
     const edges = writable<XYEdge[]>([]);
 
-    let pipelineVersion = 0;
     $: if (pipeline) {
-        pipelineVersion += 1;
         updateGraph(pipeline);
     }
 
@@ -47,77 +45,86 @@
             return;
         }
 
-        const findIncoming = (node: XYNode) => {
+        const findIncoming = (node: NodeCustom) => {
             return $edges.filter((edge) => edge.target === node.id);
         };
 
-        const findPrev = (node: XYNode) => {
+        const findPrev = (node: NodeCustom) => {
             const incoming = findIncoming(node);
             return $nodes.filter((node) => incoming.find((edge) => edge.source === node.id));
         };
 
-        const placeholderList = [];
-        const queue = [target];
-        const visited = new Set<string>();
-        while (queue.length > 0) {
-            const current = queue.shift();
-            if (!current || visited.has(current.id)) {
-                continue;
-            }
-            visited.add(current.id);
+        const getAllPreviousPlaceholders = (node: NodeCustom) => {
+            const placeholderList = [];
+            const queue = [node];
+            const visited = new Set<string>();
+            while (queue.length > 0) {
+                const current = queue.shift();
+                if (!current || visited.has(current.id)) {
+                    continue;
+                }
+                visited.add(current.id);
+                updateNodeData(current.id, {
+                    status: 'waiting',
+                });
 
-            if (current.type === 'placeholder') {
-                placeholderList.push(current);
-            }
+                if (current.type === 'placeholder') {
+                    placeholderList.push(current);
+                }
 
-            const prevNodes = findPrev(current);
-            queue.push(...prevNodes);
-        }
+                const prevNodes = findPrev(current);
+                queue.push(...prevNodes);
+            }
+            return placeholderList;
+        };
+
+        const placeholderList = getAllPreviousPlaceholders(target);
+
+        const getChunk = (placeholder: NodeCustom) => {
+            const chunk: NodeCustom[] = [placeholder];
+            const visited = new Set<string>();
+            let i = 0;
+            while (i < chunk.length) {
+                const current = chunk[i];
+                i++;
+                if (visited.has(current.id)) {
+                    continue;
+                }
+                visited.add(current.id);
+
+                const prevNodes = findPrev(current).filter((node) => node.type !== 'placeholder');
+                chunk.push(...prevNodes);
+            }
+            return chunk;
+        };
 
         let totalWaitTime = 0;
-        placeholderList.reverse().forEach((placeholder) => {
-            const waitTime = Math.floor(Math.random() * 4 + 1) * 500;
-            totalWaitTime = waitTime + totalWaitTime;
-            setTimeout(() => {
-                const chunk: NodeCustom[] = [placeholder];
-                const visited = new Set<string>();
-                let i = 0;
-                while (i < chunk.length) {
-                    const current = chunk[i];
-                    i++;
-                    if (visited.has(current.id)) {
-                        continue;
-                    }
-                    visited.add(current.id);
+        const executionQueue = placeholderList
+            .reverse()
+            .map((placeholder) => {
+                const waitTime = Math.floor(Math.random() * 10 + 2) * 500;
+                totalWaitTime = waitTime + totalWaitTime;
+                return { chunk: getChunk(placeholder), waitTime: totalWaitTime };
+            })
+            .sort((a, b) => a.waitTime - b.waitTime);
 
-                    const prevNodes = findPrev(current).filter(
-                        (node) => node.type !== 'placeholder',
-                    );
-                    chunk.push(...prevNodes);
-                }
-                nodes.update((nodeList) => {
-                    const tmp: NodeCustom[] = nodeList.map((node) => {
-                        if (chunk.find((n) => n.id === node.id)) {
-                            return {
-                                ...node,
-                                data: {
-                                    ...node.data,
-                                    status: 'done',
-                                },
-                            };
-                        }
-                        return node;
+        executionQueue.forEach((element, index) => {
+            setTimeout(() => {
+                element.chunk.forEach((node) => updateNodeData(node.id, { status: 'done' }));
+                const nextChunk = executionQueue[index + 1];
+                if (nextChunk)
+                    nextChunk.chunk.forEach((node) => {
+                        updateNodeData(node.id, {
+                            status: 'processing',
+                        });
                     });
-                    return tmp;
-                });
-                chunk.forEach((node) => {
-                    console.log('Node done: ' + node.id);
-                    updateNodeData(node.id, {
-                        status: 'done',
-                    });
-                });
-            }, totalWaitTime);
+            }, element.waitTime);
         });
+        if (executionQueue[0]) {
+            executionQueue[0].chunk.forEach((node) =>
+                updateNodeData(node.id, { status: 'processing' }),
+            );
+        }
     };
 
     let latestCall = 0;
@@ -220,36 +227,30 @@
             {pipeline.name}
         </div>
     </div>
-    {#key pipelineVersion}
-        <SvelteFlow
-            {edges}
-            {nodes}
-            {nodeTypes}
-            fitView
-            minZoom={0.1}
-            proOptions={{ hideAttribution: true }}
-            nodesDraggable={true}
-            selectionOnDrag={false}
-            on:nodecontextmenu={({ detail: { event, node } }) => {
-                // if (node.type) {
-                //     event.preventDefault();
-                // }
-            }}
-            on:nodeclick={triggerSelection}
-            on:paneclick={triggerSelection}
-        >
-            <Controls position="bottom-right" />
-            <Background
-                class=" bg-menu-700"
-                patternColor={colorPallet.grid.patternColor}
-                variant={BackgroundVariant.Cross}
-            />
-            <MiniMap
-                bgColor={colorPallet.grid.background}
-                maskColor={colorPallet.grid.minimapMask}
-                nodeColor={(node) => (node.type !== 'segment' ? '#e2e2e2' : 'none')}
-                position="top-right"
-            />
-        </SvelteFlow>
-    {/key}
+
+    <SvelteFlow
+        {edges}
+        {nodes}
+        {nodeTypes}
+        fitView
+        minZoom={0.1}
+        proOptions={{ hideAttribution: true }}
+        nodesDraggable={true}
+        selectionOnDrag={false}
+        on:nodeclick={triggerSelection}
+        on:paneclick={triggerSelection}
+    >
+        <Controls position="bottom-right" />
+        <Background
+            class=" bg-menu-700"
+            patternColor={colorPallet.grid.patternColor}
+            variant={BackgroundVariant.Cross}
+        />
+        <MiniMap
+            bgColor={colorPallet.grid.background}
+            maskColor={colorPallet.grid.minimapMask}
+            nodeColor={(node) => (node.type !== 'segment' ? '#e2e2e2' : 'none')}
+            position="top-right"
+        />
+    </SvelteFlow>
 </div>

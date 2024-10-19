@@ -15,9 +15,7 @@
     type $$Props = NodeProps;
     export let data: $$Props['data'];
     export let selected: $$Props['selected'] = undefined;
-    const { call, status } = data as CallProps;
-    console.log('status call: ' + status);
-
+    $: ({ call, status } = data as CallProps);
     let expanded: boolean = true;
 </script>
 
