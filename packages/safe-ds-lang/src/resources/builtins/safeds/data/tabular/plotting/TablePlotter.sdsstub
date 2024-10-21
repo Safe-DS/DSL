@@ -14,7 +14,7 @@ from safeds.data.tabular.containers import Table
  *     val plotter = table.plot;
  * }
  */
-
+@Category(DataScienceCategory.BasicElement)
 class TablePlotter(table: Table) {
 /**
  * Create a box plot for every numerical column.
@@ -32,7 +32,7 @@ class TablePlotter(table: Table) {
     @Pure
     @PythonName("box_plots")
     @Category(
-        DataScienceCategory.DataExploration
+        DataScienceCategory.DataExplorationQVisualization
     )
     fun boxPlots(
         theme: literal<"dark", "light"> = "light"
@@ -75,7 +75,7 @@ class TablePlotter(table: Table) {
     @Pure
     @PythonName("correlation_heatmap")
     @Category(
-        DataScienceCategory.DataExploration
+        DataScienceCategory.DataExplorationQVisualization
     )
     fun correlationHeatmap(
         theme: literal<"dark", "light"> = "light"
@@ -98,7 +98,7 @@ class TablePlotter(table: Table) {
 
     @Pure
     @Category(
-        DataScienceCategory.DataExploration
+        DataScienceCategory.DataExplorationQVisualization
     )
     fun histograms(
         @PythonName("max_bin_count")
@@ -133,7 +133,7 @@ class TablePlotter(table: Table) {
     @Pure
     @PythonName("line_plot")
     @Category(
-        DataScienceCategory.DataExploration
+        DataScienceCategory.DataExplorationQVisualization
     )
     fun linePlot(
         @PythonName("x_name")
@@ -169,7 +169,7 @@ class TablePlotter(table: Table) {
     @Pure
     @PythonName("scatter_plot")
     @Category(
-        DataScienceCategory.DataExploration
+        DataScienceCategory.DataExplorationQVisualization
     )
     fun scatterPlot(
         @PythonName("x_name")

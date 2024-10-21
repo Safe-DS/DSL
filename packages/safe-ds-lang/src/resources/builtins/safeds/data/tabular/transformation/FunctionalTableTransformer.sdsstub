@@ -19,6 +19,7 @@ class FunctionalTableTransformer(
      * @result fittedTransformer Returns self, because this transformer is always fitted.
      */
     @Pure
+    @Category(DataScienceCategory.DataProcessingQTransformer)
     fun fit(
         table: Table
     ) -> fittedTransformer: FunctionalTableTransformer
@@ -33,6 +34,7 @@ class FunctionalTableTransformer(
      */
     @Pure
     @PythonName("fit_and_transform")
+    @Category(DataScienceCategory.DataProcessingQTransformer)
     fun fitAndTransform(
         table: Table
     ) -> (fittedTransformer: FunctionalTableTransformer, transformedTable: Table)

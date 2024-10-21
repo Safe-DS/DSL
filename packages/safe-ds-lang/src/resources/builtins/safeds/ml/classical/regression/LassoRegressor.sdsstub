@@ -41,7 +41,7 @@ class LassoRegressor(
      * @result fittedRegressor The fitted regressor.
      */
     @Pure
-    @Category(DataScienceCategory.Modeling)
+    @Category(DataScienceCategory.ModelingQClassicalRegression)
     fun fit(
         @PythonName("training_set") trainingSet: TabularDataset
     ) -> fittedRegressor: LassoRegressor

@@ -29,6 +29,7 @@ from safeds.data.tabular.typing import Schema
  *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
  * }
  */
+@Category(DataScienceCategory.BasicElement)
 class Table(
     data: Map<String, List<Any?>>? = null
 ) {
@@ -176,7 +177,7 @@ class Table(
      */
     @Pure
     @PythonName("add_columns")
-    @Category(DataScienceCategory.DataProcessing)
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun addColumns(
         columns: union<Column, List<Column>>
     ) -> newTable: Table
@@ -199,7 +200,7 @@ class Table(
      */
     @Pure
     @PythonName("add_computed_column")
-    @Category(DataScienceCategory.DataProcessing)
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun addComputedColumn(
         name: String,
         computer: (row: Row) -> computedCell: Cell
@@ -290,7 +291,7 @@ class Table(
      */
     @Pure
     @PythonName("remove_columns")
-    @Category(DataScienceCategory.DataProcessing)
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun removeColumns(
         names: union<List<String>, String>,
         @PythonName("ignore_unknown_names") ignoreUnknownNames: Boolean = false
@@ -312,7 +313,7 @@ class Table(
      */
     @Pure
     @PythonName("remove_columns_except")
-    @Category(DataScienceCategory.DataProcessing)
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun removeColumnsExcept(
         names: union<List<String>, String>
     ) -> newTable: Table
@@ -336,7 +337,7 @@ class Table(
      */
     @Pure
     @PythonName("remove_columns_with_missing_values")
-    @Category(DataScienceCategory.DataProcessing)
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun removeColumnsWithMissingValues() -> newTable: Table
 
     /**
@@ -355,7 +356,7 @@ class Table(
      */
     @Pure
     @PythonName("remove_non_numeric_columns")
-    @Category(DataScienceCategory.DataProcessing)
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun removeNonNumericColumns() -> newTable: Table
 
     /**
@@ -377,7 +378,7 @@ class Table(
      */
     @Pure
     @PythonName("rename_column")
-    @Category(DataScienceCategory.DataProcessing)
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun renameColumn(
         @PythonName("old_name") oldName: String,
         @PythonName("new_name") newName: String
@@ -426,7 +427,7 @@ class Table(
      */
     @Pure
     @PythonName("replace_column")
-    @Category(DataScienceCategory.DataProcessing)
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun replaceColumn(
         @PythonName("old_name") oldName: String,
         @PythonName("new_columns") newColumns: union<Column, List<Column>, Table>
@@ -451,7 +452,7 @@ class Table(
      */
     @Pure
     @PythonName("transform_column")
-    @Category(DataScienceCategory.DataProcessing)
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun transformColumn(
         name: String,
         transformer: (cell: Cell) -> transformedCell: Cell
@@ -491,6 +492,7 @@ class Table(
      */
     @Pure
     @PythonName("count_row_if")
+    @Category(DataScienceCategory.DataExplorationQGeneral)
     fun countRowIf(
         predicate: (cell: Row) -> satisfiesPredicate: Cell<Boolean?>,
         @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
@@ -512,7 +514,7 @@ class Table(
      */
     @Pure
     @PythonName("remove_duplicate_rows")
-    @Category(DataScienceCategory.DataProcessing)
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun removeDuplicateRows() -> newTable: Table
 
     /**
@@ -533,7 +535,7 @@ class Table(
      */
     @Pure
     @PythonName("remove_rows")
-    @Category(DataScienceCategory.DataProcessing)
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun removeRows(
         query: (row: Row) -> shouldRemoveRow: Cell<Boolean>
     ) -> newTable: Table
@@ -557,7 +559,7 @@ class Table(
      */
     @Pure
     @PythonName("remove_rows_by_column")
-    @Category(DataScienceCategory.DataProcessing)
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun removeRowsByColumn(
         name: String,
         query: (cell: Cell) -> shouldRemoveRow: Cell<Boolean>
@@ -581,7 +583,7 @@ class Table(
      */
     @Pure
     @PythonName("remove_rows_with_missing_values")
-    @Category(DataScienceCategory.DataProcessing)
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun removeRowsWithMissingValues(
         @PythonName("column_names") columnNames: List<String>? = null
     ) -> newTable: Table
@@ -621,7 +623,7 @@ class Table(
      */
     @Pure
     @PythonName("remove_rows_with_outliers")
-    @Category(DataScienceCategory.DataProcessing)
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun removeRowsWithOutliers(
         @PythonName("column_names") columnNames: List<String>? = null,
         @PythonName("z_score_threshold") zScoreThreshold: Float = 3.0
@@ -643,7 +645,7 @@ class Table(
      */
     @Pure
     @PythonName("shuffle_rows")
-    @Category(DataScienceCategory.DataProcessing)
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun shuffleRows() -> newTable: Table
 
     /**
@@ -673,7 +675,7 @@ class Table(
      */
     @Pure
     @PythonName("slice_rows")
-    @Category(DataScienceCategory.DataProcessing)
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun sliceRows(
         start: Int = 0,
         length: Int? = null
@@ -698,7 +700,7 @@ class Table(
      */
     @Pure
     @PythonName("sort_rows")
-    @Category(DataScienceCategory.DataProcessing)
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun sortRows(
         @PythonName("key_selector") keySelector: (row: Row) -> key: Cell,
         descending: Boolean = false
@@ -723,7 +725,7 @@ class Table(
      */
     @Pure
     @PythonName("sort_rows_by_column")
-    @Category(DataScienceCategory.DataProcessing)
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun sortRowsByColumn(
         name: String,
         descending: Boolean = false
@@ -754,7 +756,7 @@ class Table(
      */
     @Pure
     @PythonName("split_rows")
-    @Category(DataScienceCategory.DataProcessing)
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun splitRows(
         @PythonName("percentage_in_first") percentageInFirst: Float,
         shuffle: Boolean = true
@@ -782,7 +784,7 @@ class Table(
      */
     @Pure
     @PythonName("add_table_as_columns")
-    @Category(DataScienceCategory.DataProcessing)
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun addTableAsColumns(
         other: Table
     ) -> newTable: Table
@@ -809,7 +811,7 @@ class Table(
      */
     @Pure
     @PythonName("add_table_as_rows")
-    @Category(DataScienceCategory.DataProcessing)
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun addTableAsRows(
         other: Table
     ) -> newTable: Table
@@ -836,7 +838,7 @@ class Table(
      */
     @Pure
     @PythonName("inverse_transform_table")
-    @Category(DataScienceCategory.DataProcessing)
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun inverseTransformTable(
         @PythonName("fitted_transformer") fittedTransformer: InvertibleTableTransformer
     ) -> newTable: Table
@@ -889,7 +891,7 @@ class Table(
      */
     @Pure
     @PythonName("transform_table")
-    @Category(DataScienceCategory.DataProcessing)
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun transformTable(
         @PythonName("fitted_transformer") fittedTransformer: TableTransformer
     ) -> newTable: Table
@@ -907,7 +909,7 @@ class Table(
      */
     @Pure
     @PythonName("summarize_statistics")
-    @Category(DataScienceCategory.DataExploration)
+    @Category(DataScienceCategory.DataExplorationQMetric)
     fun summarizeStatistics() -> statistics: Table
 
     /**

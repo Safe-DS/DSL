@@ -11,6 +11,7 @@ from safeds.ml.nn.typing import ModelImageSize
  * @param padding the padding of the pooling
  */
 @Experimental
+@Category(DataScienceCategory.ModelingQNeuralNetwork)
 class MaxPooling2DLayer(
     @PythonName("kernel_size") kernelSize: Int,
     stride: Int = -1,

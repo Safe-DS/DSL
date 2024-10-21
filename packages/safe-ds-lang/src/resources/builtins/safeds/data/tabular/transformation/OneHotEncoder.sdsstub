@@ -61,6 +61,7 @@ class OneHotEncoder(
      * @result fittedTransformer The fitted transformer.
      */
     @Pure
+    @Category(DataScienceCategory.DataProcessingQTransformer)
     fun fit(
         table: Table
     ) -> fittedTransformer: OneHotEncoder
@@ -77,6 +78,7 @@ class OneHotEncoder(
      */
     @Pure
     @PythonName("fit_and_transform")
+    @Category(DataScienceCategory.DataProcessingQTransformer)
     fun fitAndTransform(
         table: Table
     ) -> (fittedTransformer: OneHotEncoder, transformedTable: Table)

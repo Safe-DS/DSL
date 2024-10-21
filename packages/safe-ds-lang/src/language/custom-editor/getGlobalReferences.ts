@@ -56,11 +56,11 @@ const getGlobalReferencesHandler = async (
                 );
             }
             if (element.node.parameterList) {
-                functionList.push({
-                    parent: name,
-                    name: "new",
-                    category: "Modeling",
-                });
+                // functionList.push({
+                //     parent: name,
+                //     name: "new",
+                //     category: "Modeling",
+                // });
             }
 
             resultList.push(...functionList);

@@ -38,7 +38,7 @@ class KNearestNeighborsClassifier(
      * @result fittedClassifier The fitted classifier.
      */
     @Pure
-    @Category(DataScienceCategory.Modeling)
+    @Category(DataScienceCategory.ModelingQClassicalClassification)
     fun fit(
         @PythonName("training_set") trainingSet: TabularDataset
     ) -> fittedClassifier: KNearestNeighborsClassifier

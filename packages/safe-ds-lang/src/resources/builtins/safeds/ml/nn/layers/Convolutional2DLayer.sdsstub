@@ -12,6 +12,7 @@ from safeds.ml.nn.typing import ModelImageSize
  * @param padding the padding of the convolution
  */
 @Experimental
+@Category(DataScienceCategory.ModelingQNeuralNetwork)
 class Convolutional2DLayer(
     @PythonName("output_channel") outputChannel: Int,
     @PythonName("kernel_size") kernelSize: Int,

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { Node as XYNode } from '@xyflow/svelte';
 import type { CallProps } from '../nodes/node-call.svelte';
 import type { PlaceholderProps } from '../nodes/node-placeholder.svelte';
@@ -21,7 +20,7 @@ export const getName = (xyNodeList: XYNode[]) => {
             return placeholder.name;
         }
         if (Object.keys(node.data).includes('genericExpression')) {
-            const { genericExpression } = node.data as GenericExpressionProps;
+            // const { genericExpression } = node.data as GenericExpressionProps;
             return 'Expression';
         }
         return '';
@@ -77,7 +76,7 @@ export const getParameterList = (xyNode: XYNode) => {
         return result;
     }
     if (Object.keys(xyNode.data).includes('genericExpression')) {
-        const { genericExpression } = xyNode.data as GenericExpressionProps;
+        // const { genericExpression } = xyNode.data as GenericExpressionProps;
         return [];
     }
     return [];
@@ -106,4 +105,25 @@ export const intersect = (list: Parameter[][]) => {
         });
 
     return intersection;
+};
+
+export const getTypeName = (xyNodeList: XYNode[]) => {
+    if (xyNodeList.length !== 1) return undefined;
+    const node = xyNodeList[0];
+
+    if (Object.keys(node.data).includes('call')) {
+        const { call } = node.data as CallProps;
+        if (call.resultList.length !== 1) return;
+        const result = call.resultList[0];
+        return result.type;
+    }
+    if (Object.keys(node.data).includes('placeholder')) {
+        const { placeholder } = node.data as PlaceholderProps;
+        return placeholder.type;
+    }
+    if (Object.keys(node.data).includes('genericExpression')) {
+        const { genericExpression } = node.data as GenericExpressionProps;
+        return genericExpression.type;
+    }
+    return;
 };

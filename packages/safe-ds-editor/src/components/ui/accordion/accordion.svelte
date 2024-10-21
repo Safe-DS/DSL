@@ -5,6 +5,7 @@
 
     export let name: string;
     export let className: ClassValue;
+    export let withIcon: boolean = true;
     export { className as class };
 
     let showPane: boolean = false;
@@ -23,9 +24,11 @@
     <ChevronRight
         class="duration-35 mr-2 h-4 w-4 shrink-0 transition-transform focus:outline-none"
     />
-    <div class="flex h-9 w-9 justify-center align-middle">
-        <slot name="icon" />
-    </div>
+    {#if withIcon}
+        <div class="flex h-9 w-9 justify-center align-middle">
+            <slot name="icon" />
+        </div>
+    {/if}
     {name}
 </button>
 {#if showPane}

@@ -13,6 +13,7 @@ from safeds.data.image.containers import Image
  *     val plotter = column.plot;
  * }
  */
+@Category(DataScienceCategory.BasicElement)
 class ColumnPlotter(
     column: Column<Any>
 ) {

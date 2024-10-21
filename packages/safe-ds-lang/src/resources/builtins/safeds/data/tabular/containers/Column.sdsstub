@@ -15,6 +15,7 @@ from safeds.data.tabular.typing import DataType
  *     val column = Column("test", [1, 2, 3]);
  * }
  */
+@Category(DataScienceCategory.BasicElement)
 class Column<out T = Any?>(
     name: String,
     data: List<T> = []
@@ -124,6 +125,7 @@ class Column<out T = Any?>(
      * }
      */
     @Pure
+    @Category(DataScienceCategory.DataExplorationQGeneral)
     fun all(
         predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
         @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
@@ -270,6 +272,7 @@ class Column<out T = Any?>(
      * }
      */
     @Pure
+    @Category(DataScienceCategory.DataProcessingQColumn)
     fun rename(
         @PythonName("new_name") newName: String
     ) -> renamedColumn: Column<T>
@@ -340,6 +343,7 @@ class Column<out T = Any?>(
      */
     @Pure
     @PythonName("correlation_with")
+    @Category(DataScienceCategory.DataExplorationQMetric)
     fun correlationWith(
         other: Column<Any>
     ) -> correlation: Float
@@ -359,6 +363,7 @@ class Column<out T = Any?>(
      */
     @Pure
     @PythonName("distinct_value_count")
+    @Category(DataScienceCategory.DataExplorationQMetric)
     fun distinctValueCount(
         @PythonName("ignore_missing_values") ignoreMissingValues: Boolean = true
     ) -> distinctValueCount: Int
@@ -387,6 +392,7 @@ class Column<out T = Any?>(
      * }
      */
     @Pure
+    @Category(DataScienceCategory.DataExplorationQMetric)
     fun idness() -> idness: Float
 
     /**
@@ -401,6 +407,7 @@ class Column<out T = Any?>(
      * }
      */
     @Pure
+    @Category(DataScienceCategory.DataExplorationQMetric)
     fun max() -> max: T?
 
     /**
@@ -417,6 +424,7 @@ class Column<out T = Any?>(
      * }
      */
     @Pure
+    @Category(DataScienceCategory.DataExplorationQMetric)
     fun mean() -> mean: T
 
     /**
@@ -434,6 +442,7 @@ class Column<out T = Any?>(
      * }
      */
     @Pure
+    @Category(DataScienceCategory.DataExplorationQMetric)
     fun median() -> median: T
 
     /**
@@ -448,6 +457,7 @@ class Column<out T = Any?>(
      * }
      */
     @Pure
+    @Category(DataScienceCategory.DataExplorationQMetric)
     fun min() -> min: T?
 
     /**
@@ -463,6 +473,7 @@ class Column<out T = Any?>(
      */
     @Pure
     @PythonName("missing_value_count")
+    @Category(DataScienceCategory.DataExplorationQMetric)
     fun missingValueCount() -> missingValueCount: Int
 
     /**
