@@ -33,10 +33,10 @@ describe('getCategory', () => {
             code: `
             package test
 
-            @Category(DataScienceCategory.DataPreparation)
+            @Category(DataScienceCategory.ModelEvaluationQVisualization)
             class Test
         `,
-            expected: 'DataPreparation',
+            expected: 'ModelEvaluationQVisualization',
         },
     ];
 

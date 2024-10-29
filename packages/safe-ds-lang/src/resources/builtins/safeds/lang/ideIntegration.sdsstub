@@ -68,7 +68,7 @@ enum DataScienceCategory {
      * Evaluate the performance of your model.
      */
     ModelEvaluationQMetric
-    ModelEvaluationQVisulization
+    ModelEvaluationQVisualization
 
     /**
      * Used in lambdas or in any parts of the pipeline.
