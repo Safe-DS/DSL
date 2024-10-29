@@ -122,9 +122,9 @@
             }, element.waitTime);
         });
         if (executionQueue[0]) {
-            executionQueue[0].chunk.forEach((node) =>
-                updateNodeData(node.id, { status: 'processing' }),
-            );
+            executionQueue[0].chunk.forEach((node) => {
+                updateNodeData(node.id, { status: 'processing' });
+            });
         }
     };
 
