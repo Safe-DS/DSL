@@ -46,5 +46,8 @@
         "flatten": "^1.0.3",
         "marked": "^14.0.0",
         "paneforge": "^0.0.5"
+    },
+    "optionalDependencies": {
+        "@rollup/rollup-linux-x64-gnu": "^4.24.2"
     }
 }
