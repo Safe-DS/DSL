@@ -2,6 +2,7 @@
     export type Category = {
         name: string;
         subcategories: Category[] | undefined;
+        filteredCount: number;
         elements: GlobalReference[];
     };
 </script>
@@ -18,6 +19,9 @@
     {#each category.elements as element}
         <span>{element.parent + '.' + element.name}</span>
     {/each}
+    {#if category.filteredCount > 0}
+        <span>{'Filtered Elements: ' + category.filteredCount}</span>
+    {/if}
 {:else}
     <div class="pl-3">
         {#each category.subcategories as subcategory}

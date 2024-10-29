@@ -43,62 +43,55 @@
     };
 
     $: categories = Array.from(
-        $globalReferences
-            .filter((ref) => {
-                if (!searchValue) return true;
-                return `${ref.parent}.${ref.name}`
-                    .toLowerCase()
-                    .includes(searchValue.toLowerCase());
-            })
-            // .filter((ref) => {
-            //     return (
-            //         !contextual ||
-            //         !typeName ||
-            //         ref.parent?.toLowerCase() === typeName?.toLowerCase()
-            //     );
-            // })
-            .reduce((categories, ref) => {
-                const categoryPath = ref.category ? ref.category.split('Q') : ['NotYetCategorized'];
+        $globalReferences.reduce((categories, ref) => {
+            const categoryPath = ref.category ? ref.category.split('Q') : ['NotYetCategorized'];
 
-                const insertRef = (path: string[], categories: Category[]) => {
-                    const match = categories.find((c) => c.name === path[0]);
-                    const last = path.length === 1;
-                    const filtered =
-                        contextual &&
+            const insertRef = (path: string[], categories: Category[]) => {
+                const match = categories.find((c) => c.name === path[0]);
+                const last = path.length === 1;
+                const filtered =
+                    (contextual &&
                         typeName &&
-                        ref.parent?.toLowerCase() !== typeName?.toLowerCase();
+                        ref.parent?.toLowerCase() !== typeName?.toLowerCase()) ||
+                    (searchValue &&
+                        !`${ref.parent}.${ref.name}`
+                            .toLowerCase()
+                            .includes(searchValue.toLowerCase()));
 
-                    if (match && last) {
-                        if (!filtered) match.elements.push(ref);
-                        return;
-                    }
-                    if (match && !last) {
-                        if (!match.subcategories) match.subcategories = [];
-                        insertRef(path.slice(1), match.subcategories);
-                    }
-                    if (!match && last) {
-                        const newCategory: Category = {
-                            name: path[0],
-                            subcategories: undefined,
-                            elements: !filtered ? [ref] : [],
-                        };
-                        categories.push(newCategory);
-                        return;
-                    }
-                    if (!match && !last) {
-                        const newCategory: Category = {
-                            name: path[0],
-                            subcategories: [],
-                            elements: [],
-                        };
-                        categories.push(newCategory);
-                        insertRef(path.slice(1), newCategory.subcategories!);
-                    }
-                };
-                insertRef(categoryPath, categories);
+                if (match && last) {
+                    if (!filtered) match.elements.push(ref);
+                    else match.filteredCount += 1;
+                    return;
+                }
+                if (match && !last) {
+                    if (!match.subcategories) match.subcategories = [];
+                    insertRef(path.slice(1), match.subcategories);
+                }
+                if (!match && last) {
+                    const newCategory: Category = {
+                        name: path[0],
+                        subcategories: undefined,
+                        filteredCount: !filtered ? 0 : 1,
+                        elements: !filtered ? [ref] : [],
+                    };
+                    categories.push(newCategory);
+                    return;
+                }
+                if (!match && !last) {
+                    const newCategory: Category = {
+                        name: path[0],
+                        subcategories: [],
+                        filteredCount: 0,
+                        elements: [],
+                    };
+                    categories.push(newCategory);
+                    insertRef(path.slice(1), newCategory.subcategories!);
+                }
+            };
+            insertRef(categoryPath, categories);
 
-                return categories;
-            }, [] as Category[]),
+            return categories;
+        }, [] as Category[]),
     ).sort(customSort);
 </script>
 

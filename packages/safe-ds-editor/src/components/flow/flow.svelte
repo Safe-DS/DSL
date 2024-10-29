@@ -102,7 +102,7 @@
         const executionQueue = placeholderList
             .reverse()
             .map((placeholder) => {
-                const waitTime = Math.floor(Math.random() * 10 + 2) * 500;
+                const waitTime = Math.floor(Math.random() * 12 + 4) * 500;
                 totalWaitTime = waitTime + totalWaitTime;
                 return { chunk: getChunk(placeholder), waitTime: totalWaitTime };
             })
