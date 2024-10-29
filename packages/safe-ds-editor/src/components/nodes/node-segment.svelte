@@ -11,7 +11,7 @@
     type $$Props = NodeProps;
     export let data: $$Props['data'];
     export let selected: $$Props['selected'] = undefined;
-    $: ({ segment, status } = data as SegmentProps);
+    $: ({ segment } = data as SegmentProps);
 </script>
 
 <div

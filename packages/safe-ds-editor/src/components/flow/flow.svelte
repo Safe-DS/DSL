@@ -6,11 +6,10 @@
         MiniMap,
         Background,
         BackgroundVariant,
-        type Node as XYNode,
         type Edge as XYEdge,
         useSvelteFlow,
     } from '@xyflow/svelte';
-    import { Edge, Segment, SegmentGroupId, type CustomError, type Graph } from '$global';
+    import { Segment, SegmentGroupId, type CustomError, type Graph } from '$global';
     import {
         callToNode,
         edgeToEdge,
@@ -51,7 +50,7 @@
 
         const findPrev = (node: NodeCustom) => {
             const incoming = findIncoming(node);
-            return $nodes.filter((node) => incoming.find((edge) => edge.source === node.id));
+            return $nodes.filter((e) => incoming.find((edge) => edge.source === e.id));
         };
 
         const getAllPreviousPlaceholders = (node: NodeCustom) => {
@@ -110,7 +109,9 @@
 
         executionQueue.forEach((element, index) => {
             setTimeout(() => {
-                element.chunk.forEach((node) => updateNodeData(node.id, { status: 'done' }));
+                element.chunk.forEach((node) => {
+                    updateNodeData(node.id, { status: 'done' });
+                });
                 const nextChunk = executionQueue[index + 1];
                 if (nextChunk)
                     nextChunk.chunk.forEach((node) => {
@@ -128,38 +129,38 @@
     };
 
     let latestCall = 0;
-    async function updateGraph(pipeline: Graph | Segment) {
+    const updateGraph = async (graph: Graph | Segment) => {
         const currentCall = ++latestCall;
-        const isSegment = pipeline.type == 'segment';
+        const isSegment = graph.type === 'segment';
         const nodeList = ([] as NodeCustom[])
             .concat(
-                pipeline.ast.callList.map((call) =>
+                graph.ast.callList.map((call) =>
                     callToNode(call, isSegment, () => {
                         dispatch('editSegment', call.name);
                     }),
                 ),
             )
             .concat(
-                pipeline.ast.placeholderList.map((placeholder) =>
+                graph.ast.placeholderList.map((placeholder) =>
                     placeholderToNode(placeholder, isSegment, runUntilHere),
                 ),
             )
             .concat(
-                pipeline.ast.genericExpressionList.map((genericExpression) =>
+                graph.ast.genericExpressionList.map((genericExpression) =>
                     genericExpressionToNode(genericExpression, isSegment),
                 ),
             )
-            .concat(isSegment ? [segmentToNode(pipeline as Segment)] : [])
+            .concat(isSegment ? [segmentToNode(graph as Segment)] : [])
             .sort((a, b) => a.id.localeCompare(b.id));
 
-        const edgeList: XYEdge[] = pipeline.ast.edgeList.map(edgeToEdge);
+        const edgeList: XYEdge[] = graph.ast.edgeList.map(edgeToEdge);
 
         const nodeListLayouted = await calculateLayout(
             nodeList,
             edgeList.filter(
                 (edge) =>
-                    !(edge.source == SegmentGroupId.toString()) &&
-                    !(edge.target == SegmentGroupId.toString()),
+                    !(edge.source === SegmentGroupId.toString()) &&
+                    !(edge.target === SegmentGroupId.toString()),
             ),
             isSegment,
         );
@@ -176,7 +177,7 @@
         nodes.set(nodeListLayouted);
         edges.set(edgeList);
         setTimeout(() => fitView(), 0);
-    }
+    };
 
     const triggerSelection = (event: CustomEvent) => {
         const selectedNodeList =
@@ -195,8 +196,8 @@
                     $nodes,
                     $edges.filter(
                         (edge) =>
-                            !(edge.source == SegmentGroupId.toString()) &&
-                            !(edge.target == SegmentGroupId.toString()),
+                            !(edge.source === SegmentGroupId.toString()) &&
+                            !(edge.target === SegmentGroupId.toString()),
                     ),
                     pipeline.type === 'segment',
                 );
@@ -212,7 +213,7 @@
         >
             <MenuIcon name={'layout'} className="w-7 h-7 p-1 stroke-text-normal" />
         </button>
-        {#if pipeline.type == 'segment'}
+        {#if pipeline.type === 'segment'}
             <button
                 class=" bg-menu-400 hover:bg-menu-300 rounded p-1"
                 title="Back"
@@ -223,7 +224,7 @@
         {/if}
         <div class="flex flex-row items-center gap-1 whitespace-pre">
             <span class=" text-text-muted">
-                {pipeline.type == 'segment' ? 'Segment:' : 'Pipeline:'}
+                {pipeline.type === 'segment' ? 'Segment:' : 'Pipeline:'}
             </span>
             {pipeline.name}
         </div>

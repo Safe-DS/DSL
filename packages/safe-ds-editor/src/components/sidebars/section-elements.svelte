@@ -43,11 +43,11 @@
     };
 
     $: categories = Array.from(
-        $globalReferences.reduce((categories, ref) => {
+        $globalReferences.reduce((reduceTarget, ref) => {
             const categoryPath = ref.category ? ref.category.split('Q') : ['NotYetCategorized'];
 
-            const insertRef = (path: string[], categories: Category[]) => {
-                const match = categories.find((c) => c.name === path[0]);
+            const insertRef = (path: string[], target: Category[]) => {
+                const match = target.find((c) => c.name === path[0]);
                 const last = path.length === 1;
                 const filtered =
                     (contextual &&
@@ -74,7 +74,7 @@
                         filteredCount: !filtered ? 0 : 1,
                         elements: !filtered ? [ref] : [],
                     };
-                    categories.push(newCategory);
+                    target.push(newCategory);
                     return;
                 }
                 if (!match && !last) {
@@ -84,13 +84,13 @@
                         filteredCount: 0,
                         elements: [],
                     };
-                    categories.push(newCategory);
+                    target.push(newCategory);
                     insertRef(path.slice(1), newCategory.subcategories!);
                 }
             };
-            insertRef(categoryPath, categories);
+            insertRef(categoryPath, reduceTarget);
 
-            return categories;
+            return reduceTarget;
         }, [] as Category[]),
     ).sort(customSort);
 </script>

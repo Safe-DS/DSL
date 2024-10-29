@@ -21,13 +21,13 @@
     let errorList = writable<CustomError[]>([]);
     let globalReferences = writable<GlobalReference[]>([]);
 
-    async function fetchParsedDocument() {
+    const fetchParsedDocument = async () => {
         const response = await MessageHandler.getAst();
         errorList.set(response.errorList);
         pipeline.set(response.pipeline);
         currentGraph.set(response.pipeline);
         segmentList.set(response.segmentList);
-    }
+    };
 
     MessageHandler.handleSyncEvent((elements) => {
         pipeline.set(elements.pipeline);
@@ -47,17 +47,17 @@
         }
     });
 
-    async function fetchGlobalReferences() {
+    const fetchGlobalReferences = async () => {
         const response = await MessageHandler.getGlobalReferences();
         globalReferences.set(response.globalReferences);
-    }
+    };
 
     onMount(async () => {
         await fetchParsedDocument();
         await fetchGlobalReferences();
     });
 
-    function handleError(error: CustomError) {
+    const handleError = (error: CustomError) => {
         if (error.action === 'block')
             errorList.update((array) => {
                 array.push(error);
@@ -65,7 +65,7 @@
             });
 
         if (error.action === 'notify') console.log(error.message);
-    }
+    };
     setContext('handleError', handleError);
 
     let selectedNodeList: XYNode[] = [];
@@ -73,11 +73,11 @@
     let mainSidebar: PaneAPI;
     let isCollapsed = false;
 
-    function handleEditSegment(event: CustomEvent<string>) {
+    const handleEditSegment = (event: CustomEvent<string>) => {
         const name: string = event.detail;
-        const segment = $segmentList.find((segment) => segment.name === name)!;
+        const segment = $segmentList.find((element) => element.name === name)!;
         currentGraph.set(segment);
-    }
+    };
 </script>
 
 {#if $errorList.length > 0}

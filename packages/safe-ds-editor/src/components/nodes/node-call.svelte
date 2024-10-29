@@ -23,18 +23,6 @@
     data-state={selected ? 'selected' : ''}
     class={` bg-node-normal [&[data-state=selected]]:shadow-highlight shadow-node relative w-[260px] cursor-default rounded-sm pb-2 focus-visible:outline-none`}
     on:dblclick={() => openSegmentEditor()}
-    on:mousedown={(event) => {
-        /*
-        Currenlty its not really helping to minimize nodes
-        (vertical screen space is not a limiting facotr)
-        Because of that this feature was not fully implemented.
-        
-        if (event.shiftKey) {
-            expanded = !expanded;
-        }
-        
-        */
-    }}
 >
     <div class="flex w-full flex-row items-center p-1">
         <CategoryIcon name={call.category} className="w-14 h-14 p-1 pr-4 stroke-text-normal" />
@@ -42,7 +30,7 @@
             <span class="text-text-muted truncate text-left text-lg">{call.self ?? ''}</span>
             <span class="text-text-normal truncate text-left text-2xl font-bold">{call.name}</span>
         </div>
-        {#if !call.self && !(call.category == 'Segment')}
+        {#if !call.self && !(call.category === 'Segment')}
             <Handle
                 type="target"
                 position={Position.Left}

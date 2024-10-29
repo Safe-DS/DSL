@@ -1,6 +1,5 @@
 import { Disposable, Uri, Webview } from 'vscode';
 import { LanguageClient, NotificationType, RequestType } from 'vscode-languageclient/node.js';
-import * as vscode from 'vscode';
 import { GetAst } from '$lang/language/custom-editor/getAst.js';
 import {
     AstInterface,

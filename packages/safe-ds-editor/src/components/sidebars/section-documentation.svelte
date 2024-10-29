@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { marked } from 'marked';
+    import Markdown from '@magidoc/plugin-svelte-marked';
     import { getDescription } from './utils';
     import { type Node as XYNode } from '@xyflow/svelte';
     import { cn } from '$src/pages/utils';
@@ -16,5 +16,5 @@
 </script>
 
 <div class={cn('flex h-full w-full select-text flex-col gap-3 text-wrap p-2 pl-3 pt-4', className)}>
-    {@html marked(description)}
+    <Markdown source={description} />
 </div>
