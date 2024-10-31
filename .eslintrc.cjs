@@ -7,8 +7,6 @@ module.exports = {
 
     extends: '@lars-reimann/svelte',
     rules: {
-        '@typescript-eslint/no-throw-literal': 'off',
-        '@typescript-eslint/only-throw-error': 'error',
         'import/extensions': 'off',
         'import/no-extraneous-dependencies': 'off',
         'svelte/valid-compile': 'off',
