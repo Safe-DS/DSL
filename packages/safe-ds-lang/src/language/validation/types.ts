@@ -161,17 +161,27 @@ export const infixOperationOperandsMustHaveCorrectType = (services: SafeDsServic
     return (node: SdsInfixOperation, accept: ValidationAcceptor): void => {
         const leftType = typeComputer.computeType(node.leftOperand);
         const rightType = typeComputer.computeType(node.rightOperand);
+        const cellType = coreTypes.Cell();
+
         switch (node.operator) {
             case 'or':
             case 'and':
-                if (node.leftOperand && !typeChecker.isSubtypeOf(leftType, coreTypes.Boolean)) {
-                    accept('error', `Expected type '${coreTypes.Boolean}' but got '${leftType}'.`, {
+                if (
+                    node.leftOperand &&
+                    !typeChecker.isSubtypeOf(leftType, coreTypes.Boolean) &&
+                    !typeChecker.isSubtypeOf(leftType, cellType)
+                ) {
+                    accept('error', `This operator is not defined for type '${leftType}'.`, {
                         node: node.leftOperand,
                         code: CODE_TYPE_MISMATCH,
                     });
                 }
-                if (node.rightOperand && !typeChecker.isSubtypeOf(rightType, coreTypes.Boolean)) {
-                    accept('error', `Expected type '${coreTypes.Boolean}' but got '${rightType}'.`, {
+                if (
+                    node.rightOperand &&
+                    !typeChecker.isSubtypeOf(rightType, coreTypes.Boolean) &&
+                    !typeChecker.isSubtypeOf(rightType, cellType)
+                ) {
+                    accept('error', `This operator is not defined for type '${rightType}'.`, {
                         node: node.rightOperand,
                         code: CODE_TYPE_MISMATCH,
                     });
@@ -202,9 +212,10 @@ export const infixOperationOperandsMustHaveCorrectType = (services: SafeDsServic
                 if (
                     node.leftOperand &&
                     !typeChecker.isSubtypeOf(leftType, coreTypes.Float) &&
-                    !typeChecker.isSubtypeOf(leftType, coreTypes.Int)
+                    !typeChecker.isSubtypeOf(leftType, coreTypes.Int) &&
+                    !typeChecker.isSubtypeOf(leftType, cellType)
                 ) {
-                    accept('error', `Expected type '${coreTypes.Float}' or '${coreTypes.Int}' but got '${leftType}'.`, {
+                    accept('error', `This operator is not defined for type '${leftType}'.`, {
                         node: node.leftOperand,
                         code: CODE_TYPE_MISMATCH,
                     });
@@ -212,16 +223,13 @@ export const infixOperationOperandsMustHaveCorrectType = (services: SafeDsServic
                 if (
                     node.rightOperand &&
                     !typeChecker.isSubtypeOf(rightType, coreTypes.Float) &&
-                    !typeChecker.isSubtypeOf(rightType, coreTypes.Int)
+                    !typeChecker.isSubtypeOf(rightType, coreTypes.Int) &&
+                    !typeChecker.isSubtypeOf(rightType, cellType)
                 ) {
-                    accept(
-                        'error',
-                        `Expected type '${coreTypes.Float}' or '${coreTypes.Int}' but got '${rightType}'.`,
-                        {
-                            node: node.rightOperand,
-                            code: CODE_TYPE_MISMATCH,
-                        },
-                    );
+                    accept('error', `This operator is not defined for type '${rightType}'.`, {
+                        node: node.rightOperand,
+                        code: CODE_TYPE_MISMATCH,
+                    });
                 }
                 return;
         }
@@ -338,10 +346,15 @@ export const prefixOperationOperandMustHaveCorrectType = (services: SafeDsServic
 
     return (node: SdsPrefixOperation, accept: ValidationAcceptor): void => {
         const operandType = typeComputer.computeType(node.operand);
+        const cellType = coreTypes.Cell(coreTypes.AnyOrNull);
+
         switch (node.operator) {
             case 'not':
-                if (!typeChecker.isSubtypeOf(operandType, coreTypes.Boolean)) {
-                    accept('error', `Expected type '${coreTypes.Boolean}' but got '${operandType}'.`, {
+                if (
+                    !typeChecker.isSubtypeOf(operandType, coreTypes.Boolean) &&
+                    !typeChecker.isSubtypeOf(operandType, cellType)
+                ) {
+                    accept('error', `This operator is not defined for type '${operandType}'.`, {
                         node,
                         property: 'operand',
                         code: CODE_TYPE_MISMATCH,
@@ -351,17 +364,14 @@ export const prefixOperationOperandMustHaveCorrectType = (services: SafeDsServic
             case '-':
                 if (
                     !typeChecker.isSubtypeOf(operandType, coreTypes.Float) &&
-                    !typeChecker.isSubtypeOf(operandType, coreTypes.Int)
+                    !typeChecker.isSubtypeOf(operandType, coreTypes.Int) &&
+                    !typeChecker.isSubtypeOf(operandType, cellType)
                 ) {
-                    accept(
-                        'error',
-                        `Expected type '${coreTypes.Float}' or '${coreTypes.Int}' but got '${operandType}'.`,
-                        {
-                            node,
-                            property: 'operand',
-                            code: CODE_TYPE_MISMATCH,
-                        },
-                    );
+                    accept('error', `This operator is not defined for type '${operandType}'.`, {
+                        node,
+                        property: 'operand',
+                        code: CODE_TYPE_MISMATCH,
+                    });
                 }
                 return;
         }

@@ -3,6 +3,7 @@ import { SafeDsModuleMembers } from './safe-ds-module-members.js';
 import { resourceNameToUri } from '../../helpers/resources.js';
 import { URI } from 'langium';
 
+const CELL_URI = resourceNameToUri('builtins/safeds/data/tabular/containers/Cell.sdsstub');
 const CORE_CLASSES_URI = resourceNameToUri('builtins/safeds/lang/coreClasses.sdsstub');
 const IMAGE_URI = resourceNameToUri('builtins/safeds/data/image/containers/Image.sdsstub');
 const TABLE_URI = resourceNameToUri('builtins/safeds/data/tabular/containers/Table.sdsstub');
@@ -14,6 +15,10 @@ export class SafeDsClasses extends SafeDsModuleMembers<SdsClass> {
 
     get Boolean(): SdsClass | undefined {
         return this.getClass('Boolean');
+    }
+
+    get Cell(): SdsClass | undefined {
+        return this.getClass('Cell', CELL_URI);
     }
 
     get Float(): SdsClass | undefined {

@@ -114,6 +114,8 @@ import {
 } from './utilityFunctions.js';
 import { CODEGEN_PREFIX } from './constants.js';
 import { SafeDsSlicer } from '../../flow/safe-ds-slicer.js';
+import { SafeDsTypeChecker } from '../../typing/safe-ds-type-checker.js';
+import { SafeDsCoreTypes } from '../../typing/safe-ds-core-types.js';
 
 const LAMBDA_PREFIX = `${CODEGEN_PREFIX}lambda_`;
 const BLOCK_LAMBDA_RESULT_PREFIX = `${CODEGEN_PREFIX}block_lambda_result_`;
@@ -130,18 +132,22 @@ const SPACING = new CompositeGeneratorNode(NL, NL);
 
 export class SafeDsPythonGenerator {
     private readonly builtinAnnotations: SafeDsAnnotations;
+    private readonly coreTypes: SafeDsCoreTypes;
     private readonly nodeMapper: SafeDsNodeMapper;
     private readonly partialEvaluator: SafeDsPartialEvaluator;
     private readonly purityComputer: SafeDsPurityComputer;
     private readonly slicer: SafeDsSlicer;
+    private readonly typeChecker: SafeDsTypeChecker;
     private readonly typeComputer: SafeDsTypeComputer;
 
     constructor(services: SafeDsServices) {
         this.builtinAnnotations = services.builtins.Annotations;
+        this.coreTypes = services.typing.CoreTypes;
         this.nodeMapper = services.helpers.NodeMapper;
         this.partialEvaluator = services.evaluation.PartialEvaluator;
         this.purityComputer = services.purity.PurityComputer;
         this.slicer = services.flow.Slicer;
+        this.typeChecker = services.typing.TypeChecker;
         this.typeComputer = services.typing.TypeComputer;
     }
 
@@ -722,19 +728,43 @@ export class SafeDsPythonGenerator {
         } else if (isSdsInfixOperation(expression)) {
             const leftOperand = this.generateExpression(expression.leftOperand, frame);
             const rightOperand = this.generateExpression(expression.rightOperand, frame);
+
+            const leftOperandType = this.typeComputer.computeType(expression.leftOperand);
+            const rightOperandType = this.typeComputer.computeType(expression.rightOperand);
+
             switch (expression.operator) {
                 case 'or':
-                    frame.addUtility(eagerOr);
-                    return expandTracedToNode(expression)`${traceToNode(
-                        expression,
-                        'operator',
-                    )(eagerOr.name)}(${leftOperand}, ${rightOperand})`;
+                    if (
+                        this.typeChecker.isSubtypeOf(leftOperandType, this.coreTypes.Boolean) &&
+                        this.typeChecker.isSubtypeOf(rightOperandType, this.coreTypes.Boolean)
+                    ) {
+                        frame.addUtility(eagerOr);
+                        return expandTracedToNode(expression)`${traceToNode(
+                            expression,
+                            'operator',
+                        )(eagerOr.name)}(${leftOperand}, ${rightOperand})`;
+                    } else {
+                        return expandTracedToNode(expression)`(${leftOperand}) ${traceToNode(
+                            expression,
+                            'operator',
+                        )('|')} (${rightOperand})`;
+                    }
                 case 'and':
-                    frame.addUtility(eagerAnd);
-                    return expandTracedToNode(expression)`${traceToNode(
-                        expression,
-                        'operator',
-                    )(eagerAnd.name)}(${leftOperand}, ${rightOperand})`;
+                    if (
+                        this.typeChecker.isSubtypeOf(leftOperandType, this.coreTypes.Boolean) &&
+                        this.typeChecker.isSubtypeOf(rightOperandType, this.coreTypes.Boolean)
+                    ) {
+                        frame.addUtility(eagerAnd);
+                        return expandTracedToNode(expression)`${traceToNode(
+                            expression,
+                            'operator',
+                        )(eagerAnd.name)}(${leftOperand}, ${rightOperand})`;
+                    } else {
+                        return expandTracedToNode(expression)`(${leftOperand}) ${traceToNode(
+                            expression,
+                            'operator',
+                        )('&')} (${rightOperand})`;
+                    }
                 case '?:':
                     frame.addUtility(eagerElvis);
                     return expandTracedToNode(expression)`${traceToNode(
@@ -807,7 +837,14 @@ export class SafeDsPythonGenerator {
             const operand = this.generateExpression(expression.operand, frame);
             switch (expression.operator) {
                 case 'not':
-                    return expandTracedToNode(expression)`${traceToNode(expression, 'operator')('not')} (${operand})`;
+                    const operandType = this.typeComputer.computeType(expression.operand);
+                    if (this.typeChecker.isSubtypeOf(operandType, this.coreTypes.Boolean)) {
+                        return expandTracedToNode(
+                            expression,
+                        )`${traceToNode(expression, 'operator')('not')} (${operand})`;
+                    } else {
+                        return expandTracedToNode(expression)`${traceToNode(expression, 'operator')('~')}(${operand})`;
+                    }
                 case '-':
                     return expandTracedToNode(expression)`${traceToNode(expression, 'operator')('-')}(${operand})`;
             }

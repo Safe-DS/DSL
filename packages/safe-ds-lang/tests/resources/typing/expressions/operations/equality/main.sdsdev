@@ -1,6 +1,8 @@
 package tests.typing.operations.equality
 
-pipeline myPipeline {
+@Pure fun cell() -> r: Cell<Number>
+
+pipeline basicOperands {
     // $TEST$ serialization literal<true>
     val equals = (»1 == 1«);
     // $TEST$ serialization literal<false>
@@ -19,4 +21,21 @@ pipeline myPipeline {
     val nonConstantIdenticalTo = (»1 === unresolved«);
     // $TEST$ serialization Boolean
     val nonConstantNotIdenticalTo = (»1 !== unresolved«);
+}
+
+pipeline cellOperands {
+    // $TEST$ serialization Cell<Boolean>
+    val equalsAnyCell = (»1 == cell()«);
+    // $TEST$ serialization Cell<Boolean>
+    val notEqualsAnyCell = (»1 != cell()«);
+
+    // $TEST$ serialization Cell<Boolean>
+    val equalsCellAny = (»cell() == 1«);
+    // $TEST$ serialization Cell<Boolean>
+    val notEqualsCellAny = (»cell() != 1«);
+
+    // $TEST$ serialization Cell<Boolean>
+    val equalsCellCell = (»cell() == cell()«);
+    // $TEST$ serialization Cell<Boolean>
+    val notEqualsCellCell = (»cell() != cell()«);
 }

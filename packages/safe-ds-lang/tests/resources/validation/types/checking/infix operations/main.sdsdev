@@ -1,131 +1,163 @@
 package tests.validation.types.checking.infixOperations
 
+@Pure fun cell() -> cell: Cell
+
 pipeline myPipeline {
 
-    // $TEST$ no error r"Expected type 'Boolean' but got .*\."
-    // $TEST$ no error r"Expected type 'Boolean' but got .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
     »true« or »true« ;
-    // $TEST$ error "Expected type 'Boolean' but got 'literal<0>'."
-    // $TEST$ error "Expected type 'Boolean' but got 'literal<0>'."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    »cell()« or »cell()«;
+    // $TEST$ error "This operator is not defined for type 'literal<0>'."
+    // $TEST$ error "This operator is not defined for type 'literal<0>'."
     »0« or »0«;
-    // $TEST$ error "Expected type 'Boolean' but got 'unknown'."
-    // $TEST$ error "Expected type 'Boolean' but got 'unknown'."
+    // $TEST$ error "This operator is not defined for type 'unknown'."
+    // $TEST$ error "This operator is not defined for type 'unknown'."
     »unresolved« or »unresolved«;
 
-    // $TEST$ no error r"Expected type 'Boolean' but got .*\."
-    // $TEST$ no error r"Expected type 'Boolean' but got .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
     »true« and »true«;
-    // $TEST$ error "Expected type 'Boolean' but got 'literal<0>'."
-    // $TEST$ error "Expected type 'Boolean' but got 'literal<0>'."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    »cell()« and »cell()«;
+    // $TEST$ error "This operator is not defined for type 'literal<0>'."
+    // $TEST$ error "This operator is not defined for type 'literal<0>'."
     »0« and »0«;
-    // $TEST$ error "Expected type 'Boolean' but got 'unknown'."
-    // $TEST$ error "Expected type 'Boolean' but got 'unknown'."
+    // $TEST$ error "This operator is not defined for type 'unknown'."
+    // $TEST$ error "This operator is not defined for type 'unknown'."
     »unresolved« and »unresolved«;
 
 
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
     »0.0« + »0.0«;
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
     »0« + »0«;
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<true>'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<false>'."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    »cell()« + »cell()«;
+    // $TEST$ error "This operator is not defined for type 'literal<true>'."
+    // $TEST$ error "This operator is not defined for type 'literal<false>'."
     »true« + »false«;
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
+    // $TEST$ error "This operator is not defined for type 'unknown'."
+    // $TEST$ error "This operator is not defined for type 'unknown'."
     »unresolved« + »unresolved«;
 
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
     »0.0« - »0.0«;
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
     »0« - »0«;
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    »cell()« - »cell()«;
+    // $TEST$ error "This operator is not defined for type 'literal<"">'."
+    // $TEST$ error "This operator is not defined for type 'literal<"">'."
     »""« - »""«;
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
+    // $TEST$ error "This operator is not defined for type 'unknown'."
+    // $TEST$ error "This operator is not defined for type 'unknown'."
     »unresolved« - »unresolved«;
 
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
     »0.0« * »0.0«;
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
     »0« * »0«;
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    »cell()« * »cell()«;
+    // $TEST$ error "This operator is not defined for type 'literal<"">'."
+    // $TEST$ error "This operator is not defined for type 'literal<"">'."
     »""« * »""«;
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
+    // $TEST$ error "This operator is not defined for type 'unknown'."
+    // $TEST$ error "This operator is not defined for type 'unknown'."
     »unresolved« * »unresolved«;
 
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
     »0.0« / »0.0«;
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
     »0« / »0«;
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    »cell()« / »cell()«;
+    // $TEST$ error "This operator is not defined for type 'literal<"">'."
+    // $TEST$ error "This operator is not defined for type 'literal<"">'."
     »""« / »""«;
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
+    // $TEST$ error "This operator is not defined for type 'unknown'."
+    // $TEST$ error "This operator is not defined for type 'unknown'."
     »unresolved« / »unresolved«;
 
 
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
     »0.0« < »0.0«;
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
     »0« < »0«;
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    »cell()« < »cell()«;
+    // $TEST$ error "This operator is not defined for type 'literal<"">'."
+    // $TEST$ error "This operator is not defined for type 'literal<"">'."
     »""« < »""«;
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
+    // $TEST$ error "This operator is not defined for type 'unknown'."
+    // $TEST$ error "This operator is not defined for type 'unknown'."
     »unresolved« < »unresolved«;
 
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
     »0.0« <= »0.0«;
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
     »0« <= »0«;
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    »cell()« <= »cell()«;
+    // $TEST$ error "This operator is not defined for type 'literal<"">'."
+    // $TEST$ error "This operator is not defined for type 'literal<"">'."
     »""« <= »""«;
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
+    // $TEST$ error "This operator is not defined for type 'unknown'."
+    // $TEST$ error "This operator is not defined for type 'unknown'."
     »unresolved« <= »unresolved«;
 
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
     »0.0« >= »0.0«;
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
     »0« >= »0«;
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    »cell()« >= »cell()«;
+    // $TEST$ error "This operator is not defined for type 'literal<"">'."
+    // $TEST$ error "This operator is not defined for type 'literal<"">'."
     »""« >= »""«;
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
+    // $TEST$ error "This operator is not defined for type 'unknown'."
+    // $TEST$ error "This operator is not defined for type 'unknown'."
     »unresolved« >= »unresolved«;
 
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
     »0.0« > »0.0«;
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
     »0« > »0«;
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    »cell()« > »cell()«;
+    // $TEST$ error "This operator is not defined for type 'literal<"">'."
+    // $TEST$ error "This operator is not defined for type 'literal<"">'."
     »""« > »""«;
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
+    // $TEST$ error "This operator is not defined for type 'unknown'."
+    // $TEST$ error "This operator is not defined for type 'unknown'."
     »unresolved« > »unresolved«;
 }
 
@@ -133,37 +165,37 @@ pipeline myPipeline {
 class MyClass<T sub Any>(
     p1: T,
 
-    // $TEST$ error "Expected type 'Boolean' but got 'T'."
-    // $TEST$ error "Expected type 'Boolean' but got 'T'."
+    // $TEST$ error "This operator is not defined for type 'T'."
+    // $TEST$ error "This operator is not defined for type 'T'."
     a1: Any? = »p1« or »p1«,
-    // $TEST$ error "Expected type 'Boolean' but got 'T'."
-    // $TEST$ error "Expected type 'Boolean' but got 'T'."
+    // $TEST$ error "This operator is not defined for type 'T'."
+    // $TEST$ error "This operator is not defined for type 'T'."
     a2: Any? = »p1« and »p1«,
 
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
+    // $TEST$ error "This operator is not defined for type 'T'."
+    // $TEST$ error "This operator is not defined for type 'T'."
     b1: Any? = »p1« + »p1«,
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
+    // $TEST$ error "This operator is not defined for type 'T'."
+    // $TEST$ error "This operator is not defined for type 'T'."
     b2: Any? = »p1« - »p1«,
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
+    // $TEST$ error "This operator is not defined for type 'T'."
+    // $TEST$ error "This operator is not defined for type 'T'."
     b3: Any? = »p1« * »p1«,
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
+    // $TEST$ error "This operator is not defined for type 'T'."
+    // $TEST$ error "This operator is not defined for type 'T'."
     b4: Any? = »p1« / »p1«,
 
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
+    // $TEST$ error "This operator is not defined for type 'T'."
+    // $TEST$ error "This operator is not defined for type 'T'."
     c1: Any? = »p1« < »p1«,
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
+    // $TEST$ error "This operator is not defined for type 'T'."
+    // $TEST$ error "This operator is not defined for type 'T'."
     c2: Any? = »p1« <= »p1«,
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
+    // $TEST$ error "This operator is not defined for type 'T'."
+    // $TEST$ error "This operator is not defined for type 'T'."
     c3: Any? = »p1« >= »p1«,
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
+    // $TEST$ error "This operator is not defined for type 'T'."
+    // $TEST$ error "This operator is not defined for type 'T'."
     c4: Any? = »p1« > »p1«,
 )
 

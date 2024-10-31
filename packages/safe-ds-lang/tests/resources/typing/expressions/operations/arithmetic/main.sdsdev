@@ -1,7 +1,9 @@
 package tests.typing.operations.arithmetic
 
-fun anyInt() -> r: Int
-fun anyFloat() -> r: Float
+@Pure fun anyInt() -> r: Int
+@Pure fun anyFloat() -> r: Float
+
+@Pure fun cell() -> r: Cell<Number>
 
 pipeline constantOperands {
     // $TEST$ serialization literal<2>
@@ -139,6 +141,74 @@ pipeline mixedOperands {
     val multiplicationFloatFloat = »1.5 * anyFloat()«;
     // $TEST$ serialization Float
     val divisionFloatFloat = »1.5 / anyFloat()«;
+}
+
+pipeline cellOperands {
+    // $TEST$ serialization Cell<Number>
+    val additionIntCell = »10 + cell()«;
+    // $TEST$ serialization Cell<Number>
+    val subtractionIntCell = »10 - cell()«;
+    // $TEST$ serialization Cell<Number>
+    val multiplicationIntCell = »10 * cell()«;
+    // $TEST$ serialization Cell<Number>
+    val divisionIntCell = »10 / cell()«;
+
+    // $TEST$ serialization Cell<Number>
+    val additionFloatCell = »1.5 + cell()«;
+    // $TEST$ serialization Cell<Number>
+    val subtractionFloatCell = »1.5 - cell()«;
+    // $TEST$ serialization Cell<Number>
+    val multiplicationFloatCell = »1.5 * cell()«;
+    // $TEST$ serialization Cell<Number>
+    val divisionFloatCell = »1.5 / cell()«;
+
+    // $TEST$ serialization Cell<Number>
+    val additionInvalidCell = »true + cell()«;
+    // $TEST$ serialization Cell<Number>
+    val subtractionInvalidCell = »true - cell()«;
+    // $TEST$ serialization Cell<Number>
+    val multiplicationInvalidCell = »true * cell()«;
+    // $TEST$ serialization Cell<Number>
+    val divisionInvalidCell = »true / cell()«;
+
+    // $TEST$ serialization Cell<Number>
+    val additionCellInt = »cell() + 10«;
+    // $TEST$ serialization Cell<Number>
+    val subtractionCellInt = »cell() - 10«;
+    // $TEST$ serialization Cell<Number>
+    val multiplicationCellInt = »cell() * 10«;
+    // $TEST$ serialization Cell<Number>
+    val divisionCellInt = »cell() / 10«;
+
+    // $TEST$ serialization Cell<Number>
+    val additionCellFloat = »cell() + 1.5«;
+    // $TEST$ serialization Cell<Number>
+    val subtractionCellFloat = »cell() - 1.5«;
+    // $TEST$ serialization Cell<Number>
+    val multiplicationCellFloat = »cell() * 1.5«;
+    // $TEST$ serialization Cell<Number>
+    val divisionCellFloat = »cell() / 1.5«;
+
+    // $TEST$ serialization Cell<Number>
+    val additionCellInvalid = »cell() + true«;
+    // $TEST$ serialization Cell<Number>
+    val subtractionCellInvalid = »cell() - true«;
+    // $TEST$ serialization Cell<Number>
+    val multiplicationCellInvalid = »cell() * true«;
+    // $TEST$ serialization Cell<Number>
+    val divisionCellInvalid = »cell() / true«;
+
+    // $TEST$ serialization Cell<Number>
+    val additionCellCell = »cell() + cell()«;
+    // $TEST$ serialization Cell<Number>
+    val subtractionCellCell = »cell() - cell()«;
+    // $TEST$ serialization Cell<Number>
+    val multiplicationCellCell = »cell() * cell()«;
+    // $TEST$ serialization Cell<Number>
+    val divisionCellCell = »cell() / cell()«;
+
+    // $TEST$ serialization Cell<Number>
+    val negationCell = »-cell()«;
 }
 
 // Strict checking of type parameter types
