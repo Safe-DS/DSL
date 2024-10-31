@@ -249,6 +249,21 @@ class Cell<out T = Any?> {
     ) -> result: Cell<Boolean>
 
     /**
+     * Check if not equal to a value. This WILL LATER BE equivalent to the `!=` operator.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("example", [1, 2]);
+     *     val result = column.transform((cell) -> cell.neq(2));
+     *     // Column("example", [true, false])
+     * }
+     */
+    @Pure
+    fun neq(
+        other: Any
+    ) -> result: Cell<Boolean>
+
+    /**
      * Check if greater than or equal to a value. This WILL LATER BE equivalent to the `>=` operator.
      *
      * @example
