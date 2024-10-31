@@ -1,17 +1,41 @@
 package tests.typing.operations.logical
 
-pipeline myPipeline {
+@Pure fun cell() -> r: Cell<Number>
+
+pipeline constantOperands {
     // $TEST$ serialization literal<true>
     val conjunction = »true and true«;
     // $TEST$ serialization literal<true>
     val disjunction = »true or true«;
     // $TEST$ serialization literal<false>
     val negation = »not true«;
+}
 
+pipeline invalidOperands {
     // $TEST$ serialization Boolean
     val conjunctionInvalid = »1 and 1«;
     // $TEST$ serialization Boolean
     val disjunctionInvalid = »1.0 or 1.0«;
     // $TEST$ serialization Boolean
     val negationInvalid = »not "true"«;
+}
+
+pipeline cellOperands {
+    // $TEST$ serialization Cell<Boolean>
+    val conjunctionBooleanCell = »true and cell()«;
+    // $TEST$ serialization Cell<Boolean>
+    val disjunctionBooleanCell = »true or cell()«;
+
+    // $TEST$ serialization Cell<Boolean>
+    val conjunctionCellBoolean = »cell() and true«;
+    // $TEST$ serialization Cell<Boolean>
+    val disjunctionCellBoolean = »cell() or true«;
+
+    // $TEST$ serialization Cell<Boolean>
+    val conjunctionCellCell = »cell() and cell()«;
+    // $TEST$ serialization Cell<Boolean>
+    val disjunctionCellCell = »cell() or cell()«;
+
+    // $TEST$ serialization Cell<Boolean>
+    val negationCell = »not cell()«;
 }

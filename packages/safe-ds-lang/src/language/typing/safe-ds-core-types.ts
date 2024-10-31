@@ -26,7 +26,7 @@ export class SafeDsCoreTypes {
         return this.createCoreType(this.builtinClasses.Boolean);
     }
 
-    Cell(wrappedType: Type): Type {
+    Cell(wrappedType: Type = this.AnyOrNull): Type {
         const cell = this.builtinClasses.Cell;
         const wrappedTypeParameter = getTypeParameters(cell)[0];
 
