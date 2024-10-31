@@ -28,7 +28,7 @@
         "@vitest/coverage-v8": "^1.6.0",
         "concurrently": "^8.2.2",
         "conventional-changelog-conventionalcommits": "^8.0.0",
-        "semantic-release": "^24.0.0",
+        "semantic-release": "^24.2.0",
         "shx": "^0.3.4",
         "svelte": "^4.2.19",
         "typescript": "^5.5.2",
