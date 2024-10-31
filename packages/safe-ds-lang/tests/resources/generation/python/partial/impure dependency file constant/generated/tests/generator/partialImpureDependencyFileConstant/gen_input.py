@@ -5,10 +5,10 @@ from tests.generator.partialImpureDependencyFileConstant import iFileReadA, iFil
 # Pipelines --------------------------------------------------------------------
 
 def testPipeline():
-    __gen_impureFileWrite = iFileWriteA()
-    __gen_impureFileWrite2 = iFileWriteA()
-    __gen_impureFileReadAgain = iFileReadA()
-    __gen_impureFileWriteB = iFileWriteB()
-    __gen_impureFileWrite2B = iFileWriteB()
-    __gen_impureFileReadAgainB = iFileReadB()
-    __gen_result = (__gen_impureFileReadAgain) + (__gen_impureFileReadAgainB)
+    __gen_placeholder_impureFileWrite = iFileWriteA()
+    __gen_placeholder_impureFileWrite2 = iFileWriteA()
+    __gen_placeholder_impureFileReadAgain = iFileReadA()
+    __gen_placeholder_impureFileWriteB = iFileWriteB()
+    __gen_placeholder_impureFileWrite2B = iFileWriteB()
+    __gen_placeholder_impureFileReadAgainB = iFileReadB()
+    __gen_placeholder_result = (__gen_placeholder_impureFileReadAgain) + (__gen_placeholder_impureFileReadAgainB)

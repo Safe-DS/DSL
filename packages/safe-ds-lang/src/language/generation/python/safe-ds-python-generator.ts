@@ -117,6 +117,7 @@ import { SafeDsSlicer } from '../../flow/safe-ds-slicer.js';
 
 const LAMBDA_PREFIX = `${CODEGEN_PREFIX}lambda_`;
 const BLOCK_LAMBDA_RESULT_PREFIX = `${CODEGEN_PREFIX}block_lambda_result_`;
+const PLACEHOLDER_PREFIX = `${CODEGEN_PREFIX}placeholder_`;
 const RECEIVER_PREFIX = `${CODEGEN_PREFIX}receiver_`;
 const YIELD_PREFIX = `${CODEGEN_PREFIX}yield_`;
 
@@ -538,7 +539,7 @@ export class SafeDsPythonGenerator {
                     assignmentStatements.push(
                         expandTracedToNode(
                             savableAssignment,
-                        )`${RUNNER_PACKAGE}.save_placeholder('${savableAssignment.name}', ${CODEGEN_PREFIX}${savableAssignment.name})`,
+                        )`${RUNNER_PACKAGE}.save_placeholder('${savableAssignment.name}', ${PLACEHOLDER_PREFIX}${savableAssignment.name})`,
                     );
                 }
             }
@@ -557,7 +558,7 @@ export class SafeDsPythonGenerator {
                 'name',
             )(assignee.name)}`;
         } else if (isSdsPlaceholder(assignee)) {
-            return expandTracedToNode(assignee)`${CODEGEN_PREFIX}${assignee.name}`;
+            return expandTracedToNode(assignee)`${PLACEHOLDER_PREFIX}${assignee.name}`;
         } else if (isSdsWildcard(assignee)) {
             return traceToNode(assignee)('_');
         } else if (isSdsYield(assignee)) {
@@ -572,7 +573,8 @@ export class SafeDsPythonGenerator {
 
     private generateBlockLambda(blockLambda: SdsBlockLambda, frame: GenerationInfoFrame): Generated {
         const results = streamBlockLambdaResults(blockLambda).toArray();
-        const lambdaBlock = this.generateBlock(blockLambda.body, frame, true);
+        const lambdaFrame = frame.newScope();
+        const lambdaBlock = this.generateBlock(blockLambda.body, lambdaFrame, true);
         if (results.length !== 0) {
             lambdaBlock.appendNewLine();
             lambdaBlock.append(
@@ -815,7 +817,7 @@ export class SafeDsPythonGenerator {
             frame.addImport(referenceImport);
 
             if (isSdsPlaceholder(declaration)) {
-                return traceToNode(expression)(`${CODEGEN_PREFIX}${declaration.name}`);
+                return traceToNode(expression)(`${PLACEHOLDER_PREFIX}${declaration.name}`);
             } else {
                 return traceToNode(expression)(referenceImport?.alias ?? this.getPythonNameOrDefault(declaration));
             }
