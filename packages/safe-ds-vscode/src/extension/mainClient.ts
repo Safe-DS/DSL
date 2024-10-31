@@ -319,12 +319,13 @@ export const getPipelineDocument = async function (
             (document) =>
                 !(
                     ast.isSdsModule(document.parseResult.value) &&
-                    (<ast.SdsModule>document.parseResult.value).name === 'safeds.lang'
+                    (<ast.SdsModule>document.parseResult.value).name.startsWith('safeds')
                 ),
         )
         .forEach((oldDocument) => {
             services.shared.workspace.LangiumDocuments.deleteDocument(oldDocument.uri);
         });
+
     const workspaceSdsFiles = await vscode.workspace.findFiles('**/*.{sds,sdsstub,sdsdev}');
     // Load all documents
     const unvalidatedSdsDocuments = await Promise.all(
