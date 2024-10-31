@@ -23,5 +23,5 @@ def test():
     def __gen_lambda_4(a, b=2):
         __gen_block_lambda_result_d = g()
         return __gen_block_lambda_result_d
-    __gen_c = f3(__gen_lambda_4)
-    g2(__gen_c)
+    __gen_placeholder_c = f3(__gen_lambda_4)
+    g2(__gen_placeholder_c)

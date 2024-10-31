@@ -15,11 +15,11 @@ def myPipeline():
             {},
             []
         )
-    __gen_result = safeds_runner.memoized_static_call(
+    __gen_placeholder_result = safeds_runner.memoized_static_call(
         "tests.generation.python.runnerIntegration.expressionLambdas.f",
         f,
         [__gen_lambda_0],
         {},
         []
     )
-    safeds_runner.save_placeholder('result', __gen_result)
+    safeds_runner.save_placeholder('result', __gen_placeholder_result)

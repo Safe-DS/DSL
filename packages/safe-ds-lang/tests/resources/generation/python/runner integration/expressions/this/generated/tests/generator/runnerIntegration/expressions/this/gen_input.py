@@ -13,11 +13,11 @@ def myPipeline():
         {},
         []
     )
-    __gen_a = safeds_runner.memoized_dynamic_call(
+    __gen_placeholder_a = safeds_runner.memoized_dynamic_call(
         __gen_receiver_0,
         "myFunction",
         [],
         {"p": __gen_receiver_0},
         []
     )
-    safeds_runner.save_placeholder('a', __gen_a)
+    safeds_runner.save_placeholder('a', __gen_placeholder_a)
