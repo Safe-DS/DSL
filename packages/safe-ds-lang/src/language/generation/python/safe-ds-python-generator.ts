@@ -573,7 +573,8 @@ export class SafeDsPythonGenerator {
 
     private generateBlockLambda(blockLambda: SdsBlockLambda, frame: GenerationInfoFrame): Generated {
         const results = streamBlockLambdaResults(blockLambda).toArray();
-        const lambdaBlock = this.generateBlock(blockLambda.body, frame, true);
+        const lambdaFrame = frame.newScope();
+        const lambdaBlock = this.generateBlock(blockLambda.body, lambdaFrame, true);
         if (results.length !== 0) {
             lambdaBlock.appendNewLine();
             lambdaBlock.append(

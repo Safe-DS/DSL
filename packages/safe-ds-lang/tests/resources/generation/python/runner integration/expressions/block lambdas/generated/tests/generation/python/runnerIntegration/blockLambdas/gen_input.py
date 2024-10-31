@@ -24,14 +24,14 @@ def myPipeline():
         []
     )
     safeds_runner.save_placeholder('_result', __gen_placeholder__result)
+    __gen_receiver_2 = safeds_runner.memoized_static_call(
+        "tests.generation.python.runnerIntegration.blockLambdas.C",
+        C,
+        [],
+        {},
+        []
+    )
     def __gen_lambda_4(a):
-        __gen_receiver_2 = safeds_runner.memoized_static_call(
-            "tests.generation.python.runnerIntegration.blockLambdas.C",
-            C,
-            [],
-            {},
-            []
-        )
         __gen_receiver_3 = a
         __gen_block_lambda_result_result = safeds_runner.memoized_dynamic_call(
             __gen_receiver_3,
