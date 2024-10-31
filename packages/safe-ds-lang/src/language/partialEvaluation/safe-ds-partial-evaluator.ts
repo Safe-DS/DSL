@@ -77,16 +77,22 @@ import {
     substitutionsAreEqual,
     UnknownEvaluatedNode,
 } from './model.js';
+import type { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
+import { SafeDsCoreTypes } from '../typing/safe-ds-core-types.js';
 
 export class SafeDsPartialEvaluator {
     private readonly astNodeLocator: AstNodeLocator;
+    private readonly coreTypes: SafeDsCoreTypes;
     private readonly nodeMapper: SafeDsNodeMapper;
+    private readonly typeComputer: () => SafeDsTypeComputer;
 
     private readonly cache: WorkspaceCache<string, EvaluatedNode>;
 
     constructor(services: SafeDsServices) {
         this.astNodeLocator = services.workspace.AstNodeLocator;
+        this.coreTypes = services.typing.CoreTypes;
         this.nodeMapper = services.helpers.NodeMapper;
+        this.typeComputer = () => services.typing.TypeComputer;
 
         this.cache = new WorkspaceCache(services.shared);
     }
@@ -357,7 +363,10 @@ export class SafeDsPartialEvaluator {
     ): EvaluatedNode {
         // Short-circuit
         if (evaluatedLeft.equals(trueConstant)) {
-            return trueConstant;
+            const rightType = this.typeComputer().computeType(rightOperand);
+            if (rightType.equals(this.coreTypes.Boolean)) {
+                return trueConstant;
+            }
         }
 
         // Compute the result if both operands are constant booleans
@@ -377,7 +386,10 @@ export class SafeDsPartialEvaluator {
     ): EvaluatedNode {
         // Short-circuit
         if (evaluatedLeft.equals(falseConstant)) {
-            return falseConstant;
+            const rightType = this.typeComputer().computeType(rightOperand);
+            if (rightType.equals(this.coreTypes.Boolean)) {
+                return falseConstant;
+            }
         }
 
         // Compute the result if both operands are constant booleans
