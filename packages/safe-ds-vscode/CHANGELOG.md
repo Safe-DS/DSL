@@ -1,3 +1,14 @@
+## [0.19.0](https://github.com/Safe-DS/DSL/compare/v0.18.0...v0.19.0) (2024-10-31)
+
+### Features
+
+* allow use of operators for cells ([#1247](https://github.com/Safe-DS/DSL/issues/1247)) ([2930357](https://github.com/Safe-DS/DSL/commit/293035736994f56fadba58e594ce2f1dec0c6e8b)), closes [#1165](https://github.com/Safe-DS/DSL/issues/1165)
+* show "print" code lens for some nullable types ([#1248](https://github.com/Safe-DS/DSL/issues/1248)) ([492120c](https://github.com/Safe-DS/DSL/commit/492120ccc6706345d9a3e3058ffb148b6b2ac665))
+
+### Bug Fixes
+
+* generate code for receivers outside of block lambdas ([#1246](https://github.com/Safe-DS/DSL/issues/1246)) ([0d27e33](https://github.com/Safe-DS/DSL/commit/0d27e33e198e9a1d21169dc5a2e66fbe61428e09))
+
 ## [0.18.0](https://github.com/Safe-DS/DSL/compare/v0.17.0...v0.18.0) (2024-09-25)
 
 ### Features
