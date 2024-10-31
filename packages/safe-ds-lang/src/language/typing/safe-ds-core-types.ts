@@ -26,6 +26,19 @@ export class SafeDsCoreTypes {
         return this.createCoreType(this.builtinClasses.Boolean);
     }
 
+    Cell(wrappedType: Type): Type {
+        const cell = this.builtinClasses.Cell;
+        const wrappedTypeParameter = getTypeParameters(cell)[0];
+
+        if (!cell || !wrappedTypeParameter) {
+            /* c8 ignore next 2 */
+            return UnknownType;
+        }
+
+        let substitutions = new Map([[wrappedTypeParameter, wrappedType]]);
+        return new ClassType(cell, substitutions, false);
+    }
+
     get Float(): Type {
         return this.createCoreType(this.builtinClasses.Float);
     }
