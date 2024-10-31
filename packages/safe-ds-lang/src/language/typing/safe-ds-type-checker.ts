@@ -372,7 +372,6 @@ export class SafeDsTypeChecker {
     canBePrinted = (type: Type): boolean => {
         return (
             !type.equals(this.coreTypes.Nothing) &&
-            !type.equals(this.coreTypes.NothingOrNull) &&
             [
                 this.coreTypes.Boolean,
                 this.coreTypes.Float,
@@ -380,7 +379,7 @@ export class SafeDsTypeChecker {
                 this.coreTypes.List(UnknownType),
                 this.coreTypes.Map(UnknownType, UnknownType),
                 this.coreTypes.String,
-            ].some((it) => this.isSubtypeOf(type, it, { ignoreTypeParameters: true }))
+            ].some((it) => this.isSubtypeOf(type.withExplicitNullability(false), it, { ignoreTypeParameters: true }))
         );
     };
 

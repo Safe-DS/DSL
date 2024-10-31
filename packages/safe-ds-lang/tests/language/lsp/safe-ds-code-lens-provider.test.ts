@@ -26,7 +26,7 @@ describe('SafeDsCodeLensProvider', () => {
                 code: `pipeline myPipeline {
                     val a = null;
                 }`,
-                expectedCodeLensTitles: ['Run myPipeline'],
+                expectedCodeLensTitles: ['Run myPipeline', 'Print a'],
             },
             {
                 testName: 'pipeline with Image placeholder',
