@@ -326,19 +326,22 @@ export const getPipelineDocument = async function (
             services.shared.workspace.LangiumDocuments.deleteDocument(oldDocument.uri);
         });
 
-    const workspaceSdsFiles = await vscode.workspace.findFiles('**/*.{sds,sdsstub,sdsdev}');
-    // Load all documents
-    const unvalidatedSdsDocuments = await Promise.all(
-        workspaceSdsFiles.map((newDocumentUri) =>
-            services.shared.workspace.LangiumDocuments.getOrCreateDocument(newDocumentUri),
-        ),
-    );
-    // Validate them
-    const validationErrorMessage = await validateDocuments(services, unvalidatedSdsDocuments);
-    if (validationErrorMessage) {
-        vscode.window.showErrorMessage(validationErrorMessage);
-        return;
-    }
+    // TODO: Needs a more robust way for validation. Only files that are used by the main file should be validated.
+    //  For now, we are better off disabling this check, since users cannot run pipelines if any file in their workspace
+    //  has an error.
+    // const workspaceSdsFiles = await vscode.workspace.findFiles('**/*.{sds,sdsstub,sdsdev}');
+    // // Load all documents
+    // const unvalidatedSdsDocuments = await Promise.all(
+    //     workspaceSdsFiles.map((newDocumentUri) =>
+    //         services.shared.workspace.LangiumDocuments.getOrCreateDocument(newDocumentUri),
+    //     ),
+    // );
+    // // Validate them
+    // const validationErrorMessage = await validateDocuments(services, unvalidatedSdsDocuments);
+    // if (validationErrorMessage) {
+    //     vscode.window.showErrorMessage(validationErrorMessage);
+    //     return;
+    // }
 
     let mainDocument;
     if (!services.shared.workspace.LangiumDocuments.hasDocument(pipelinePath)) {
