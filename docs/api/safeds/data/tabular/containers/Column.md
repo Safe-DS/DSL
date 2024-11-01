@@ -78,7 +78,7 @@ pipeline example {
         ) -> distinctValues: List<T?>
 
         /**
-         * Return the column value at specified index. This WILL LATER BE equivalent to the `[]` operator (indexed access).
+         * Return the column value at specified index. This is equivalent to the `[]` operator (indexed access).
          *
          * Nonnegative indices are counted from the beginning (starting at 0), negative indices from the end (starting at
          * -1).
@@ -91,6 +91,12 @@ pipeline example {
          * pipeline example {
          *     val column = Column("test", [1, 2, 3]);
          *     val result = column.getValue(1); // 2
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("test", [1, 2, 3]);
+         *     val result = column[1]; // 2
          * }
          */
         @Pure
@@ -695,7 +701,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="126"
+    ```sds linenums="132"
     @Pure
     fun all(
         predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
@@ -754,7 +760,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="169"
+    ```sds linenums="175"
     @Pure
     fun any(
         predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
@@ -804,7 +810,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="341"
+    ```sds linenums="347"
     @Pure
     @PythonName("correlation_with")
     fun correlationWith(
@@ -858,7 +864,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="207"
+    ```sds linenums="213"
     @Pure
     fun countIf(
         predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
@@ -893,7 +899,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="360"
+    ```sds linenums="366"
     @Pure
     @PythonName("distinct_value_count")
     fun distinctValueCount(
@@ -927,7 +933,7 @@ pipeline example {
 
 ## <code class="doc-symbol doc-symbol-function"></code> `getValue` {#safeds.data.tabular.containers.Column.getValue data-toc-label='[function] getValue'}
 
-Return the column value at specified index. This WILL LATER BE equivalent to the `[]` operator (indexed access).
+Return the column value at specified index. This is equivalent to the `[]` operator (indexed access).
 
 Nonnegative indices are counted from the beginning (starting at 0), negative indices from the end (starting at
 -1).
@@ -952,10 +958,16 @@ pipeline example {
     val result = column.getValue(1); // 2
 }
 ```
+```sds
+pipeline example {
+    val column = Column("test", [1, 2, 3]);
+    val result = column[1]; // 2
+}
+```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="83"
+    ```sds linenums="89"
     @Pure
     @PythonName("get_value")
     fun getValue(
@@ -996,7 +1008,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="389"
+    ```sds linenums="395"
     @Pure
     fun idness() -> idness: Float
     ```
@@ -1022,7 +1034,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="403"
+    ```sds linenums="409"
     @Pure
     fun max() -> max: T?
     ```
@@ -1050,7 +1062,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="419"
+    ```sds linenums="425"
     @Pure
     fun mean() -> mean: T
     ```
@@ -1079,7 +1091,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="436"
+    ```sds linenums="442"
     @Pure
     fun median() -> median: T
     ```
@@ -1105,7 +1117,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="450"
+    ```sds linenums="456"
     @Pure
     fun min() -> min: T?
     ```
@@ -1131,7 +1143,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="464"
+    ```sds linenums="470"
     @Pure
     @PythonName("missing_value_count")
     fun missingValueCount() -> missingValueCount: Int
@@ -1164,7 +1176,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="485"
+    ```sds linenums="491"
     @Pure
     @PythonName("missing_value_ratio")
     fun missingValueRatio() -> missingValueRatio: Float
@@ -1200,7 +1212,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="505"
+    ```sds linenums="511"
     @Pure
     fun mode(
         @PythonName("ignore_missing_values") ignoreMissingValues: Boolean = true,
@@ -1258,7 +1270,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="250"
+    ```sds linenums="256"
     @Pure
     fun none(
         predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
@@ -1296,7 +1308,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="272"
+    ```sds linenums="278"
     @Pure
     fun rename(
         @PythonName("new_name") newName: String
@@ -1330,7 +1342,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="527"
+    ```sds linenums="533"
     @Pure
     fun stability() -> stability: Float
     ```
@@ -1358,7 +1370,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="544"
+    ```sds linenums="550"
     @Pure
     @PythonName("standard_deviation")
     fun standardDeviation() -> standardDeviation: Float
@@ -1385,7 +1397,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="309"
+    ```sds linenums="315"
     @Pure
     @PythonName("summarize_statistics")
     fun summarizeStatistics() -> statistics: Table
@@ -1412,7 +1424,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="576"
+    ```sds linenums="582"
     @Pure
     @PythonName("to_list")
     fun toList() -> values: List<T>
@@ -1440,7 +1452,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="592"
+    ```sds linenums="598"
     @Pure
     @PythonName("to_table")
     fun toTable() -> table: Table
@@ -1482,7 +1494,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="293"
+    ```sds linenums="299"
     @Pure
     fun transform<R>(
         transformer: (cell: Cell<T>) -> transformedCell: Cell<R>
@@ -1512,7 +1524,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="562"
+    ```sds linenums="568"
     @Pure
     fun variance() -> variance: Float
     ```
