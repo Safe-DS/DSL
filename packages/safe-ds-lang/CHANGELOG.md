@@ -1,3 +1,10 @@
+## [0.20.0](https://github.com/Safe-DS/DSL/compare/v0.19.0...v0.20.0) (2024-11-01)
+
+### Features
+
+* indexed access for columns and rows ([#1252](https://github.com/Safe-DS/DSL/issues/1252)) ([896165a](https://github.com/Safe-DS/DSL/commit/896165abdc30f38c3ad99f171f7187de4965d351))
+* show default values of parameters in signature help ([#1251](https://github.com/Safe-DS/DSL/issues/1251)) ([ff8fa13](https://github.com/Safe-DS/DSL/commit/ff8fa135ada4710c460cf1e9b8e24f12b88bf916)), closes [#1147](https://github.com/Safe-DS/DSL/issues/1147)
+
 ## [0.19.0](https://github.com/Safe-DS/DSL/compare/v0.18.0...v0.19.0) (2024-10-31)
 
 ### Features
