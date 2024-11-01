@@ -65,7 +65,7 @@ class Column<out T = Any?>(
     ) -> distinctValues: List<T?>
 
     /**
-     * Return the column value at specified index. This WILL LATER BE equivalent to the `[]` operator (indexed access).
+     * Return the column value at specified index. This is equivalent to the `[]` operator (indexed access).
      *
      * Nonnegative indices are counted from the beginning (starting at 0), negative indices from the end (starting at
      * -1).
@@ -78,6 +78,12 @@ class Column<out T = Any?>(
      * pipeline example {
      *     val column = Column("test", [1, 2, 3]);
      *     val result = column.getValue(1); // 2
+     * }
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("test", [1, 2, 3]);
+     *     val result = column[1]; // 2
      * }
      */
     @Pure
