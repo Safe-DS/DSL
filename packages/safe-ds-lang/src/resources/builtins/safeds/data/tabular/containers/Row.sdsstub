@@ -33,6 +33,7 @@ class Row {
      * pipeline example {
      *     val table = Table({"col1": [1, 2], "col2": [3, 4]});
      *     val result = table.removeRows((row) -> row.getValue("col1") == 1);
+     * }
      *
      * @example
      * pipeline example {

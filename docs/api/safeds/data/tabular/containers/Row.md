@@ -39,6 +39,7 @@ This class cannot be instantiated directly. It is only used for arguments of cal
          * pipeline example {
          *     val table = Table({"col1": [1, 2], "col2": [3, 4]});
          *     val result = table.removeRows((row) -> row.getValue("col1") == 1);
+         * }
          *
          * @example
          * pipeline example {
@@ -117,7 +118,7 @@ Get the type of the specified column.
 
 ??? quote "Stub code in `Row.sdsstub`"
 
-    ```sds linenums="57"
+    ```sds linenums="58"
     @Pure
     @PythonName("get_column_type")
     fun getColumnType(
@@ -147,6 +148,7 @@ Get the value of the specified column. This is equivalent to the `[]` operator (
 pipeline example {
     val table = Table({"col1": [1, 2], "col2": [3, 4]});
     val result = table.removeRows((row) -> row.getValue("col1") == 1);
+}
 ```
 ```sds
 pipeline example {
@@ -158,7 +160,7 @@ pipeline example {
 
 ??? quote "Stub code in `Row.sdsstub`"
 
-    ```sds linenums="44"
+    ```sds linenums="45"
     @Pure
     @PythonName("get_value")
     fun getValue(
@@ -184,7 +186,7 @@ Check if the row has a column with the specified name.
 
 ??? quote "Stub code in `Row.sdsstub`"
 
-    ```sds linenums="70"
+    ```sds linenums="71"
     @Pure
     @PythonName("has_column")
     fun hasColumn(

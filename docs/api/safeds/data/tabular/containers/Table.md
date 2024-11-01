@@ -190,7 +190,7 @@ pipeline example {
          * @example
          * pipeline example {
          *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
-         *     val result = table.addComputedColumn("c", (row) -> row.getValue("a") + row.getValue("b"));
+         *     val result = table.addComputedColumn("c", (row) -> row["a"] + row["b"]);
          * }
          */
         @Pure
@@ -468,13 +468,13 @@ pipeline example {
          * @example
          * pipeline example {
          *     val table = Table({"col1": [1, 2, 3], "col2": [1, 3, 3]});
-         *     val result = table.countRowIf((row) -> row.getValue("col1") == row.getValue("col2")); // 2
+         *     val result = table.countRowIf((row) -> row["col1"] == row["col2"]); // 2
          * }
          *
          * @example
          * pipeline example {
          *     val table = Table({"col1": [1, 2, 3], "col2": [1, 3, 3]});
-         *     val result = table.countRowIf((row) -> row.getValue("col1") > row.getValue("col2")); // 0
+         *     val result = table.countRowIf((row) -> row["col1"] > row["col2"]); // 0
          * }
          */
         @Pure
@@ -514,7 +514,7 @@ pipeline example {
          * @example
          * pipeline example {
          *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
-         *     val result = table.removeRows((row) -> row.getValue("a") == 2);
+         *     val result = table.removeRows((row) -> row["a"] == 2);
          *     // Table({"a": [1, 3], "b": [4, 6]})
          * }
          */
@@ -673,7 +673,7 @@ pipeline example {
          * @example
          * pipeline example {
          *     val table = Table({"a": [2, 1, 3], "b": [1, 1, 2]});
-         *     val result = table.sortRows((row) -> row.getValue("a") - row.getValue("b"));
+         *     val result = table.sortRows((row) -> row["a"] - row["b"]);
          *     // Table({"a": [1, 2, 3], "b": [1, 1, 2]})
          * }
          */
@@ -1147,7 +1147,7 @@ Return a new table with an additional computed column.
 ```sds hl_lines="3"
 pipeline example {
     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
-    val result = table.addComputedColumn("c", (row) -> row.getValue("a") + row.getValue("b"));
+    val result = table.addComputedColumn("c", (row) -> row["a"] + row["b"]);
 }
 ```
 
@@ -1280,13 +1280,13 @@ if the predicate returns null at least once. Otherwise, it still returns how oft
 ```sds hl_lines="3"
 pipeline example {
     val table = Table({"col1": [1, 2, 3], "col2": [1, 3, 3]});
-    val result = table.countRowIf((row) -> row.getValue("col1") == row.getValue("col2")); // 2
+    val result = table.countRowIf((row) -> row["col1"] == row["col2"]); // 2
 }
 ```
 ```sds hl_lines="3"
 pipeline example {
     val table = Table({"col1": [1, 2, 3], "col2": [1, 3, 3]});
-    val result = table.countRowIf((row) -> row.getValue("col1") > row.getValue("col2")); // 0
+    val result = table.countRowIf((row) -> row["col1"] > row["col2"]); // 0
 }
 ```
 
@@ -1690,7 +1690,7 @@ Return a new table without rows that satisfy a condition.
 ```sds hl_lines="3"
 pipeline example {
     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
-    val result = table.removeRows((row) -> row.getValue("a") == 2);
+    val result = table.removeRows((row) -> row["a"] == 2);
     // Table({"a": [1, 3], "b": [4, 6]})
 }
 ```
@@ -2044,7 +2044,7 @@ Return a new table with the rows sorted.
 ```sds hl_lines="3"
 pipeline example {
     val table = Table({"a": [2, 1, 3], "b": [1, 1, 2]});
-    val result = table.sortRows((row) -> row.getValue("a") - row.getValue("b"));
+    val result = table.sortRows((row) -> row["a"] - row["b"]);
     // Table({"a": [1, 2, 3], "b": [1, 1, 2]})
 }
 ```
