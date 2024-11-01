@@ -160,7 +160,7 @@ import {
     attributeMustHaveTypeHint,
     callReceiverMustBeCallable,
     indexedAccessIndexMustHaveCorrectType,
-    indexedAccessReceiverMustBeListOrMap,
+    indexedAccessReceiverMustHaveCorrectType,
     infixOperationOperandsMustHaveCorrectType,
     listMustNotContainNamedTuples,
     mapMustNotContainNamedTuples,
@@ -294,7 +294,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsIndexedAccess: [
             indexedAccessIndexMustBeValid(services),
             indexedAccessIndexMustHaveCorrectType(services),
-            indexedAccessReceiverMustBeListOrMap(services),
+            indexedAccessReceiverMustHaveCorrectType(services),
         ],
         SdsInfixOperation: [
             divisionDivisorMustNotBeZero(services),

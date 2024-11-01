@@ -326,7 +326,7 @@ export class SafeDsTypeChecker {
      * Checks whether {@link type} is allowed as the type of the receiver of an indexed access.
      */
     canBeAccessedByIndex = (type: Type): boolean => {
-        return this.isList(type) || this.isMap(type);
+        return this.isColumn(type) || this.isList(type) || this.isMap(type) || this.isRow(type);
     };
 
     /**
@@ -407,6 +407,21 @@ export class SafeDsTypeChecker {
     };
 
     /**
+     * Checks whether {@link type} is some kind of column (with any element type).
+     */
+    isColumn(type: Type): type is ClassType | TypeVariable {
+        const columnOrNull = this.coreTypes.Column(UnknownType).withExplicitNullability(true);
+
+        return (
+            !type.equals(this.coreTypes.Nothing) &&
+            !type.equals(this.coreTypes.NothingOrNull) &&
+            this.isSubtypeOf(type, columnOrNull, {
+                ignoreTypeParameters: true,
+            })
+        );
+    }
+
+    /**
      * Checks whether {@link type} is some kind of image.
      */
     isImage(type: Type): type is ClassType {
@@ -448,6 +463,19 @@ export class SafeDsTypeChecker {
             this.isSubtypeOf(type, mapOrNull, {
                 ignoreTypeParameters: true,
             })
+        );
+    }
+
+    /**
+     * Checks whether {@link type} is some kind of row.
+     */
+    isRow(type: Type): type is ClassType | TypeVariable {
+        const rowOrNull = this.coreTypes.Row.withExplicitNullability(true);
+
+        return (
+            !type.equals(this.coreTypes.Nothing) &&
+            !type.equals(this.coreTypes.NothingOrNull) &&
+            this.isSubtypeOf(type, rowOrNull)
         );
     }
 

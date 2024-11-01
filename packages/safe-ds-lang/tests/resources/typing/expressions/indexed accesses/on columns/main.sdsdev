@@ -1,96 +1,96 @@
-package tests.typing.expressions.indexedAccesses.onMaps
+package tests.typing.expressions.indexedAccesses.onColumns
 
-class MyMap sub Map<String, Int>
+class IntColumn sub Column<Int>
 
-segment mySegment(param1: Map<String, Int>, param2: Map<String, Int?>, param3: Map<String, Int>?, param4: MyMap) {
+segment mySegment(param1: Column<Int>, param2: Column<Int?>, param3: Column<Int>?, param4: IntColumn) {
     // $TEST$ serialization Int
-    »param1[""]«;
+    »param1[0]«;
 
     // $TEST$ serialization Int
     »param1[unresolved]«;
 
     // $TEST$ serialization Int?
-    »param2[""]«;
+    »param2[0]«;
 
     // $TEST$ serialization Int?
     »param2[unresolved]«;
 
     // $TEST$ serialization Int
-    »param3[""]«;
+    »param3[0]«;
 
     // $TEST$ serialization Int
     »param3[unresolved]«;
 
     // $TEST$ serialization Int
-    »param4[""]«;
+    »param4[0]«;
 
     // $TEST$ serialization Int
     »param4[unresolved]«;
 
 
     // $TEST$ serialization Int
-    »param1?[""]«;
+    »param1?[0]«;
 
     // $TEST$ serialization Int
     »param1?[unresolved]«;
 
     // $TEST$ serialization Int?
-    »param2?[""]«;
+    »param2?[0]«;
 
     // $TEST$ serialization Int?
     »param2?[unresolved]«;
 
     // $TEST$ serialization Int?
-    »param3?[""]«;
+    »param3?[0]«;
 
     // $TEST$ serialization Int?
     »param3?[unresolved]«;
 
     // $TEST$ serialization Int
-    »param4?[""]«;
+    »param4?[0]«;
 
     // $TEST$ serialization Int
     »param4?[unresolved]«;
 }
 
-class MyClass<MyMap sub Map<String, Int>, MyNullableMap sub Map<String, Int>?>(
-    param1: MyMap,
-    param2: MyMap?,
-    param3: MyNullableMap,
+class MyClass<MyColumn sub Column<Int>, MyNullableColumn sub Column<Int>?>(
+    param1: MyColumn,
+    param2: MyColumn?,
+    param3: MyNullableColumn,
 
     // $TEST$ serialization Int
-    p1: Any? = »param1[""]«,
+    p1: Any? = »param1[0]«,
 
     // $TEST$ serialization Int
     p2: Any? = »param1[unresolved]«,
 
     // $TEST$ serialization Int
-    p3: Any? = »param2[""]«,
+    p3: Any? = »param2[0]«,
 
     // $TEST$ serialization Int
     p4: Any? = »param2[unresolved]«,
 
     // $TEST$ serialization Int
-    p5: Any? = »param3[""]«,
+    p5: Any? = »param3[0]«,
 
     // $TEST$ serialization Int
     p6: Any? = »param3[unresolved]«,
 
 
     // $TEST$ serialization Int
-    p7: Any? = »param1?[""]«,
+    p7: Any? = »param1?[0]«,
 
     // $TEST$ serialization Int
     p8: Any? = »param1?[unresolved]«,
 
     // $TEST$ serialization Int?
-    p9: Any? = »param2?[""]«,
+    p9: Any? = »param2?[0]«,
 
     // $TEST$ serialization Int?
     p10: Any? = »param2?[unresolved]«,
 
     // $TEST$ serialization Int?
-    p11: Any? = »param3?[""]«,
+    p11: Any? = »param3?[0]«,
 
     // $TEST$ serialization Int?
     p12: Any? = »param3?[unresolved]«,

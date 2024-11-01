@@ -99,7 +99,7 @@ export const callReceiverMustBeCallable = (services: SafeDsServices) => {
     };
 };
 
-export const indexedAccessReceiverMustBeListOrMap = (services: SafeDsServices) => {
+export const indexedAccessReceiverMustHaveCorrectType = (services: SafeDsServices) => {
     const typeChecker = services.typing.TypeChecker;
     const typeComputer = services.typing.TypeComputer;
 
@@ -111,7 +111,7 @@ export const indexedAccessReceiverMustBeListOrMap = (services: SafeDsServices) =
 
         const receiverType = typeComputer.computeType(node.receiver);
         if (!typeChecker.canBeAccessedByIndex(receiverType)) {
-            accept('error', `Expected type 'List<T>' or 'Map<K, V>' but got '${receiverType}'.`, {
+            accept('error', `Indexed access is not defined for type '${receiverType}'.`, {
                 node: node.receiver,
                 code: CODE_TYPE_MISMATCH,
             });
@@ -127,10 +127,19 @@ export const indexedAccessIndexMustHaveCorrectType = (services: SafeDsServices) 
 
     return (node: SdsIndexedAccess, accept: ValidationAcceptor): void => {
         const receiverType = typeComputer.computeType(node.receiver);
-        if (typeChecker.isList(receiverType)) {
+        if (typeChecker.isColumn(receiverType) || typeChecker.isList(receiverType)) {
             const indexType = typeComputer.computeType(node.index);
             if (!typeChecker.isSubtypeOf(indexType, coreTypes.Int)) {
                 accept('error', `Expected type '${coreTypes.Int}' but got '${indexType}'.`, {
+                    node,
+                    property: 'index',
+                    code: CODE_TYPE_MISMATCH,
+                });
+            }
+        } else if (typeChecker.isRow(receiverType)) {
+            const indexType = typeComputer.computeType(node.index);
+            if (!typeChecker.isSubtypeOf(indexType, coreTypes.String)) {
+                accept('error', `Expected type '${coreTypes.String}' but got '${indexType}'.`, {
                     node,
                     property: 'index',
                     code: CODE_TYPE_MISMATCH,

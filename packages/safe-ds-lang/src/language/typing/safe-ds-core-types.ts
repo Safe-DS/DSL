@@ -39,6 +39,19 @@ export class SafeDsCoreTypes {
         return new ClassType(cell, substitutions, false);
     }
 
+    Column(elementType: Type): Type {
+        const column = this.builtinClasses.Column;
+        const elementTypeParameter = getTypeParameters(column)[0];
+
+        if (!column || !elementTypeParameter) {
+            /* c8 ignore next 2 */
+            return UnknownType;
+        }
+
+        let substitutions = new Map([[elementTypeParameter, elementType]]);
+        return new ClassType(column, substitutions, false);
+    }
+
     get Float(): Type {
         return this.createCoreType(this.builtinClasses.Float);
     }
@@ -91,6 +104,10 @@ export class SafeDsCoreTypes {
 
     get Number(): Type {
         return this.createCoreType(this.builtinClasses.Number);
+    }
+
+    get Row(): Type {
+        return this.createCoreType(this.builtinClasses.Row);
     }
 
     get String(): Type {

@@ -29,7 +29,7 @@ This class cannot be instantiated directly. It is only used for arguments of cal
         attr ^schema: Schema
 
         /**
-         * Get the value of the specified column. This WILL LATER BE equivalent to using the `[]` operator (indexed access).
+         * Get the value of the specified column. This is equivalent to the `[]` operator (indexed access).
          *
          * @param name The name of the column.
          *
@@ -39,6 +39,12 @@ This class cannot be instantiated directly. It is only used for arguments of cal
          * pipeline example {
          *     val table = Table({"col1": [1, 2], "col2": [3, 4]});
          *     val result = table.removeRows((row) -> row.getValue("col1") == 1);
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table({"col1": [1, 2], "col2": [3, 4]});
+         *     val result = table.removeRows((row) -> row["col1"] == 1);
          *     // Table({"col1": [2], "col2": [4]})
          * }
          */
@@ -46,7 +52,7 @@ This class cannot be instantiated directly. It is only used for arguments of cal
         @PythonName("get_value")
         fun getValue(
             name: String
-        ) -> value: Cell<Any>
+        ) -> value: Cell
 
         /**
          * Get the type of the specified column.
@@ -112,7 +118,7 @@ Get the type of the specified column.
 
 ??? quote "Stub code in `Row.sdsstub`"
 
-    ```sds linenums="52"
+    ```sds linenums="58"
     @Pure
     @PythonName("get_column_type")
     fun getColumnType(
@@ -122,7 +128,7 @@ Get the type of the specified column.
 
 ## <code class="doc-symbol doc-symbol-function"></code> `getValue` {#safeds.data.tabular.containers.Row.getValue data-toc-label='[function] getValue'}
 
-Get the value of the specified column. This WILL LATER BE equivalent to using the `[]` operator (indexed access).
+Get the value of the specified column. This is equivalent to the `[]` operator (indexed access).
 
 **Parameters:**
 
@@ -134,7 +140,7 @@ Get the value of the specified column. This WILL LATER BE equivalent to using th
 
 | Name | Type | Description |
 |------|------|-------------|
-| `value` | [`Cell<Any>`][safeds.data.tabular.containers.Cell] | The value of the column. |
+| `value` | [`Cell<Any?>`][safeds.data.tabular.containers.Cell] | The value of the column. |
 
 **Examples:**
 
@@ -142,18 +148,24 @@ Get the value of the specified column. This WILL LATER BE equivalent to using th
 pipeline example {
     val table = Table({"col1": [1, 2], "col2": [3, 4]});
     val result = table.removeRows((row) -> row.getValue("col1") == 1);
+}
+```
+```sds
+pipeline example {
+    val table = Table({"col1": [1, 2], "col2": [3, 4]});
+    val result = table.removeRows((row) -> row["col1"] == 1);
     // Table({"col1": [2], "col2": [4]})
 }
 ```
 
 ??? quote "Stub code in `Row.sdsstub`"
 
-    ```sds linenums="39"
+    ```sds linenums="45"
     @Pure
     @PythonName("get_value")
     fun getValue(
         name: String
-    ) -> value: Cell<Any>
+    ) -> value: Cell
     ```
 
 ## <code class="doc-symbol doc-symbol-function"></code> `hasColumn` {#safeds.data.tabular.containers.Row.hasColumn data-toc-label='[function] hasColumn'}
@@ -174,7 +186,7 @@ Check if the row has a column with the specified name.
 
 ??? quote "Stub code in `Row.sdsstub`"
 
-    ```sds linenums="65"
+    ```sds linenums="71"
     @Pure
     @PythonName("has_column")
     fun hasColumn(

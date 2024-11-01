@@ -489,20 +489,37 @@ export class SafeDsTypeComputer {
             return UnknownType;
         }
 
+        // Receiver is a column
+        const columnType = this.computeMatchingSupertype(receiverType, this.coreClasses.Column);
+        if (columnType) {
+            const elementType = columnType.getTypeParameterTypeByIndex(0);
+            return elementType.withExplicitNullability(
+                elementType.isExplicitlyNullable || (columnType.isExplicitlyNullable && node.isNullSafe),
+            );
+        }
+
         // Receiver is a list
         const listType = this.computeMatchingSupertype(receiverType, this.coreClasses.List);
         if (listType) {
-            return listType
-                .getTypeParameterTypeByIndex(0)
-                .withExplicitNullability(listType.isExplicitlyNullable && node.isNullSafe);
+            const elementType = listType.getTypeParameterTypeByIndex(0);
+            return elementType.withExplicitNullability(
+                elementType.isExplicitlyNullable || (listType.isExplicitlyNullable && node.isNullSafe),
+            );
         }
 
         // Receiver is a map
         const mapType = this.computeMatchingSupertype(receiverType, this.coreClasses.Map);
         if (mapType) {
-            return mapType
-                .getTypeParameterTypeByIndex(1)
-                .withExplicitNullability(mapType.isExplicitlyNullable && node.isNullSafe);
+            const valueType = mapType.getTypeParameterTypeByIndex(1);
+            return valueType.withExplicitNullability(
+                valueType.isExplicitlyNullable || (mapType.isExplicitlyNullable && node.isNullSafe),
+            );
+        }
+
+        // Receiver is a row
+        const rowType = this.computeMatchingSupertype(receiverType, this.coreClasses.Row);
+        if (rowType) {
+            return this.coreTypes.Cell().withExplicitNullability(rowType.isExplicitlyNullable && node.isNullSafe);
         }
 
         return UnknownType;
