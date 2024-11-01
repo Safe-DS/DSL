@@ -11,25 +11,25 @@ segment mySegment(
     myList: MyList,
     myMap: MyMap,
 ) {
-    // $TEST$ no error r"Expected type 'List<T>' or 'Map<K, V>' but got .*\."
+    // $TEST$ no error r"Indexed access is not defined for type .*\."
     »[1]«[0];
-    // $TEST$ no error r"Expected type 'List<T>' or 'Map<K, V>' but got .*\."
+    // $TEST$ no error r"Indexed access is not defined for type .*\."
     »{0: 1}«[0];
-    // $TEST$ error "Expected type 'List<T>' or 'Map<K, V>' but got 'literal<1>'."
+    // $TEST$ error "Indexed access is not defined for type 'literal<1>'."
     »1«[0];
 
-    // $TEST$ no error r"Expected type 'List<T>' or 'Map<K, V>' but got .*\."
+    // $TEST$ no error r"Indexed access is not defined for type .*\."
     »listOrNull«[0];
-    // $TEST$ no error r"Expected type 'List<T>' or 'Map<K, V>' but got .*\."
+    // $TEST$ no error r"Indexed access is not defined for type .*\."
     »mapOrNull«[""];
-    // $TEST$ error "Expected type 'List<T>' or 'Map<K, V>' but got 'Int?'."
+    // $TEST$ error "Indexed access is not defined for type 'Int?'."
     »intOrNull«[0];
 
-    // $TEST$ no error r"Expected type 'List<T>' or 'Map<K, V>' but got .*\."
+    // $TEST$ no error r"Indexed access is not defined for type .*\."
     »myList«[0];
-    // $TEST$ no error r"Expected type 'List<T>' or 'Map<K, V>' but got .*\."
+    // $TEST$ no error r"Indexed access is not defined for type .*\."
     »myMap«[""];
-    // $TEST$ error "Expected type 'List<T>' or 'Map<K, V>' but got 'unknown'."
+    // $TEST$ error "Indexed access is not defined for type 'unknown'."
     »unresolved«[0];
 }
 
@@ -37,6 +37,6 @@ segment mySegment(
 class MyClass<T sub Any>(
     p1: T,
 
-    // $TEST$ error "Expected type 'List<T>' or 'Map<K, V>' but got 'T'."
+    // $TEST$ error "Indexed access is not defined for type 'T'."
     p2: Any? = »p1«[0],
 )

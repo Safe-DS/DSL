@@ -1,44 +1,35 @@
-package tests.validation.types.checking.indexedAccessOnList
+package tests.validation.types.checking.indexedAccessOnColumn
 
-@Pure fun list() -> list: List<Int>
+@Pure fun column() -> column: Column<Int>
 @Pure fun index() -> index: Int
 
 pipeline myPipeline {
     // $TEST$ no error r"Expected type .* but got .*\."
-    [0][»0«];
+    column()[»0«];
 
     // $TEST$ error "Expected type 'Int' but got 'literal<"">'."
-    [0][»""«];
+    column()[»""«];
 
     // $TEST$ no error r"Expected type .* but got .*\."
-    [0][»index()«];
-
-    // $TEST$ no error r"Expected type .* but got .*\."
-    list()[»0«];
-
-    // $TEST$ error "Expected type 'Int' but got 'literal<"">'."
-    list()[»""«];
-
-    // $TEST$ no error r"Expected type .* but got .*\."
-    list()[»index()«];
+    column()[»index()«];
 
     // $TEST$ no error r"Expected type .* but got .*\."
     unresolved[»""«];
 }
 
-class MyList sub List<Int>
+class MyColumn sub Column<Int>
 
 segment mySegment(
-    myList: MyList,
+    myColumn: MyColumn,
 ) {
     // $TEST$ no error r"Expected type .* but got .*\."
-    myList[»0«];
+    myColumn[»0«];
 
     // $TEST$ error "Expected type 'Int' but got 'literal<"">'."
-    myList[»""«];
+    myColumn[»""«];
 
     // $TEST$ no error r"Expected type .* but got .*\."
-    myList[»index()«];
+    myColumn[»index()«];
 }
 
 // Strict checking of type parameter types
@@ -46,5 +37,5 @@ class MyClass<T sub Any>(
     p1: T,
 
     // $TEST$ error "Expected type 'Int' but got 'T'."
-    a: Any? = [0][»p1«],
+    a: Any? = column()[»p1«],
 )
