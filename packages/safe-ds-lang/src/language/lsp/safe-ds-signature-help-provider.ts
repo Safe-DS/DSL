@@ -16,11 +16,10 @@ import type {
 } from 'vscode-languageserver';
 import { createMarkupContent } from '../documentation/safe-ds-comment-provider.js';
 import { isSdsAbstractCall, SdsCallable, SdsParameter } from '../generated/ast.js';
-import { getParameters, Parameter } from '../helpers/nodeProperties.js';
+import { getParameters } from '../helpers/nodeProperties.js';
 import { type SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import type { SafeDsServices } from '../safe-ds-module.js';
 import { type SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
-import { CallableType, NamedType } from '../typing/model.js';
 import { SignatureHelpProvider } from 'langium/lsp';
 
 export class SafeDsSignatureHelpProvider implements SignatureHelpProvider {
@@ -88,17 +87,11 @@ export class SafeDsSignatureHelpProvider implements SignatureHelpProvider {
     }
 
     private getLabel(callable: SdsCallable): string {
-        const type = this.typeComputer.computeType(callable);
-
-        if (type instanceof NamedType) {
-            return `${type.declaration.name}(${getParameters(callable)
-                .map((it) => this.getParameterLabel(it))
-                .join(', ')})`;
-        } else if (type instanceof CallableType && isNamed(callable)) {
-            return `${callable.name}${type}`;
-        } else {
-            return type.toString();
-        }
+        const name = isNamed(callable) ? callable.name : 'λ';
+        const parameters = `(${getParameters(callable)
+            .map((it) => this.getParameterLabel(it))
+            .join(', ')})`;
+        return `${name}${parameters}`;
     }
 
     private getParameterInformation = (parameter: SdsParameter) => {
@@ -108,9 +101,10 @@ export class SafeDsSignatureHelpProvider implements SignatureHelpProvider {
     };
 
     private getParameterLabel = (parameter: SdsParameter) => {
-        const optionality = Parameter.isOptional(parameter) ? '?' : '';
         const type = this.typeComputer.computeType(parameter);
-        return `${parameter.name}${optionality}: ${type}`;
+        const defaultValueCstNode = parameter.defaultValue?.$cstNode;
+        const defaultValue = defaultValueCstNode ? ` = ${defaultValueCstNode.text}` : '';
+        return `${parameter.name}: ${type}${defaultValue}`;
     };
 
     /* c8 ignore start */
