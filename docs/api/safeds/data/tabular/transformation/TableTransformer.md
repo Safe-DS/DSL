@@ -13,7 +13,6 @@ Learn a transformation for a set of columns in a `Table` and transform another `
 
 - [`Discretizer`][safeds.data.tabular.transformation.Discretizer]
 - [`FunctionalTableTransformer`][safeds.data.tabular.transformation.FunctionalTableTransformer]
-- `#!sds Imputer`
 - [`InvertibleTableTransformer`][safeds.data.tabular.transformation.InvertibleTableTransformer]
 - [`KNearestNeighborsImputer`][safeds.data.tabular.transformation.KNearestNeighborsImputer]
 - [`SimpleImputer`][safeds.data.tabular.transformation.SimpleImputer]

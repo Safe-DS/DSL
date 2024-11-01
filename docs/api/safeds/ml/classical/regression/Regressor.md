@@ -19,11 +19,9 @@ A model for regression tasks.
 - [`GradientBoostingRegressor`][safeds.ml.classical.regression.GradientBoostingRegressor]
 - [`KNearestNeighborsRegressor`][safeds.ml.classical.regression.KNearestNeighborsRegressor]
 - [`LassoRegressor`][safeds.ml.classical.regression.LassoRegressor]
-- `#!sds LinearRegressionRegressor`
 - [`LinearRegressor`][safeds.ml.classical.regression.LinearRegressor]
 - [`RandomForestRegressor`][safeds.ml.classical.regression.RandomForestRegressor]
 - [`RidgeRegressor`][safeds.ml.classical.regression.RidgeRegressor]
-- `#!sds SupportVectorMachineRegressor`
 - [`SupportVectorRegressor`][safeds.ml.classical.regression.SupportVectorRegressor]
 
 ??? quote "Stub code in `Regressor.sdsstub`"
