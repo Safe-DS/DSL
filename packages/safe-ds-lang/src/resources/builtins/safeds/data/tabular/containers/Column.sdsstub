@@ -114,13 +114,13 @@ class Column<out T = Any?>(
      * @example
      * pipeline example {
      *     val column = Column("test", [1, 2, 3]);
-     *     val result = column.all((cell) -> cell.gt(0)); // true
+     *     val result = column.all((cell) -> cell > 0); // true
      * }
      *
      * @example
      * pipeline example {
      *     val column = Column("test", [1, 2, 3]);
-     *     val result = column.all((cell) -> cell.lt(3)); // false
+     *     val result = column.all((cell) -> cell < 3); // false
      * }
      */
     @Pure
@@ -157,13 +157,13 @@ class Column<out T = Any?>(
      * @example
      * pipeline example {
      *     val column = Column("test", [1, 2, 3]);
-     *     val result = column.any((cell) -> cell.gt(2)); // true
+     *     val result = column.any((cell) -> cell > 2); // true
      * }
      *
      * @example
      * pipeline example {
      *     val column = Column("test", [1, 2, 3]);
-     *     val result = column.any((cell) -> cell.lt(0)); // false
+     *     val result = column.any((cell) -> cell < 0); // false
      * }
      */
     @Pure
@@ -195,13 +195,13 @@ class Column<out T = Any?>(
      * @example
      * pipeline example {
      *    val column = Column("test", [1, 2, 3]);
-     *    val result = column.countIf((cell) -> cell.gt(1)); // 2
+     *    val result = column.countIf((cell) -> cell > 1); // 2
      * }
      *
      * @example
      * pipeline example {
      *     val column = Column("test", [1, 2, 3]);
-     *     val result = column.countIf((cell) -> cell.lt(0)); // 0
+     *     val result = column.countIf((cell) -> cell < 0); // 0
      * }
      */
     @Pure
@@ -238,13 +238,13 @@ class Column<out T = Any?>(
      * @example
      * pipeline example {
      *     val column = Column("test", [1, 2, 3]);
-     *     val result = column.none((cell) -> cell.lt(0)); // true
+     *     val result = column.none((cell) -> cell < 0); // true
      * }
      *
      * @example
      * pipeline example {
      *     val column = Column("test", [1, 2, 3]);
-     *     val result = column.none((cell) -> cell.gt(2)); // false
+     *     val result = column.none((cell) -> cell > 2); // false
      * }
      */
     @Pure
@@ -286,7 +286,7 @@ class Column<out T = Any?>(
      * @example
      * pipeline example {
      *     val column = Column("test", [1, 2, 3]);
-     *     val result = column.transform((cell) -> cell.mul(2));
+     *     val result = column.transform((cell) -> cell * 2);
      *     // Column("test", [2, 4, 6])
      * }
      */
