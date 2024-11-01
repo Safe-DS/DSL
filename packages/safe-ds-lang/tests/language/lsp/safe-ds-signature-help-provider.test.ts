@@ -90,7 +90,7 @@ describe('SafeDsSignatureHelpProvider', async () => {
             `,
             expectedSignature: [
                 {
-                    label: 'A(p: Int) -> ()',
+                    label: 'A(p: Int)',
                     documentation: {
                         kind: 'markdown',
                         value: 'Lorem ipsum.',
@@ -144,7 +144,7 @@ describe('SafeDsSignatureHelpProvider', async () => {
             `,
             expectedSignature: [
                 {
-                    label: 'f(p: Int) -> ()',
+                    label: 'f(p: Int)',
                     documentation: {
                         kind: 'markdown',
                         value: 'Lorem ipsum.',
@@ -166,7 +166,7 @@ describe('SafeDsSignatureHelpProvider', async () => {
             `,
             expectedSignature: [
                 {
-                    label: '(p: Int) -> ()',
+                    label: 'λ(p: Int)',
                     documentation: undefined,
                     parameters: [
                         {
@@ -188,11 +188,11 @@ describe('SafeDsSignatureHelpProvider', async () => {
             `,
             expectedSignature: [
                 {
-                    label: 'f(p?: Int) -> ()',
+                    label: 'f(p: Int = 0)',
                     documentation: undefined,
                     parameters: [
                         {
-                            label: 'p?: Int',
+                            label: 'p: Int = 0',
                         },
                     ],
                 },
