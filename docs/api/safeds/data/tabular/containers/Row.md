@@ -38,7 +38,7 @@ This class cannot be instantiated directly. It is only used for arguments of cal
          * @example
          * pipeline example {
          *     val table = Table({"col1": [1, 2], "col2": [3, 4]});
-         *     val result = table.removeRows((row) -> row.getValue("col1").eq(1));
+         *     val result = table.removeRows((row) -> row.getValue("col1") == 1);
          *     // Table({"col1": [2], "col2": [4]})
          * }
          */
@@ -141,7 +141,7 @@ Get the value of the specified column. This WILL LATER BE equivalent to using th
 ```sds hl_lines="3"
 pipeline example {
     val table = Table({"col1": [1, 2], "col2": [3, 4]});
-    val result = table.removeRows((row) -> row.getValue("col1").eq(1));
+    val result = table.removeRows((row) -> row.getValue("col1") == 1);
     // Table({"col1": [2], "col2": [4]})
 }
 ```

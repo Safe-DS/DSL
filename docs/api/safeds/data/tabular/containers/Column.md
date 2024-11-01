@@ -127,13 +127,13 @@ pipeline example {
          * @example
          * pipeline example {
          *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.all((cell) -> cell.gt(0)); // true
+         *     val result = column.all((cell) -> cell > 0); // true
          * }
          *
          * @example
          * pipeline example {
          *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.all((cell) -> cell.lt(3)); // false
+         *     val result = column.all((cell) -> cell < 3); // false
          * }
          */
         @Pure
@@ -170,13 +170,13 @@ pipeline example {
          * @example
          * pipeline example {
          *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.any((cell) -> cell.gt(2)); // true
+         *     val result = column.any((cell) -> cell > 2); // true
          * }
          *
          * @example
          * pipeline example {
          *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.any((cell) -> cell.lt(0)); // false
+         *     val result = column.any((cell) -> cell < 0); // false
          * }
          */
         @Pure
@@ -208,13 +208,13 @@ pipeline example {
          * @example
          * pipeline example {
          *    val column = Column("test", [1, 2, 3]);
-         *    val result = column.countIf((cell) -> cell.gt(1)); // 2
+         *    val result = column.countIf((cell) -> cell > 1); // 2
          * }
          *
          * @example
          * pipeline example {
          *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.countIf((cell) -> cell.lt(0)); // 0
+         *     val result = column.countIf((cell) -> cell < 0); // 0
          * }
          */
         @Pure
@@ -251,13 +251,13 @@ pipeline example {
          * @example
          * pipeline example {
          *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.none((cell) -> cell.lt(0)); // true
+         *     val result = column.none((cell) -> cell < 0); // true
          * }
          *
          * @example
          * pipeline example {
          *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.none((cell) -> cell.gt(2)); // false
+         *     val result = column.none((cell) -> cell > 2); // false
          * }
          */
         @Pure
@@ -299,7 +299,7 @@ pipeline example {
          * @example
          * pipeline example {
          *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.transform((cell) -> cell.mul(2));
+         *     val result = column.transform((cell) -> cell * 2);
          *     // Column("test", [2, 4, 6])
          * }
          */
@@ -683,13 +683,13 @@ You can instead enable Kleene logic by setting `ignoreUnknown = false`. In this 
 ```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
-    val result = column.all((cell) -> cell.gt(0)); // true
+    val result = column.all((cell) -> cell > 0); // true
 }
 ```
 ```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
-    val result = column.all((cell) -> cell.lt(3)); // false
+    val result = column.all((cell) -> cell < 3); // false
 }
 ```
 
@@ -742,13 +742,13 @@ You can instead enable Kleene logic by setting `ignoreUnknown = false`. In this 
 ```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
-    val result = column.any((cell) -> cell.gt(2)); // true
+    val result = column.any((cell) -> cell > 2); // true
 }
 ```
 ```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
-    val result = column.any((cell) -> cell.lt(0)); // false
+    val result = column.any((cell) -> cell < 0); // false
 }
 ```
 
@@ -846,13 +846,13 @@ if the predicate returns null at least once. Otherwise, it still returns how oft
 ```sds hl_lines="3"
 pipeline example {
    val column = Column("test", [1, 2, 3]);
-   val result = column.countIf((cell) -> cell.gt(1)); // 2
+   val result = column.countIf((cell) -> cell > 1); // 2
 }
 ```
 ```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
-    val result = column.countIf((cell) -> cell.lt(0)); // 0
+    val result = column.countIf((cell) -> cell < 0); // 0
 }
 ```
 
@@ -1246,13 +1246,13 @@ You can instead enable Kleene logic by setting `ignoreUnknown = false`. In this 
 ```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
-    val result = column.none((cell) -> cell.lt(0)); // true
+    val result = column.none((cell) -> cell < 0); // true
 }
 ```
 ```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
-    val result = column.none((cell) -> cell.gt(2)); // false
+    val result = column.none((cell) -> cell > 2); // false
 }
 ```
 
@@ -1475,7 +1475,7 @@ Return a new column with values transformed by the transformer.
 ```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
-    val result = column.transform((cell) -> cell.mul(2));
+    val result = column.transform((cell) -> cell * 2);
     // Column("test", [2, 4, 6])
 }
 ```
