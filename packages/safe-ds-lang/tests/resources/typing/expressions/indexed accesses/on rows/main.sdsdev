@@ -1,0 +1,85 @@
+package tests.typing.expressions.indexedAccesses.onRows
+
+class MyRow sub Row
+
+segment mySegment(param1: Row, param2: Row?, param3: MyRow) {
+    // $TEST$ serialization Cell<Any?>
+    »param1[""]«;
+
+    // $TEST$ serialization Cell<Any?>
+    »param1[unresolved]«;
+
+    // $TEST$ serialization Cell<Any?>
+    »param2[""]«;
+
+    // $TEST$ serialization Cell<Any?>
+    »param2[unresolved]«;
+
+    // $TEST$ serialization Cell<Any?>
+    »param3[""]«;
+
+    // $TEST$ serialization Cell<Any?>
+    »param3[unresolved]«;
+
+
+    // $TEST$ serialization Cell<Any?>
+    »param1?[""]«;
+
+    // $TEST$ serialization Cell<Any?>
+    »param1?[unresolved]«;
+
+    // $TEST$ serialization Cell<Any?>?
+    »param2?[""]«;
+
+    // $TEST$ serialization Cell<Any?>?
+    »param2?[unresolved]«;
+
+    // $TEST$ serialization Cell<Any?>
+    »param3?[""]«;
+
+    // $TEST$ serialization Cell<Any?>
+    »param3?[unresolved]«;
+}
+
+class MyClass<MyRow sub Row, MyNullableRow sub Row?>(
+    param1: MyRow,
+    param2: MyRow?,
+    param3: MyNullableRow,
+
+    // $TEST$ serialization Cell<Any?>
+    p1: Any? = »param1[""]«,
+
+    // $TEST$ serialization Cell<Any?>
+    p2: Any? = »param1[unresolved]«,
+
+    // $TEST$ serialization Cell<Any?>
+    p3: Any? = »param2[""]«,
+
+    // $TEST$ serialization Cell<Any?>
+    p4: Any? = »param2[unresolved]«,
+
+    // $TEST$ serialization Cell<Any?>
+    p5: Any? = »param3[""]«,
+
+    // $TEST$ serialization Cell<Any?>
+    p6: Any? = »param3[unresolved]«,
+
+
+    // $TEST$ serialization Cell<Any?>
+    p7: Any? = »param1?[""]«,
+
+    // $TEST$ serialization Cell<Any?>
+    p8: Any? = »param1?[unresolved]«,
+
+    // $TEST$ serialization Cell<Any?>?
+    p9: Any? = »param2?[""]«,
+
+    // $TEST$ serialization Cell<Any?>?
+    p10: Any? = »param2?[unresolved]«,
+
+    // $TEST$ serialization Cell<Any?>?
+    p11: Any? = »param3?[""]«,
+
+    // $TEST$ serialization Cell<Any?>?
+    p12: Any? = »param3?[unresolved]«,
+)
