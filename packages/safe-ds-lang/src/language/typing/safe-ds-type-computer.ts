@@ -394,6 +394,7 @@ export class SafeDsTypeComputer {
                 case '-':
                 case '*':
                 case '/':
+                case '%':
                     return this.computeTypeOfArithmeticInfixOperation(node);
 
                 // Elvis operator
