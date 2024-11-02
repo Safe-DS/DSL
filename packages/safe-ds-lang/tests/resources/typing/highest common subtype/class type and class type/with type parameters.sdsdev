@@ -28,7 +28,7 @@ segment covariant(
     »[coInt, coString]«;
     // $TEST$ serialization List<Contravariant<Nothing>>
     »[coInt, coFloat]«;
-    // $TEST$ serialization List<Contravariant<SomeCovariant<Nothing, Boolean>>>
+    // $TEST$ serialization List<Contravariant<SomeCovariant<Int, Boolean>>>
     »[coInt, coFloat2]«;
 
     // $TEST$ serialization List<Contravariant<Covariant<String>>>

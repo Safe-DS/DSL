@@ -9,7 +9,7 @@ search:
 
 An integer.
 
-**Parent type:** [`Number`][safeds.lang.Number]
+**Parent type:** [`Float`][safeds.lang.Float]
 
 **Examples:**
 
@@ -21,8 +21,8 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="71"
-    class Int sub Number {
+    ```sds linenums="94"
+    class Int sub Float {
 
         /**
          * Convert this integer to a floating-point number.
@@ -58,8 +58,34 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="81"
+    ```sds linenums="104"
     @Pure
     @PythonMacro("float($this)")
     fun toFloat() -> float: Float
+    ```
+
+## <code class="doc-symbol doc-symbol-function"></code> `toInt` {#safeds.lang.Int.toInt data-toc-label='[function] toInt'}
+
+Convert this floating-point number to an integer by truncating the fractional part.
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `int` | [`Int`][safeds.lang.Int] | - |
+
+**Examples:**
+
+```sds hl_lines="2"
+pipeline example {
+    val int = (1.0).toInt(); // 1
+}
+```
+
+??? quote "Stub code in `coreClasses.sdsstub`"
+
+    ```sds linenums="81"
+    @Pure
+    @PythonMacro("int($this)")
+    fun toInt() -> int: Int
     ```

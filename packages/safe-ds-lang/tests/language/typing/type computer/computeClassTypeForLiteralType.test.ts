@@ -66,7 +66,7 @@ const tests: ComputeClassTypeForLiteralTypeTest[] = [
     },
     {
         literalType: factory.createLiteralType(new FloatConstant(1.5), new IntConstant(1n)),
-        expected: coreTypes.Number,
+        expected: coreTypes.Float,
     },
     {
         literalType: factory.createLiteralType(new IntConstant(1n), new StringConstant('')),
@@ -78,7 +78,7 @@ const tests: ComputeClassTypeForLiteralTypeTest[] = [
     },
     {
         literalType: factory.createLiteralType(new FloatConstant(1.5), new IntConstant(1n), NullConstant),
-        expected: coreTypes.Number.withExplicitNullability(true),
+        expected: coreTypes.Float.withExplicitNullability(true),
     },
     {
         literalType: factory.createLiteralType(new IntConstant(1n), new StringConstant(''), NullConstant),

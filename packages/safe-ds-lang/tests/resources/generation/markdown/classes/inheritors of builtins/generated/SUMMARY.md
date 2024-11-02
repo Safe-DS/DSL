@@ -7,5 +7,5 @@ search:
 
 - safeds
     - lang
-        - [Int](safeds/lang/Int.md)
+        - [Float](safeds/lang/Float.md)
         - [Number](safeds/lang/Number.md)

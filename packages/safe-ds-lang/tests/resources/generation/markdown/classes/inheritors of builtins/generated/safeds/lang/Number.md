@@ -10,7 +10,6 @@ search:
 **Inheritors:**
 
 - `#!sds Float`
-- `#!sds Int`
 
 ??? quote "Stub code in `main.sdsstub`"
 
