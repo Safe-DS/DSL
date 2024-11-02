@@ -348,6 +348,18 @@ export class SafeDsPartialEvaluator {
                     (leftOperand, rightOperand) => leftOperand / rightOperand,
                     evaluatedRight,
                 );
+            case '%':
+                // Division by zero
+                if (zeroConstants.some((it) => it.equals(evaluatedRight))) {
+                    return UnknownEvaluatedNode;
+                }
+
+                return this.evaluateArithmeticOp(
+                    evaluatedLeft,
+                    (leftOperand, rightOperand) => ((leftOperand % rightOperand) + rightOperand) % rightOperand,
+                    (leftOperand, rightOperand) => ((leftOperand % rightOperand) + rightOperand) % rightOperand,
+                    evaluatedRight,
+                );
 
             /* c8 ignore next 2 */
             default:

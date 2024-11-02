@@ -10,7 +10,7 @@ pipeline test {
     // $TEST$ serialization 0.375
     »1 % 0.625«;
 
-    // $TEST$ serialization 1
+    // $TEST$ serialization 0
     »1 % 1«;
 
     // $TEST$ serialization -1
