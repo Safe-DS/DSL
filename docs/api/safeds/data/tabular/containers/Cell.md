@@ -226,12 +226,19 @@ This class cannot be instantiated directly. It is only used for arguments of cal
         ) -> result: Cell<Number>
 
         /**
-         * Perform a modulo operation.
+         * Perform a modulo operation.  This is equivalent to the `%` operator.
          *
          * @example
          * pipeline example {
          *     val column = Column("example", [5, 6]);
          *     val result = column.transform((cell) -> cell.mod(3));
+         *     // Column("example", [2, 0])
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("example", [5, 6]);
+         *     val result = column.transform((cell) -> cell % 3);
          *     // Column("example", [2, 0])
          * }
          */
@@ -661,7 +668,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="309"
+    ```sds linenums="316"
     @Pure
     fun eq(
         other: Any?
@@ -730,7 +737,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="353"
+    ```sds linenums="360"
     @Pure
     fun ge(
         other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
@@ -772,7 +779,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="375"
+    ```sds linenums="382"
     @Pure
     fun gt(
         other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
@@ -814,7 +821,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="397"
+    ```sds linenums="404"
     @Pure
     fun le(
         other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
@@ -856,7 +863,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="419"
+    ```sds linenums="426"
     @Pure
     fun lt(
         other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
@@ -865,7 +872,7 @@ pipeline example {
 
 ## <code class="doc-symbol doc-symbol-function"></code> `mod` {#safeds.data.tabular.containers.Cell.mod data-toc-label='[function] mod'}
 
-Perform a modulo operation.
+Perform a modulo operation.  This is equivalent to the `%` operator.
 
 **Parameters:**
 
@@ -888,10 +895,17 @@ pipeline example {
     // Column("example", [2, 0])
 }
 ```
+```sds
+pipeline example {
+    val column = Column("example", [5, 6]);
+    val result = column.transform((cell) -> cell % 3);
+    // Column("example", [2, 0])
+}
+```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="228"
+    ```sds linenums="235"
     @Pure
     fun mod(
         other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
@@ -933,7 +947,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="250"
+    ```sds linenums="257"
     @Pure
     fun mul(
         other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
@@ -1009,7 +1023,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="331"
+    ```sds linenums="338"
     @Pure
     fun neq(
         other: Any?
@@ -1122,7 +1136,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="265"
+    ```sds linenums="272"
     @Pure
     fun pow(
         other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
@@ -1164,7 +1178,7 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="287"
+    ```sds linenums="294"
     @Pure
     fun ^sub(
         other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>

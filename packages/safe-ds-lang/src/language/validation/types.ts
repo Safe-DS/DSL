@@ -218,6 +218,7 @@ export const infixOperationOperandsMustHaveCorrectType = (services: SafeDsServic
             case '-':
             case '*':
             case '/':
+            case '%':
                 if (
                     node.leftOperand &&
                     !typeChecker.isSubtypeOf(leftType, coreTypes.Float) &&

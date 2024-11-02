@@ -71,4 +71,8 @@ def test():
     f((cell()) / (h()))
     f((h()) / (cell()))
     f((cell()) / (cell()))
+    f((h()) % (h()))
+    f((cell()) % (h()))
+    f((h()) % (cell()))
+    f((cell()) % (cell()))
     f(__gen_eager_elvis(i(), i()))

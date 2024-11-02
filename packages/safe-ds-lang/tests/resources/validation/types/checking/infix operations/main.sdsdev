@@ -95,6 +95,22 @@ pipeline myPipeline {
     // $TEST$ error "This operator is not defined for type 'unknown'."
     »unresolved« / »unresolved«;
 
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    »0.0« % »0.0«;
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    »0« % »0«;
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    »cell()« % »cell()«;
+    // $TEST$ error "This operator is not defined for type 'literal<"">'."
+    // $TEST$ error "This operator is not defined for type 'literal<"">'."
+    »""« % »""«;
+    // $TEST$ error "This operator is not defined for type 'unknown'."
+    // $TEST$ error "This operator is not defined for type 'unknown'."
+    »unresolved« % »unresolved«;
+
 
     // $TEST$ no error r"This operator is not defined for type .*\."
     // $TEST$ no error r"This operator is not defined for type .*\."

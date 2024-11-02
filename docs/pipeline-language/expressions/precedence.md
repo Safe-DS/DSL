@@ -9,7 +9,7 @@ We all know that `#!sds 2 + 3 * 7` is `#!sds 23` and not `#!sds 35`. The reason 
 - `#!sds -` (unary, [arithmetic negations][operations-on-numbers])
 - `#!sds as` ([type casts][type-casts])
 - `#!sds ?:` ([Elvis operators][elvis-operator])
-- `#!sds *`, `#!sds /` ([multiplicative operators][operations-on-numbers])
+- `#!sds *`, `#!sds /`, `#!sds %` ([multiplicative operators][operations-on-numbers])
 - `#!sds +`, `#!sds -` (binary, [additive operators][operations-on-numbers])
 - `#!sds <`, `#!sds <=`, `#!sds >=`, `#!sds >` ([comparison operators][operations-on-numbers])
 - `#!sds ===`, `#!sds ==`, `#!sds !==`, `#!sds !=` ([equality operators][equality-checks])
