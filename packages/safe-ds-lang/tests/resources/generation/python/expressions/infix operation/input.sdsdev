@@ -77,6 +77,11 @@ pipeline test {
     f(h() / cell());
     f(cell() / cell());
 
+    f(h() % h());
+    f(cell() % h());
+    f(h() % cell());
+    f(cell() % cell());
+
 
     f(i() ?: i());
 }
