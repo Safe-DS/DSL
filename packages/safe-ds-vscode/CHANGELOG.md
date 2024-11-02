@@ -1,3 +1,10 @@
+## [0.21.0](https://github.com/Safe-DS/DSL/compare/v0.20.0...v0.21.0) (2024-11-02)
+
+### Features
+
+* make `Int` a subclass of `Float` ([#1255](https://github.com/Safe-DS/DSL/issues/1255)) ([c8f3b67](https://github.com/Safe-DS/DSL/commit/c8f3b67717e1c4af6a02903c3aaf3f09ec6327d4))
+* modulo operator ([#1256](https://github.com/Safe-DS/DSL/issues/1256)) ([f590e7a](https://github.com/Safe-DS/DSL/commit/f590e7a9c75f189725f4fade491be98ea09b5158))
+
 ## [0.20.0](https://github.com/Safe-DS/DSL/compare/v0.19.0...v0.20.0) (2024-11-01)
 
 ### Features
