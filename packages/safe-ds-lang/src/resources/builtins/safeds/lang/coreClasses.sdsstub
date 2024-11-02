@@ -61,29 +61,6 @@ class Boolean
 class Number
 
 /**
- * An integer.
- *
- * @example
- * pipeline example {
- *     val int = 1;
- * }
- */
-class Int sub Number {
-
-    /**
-     * Convert this integer to a floating-point number.
-     *
-     * @example
-     * pipeline example {
-     *     val float = 1.toFloat(); // 1.0
-     * }
-     */
-    @Pure
-    @PythonMacro("float($this)")
-    fun toFloat() -> float: Float
-}
-
-/**
  * A floating-point number.
  *
  * @example
@@ -98,12 +75,35 @@ class Float sub Number {
      *
      * @example
      * pipeline example {
-     *     val int = 1.0.toInt(); // 1
+     *     val int = (1.0).toInt(); // 1
      * }
      */
     @Pure
     @PythonMacro("int($this)")
     fun toInt() -> int: Int
+}
+
+/**
+ * An integer.
+ *
+ * @example
+ * pipeline example {
+ *     val int = 1;
+ * }
+ */
+class Int sub Float {
+
+    /**
+     * Convert this integer to a floating-point number.
+     *
+     * @example
+     * pipeline example {
+     *     val float = 1.toFloat(); // 1.0
+     * }
+     */
+    @Pure
+    @PythonMacro("float($this)")
+    fun toFloat() -> float: Float
 }
 
 /**
