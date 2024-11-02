@@ -18,6 +18,16 @@ The usual arithmetic operations are also supported for integers, floats and comb
 - Subtraction: `#!sds 6 - 2.9` (result is a float)
 - Multiplication: `#!sds 1.1 * 3` (result is a float)
 - Division: `#!sds 1.0 / 4.2` (result is a float)
+- Modulo: `#!sds 5 % 2` (result is an integer)
+
+The `%` operator is well-known from other programming languages. However, there is no consensus on its result for negative operands. Safe-DS defines `n % d` as $n - \left\lfloor\frac{n}{d}\right\rfloor \cdot d$, where $\left\lfloor\text{ }\right\rfloor$ is the floor function (rounding down). The result always has the same sign as the divisor `d`. The following table shows some examples:
+
+| `n` | `d` | `n % d` |
+|-----|-----|---------|
+| 5   | 3   | 2       |
+| 5   | -3  | -1      |
+| -5  | 3   | 1       |
+| -5  | -3  | -2      |
 
 Finally, two numbers can be compared, which results in a boolean. The integer `#!sds 3` for example is less than the integer `#!sds 5`. Safe-DS offers operators to do such checks for order:
 
@@ -33,22 +43,22 @@ To work with logic, Safe-DS has the two boolean literals `#!sds false` and `#!sd
 - (Logical) **negation** (example `#!sds not a`): Output is `#!sds true` if and only if the operand is false:
 
 | `#!sds not a` | false | true  |
-|---------|-------|-------|
-| &nbsp;  | true  | false |
+|---------------|-------|-------|
+| &nbsp;        | true  | false |
 
 - **Conjunction** (example `#!sds a and b`): Output is `#!sds true` if and only if both operands are `#!sds true`. Note that the second operand is always evaluated, even if the first operand is `#!sds false` and, thus, already determines the result of the expression. The operator is not short-circuited:
 
 | `#!sds a and b` | false | true  |
-|-----------|-------|-------|
-| **false** | false | false |
-| **true**  | false | true  |
+|-----------------|-------|-------|
+| **false**       | false | false |
+| **true**        | false | true  |
 
 - **Disjunction** (example `#!sds a or b`): Output is `#!sds true` if and only if at least one operand is `#!sds true`. Note that the second operand is always evaluated, even if the first operand is `#!sds true` and, thus, already determines the result of the expression. The operator is not short-circuited:
 
-| `#!sds a or b`  | false | true |
-|-----------|-------|------|
-| **false** | false | true |
-| **true**  | true  | true |
+| `#!sds a or b` | false | true |
+|----------------|-------|------|
+| **false**      | false | true |
+| **true**       | true  | true |
 
 ## Equality Checks
 
