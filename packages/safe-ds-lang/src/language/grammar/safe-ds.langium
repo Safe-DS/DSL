@@ -664,7 +664,7 @@ SdsMultiplicativeExpression returns SdsExpression:
 ;
 
 SdsMultiplicativeOperator returns string:
-    '*' | '/'
+    '*' | '/' | '%'
 ;
 
 SdsElvisExpression returns SdsExpression:
