@@ -12,7 +12,6 @@ A number.
 **Inheritors:**
 
 - [`Float`][safeds.lang.Float]
-- [`Int`][safeds.lang.Int]
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
