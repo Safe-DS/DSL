@@ -216,12 +216,19 @@ class Cell<out T = Any?> {
     ) -> result: Cell<Number>
 
     /**
-     * Perform a modulo operation.
+     * Perform a modulo operation.  This is equivalent to the `%` operator.
      *
      * @example
      * pipeline example {
      *     val column = Column("example", [5, 6]);
      *     val result = column.transform((cell) -> cell.mod(3));
+     *     // Column("example", [2, 0])
+     * }
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("example", [5, 6]);
+     *     val result = column.transform((cell) -> cell % 3);
      *     // Column("example", [2, 0])
      * }
      */
