@@ -135,7 +135,7 @@ pipeline example {
          * Return a new `Image` that is converted to grayscale.
          *
          * The new image will have the same amount of channels as the original image. If you want to change the amount of
-         * channels used, please use the method [changeChannel][safeds.data.image.containers.Image.changeChannel].
+         * channels used, please use the method {@link Image.changeChannel}.
          *
          * The original image is not modified.
          *
@@ -696,7 +696,7 @@ pipeline example {
 Return a new `Image` that is converted to grayscale.
 
 The new image will have the same amount of channels as the original image. If you want to change the amount of
-channels used, please use the method [changeChannel][safeds.data.image.containers.Image.changeChannel].
+channels used, please use the method [Image.changeChannel][safeds.data.image.containers.Image.changeChannel].
 
 The original image is not modified.
 

@@ -301,7 +301,7 @@ To create an `ImageList` call one of the following static methods:
          * Return a new `ImageList` with all images converted to grayscale.
          *
          * The new image will have the same amount of channels as the original image. If you want to change the amount of
-         * channels used, please use the method [changeChannel][safeds.data.image.containers.ImageList.changeChannel].
+         * channels used, please use the method {@link ImageList.changeChannel}.
          *
          * The original image list is not modified.
          *
@@ -792,7 +792,7 @@ The original image list is not modified.
 Return a new `ImageList` with all images converted to grayscale.
 
 The new image will have the same amount of channels as the original image. If you want to change the amount of
-channels used, please use the method [changeChannel][safeds.data.image.containers.ImageList.changeChannel].
+channels used, please use the method [ImageList.changeChannel][safeds.data.image.containers.ImageList.changeChannel].
 
 The original image list is not modified.
 
