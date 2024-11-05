@@ -1,3 +1,9 @@
+## [0.21.1](https://github.com/Safe-DS/DSL/compare/v0.21.0...v0.21.1) (2024-11-05)
+
+### Bug Fixes
+
+* use correct link syntax in stubs ([#1257](https://github.com/Safe-DS/DSL/issues/1257)) ([6c51c12](https://github.com/Safe-DS/DSL/commit/6c51c12fe4f9691e5fd1e83dbf6fe2ca0cbf8c11))
+
 ## [0.21.0](https://github.com/Safe-DS/DSL/compare/v0.20.0...v0.21.0) (2024-11-02)
 
 ### Features
