@@ -6,13 +6,13 @@ A two-dimensional collection of data. It can either be seen as a list of rows or
 
 To create a `Table` call the constructor or use one of the following static methods:
 
-| Method                                                                  | Description                            |
-| ----------------------------------------------------------------------- | -------------------------------------- |
-| [fromCsvFile][safeds.data.tabular.containers.Table.fromCsvFile]         | Create a table from a CSV file.        |
-| [fromJsonFile][safeds.data.tabular.containers.Table.fromJsonFile]       | Create a table from a JSON file.       |
-| [fromParquetFile][safeds.data.tabular.containers.Table.fromParquetFile] | Create a table from a Parquet file.    |
-| [fromColumns][safeds.data.tabular.containers.Table.fromColumns]         | Create a table from a list of columns. |
-| [fromMap][safeds.data.tabular.containers.Table.fromMap]                 | Create a table from a map.      |
+| Method                        | Description                            |
+| ----------------------------- | -------------------------------------- |
+| [Table.fromCsvFile][safeds.data.tabular.containers.Table.fromCsvFile]     | Create a table from a CSV file.        |
+| [Table.fromJsonFile][safeds.data.tabular.containers.Table.fromJsonFile]    | Create a table from a JSON file.       |
+| [Table.fromParquetFile][safeds.data.tabular.containers.Table.fromParquetFile] | Create a table from a Parquet file.    |
+| [Table.fromColumns][safeds.data.tabular.containers.Table.fromColumns]     | Create a table from a list of columns. |
+| [Table.fromMap][safeds.data.tabular.containers.Table.fromMap]         | Create a table from a map.             |
 
 **Parameters:**
 
