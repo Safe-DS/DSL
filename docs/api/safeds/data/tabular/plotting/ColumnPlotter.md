@@ -107,6 +107,7 @@ pipeline example {
         ) -> plot: Image
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `boxPlot` {#safeds.data.tabular.plotting.ColumnPlotter.boxPlot data-toc-label='[function] boxPlot'}
 
@@ -142,6 +143,7 @@ pipeline example {
         theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `histogram` {#safeds.data.tabular.plotting.ColumnPlotter.histogram data-toc-label='[function] histogram'}
 
@@ -180,6 +182,7 @@ pipeline example {
         maxBinCount > 0
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `lagPlot` {#safeds.data.tabular.plotting.ColumnPlotter.lagPlot data-toc-label='[function] lagPlot'}
 
@@ -217,6 +220,7 @@ pipeline example {
         theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `violinPlot` {#safeds.data.tabular.plotting.ColumnPlotter.violinPlot data-toc-label='[function] violinPlot'}
 
@@ -252,3 +256,4 @@ pipeline example {
         theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
     ```
+    { data-search-exclude }

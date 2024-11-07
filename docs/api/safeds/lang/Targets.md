@@ -21,3 +21,4 @@ The annotation must target only the specified declaration types. By default, any
         targets: List<AnnotationTarget>
     )
     ```
+    { data-search-exclude }

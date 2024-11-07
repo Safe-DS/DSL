@@ -11,3 +11,4 @@ The input conversion for a neural network, defines the input parameters for the 
     ```sds linenums="7"
     class InputConversionTimeSeries() sub InputConversion<TimeSeriesDataset, TimeSeriesDataset>
     ```
+    { data-search-exclude }

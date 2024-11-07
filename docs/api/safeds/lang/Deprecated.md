@@ -36,3 +36,4 @@ The declaration should no longer be used.
         removalVersion: String? = null,
     )
     ```
+    { data-search-exclude }

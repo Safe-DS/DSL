@@ -127,6 +127,7 @@ pipeline example {
         ) -> (firstDataset: ImageDataset<O>, secondDataset: ImageDataset<O>)
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `inputSize` {#safeds.data.labeled.containers.ImageDataset.inputSize data-toc-label='[attribute] inputSize'}
 
@@ -169,6 +170,7 @@ pipeline example {
     @PythonName("get_input")
     fun getInput() -> input: ImageList
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `getOutput` {#safeds.data.labeled.containers.ImageDataset.getOutput data-toc-label='[function] getOutput'}
 
@@ -199,6 +201,7 @@ pipeline example {
     @PythonName("get_output")
     fun getOutput() -> output: O
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `shuffle` {#safeds.data.labeled.containers.ImageDataset.shuffle data-toc-label='[function] shuffle'}
 
@@ -230,6 +233,7 @@ pipeline example {
     @Pure
     fun shuffle() -> imageDataset: ImageDataset<O>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `split` {#safeds.data.labeled.containers.ImageDataset.split data-toc-label='[function] split'}
 
@@ -264,3 +268,4 @@ The original dataset is not modified.
         shuffle: Boolean = true
     ) -> (firstDataset: ImageDataset<O>, secondDataset: ImageDataset<O>)
     ```
+    { data-search-exclude }

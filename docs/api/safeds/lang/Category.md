@@ -22,3 +22,4 @@ The category of a declaration. It can be used for grouping.
     ```sds linenums="20"
     annotation Category(category: DataScienceCategory)
     ```
+    { data-search-exclude }

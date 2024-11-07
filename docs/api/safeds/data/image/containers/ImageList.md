@@ -517,6 +517,7 @@ To create an `ImageList` call one of the following static methods:
         fun findEdges() -> imageList: ImageList
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `channel` {#safeds.data.image.containers.ImageList.channel data-toc-label='[attribute] channel'}
 
@@ -581,6 +582,7 @@ The original image list is not modified.
         image: Image
     ) -> imageList: ImageList
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `addImages` {#safeds.data.image.containers.ImageList.addImages data-toc-label='[function] addImages'}
 
@@ -609,6 +611,7 @@ The original image list is not modified.
         images: union<ImageList, List<Image>>
     ) -> imageList: ImageList
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `addNoise` {#safeds.data.image.containers.ImageList.addNoise data-toc-label='[function] addNoise'}
 
@@ -639,6 +642,7 @@ The original image list is not modified.
         standardDeviation >= 0.0
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `adjustBrightness` {#safeds.data.image.containers.ImageList.adjustBrightness data-toc-label='[function] adjustBrightness'}
 
@@ -669,6 +673,7 @@ The original image list is not modified.
         factor >= 0.0
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `adjustColorBalance` {#safeds.data.image.containers.ImageList.adjustColorBalance data-toc-label='[function] adjustColorBalance'}
 
@@ -699,6 +704,7 @@ The original image list is not modified.
         factor >= 0.0
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `adjustContrast` {#safeds.data.image.containers.ImageList.adjustContrast data-toc-label='[function] adjustContrast'}
 
@@ -729,6 +735,7 @@ The original image list is not modified.
         factor >= 0.0
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `blur` {#safeds.data.image.containers.ImageList.blur data-toc-label='[function] blur'}
 
@@ -758,6 +765,7 @@ The original image list is not modified.
         radius >= 0
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `changeChannel` {#safeds.data.image.containers.ImageList.changeChannel data-toc-label='[function] changeChannel'}
 
@@ -786,6 +794,7 @@ The original image list is not modified.
         channel: Int
     ) -> imageList: ImageList
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `convertToGrayscale` {#safeds.data.image.containers.ImageList.convertToGrayscale data-toc-label='[function] convertToGrayscale'}
 
@@ -809,6 +818,7 @@ The original image list is not modified.
     @PythonName("convert_to_grayscale")
     fun convertToGrayscale() -> imageList: ImageList
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `crop` {#safeds.data.image.containers.ImageList.crop data-toc-label='[function] crop'}
 
@@ -847,6 +857,7 @@ The original image list is not modified.
         height >= 0
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `findEdges` {#safeds.data.image.containers.ImageList.findEdges data-toc-label='[function] findEdges'}
 
@@ -867,6 +878,7 @@ The original image list is not modified.
     @PythonName("find_edges")
     fun findEdges() -> imageList: ImageList
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `flipHorizontally` {#safeds.data.image.containers.ImageList.flipHorizontally data-toc-label='[function] flipHorizontally'}
 
@@ -887,6 +899,7 @@ The original image list is not modified.
     @PythonName("flip_horizontally")
     fun flipHorizontally() -> imageList: ImageList
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `flipVertically` {#safeds.data.image.containers.ImageList.flipVertically data-toc-label='[function] flipVertically'}
 
@@ -907,6 +920,7 @@ The original image list is not modified.
     @PythonName("flip_vertically")
     fun flipVertically() -> imageList: ImageList
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `getImage` {#safeds.data.image.containers.ImageList.getImage data-toc-label='[function] getImage'}
 
@@ -933,6 +947,7 @@ Return the image at the given index.
         index: Int
     ) -> image: Image
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `hasImage` {#safeds.data.image.containers.ImageList.hasImage data-toc-label='[function] hasImage'}
 
@@ -959,6 +974,7 @@ Return whether the given image is in this image list.
         image: Image
     ) -> hasImage: Boolean
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `index` {#safeds.data.image.containers.ImageList.index data-toc-label='[function] index'}
 
@@ -986,6 +1002,7 @@ If the image has multiple occurrences, all indices will be returned
         image: Image
     ) -> indices: List<Int>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `invertColors` {#safeds.data.image.containers.ImageList.invertColors data-toc-label='[function] invertColors'}
 
@@ -1006,6 +1023,7 @@ The original image list is not modified.
     @PythonName("invert_colors")
     fun invertColors() -> imageList: ImageList
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `removeDuplicateImages` {#safeds.data.image.containers.ImageList.removeDuplicateImages data-toc-label='[function] removeDuplicateImages'}
 
@@ -1028,6 +1046,7 @@ The original image list is not modified.
     @PythonName("remove_duplicate_images")
     fun removeDuplicateImages() -> imageList: ImageList
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `removeImage` {#safeds.data.image.containers.ImageList.removeImage data-toc-label='[function] removeImage'}
 
@@ -1058,6 +1077,7 @@ The original image list is not modified.
         image: Image
     ) -> imageList: ImageList
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `removeImageByIndex` {#safeds.data.image.containers.ImageList.removeImageByIndex data-toc-label='[function] removeImageByIndex'}
 
@@ -1086,6 +1106,7 @@ The original image list is not modified.
         index: union<Int, List<Int>>
     ) -> imageList: ImageList
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `removeImages` {#safeds.data.image.containers.ImageList.removeImages data-toc-label='[function] removeImages'}
 
@@ -1116,6 +1137,7 @@ The original image list is not modified.
         images: List<Image>
     ) -> imageList: ImageList
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `removeImagesWithSize` {#safeds.data.image.containers.ImageList.removeImagesWithSize data-toc-label='[function] removeImagesWithSize'}
 
@@ -1146,6 +1168,7 @@ The original image list is not modified.
         height: Int
     ) -> imageList: ImageList
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `resize` {#safeds.data.image.containers.ImageList.resize data-toc-label='[function] resize'}
 
@@ -1178,6 +1201,7 @@ The original image list is not modified.
         newHeight >= 0
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `rotateLeft` {#safeds.data.image.containers.ImageList.rotateLeft data-toc-label='[function] rotateLeft'}
 
@@ -1198,6 +1222,7 @@ The original image list is not modified.
     @PythonName("rotate_left")
     fun rotateLeft() -> imageList: ImageList
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `rotateRight` {#safeds.data.image.containers.ImageList.rotateRight data-toc-label='[function] rotateRight'}
 
@@ -1218,6 +1243,7 @@ The original image list is not modified.
     @PythonName("rotate_right")
     fun rotateRight() -> imageList: ImageList
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `sharpen` {#safeds.data.image.containers.ImageList.sharpen data-toc-label='[function] sharpen'}
 
@@ -1247,6 +1273,7 @@ The original image list is not modified.
         factor >= 0.0
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `shuffleImages` {#safeds.data.image.containers.ImageList.shuffleImages data-toc-label='[function] shuffleImages'}
 
@@ -1267,6 +1294,7 @@ The original image list is not modified.
     @PythonName("shuffle_images")
     fun shuffleImages() -> imageList: ImageList
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toImages` {#safeds.data.image.containers.ImageList.toImages data-toc-label='[function] toImages'}
 
@@ -1293,6 +1321,7 @@ Return a list of all images in this image list.
         indices: List<Int>? = null
     ) -> images: List<Image>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toJpegFiles` {#safeds.data.image.containers.ImageList.toJpegFiles data-toc-label='[function] toJpegFiles'}
 
@@ -1313,6 +1342,7 @@ Save all images as jpeg files.
         path: union<List<String>, String>
     )
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toPngFiles` {#safeds.data.image.containers.ImageList.toPngFiles data-toc-label='[function] toPngFiles'}
 
@@ -1333,6 +1363,7 @@ Save all images as png files.
         path: union<List<String>, String>
     )
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-static-function"></code> `fromFiles` {#safeds.data.image.containers.ImageList.fromFiles data-toc-label='[static-function] fromFiles'}
 
@@ -1361,6 +1392,7 @@ If you provide a path to a directory the images will be sorted alphabetically wh
         path: union<List<String>, String>
     ) -> imageList: ImageList
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-static-function"></code> `fromImages` {#safeds.data.image.containers.ImageList.fromImages data-toc-label='[static-function] fromImages'}
 
@@ -1387,3 +1419,4 @@ Create an ImageList from a list of images.
         images: List<Image>
     ) -> imageList: ImageList
     ```
+    { data-search-exclude }

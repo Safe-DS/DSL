@@ -81,6 +81,7 @@ This class cannot be instantiated directly. It is only used for arguments of cal
         ) -> hasColumn: Boolean
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `columnCount` {#safeds.data.tabular.containers.Row.columnCount data-toc-label='[attribute] columnCount'}
 
@@ -125,6 +126,7 @@ Get the type of the specified column.
         name: String
     ) -> type: DataType
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `getValue` {#safeds.data.tabular.containers.Row.getValue data-toc-label='[function] getValue'}
 
@@ -167,6 +169,7 @@ pipeline example {
         name: String
     ) -> value: Cell
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `hasColumn` {#safeds.data.tabular.containers.Row.hasColumn data-toc-label='[function] hasColumn'}
 
@@ -193,3 +196,4 @@ Check if the row has a column with the specified name.
         name: String
     ) -> hasColumn: Boolean
     ```
+    { data-search-exclude }

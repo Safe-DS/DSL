@@ -50,6 +50,7 @@ A reason why a function is impure.
         Other
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-variant"></code> `FileReadFromConstantPath` {#safeds.lang.ImpurityReason.FileReadFromConstantPath data-toc-label='[variant] FileReadFromConstantPath'}
 

@@ -435,6 +435,7 @@ pipeline example {
         fun findEdges() -> newImage: Image
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `channel` {#safeds.data.image.containers.Image.channel data-toc-label='[attribute] channel'}
 
@@ -498,6 +499,7 @@ pipeline example {
         standardDeviation >= 0.0
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `adjustBrightness` {#safeds.data.image.containers.Image.adjustBrightness data-toc-label='[function] adjustBrightness'}
 
@@ -537,6 +539,7 @@ pipeline example {
         factor >= 0.0
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `adjustColorBalance` {#safeds.data.image.containers.Image.adjustColorBalance data-toc-label='[function] adjustColorBalance'}
 
@@ -576,6 +579,7 @@ pipeline example {
         factor >= 0.0
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `adjustContrast` {#safeds.data.image.containers.Image.adjustContrast data-toc-label='[function] adjustContrast'}
 
@@ -615,6 +619,7 @@ pipeline example {
         factor >= 0.0
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `blur` {#safeds.data.image.containers.Image.blur data-toc-label='[function] blur'}
 
@@ -653,6 +658,7 @@ pipeline example {
         radius >= 0
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `changeChannel` {#safeds.data.image.containers.Image.changeChannel data-toc-label='[function] changeChannel'}
 
@@ -690,6 +696,7 @@ pipeline example {
         channel: Int
     ) -> newImage: Image
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `convertToGrayscale` {#safeds.data.image.containers.Image.convertToGrayscale data-toc-label='[function] convertToGrayscale'}
 
@@ -722,6 +729,7 @@ pipeline example {
     @PythonName("convert_to_grayscale")
     fun convertToGrayscale() -> newImage: Image
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `crop` {#safeds.data.image.containers.Image.crop data-toc-label='[function] crop'}
 
@@ -769,6 +777,7 @@ pipeline example {
         height >= 0
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `findEdges` {#safeds.data.image.containers.Image.findEdges data-toc-label='[function] findEdges'}
 
@@ -798,6 +807,7 @@ pipeline example {
     @PythonName("find_edges")
     fun findEdges() -> newImage: Image
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `flipHorizontally` {#safeds.data.image.containers.Image.flipHorizontally data-toc-label='[function] flipHorizontally'}
 
@@ -827,6 +837,7 @@ pipeline example {
     @PythonName("flip_horizontally")
     fun flipHorizontally() -> newImage: Image
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `flipVertically` {#safeds.data.image.containers.Image.flipVertically data-toc-label='[function] flipVertically'}
 
@@ -856,6 +867,7 @@ pipeline example {
     @PythonName("flip_vertically")
     fun flipVertically() -> newImage: Image
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `invertColors` {#safeds.data.image.containers.Image.invertColors data-toc-label='[function] invertColors'}
 
@@ -885,6 +897,7 @@ pipeline example {
     @PythonName("invert_colors")
     fun invertColors() -> newImage: Image
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `resize` {#safeds.data.image.containers.Image.resize data-toc-label='[function] resize'}
 
@@ -926,6 +939,7 @@ pipeline example {
         newHeight >= 0
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `rotateLeft` {#safeds.data.image.containers.Image.rotateLeft data-toc-label='[function] rotateLeft'}
 
@@ -955,6 +969,7 @@ pipeline example {
     @PythonName("rotate_left")
     fun rotateLeft() -> newImage: Image
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `rotateRight` {#safeds.data.image.containers.Image.rotateRight data-toc-label='[function] rotateRight'}
 
@@ -984,6 +999,7 @@ pipeline example {
     @PythonName("rotate_right")
     fun rotateRight() -> newImage: Image
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `sharpen` {#safeds.data.image.containers.Image.sharpen data-toc-label='[function] sharpen'}
 
@@ -1022,6 +1038,7 @@ pipeline example {
         factor >= 0.0
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toJpegFile` {#safeds.data.image.containers.Image.toJpegFile data-toc-label='[function] toJpegFile'}
 
@@ -1051,6 +1068,7 @@ pipeline example {
         path: String
     )
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toPngFile` {#safeds.data.image.containers.Image.toPngFile data-toc-label='[function] toPngFile'}
 
@@ -1080,6 +1098,7 @@ pipeline example {
         path: String
     )
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-static-function"></code> `fromFile` {#safeds.data.image.containers.Image.fromFile data-toc-label='[static-function] fromFile'}
 
@@ -1114,3 +1133,4 @@ pipeline example {
         path: String
     ) -> image: Image
     ```
+    { data-search-exclude }

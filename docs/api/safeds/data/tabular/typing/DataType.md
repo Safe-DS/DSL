@@ -23,6 +23,7 @@ The type of a column or cell in a table.
         @PythonName("is_temporal") attr isTemporal: Boolean
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `isNumeric` {#safeds.data.tabular.typing.DataType.isNumeric data-toc-label='[attribute] isNumeric'}
 

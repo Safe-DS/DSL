@@ -19,3 +19,4 @@ The function has side effects and/or does not always return the same results giv
     ```sds linenums="23"
     annotation Impure(allReasons: List<ImpurityReason>)
     ```
+    { data-search-exclude }

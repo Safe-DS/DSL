@@ -62,6 +62,7 @@ The KNearestNeighborsImputer replaces missing values in given Columns with the m
         ) -> (fittedTransformer: KNearestNeighborsImputer, transformedTable: Table)
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `isFitted` {#safeds.data.tabular.transformation.KNearestNeighborsImputer.isFitted data-toc-label='[attribute] isFitted'}
 
@@ -107,6 +108,7 @@ Learn a transformation for a set of columns in a table.
         table: Table
     ) -> fittedTransformer: KNearestNeighborsImputer
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `fitAndTransform` {#safeds.data.tabular.transformation.KNearestNeighborsImputer.fitAndTransform data-toc-label='[function] fitAndTransform'}
 
@@ -136,6 +138,7 @@ Learn a transformation for a set of columns in a table and apply the learned tra
         table: Table
     ) -> (fittedTransformer: KNearestNeighborsImputer, transformedTable: Table)
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `transform` {#safeds.data.tabular.transformation.KNearestNeighborsImputer.transform data-toc-label='[function] transform'}
 
@@ -163,3 +166,4 @@ Apply the learned transformation to a table.
         table: Table
     ) -> transformedTable: Table
     ```
+    { data-search-exclude }

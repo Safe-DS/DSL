@@ -16,6 +16,7 @@ A container for image size data.
     ```sds linenums="15"
     class ImageSize sub ConstantImageSize
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `channel` {#safeds.data.image.typing.ImageSize.channel data-toc-label='[attribute] channel'}
 

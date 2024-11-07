@@ -44,6 +44,7 @@ The common superclass of all classes.
         fun toString() -> string: String
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toBoolean` {#safeds.lang.Any.toBoolean data-toc-label='[function] toBoolean'}
 
@@ -75,6 +76,7 @@ pipeline example {
     @PythonMacro("bool($this)")
     fun toBoolean() -> boolean: Boolean
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toString` {#safeds.lang.Any.toString data-toc-label='[function] toString'}
 
@@ -101,3 +103,4 @@ pipeline example {
     @PythonMacro("str($this)")
     fun toString() -> string: String
     ```
+    { data-search-exclude }

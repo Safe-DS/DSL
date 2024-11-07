@@ -38,6 +38,7 @@ A convolutional 2D Layer.
         @PythonName("output_size") attr outputSize: ModelImageSize
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `inputSize` {#safeds.ml.nn.layers.Convolutional2DLayer.inputSize data-toc-label='[attribute] inputSize'}
 

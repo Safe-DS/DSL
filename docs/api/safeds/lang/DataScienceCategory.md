@@ -39,6 +39,7 @@ A step in the data science process.
         ModelEvaluation
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-variant"></code> `DataExploration` {#safeds.lang.DataScienceCategory.DataExploration data-toc-label='[variant] DataExploration'}
 

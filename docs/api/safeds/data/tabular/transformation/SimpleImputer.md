@@ -112,6 +112,7 @@ pipeline example {
         ) -> (fittedTransformer: SimpleImputer, transformedTable: Table)
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `isFitted` {#safeds.data.tabular.transformation.SimpleImputer.isFitted data-toc-label='[attribute] isFitted'}
 
@@ -157,6 +158,7 @@ This transformer is not modified.
         table: Table
     ) -> fittedTransformer: SimpleImputer
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `fitAndTransform` {#safeds.data.tabular.transformation.SimpleImputer.fitAndTransform data-toc-label='[function] fitAndTransform'}
 
@@ -186,6 +188,7 @@ Learn a transformation for a set of columns in a table and apply the learned tra
         table: Table
     ) -> (fittedTransformer: SimpleImputer, transformedTable: Table)
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `transform` {#safeds.data.tabular.transformation.SimpleImputer.transform data-toc-label='[function] transform'}
 
@@ -213,6 +216,7 @@ Apply the learned transformation to a table.
         table: Table
     ) -> transformedTable: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-enum"></code> `Strategy` {#safeds.data.tabular.transformation.SimpleImputer.Strategy data-toc-label='[enum] Strategy'}
 
@@ -249,6 +253,7 @@ Various strategies to replace missing values.
         Mode
     }
     ```
+    { data-search-exclude }
 
 ### <code class="doc-symbol doc-symbol-variant"></code> `Constant` {#safeds.data.tabular.transformation.SimpleImputer.Strategy.Constant data-toc-label='[variant] Constant'}
 

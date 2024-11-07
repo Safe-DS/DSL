@@ -18,3 +18,4 @@ A number.
     ```sds linenums="61"
     class Number
     ```
+    { data-search-exclude }

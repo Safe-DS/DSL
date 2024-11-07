@@ -22,3 +22,4 @@ stubs.
         qualifiedName: String
     )
     ```
+    { data-search-exclude }

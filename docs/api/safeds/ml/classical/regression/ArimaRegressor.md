@@ -61,6 +61,7 @@ pipeline example {
         ) -> image: Image
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `isFitted` {#safeds.ml.classical.regression.ArimaRegressor.isFitted data-toc-label='[attribute] isFitted'}
 
@@ -94,6 +95,7 @@ This ARIMA Model is not modified.
         @PythonName("time_series") timeSeries: TimeSeriesDataset
     ) -> fittedArima: ArimaRegressor
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `plotPredictions` {#safeds.ml.classical.regression.ArimaRegressor.plotPredictions data-toc-label='[function] plotPredictions'}
 
@@ -120,6 +122,7 @@ Plot the predictions of the trained model to the given target of the time series
         @PythonName("test_series") testSeries: TimeSeriesDataset
     ) -> image: Image
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `predict` {#safeds.ml.classical.regression.ArimaRegressor.predict data-toc-label='[function] predict'}
 
@@ -145,3 +148,4 @@ Predict a target vector using a time series target column. The model has to be t
         @PythonName("time_series") timeSeries: TimeSeriesDataset
     ) -> prediction: Table
     ```
+    { data-search-exclude }
