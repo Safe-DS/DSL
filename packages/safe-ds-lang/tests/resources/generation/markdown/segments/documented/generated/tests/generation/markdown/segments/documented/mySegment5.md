@@ -19,3 +19,4 @@ Description of mySegment5.
         yield result2 = 2.0;
     }
     ```
+    { data-search-exclude }

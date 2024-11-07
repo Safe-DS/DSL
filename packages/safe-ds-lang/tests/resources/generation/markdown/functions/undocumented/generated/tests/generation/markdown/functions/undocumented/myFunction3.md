@@ -14,3 +14,4 @@
     ```sds linenums="14"
     fun myFunction3(param1: Int, param2: Float = 1.0)
     ```
+    { data-search-exclude }

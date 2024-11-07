@@ -10,6 +10,7 @@
         MyVariant1
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-variant"></code> `MyVariant1` {#tests.generation.markdown.enums.undocumented.MyEnum2.MyVariant1 data-toc-label='[variant] MyVariant1'}
 

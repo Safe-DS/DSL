@@ -12,3 +12,4 @@ search:
     ```sds linenums="12"
     class MyClass2
     ```
+    { data-search-exclude }

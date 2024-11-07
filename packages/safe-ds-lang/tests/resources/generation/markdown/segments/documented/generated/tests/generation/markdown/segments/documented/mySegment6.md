@@ -15,3 +15,4 @@ Description of mySegment6.
     ```sds linenums="42"
     segment mySegment6() {}
     ```
+    { data-search-exclude }

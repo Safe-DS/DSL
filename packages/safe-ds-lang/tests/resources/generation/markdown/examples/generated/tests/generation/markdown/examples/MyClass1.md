@@ -18,3 +18,4 @@ Do not highlight.
     ```sds linenums="7"
     class MyClass1
     ```
+    { data-search-exclude }

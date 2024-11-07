@@ -7,3 +7,4 @@
     ```sds linenums="5"
     class MyClass2()
     ```
+    { data-search-exclude }

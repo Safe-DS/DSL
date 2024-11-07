@@ -16,3 +16,4 @@ search:
     ```sds linenums="3"
     class MyClass1
     ```
+    { data-search-exclude }

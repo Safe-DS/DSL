@@ -22,3 +22,4 @@ Description of MyClass3.
     ```sds linenums="20"
     class MyClass3<TypeParam1, TypeParam2 sub MyClass1, TypeParam3 = MyClass1>
     ```
+    { data-search-exclude }

@@ -17,3 +17,4 @@ Broken.
     ```sds linenums="10"
     class MyClass1(param1: Int)
     ```
+    { data-search-exclude }

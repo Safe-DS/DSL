@@ -14,3 +14,4 @@
     ```sds linenums="17"
     fun myFunction4() -> (result1: Int, result2: Float)
     ```
+    { data-search-exclude }

@@ -17,3 +17,4 @@
         yield result2 = 2.0;
     }
     ```
+    { data-search-exclude }

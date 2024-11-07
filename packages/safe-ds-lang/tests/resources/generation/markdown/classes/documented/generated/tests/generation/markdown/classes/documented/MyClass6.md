@@ -57,6 +57,7 @@ Description of MyClass6.
         static attr myAttribute2: Float
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `myAttribute1` {#tests.generation.markdown.classes.documented.MyClass6.myAttribute1 data-toc-label='[attribute] myAttribute1'}
 
@@ -73,6 +74,7 @@ Description of myFunction1.
     ```sds linenums="68"
     @Pure fun myFunction1()
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-static-attribute"></code> `myAttribute2` {#tests.generation.markdown.classes.documented.MyClass6.myAttribute2 data-toc-label='[static-attribute] myAttribute2'}
 
@@ -89,6 +91,7 @@ Description of myFunction2.
     ```sds linenums="72"
     @Pure static fun myFunction2()
     ```
+    { data-search-exclude }
 
 ---
 search:
@@ -115,6 +118,7 @@ Description of MyClass7.
         attr myAttribute3: Int
     }
     ```
+    { data-search-exclude }
 
 ### <code class="doc-symbol doc-symbol-attribute"></code> `myAttribut4` {#tests.generation.markdown.classes.documented.MyClass6.MyClass7.myAttribut4 data-toc-label='[attribute] myAttribut4'}
 
@@ -148,6 +152,7 @@ Description of MyEnum1.
         MyVariant1
     }
     ```
+    { data-search-exclude }
 
 ### <code class="doc-symbol doc-symbol-variant"></code> `MyVariant1` {#tests.generation.markdown.classes.documented.MyClass6.MyEnum1.MyVariant1 data-toc-label='[variant] MyVariant1'}
 

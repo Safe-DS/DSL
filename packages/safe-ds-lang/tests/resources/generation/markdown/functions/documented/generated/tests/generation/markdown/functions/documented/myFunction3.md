@@ -16,3 +16,4 @@ Description of myFunction3.
     ```sds linenums="30"
     fun myFunction3(param1: MyClass1, param2: Float = 1.0)
     ```
+    { data-search-exclude }

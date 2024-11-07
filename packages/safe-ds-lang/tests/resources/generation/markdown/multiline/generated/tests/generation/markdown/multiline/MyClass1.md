@@ -18,3 +18,4 @@ $$
     ```sds linenums="10"
     class MyClass1
     ```
+    { data-search-exclude }

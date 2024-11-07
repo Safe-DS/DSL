@@ -7,3 +7,4 @@
     ```sds linenums="4"
     enum MyEnum1
     ```
+    { data-search-exclude }

@@ -15,3 +15,4 @@ Description of myFunction5.
     ```sds linenums="47"
     fun myFunction5()
     ```
+    { data-search-exclude }
