@@ -715,7 +715,7 @@ export class SafeDsMarkdownGenerator {
         const kind = isInPipelineFile(node) ? 'Implementation' : 'Stub';
 
         let result = `??? quote "${kind} code in \`${fileName}\`"\n\n`;
-        result += indent(`\`\`\`sds linenums="${startLine + 1}"\n${text}\n\`\`\``);
+        result += indent(`\`\`\`sds linenums="${startLine + 1}"\n${text}\n\`\`\`\n{ data-search-exclude }`);
 
         return result + '\n';
     }
