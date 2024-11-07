@@ -45,6 +45,7 @@ Wraps a callable so that it conforms to the TableTransformer interface.
         ) -> (fittedTransformer: FunctionalTableTransformer, transformedTable: Table)
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `isFitted` {#safeds.data.tabular.transformation.FunctionalTableTransformer.isFitted data-toc-label='[attribute] isFitted'}
 
@@ -76,6 +77,7 @@ Whether the transformer is fitted.
         table: Table
     ) -> fittedTransformer: FunctionalTableTransformer
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `fitAndTransform` {#safeds.data.tabular.transformation.FunctionalTableTransformer.fitAndTransform data-toc-label='[function] fitAndTransform'}
 
@@ -103,6 +105,7 @@ Whether the transformer is fitted.
         table: Table
     ) -> (fittedTransformer: FunctionalTableTransformer, transformedTable: Table)
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `transform` {#safeds.data.tabular.transformation.FunctionalTableTransformer.transform data-toc-label='[function] transform'}
 
@@ -130,3 +133,4 @@ Apply the learned transformation to a table.
         table: Table
     ) -> transformedTable: Table
     ```
+    { data-search-exclude }

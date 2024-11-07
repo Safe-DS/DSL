@@ -153,6 +153,7 @@ pipeline example {
         ) -> string: Cell<String>
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `century` {#safeds.data.tabular.containers.TemporalCell.century data-toc-label='[function] century'}
 
@@ -181,6 +182,7 @@ pipeline example {
     @Pure
     fun century() -> century: Cell<Int>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `datetimeToString` {#safeds.data.tabular.containers.TemporalCell.datetimeToString data-toc-label='[function] datetimeToString'}
 
@@ -218,6 +220,7 @@ pipeline example {
         @PythonName("format_string") formatString: String = "%Y/%m/%d %H:%M:%S"
     ) -> string: Cell<String>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `dateToString` {#safeds.data.tabular.containers.TemporalCell.dateToString data-toc-label='[function] dateToString'}
 
@@ -255,6 +258,7 @@ pipeline example {
         @PythonName("format_string") formatString: String = "%F"
     ) -> string: Cell<String>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `day` {#safeds.data.tabular.containers.TemporalCell.day data-toc-label='[function] day'}
 
@@ -283,6 +287,7 @@ pipeline example {
     @Pure
     fun day() -> day: Cell<Int>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `month` {#safeds.data.tabular.containers.TemporalCell.month data-toc-label='[function] month'}
 
@@ -311,6 +316,7 @@ pipeline example {
     @Pure
     fun month() -> month: Cell<Int>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `week` {#safeds.data.tabular.containers.TemporalCell.week data-toc-label='[function] week'}
 
@@ -339,6 +345,7 @@ pipeline example {
     @Pure
     fun week() -> week: Cell<Int>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `weekday` {#safeds.data.tabular.containers.TemporalCell.weekday data-toc-label='[function] weekday'}
 
@@ -367,6 +374,7 @@ pipeline example {
     @Pure
     fun weekday() -> weekday: Cell<Int>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `year` {#safeds.data.tabular.containers.TemporalCell.year data-toc-label='[function] year'}
 
@@ -395,3 +403,4 @@ pipeline example {
     @Pure
     fun year() -> year: Cell<Int>
     ```
+    { data-search-exclude }

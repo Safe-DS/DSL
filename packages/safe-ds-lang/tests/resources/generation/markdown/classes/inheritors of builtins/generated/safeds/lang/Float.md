@@ -18,3 +18,4 @@ search:
     ```sds linenums="5"
     class Float sub Number
     ```
+    { data-search-exclude }

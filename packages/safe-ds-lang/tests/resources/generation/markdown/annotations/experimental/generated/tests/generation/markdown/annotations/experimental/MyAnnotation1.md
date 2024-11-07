@@ -23,3 +23,4 @@
     ```sds linenums="4"
     annotation MyAnnotation1
     ```
+    { data-search-exclude }

@@ -78,6 +78,7 @@ The schema of a row or table.
         fun toMap() -> data: Map<String, DataType>
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `columnNames` {#safeds.data.tabular.typing.Schema.columnNames data-toc-label='[attribute] columnNames'}
 
@@ -119,6 +120,7 @@ pipeline example {
         name: String
     ) -> type: DataType
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `hasColumn` {#safeds.data.tabular.typing.Schema.hasColumn data-toc-label='[function] hasColumn'}
 
@@ -160,6 +162,7 @@ pipeline example {
         name: String
     ) -> contains: Boolean
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toMap` {#safeds.data.tabular.typing.Schema.toMap data-toc-label='[function] toMap'}
 
@@ -187,3 +190,4 @@ pipeline example {
     @PythonName("to_dict")
     fun toMap() -> data: Map<String, DataType>
     ```
+    { data-search-exclude }

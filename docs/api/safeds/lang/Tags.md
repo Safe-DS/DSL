@@ -25,3 +25,4 @@ Tags to associate with a declaration. They can be used for filtering.
     ```sds linenums="71"
     annotation Tags(tags: List<String>)
     ```
+    { data-search-exclude }

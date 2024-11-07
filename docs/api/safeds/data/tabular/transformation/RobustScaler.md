@@ -51,6 +51,7 @@ Currently, for columns with high stability (IQR == 0), it will only substract th
         ) -> (fittedTransformer: RobustScaler, transformedTable: Table)
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `isFitted` {#safeds.data.tabular.transformation.RobustScaler.isFitted data-toc-label='[attribute] isFitted'}
 
@@ -84,6 +85,7 @@ Learn a transformation for a set of columns in a table.
         table: Table
     ) -> fittedTransformer: RobustScaler
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `fitAndTransform` {#safeds.data.tabular.transformation.RobustScaler.fitAndTransform data-toc-label='[function] fitAndTransform'}
 
@@ -113,6 +115,7 @@ Learn a transformation for a set of columns in a table and apply the learned tra
         table: Table
     ) -> (fittedTransformer: RobustScaler, transformedTable: Table)
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `inverseTransform` {#safeds.data.tabular.transformation.RobustScaler.inverseTransform data-toc-label='[function] inverseTransform'}
 
@@ -143,6 +146,7 @@ Column order and types may differ from the original table. Likewise, some values
         @PythonName("transformed_table") transformedTable: Table
     ) -> originalTable: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `transform` {#safeds.data.tabular.transformation.RobustScaler.transform data-toc-label='[function] transform'}
 
@@ -170,3 +174,4 @@ Apply the learned transformation to a table.
         table: Table
     ) -> transformedTable: Table
     ```
+    { data-search-exclude }

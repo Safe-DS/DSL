@@ -16,3 +16,4 @@ Description of mySegment4.
     ```sds linenums="24"
     segment mySegment4(param1: MyClass1, param2: Float = 1.0) {}
     ```
+    { data-search-exclude }

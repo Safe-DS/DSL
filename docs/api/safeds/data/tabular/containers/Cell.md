@@ -439,6 +439,7 @@ This class cannot be instantiated directly. It is only used for arguments of cal
         ) -> result: Cell<Boolean>
     }
     ```
+    { data-search-exclude }
 
 ## :test_tube:{ title="Experimental" } <code class="doc-symbol doc-symbol-attribute"></code> `dt` {#safeds.data.tabular.containers.Cell.dt data-toc-label='[attribute] dt'}
 
@@ -478,6 +479,7 @@ pipeline example {
     @Pure
     fun abs() -> result: Cell<Number>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `add` {#safeds.data.tabular.containers.Cell.add data-toc-label='[function] add'}
 
@@ -520,6 +522,7 @@ pipeline example {
         other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
     ) -> result: Cell<Number>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `and` {#safeds.data.tabular.containers.Cell.and data-toc-label='[function] and'}
 
@@ -563,6 +566,7 @@ pipeline example {
         other: union<Boolean, Cell> // TODO, once cell types can be inferred: union<Boolean, Cell<Boolean>>
     ) -> result: Cell<Boolean>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `ceil` {#safeds.data.tabular.containers.Cell.ceil data-toc-label='[function] ceil'}
 
@@ -590,6 +594,7 @@ pipeline example {
     @Pure
     fun ceil() -> result: Cell<Int>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `div` {#safeds.data.tabular.containers.Cell.div data-toc-label='[function] div'}
 
@@ -632,6 +637,7 @@ pipeline example {
         other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
     ) -> result: Cell<Number>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `eq` {#safeds.data.tabular.containers.Cell.eq data-toc-label='[function] eq'}
 
@@ -674,6 +680,7 @@ pipeline example {
         other: Any?
     ) -> result: Cell<Boolean>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `floor` {#safeds.data.tabular.containers.Cell.floor data-toc-label='[function] floor'}
 
@@ -701,6 +708,7 @@ pipeline example {
     @Pure
     fun floor() -> result: Cell<Int>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `ge` {#safeds.data.tabular.containers.Cell.ge data-toc-label='[function] ge'}
 
@@ -743,6 +751,7 @@ pipeline example {
         other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
     ) -> result: Cell<Boolean>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `gt` {#safeds.data.tabular.containers.Cell.gt data-toc-label='[function] gt'}
 
@@ -785,6 +794,7 @@ pipeline example {
         other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
     ) -> result: Cell<Boolean>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `le` {#safeds.data.tabular.containers.Cell.le data-toc-label='[function] le'}
 
@@ -827,6 +837,7 @@ pipeline example {
         other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
     ) -> result: Cell<Boolean>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `lt` {#safeds.data.tabular.containers.Cell.lt data-toc-label='[function] lt'}
 
@@ -869,6 +880,7 @@ pipeline example {
         other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
     ) -> result: Cell<Boolean>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `mod` {#safeds.data.tabular.containers.Cell.mod data-toc-label='[function] mod'}
 
@@ -911,6 +923,7 @@ pipeline example {
         other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
     ) -> result: Cell<Number>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `mul` {#safeds.data.tabular.containers.Cell.mul data-toc-label='[function] mul'}
 
@@ -953,6 +966,7 @@ pipeline example {
         other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
     ) -> result: Cell<Number>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `neg` {#safeds.data.tabular.containers.Cell.neg data-toc-label='[function] neg'}
 
@@ -987,6 +1001,7 @@ pipeline example {
     @Pure
     fun neg() -> result: Cell<Number>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `neq` {#safeds.data.tabular.containers.Cell.neq data-toc-label='[function] neq'}
 
@@ -1029,6 +1044,7 @@ pipeline example {
         other: Any?
     ) -> result: Cell<Boolean>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `not` {#safeds.data.tabular.containers.Cell.not data-toc-label='[function] not'}
 
@@ -1064,6 +1080,7 @@ pipeline example {
     @PythonName("not_")
     fun ^not() -> result: Cell<Boolean>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `or` {#safeds.data.tabular.containers.Cell.or data-toc-label='[function] or'}
 
@@ -1107,6 +1124,7 @@ pipeline example {
         other: union<Boolean, Cell> // TODO, once cell types can be inferred: union<Boolean, Cell<Boolean>>
     ) -> result: Cell<Boolean>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `pow` {#safeds.data.tabular.containers.Cell.pow data-toc-label='[function] pow'}
 
@@ -1142,6 +1160,7 @@ pipeline example {
         other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
     ) -> result: Cell<Number>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `sub` {#safeds.data.tabular.containers.Cell.sub data-toc-label='[function] sub'}
 
@@ -1184,6 +1203,7 @@ pipeline example {
         other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
     ) -> result: Cell<Number>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `xor` {#safeds.data.tabular.containers.Cell.xor data-toc-label='[function] xor'}
 
@@ -1219,6 +1239,7 @@ pipeline example {
         other: union<Boolean, Cell> // TODO, once cell types can be inferred: union<Boolean, Cell<Boolean>>
     ) -> result: Cell<Boolean>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-static-function"></code> `firstNotNone` {#safeds.data.tabular.containers.Cell.firstNotNone data-toc-label='[static-function] firstNotNone'}
 
@@ -1251,3 +1272,4 @@ Return the first cell from the given list that is not None.
         cells: List<Cell<T>>
     ) -> cell: Cell<T?>
     ```
+    { data-search-exclude }

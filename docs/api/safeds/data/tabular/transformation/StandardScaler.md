@@ -62,6 +62,7 @@ pipeline example {
         ) -> (fittedTransformer: StandardScaler, transformedTable: Table)
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `isFitted` {#safeds.data.tabular.transformation.StandardScaler.isFitted data-toc-label='[attribute] isFitted'}
 
@@ -95,6 +96,7 @@ This transformer is not modified.
         table: Table
     ) -> fittedTransformer: StandardScaler
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `fitAndTransform` {#safeds.data.tabular.transformation.StandardScaler.fitAndTransform data-toc-label='[function] fitAndTransform'}
 
@@ -124,6 +126,7 @@ Learn a transformation for a set of columns in a table and apply the learned tra
         table: Table
     ) -> (fittedTransformer: StandardScaler, transformedTable: Table)
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `inverseTransform` {#safeds.data.tabular.transformation.StandardScaler.inverseTransform data-toc-label='[function] inverseTransform'}
 
@@ -154,6 +157,7 @@ Column order and types may differ from the original table. Likewise, some values
         @PythonName("transformed_table") transformedTable: Table
     ) -> originalTable: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `transform` {#safeds.data.tabular.transformation.StandardScaler.transform data-toc-label='[function] transform'}
 
@@ -181,3 +185,4 @@ Apply the learned transformation to a table.
         table: Table
     ) -> transformedTable: Table
     ```
+    { data-search-exclude }

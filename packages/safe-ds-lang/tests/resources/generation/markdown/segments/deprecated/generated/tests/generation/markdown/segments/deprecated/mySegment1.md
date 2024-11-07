@@ -11,3 +11,4 @@
     ```sds linenums="4"
     segment mySegment1() {}
     ```
+    { data-search-exclude }

@@ -52,6 +52,7 @@ Get a baseline by fitting data on multiple different models and comparing the be
         ) -> bestMetrics: Map<String, Float>
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `isFitted` {#safeds.ml.classical.classification.BaselineClassifier.isFitted data-toc-label='[attribute] isFitted'}
 
@@ -85,6 +86,7 @@ The original model is not modified.
         @PythonName("train_data") trainData: TabularDataset
     ) -> trainedClassifier: BaselineClassifier
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `predict` {#safeds.ml.classical.classification.BaselineClassifier.predict data-toc-label='[function] predict'}
 
@@ -112,3 +114,4 @@ The original Model is not modified.
         @PythonName("test_data") testData: TabularDataset
     ) -> bestMetrics: Map<String, Float>
     ```
+    { data-search-exclude }

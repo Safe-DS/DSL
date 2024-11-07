@@ -9,3 +9,4 @@ Description of MySchema1.
     ```sds linenums="8"
     schema MySchema1 {}
     ```
+    { data-search-exclude }

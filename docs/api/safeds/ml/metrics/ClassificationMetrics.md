@@ -100,6 +100,7 @@ A collection of classification metrics.
         ) -> recall: Float
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-static-function"></code> `accuracy` {#safeds.ml.metrics.ClassificationMetrics.accuracy data-toc-label='[static-function] accuracy'}
 
@@ -130,6 +131,7 @@ better. Results range from 0.0 to 1.0.
         expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
     ) -> accuracy: Float
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-static-function"></code> `f1Score` {#safeds.ml.metrics.ClassificationMetrics.f1Score data-toc-label='[static-function] f1Score'}
 
@@ -163,6 +165,7 @@ classifier. Results range from 0.0 to 1.0.
         @PythonName("positive_class") positiveClass: Any
     ) -> f1Score: Float
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-static-function"></code> `precision` {#safeds.ml.metrics.ClassificationMetrics.precision data-toc-label='[static-function] precision'}
 
@@ -195,6 +198,7 @@ better the classifier. Results range from 0.0 to 1.0.
         @PythonName("positive_class") positiveClass: Any
     ) -> precision: Float
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-static-function"></code> `recall` {#safeds.ml.metrics.ClassificationMetrics.recall data-toc-label='[static-function] recall'}
 
@@ -227,6 +231,7 @@ better the classifier. Results range from 0.0 to 1.0.
         @PythonName("positive_class") positiveClass: Any
     ) -> recall: Float
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-static-function"></code> `summarize` {#safeds.ml.metrics.ClassificationMetrics.summarize data-toc-label='[static-function] summarize'}
 
@@ -256,3 +261,4 @@ Summarize classification metrics on the given data.
         @PythonName("positive_class") positiveClass: Any
     ) -> metrics: Table
     ```
+    { data-search-exclude }

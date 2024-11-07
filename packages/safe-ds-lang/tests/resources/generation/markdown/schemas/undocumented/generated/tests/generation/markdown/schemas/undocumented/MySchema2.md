@@ -17,3 +17,4 @@
         "column2": Int
     }
     ```
+    { data-search-exclude }

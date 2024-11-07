@@ -20,3 +20,4 @@ search:
     ```sds linenums="7"
     class MyClass3<TypeParam1, TypeParam2 sub Int, TypeParam3 = Int>
     ```
+    { data-search-exclude }

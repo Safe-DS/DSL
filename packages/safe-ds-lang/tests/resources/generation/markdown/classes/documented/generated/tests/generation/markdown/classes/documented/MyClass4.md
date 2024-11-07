@@ -16,3 +16,4 @@ Description of MyClass4.
     ```sds linenums="28"
     class MyClass4(param1: MyClass1, param2: Float = 1.0)
     ```
+    { data-search-exclude }

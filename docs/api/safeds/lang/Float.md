@@ -41,6 +41,7 @@ pipeline example {
         fun toInt() -> int: Int
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toInt` {#safeds.lang.Float.toInt data-toc-label='[function] toInt'}
 
@@ -67,3 +68,4 @@ pipeline example {
     @PythonMacro("int($this)")
     fun toInt() -> int: Int
     ```
+    { data-search-exclude }

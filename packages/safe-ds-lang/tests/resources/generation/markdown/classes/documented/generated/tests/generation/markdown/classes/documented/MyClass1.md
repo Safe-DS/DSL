@@ -18,3 +18,4 @@ Description of MyClass1.
     ```sds linenums="6"
     class MyClass1
     ```
+    { data-search-exclude }

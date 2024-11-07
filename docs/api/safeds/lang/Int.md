@@ -37,6 +37,7 @@ pipeline example {
         fun toFloat() -> float: Float
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toFloat` {#safeds.lang.Int.toFloat data-toc-label='[function] toFloat'}
 
@@ -63,6 +64,7 @@ pipeline example {
     @PythonMacro("float($this)")
     fun toFloat() -> float: Float
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toInt` {#safeds.lang.Int.toInt data-toc-label='[function] toInt'}
 
@@ -89,3 +91,4 @@ pipeline example {
     @PythonMacro("int($this)")
     fun toInt() -> int: Int
     ```
+    { data-search-exclude }

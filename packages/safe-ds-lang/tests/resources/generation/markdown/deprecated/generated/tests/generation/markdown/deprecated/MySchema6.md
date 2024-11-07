@@ -14,3 +14,4 @@
     ```sds linenums="32"
     schema MySchema6 {}
     ```
+    { data-search-exclude }

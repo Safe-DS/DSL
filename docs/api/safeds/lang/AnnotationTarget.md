@@ -75,6 +75,7 @@ The declaration types that can be targeted by annotations.
         TypeParameter
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-variant"></code> `Annotation` {#safeds.lang.AnnotationTarget.Annotation data-toc-label='[variant] Annotation'}
 

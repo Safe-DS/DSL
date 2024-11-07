@@ -317,6 +317,7 @@ pipeline example {
         fun trimStart() -> trimmed: Cell<String>
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `contains` {#safeds.data.tabular.containers.StringCell.contains data-toc-label='[function] contains'}
 
@@ -351,6 +352,7 @@ pipeline example {
         substring: String
     ) -> contains: Cell<Boolean>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `endsWith` {#safeds.data.tabular.containers.StringCell.endsWith data-toc-label='[function] endsWith'}
 
@@ -386,6 +388,7 @@ pipeline example {
         suffix: String
     ) -> endsWith: Cell<Boolean>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `indexOf` {#safeds.data.tabular.containers.StringCell.indexOf data-toc-label='[function] indexOf'}
 
@@ -422,6 +425,7 @@ pipeline example {
         substring: String
     ) -> indexOf: Cell<Int?>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `length` {#safeds.data.tabular.containers.StringCell.length data-toc-label='[function] length'}
 
@@ -457,6 +461,7 @@ pipeline example {
         @PythonName("optimize_for_ascii") optimizeForAscii: Boolean = false
     ) -> length: Cell<Int>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `replace` {#safeds.data.tabular.containers.StringCell.replace data-toc-label='[function] replace'}
 
@@ -494,6 +499,7 @@ pipeline example {
         new: String
     ) -> replacedString: Cell<String>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `startsWith` {#safeds.data.tabular.containers.StringCell.startsWith data-toc-label='[function] startsWith'}
 
@@ -529,6 +535,7 @@ pipeline example {
         prefix: String
     ) -> startsWith: Cell<Boolean>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `substring` {#safeds.data.tabular.containers.StringCell.substring data-toc-label='[function] substring'}
 
@@ -566,6 +573,7 @@ pipeline example {
         length: Int? = null
     ) -> substring: Cell<String>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toDate` {#safeds.data.tabular.containers.StringCell.toDate data-toc-label='[function] toDate'}
 
@@ -593,6 +601,7 @@ pipeline example {
     @PythonName("to_date")
     fun toDate() -> date: Cell
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toDatetime` {#safeds.data.tabular.containers.StringCell.toDatetime data-toc-label='[function] toDatetime'}
 
@@ -620,6 +629,7 @@ pipeline example {
     @PythonName("to_datetime")
     fun toDatetime() -> datetime: Cell
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toFloat` {#safeds.data.tabular.containers.StringCell.toFloat data-toc-label='[function] toFloat'}
 
@@ -648,6 +658,7 @@ pipeline example {
     @PythonName("to_float")
     fun toFloat() -> float: Cell<Float?>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toInt` {#safeds.data.tabular.containers.StringCell.toInt data-toc-label='[function] toInt'}
 
@@ -691,6 +702,7 @@ pipeline example {
         base: Int = 10
     ) -> int: Cell<Int?>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toLowercase` {#safeds.data.tabular.containers.StringCell.toLowercase data-toc-label='[function] toLowercase'}
 
@@ -719,6 +731,7 @@ pipeline example {
     @PythonName("to_lowercase")
     fun toLowercase() -> lowercase: Cell<String>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toUppercase` {#safeds.data.tabular.containers.StringCell.toUppercase data-toc-label='[function] toUppercase'}
 
@@ -747,6 +760,7 @@ pipeline example {
     @PythonName("to_uppercase")
     fun toUppercase() -> uppercase: Cell<String>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `trim` {#safeds.data.tabular.containers.StringCell.trim data-toc-label='[function] trim'}
 
@@ -774,6 +788,7 @@ pipeline example {
     @Pure
     fun trim() -> trimmed: Cell<String>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `trimEnd` {#safeds.data.tabular.containers.StringCell.trimEnd data-toc-label='[function] trimEnd'}
 
@@ -802,6 +817,7 @@ pipeline example {
     @PythonName("trim_end")
     fun trimEnd() -> trimmed: Cell<String>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `trimStart` {#safeds.data.tabular.containers.StringCell.trimStart data-toc-label='[function] trimStart'}
 
@@ -830,3 +846,4 @@ pipeline example {
     @PythonName("trim_start")
     fun trimStart() -> trimmed: Cell<String>
     ```
+    { data-search-exclude }

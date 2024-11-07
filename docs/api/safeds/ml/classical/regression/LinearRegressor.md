@@ -101,6 +101,7 @@ pipeline example {
         ) -> fittedRegressor: LinearRegressor
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `isFitted` {#safeds.ml.classical.regression.LinearRegressor.isFitted data-toc-label='[attribute] isFitted'}
 
@@ -157,6 +158,7 @@ to 1.0. You can interpret the coefficient of determination as follows:
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
     ) -> coefficientOfDetermination: Float
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `fit` {#safeds.ml.classical.regression.LinearRegressor.fit data-toc-label='[function] fit'}
 
@@ -184,6 +186,7 @@ This regressor is not modified.
         @PythonName("training_set") trainingSet: TabularDataset
     ) -> fittedRegressor: LinearRegressor
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `getFeatureNames` {#safeds.ml.classical.regression.LinearRegressor.getFeatureNames data-toc-label='[function] getFeatureNames'}
 
@@ -204,6 +207,7 @@ Return the names of the feature columns.
     @PythonName("get_feature_names")
     fun getFeatureNames() -> featureNames: List<String>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `getFeaturesSchema` {#safeds.ml.classical.regression.LinearRegressor.getFeaturesSchema data-toc-label='[function] getFeaturesSchema'}
 
@@ -224,6 +228,7 @@ Return the schema of the feature columns.
     @PythonName("get_features_schema")
     fun getFeaturesSchema() -> featureSchema: Schema
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `getTargetName` {#safeds.ml.classical.regression.LinearRegressor.getTargetName data-toc-label='[function] getTargetName'}
 
@@ -244,6 +249,7 @@ Return the name of the target column.
     @PythonName("get_target_name")
     fun getTargetName() -> targetName: String
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `getTargetType` {#safeds.ml.classical.regression.LinearRegressor.getTargetType data-toc-label='[function] getTargetType'}
 
@@ -264,6 +270,7 @@ Return the type of the target column.
     @PythonName("get_target_type")
     fun getTargetType() -> targetType: DataType
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `meanAbsoluteError` {#safeds.ml.classical.regression.LinearRegressor.meanAbsoluteError data-toc-label='[function] meanAbsoluteError'}
 
@@ -297,6 +304,7 @@ infinity.
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
     ) -> meanAbsoluteError: Float
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `meanDirectionalAccuracy` {#safeds.ml.classical.regression.LinearRegressor.meanDirectionalAccuracy data-toc-label='[function] meanDirectionalAccuracy'}
 
@@ -334,6 +342,7 @@ for other types of data. Because of this, it is not included in the `summarize_m
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
     ) -> meanDirectionalAccuracy: Float
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `meanSquaredError` {#safeds.ml.classical.regression.LinearRegressor.meanSquaredError data-toc-label='[function] meanSquaredError'}
 
@@ -369,6 +378,7 @@ infinity.
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
     ) -> meanSquaredError: Float
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `medianAbsoluteDeviation` {#safeds.ml.classical.regression.LinearRegressor.medianAbsoluteDeviation data-toc-label='[function] medianAbsoluteDeviation'}
 
@@ -402,6 +412,7 @@ positive infinity.
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
     ) -> medianAbsoluteDeviation: Float
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `predict` {#safeds.ml.classical.regression.LinearRegressor.predict data-toc-label='[function] predict'}
 
@@ -429,6 +440,7 @@ Predict the target values on the given dataset.
         dataset: union<Table, TabularDataset>
     ) -> prediction: TabularDataset
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `summarizeMetrics` {#safeds.ml.classical.regression.LinearRegressor.summarizeMetrics data-toc-label='[function] summarizeMetrics'}
 
@@ -457,6 +469,7 @@ Summarize the regressor's metrics on the given data.
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
     ) -> metrics: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-enum"></code> `Penalty` {#safeds.ml.classical.regression.LinearRegressor.Penalty data-toc-label='[enum] Penalty'}
 
@@ -514,6 +527,7 @@ Possible penalties for the linear regressor.
         }
     }
     ```
+    { data-search-exclude }
 
 ### <code class="doc-symbol doc-symbol-variant"></code> `ElasticNet` {#safeds.ml.classical.regression.LinearRegressor.Penalty.ElasticNet data-toc-label='[variant] ElasticNet'}
 

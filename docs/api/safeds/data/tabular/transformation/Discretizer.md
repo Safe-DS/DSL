@@ -69,6 +69,7 @@ pipeline example {
         ) -> (fittedTransformer: Discretizer, transformedTable: Table)
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `binCount` {#safeds.data.tabular.transformation.Discretizer.binCount data-toc-label='[attribute] binCount'}
 
@@ -108,6 +109,7 @@ This transformer is not modified.
         table: Table
     ) -> fittedTransformer: Discretizer
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `fitAndTransform` {#safeds.data.tabular.transformation.Discretizer.fitAndTransform data-toc-label='[function] fitAndTransform'}
 
@@ -137,6 +139,7 @@ Learn a transformation for a set of columns in a table and apply the learned tra
         table: Table
     ) -> (fittedTransformer: Discretizer, transformedTable: Table)
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `transform` {#safeds.data.tabular.transformation.Discretizer.transform data-toc-label='[function] transform'}
 
@@ -164,3 +167,4 @@ Apply the learned transformation to a table.
         table: Table
     ) -> transformedTable: Table
     ```
+    { data-search-exclude }

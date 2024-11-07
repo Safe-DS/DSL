@@ -31,3 +31,4 @@ Description of MyAnnotation4.
     ```sds linenums="29"
     annotation MyAnnotation4
     ```
+    { data-search-exclude }

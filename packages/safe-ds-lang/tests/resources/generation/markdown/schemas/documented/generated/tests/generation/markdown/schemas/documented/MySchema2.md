@@ -19,3 +19,4 @@ Description of MySchema2.
         "column2": Int,
     }
     ```
+    { data-search-exclude }

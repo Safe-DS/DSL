@@ -18,6 +18,7 @@ Description of MyClass7.
         attr myAttribute1: Int
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `myAttribute1` {#tests.generation.markdown.classes.undocumented.MyClass7.myAttribute1 data-toc-label='[attribute] myAttribute1'}
 
@@ -30,3 +31,4 @@ Description of MyClass7.
     ```sds linenums="17"
     @Pure fun myFunction1()
     ```
+    { data-search-exclude }

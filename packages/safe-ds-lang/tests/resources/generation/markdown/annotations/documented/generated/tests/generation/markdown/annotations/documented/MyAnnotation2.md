@@ -32,3 +32,4 @@ Description of MyAnnotation2.
     ```sds linenums="14"
     annotation MyAnnotation2(param1: MyEnum1, param2: Float = 1.0)
     ```
+    { data-search-exclude }

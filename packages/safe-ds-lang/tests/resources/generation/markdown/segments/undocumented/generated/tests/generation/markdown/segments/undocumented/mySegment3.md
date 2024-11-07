@@ -7,3 +7,4 @@
     ```sds linenums="7"
     internal segment mySegment3() {}
     ```
+    { data-search-exclude }

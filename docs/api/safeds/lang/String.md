@@ -271,6 +271,7 @@ pipeline example {
         fun toInt(base: Int = 10) -> int: Int
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `contains` {#safeds.lang.String.contains data-toc-label='[function] contains'}
 
@@ -303,6 +304,7 @@ pipeline example {
     @PythonMacro("$substring in $this")
     fun contains(substring: String) -> contains: Boolean
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `endsWith` {#safeds.lang.String.endsWith data-toc-label='[function] endsWith'}
 
@@ -335,6 +337,7 @@ pipeline example {
     @PythonMacro("$this.endswith($suffix)")
     fun endsWith(suffix: String) -> endsWith: Boolean
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `indexOf` {#safeds.lang.String.indexOf data-toc-label='[function] indexOf'}
 
@@ -367,6 +370,7 @@ pipeline example {
     @PythonMacro("$this.find($substring)")
     fun indexOf(substring: String) -> index: Int
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `lastIndexOf` {#safeds.lang.String.lastIndexOf data-toc-label='[function] lastIndexOf'}
 
@@ -399,6 +403,7 @@ pipeline example {
     @PythonMacro("$this.rfind($substring)")
     fun lastIndexOf(substring: String) -> index: Int
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `length` {#safeds.lang.String.length data-toc-label='[function] length'}
 
@@ -425,6 +430,7 @@ pipeline example {
     @PythonMacro("len($this)")
     fun length() -> length: Int
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `repeat` {#safeds.lang.String.repeat data-toc-label='[function] repeat'}
 
@@ -457,6 +463,7 @@ pipeline example {
     @PythonMacro("$this * $n")
     fun repeat(n: Int) -> repeatedString: String
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `replace` {#safeds.lang.String.replace data-toc-label='[function] replace'}
 
@@ -490,6 +497,7 @@ pipeline example {
     @PythonMacro("$this.replace($old, $new)")
     fun replace(old: String, new: String) -> replacedString: String
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `split` {#safeds.lang.String.split data-toc-label='[function] split'}
 
@@ -522,6 +530,7 @@ pipeline example {
     @PythonMacro("$this.split($separator)")
     fun split(separator: String) -> parts: List<String>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `startsWith` {#safeds.lang.String.startsWith data-toc-label='[function] startsWith'}
 
@@ -554,6 +563,7 @@ pipeline example {
     @PythonMacro("$this.startswith($prefix)")
     fun startsWith(prefix: String) -> startsWith: Boolean
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `substring` {#safeds.lang.String.substring data-toc-label='[function] substring'}
 
@@ -587,6 +597,7 @@ pipeline example {
     @PythonMacro("$this[$start:$end]")
     fun substring(start: Int = 0, end: Int = this.length()) -> substring: String
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toCasefolded` {#safeds.lang.String.toCasefolded data-toc-label='[function] toCasefolded'}
 
@@ -621,6 +632,7 @@ pipeline example {
     @PythonMacro("$this.casefold()")
     fun toCasefolded() -> casefolded: String
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toFloat` {#safeds.lang.String.toFloat data-toc-label='[function] toFloat'}
 
@@ -647,6 +659,7 @@ pipeline example {
     @PythonMacro("float($this)")
     fun toFloat() -> float: Float
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toInt` {#safeds.lang.String.toInt data-toc-label='[function] toInt'}
 
@@ -684,6 +697,7 @@ pipeline example {
     @PythonMacro("int($this, $base)")
     fun toInt(base: Int = 10) -> int: Int
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toLowercase` {#safeds.lang.String.toLowercase data-toc-label='[function] toLowercase'}
 
@@ -717,6 +731,7 @@ pipeline example {
     @PythonMacro("$this.lower()")
     fun toLowercase() -> lowercase: String
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toUppercase` {#safeds.lang.String.toUppercase data-toc-label='[function] toUppercase'}
 
@@ -750,6 +765,7 @@ pipeline example {
     @PythonMacro("$this.upper()")
     fun toUppercase() -> uppercase: String
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `trim` {#safeds.lang.String.trim data-toc-label='[function] trim'}
 
@@ -776,6 +792,7 @@ pipeline example {
     @PythonMacro("$this.strip()")
     fun trim() -> trimmed: String
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `trimEnd` {#safeds.lang.String.trimEnd data-toc-label='[function] trimEnd'}
 
@@ -802,6 +819,7 @@ pipeline example {
     @PythonMacro("$this.rstrip()")
     fun trimEnd() -> trimmed: String
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `trimStart` {#safeds.lang.String.trimStart data-toc-label='[function] trimStart'}
 
@@ -828,3 +846,4 @@ pipeline example {
     @PythonMacro("$this.lstrip()")
     fun trimStart() -> trimmed: String
     ```
+    { data-search-exclude }

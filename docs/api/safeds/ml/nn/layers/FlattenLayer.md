@@ -20,6 +20,7 @@ A flatten layer.
         @PythonName("output_size") attr outputSize: Int
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `inputSize` {#safeds.ml.nn.layers.FlattenLayer.inputSize data-toc-label='[attribute] inputSize'}
 

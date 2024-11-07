@@ -30,6 +30,7 @@ A fully connected forward layer.
         @PythonName("output_size") attr outputSize: Int
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `inputSize` {#safeds.ml.nn.layers.ForwardLayer.inputSize data-toc-label='[attribute] inputSize'}
 

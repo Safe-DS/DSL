@@ -27,3 +27,4 @@
         param3: TypeParam3,
     )
     ```
+    { data-search-exclude }

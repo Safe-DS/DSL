@@ -85,6 +85,7 @@ pipeline example {
         fun toTable() -> table: Table
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `extras` {#safeds.data.labeled.containers.TabularDataset.extras data-toc-label='[attribute] extras'}
 
@@ -139,3 +140,4 @@ pipeline example {
     @PythonName("to_table")
     fun toTable() -> table: Table
     ```
+    { data-search-exclude }
