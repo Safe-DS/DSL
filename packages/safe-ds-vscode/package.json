@@ -136,7 +136,7 @@
             "properties": {
                 "safe-ds.inlayHints.assigneeTypes.enabled": {
                     "type": "boolean",
-                    "default": true,
+                    "default": false,
                     "description": "Show inferred types for named assignees."
                 },
                 "safe-ds.inlayHints.lambdaParameterTypes.enabled": {
