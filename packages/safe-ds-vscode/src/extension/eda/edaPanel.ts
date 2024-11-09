@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { ToExtensionMessage } from '@safe-ds/eda/types/messaging.js';
 import * as webviewApi from './apis/webviewApi.ts';
 import { Table } from '@safe-ds/eda/types/state.ts';
-import { SafeDsServices, ast } from '@safe-ds/lang';
+import { SafeDsServices } from '@safe-ds/lang';
 import { RunnerApi } from './apis/runnerApi.ts';
 import { safeDsLogger } from '../helpers/logging.js';
 
@@ -33,14 +33,14 @@ export class EDAPanel {
         startPipelineExecutionId: string,
         pipelinePath: vscode.Uri,
         pipelineName: string,
-        pipelineNode: ast.SdsPipeline,
+        pipelineNodeEndOffset: number,
         tableName: string,
     ) {
         this.tableIdentifier = pipelineName + '.' + tableName;
         this.panel = panel;
         this.extensionUri = extensionUri;
         this.startPipelineExecutionId = startPipelineExecutionId;
-        this.runnerApi = new RunnerApi(EDAPanel.services, pipelinePath, pipelineName, pipelineNode, tableName);
+        this.runnerApi = new RunnerApi(EDAPanel.services, pipelinePath, pipelineName, pipelineNodeEndOffset, tableName);
         this.tableName = tableName;
 
         // Set the webview's initial html content
@@ -265,7 +265,7 @@ export class EDAPanel {
         services: SafeDsServices,
         pipelinePath: vscode.Uri,
         pipelineName: string,
-        pipelineNode: ast.SdsPipeline,
+        pipelineNodeEndOffset: number,
         tableName: string,
     ): Promise<void> {
         EDAPanel.context = context;
@@ -282,7 +282,7 @@ export class EDAPanel {
             panel.panel.reveal(panel.column);
             panel.tableIdentifier = tableIdentifier;
             panel.startPipelineExecutionId = startPipelineExecutionId;
-            panel.runnerApi = new RunnerApi(services, pipelinePath, pipelineName, pipelineNode, tableName);
+            panel.runnerApi = new RunnerApi(services, pipelinePath, pipelineName, pipelineNodeEndOffset, tableName);
             panel.tableName = tableName;
             EDAPanel.panelsMap.set(tableIdentifier, panel);
 
@@ -312,7 +312,7 @@ export class EDAPanel {
                 startPipelineExecutionId,
                 pipelinePath,
                 pipelineName,
-                pipelineNode,
+                pipelineNodeEndOffset,
                 tableName,
             );
             EDAPanel.panelsMap.set(tableIdentifier, edaPanel);

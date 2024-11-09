@@ -16,7 +16,7 @@ import { isSdsModule, isSdsPipeline, isSdsPlaceholder } from '../generated/ast.j
 import { SafeDsLogger, SafeDsMessagingProvider } from '../communication/safe-ds-messaging-provider.js';
 import crypto from 'crypto';
 import { SafeDsPythonServer } from './safe-ds-python-server.js';
-import { IsRunnerReadyRequest, ShowImageNotification } from '../communication/rpc.js';
+import { ExploreTableNotification, IsRunnerReadyRequest, ShowImageNotification } from '../communication/rpc.js';
 import { expandToStringLF, joinToNode } from 'langium/generate';
 import { UUID } from 'node:crypto';
 
@@ -73,6 +73,45 @@ export class SafeDsRunner {
         await this.runWithCallbacks(`running pipeline ${node.name} in ${documentUri}`, async (pipelineExecutionId) => {
             await this.executePipeline(pipelineExecutionId, document, node.name);
         });
+    }
+
+    async exploreTable(name: string, documentUri: string, nodePath: string, index: number | undefined) {
+        const document = this.getDocument(documentUri);
+        if (!document) {
+            return;
+        }
+
+        const root = document.parseResult.value;
+        const placeholder = this.astNodeLocator.getAstNode(root, nodePath);
+        if (!isSdsPlaceholder(placeholder)) {
+            this.messaging.showErrorMessage('Selected node is not a placeholder.');
+            return;
+        }
+
+        const pipeline = AstUtils.getContainerOfType(placeholder, isSdsPipeline);
+        const pipelineCstNode = pipeline?.$cstNode;
+        if (!pipeline || !pipelineCstNode) {
+            this.messaging.showErrorMessage('Could not find pipeline.');
+            return;
+        }
+
+        await this.runWithCallbacks(
+            `exploring table ${pipeline.name}/${name} in ${documentUri}`,
+            async (pipelineExecutionId) => {
+                await this.executePipeline(pipelineExecutionId, document, pipeline.name, [placeholder.name]);
+            },
+            async (pipelineExecutionId, placeholderName) => {
+                if (placeholderName === placeholder.name) {
+                    await this.messaging.sendNotification(ExploreTableNotification.type, {
+                        pipelineExecutionId,
+                        uri: documentUri,
+                        pipelineName: pipeline.name,
+                        pipelineNodeEndOffset: pipelineCstNode.end,
+                        placeholderName: placeholder.name,
+                    });
+                }
+            },
+        );
     }
 
     async printValue(name: string, documentUri: string, nodePath: string, index: number | undefined) {

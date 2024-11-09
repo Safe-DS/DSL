@@ -10,7 +10,7 @@ import {
     ProfilingDetailStatistical,
     Table,
 } from '@safe-ds/eda/types/state.js';
-import { ast, CODEGEN_PREFIX, messages, SafeDsServices } from '@safe-ds/lang';
+import { CODEGEN_PREFIX, messages, SafeDsServices } from '@safe-ds/lang';
 import { LangiumDocument } from 'langium';
 import * as vscode from 'vscode';
 import crypto from 'crypto';
@@ -26,7 +26,7 @@ export class RunnerApi {
     services: SafeDsServices;
     pipelinePath: vscode.Uri;
     pipelineName: string;
-    pipelineNode: ast.SdsPipeline;
+    pipelineNodeEndOffset: number;
     tablePlaceholder: string;
     baseDocument: LangiumDocument | undefined;
     placeholderCounter = 0;
@@ -35,13 +35,13 @@ export class RunnerApi {
         services: SafeDsServices,
         pipelinePath: vscode.Uri,
         pipelineName: string,
-        pipelineNode: ast.SdsPipeline,
+        pipelineNodeEndOffset: number,
         tablePlaceholder: string,
     ) {
         this.services = services;
         this.pipelinePath = pipelinePath;
         this.pipelineName = pipelineName;
-        this.pipelineNode = pipelineNode;
+        this.pipelineNodeEndOffset = pipelineNodeEndOffset;
         this.tablePlaceholder = tablePlaceholder;
         getPipelineDocument(this.pipelinePath).then((doc) => {
             // Get here to avoid issues because of chanigng file
@@ -65,11 +65,7 @@ export class RunnerApi {
 
             const documentText = this.baseDocument.textDocument.getText();
 
-            const endOfPipeline = this.pipelineNode.$cstNode?.end;
-            if (!endOfPipeline) {
-                reject('Pipeline not found');
-                return;
-            }
+            const endOfPipeline = this.pipelineNodeEndOffset;
 
             let newDocumentText;
 
