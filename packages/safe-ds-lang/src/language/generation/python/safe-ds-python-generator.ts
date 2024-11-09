@@ -44,7 +44,6 @@ import {
     isSdsPrefixOperation,
     isSdsReference,
     isSdsSegment,
-    isSdsStatement,
     isSdsTemplateString,
     isSdsTemplateStringEnd,
     isSdsTemplateStringInner,
@@ -83,7 +82,6 @@ import {
     getAssignees,
     getModuleMembers,
     getParameters,
-    getPlaceholderByName,
     getStatements,
     isStatic,
     Parameter,
@@ -417,12 +415,17 @@ export class SafeDsPythonGenerator {
         typeVariableSet: Set<string>,
         generateOptions: GenerateOptions,
     ): Generated {
+        const targetStatements =
+            typeof generateOptions.targetStatements === 'number'
+                ? [generateOptions.targetStatements]
+                : generateOptions.targetStatements;
+
         const infoFrame = new GenerationInfoFrame(
             importSet,
             utilitySet,
             typeVariableSet,
             true,
-            generateOptions.targetPlaceholders,
+            targetStatements,
             generateOptions.disableRunnerIntegration,
         );
         return expandTracedToNode(pipeline)`def ${traceToNode(
@@ -475,11 +478,9 @@ export class SafeDsPythonGenerator {
         generateLambda: boolean = false,
     ): CompositeGeneratorNode {
         let statements = getStatements(block).filter((stmt) => this.purityComputer.statementDoesSomething(stmt));
-        if (frame.targetPlaceholders) {
-            const targetStatements = frame.targetPlaceholders.flatMap((it) => {
-                const placeholder = getPlaceholderByName(block, it);
-                const statement = AstUtils.getContainerOfType(placeholder, isSdsStatement);
-                return statement ?? [];
+        if (frame.targetStatements) {
+            const targetStatements = frame.targetStatements.flatMap((it) => {
+                return getStatements(block)[it] ?? [];
             });
             if (!isEmpty(targetStatements)) {
                 statements = this.slicer.computeBackwardSliceToTargets(statements, targetStatements);
@@ -1239,7 +1240,7 @@ class GenerationInfoFrame {
     private readonly utilitySet: Set<UtilityFunction>;
     private readonly typeVariableSet: Set<string>;
     public readonly isInsidePipeline: boolean;
-    public readonly targetPlaceholders: string[] | undefined;
+    public readonly targetStatements: number[] | undefined;
     public readonly disableRunnerIntegration: boolean;
     private extraStatements = new Map<SdsExpression, Generated>();
 
@@ -1248,7 +1249,7 @@ class GenerationInfoFrame {
         utilitySet: Set<UtilityFunction> = new Set<UtilityFunction>(),
         typeVariableSet: Set<string> = new Set<string>(),
         insidePipeline: boolean = false,
-        targetPlaceholders: string[] | undefined = undefined,
+        targetStatements: number[] | undefined = undefined,
         disableRunnerIntegration: boolean = false,
         idManager: IdManager<SdsExpression> = new IdManager(),
     ) {
@@ -1257,7 +1258,7 @@ class GenerationInfoFrame {
         this.utilitySet = utilitySet;
         this.typeVariableSet = typeVariableSet;
         this.isInsidePipeline = insidePipeline;
-        this.targetPlaceholders = targetPlaceholders;
+        this.targetStatements = targetStatements;
         this.disableRunnerIntegration = disableRunnerIntegration;
     }
 
@@ -1316,7 +1317,7 @@ class GenerationInfoFrame {
             this.utilitySet,
             this.typeVariableSet,
             this.isInsidePipeline,
-            this.targetPlaceholders,
+            this.targetStatements,
             this.disableRunnerIntegration,
             this.idManager,
         );
@@ -1324,8 +1325,26 @@ class GenerationInfoFrame {
 }
 
 export interface GenerateOptions {
+    /**
+     * Where the generated code should be written to.
+     */
     destination: URI;
+
+    /**
+     * Whether to create source maps for the generated code.
+     */
     createSourceMaps: boolean;
-    targetPlaceholders: string[] | undefined;
+
+    /**
+     * The indices of the statements to generate code for. Code will also be generated for any statements that affect
+     * the target statements.
+     *
+     * If undefined, only code for statements with side effects and those that affect them will be generated.
+     */
+    targetStatements: number[] | number | undefined;
+
+    /**
+     * Whether to disable the integration with the `safe-ds-runner` package and instead generate plain Python code.
+     */
     disableRunnerIntegration: boolean;
 }

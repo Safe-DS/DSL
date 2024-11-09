@@ -11,7 +11,7 @@ import {
     Table,
 } from '@safe-ds/eda/types/state.js';
 import { CODEGEN_PREFIX, messages, SafeDsServices } from '@safe-ds/lang';
-import { LangiumDocument } from 'langium';
+import { AstUtils, LangiumDocument } from 'langium';
 import * as vscode from 'vscode';
 import crypto from 'crypto';
 import { getPipelineDocument } from '../../mainClient.ts';
@@ -21,6 +21,8 @@ import {
     MultipleRunnerExecutionResultMessage,
     RunnerExecutionResultMessage,
 } from '@safe-ds/eda/types/messaging.ts';
+import { isSdsPipeline, isSdsStatement, SdsModule } from '../../../../../safe-ds-lang/src/language/generated/ast.js';
+import { getModuleMembers, getPlaceholderByName } from '../../../../../safe-ds-lang/src/language/index.js';
 
 export class RunnerApi {
     services: SafeDsServices;
@@ -81,12 +83,25 @@ export class RunnerApi {
             );
             await this.services.shared.workspace.DocumentBuilder.build([newDoc]);
 
+            let targetStatements: number[] = [];
+            for (const moduleMember of getModuleMembers(newDoc.parseResult.value as SdsModule)) {
+                if (isSdsPipeline(moduleMember) && moduleMember.name === this.pipelineName) {
+                    for (const name of placeholderNames ?? []) {
+                        const placeholder = getPlaceholderByName(moduleMember.body, name);
+                        const statement = AstUtils.getContainerOfType(placeholder, isSdsStatement);
+                        if (statement) {
+                            targetStatements.push(statement.$containerIndex!);
+                        }
+                    }
+                }
+            }
+
             safeDsLogger.debug(`Executing pipeline ${this.pipelineName} with added lines`);
             await this.services.runtime.Runner.executePipeline(
                 pipelineExecutionId,
                 newDoc,
                 this.pipelineName,
-                placeholderNames,
+                targetStatements,
             );
 
             this.services.shared.workspace.LangiumDocuments.deleteDocument(this.pipelinePath);

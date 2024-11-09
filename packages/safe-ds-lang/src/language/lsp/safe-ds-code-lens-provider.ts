@@ -116,20 +116,31 @@ export class SafeDsCodeLensProvider implements CodeLensProvider {
         for (const assignee of getAssignees(node)) {
             await interruptAndCheck(cancelToken);
             if (isSdsPlaceholder(assignee)) {
-                await this.computeCodeLensForPlaceholder(assignee, accept);
+                await this.computeCodeLensForPlaceholder(node, assignee, accept);
             }
         }
     }
 
-    private async computeCodeLensForPlaceholder(node: SdsPlaceholder, accept: CodeLensAcceptor): Promise<void> {
-        const cstNode = node.$cstNode;
+    private async computeCodeLensForPlaceholder(
+        assignment: SdsAssignment,
+        placeholder: SdsPlaceholder,
+        accept: CodeLensAcceptor,
+    ): Promise<void> {
+        const cstNode = placeholder.$cstNode;
         if (!cstNode) {
             /* c8 ignore next 2 */
             return;
         }
 
-        const type = this.typeComputer.computeType(node);
-        await this.computeCodeLensForValue(type, node.name, this.computeNodeId(node), cstNode.range, accept);
+        const type = this.typeComputer.computeType(placeholder);
+        await this.computeCodeLensForValue(
+            type,
+            placeholder.name,
+            this.computeNodeId(assignment),
+            placeholder.$containerIndex,
+            cstNode.range,
+            accept,
+        );
     }
 
     private async computeCodeLensForOutputStatement(
@@ -175,9 +186,10 @@ export class SafeDsCodeLensProvider implements CodeLensProvider {
                 unpackedTypes[i]!,
                 valueNames[i] ?? 'expression',
                 this.computeNodeId(node),
+                index,
                 cstNode.range,
                 accept,
-                { index, fallbackToPrint: true },
+                { fallbackToPrint: true },
             );
         }
     }
@@ -186,6 +198,7 @@ export class SafeDsCodeLensProvider implements CodeLensProvider {
         type: Type,
         name: string,
         id: NodeId,
+        index: number | undefined,
         range: Range,
         accept: CodeLensAcceptor,
         options: CodeLensForValueOptions = {},
@@ -196,7 +209,7 @@ export class SafeDsCodeLensProvider implements CodeLensProvider {
                 command: {
                     title: `Show ${name}`,
                     command: COMMAND_SHOW_IMAGE,
-                    arguments: [name, id, options.index],
+                    arguments: [name, id, index],
                 },
             });
         } else if (this.typeChecker.isTable(type)) {
@@ -205,7 +218,7 @@ export class SafeDsCodeLensProvider implements CodeLensProvider {
                 command: {
                     title: `Explore ${name}`,
                     command: COMMAND_EXPLORE_TABLE,
-                    arguments: [name, id, options.index],
+                    arguments: [name, id, index],
                 },
             });
         } else if (options.fallbackToPrint || this.typeChecker.canBePrinted(type)) {
@@ -214,7 +227,7 @@ export class SafeDsCodeLensProvider implements CodeLensProvider {
                 command: {
                     title: `Print ${name}`,
                     command: COMMAND_PRINT_VALUE,
-                    arguments: [name, id, options.index],
+                    arguments: [name, id, index],
                 },
             });
         }
@@ -234,12 +247,6 @@ type NodeId = [string, string];
  * Options for the `computeCodeLensForValue` method.
  */
 interface CodeLensForValueOptions {
-    /**
-     * The index of the value to show if it is contained in a tuple. If `undefined`, the value is not contained in a
-     * tuple.
-     */
-    index?: number;
-
     /**
      * If `true`, a print code lens is created, if no other code lens is applicable.
      */

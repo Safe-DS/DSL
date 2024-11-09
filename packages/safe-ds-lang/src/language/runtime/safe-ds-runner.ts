@@ -12,13 +12,21 @@ import {
 import { SourceMapConsumer } from 'source-map-js';
 import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import { SafeDsPythonGenerator } from '../generation/python/safe-ds-python-generator.js';
-import { isSdsModule, isSdsPipeline, isSdsPlaceholder } from '../generated/ast.js';
+import {
+    isSdsAssignment,
+    isSdsModule,
+    isSdsOutputStatement,
+    isSdsPipeline,
+    isSdsStatement,
+    SdsStatement,
+} from '../generated/ast.js';
 import { SafeDsLogger, SafeDsMessagingProvider } from '../communication/safe-ds-messaging-provider.js';
 import crypto from 'crypto';
 import { SafeDsPythonServer } from './safe-ds-python-server.js';
 import { ExploreTableNotification, IsRunnerReadyRequest, ShowImageNotification } from '../communication/rpc.js';
 import { expandToStringLF, joinToNode } from 'langium/generate';
 import { UUID } from 'node:crypto';
+import { CODEGEN_PREFIX } from '../generation/python/constants.js';
 
 // Most of the functionality cannot be tested automatically as a functioning runner setup would always be required
 
@@ -82,13 +90,19 @@ export class SafeDsRunner {
         }
 
         const root = document.parseResult.value;
-        const placeholder = this.astNodeLocator.getAstNode(root, nodePath);
-        if (!isSdsPlaceholder(placeholder)) {
-            this.messaging.showErrorMessage('Selected node is not a placeholder.');
+        const statement = this.astNodeLocator.getAstNode(root, nodePath);
+        if (!isSdsStatement(statement)) {
+            this.messaging.showErrorMessage('Selected node is not a statement.');
             return;
         }
 
-        const pipeline = AstUtils.getContainerOfType(placeholder, isSdsPipeline);
+        const placeholderName = this.getPlaceholderName(statement, name);
+        if (!placeholderName) {
+            this.messaging.showErrorMessage('Selected node is not an assignment or output statement.');
+            return;
+        }
+
+        const pipeline = AstUtils.getContainerOfType(statement, isSdsPipeline);
         const pipelineCstNode = pipeline?.$cstNode;
         if (!pipeline || !pipelineCstNode) {
             this.messaging.showErrorMessage('Could not find pipeline.');
@@ -98,16 +112,16 @@ export class SafeDsRunner {
         await this.runWithCallbacks(
             `exploring table ${pipeline.name}/${name} in ${documentUri}`,
             async (pipelineExecutionId) => {
-                await this.executePipeline(pipelineExecutionId, document, pipeline.name, [placeholder.name]);
+                await this.executePipeline(pipelineExecutionId, document, pipeline.name, statement.$containerIndex);
             },
-            async (pipelineExecutionId, placeholderName) => {
-                if (placeholderName === placeholder.name) {
+            async (pipelineExecutionId, currentPlaceholderName) => {
+                if (currentPlaceholderName === placeholderName) {
                     await this.messaging.sendNotification(ExploreTableNotification.type, {
                         pipelineExecutionId,
                         uri: documentUri,
                         pipelineName: pipeline.name,
                         pipelineNodeEndOffset: pipelineCstNode.end,
-                        placeholderName: placeholder.name,
+                        placeholderName,
                     });
                 }
             },
@@ -121,13 +135,19 @@ export class SafeDsRunner {
         }
 
         const root = document.parseResult.value;
-        const placeholder = this.astNodeLocator.getAstNode(root, nodePath);
-        if (!isSdsPlaceholder(placeholder)) {
-            this.messaging.showErrorMessage('Selected node is not a placeholder.');
+        const statement = this.astNodeLocator.getAstNode(root, nodePath);
+        if (!isSdsStatement(statement)) {
+            this.messaging.showErrorMessage('Selected node is not a statement.');
             return;
         }
 
-        const pipeline = AstUtils.getContainerOfType(placeholder, isSdsPipeline);
+        const placeholderName = this.getPlaceholderName(statement, name);
+        if (!placeholderName) {
+            this.messaging.showErrorMessage('Selected node is not an assignment or output statement.');
+            return;
+        }
+
+        const pipeline = AstUtils.getContainerOfType(statement, isSdsPipeline);
         if (!pipeline) {
             this.messaging.showErrorMessage('Could not find pipeline.');
             return;
@@ -136,12 +156,12 @@ export class SafeDsRunner {
         await this.runWithCallbacks(
             `printing value ${pipeline.name}/${name} in ${documentUri}`,
             async (pipelineExecutionId) => {
-                await this.executePipeline(pipelineExecutionId, document, pipeline.name, [placeholder.name]);
+                await this.executePipeline(pipelineExecutionId, document, pipeline.name, statement.$containerIndex);
             },
-            async (pipelineExecutionId, placeholderName) => {
-                if (placeholderName === placeholder.name) {
-                    const data = await this.getPlaceholderValue(placeholder.name, pipelineExecutionId);
-                    this.logger.result(`val ${placeholder.name} = ${JSON.stringify(data, null, 2)};`);
+            async (pipelineExecutionId, currentPlaceholderName) => {
+                if (currentPlaceholderName === placeholderName) {
+                    const data = await this.getPlaceholderValue(placeholderName, pipelineExecutionId);
+                    this.logger.result(`val ${placeholderName} = ${JSON.stringify(data, null, 2)};`);
                 }
             },
         );
@@ -154,13 +174,19 @@ export class SafeDsRunner {
         }
 
         const root = document.parseResult.value;
-        const placeholder = this.astNodeLocator.getAstNode(root, nodePath);
-        if (!isSdsPlaceholder(placeholder)) {
-            this.messaging.showErrorMessage('Selected node is not a placeholder.');
+        const statement = this.astNodeLocator.getAstNode(root, nodePath);
+        if (!isSdsStatement(statement)) {
+            this.messaging.showErrorMessage('Selected node is not a statement.');
             return;
         }
 
-        const pipeline = AstUtils.getContainerOfType(placeholder, isSdsPipeline);
+        const placeholderName = this.getPlaceholderName(statement, name);
+        if (!placeholderName) {
+            this.messaging.showErrorMessage('Selected node is not an assignment or output statement.');
+            return;
+        }
+
+        const pipeline = AstUtils.getContainerOfType(statement, isSdsPipeline);
         if (!pipeline) {
             this.messaging.showErrorMessage('Could not find pipeline.');
             return;
@@ -169,11 +195,11 @@ export class SafeDsRunner {
         await this.runWithCallbacks(
             `showing image ${pipeline.name}/${name} in ${documentUri}`,
             async (pipelineExecutionId) => {
-                await this.executePipeline(pipelineExecutionId, document, pipeline.name, [placeholder.name]);
+                await this.executePipeline(pipelineExecutionId, document, pipeline.name, statement.$containerIndex);
             },
-            async (pipelineExecutionId, placeholderName) => {
-                if (placeholderName === placeholder.name) {
-                    const data = await this.getPlaceholderValue(placeholder.name, pipelineExecutionId);
+            async (pipelineExecutionId, currentPlaceholderName) => {
+                if (currentPlaceholderName === placeholderName) {
+                    const data = await this.getPlaceholderValue(placeholderName, pipelineExecutionId);
                     await this.messaging.sendNotification(ShowImageNotification.type, { image: data });
                 }
             },
@@ -235,6 +261,16 @@ export class SafeDsRunner {
         );
 
         await func(pipelineExecutionId);
+    }
+
+    private getPlaceholderName(statement: SdsStatement, name: string): string | undefined {
+        if (isSdsAssignment(statement)) {
+            return name;
+        } else if (isSdsOutputStatement(statement)) {
+            return `${CODEGEN_PREFIX}${name}`;
+        } else {
+            return undefined;
+        }
     }
 
     private async getPlaceholderValue(placeholder: string, pipelineExecutionId: string): Promise<any | undefined> {
@@ -304,13 +340,13 @@ export class SafeDsRunner {
      * @param id A unique id that is used in further communication with this pipeline.
      * @param pipelineDocument Document containing the main Safe-DS pipeline to execute.
      * @param pipelineName Name of the pipeline that should be run
-     * @param targets The names of the target placeholders, used to do partial execution. If undefined is provided, the entire pipeline is run.
+     * @param targetStatements The indices of the target statements, used to do partial execution. If undefined is provided, the entire pipeline is run.
      */
     public async executePipeline(
         id: string,
         pipelineDocument: LangiumDocument,
         pipelineName: string,
-        targets: string[] | undefined = undefined,
+        targetStatements: number[] | number | undefined = undefined,
     ) {
         const node = pipelineDocument.parseResult.value;
         if (!isSdsModule(node)) {
@@ -321,7 +357,7 @@ export class SafeDsRunner {
         const mainPackage = mainPythonModuleName === undefined ? node.name.split('.') : [mainPythonModuleName];
         const mainModuleName = this.getMainModuleName(pipelineDocument);
         // Code generation
-        const [codeMap, lastGeneratedSources] = this.generateCodeForRunner(pipelineDocument, targets);
+        const [codeMap, lastGeneratedSources] = this.generateCodeForRunner(pipelineDocument, targetStatements);
         // Store information about the run
         this.executionInformation.set(id, {
             generatedSource: lastGeneratedSources,
@@ -448,13 +484,13 @@ export class SafeDsRunner {
 
     public generateCodeForRunner(
         pipelineDocument: LangiumDocument,
-        targetPlaceholders: string[] | undefined,
+        targetStatements: number[] | number | undefined,
     ): [ProgramCodeMap, Map<string, string>] {
         const rootGenerationDir = path.parse(pipelineDocument.uri.fsPath).dir;
         const generatedDocuments = this.generator.generate(pipelineDocument, {
             destination: URI.file(rootGenerationDir), // actual directory of main module file
             createSourceMaps: true,
-            targetPlaceholders,
+            targetStatements,
             disableRunnerIntegration: false,
         });
         const lastGeneratedSources = new Map<string, string>();
