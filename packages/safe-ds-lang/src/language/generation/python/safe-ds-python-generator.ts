@@ -44,6 +44,7 @@ import {
     isSdsPrefixOperation,
     isSdsReference,
     isSdsSegment,
+    isSdsStatement,
     isSdsTemplateString,
     isSdsTemplateStringEnd,
     isSdsTemplateStringInner,
@@ -475,9 +476,13 @@ export class SafeDsPythonGenerator {
     ): CompositeGeneratorNode {
         let statements = getStatements(block).filter((stmt) => this.purityComputer.statementDoesSomething(stmt));
         if (frame.targetPlaceholders) {
-            const targetPlaceholders = frame.targetPlaceholders.flatMap((it) => getPlaceholderByName(block, it) ?? []);
-            if (!isEmpty(targetPlaceholders)) {
-                statements = this.slicer.computeBackwardSliceToTargets(statements, targetPlaceholders);
+            const targetStatements = frame.targetPlaceholders.flatMap((it) => {
+                const placeholder = getPlaceholderByName(block, it);
+                const statement = AstUtils.getContainerOfType(placeholder, isSdsStatement);
+                return statement ?? [];
+            });
+            if (!isEmpty(targetStatements)) {
+                statements = this.slicer.computeBackwardSliceToTargets(statements, targetStatements);
             }
         }
         if (statements.length === 0) {

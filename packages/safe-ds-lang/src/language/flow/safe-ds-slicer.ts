@@ -15,14 +15,19 @@ export class SafeDsSlicer {
     /**
      * Computes the subset of the given statements that are needed to calculate the target placeholders.
      */
-    computeBackwardSliceToTargets(statements: SdsStatement[], targets: SdsPlaceholder[]): SdsStatement[] {
-        const aggregator = new BackwardSliceAggregator(this.purityComputer, targets);
+    computeBackwardSliceToTargets(statements: SdsStatement[], targets: SdsStatement[]): SdsStatement[] {
+        const aggregator = new BackwardSliceAggregator(this.purityComputer);
 
         for (const statement of statements.reverse()) {
-            // Keep if it declares a target
-            if (
+            // Keep if it is a target
+            if (targets.includes(statement)) {
+                aggregator.addStatement(statement);
+            }
+
+            // Keep if it declares a referenced placeholder
+            else if (
                 isSdsAssignment(statement) &&
-                getAssignees(statement).some((it) => isSdsPlaceholder(it) && aggregator.targets.has(it))
+                getAssignees(statement).some((it) => isSdsPlaceholder(it) && aggregator.referencedPlaceholders.has(it))
             ) {
                 aggregator.addStatement(statement);
             }
@@ -49,24 +54,24 @@ class BackwardSliceAggregator {
     private readonly purityComputer: SafeDsPurityComputer;
 
     /**
-     * The statements that are needed to calculate the target placeholders.
+     * The statements that are needed to calculate the target statements.
      */
     readonly statements: SdsStatement[] = [];
 
     /**
-     * The target placeholders that should be calculated.
+     * The placeholders that are needed to calculate the target statements.
      */
-    readonly targets: Set<SdsPlaceholder>;
+    readonly referencedPlaceholders: Set<SdsPlaceholder>;
 
     /**
      * The impurity reasons of the collected statements.
      */
     readonly impurityReasons: ImpurityReason[] = [];
 
-    constructor(purityComputer: SafeDsPurityComputer, initialTargets: SdsPlaceholder[]) {
+    constructor(purityComputer: SafeDsPurityComputer) {
         this.purityComputer = purityComputer;
 
-        this.targets = new Set(initialTargets);
+        this.referencedPlaceholders = new Set();
     }
 
     addStatement(statement: SdsStatement): void {
@@ -74,7 +79,7 @@ class BackwardSliceAggregator {
 
         // Remember all referenced placeholders
         this.getReferencedPlaceholders(statement).forEach((it) => {
-            this.targets.add(it);
+            this.referencedPlaceholders.add(it);
         });
 
         // Remember all impurity reasons
