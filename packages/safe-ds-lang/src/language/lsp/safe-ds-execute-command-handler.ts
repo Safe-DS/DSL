@@ -20,15 +20,15 @@ export class SafeDsExecuteCommandHandler extends AbstractExecuteCommandHandler {
     }
 
     override registerCommands(acceptor: ExecuteCommandAcceptor) {
-        acceptor(COMMAND_EXPLORE_TABLE, ([name, [documentUri, nodePath], index]) =>
-            this.runner.exploreTable(name, documentUri, nodePath, index),
+        acceptor(COMMAND_EXPLORE_TABLE, ([name, [documentUri, nodePath]]) =>
+            this.runner.exploreTable(name, documentUri, nodePath),
         );
-        acceptor(COMMAND_PRINT_VALUE, ([name, [documentUri, nodePath], index]) =>
-            this.runner.printValue(name, documentUri, nodePath, index),
+        acceptor(COMMAND_PRINT_VALUE, ([name, [documentUri, nodePath]]) =>
+            this.runner.printValue(name, documentUri, nodePath),
         );
         acceptor(COMMAND_RUN_PIPELINE, ([documentUri, nodePath]) => this.runner.runPipeline(documentUri, nodePath));
-        acceptor(COMMAND_SHOW_IMAGE, ([name, [documentUri, nodePath], index]) =>
-            this.runner.showImage(name, documentUri, nodePath, index),
+        acceptor(COMMAND_SHOW_IMAGE, ([name, [documentUri, nodePath]]) =>
+            this.runner.showImage(name, documentUri, nodePath),
         );
     }
 }

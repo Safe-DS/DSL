@@ -137,7 +137,6 @@ export class SafeDsCodeLensProvider implements CodeLensProvider {
             type,
             placeholder.name,
             this.computeNodeId(assignment),
-            placeholder.$containerIndex,
             cstNode.range,
             accept,
         );
@@ -181,12 +180,10 @@ export class SafeDsCodeLensProvider implements CodeLensProvider {
         for (let i = 0; i < unpackedTypes.length; i++) {
             await interruptAndCheck(cancelToken);
 
-            const index = expressionType instanceof NamedTupleType ? i : undefined;
             await this.computeCodeLensForValue(
                 unpackedTypes[i]!,
                 valueNames[i] ?? 'expression',
                 this.computeNodeId(node),
-                index,
                 cstNode.range,
                 accept,
                 { fallbackToPrint: true },
@@ -198,7 +195,6 @@ export class SafeDsCodeLensProvider implements CodeLensProvider {
         type: Type,
         name: string,
         id: NodeId,
-        index: number | undefined,
         range: Range,
         accept: CodeLensAcceptor,
         options: CodeLensForValueOptions = {},
@@ -209,7 +205,7 @@ export class SafeDsCodeLensProvider implements CodeLensProvider {
                 command: {
                     title: `Show ${name}`,
                     command: COMMAND_SHOW_IMAGE,
-                    arguments: [name, id, index],
+                    arguments: [name, id],
                 },
             });
         } else if (this.typeChecker.isTable(type)) {
@@ -218,7 +214,7 @@ export class SafeDsCodeLensProvider implements CodeLensProvider {
                 command: {
                     title: `Explore ${name}`,
                     command: COMMAND_EXPLORE_TABLE,
-                    arguments: [name, id, index],
+                    arguments: [name, id],
                 },
             });
         } else if (options.fallbackToPrint || this.typeChecker.canBePrinted(type)) {
@@ -227,7 +223,7 @@ export class SafeDsCodeLensProvider implements CodeLensProvider {
                 command: {
                     title: `Print ${name}`,
                     command: COMMAND_PRINT_VALUE,
-                    arguments: [name, id, index],
+                    arguments: [name, id],
                 },
             });
         }

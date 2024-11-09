@@ -83,7 +83,7 @@ export class SafeDsRunner {
         });
     }
 
-    async exploreTable(name: string, documentUri: string, nodePath: string, index: number | undefined) {
+    async exploreTable(name: string, documentUri: string, nodePath: string) {
         const document = this.getDocument(documentUri);
         if (!document) {
             return;
@@ -128,7 +128,7 @@ export class SafeDsRunner {
         );
     }
 
-    async printValue(name: string, documentUri: string, nodePath: string, index: number | undefined) {
+    async printValue(name: string, documentUri: string, nodePath: string) {
         const document = this.getDocument(documentUri);
         if (!document) {
             return;
@@ -161,13 +161,13 @@ export class SafeDsRunner {
             async (pipelineExecutionId, currentPlaceholderName) => {
                 if (currentPlaceholderName === placeholderName) {
                     const data = await this.getPlaceholderValue(placeholderName, pipelineExecutionId);
-                    this.logger.result(`val ${placeholderName} = ${JSON.stringify(data, null, 2)};`);
+                    this.logger.result(`val ${name} = ${JSON.stringify(data, null, 2)};`);
                 }
             },
         );
     }
 
-    async showImage(name: string, documentUri: string, nodePath: string, index?: number) {
+    async showImage(name: string, documentUri: string, nodePath: string) {
         const document = this.getDocument(documentUri);
         if (!document) {
             return;
@@ -267,7 +267,7 @@ export class SafeDsRunner {
         if (isSdsAssignment(statement)) {
             return name;
         } else if (isSdsOutputStatement(statement)) {
-            return `${CODEGEN_PREFIX}${name}`;
+            return `${CODEGEN_PREFIX}_${statement.$containerIndex}_${name}`;
         } else {
             return undefined;
         }
