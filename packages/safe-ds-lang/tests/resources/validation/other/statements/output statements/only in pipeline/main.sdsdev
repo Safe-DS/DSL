@@ -1,0 +1,16 @@
+package tests.validation.other.statements.outputStatements.onlyInPipeline
+
+pipeline myPipeline {
+    // $TEST$ no error "Output statements can only be used in a pipeline."
+    »out 1 + 2;«
+
+    () {
+        // $TEST$ error "Output statements can only be used in a pipeline."
+        »out 1 + 2;«
+    };
+}
+
+segment mySegment() {
+    // $TEST$ error "Output statements can only be used in a pipeline."
+    »out 1 + 2;«
+}

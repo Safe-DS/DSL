@@ -189,6 +189,7 @@ import { tagsShouldNotHaveDuplicateEntries } from './builtins/tags.js';
 import { moduleMemberShouldBeUsed } from './other/declarations/moduleMembers.js';
 import { pipelinesMustBePrivate } from './other/declarations/pipelines.js';
 import { thisMustReferToClassInstance } from './other/expressions/this.js';
+import { outputStatementMustOnlyBeUsedInPipeline } from './other/statements/outputStatements.js';
 
 /**
  * Register custom validation checks.
@@ -335,6 +336,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             namedTypeTypeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments,
             namedTypeTypeArgumentsMustMatchBounds(services),
         ],
+        SdsOutputStatement: [outputStatementMustOnlyBeUsedInPipeline],
         SdsParameter: [
             constantParameterMustHaveConstantDefaultValue(services),
             constantParameterMustHaveTypeThatCanBeEvaluatedToConstant(services),
