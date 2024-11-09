@@ -37,6 +37,7 @@ import {
     isSdsMap,
     isSdsMemberAccess,
     isSdsModule,
+    isSdsOutputStatement,
     isSdsParameter,
     isSdsParenthesizedExpression,
     isSdsPipeline,
@@ -67,6 +68,7 @@ import {
     SdsFunction,
     SdsLambda,
     SdsModule,
+    SdsOutputStatement,
     SdsParameter,
     SdsParameterList,
     SdsPipeline,
@@ -118,6 +120,7 @@ import { SafeDsCoreTypes } from '../../typing/safe-ds-core-types.js';
 
 const LAMBDA_PREFIX = `${CODEGEN_PREFIX}lambda_`;
 const BLOCK_LAMBDA_RESULT_PREFIX = `${CODEGEN_PREFIX}block_lambda_result_`;
+const OUTPUT_PREFIX = `${CODEGEN_PREFIX}output_`;
 const PLACEHOLDER_PREFIX = `${CODEGEN_PREFIX}placeholder_`;
 const RECEIVER_PREFIX = `${CODEGEN_PREFIX}receiver_`;
 const YIELD_PREFIX = `${CODEGEN_PREFIX}yield_`;
@@ -477,7 +480,8 @@ export class SafeDsPythonGenerator {
         frame: GenerationInfoFrame,
         generateLambda: boolean = false,
     ): CompositeGeneratorNode {
-        let statements = getStatements(block).filter((stmt) => this.purityComputer.statementDoesSomething(stmt));
+        // TODO: if there are no target statements, only generate code that causes side-effects
+        let statements = getStatements(block).filter((stmt) => this.statementDoesSomething(stmt));
         if (frame.targetStatements) {
             const targetStatements = frame.targetStatements.flatMap((it) => {
                 return getStatements(block)[it] ?? [];
@@ -497,6 +501,29 @@ export class SafeDsPythonGenerator {
             },
         )!;
     }
+
+    /**
+     * Returns whether the given statement does something. It must either
+     *     - create a placeholder,
+     *     - assign to a result, or
+     *     - call a function that has side effects.
+     *
+     * @param node
+     * The statement to check.
+     */
+    private statementDoesSomething(node: SdsStatement): boolean {
+        if (isSdsAssignment(node)) {
+            return (
+                !getAssignees(node).every(isSdsWildcard) ||
+                this.purityComputer.expressionHasSideEffects(node.expression)
+            );
+        } else if (isSdsExpressionStatement(node)) {
+            return this.purityComputer.expressionHasSideEffects(node.expression);
+        } else {
+            return isSdsOutputStatement(node);
+        }
+    }
+
     private generateStatement(statement: SdsStatement, frame: GenerationInfoFrame, generateLambda: boolean): Generated {
         const result: Generated[] = [];
 
@@ -506,6 +533,14 @@ export class SafeDsPythonGenerator {
         } else if (isSdsExpressionStatement(statement)) {
             const expressionStatement = this.generateExpression(statement.expression, frame);
             result.push(...frame.getExtraStatements(), expressionStatement);
+        } else if (isSdsOutputStatement(statement)) {
+            if (frame.disableRunnerIntegration || !frame.targetStatements?.includes(statement.$containerIndex ?? -1)) {
+                const expressionStatement = this.generateExpression(statement.expression, frame);
+                result.push(...frame.getExtraStatements(), expressionStatement);
+            } else {
+                const outputStatement = this.generateOutputStatement(statement, frame);
+                result.push(...frame.getExtraStatements(), outputStatement);
+            }
         } /* c8 ignore start */ else {
             throw new Error(`Unknown statement: ${statement}`);
         } /* c8 ignore stop */
@@ -561,6 +596,49 @@ export class SafeDsPythonGenerator {
         } else {
             return traceToNode(assignment)(this.generateExpression(assignment.expression!, frame));
         }
+    }
+
+    private generateOutputStatement(node: SdsOutputStatement, frame: GenerationInfoFrame): Generated {
+        let valueNames: string[] = [];
+        if (isSdsCall(node.expression)) {
+            const callable = this.nodeMapper.callToCallable(node.expression);
+            if (isSdsClass(callable)) {
+                valueNames = ['instance'];
+            } else {
+                valueNames = getAbstractResults(callable).map((it) => it.name);
+            }
+        } else if (isSdsMemberAccess(node.expression)) {
+            const declarationName = node.expression.member?.target?.ref?.name;
+            if (declarationName) {
+                valueNames = [declarationName];
+            }
+        } else {
+            valueNames = ['expression'];
+        }
+
+        const assignmentStatements: Generated[] = [];
+
+        assignmentStatements.push(
+            expandTracedToNode(node)`${joinToNode(
+                valueNames,
+                (valueName) => `${OUTPUT_PREFIX}${node.$containerIndex}_${valueName}`,
+                {
+                    separator: ', ',
+                },
+            )} = ${this.generateExpression(node.expression!, frame)}`,
+        );
+
+        for (const valueName of valueNames) {
+            frame.addImport({ importPath: RUNNER_PACKAGE });
+
+            assignmentStatements.push(
+                expandToNode`${RUNNER_PACKAGE}.save_placeholder('${CODEGEN_PREFIX}${node.$containerIndex}_${valueName}', ${OUTPUT_PREFIX}${node.$containerIndex}_${valueName})`,
+            );
+        }
+
+        return joinTracedToNode(node)(assignmentStatements, (stmt) => stmt, {
+            separator: NL,
+        })!;
     }
 
     private generateAssignee(assignee: SdsAssignee): Generated {

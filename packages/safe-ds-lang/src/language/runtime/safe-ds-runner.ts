@@ -267,7 +267,7 @@ export class SafeDsRunner {
         if (isSdsAssignment(statement)) {
             return name;
         } else if (isSdsOutputStatement(statement)) {
-            return `${CODEGEN_PREFIX}_${statement.$containerIndex}_${name}`;
+            return `${CODEGEN_PREFIX}${statement.$containerIndex}_${name}`;
         } else {
             return undefined;
         }
