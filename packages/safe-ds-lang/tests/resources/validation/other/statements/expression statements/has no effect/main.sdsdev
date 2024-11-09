@@ -30,9 +30,9 @@ segment recursiveB() {
 }
 
 segment mySegment() {
-    // $TEST$ warning "This statement does nothing. Did you forget the assignment?"
+    // $TEST$ warning "This statement does nothing. Did you mean to assign or output the result?"
     »1 + 2;«
-    // $TEST$ warning "This statement does nothing. Did you forget the assignment?"
+    // $TEST$ warning "This statement does nothing. Did you mean to assign or output the result?"
     »pureFunctionWithResults();«
     // $TEST$ warning "This statement does nothing."
     »MyClass().pureFunctionWithoutResults();«
@@ -43,9 +43,9 @@ segment mySegment() {
     »MyClass().impureFunction();«
 
     () {
-        // $TEST$ warning "This statement does nothing. Did you forget the assignment?"
+        // $TEST$ warning "This statement does nothing. Did you mean to assign or output the result?"
         »1 + 2;«
-        // $TEST$ warning "This statement does nothing. Did you forget the assignment?"
+        // $TEST$ warning "This statement does nothing. Did you mean to assign or output the result?"
         »pureFunctionWithResults();«
         // $TEST$ warning "This statement does nothing."
         »MyClass().pureFunctionWithoutResults();«
