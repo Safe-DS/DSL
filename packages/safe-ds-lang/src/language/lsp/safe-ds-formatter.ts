@@ -111,6 +111,8 @@ export class SafeDsFormatter extends AbstractFormatter {
             this.formatSdsYield(node);
         } else if (ast.isSdsExpressionStatement(node)) {
             this.formatSdsExpressionStatement(node);
+        } else if (ast.isSdsOutputStatement(node)) {
+            this.formatSdsOutputStatement(node);
         }
 
         // -----------------------------------------------------------------------------
@@ -644,6 +646,13 @@ export class SafeDsFormatter extends AbstractFormatter {
     private formatSdsExpressionStatement(node: ast.SdsExpressionStatement) {
         const formatter = this.getNodeFormatter(node);
 
+        formatter.keyword(';').prepend(noSpace());
+    }
+
+    private formatSdsOutputStatement(node: ast.SdsOutputStatement) {
+        const formatter = this.getNodeFormatter(node);
+
+        formatter.keyword('out').append(oneSpace());
         formatter.keyword(';').prepend(noSpace());
     }
 
