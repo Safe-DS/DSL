@@ -166,7 +166,7 @@ export class SafeDsCodeLensProvider implements CodeLensProvider {
         if (isSdsCall(node.expression)) {
             const callable = this.nodeMapper.callToCallable(node.expression);
             if (isSdsClass(callable)) {
-                valueNames = [`${callable.name} instance`];
+                valueNames = [`instance`];
             } else {
                 valueNames = getAbstractResults(callable).map((it) => it.name);
             }

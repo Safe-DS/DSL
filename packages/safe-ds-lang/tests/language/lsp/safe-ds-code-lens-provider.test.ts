@@ -173,7 +173,7 @@ describe('SafeDsCodeLensProvider', () => {
                         out Table();
                     }
                 `,
-                expectedCodeLensTitles: ['Run myPipeline', 'Explore Table instance'],
+                expectedCodeLensTitles: ['Run myPipeline', 'Explore instance'],
             },
             {
                 testName: 'block lambda with Table output',
