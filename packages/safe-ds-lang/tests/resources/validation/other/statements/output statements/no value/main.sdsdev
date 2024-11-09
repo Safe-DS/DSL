@@ -1,0 +1,24 @@
+package tests.validation.other.statements.outputStatements.noValue
+
+@Pure fun noResults()
+
+pipeline myPipeline {
+    // $TEST$ no error 'This expression does not produce a value to output.'
+    out »1 + 2«;
+    // $TEST$ error 'This expression does not produce a value to output.'
+    out »noResults()«;
+
+    () {
+        // $TEST$ no error 'This expression does not produce a value to output.'
+        out »1 + 2«;
+        // $TEST$ no error 'This expression does not produce a value to output.'
+        out »noResults()«;
+    };
+}
+
+segment mySegment() {
+    // $TEST$ no error 'This expression does not produce a value to output.'
+    out »1 + 2«;
+    // $TEST$ no error 'This expression does not produce a value to output.'
+    out »noResults()«;
+}
