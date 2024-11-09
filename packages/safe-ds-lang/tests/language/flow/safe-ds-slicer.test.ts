@@ -76,7 +76,7 @@ describe('computeBackwardSlice', async () => {
             expectedIndices: [0, 1],
         },
         {
-            testName: 'required due to impurity reason',
+            testName: 'required due to impurity reason (expression statement)',
             code: `
                 package test
 
@@ -88,6 +88,25 @@ describe('computeBackwardSlice', async () => {
 
                 pipeline myPipeline {
                     fileWrite();
+                    val a = fileRead();
+                }
+            `,
+            targetNames: ['a'],
+            expectedIndices: [0, 1],
+        },
+        {
+            testName: 'required due to impurity reason (output statement)',
+            code: `
+                package test
+
+                @Impure([ImpurityReason.FileReadFromConstantPath("a.txt")])
+                fun fileRead() -> content: String
+
+                @Impure([ImpurityReason.FileWriteToConstantPath("a.txt")])
+                fun fileWrite() -> content: String
+
+                pipeline myPipeline {
+                    out fileWrite();
                     val a = fileRead();
                 }
             `,

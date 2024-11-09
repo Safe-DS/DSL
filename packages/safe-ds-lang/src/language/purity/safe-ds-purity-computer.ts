@@ -20,6 +20,7 @@ import {
     isSdsExpressionStatement,
     isSdsFunction,
     isSdsLambda,
+    isSdsOutputStatement,
     isSdsParameter,
     isSdsWildcard,
     SdsCall,
@@ -190,6 +191,8 @@ export class SafeDsPurityComputer {
         if (isSdsAssignment(node)) {
             return this.getImpurityReasonsForExpression(node.expression, substitutions);
         } else if (isSdsExpressionStatement(node)) {
+            return this.getImpurityReasonsForExpression(node.expression, substitutions);
+        } else if (isSdsOutputStatement(node)) {
             return this.getImpurityReasonsForExpression(node.expression, substitutions);
         } else {
             /* c8 ignore next 2 */
