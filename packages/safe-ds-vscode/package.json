@@ -256,11 +256,6 @@
                 "category": "Safe-DS"
             },
             {
-                "command": "safe-ds.refreshWebview",
-                "title": "Refresh Webview",
-                "category": "Safe-DS"
-            },
-            {
                 "command": "safe-ds.updateRunner",
                 "title": "Update the Safe-DS Runner",
                 "category": "Safe-DS"

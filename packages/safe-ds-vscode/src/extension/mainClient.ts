@@ -18,11 +18,6 @@ import { showImage } from './actions/showImage.js';
 
 let client: LanguageClient;
 let services: SafeDsServices;
-let lastFinishedPipelineExecutionId: string | undefined;
-let lastSuccessfulPipelineName: string | undefined;
-let lastSuccessfulTableName: string | undefined;
-let lastSuccessfulPipelinePath: vscode.Uri | undefined;
-let lastSuccessfulPipelineNode: ast.SdsPipeline | undefined;
 
 /**
  * This function is called when the extension is activated.
@@ -116,40 +111,8 @@ const registerCommands = function (context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('safe-ds.exploreTable', exploreTable(context)),
         vscode.commands.registerCommand('safe-ds.installRunner', installRunner(client)),
         vscode.commands.registerCommand('safe-ds.openDiagnosticsDumps', openDiagnosticsDumps(context)),
-        vscode.commands.registerCommand('safe-ds.refreshWebview', refreshWebview(context)),
         vscode.commands.registerCommand('safe-ds.updateRunner', updateRunner(context, client)),
     );
-};
-
-const refreshWebview = function (context: vscode.ExtensionContext) {
-    return async () => {
-        if (
-            !lastSuccessfulPipelinePath ||
-            !lastFinishedPipelineExecutionId ||
-            !lastSuccessfulPipelineName ||
-            !lastSuccessfulTableName ||
-            !lastSuccessfulPipelineNode
-        ) {
-            vscode.window.showErrorMessage('No EDA Panel to refresh!');
-            return;
-        }
-        EDAPanel.kill(lastSuccessfulPipelineName! + '.' + lastSuccessfulTableName!);
-        setTimeout(() => {
-            EDAPanel.createOrShow(
-                context.extensionUri,
-                context,
-                lastFinishedPipelineExecutionId!,
-                services,
-                lastSuccessfulPipelinePath!,
-                lastSuccessfulPipelineName!,
-                lastSuccessfulPipelineNode!,
-                lastSuccessfulTableName!,
-            );
-        }, 100);
-        setTimeout(() => {
-            vscode.commands.executeCommand('workbench.action.webview.openDeveloperTools');
-        }, 100);
-    };
 };
 
 const doRunPipelineFile = async function (
