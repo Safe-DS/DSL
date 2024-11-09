@@ -1,5 +1,5 @@
 import { SafeDsServices } from '../safe-ds-module.js';
-import { AstNodeLocator, AstUtils, LangiumDocument, LangiumDocuments, URI } from 'langium';
+import { AstNodeLocator, AstUtils, Disposable, LangiumDocument, LangiumDocuments, URI } from 'langium';
 import path from 'path';
 import {
     createPlaceholderQueryMessage,
@@ -18,6 +18,7 @@ import crypto from 'crypto';
 import { SafeDsPythonServer } from './safe-ds-python-server.js';
 import { IsRunnerReadyRequest, ShowImageNotification } from '../communication/rpc.js';
 import { expandToStringLF, joinToNode } from 'langium/generate';
+import { UUID } from 'node:crypto';
 
 // Most of the functionality cannot be tested automatically as a functioning runner setup would always be required
 
@@ -57,69 +58,26 @@ export class SafeDsRunner {
     }
 
     async runPipeline(documentUri: string, nodePath: string) {
-        const uri = URI.parse(documentUri);
-        const document = this.langiumDocuments.getDocument(uri);
+        const document = this.getDocument(documentUri);
         if (!document) {
-            this.messaging.showErrorMessage('Could not find document.');
             return;
         }
 
         const root = document.parseResult.value;
-        const pipeline = this.astNodeLocator.getAstNode(root, nodePath);
-        if (!isSdsPipeline(pipeline)) {
+        const node = this.astNodeLocator.getAstNode(root, nodePath);
+        if (!isSdsPipeline(node)) {
             this.messaging.showErrorMessage('Selected node is not a pipeline.');
             return;
         }
 
-        const pipelineExecutionId = crypto.randomUUID();
-
-        const start = Date.now();
-        const progress = await this.messaging.showProgress('Safe-DS Runner', 'Starting...');
-        this.logger.info(`[${pipelineExecutionId}] Running pipeline "${pipeline.name}" in ${documentUri}.`);
-
-        const disposables = [
-            this.pythonServer.addMessageCallback('placeholder_type', (message) => {
-                if (message.id === pipelineExecutionId) {
-                    progress.report(`Computed ${message.data.name}`);
-                }
-            }),
-
-            this.pythonServer.addMessageCallback('runtime_error', (message) => {
-                if (message.id === pipelineExecutionId) {
-                    progress?.done();
-                    disposables.forEach((it) => {
-                        it.dispose();
-                    });
-                    this.messaging.showErrorMessage('An error occurred during pipeline execution.');
-                }
-                progress.done();
-                disposables.forEach((it) => {
-                    it.dispose();
-                });
-            }),
-
-            this.pythonServer.addMessageCallback('runtime_progress', (message) => {
-                if (message.id === pipelineExecutionId) {
-                    progress.done();
-                    const timeElapsed = Date.now() - start;
-                    this.logger.info(
-                        `[${pipelineExecutionId}] Finished running pipeline "${pipeline.name}" in ${timeElapsed}ms.`,
-                    );
-                    disposables.forEach((it) => {
-                        it.dispose();
-                    });
-                }
-            }),
-        ];
-
-        await this.executePipeline(pipelineExecutionId, document, pipeline.name);
+        await this.runWithCallbacks(`running pipeline ${node.name} in ${documentUri}`, async (pipelineExecutionId) => {
+            await this.executePipeline(pipelineExecutionId, document, node.name);
+        });
     }
 
-    async printValue(documentUri: string, nodePath: string) {
-        const uri = URI.parse(documentUri);
-        const document = this.langiumDocuments.getDocument(uri);
+    async printValue(name: string, documentUri: string, nodePath: string, index: number | undefined) {
+        const document = this.getDocument(documentUri);
         if (!document) {
-            this.messaging.showErrorMessage('Could not find document.');
             return;
         }
 
@@ -136,60 +94,23 @@ export class SafeDsRunner {
             return;
         }
 
-        const pipelineExecutionId = crypto.randomUUID();
-
-        const start = Date.now();
-
-        const progress = await this.messaging.showProgress('Safe-DS Runner', 'Starting...');
-
-        this.logger.info(
-            `[${pipelineExecutionId}] Printing value "${pipeline.name}/${placeholder.name}" in ${documentUri}.`,
-        );
-
-        const disposables = [
-            this.pythonServer.addMessageCallback('runtime_error', (message) => {
-                if (message.id === pipelineExecutionId) {
-                    progress?.done();
-                    disposables.forEach((it) => {
-                        it.dispose();
-                    });
-                    this.messaging.showErrorMessage('An error occurred during pipeline execution.');
-                }
-                progress.done();
-                disposables.forEach((it) => {
-                    it.dispose();
-                });
-            }),
-
-            this.pythonServer.addMessageCallback('placeholder_type', async (message) => {
-                if (message.id === pipelineExecutionId && message.data.name === placeholder.name) {
+        await this.runWithCallbacks(
+            `printing value ${pipeline.name}/${name} in ${documentUri}`,
+            async (pipelineExecutionId) => {
+                await this.executePipeline(pipelineExecutionId, document, pipeline.name, [placeholder.name]);
+            },
+            async (pipelineExecutionId, placeholderName) => {
+                if (placeholderName === placeholder.name) {
                     const data = await this.getPlaceholderValue(placeholder.name, pipelineExecutionId);
                     this.logger.result(`val ${placeholder.name} = ${JSON.stringify(data, null, 2)};`);
                 }
-            }),
-
-            this.pythonServer.addMessageCallback('runtime_progress', (message) => {
-                if (message.id === pipelineExecutionId) {
-                    progress.done();
-                    const timeElapsed = Date.now() - start;
-                    this.logger.info(
-                        `[${pipelineExecutionId}] Finished printing value "${pipeline.name}/${placeholder.name}" in ${timeElapsed}ms.`,
-                    );
-                    disposables.forEach((it) => {
-                        it.dispose();
-                    });
-                }
-            }),
-        ];
-
-        await this.executePipeline(pipelineExecutionId, document, pipeline.name, [placeholder.name]);
+            },
+        );
     }
 
-    async showImage(documentUri: string, nodePath: string) {
-        const uri = URI.parse(documentUri);
-        const document = this.langiumDocuments.getDocument(uri);
+    async showImage(name: string, documentUri: string, nodePath: string, index?: number) {
+        const document = this.getDocument(documentUri);
         if (!document) {
-            this.messaging.showErrorMessage('Could not find document.');
             return;
         }
 
@@ -206,53 +127,75 @@ export class SafeDsRunner {
             return;
         }
 
-        const pipelineExecutionId = crypto.randomUUID();
+        await this.runWithCallbacks(
+            `showing image ${pipeline.name}/${name} in ${documentUri}`,
+            async (pipelineExecutionId) => {
+                await this.executePipeline(pipelineExecutionId, document, pipeline.name, [placeholder.name]);
+            },
+            async (pipelineExecutionId, placeholderName) => {
+                if (placeholderName === placeholder.name) {
+                    const data = await this.getPlaceholderValue(placeholder.name, pipelineExecutionId);
+                    await this.messaging.sendNotification(ShowImageNotification.type, { image: data });
+                }
+            },
+        );
+    }
 
+    private getDocument(documentUri: string): LangiumDocument | undefined {
+        const uri = URI.parse(documentUri);
+        const document = this.langiumDocuments.getDocument(uri);
+        if (!document) {
+            this.messaging.showErrorMessage('Could not find document.');
+            this.logger.error(`Could not find document "${documentUri}".`);
+        }
+        return document;
+    }
+
+    async runWithCallbacks(
+        taskName: string,
+        func: (pipelineExecutionId: UUID) => Promise<void>,
+        onPlaceholderReady?: (pipelineExecutionId: UUID, placeholderName: string) => Promise<void>,
+    ) {
+        const pipelineExecutionId = crypto.randomUUID();
         const start = Date.now();
 
         const progress = await this.messaging.showProgress('Safe-DS Runner', 'Starting...');
+        this.logger.info(`[${pipelineExecutionId}] Starting ${taskName}.`);
 
-        this.logger.info(
-            `[${pipelineExecutionId}] Showing image "${pipeline.name}/${placeholder.name}" in ${documentUri}.`,
-        );
-
-        const disposables = [
-            this.pythonServer.addMessageCallback('runtime_error', (message) => {
-                if (message.id === pipelineExecutionId) {
-                    progress?.done();
-                    disposables.forEach((it) => {
-                        it.dispose();
-                    });
-                    this.messaging.showErrorMessage('An error occurred during pipeline execution.');
-                }
-                progress.done();
-                disposables.forEach((it) => {
-                    it.dispose();
-                });
-            }),
-
+        let disposables: Disposable[] = [];
+        disposables.push(
             this.pythonServer.addMessageCallback('placeholder_type', async (message) => {
-                if (message.id === pipelineExecutionId && message.data.name === placeholder.name) {
-                    const data = await this.getPlaceholderValue(placeholder.name, pipelineExecutionId);
-                    await this.messaging.sendNotification(ShowImageNotification.type, { image: data });
+                if (message.id === pipelineExecutionId) {
+                    progress.report(`Computed ${message.data.name}.`);
+                    await onPlaceholderReady?.(pipelineExecutionId, message.data.name);
                 }
             }),
 
             this.pythonServer.addMessageCallback('runtime_progress', (message) => {
                 if (message.id === pipelineExecutionId) {
-                    progress.done();
-                    const timeElapsed = Date.now() - start;
-                    this.logger.info(
-                        `[${pipelineExecutionId}] Finished showing image "${pipeline.name}/${placeholder.name}" in ${timeElapsed}ms.`,
-                    );
                     disposables.forEach((it) => {
                         it.dispose();
                     });
+
+                    progress.done();
+                    const timeElapsed = Date.now() - start;
+                    this.logger.info(`[${pipelineExecutionId}] Finished ${taskName} in ${timeElapsed}ms.`);
                 }
             }),
-        ];
 
-        await this.executePipeline(pipelineExecutionId, document, pipeline.name, [placeholder.name]);
+            this.pythonServer.addMessageCallback('runtime_error', (message) => {
+                if (message.id === pipelineExecutionId) {
+                    disposables.forEach((it) => {
+                        it.dispose();
+                    });
+
+                    progress.done();
+                    this.messaging.showErrorMessage('An error occurred during pipeline execution.');
+                }
+            }),
+        );
+
+        await func(pipelineExecutionId);
     }
 
     private async getPlaceholderValue(placeholder: string, pipelineExecutionId: string): Promise<any | undefined> {
@@ -322,13 +265,13 @@ export class SafeDsRunner {
      * @param id A unique id that is used in further communication with this pipeline.
      * @param pipelineDocument Document containing the main Safe-DS pipeline to execute.
      * @param pipelineName Name of the pipeline that should be run
-     * @param targetPlaceholders The names of the target placeholders, used to do partial execution. If undefined is provided, the entire pipeline is run.
+     * @param targets The names of the target placeholders, used to do partial execution. If undefined is provided, the entire pipeline is run.
      */
     public async executePipeline(
         id: string,
         pipelineDocument: LangiumDocument,
         pipelineName: string,
-        targetPlaceholders: string[] | undefined = undefined,
+        targets: string[] | undefined = undefined,
     ) {
         const node = pipelineDocument.parseResult.value;
         if (!isSdsModule(node)) {
@@ -339,7 +282,7 @@ export class SafeDsRunner {
         const mainPackage = mainPythonModuleName === undefined ? node.name.split('.') : [mainPythonModuleName];
         const mainModuleName = this.getMainModuleName(pipelineDocument);
         // Code generation
-        const [codeMap, lastGeneratedSources] = this.generateCodeForRunner(pipelineDocument, targetPlaceholders);
+        const [codeMap, lastGeneratedSources] = this.generateCodeForRunner(pipelineDocument, targets);
         // Store information about the run
         this.executionInformation.set(id, {
             generatedSource: lastGeneratedSources,

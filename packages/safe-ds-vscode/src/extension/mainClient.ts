@@ -182,7 +182,7 @@ const doRunPipelineFile = async function (
 };
 
 const exploreTable = (context: vscode.ExtensionContext) => {
-    return async (documentUri: string, nodePath: string) => {
+    return async (name: string, [documentUri, nodePath]: [string, string], index?: string) => {
         await vscode.workspace.saveAll();
 
         const uri = Uri.parse(documentUri);
