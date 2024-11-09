@@ -15,7 +15,7 @@ export class SafeDsSlicer {
     /**
      * Computes the subset of the given statements that are needed to calculate the target placeholders.
      */
-    computeBackwardSlice(statements: SdsStatement[], targets: SdsPlaceholder[]): SdsStatement[] {
+    computeBackwardSliceToTargets(statements: SdsStatement[], targets: SdsPlaceholder[]): SdsStatement[] {
         const aggregator = new BackwardSliceAggregator(this.purityComputer, targets);
 
         for (const statement of statements.reverse()) {

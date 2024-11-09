@@ -477,7 +477,7 @@ export class SafeDsPythonGenerator {
         if (frame.targetPlaceholders) {
             const targetPlaceholders = frame.targetPlaceholders.flatMap((it) => getPlaceholderByName(block, it) ?? []);
             if (!isEmpty(targetPlaceholders)) {
-                statements = this.slicer.computeBackwardSlice(statements, targetPlaceholders);
+                statements = this.slicer.computeBackwardSliceToTargets(statements, targetPlaceholders);
             }
         }
         if (statements.length === 0) {

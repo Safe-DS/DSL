@@ -8,7 +8,7 @@ import { fail } from 'node:assert';
 const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const slicer = services.flow.Slicer;
 
-describe('computeBackwardSlice', async () => {
+describe('computeBackwardSliceToTargets', async () => {
     const testCases: ComputeBackwardSliceTest[] = [
         {
             testName: 'no targets',
@@ -124,7 +124,7 @@ describe('computeBackwardSlice', async () => {
                 fail(`Target placeholder "${targetName}" not found.`),
         );
 
-        const backwardSlice = slicer.computeBackwardSlice(statements, targets);
+        const backwardSlice = slicer.computeBackwardSliceToTargets(statements, targets);
         const actualIndices = backwardSlice.map((statement) => statement.$containerIndex);
 
         expect(actualIndices).toStrictEqual(expectedIndices);
