@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { getNodeOfType } from '../../helpers/nodeFinder.js';
 import { isSdsPipeline } from '../../../src/language/generated/ast.js';
-import { createSafeDsServices, getPlaceholderByName, getStatements } from '../../../src/language/index.js';
+import { createSafeDsServices, getStatements } from '../../../src/language/index.js';
 import { NodeFileSystem } from 'langium/node';
 import { fail } from 'node:assert';
 
 const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const slicer = services.flow.Slicer;
 
-describe('computeBackwardSlice', async () => {
+describe('computeBackwardSliceToTargets', async () => {
     const testCases: ComputeBackwardSliceTest[] = [
         {
             testName: 'no targets',
@@ -17,17 +17,27 @@ describe('computeBackwardSlice', async () => {
                     val a = 1;
                 }
             `,
-            targetNames: [],
+            targetIndices: [],
             expectedIndices: [],
         },
         {
-            testName: 'single target',
+            testName: 'single target (assignment)',
             code: `
                 pipeline myPipeline {
                     val a = 1;
                 }
             `,
-            targetNames: ['a'],
+            targetIndices: [0],
+            expectedIndices: [0],
+        },
+        {
+            testName: 'single target (output statement)',
+            code: `
+                pipeline myPipeline {
+                    out 1;
+                }
+            `,
+            targetIndices: [0],
             expectedIndices: [0],
         },
         {
@@ -38,7 +48,7 @@ describe('computeBackwardSlice', async () => {
                     val b = 2;
                 }
             `,
-            targetNames: ['a', 'b'],
+            targetIndices: [0, 1],
             expectedIndices: [0, 1],
         },
         {
@@ -50,7 +60,7 @@ describe('computeBackwardSlice', async () => {
                     val b = a;
                 }
             `,
-            targetNames: ['b'],
+            targetIndices: [2],
             expectedIndices: [0, 2],
         },
         {
@@ -61,22 +71,33 @@ describe('computeBackwardSlice', async () => {
                     val b = a;
                 }
             `,
-            targetNames: ['a'],
+            targetIndices: [0],
             expectedIndices: [0],
         },
         {
-            testName: 'required due to reference',
+            testName: 'required due to reference (assignment)',
             code: `
                 pipeline myPipeline {
                     val a = 1;
                     val b = a + 1;
                 }
             `,
-            targetNames: ['b'],
+            targetIndices: [1],
             expectedIndices: [0, 1],
         },
         {
-            testName: 'required due to impurity reason',
+            testName: 'required due to reference (output statement)',
+            code: `
+                pipeline myPipeline {
+                    val a = 1;
+                    out a + 1;
+                }
+            `,
+            targetIndices: [1],
+            expectedIndices: [0, 1],
+        },
+        {
+            testName: 'required due to impurity reason (expression statement)',
             code: `
                 package test
 
@@ -91,21 +112,38 @@ describe('computeBackwardSlice', async () => {
                     val a = fileRead();
                 }
             `,
-            targetNames: ['a'],
+            targetIndices: [1],
+            expectedIndices: [0, 1],
+        },
+        {
+            testName: 'required due to impurity reason (output statement)',
+            code: `
+                package test
+
+                @Impure([ImpurityReason.FileReadFromConstantPath("a.txt")])
+                fun fileRead() -> content: String
+
+                @Impure([ImpurityReason.FileWriteToConstantPath("a.txt")])
+                fun fileWrite() -> content: String
+
+                pipeline myPipeline {
+                    out fileWrite();
+                    val a = fileRead();
+                }
+            `,
+            targetIndices: [1],
             expectedIndices: [0, 1],
         },
     ];
 
-    it.each(testCases)('$testName', async ({ code, targetNames, expectedIndices }) => {
+    it.each(testCases)('$testName', async ({ code, targetIndices, expectedIndices }) => {
         const pipeline = await getNodeOfType(services, code, isSdsPipeline);
         const statements = getStatements(pipeline.body);
-        const targets = targetNames.map(
-            (targetName) =>
-                getPlaceholderByName(pipeline.body, targetName) ??
-                fail(`Target placeholder "${targetName}" not found.`),
+        const targets = targetIndices.map(
+            (index) => statements[index] ?? fail(`Target index ${index} is out of bounds.`),
         );
 
-        const backwardSlice = slicer.computeBackwardSlice(statements, targets);
+        const backwardSlice = slicer.computeBackwardSliceToTargets(statements, targets);
         const actualIndices = backwardSlice.map((statement) => statement.$containerIndex);
 
         expect(actualIndices).toStrictEqual(expectedIndices);
@@ -124,9 +162,9 @@ interface ComputeBackwardSliceTest {
     code: string;
 
     /**
-     * The targets to compute the backward slice for.
+     * The container indices of the target statements.
      */
-    targetNames: string[];
+    targetIndices: number[];
 
     /**
      * The expected container indices of the statements in the backward slice.

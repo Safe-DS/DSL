@@ -1,24 +1,44 @@
 import { CodeLensProvider } from 'langium/lsp';
-import { CancellationToken, CodeLens, type CodeLensParams } from 'vscode-languageserver';
+import { CancellationToken, CodeLens, type CodeLensParams, Range } from 'vscode-languageserver';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import { AstNode, AstNodeLocator, AstUtils, interruptAndCheck, LangiumDocument } from 'langium';
-import { isSdsModule, isSdsPipeline, SdsModuleMember, SdsPipeline, SdsPlaceholder } from '../generated/ast.js';
+import {
+    isSdsAssignment,
+    isSdsModule,
+    isSdsOutputStatement,
+    isSdsPipeline,
+    isSdsPlaceholder,
+    SdsAssignment,
+    SdsModuleMember,
+    SdsOutputStatement,
+    SdsPipeline,
+    SdsPlaceholder,
+} from '../generated/ast.js';
 import { SafeDsRunner } from '../runtime/safe-ds-runner.js';
-import { getModuleMembers, streamPlaceholders } from '../helpers/nodeProperties.js';
+import { getAssignees, getModuleMembers, getStatements } from '../helpers/nodeProperties.js';
 import { SafeDsTypeChecker } from '../typing/safe-ds-type-checker.js';
 
-import { COMMAND_PRINT_VALUE, COMMAND_RUN_PIPELINE, COMMAND_SHOW_IMAGE } from '../communication/commands.js';
+import {
+    COMMAND_EXPLORE_TABLE,
+    COMMAND_PRINT_VALUE,
+    COMMAND_RUN_PIPELINE,
+    COMMAND_SHOW_IMAGE,
+} from '../communication/commands.js';
+import { NamedTupleType, Type } from '../typing/model.js';
+import { SafeDsSyntheticProperties } from '../helpers/safe-ds-synthetic-properties.js';
 
 export class SafeDsCodeLensProvider implements CodeLensProvider {
     private readonly astNodeLocator: AstNodeLocator;
     private readonly runner: SafeDsRunner;
+    private readonly syntheticProperties: SafeDsSyntheticProperties;
     private readonly typeChecker: SafeDsTypeChecker;
     private readonly typeComputer: SafeDsTypeComputer;
 
     constructor(services: SafeDsServices) {
         this.astNodeLocator = services.workspace.AstNodeLocator;
         this.runner = services.runtime.Runner;
+        this.syntheticProperties = services.helpers.SyntheticProperties;
         this.typeChecker = services.typing.TypeChecker;
         this.typeComputer = services.typing.TypeComputer;
     }
@@ -57,9 +77,13 @@ export class SafeDsCodeLensProvider implements CodeLensProvider {
         if (isSdsPipeline(node)) {
             await this.computeCodeLensForPipeline(node, accept);
 
-            for (const placeholder of streamPlaceholders(node.body)) {
+            for (const statement of getStatements(node.body)) {
                 await interruptAndCheck(cancelToken);
-                await this.computeCodeLensForPlaceholder(placeholder, accept);
+                if (isSdsAssignment(statement)) {
+                    await this.computeCodeLensForAssignment(statement, accept);
+                } else if (isSdsOutputStatement(statement)) {
+                    await this.computeCodeLensForOutputStatement(statement, accept);
+                }
             }
         }
     }
@@ -81,47 +105,115 @@ export class SafeDsCodeLensProvider implements CodeLensProvider {
         });
     }
 
-    private async computeCodeLensForPlaceholder(node: SdsPlaceholder, accept: CodeLensAcceptor): Promise<void> {
+    private async computeCodeLensForAssignment(
+        node: SdsAssignment,
+        accept: CodeLensAcceptor,
+        cancelToken: CancellationToken = CancellationToken.None,
+    ): Promise<void> {
+        for (const assignee of getAssignees(node)) {
+            await interruptAndCheck(cancelToken);
+            if (isSdsPlaceholder(assignee)) {
+                await this.computeCodeLensForPlaceholder(node, assignee, accept);
+            }
+        }
+    }
+
+    private async computeCodeLensForPlaceholder(
+        assignment: SdsAssignment,
+        placeholder: SdsPlaceholder,
+        accept: CodeLensAcceptor,
+    ): Promise<void> {
+        const cstNode = placeholder.$cstNode;
+        if (!cstNode) {
+            /* c8 ignore next 2 */
+            return;
+        }
+
+        const type = this.typeComputer.computeType(placeholder);
+        await this.computeCodeLensForValue(
+            type,
+            placeholder.name,
+            this.computeNodeId(assignment),
+            cstNode.range,
+            accept,
+        );
+    }
+
+    private async computeCodeLensForOutputStatement(
+        node: SdsOutputStatement,
+        accept: CodeLensAcceptor,
+        cancelToken: CancellationToken = CancellationToken.None,
+    ): Promise<void> {
         const cstNode = node.$cstNode;
         if (!cstNode) {
             /* c8 ignore next 2 */
             return;
         }
 
-        if (this.typeChecker.isImage(this.typeComputer.computeType(node))) {
-            const documentUri = AstUtils.getDocument(node).uri.toString();
-            const nodePath = this.astNodeLocator.getAstNodePath(node);
+        // Compute type of expression and unpack if it is a named tuple
+        const expressionType = this.typeComputer.computeType(node.expression);
+        let unpackedTypes: Type[] = [expressionType];
+        if (expressionType instanceof NamedTupleType) {
+            unpackedTypes = expressionType.entries.map((it) => it.type);
+        }
 
+        // Get names of values
+        const valueNames = this.syntheticProperties.getValueNamesForExpression(node.expression);
+
+        // Create code lenses for each value
+        for (let i = 0; i < unpackedTypes.length; i++) {
+            await interruptAndCheck(cancelToken);
+
+            await this.computeCodeLensForValue(
+                unpackedTypes[i]!,
+                valueNames[i] ?? 'expression',
+                this.computeNodeId(node),
+                cstNode.range,
+                accept,
+                { fallbackToPrint: true },
+            );
+        }
+    }
+
+    private async computeCodeLensForValue(
+        type: Type,
+        name: string,
+        id: NodeId,
+        range: Range,
+        accept: CodeLensAcceptor,
+        options: CodeLensForValueOptions = {},
+    ): Promise<void> {
+        if (this.typeChecker.isImage(type)) {
             accept({
-                range: cstNode.range,
+                range,
                 command: {
-                    title: `Show ${node.name}`,
+                    title: `Show ${name}`,
                     command: COMMAND_SHOW_IMAGE,
-                    arguments: [documentUri, nodePath],
+                    arguments: [name, id],
                 },
             });
-        } else if (this.typeChecker.isTable(this.typeComputer.computeType(node))) {
+        } else if (this.typeChecker.isTable(type)) {
             accept({
-                range: cstNode.range,
+                range,
                 command: {
-                    title: `Explore ${node.name}`,
-                    command: 'safe-ds.exploreTable',
-                    arguments: this.computeNodeId(node),
+                    title: `Explore ${name}`,
+                    command: COMMAND_EXPLORE_TABLE,
+                    arguments: [name, id],
                 },
             });
-        } else if (this.typeChecker.canBePrinted(this.typeComputer.computeType(node))) {
+        } else if (options.fallbackToPrint || this.typeChecker.canBePrinted(type)) {
             accept({
-                range: cstNode.range,
+                range,
                 command: {
-                    title: `Print ${node.name}`,
+                    title: `Print ${name}`,
                     command: COMMAND_PRINT_VALUE,
-                    arguments: this.computeNodeId(node),
+                    arguments: [name, id],
                 },
             });
         }
     }
 
-    private computeNodeId(node: AstNode): [string, string] {
+    private computeNodeId(node: AstNode): NodeId {
         const documentUri = AstUtils.getDocument(node).uri;
         const nodePath = this.astNodeLocator.getAstNodePath(node);
         return [documentUri.toString(), nodePath];
@@ -129,3 +221,14 @@ export class SafeDsCodeLensProvider implements CodeLensProvider {
 }
 
 type CodeLensAcceptor = (codeLens: CodeLens) => void;
+type NodeId = [string, string];
+
+/**
+ * Options for the `computeCodeLensForValue` method.
+ */
+interface CodeLensForValueOptions {
+    /**
+     * If `true`, a print code lens is created, if no other code lens is applicable.
+     */
+    fallbackToPrint?: boolean;
+}

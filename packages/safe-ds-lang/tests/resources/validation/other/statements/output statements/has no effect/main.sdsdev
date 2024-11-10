@@ -1,0 +1,16 @@
+package tests.validation.other.statements.outputStatements.hasNoEffect
+
+pipeline myPipeline {
+    // $TEST$ no warning r"This statement does nothing.*"
+    »out 1 + 2;«
+
+    () {
+        // $TEST$ no warning r"This statement does nothing.*"
+        »out 1 + 2;«
+    };
+}
+
+segment mySegment() {
+    // $TEST$ no warning r"This statement does nothing.*"
+    »out 1 + 2;«
+}

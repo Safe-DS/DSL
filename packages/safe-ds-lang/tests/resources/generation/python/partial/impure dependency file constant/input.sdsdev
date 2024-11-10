@@ -20,5 +20,5 @@ pipeline testPipeline {
     val impureFileReadAgainB = iFileReadB();
 
     // $TEST$ target
-    val »result« = impureFileReadAgain + impureFileReadAgainB;
+    »val result = impureFileReadAgain + impureFileReadAgainB;«
 }

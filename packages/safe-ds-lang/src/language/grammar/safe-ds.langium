@@ -485,6 +485,7 @@ SdsBlock returns SdsBlock:
 SdsStatement returns SdsStatement:
     SdsAssignment
   | SdsExpressionStatement
+  | SdsOutputStatement
 ;
 
 interface SdsAssignment extends SdsStatement {
@@ -528,6 +529,14 @@ SdsExpressionStatement returns SdsExpressionStatement:
     expression=SdsExpression ';'
 ;
 
+interface SdsOutputStatement extends SdsStatement {
+    expression: SdsExpression
+}
+
+SdsOutputStatement returns SdsOutputStatement:
+    'out' expression=SdsExpression ';'
+;
+
 
 // -----------------------------------------------------------------------------
 // Expressions
@@ -562,7 +571,9 @@ SdsBlockLambdaBlock returns SdsBlock:
 ;
 
 SdsBlockLambdaStatement returns SdsStatement:
-    SdsBlockLambdaAssignment | SdsExpressionStatement
+      SdsBlockLambdaAssignment
+    | SdsExpressionStatement
+    | SdsOutputStatement
 ;
 
 SdsBlockLambdaAssignment returns SdsAssignment:

@@ -3,14 +3,12 @@ import * as vscode from 'vscode';
 import { Uri } from 'vscode';
 import type { LanguageClientOptions, ServerOptions } from 'vscode-languageclient/node.js';
 import { LanguageClient, TransportKind } from 'vscode-languageclient/node.js';
-import { ast, createSafeDsServices, getModuleMembers, messages, rpc, SafeDsServices } from '@safe-ds/lang';
+import { ast, createSafeDsServices, rpc, SafeDsServices } from '@safe-ds/lang';
 import { NodeFileSystem } from 'langium/node';
-import crypto from 'crypto';
-import { AstUtils, LangiumDocument } from 'langium';
+import { LangiumDocument } from 'langium';
 import { EDAPanel } from './eda/edaPanel.ts';
 import { dumpDiagnostics } from './actions/dumpDiagnostics.js';
 import { openDiagnosticsDumps } from './actions/openDiagnosticsDumps.js';
-import { isSdsPlaceholder } from '../../../safe-ds-lang/src/language/generated/ast.js';
 import { installRunner } from './actions/installRunner.js';
 import { updateRunner } from './actions/updateRunner.js';
 import { safeDsLogger } from './helpers/logging.js';
@@ -18,11 +16,6 @@ import { showImage } from './actions/showImage.js';
 
 let client: LanguageClient;
 let services: SafeDsServices;
-let lastFinishedPipelineExecutionId: string | undefined;
-let lastSuccessfulPipelineName: string | undefined;
-let lastSuccessfulTableName: string | undefined;
-let lastSuccessfulPipelinePath: vscode.Uri | undefined;
-let lastSuccessfulPipelineNode: ast.SdsPipeline | undefined;
 
 /**
  * This function is called when the extension is activated.
@@ -106,6 +99,7 @@ const registerNotificationListeners = function (context: vscode.ExtensionContext
         client.onNotification(rpc.UpdateRunnerNotification.type, async () => {
             await updateRunner(context, client)();
         }),
+        client.onNotification(rpc.ExploreTableNotification.type, exploreTable(context)),
         client.onNotification(rpc.ShowImageNotification.type, showImage(context)),
     );
 };
@@ -113,181 +107,24 @@ const registerNotificationListeners = function (context: vscode.ExtensionContext
 const registerCommands = function (context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand('safe-ds.dumpDiagnostics', dumpDiagnostics(context)),
-        vscode.commands.registerCommand('safe-ds.exploreTable', exploreTable(context)),
         vscode.commands.registerCommand('safe-ds.installRunner', installRunner(client)),
         vscode.commands.registerCommand('safe-ds.openDiagnosticsDumps', openDiagnosticsDumps(context)),
-        vscode.commands.registerCommand('safe-ds.refreshWebview', refreshWebview(context)),
         vscode.commands.registerCommand('safe-ds.updateRunner', updateRunner(context, client)),
     );
 };
 
-const refreshWebview = function (context: vscode.ExtensionContext) {
-    return async () => {
-        if (
-            !lastSuccessfulPipelinePath ||
-            !lastFinishedPipelineExecutionId ||
-            !lastSuccessfulPipelineName ||
-            !lastSuccessfulTableName ||
-            !lastSuccessfulPipelineNode
-        ) {
-            vscode.window.showErrorMessage('No EDA Panel to refresh!');
-            return;
-        }
-        EDAPanel.kill(lastSuccessfulPipelineName! + '.' + lastSuccessfulTableName!);
-        setTimeout(() => {
-            EDAPanel.createOrShow(
-                context.extensionUri,
-                context,
-                lastFinishedPipelineExecutionId!,
-                services,
-                lastSuccessfulPipelinePath!,
-                lastSuccessfulPipelineName!,
-                lastSuccessfulPipelineNode!,
-                lastSuccessfulTableName!,
-            );
-        }, 100);
-        setTimeout(() => {
-            vscode.commands.executeCommand('workbench.action.webview.openDeveloperTools');
-        }, 100);
-    };
-};
-
-const doRunPipelineFile = async function (
-    filePath: vscode.Uri | undefined,
-    pipelineExecutionId: string,
-    knownPipelineName?: string,
-    placeholderNames?: string[],
-) {
-    const document = await getPipelineDocument(filePath);
-
-    if (document) {
-        // Run it
-        let pipelineName;
-        if (!knownPipelineName) {
-            const firstPipeline = getModuleMembers(<ast.SdsModule>document.parseResult.value).find(ast.isSdsPipeline);
-            if (firstPipeline === undefined) {
-                safeDsLogger.error('Cannot execute: no pipeline found');
-                vscode.window.showErrorMessage('The current file cannot be executed, as no pipeline could be found.');
-                return;
-            }
-            pipelineName = services.builtins.Annotations.getPythonName(firstPipeline) ?? firstPipeline.name;
-        } else {
-            pipelineName = knownPipelineName;
-        }
-
-        safeDsLogger.info(`Launching Pipeline (${pipelineExecutionId}): ${filePath} - ${pipelineName}`);
-
-        await services.runtime.Runner.executePipeline(pipelineExecutionId, document, pipelineName, placeholderNames);
-    }
-};
-
 const exploreTable = (context: vscode.ExtensionContext) => {
-    return async (documentUri: string, nodePath: string) => {
-        await vscode.workspace.saveAll();
-
-        const uri = Uri.parse(documentUri);
-
-        const document = await getPipelineDocument(Uri.parse(documentUri));
-        if (!document) {
-            vscode.window.showErrorMessage('Could not find document.');
-            return;
-        }
-
-        const root = document.parseResult.value;
-        const placeholderNode = services.workspace.AstNodeLocator.getAstNode(root, nodePath);
-        if (!isSdsPlaceholder(placeholderNode)) {
-            vscode.window.showErrorMessage('Selected node is not a placeholder.');
-            return;
-        }
-
-        const pipelineNode = AstUtils.getContainerOfType(placeholderNode, ast.isSdsPipeline);
-        if (!pipelineNode) {
-            vscode.window.showErrorMessage('Selected placeholder is not in a pipeline.');
-            return;
-        }
-
-        const pipelineName = pipelineNode.name;
-        const requestedPlaceholderName = placeholderNode.name;
-
-        // gen custom id for pipeline
-        const pipelineExecutionId = crypto.randomUUID();
-
-        let loadingInProgress = true; // Flag to track loading status
-        // Show progress indicator
-        vscode.window.withProgress(
-            {
-                location: vscode.ProgressLocation.Window,
-                title: 'Loading Table...',
-            },
-            (progress, _) => {
-                progress.report({ increment: 0 });
-                return new Promise<void>((resolve) => {
-                    // Resolve the promise when loading is no longer in progress
-                    const checkInterval = setInterval(() => {
-                        if (!loadingInProgress) {
-                            clearInterval(checkInterval);
-                            resolve();
-                        }
-                    }, 1000); // Check every second
-                });
-            },
+    return async (data: rpc.ExploreTableNotification) => {
+        await EDAPanel.createOrShow(
+            context.extensionUri,
+            context,
+            data.pipelineExecutionId,
+            services,
+            Uri.parse(data.uri),
+            data.pipelineName,
+            data.pipelineNodeEndOffset,
+            data.placeholderName,
         );
-        const cleanupLoadingIndication = () => {
-            loadingInProgress = false;
-        };
-
-        const placeholderTypeCallback = function (message: messages.PlaceholderTypeMessage) {
-            safeDsLogger.info(
-                `Placeholder was calculated (${message.id}): ${message.data.name} of type ${message.data.type}`,
-            );
-            if (message.id === pipelineExecutionId && message.data.name === requestedPlaceholderName) {
-                lastFinishedPipelineExecutionId = pipelineExecutionId;
-                lastSuccessfulPipelinePath = uri;
-                lastSuccessfulTableName = requestedPlaceholderName;
-                lastSuccessfulPipelineName = pipelineName;
-                lastSuccessfulPipelineNode = pipelineNode;
-                EDAPanel.createOrShow(
-                    context.extensionUri,
-                    context,
-                    pipelineExecutionId,
-                    services,
-                    uri,
-                    pipelineName,
-                    pipelineNode,
-                    message.data.name,
-                );
-                services.runtime.PythonServer.removeMessageCallback('placeholder_type', placeholderTypeCallback);
-                cleanupLoadingIndication();
-            }
-        };
-        services.runtime.PythonServer.addMessageCallback('placeholder_type', placeholderTypeCallback);
-
-        const runtimeProgressCallback = function (message: messages.RuntimeProgressMessage) {
-            safeDsLogger.info(`Runner-Progress (${message.id}): ${message.data}`);
-            if (
-                message.id === pipelineExecutionId &&
-                message.data === 'done' &&
-                lastFinishedPipelineExecutionId !== pipelineExecutionId
-            ) {
-                lastFinishedPipelineExecutionId = pipelineExecutionId;
-                vscode.window.showErrorMessage(`Selected text is not a placeholder!`);
-                services.runtime.PythonServer.removeMessageCallback('runtime_progress', runtimeProgressCallback);
-                cleanupLoadingIndication();
-            }
-        };
-        services.runtime.PythonServer.addMessageCallback('runtime_progress', runtimeProgressCallback);
-
-        const runtimeErrorCallback = function (message: messages.RuntimeErrorMessage) {
-            if (message.id === pipelineExecutionId && lastFinishedPipelineExecutionId !== pipelineExecutionId) {
-                lastFinishedPipelineExecutionId = pipelineExecutionId;
-                vscode.window.showErrorMessage(`Pipeline ran into an Error!`);
-                services.runtime.PythonServer.removeMessageCallback('runtime_error', runtimeErrorCallback);
-                cleanupLoadingIndication();
-            }
-        };
-        services.runtime.PythonServer.addMessageCallback('runtime_error', runtimeErrorCallback);
-
-        await doRunPipelineFile(uri, pipelineExecutionId, pipelineName, [requestedPlaceholderName]);
     };
 };
 

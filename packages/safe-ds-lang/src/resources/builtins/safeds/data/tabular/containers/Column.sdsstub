@@ -44,7 +44,7 @@ class Column<out T = Any?>(
      */
     attr type: DataType
 
-    /*
+    /**
      * Return the distinct values in the column.
      *
      * @param ignoreMissingValues Whether to ignore missing values.

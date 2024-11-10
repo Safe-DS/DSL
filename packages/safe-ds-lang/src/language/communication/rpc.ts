@@ -1,5 +1,6 @@
 import { MessageDirection, NotificationType0, RequestType0 } from 'vscode-languageserver';
 import { NotificationType } from 'vscode-languageserver-protocol';
+import { UUID } from 'node:crypto';
 
 export namespace InstallRunnerNotification {
     export const method = 'runner/install' as const;
@@ -30,6 +31,39 @@ export namespace UpdateRunnerNotification {
     export const method = 'runner/update' as const;
     export const messageDirection = MessageDirection.serverToClient;
     export const type = new NotificationType0(method);
+}
+
+export namespace ExploreTableNotification {
+    export const method = 'runner/exploreTable' as const;
+    export const messageDirection = MessageDirection.serverToClient;
+    export const type = new NotificationType<ExploreTableNotification>(method);
+}
+
+export interface ExploreTableNotification {
+    /**
+     * The ID of the pipeline execution.
+     */
+    pipelineExecutionId: UUID;
+
+    /**
+     * The URI of the pipeline document.
+     */
+    uri: string;
+
+    /**
+     * The name of the pipeline.
+     */
+    pipelineName: string;
+
+    /**
+     * The end offset of the pipeline node. This is used to add more code to the pipeline by the EDA tool.
+     */
+    pipelineNodeEndOffset: number;
+
+    /**
+     * The name of the placeholder containing the table.
+     */
+    placeholderName: string;
 }
 
 export namespace ShowImageNotification {

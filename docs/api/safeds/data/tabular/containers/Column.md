@@ -57,7 +57,7 @@ pipeline example {
          */
         attr type: DataType
 
-        /*
+        /**
          * Return the distinct values in the column.
          *
          * @param ignoreMissingValues Whether to ignore missing values.
@@ -915,17 +915,29 @@ pipeline example {
 
 ## <code class="doc-symbol doc-symbol-function"></code> `getDistinctValues` {#safeds.data.tabular.containers.Column.getDistinctValues data-toc-label='[function] getDistinctValues'}
 
+Return the distinct values in the column.
+
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `ignoreMissingValues` | [`Boolean`][safeds.lang.Boolean] | - | `#!sds true` |
+| `ignoreMissingValues` | [`Boolean`][safeds.lang.Boolean] | Whether to ignore missing values. | `#!sds true` |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `distinctValues` | [`List<T?>`][safeds.lang.List] | - |
+| `distinctValues` | [`List<T?>`][safeds.lang.List] | The distinct values in the column. |
+
+**Examples:**
+
+```sds hl_lines="3"
+pipeline example {
+    val column = Column("test", [1, 2, 3, 2]);
+    val result = column.getDistinctValues();
+    // [1, 2, 3]
+}
+```
 
 ??? quote "Stub code in `Column.sdsstub`"
 

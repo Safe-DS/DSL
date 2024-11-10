@@ -13,7 +13,7 @@
         },
         {
             "name": "storage.modifier.safe-ds",
-            "match": "\\b(const|internal|private)\\b"
+            "match": "\\b(const|internal|out|private)\\b"
         },
         {
             "name": "keyword.operator.expression.safe-ds",
