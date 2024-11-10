@@ -117,6 +117,7 @@ import { CODEGEN_PREFIX } from './constants.js';
 import { SafeDsSlicer } from '../../flow/safe-ds-slicer.js';
 import { SafeDsTypeChecker } from '../../typing/safe-ds-type-checker.js';
 import { SafeDsCoreTypes } from '../../typing/safe-ds-core-types.js';
+import { SafeDsSyntheticProperties } from '../../helpers/safe-ds-synthetic-properties.js';
 
 const LAMBDA_PREFIX = `${CODEGEN_PREFIX}lambda_`;
 const BLOCK_LAMBDA_RESULT_PREFIX = `${CODEGEN_PREFIX}block_lambda_result_`;
@@ -139,6 +140,7 @@ export class SafeDsPythonGenerator {
     private readonly partialEvaluator: SafeDsPartialEvaluator;
     private readonly purityComputer: SafeDsPurityComputer;
     private readonly slicer: SafeDsSlicer;
+    private readonly syntheticProperties: SafeDsSyntheticProperties;
     private readonly typeChecker: SafeDsTypeChecker;
     private readonly typeComputer: SafeDsTypeComputer;
 
@@ -149,6 +151,7 @@ export class SafeDsPythonGenerator {
         this.partialEvaluator = services.evaluation.PartialEvaluator;
         this.purityComputer = services.purity.PurityComputer;
         this.slicer = services.flow.Slicer;
+        this.syntheticProperties = services.helpers.SyntheticProperties;
         this.typeChecker = services.typing.TypeChecker;
         this.typeComputer = services.typing.TypeComputer;
     }
@@ -599,23 +602,7 @@ export class SafeDsPythonGenerator {
     }
 
     private generateOutputStatement(node: SdsOutputStatement, frame: GenerationInfoFrame): Generated {
-        let valueNames: string[] = [];
-        if (isSdsCall(node.expression)) {
-            const callable = this.nodeMapper.callToCallable(node.expression);
-            if (isSdsClass(callable)) {
-                valueNames = ['instance'];
-            } else {
-                valueNames = getAbstractResults(callable).map((it) => it.name);
-            }
-        } else if (isSdsMemberAccess(node.expression)) {
-            const declarationName = node.expression.member?.target?.ref?.name;
-            if (declarationName) {
-                valueNames = [declarationName];
-            }
-        } else {
-            valueNames = ['expression'];
-        }
-
+        const valueNames = this.syntheticProperties.getValueNamesForExpression(node.expression);
         const assignmentStatements: Generated[] = [];
 
         assignmentStatements.push(

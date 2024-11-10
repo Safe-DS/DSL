@@ -5,9 +5,6 @@ import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import { AstNode, AstNodeLocator, AstUtils, interruptAndCheck, LangiumDocument } from 'langium';
 import {
     isSdsAssignment,
-    isSdsCall,
-    isSdsClass,
-    isSdsMemberAccess,
     isSdsModule,
     isSdsOutputStatement,
     isSdsPipeline,
@@ -19,7 +16,7 @@ import {
     SdsPlaceholder,
 } from '../generated/ast.js';
 import { SafeDsRunner } from '../runtime/safe-ds-runner.js';
-import { getAbstractResults, getAssignees, getModuleMembers, getStatements } from '../helpers/nodeProperties.js';
+import { getAssignees, getModuleMembers, getStatements } from '../helpers/nodeProperties.js';
 import { SafeDsTypeChecker } from '../typing/safe-ds-type-checker.js';
 
 import {
@@ -28,20 +25,20 @@ import {
     COMMAND_RUN_PIPELINE,
     COMMAND_SHOW_IMAGE,
 } from '../communication/commands.js';
-import { SafeDsNodeMapper } from '../helpers/safe-ds-node-mapper.js';
 import { NamedTupleType, Type } from '../typing/model.js';
+import { SafeDsSyntheticProperties } from '../helpers/safe-ds-synthetic-properties.js';
 
 export class SafeDsCodeLensProvider implements CodeLensProvider {
     private readonly astNodeLocator: AstNodeLocator;
-    private readonly nodeMapper: SafeDsNodeMapper;
     private readonly runner: SafeDsRunner;
+    private readonly syntheticProperties: SafeDsSyntheticProperties;
     private readonly typeChecker: SafeDsTypeChecker;
     private readonly typeComputer: SafeDsTypeComputer;
 
     constructor(services: SafeDsServices) {
         this.astNodeLocator = services.workspace.AstNodeLocator;
-        this.nodeMapper = services.helpers.NodeMapper;
         this.runner = services.runtime.Runner;
+        this.syntheticProperties = services.helpers.SyntheticProperties;
         this.typeChecker = services.typing.TypeChecker;
         this.typeComputer = services.typing.TypeComputer;
     }
@@ -161,20 +158,7 @@ export class SafeDsCodeLensProvider implements CodeLensProvider {
         }
 
         // Get names of values
-        let valueNames: string[] = [];
-        if (isSdsCall(node.expression)) {
-            const callable = this.nodeMapper.callToCallable(node.expression);
-            if (isSdsClass(callable)) {
-                valueNames = [`instance`];
-            } else {
-                valueNames = getAbstractResults(callable).map((it) => it.name);
-            }
-        } else if (isSdsMemberAccess(node.expression)) {
-            const declarationName = node.expression.member?.target?.ref?.name;
-            if (declarationName) {
-                valueNames = [declarationName];
-            }
-        }
+        const valueNames = this.syntheticProperties.getValueNamesForExpression(node.expression);
 
         // Create code lenses for each value
         for (let i = 0; i < unpackedTypes.length; i++) {

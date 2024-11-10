@@ -56,6 +56,7 @@ import { SafeDsExecuteCommandHandler } from './lsp/safe-ds-execute-command-handl
 import { SafeDsServiceRegistry } from './safe-ds-service-registry.js';
 import { SafeDsPythonServer } from './runtime/safe-ds-python-server.js';
 import { SafeDsSlicer } from './flow/safe-ds-slicer.js';
+import { SafeDsSyntheticProperties } from './helpers/safe-ds-synthetic-properties.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -86,6 +87,7 @@ export type SafeDsAddedServices = {
     };
     helpers: {
         NodeMapper: SafeDsNodeMapper;
+        SyntheticProperties: SafeDsSyntheticProperties;
     };
     lsp: {
         NodeInfoProvider: SafeDsNodeInfoProvider;
@@ -160,6 +162,7 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
     },
     helpers: {
         NodeMapper: (services) => new SafeDsNodeMapper(services),
+        SyntheticProperties: (services) => new SafeDsSyntheticProperties(services),
     },
     lsp: {
         CallHierarchyProvider: (services) => new SafeDsCallHierarchyProvider(services),
