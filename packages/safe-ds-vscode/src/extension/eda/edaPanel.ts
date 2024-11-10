@@ -414,7 +414,7 @@ export class EDAPanel {
         try {
             await vscode.workspace.fs.stat(scriptPath);
             safeDsLogger.info('Using EDA build from EDA package.');
-        } catch (error) {
+        } catch (_error) {
             // If not use the static one from the dist folder here
             safeDsLogger.info('Using EDA build from local dist.');
             scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this.extensionUri, 'dist', 'eda-webview', 'main.js'));
