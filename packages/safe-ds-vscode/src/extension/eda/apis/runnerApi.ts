@@ -21,7 +21,12 @@ import {
     MultipleRunnerExecutionResultMessage,
     RunnerExecutionResultMessage,
 } from '@safe-ds/eda/types/messaging.ts';
-import { isSdsPipeline, isSdsStatement, SdsModule } from '../../../../../safe-ds-lang/src/language/generated/ast.js';
+import {
+    isSdsOutputStatement,
+    isSdsPipeline,
+    isSdsStatement,
+    SdsModule,
+} from '../../../../../safe-ds-lang/src/language/generated/ast.js';
 import { getModuleMembers, getPlaceholderByName } from '../../../../../safe-ds-lang/src/language/index.js';
 
 export class RunnerApi {
@@ -46,7 +51,7 @@ export class RunnerApi {
         this.pipelineNodeEndOffset = pipelineNodeEndOffset;
         this.tablePlaceholder = tablePlaceholder;
         getPipelineDocument(this.pipelinePath).then((doc) => {
-            // Get here to avoid issues because of chanigng file
+            // Get here to avoid issues because of changing file
             // Make sure to create new instance of RunnerApi if pipeline execution of fresh pipeline is needed
             // (e.g. launching of extension on table with existing state but no current panel)
             this.baseDocument = doc;
@@ -77,7 +82,14 @@ export class RunnerApi {
             const afterPipelineEnd = documentText.substring(endOfPipeline - 1);
             newDocumentText = beforePipelineEnd + addedLines + afterPipelineEnd;
 
-            const newDoc = this.services.shared.workspace.LangiumDocumentFactory.fromString(
+            let newDoc = this.services.shared.workspace.LangiumDocumentFactory.fromString(
+                newDocumentText,
+                this.pipelinePath,
+            );
+
+            newDocumentText = this.replaceOutputStatements(newDoc);
+            safeDsLogger.debug(newDocumentText);
+            newDoc = this.services.shared.workspace.LangiumDocumentFactory.fromString(
                 newDocumentText,
                 this.pipelinePath,
             );
@@ -136,6 +148,36 @@ export class RunnerApi {
         });
     }
     //#endregion
+
+    private replaceOutputStatements(doc: LangiumDocument): string {
+        const outputStatements = AstUtils.streamAst(doc.parseResult.value)
+            .filter(isSdsOutputStatement)
+            .toArray()
+            .reverse();
+
+        let documentText = doc.textDocument.getText();
+
+        for (const outputStatement of outputStatements) {
+            const cstNode = outputStatement.$cstNode;
+            const index = outputStatement.$containerIndex;
+            const expressionCstNode = outputStatement.expression.$cstNode;
+            if (!cstNode || !index || !expressionCstNode) {
+                continue;
+            }
+
+            const assignees = this.services.helpers.SyntheticProperties.getValueNamesForExpression(
+                outputStatement.expression,
+            )
+                .map((valueName) => `val ${CODEGEN_PREFIX}${index}_${valueName}`)
+                .join(', ');
+
+            const replacement = `${assignees} = ${expressionCstNode.text};`;
+            documentText =
+                documentText.substring(0, cstNode.offset) + replacement + documentText.substring(cstNode.end);
+        }
+
+        return documentText;
+    }
 
     //#region Helpers
     private runnerResultToTable(tableName: string, runnerResult: any, columnIsNumeric: Map<string, boolean>): Table {
