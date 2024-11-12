@@ -29,6 +29,7 @@ class ArimaRegressor() {
      * @result fittedArima The fitted ARIMA Model.
      */
     @Pure
+    @Category(DataScienceCategory.ModelingQClassicalRegression)
     fun fit(
         @PythonName("time_series") timeSeries: TimeSeriesDataset
     ) -> fittedArima: ArimaRegressor
@@ -41,6 +42,7 @@ class ArimaRegressor() {
      * @result prediction A timeseries containing the predicted target vector and a time dummy as time column.
      */
     @Pure
+    @Category(DataScienceCategory.ModelingQClassicalRegression)
     fun predict(
         @PythonName("time_series") timeSeries: TimeSeriesDataset
     ) -> prediction: Table
@@ -54,6 +56,7 @@ class ArimaRegressor() {
      */
     @Pure
     @PythonName("plot_predictions")
+    @Category(DataScienceCategory.ModelEvaluationQVisualization)
     fun plotPredictions(
         @PythonName("test_series") testSeries: TimeSeriesDataset
     ) -> image: Image

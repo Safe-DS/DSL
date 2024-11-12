@@ -8,6 +8,7 @@ from safeds.ml.nn.typing import ModelImageSize
  *
  * @param probability The probability that an input element gets zeroed out.
  */
+ @Category(DataScienceCategory.ModelingQNeuralNetwork)
 class DropoutLayer(
     probability: Float
 ) sub Layer {

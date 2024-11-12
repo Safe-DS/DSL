@@ -37,6 +37,7 @@ class LogisticClassifier(
      * @result fittedClassifier The fitted classifier.
      */
     @Pure
+    @Category(DataScienceCategory.ModelingQClassicalClassification)
     fun fit(
         @PythonName("training_set") trainingSet: TabularDataset
     ) -> fittedClassifier: LogisticClassifier

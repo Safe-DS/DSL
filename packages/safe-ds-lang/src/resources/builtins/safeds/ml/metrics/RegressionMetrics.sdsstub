@@ -16,6 +16,7 @@ class RegressionMetrics {
      * @result metrics A table containing the regression metrics.
      */
     @Pure
+    @Category(DataScienceCategory.ModelEvaluationQMetric)
     static fun summarize(
         predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
         expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
@@ -46,6 +47,7 @@ class RegressionMetrics {
      */
     @Pure
     @PythonName("coefficient_of_determination")
+    @Category(DataScienceCategory.ModelEvaluationQMetric)
     static fun coefficientOfDetermination(
         predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
         expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
@@ -65,6 +67,7 @@ class RegressionMetrics {
      */
     @Pure
     @PythonName("mean_absolute_error")
+    @Category(DataScienceCategory.ModelEvaluationQMetric)
     static fun meanAbsoluteError(
         predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
         expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
@@ -88,6 +91,7 @@ class RegressionMetrics {
      */
     @Pure
     @PythonName("mean_directional_accuracy")
+    @Category(DataScienceCategory.ModelEvaluationQMetric)
     static fun meanDirectionalAccuracy(
         predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
         expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
@@ -109,6 +113,7 @@ class RegressionMetrics {
      */
     @Pure
     @PythonName("mean_squared_error")
+    @Category(DataScienceCategory.ModelEvaluationQMetric)
     static fun meanSquaredError(
         predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
         expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
@@ -128,6 +133,7 @@ class RegressionMetrics {
      */
     @Pure
     @PythonName("median_absolute_deviation")
+    @Category(DataScienceCategory.ModelEvaluationQMetric)
     static fun medianAbsoluteDeviation(
         predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
         expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>

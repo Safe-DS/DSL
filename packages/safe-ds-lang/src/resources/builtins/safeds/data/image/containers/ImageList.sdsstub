@@ -49,6 +49,7 @@ class ImageList {
      */
     @Pure
     @PythonName("from_images")
+    @Category(DataScienceCategory.DataImport)
     static fun fromImages(
         images: List<Image>
     ) -> imageList: ImageList
@@ -64,6 +65,7 @@ class ImageList {
      */
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
     @PythonName("from_files")
+    @Category(DataScienceCategory.DataImport)
     static fun fromFiles(
         path: union<List<String>, String>
     ) -> imageList: ImageList
@@ -77,6 +79,7 @@ class ImageList {
      */
     @Pure
     @PythonName("get_image")
+    @Category(DataScienceCategory.UtilitiesQImage)
     fun getImage(
         index: Int
     ) -> image: Image
@@ -91,6 +94,7 @@ class ImageList {
      * @result indices all occurrences of the image
      */
     @Pure
+    @Category(DataScienceCategory.UtilitiesQImage)
     fun index(
         image: Image
     ) -> indices: List<Int>
@@ -104,6 +108,7 @@ class ImageList {
      */
     @Pure
     @PythonName("has_image")
+    @Category(DataScienceCategory.UtilitiesQImage)
     fun hasImage(
         image: Image
     ) -> hasImage: Boolean
@@ -115,6 +120,7 @@ class ImageList {
      */
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_jpeg_files")
+    @Category(DataScienceCategory.DataExport)
     fun toJpegFiles(
         path: union<List<String>, String>
     )
@@ -126,6 +132,7 @@ class ImageList {
      */
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_png_files")
+    @Category(DataScienceCategory.DataExport)
     fun toPngFiles(
         path: union<List<String>, String>
     )
@@ -139,6 +146,7 @@ class ImageList {
      */
     @Pure
     @PythonName("to_images")
+    @Category(DataScienceCategory.UtilitiesQConversion)
     fun toImages(
         indices: List<Int>? = null
     ) -> images: List<Image>

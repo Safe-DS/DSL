@@ -78,6 +78,7 @@ class SupportVectorRegressor(
      * @result fittedRegressor The fitted regressor.
      */
     @Pure
+    @Category(DataScienceCategory.ModelingQClassicalRegression)
     fun fit(
         @PythonName("training_set") trainingSet: TabularDataset
     ) -> fittedRegressor: SupportVectorRegressor
