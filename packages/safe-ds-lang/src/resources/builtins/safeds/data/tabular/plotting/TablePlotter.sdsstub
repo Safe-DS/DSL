@@ -95,8 +95,7 @@ class TablePlotter(
     @Pure
     @Category(DataScienceCategory.DataExplorationQVisualization)
     fun histograms(
-        @PythonName("max_bin_count")
-        const maxBinCount: Int = 10,
+        @PythonName("max_bin_count") const maxBinCount: Int = 10,
         theme: literal<"dark", "light"> = "light"
     ) -> plot: Image where {
         maxBinCount > 0
@@ -127,12 +126,9 @@ class TablePlotter(
     @PythonName("line_plot")
     @Category(DataScienceCategory.DataExplorationQVisualization)
     fun linePlot(
-        @PythonName("x_name")
-        xName: String,
-        @PythonName("y_names")
-        yNames: List<String>,
-        @PythonName("show_confidence_interval")
-        showConfidenceInterval: Boolean = true,
+        @PythonName("x_name") xName: String,
+        @PythonName("y_names") yNames: List<String>,
+        @PythonName("show_confidence_interval") showConfidenceInterval: Boolean = true,
         theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
 
@@ -160,10 +156,8 @@ class TablePlotter(
     @PythonName("scatter_plot")
     @Category(DataScienceCategory.DataExplorationQVisualization)
     fun scatterPlot(
-        @PythonName("x_name")
-        xName: String,
-        @PythonName("y_names")
-        yNames: List<String>,
+        @PythonName("x_name") xName: String,
+        @PythonName("y_names") yNames: List<String>,
         theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
 
@@ -192,12 +186,9 @@ class TablePlotter(
     @PythonName("moving_average_plot")
     @Category(DataScienceCategory.DataExplorationQVisualization)
     fun movingAveragePlot(
-        @PythonName("x_name")
-        xName: String,
-        @PythonName("y_name")
-        yName: String,
-        @PythonName("window_size")
-        windowSize: Int,
+        @PythonName("x_name") xName: String,
+        @PythonName("y_name") yName: String,
+        @PythonName("window_size") windowSize: Int,
         theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
 
@@ -227,14 +218,10 @@ class TablePlotter(
     @PythonName("histogram_2d")
     @Category(DataScienceCategory.DataExplorationQVisualization)
     fun histogram2d(
-        @PythonName("x_name")
-        xName: String,
-        @PythonName("y_name")
-        yName: String,
-        @PythonName("x_max_bin_count")
-        xMaxBinCount: Int = 10,
-        @PythonName("y_max_bin_count")
-        yMaxBinCount: Int = 10,
+        @PythonName("x_name") xName: String,
+        @PythonName("y_name") yName: String,
+        @PythonName("x_max_bin_count") xMaxBinCount: Int = 10,
+        @PythonName("y_max_bin_count") yMaxBinCount: Int = 10,
         theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
 }
