@@ -38,20 +38,19 @@ class TablePlotter(
         theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
 
-/**
- * Create a violin plot for every numerical column.
- *
- * @param theme The color theme of the plot. Default is "light".
- *
- * @result plot The violin plot(s) as an image.
- *
- * @example
- * pipeline example {
- *     val table = Table({"a": [1, 2], "b": [3, 42]});
- *     val image = table.plot.violinPlots();
- * }
- */
-
+    /**
+    * Create a violin plot for every numerical column.
+    *
+    * @param theme The color theme of the plot. Default is "light".
+    *
+    * @result plot The violin plot(s) as an image.
+    *
+    * @example
+    * pipeline example {
+    *     val table = Table({"a": [1, 2], "b": [3, 42]});
+    *     val image = table.plot.violinPlots();
+    * }
+    */
     @Pure
     @PythonName("violin_plots")
     @Category(DataScienceCategory.DataExplorationQVisualization)
@@ -59,20 +58,19 @@ class TablePlotter(
         theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
 
-/**
- * Plot a correlation heatmap for all numerical columns of this `Table`.
- *
- * @param theme The color theme of the plot. Default is "light".
- *
- * @result plot The plot as an image.
- *
- * @example
- * pipeline example {
- *     val table = Table({"temperature": [10, 15, 20, 25, 30], "sales": [54, 74, 90, 206, 210]});
- *     val image = table.plot.correlationHeatmap();
- * }
- */
-
+    /**
+    * Plot a correlation heatmap for all numerical columns of this `Table`.
+    *
+    * @param theme The color theme of the plot. Default is "light".
+    *
+    * @result plot The plot as an image.
+    *
+    * @example
+    * pipeline example {
+    *     val table = Table({"temperature": [10, 15, 20, 25, 30], "sales": [54, 74, 90, 206, 210]});
+    *     val image = table.plot.correlationHeatmap();
+    * }
+    */
     @Pure
     @PythonName("correlation_heatmap")
     @Category(DataScienceCategory.DataExplorationQVisualization)
@@ -80,21 +78,20 @@ class TablePlotter(
         theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
 
-/**
- * Plot a histogram for every column.
- *
- * @param maxBinCount The maximum number of bins to use in the histogram. Default is 10.
- * @param theme The color theme of the plot. Default is "light".
- *
- * @result plot The plot as an image.
- *
- * @example
- * pipeline example {
- *     val table = Table({"a": [2, 3, 5, 1], "b": [54, 74, 90, 2014]});
- *     val image = table.plot.histograms();
- * }
- */
-
+    /**
+    * Plot a histogram for every column.
+    *
+    * @param maxBinCount The maximum number of bins to use in the histogram. Default is 10.
+    * @param theme The color theme of the plot. Default is "light".
+    *
+    * @result plot The plot as an image.
+    *
+    * @example
+    * pipeline example {
+    *     val table = Table({"a": [2, 3, 5, 1], "b": [54, 74, 90, 2014]});
+    *     val image = table.plot.histograms();
+    * }
+    */
     @Pure
     @Category(DataScienceCategory.DataExplorationQVisualization)
     fun histograms(
@@ -105,28 +102,27 @@ class TablePlotter(
         maxBinCount > 0
     }
 
-/**
- * Create a line plot for two columns in the table.
- *
- * @param xName The name of the column to be plotted on the x-axis.
- * @param yNames The name(s) of the column(s) to be plotted on the y-axis.
- * @param showConfidenceInterval Whether a confidence interval is shown.
- * @param theme The color theme of the plot. Default is "light".
- *
- * @result plot The plot as an image.
- *
- * @example
- * pipeline example {
- *     val table = Table(
- *         {
- *             "a": [1, 2, 3, 4, 5],
- *             "b": [2, 3, 4, 5, 6],
- *         }
- *     );
- *     val image = table.plot.linePlot("a", ["b"]);
- * }
- */
-
+    /**
+    * Create a line plot for two columns in the table.
+    *
+    * @param xName The name of the column to be plotted on the x-axis.
+    * @param yNames The name(s) of the column(s) to be plotted on the y-axis.
+    * @param showConfidenceInterval Whether a confidence interval is shown.
+    * @param theme The color theme of the plot. Default is "light".
+    *
+    * @result plot The plot as an image.
+    *
+    * @example
+    * pipeline example {
+    *     val table = Table(
+    *         {
+    *             "a": [1, 2, 3, 4, 5],
+    *             "b": [2, 3, 4, 5, 6],
+    *         }
+    *     );
+    *     val image = table.plot.linePlot("a", ["b"]);
+    * }
+    */
     @Pure
     @PythonName("line_plot")
     @Category(DataScienceCategory.DataExplorationQVisualization)
@@ -140,27 +136,26 @@ class TablePlotter(
         theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
 
-/**
- * Create a scatter plot for two columns in the table.
- *
- * @param xName The name of the column to be plotted on the x-axis.
- * @param yNames The name(s) of the column(s) to be plotted on the y-axis.
- * @param theme The color theme of the plot. Default is "light".
- *
- * @result plot The plot as an image.
- *
- * @example
- * pipeline example {
- *     val table = Table(
- *         {
- *             "a": [1, 2, 3, 4, 5],
- *             "b": [2, 3, 4, 5, 6],
- *         }
- *     );
- *     val image = table.plot.scatterPlot("a", ["b"]);
- * }
- */
-
+    /**
+    * Create a scatter plot for two columns in the table.
+    *
+    * @param xName The name of the column to be plotted on the x-axis.
+    * @param yNames The name(s) of the column(s) to be plotted on the y-axis.
+    * @param theme The color theme of the plot. Default is "light".
+    *
+    * @result plot The plot as an image.
+    *
+    * @example
+    * pipeline example {
+    *     val table = Table(
+    *         {
+    *             "a": [1, 2, 3, 4, 5],
+    *             "b": [2, 3, 4, 5, 6],
+    *         }
+    *     );
+    *     val image = table.plot.scatterPlot("a", ["b"]);
+    * }
+    */
     @Pure
     @PythonName("scatter_plot")
     @Category(DataScienceCategory.DataExplorationQVisualization)
@@ -172,28 +167,27 @@ class TablePlotter(
         theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
 
-/**
- * Create a moving average plot for the y column and plot it by the x column in the table.
- *
- * @param xName The name of the column to be plotted on the x-axis.
- * @param yName The name of the column to be plotted on the y-axis.
- * @param windowSize The size of the moving average window
- * @param theme The color theme of the plot. Default is "light".
- *
- * @result plot The plot as an image.
- *
- * @example
- * pipeline example {
- *     val table = Table(
- *         {
- *             "a": [1, 2, 3, 4, 5],
- *             "b": [2, 3, 4, 5, 6],
- *         }
- *     );
- *     val image = table.plot.movingAveragePlot("a", "b", windowSize = 2);
- * }
- */
-
+    /**
+    * Create a moving average plot for the y column and plot it by the x column in the table.
+    *
+    * @param xName The name of the column to be plotted on the x-axis.
+    * @param yName The name of the column to be plotted on the y-axis.
+    * @param windowSize The size of the moving average window
+    * @param theme The color theme of the plot. Default is "light".
+    *
+    * @result plot The plot as an image.
+    *
+    * @example
+    * pipeline example {
+    *     val table = Table(
+    *         {
+    *             "a": [1, 2, 3, 4, 5],
+    *             "b": [2, 3, 4, 5, 6],
+    *         }
+    *     );
+    *     val image = table.plot.movingAveragePlot("a", "b", windowSize = 2);
+    * }
+    */
     @Pure
     @PythonName("moving_average_plot")
     @Category(DataScienceCategory.DataExplorationQVisualization)
@@ -207,29 +201,28 @@ class TablePlotter(
         theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
 
-/**
- * Create a 2D histogram for two columns in the table.
- *
- * @param xName The name of the column to be plotted on the x-axis.
- * @param yName The name of the column to be plotted on the y-axis.
- * @param xMaxBinCount The maximum number of bins to use in the histogram for the x-axis. Default is 10.
- * @param yMaxBinCount The maximum number of bins to use in the histogram for the y-axis. Default is 10.
- * @param theme The color theme of the plot. Default is "light".
- *
- * @result plot The plot as an image.
- *
- * @example
- * pipeline example {
- *     val table = Table(
- *         {
- *             "a": [1, 2, 3, 4, 5],
- *             "b": [2, 3, 4, 5, 6],
- *         }
- *     );
- *     val image = table.plot.histogram2d("a", "b");
- * }
- */
-
+    /**
+    * Create a 2D histogram for two columns in the table.
+    *
+    * @param xName The name of the column to be plotted on the x-axis.
+    * @param yName The name of the column to be plotted on the y-axis.
+    * @param xMaxBinCount The maximum number of bins to use in the histogram for the x-axis. Default is 10.
+    * @param yMaxBinCount The maximum number of bins to use in the histogram for the y-axis. Default is 10.
+    * @param theme The color theme of the plot. Default is "light".
+    *
+    * @result plot The plot as an image.
+    *
+    * @example
+    * pipeline example {
+    *     val table = Table(
+    *         {
+    *             "a": [1, 2, 3, 4, 5],
+    *             "b": [2, 3, 4, 5, 6],
+    *         }
+    *     );
+    *     val image = table.plot.histogram2d("a", "b");
+    * }
+    */
     @Pure
     @PythonName("histogram_2d")
     @Category(DataScienceCategory.DataExplorationQVisualization)
