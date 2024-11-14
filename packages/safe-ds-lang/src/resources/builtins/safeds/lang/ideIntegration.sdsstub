@@ -21,38 +21,62 @@ annotation Category(category: DataScienceCategory)
 
 /**
  * A step in the data science process.
+ * The letter "Q" is used as a separator for subcategories.
  */
 @Experimental
 enum DataScienceCategory {
+    /**
+     * Basic building blocks.
+     */
+    BasicElement
+
     /**
      * Load your data into the program.
      */
     DataImport
 
     /**
-     * Prepare your data for analysis.
-     */
-    DataPreparation
-
-    /**
-     * Explore your data.
-     */
-    DataExploration
-
-    /**
      * Save your data for later use.
      */
     DataExport
 
+     /**
+     * Explore your data.
+     */
+    DataExplorationQMetric
+    DataExplorationQVisualization
+    DataExplorationQGeneral
+
+    /**
+     * Prepare your data for analysis.
+     */
+    DataProcessingQColumn
+    DataProcessingQTable
+    DataProcessingQImage
+    DataProcessingQImageList
+    DataProcessingQTransformer
+
     /**
      * Configure a model and train it on your data.
      */
-    Modeling
+    ModelingQGeneral
+    ModelingQClassicalClassification
+    ModelingQClassicalRegression
+    ModelingQNeuralNetwork
 
     /**
      * Evaluate the performance of your model.
      */
-    ModelEvaluation
+    ModelEvaluationQMetric
+    ModelEvaluationQVisualization
+
+    /**
+     * Utility iterms for general use and lambda functions
+     */
+    UtilitiesQConversion
+    UtilitiesQTable
+    UtilitiesQImage
+    UtilitiesQString
 }
 
 /**

@@ -9,6 +9,7 @@ from safeds.ml.nn.layers import Layer
  * @param activationFunction The activation function used in the forward layer, if not set the activation will be set automatically.
  */
 @Experimental
+@Category(DataScienceCategory.ModelingQNeuralNetwork)
 class ForwardLayer(
     @PythonName("neuron_count") neuronCount: Int,
     @PythonName("overwrite_activation_function") activationFunction: literal<"sigmoid", "relu", "softmax", "none", "notset"> = "notset"

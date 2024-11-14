@@ -34,6 +34,7 @@ class KNearestNeighborsImputer(
      * @result fittedTransformer The fitted transformer.
      */
     @Pure
+    @Category(DataScienceCategory.DataProcessingQTransformer)
     fun fit(
         table: Table
     ) -> fittedTransformer: KNearestNeighborsImputer
@@ -50,6 +51,7 @@ class KNearestNeighborsImputer(
      */
     @Pure
     @PythonName("fit_and_transform")
+    @Category(DataScienceCategory.DataProcessingQTransformer)
     fun fitAndTransform(
         table: Table
     ) -> (fittedTransformer: KNearestNeighborsImputer, transformedTable: Table)
