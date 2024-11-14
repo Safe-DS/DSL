@@ -967,7 +967,7 @@ class Table(
      */
     @Pure
     @PythonName("to_dict")
-    @Category(DataScienceCategory.DataExport)
+    @Category(DataScienceCategory.UtilitiesQConversion)
     fun toMap() -> map: Map<String, List<Any>>
 
     /**
