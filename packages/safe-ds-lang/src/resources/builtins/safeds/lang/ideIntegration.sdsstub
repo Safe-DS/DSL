@@ -21,7 +21,7 @@ annotation Category(category: DataScienceCategory)
 
 /**
  * A step in the data science process.
- * The letter Q is used as a Separator for Subcategories
+ * The letter "Q" is used as a separator for subcategories.
  */
 @Experimental
 enum DataScienceCategory {
