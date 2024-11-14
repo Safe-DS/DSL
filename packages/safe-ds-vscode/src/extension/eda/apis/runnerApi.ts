@@ -10,8 +10,8 @@ import {
     ProfilingDetailStatistical,
     Table,
 } from '@safe-ds/eda/types/state.js';
-import { ast, CODEGEN_PREFIX, messages, SafeDsServices } from '@safe-ds/lang';
-import { LangiumDocument } from 'langium';
+import { CODEGEN_PREFIX, messages, SafeDsServices } from '@safe-ds/lang';
+import { AstUtils, LangiumDocument } from 'langium';
 import * as vscode from 'vscode';
 import crypto from 'crypto';
 import { getPipelineDocument } from '../../mainClient.ts';
@@ -21,12 +21,19 @@ import {
     MultipleRunnerExecutionResultMessage,
     RunnerExecutionResultMessage,
 } from '@safe-ds/eda/types/messaging.ts';
+import {
+    isSdsOutputStatement,
+    isSdsPipeline,
+    isSdsStatement,
+    SdsModule,
+} from '../../../../../safe-ds-lang/src/language/generated/ast.js';
+import { getModuleMembers, getPlaceholderByName } from '../../../../../safe-ds-lang/src/language/index.js';
 
 export class RunnerApi {
     services: SafeDsServices;
     pipelinePath: vscode.Uri;
     pipelineName: string;
-    pipelineNode: ast.SdsPipeline;
+    pipelineNodeEndOffset: number;
     tablePlaceholder: string;
     baseDocument: LangiumDocument | undefined;
     placeholderCounter = 0;
@@ -35,16 +42,16 @@ export class RunnerApi {
         services: SafeDsServices,
         pipelinePath: vscode.Uri,
         pipelineName: string,
-        pipelineNode: ast.SdsPipeline,
+        pipelineNodeEndOffset: number,
         tablePlaceholder: string,
     ) {
         this.services = services;
         this.pipelinePath = pipelinePath;
         this.pipelineName = pipelineName;
-        this.pipelineNode = pipelineNode;
+        this.pipelineNodeEndOffset = pipelineNodeEndOffset;
         this.tablePlaceholder = tablePlaceholder;
         getPipelineDocument(this.pipelinePath).then((doc) => {
-            // Get here to avoid issues because of chanigng file
+            // Get here to avoid issues because of changing file
             // Make sure to create new instance of RunnerApi if pipeline execution of fresh pipeline is needed
             // (e.g. launching of extension on table with existing state but no current panel)
             this.baseDocument = doc;
@@ -65,11 +72,7 @@ export class RunnerApi {
 
             const documentText = this.baseDocument.textDocument.getText();
 
-            const endOfPipeline = this.pipelineNode.$cstNode?.end;
-            if (!endOfPipeline) {
-                reject('Pipeline not found');
-                return;
-            }
+            const endOfPipeline = this.pipelineNodeEndOffset;
 
             let newDocumentText;
 
@@ -79,18 +82,38 @@ export class RunnerApi {
             const afterPipelineEnd = documentText.substring(endOfPipeline - 1);
             newDocumentText = beforePipelineEnd + addedLines + afterPipelineEnd;
 
-            const newDoc = this.services.shared.workspace.LangiumDocumentFactory.fromString(
+            let newDoc = this.services.shared.workspace.LangiumDocumentFactory.fromString(
+                newDocumentText,
+                this.pipelinePath,
+            );
+
+            newDocumentText = this.replaceOutputStatements(newDoc);
+            safeDsLogger.debug(newDocumentText);
+            newDoc = this.services.shared.workspace.LangiumDocumentFactory.fromString(
                 newDocumentText,
                 this.pipelinePath,
             );
             await this.services.shared.workspace.DocumentBuilder.build([newDoc]);
+
+            let targetStatements: number[] = [];
+            for (const moduleMember of getModuleMembers(newDoc.parseResult.value as SdsModule)) {
+                if (isSdsPipeline(moduleMember) && moduleMember.name === this.pipelineName) {
+                    for (const name of placeholderNames ?? []) {
+                        const placeholder = getPlaceholderByName(moduleMember.body, name);
+                        const statement = AstUtils.getContainerOfType(placeholder, isSdsStatement);
+                        if (statement) {
+                            targetStatements.push(statement.$containerIndex!);
+                        }
+                    }
+                }
+            }
 
             safeDsLogger.debug(`Executing pipeline ${this.pipelineName} with added lines`);
             await this.services.runtime.Runner.executePipeline(
                 pipelineExecutionId,
                 newDoc,
                 this.pipelineName,
-                placeholderNames,
+                targetStatements,
             );
 
             this.services.shared.workspace.LangiumDocuments.deleteDocument(this.pipelinePath);
@@ -125,6 +148,36 @@ export class RunnerApi {
         });
     }
     //#endregion
+
+    private replaceOutputStatements(doc: LangiumDocument): string {
+        const outputStatements = AstUtils.streamAst(doc.parseResult.value)
+            .filter(isSdsOutputStatement)
+            .toArray()
+            .reverse();
+
+        let documentText = doc.textDocument.getText();
+
+        for (const outputStatement of outputStatements) {
+            const cstNode = outputStatement.$cstNode;
+            const index = outputStatement.$containerIndex;
+            const expressionCstNode = outputStatement.expression.$cstNode;
+            if (!cstNode || !index || !expressionCstNode) {
+                continue;
+            }
+
+            const assignees = this.services.helpers.SyntheticProperties.getValueNamesForExpression(
+                outputStatement.expression,
+            )
+                .map((valueName) => `val ${CODEGEN_PREFIX}${index}_${valueName}`)
+                .join(', ');
+
+            const replacement = `${assignees} = ${expressionCstNode.text};`;
+            documentText =
+                documentText.substring(0, cstNode.offset) + replacement + documentText.substring(cstNode.end);
+        }
+
+        return documentText;
+    }
 
     //#region Helpers
     private runnerResultToTable(tableName: string, runnerResult: any, columnIsNumeric: Map<string, boolean>): Table {

@@ -27,3 +27,4 @@ pipeline example {
     ```sds linenums="56"
     class Boolean
     ```
+    { data-search-exclude }

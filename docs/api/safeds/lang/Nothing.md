@@ -14,3 +14,4 @@ The common subclass of all classes.
     ```sds linenums="41"
     class Nothing
     ```
+    { data-search-exclude }

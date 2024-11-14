@@ -24,6 +24,7 @@ A dropout layer.
         attr probability: Float
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `probability` {#safeds.ml.nn.layers.DropoutLayer.probability data-toc-label='[attribute] probability'}
 

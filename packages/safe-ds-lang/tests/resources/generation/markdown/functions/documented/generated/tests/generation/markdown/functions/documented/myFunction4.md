@@ -16,3 +16,4 @@ Description of myFunction4.
     ```sds linenums="39"
     fun myFunction4() -> (result1: MyClass1, result2: Float)
     ```
+    { data-search-exclude }

@@ -1,3 +1,34 @@
+## [0.21.1](https://github.com/Safe-DS/DSL/compare/v0.21.0...v0.21.1) (2024-11-05)
+
+### Bug Fixes
+
+* use correct link syntax in stubs ([#1257](https://github.com/Safe-DS/DSL/issues/1257)) ([6c51c12](https://github.com/Safe-DS/DSL/commit/6c51c12fe4f9691e5fd1e83dbf6fe2ca0cbf8c11))
+
+## [0.21.0](https://github.com/Safe-DS/DSL/compare/v0.20.0...v0.21.0) (2024-11-02)
+
+### Features
+
+* make `Int` a subclass of `Float` ([#1255](https://github.com/Safe-DS/DSL/issues/1255)) ([c8f3b67](https://github.com/Safe-DS/DSL/commit/c8f3b67717e1c4af6a02903c3aaf3f09ec6327d4))
+* modulo operator ([#1256](https://github.com/Safe-DS/DSL/issues/1256)) ([f590e7a](https://github.com/Safe-DS/DSL/commit/f590e7a9c75f189725f4fade491be98ea09b5158))
+
+## [0.20.0](https://github.com/Safe-DS/DSL/compare/v0.19.0...v0.20.0) (2024-11-01)
+
+### Features
+
+* indexed access for columns and rows ([#1252](https://github.com/Safe-DS/DSL/issues/1252)) ([896165a](https://github.com/Safe-DS/DSL/commit/896165abdc30f38c3ad99f171f7187de4965d351))
+* show default values of parameters in signature help ([#1251](https://github.com/Safe-DS/DSL/issues/1251)) ([ff8fa13](https://github.com/Safe-DS/DSL/commit/ff8fa135ada4710c460cf1e9b8e24f12b88bf916)), closes [#1147](https://github.com/Safe-DS/DSL/issues/1147)
+
+## [0.19.0](https://github.com/Safe-DS/DSL/compare/v0.18.0...v0.19.0) (2024-10-31)
+
+### Features
+
+* allow use of operators for cells ([#1247](https://github.com/Safe-DS/DSL/issues/1247)) ([2930357](https://github.com/Safe-DS/DSL/commit/293035736994f56fadba58e594ce2f1dec0c6e8b)), closes [#1165](https://github.com/Safe-DS/DSL/issues/1165)
+* show "print" code lens for some nullable types ([#1248](https://github.com/Safe-DS/DSL/issues/1248)) ([492120c](https://github.com/Safe-DS/DSL/commit/492120ccc6706345d9a3e3058ffb148b6b2ac665))
+
+### Bug Fixes
+
+* generate code for receivers outside of block lambdas ([#1246](https://github.com/Safe-DS/DSL/issues/1246)) ([0d27e33](https://github.com/Safe-DS/DSL/commit/0d27e33e198e9a1d21169dc5a2e66fbe61428e09))
+
 ## [0.18.0](https://github.com/Safe-DS/DSL/compare/v0.17.0...v0.18.0) (2024-09-25)
 
 ### Features

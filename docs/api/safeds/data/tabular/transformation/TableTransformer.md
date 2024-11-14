@@ -13,7 +13,6 @@ Learn a transformation for a set of columns in a `Table` and transform another `
 
 - [`Discretizer`][safeds.data.tabular.transformation.Discretizer]
 - [`FunctionalTableTransformer`][safeds.data.tabular.transformation.FunctionalTableTransformer]
-- `#!sds Imputer`
 - [`InvertibleTableTransformer`][safeds.data.tabular.transformation.InvertibleTableTransformer]
 - [`KNearestNeighborsImputer`][safeds.data.tabular.transformation.KNearestNeighborsImputer]
 - [`SimpleImputer`][safeds.data.tabular.transformation.SimpleImputer]
@@ -72,6 +71,7 @@ Learn a transformation for a set of columns in a `Table` and transform another `
         ) -> (fittedTransformer: TableTransformer, transformedTable: Table)
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `isFitted` {#safeds.data.tabular.transformation.TableTransformer.isFitted data-toc-label='[attribute] isFitted'}
 
@@ -105,6 +105,7 @@ Learn a transformation for a set of columns in a table.
         table: Table
     ) -> fittedTransformer: TableTransformer
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `fitAndTransform` {#safeds.data.tabular.transformation.TableTransformer.fitAndTransform data-toc-label='[function] fitAndTransform'}
 
@@ -134,6 +135,7 @@ Learn a transformation for a set of columns in a table and apply the learned tra
         table: Table
     ) -> (fittedTransformer: TableTransformer, transformedTable: Table)
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `transform` {#safeds.data.tabular.transformation.TableTransformer.transform data-toc-label='[function] transform'}
 
@@ -161,3 +163,4 @@ Apply the learned transformation to a table.
         table: Table
     ) -> transformedTable: Table
     ```
+    { data-search-exclude }

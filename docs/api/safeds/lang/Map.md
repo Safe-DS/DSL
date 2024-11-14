@@ -85,6 +85,7 @@ pipeline example {
         fun values() -> values: List<V>
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `keys` {#safeds.lang.Map.keys data-toc-label='[function] keys'}
 
@@ -116,6 +117,7 @@ pipeline example {
     @PythonMacro("list($this.keys())")
     fun keys() -> keys: List<K>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `size` {#safeds.lang.Map.size data-toc-label='[function] size'}
 
@@ -147,6 +149,7 @@ pipeline example {
     @PythonMacro("len($this)")
     fun size() -> size: Int
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `values` {#safeds.lang.Map.values data-toc-label='[function] values'}
 
@@ -178,3 +181,4 @@ pipeline example {
     @PythonMacro("list($this.values())")
     fun values() -> values: List<V>
     ```
+    { data-search-exclude }

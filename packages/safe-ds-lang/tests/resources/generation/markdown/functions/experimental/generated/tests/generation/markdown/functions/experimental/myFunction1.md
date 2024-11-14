@@ -7,3 +7,4 @@
     ```sds linenums="5"
     fun myFunction1()
     ```
+    { data-search-exclude }

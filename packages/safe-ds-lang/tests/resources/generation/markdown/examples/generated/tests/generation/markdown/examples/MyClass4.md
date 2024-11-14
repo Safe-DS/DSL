@@ -18,3 +18,4 @@ Do not hightligt PrefixMyClass4.
     ```sds linenums="26"
     class MyClass4
     ```
+    { data-search-exclude }

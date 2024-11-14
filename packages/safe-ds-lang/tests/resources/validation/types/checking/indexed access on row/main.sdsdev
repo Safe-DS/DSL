@@ -1,0 +1,41 @@
+package tests.validation.types.checking.indexedAccessOnRow
+
+@Pure fun row() -> row: Row
+@Pure fun columnName() -> name: String
+
+pipeline myPipeline {
+    // $TEST$ no error r"Expected type .* but got .*\."
+    row()[»""«];
+
+    // $TEST$ error "Expected type 'String' but got 'literal<1>'."
+    row()[»1«];
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    row()[»columnName()«];
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    unresolved[»""«];
+}
+
+class MyRow sub Row
+
+segment mySegment(
+    myRow: MyRow,
+) {
+    // $TEST$ no error r"Expected type .* but got .*\."
+    myRow[»""«];
+
+    // $TEST$ error "Expected type 'String' but got 'literal<1>'."
+    myRow[»1«];
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    myRow[»columnName()«];
+}
+
+// Strict checking of type parameter types
+class MyClass<T sub Any>(
+    p1: T,
+
+    // $TEST$ error "Expected type 'String' but got 'T'."
+    a: Any? = row()[»p1«],
+)

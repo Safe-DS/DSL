@@ -22,6 +22,7 @@
         }
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `myAttribute1` {#tests.generation.markdown.classes.undocumented.MyClass6.myAttribute1 data-toc-label='[attribute] myAttribute1'}
 
@@ -34,6 +35,7 @@
     ```sds linenums="17"
     @Pure fun myFunction1()
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-static-attribute"></code> `myAttribute2` {#tests.generation.markdown.classes.undocumented.MyClass6.myAttribute2 data-toc-label='[static-attribute] myAttribute2'}
 
@@ -46,6 +48,7 @@
     ```sds linenums="18"
     @Pure static fun myFunction2()
     ```
+    { data-search-exclude }
 
 ---
 search:
@@ -59,6 +62,7 @@ search:
     ```sds linenums="20"
     class MyClass7
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-enum"></code> `MyEnum1` {#tests.generation.markdown.classes.undocumented.MyClass6.MyEnum1 data-toc-label='[enum] MyEnum1'}
 
@@ -69,5 +73,6 @@ search:
         MyVariant1
     }
     ```
+    { data-search-exclude }
 
 ### <code class="doc-symbol doc-symbol-variant"></code> `MyVariant1` {#tests.generation.markdown.classes.undocumented.MyClass6.MyEnum1.MyVariant1 data-toc-label='[variant] MyVariant1'}

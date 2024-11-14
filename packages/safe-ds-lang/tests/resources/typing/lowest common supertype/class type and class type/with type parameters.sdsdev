@@ -22,7 +22,7 @@ segment covariant(
     »[coInt, coInt]«;
     // $TEST$ serialization List<Covariant<Any>>
     »[coInt, coString]«;
-    // $TEST$ serialization List<Covariant<Number>>
+    // $TEST$ serialization List<Covariant<Float>>
     »[coInt, coFloat]«;
 
     // $TEST$ serialization List<Covariant<String>>
@@ -88,7 +88,7 @@ segment multiple(
 ) {
     // $TEST$ serialization List<Multiple<Number, Int>>
     »[multipleNumberInt, multipleNumberInt]«;
-    // $TEST$ serialization List<Multiple<Number, Number>>
+    // $TEST$ serialization List<Multiple<Number, Float>>
     »[multipleNumberInt, multipleNumberFloat]«;
 
     // $TEST$ serialization List<Multiple<Number, Float>>

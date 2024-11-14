@@ -1,0 +1,41 @@
+package tests.validation.types.checking.indexedAccessOnColumn
+
+@Pure fun column() -> column: Column<Int>
+@Pure fun index() -> index: Int
+
+pipeline myPipeline {
+    // $TEST$ no error r"Expected type .* but got .*\."
+    column()[»0«];
+
+    // $TEST$ error "Expected type 'Int' but got 'literal<"">'."
+    column()[»""«];
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    column()[»index()«];
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    unresolved[»""«];
+}
+
+class MyColumn sub Column<Int>
+
+segment mySegment(
+    myColumn: MyColumn,
+) {
+    // $TEST$ no error r"Expected type .* but got .*\."
+    myColumn[»0«];
+
+    // $TEST$ error "Expected type 'Int' but got 'literal<"">'."
+    myColumn[»""«];
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    myColumn[»index()«];
+}
+
+// Strict checking of type parameter types
+class MyClass<T sub Any>(
+    p1: T,
+
+    // $TEST$ error "Expected type 'Int' but got 'T'."
+    a: Any? = column()[»p1«],
+)

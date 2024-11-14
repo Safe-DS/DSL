@@ -15,25 +15,25 @@ from safeds.data.tabular.containers import Table
  * }
  */
 @Category(DataScienceCategory.BasicElement)
-class TablePlotter(table: Table) {
-/**
- * Create a box plot for every numerical column.
- *
- * @param theme The color theme of the plot. Default is "light".
- *
- * @result plot The box plot(s) as an image.
- *
- * @example
- * pipeline example {
- *     val table = Table({"a":[1, 2], "b": [3, 42]});
- *     val image = table.plot.boxPlots();
- * }
- */
+class TablePlotter(
+    table: Table
+) {
+    /**
+     * Create a box plot for every numerical column.
+     *
+     * @param theme The color theme of the plot. Default is "light".
+     *
+     * @result plot The box plot(s) as an image.
+     *
+     * @example
+     * pipeline example {
+     *     val table = Table({"a":[1, 2], "b": [3, 42]});
+     *     val image = table.plot.boxPlots();
+     * }
+     */
     @Pure
     @PythonName("box_plots")
-    @Category(
-        DataScienceCategory.DataExplorationQVisualization
-    )
+    @Category(DataScienceCategory.DataExplorationQVisualization)
     fun boxPlots(
         theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
@@ -54,6 +54,7 @@ class TablePlotter(table: Table) {
 
     @Pure
     @PythonName("violin_plots")
+    @Category(DataScienceCategory.DataExplorationQVisualization)
     fun violinPlots(
         theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
@@ -74,9 +75,7 @@ class TablePlotter(table: Table) {
 
     @Pure
     @PythonName("correlation_heatmap")
-    @Category(
-        DataScienceCategory.DataExplorationQVisualization
-    )
+    @Category(DataScienceCategory.DataExplorationQVisualization)
     fun correlationHeatmap(
         theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
@@ -97,9 +96,7 @@ class TablePlotter(table: Table) {
  */
 
     @Pure
-    @Category(
-        DataScienceCategory.DataExplorationQVisualization
-    )
+    @Category(DataScienceCategory.DataExplorationQVisualization)
     fun histograms(
         @PythonName("max_bin_count")
         const maxBinCount: Int = 10,
@@ -132,9 +129,7 @@ class TablePlotter(table: Table) {
 
     @Pure
     @PythonName("line_plot")
-    @Category(
-        DataScienceCategory.DataExplorationQVisualization
-    )
+    @Category(DataScienceCategory.DataExplorationQVisualization)
     fun linePlot(
         @PythonName("x_name")
         xName: String,
@@ -168,9 +163,7 @@ class TablePlotter(table: Table) {
 
     @Pure
     @PythonName("scatter_plot")
-    @Category(
-        DataScienceCategory.DataExplorationQVisualization
-    )
+    @Category(DataScienceCategory.DataExplorationQVisualization)
     fun scatterPlot(
         @PythonName("x_name")
         xName: String,
@@ -203,6 +196,7 @@ class TablePlotter(table: Table) {
 
     @Pure
     @PythonName("moving_average_plot")
+    @Category(DataScienceCategory.DataExplorationQVisualization)
     fun movingAveragePlot(
         @PythonName("x_name")
         xName: String,
@@ -238,6 +232,7 @@ class TablePlotter(table: Table) {
 
     @Pure
     @PythonName("histogram_2d")
+    @Category(DataScienceCategory.DataExplorationQVisualization)
     fun histogram2d(
         @PythonName("x_name")
         xName: String,

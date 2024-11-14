@@ -1,7 +1,9 @@
 package tests.typing.operations.arithmetic
 
-fun anyInt() -> r: Int
-fun anyFloat() -> r: Float
+@Pure fun anyInt() -> r: Int
+@Pure fun anyFloat() -> r: Float
+
+@Pure fun cell() -> r: Cell<Number>
 
 pipeline constantOperands {
     // $TEST$ serialization literal<2>
@@ -12,6 +14,8 @@ pipeline constantOperands {
     val multiplicationIntInt = »1 * 1«;
     // $TEST$ serialization literal<1>
     val divisionIntInt = »1 / 1«;
+    // $TEST$ serialization literal<0>
+    val moduloIntInt = »1 % 1«;
 
     // $TEST$ serialization literal<2.5>
     val additionIntFloat = »1 + 1.5«;
@@ -21,6 +25,8 @@ pipeline constantOperands {
     val multiplicationIntFloat = »1 * 1.5«;
     // $TEST$ serialization literal<1.6>
     val divisionIntFloat = »1 / 0.625«;
+    // $TEST$ serialization literal<0.375>
+    val moduloIntFloat = »1 % 0.625«;
 
     // $TEST$ serialization literal<2.5>
     val additionFloatInt = »1.5 + 1«;
@@ -30,6 +36,8 @@ pipeline constantOperands {
     val multiplicationFloatInt = »1.5 * 1«;
     // $TEST$ serialization literal<1.5>
     val divisionFloatInt = »1.5 / 1«;
+    // $TEST$ serialization literal<0.5>
+    val moduloFloatInt = »1.5 % 1«;
 
     // $TEST$ serialization literal<2.75>
     val additionFloatFloat = »1.5 + 1.25«;
@@ -39,6 +47,8 @@ pipeline constantOperands {
     val multiplicationFloatFloat = »1.5 * 1.25«;
     // $TEST$ serialization literal<0.6>
     val divisionFloatFloat = »1.5 / 2.5«;
+    // $TEST$ serialization literal<1.5>
+    val moduloFloatFloat = »1.5 % 2.5«;
 
     // $TEST$ serialization literal<-1>
     val negationInt = »-1«;
@@ -55,6 +65,8 @@ pipeline invalidOperands {
     val multiplicationInvalid  = »true * true«;
     // $TEST$ serialization Float
     val divisionInvalid  = »true / true«;
+    // $TEST$ serialization Float
+    val moduloInvalid  = »true % true«;
 
     // $TEST$ serialization Float
     val negationInvalid  = »-true«;
@@ -69,6 +81,8 @@ pipeline nonConstantOperands {
     val multiplicationIntInt = »anyInt() * anyInt()«;
     // $TEST$ serialization Int
     val divisionIntInt = »anyInt() / anyInt()«;
+    // $TEST$ serialization Int
+    val moduloIntInt = »anyInt() % anyInt()«;
 
     // $TEST$ serialization Float
     val additionIntFloat = »anyInt() + anyFloat()«;
@@ -78,6 +92,8 @@ pipeline nonConstantOperands {
     val multiplicationIntFloat = »anyInt() * anyFloat()«;
     // $TEST$ serialization Float
     val divisionIntFloat = »anyInt() / anyFloat()«;
+    // $TEST$ serialization Float
+    val moduloIntFloat = »anyInt() % anyFloat()«;
 
     // $TEST$ serialization Float
     val additionFloatInt = »anyFloat() + anyInt()«;
@@ -87,6 +103,8 @@ pipeline nonConstantOperands {
     val multiplicationFloatInt = »anyFloat() * anyInt()«;
     // $TEST$ serialization Float
     val divisionFloatInt = »anyFloat() / anyInt()«;
+    // $TEST$ serialization Float
+    val moduloFloatInt = »anyFloat() % anyInt()«;
 
     // $TEST$ serialization Float
     val additionFloatFloat = »anyFloat() + anyFloat()«;
@@ -96,6 +114,8 @@ pipeline nonConstantOperands {
     val multiplicationFloatFloat = »anyFloat() * anyFloat()«;
     // $TEST$ serialization Float
     val divisionFloatFloat = »anyFloat() / anyFloat()«;
+    // $TEST$ serialization Float
+    val moduloFloatFloat = »anyFloat() % anyFloat()«;
 
     // $TEST$ serialization Int
     val negationInt = »-anyInt()«;
@@ -112,6 +132,8 @@ pipeline mixedOperands {
     val multiplicationIntInt = »10 * anyInt()«;
     // $TEST$ serialization Int
     val divisionIntInt = »10 / anyInt()«;
+    // $TEST$ serialization Int
+    val moduloIntInt = »10 % anyInt()«;
 
     // $TEST$ serialization Float
     val additionIntFloat = »10 + anyFloat()«;
@@ -121,6 +143,8 @@ pipeline mixedOperands {
     val multiplicationIntFloat = »10 * anyFloat()«;
     // $TEST$ serialization Float
     val divisionIntFloat = »10 / anyFloat()«;
+    // $TEST$ serialization Float
+    val moduloIntFloat = »10 % anyFloat()«;
 
     // $TEST$ serialization Float
     val additionFloatInt = »1.5 + anyInt()«;
@@ -130,6 +154,8 @@ pipeline mixedOperands {
     val multiplicationFloatInt = »1.5 * anyInt()«;
     // $TEST$ serialization Float
     val divisionFloatInt = »1.5 / anyInt()«;
+    // $TEST$ serialization Float
+    val moduloFloatInt = »1.5 % anyInt()«;
 
     // $TEST$ serialization Float
     val additionFloatFloat = »1.5 + anyFloat()«;
@@ -139,6 +165,90 @@ pipeline mixedOperands {
     val multiplicationFloatFloat = »1.5 * anyFloat()«;
     // $TEST$ serialization Float
     val divisionFloatFloat = »1.5 / anyFloat()«;
+    // $TEST$ serialization Float
+    val moduloFloatFloat = »1.5 % anyFloat()«;
+}
+
+pipeline cellOperands {
+    // $TEST$ serialization Cell<Number>
+    val additionIntCell = »10 + cell()«;
+    // $TEST$ serialization Cell<Number>
+    val subtractionIntCell = »10 - cell()«;
+    // $TEST$ serialization Cell<Number>
+    val multiplicationIntCell = »10 * cell()«;
+    // $TEST$ serialization Cell<Number>
+    val divisionIntCell = »10 / cell()«;
+    // $TEST$ serialization Cell<Number>
+    val moduloIntCell = »10 % cell()«;
+
+    // $TEST$ serialization Cell<Number>
+    val additionFloatCell = »1.5 + cell()«;
+    // $TEST$ serialization Cell<Number>
+    val subtractionFloatCell = »1.5 - cell()«;
+    // $TEST$ serialization Cell<Number>
+    val multiplicationFloatCell = »1.5 * cell()«;
+    // $TEST$ serialization Cell<Number>
+    val divisionFloatCell = »1.5 / cell()«;
+    // $TEST$ serialization Cell<Number>
+    val moduloFloatCell = »1.5 % cell()«;
+
+    // $TEST$ serialization Cell<Number>
+    val additionInvalidCell = »true + cell()«;
+    // $TEST$ serialization Cell<Number>
+    val subtractionInvalidCell = »true - cell()«;
+    // $TEST$ serialization Cell<Number>
+    val multiplicationInvalidCell = »true * cell()«;
+    // $TEST$ serialization Cell<Number>
+    val divisionInvalidCell = »true / cell()«;
+    // $TEST$ serialization Cell<Number>
+    val moduloInvalidCell = »true % cell()«;
+
+    // $TEST$ serialization Cell<Number>
+    val additionCellInt = »cell() + 10«;
+    // $TEST$ serialization Cell<Number>
+    val subtractionCellInt = »cell() - 10«;
+    // $TEST$ serialization Cell<Number>
+    val multiplicationCellInt = »cell() * 10«;
+    // $TEST$ serialization Cell<Number>
+    val divisionCellInt = »cell() / 10«;
+    // $TEST$ serialization Cell<Number>
+    val moduloCellInt = »cell() % 10«;
+
+    // $TEST$ serialization Cell<Number>
+    val additionCellFloat = »cell() + 1.5«;
+    // $TEST$ serialization Cell<Number>
+    val subtractionCellFloat = »cell() - 1.5«;
+    // $TEST$ serialization Cell<Number>
+    val multiplicationCellFloat = »cell() * 1.5«;
+    // $TEST$ serialization Cell<Number>
+    val divisionCellFloat = »cell() / 1.5«;
+    // $TEST$ serialization Cell<Number>
+    val moduloCellFloat = »cell() % 1.5«;
+
+    // $TEST$ serialization Cell<Number>
+    val additionCellInvalid = »cell() + true«;
+    // $TEST$ serialization Cell<Number>
+    val subtractionCellInvalid = »cell() - true«;
+    // $TEST$ serialization Cell<Number>
+    val multiplicationCellInvalid = »cell() * true«;
+    // $TEST$ serialization Cell<Number>
+    val divisionCellInvalid = »cell() / true«;
+    // $TEST$ serialization Cell<Number>
+    val moduloCellInvalid = »cell() % true«;
+
+    // $TEST$ serialization Cell<Number>
+    val additionCellCell = »cell() + cell()«;
+    // $TEST$ serialization Cell<Number>
+    val subtractionCellCell = »cell() - cell()«;
+    // $TEST$ serialization Cell<Number>
+    val multiplicationCellCell = »cell() * cell()«;
+    // $TEST$ serialization Cell<Number>
+    val divisionCellCell = »cell() / cell()«;
+    // $TEST$ serialization Cell<Number>
+    val moduloCellCell = »cell() % cell()«;
+
+    // $TEST$ serialization Cell<Number>
+    val negationCell = »-cell()«;
 }
 
 // Strict checking of type parameter types

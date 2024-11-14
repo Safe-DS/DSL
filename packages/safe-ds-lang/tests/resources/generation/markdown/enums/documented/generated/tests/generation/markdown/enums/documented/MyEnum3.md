@@ -15,3 +15,4 @@ Description of MyEnum3.
     ```sds linenums="40"
     enum MyEnum3
     ```
+    { data-search-exclude }

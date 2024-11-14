@@ -37,6 +37,7 @@ import {
     isSdsMap,
     isSdsMemberAccess,
     isSdsModule,
+    isSdsOutputStatement,
     isSdsParameter,
     isSdsParenthesizedExpression,
     isSdsPipeline,
@@ -67,6 +68,7 @@ import {
     SdsFunction,
     SdsLambda,
     SdsModule,
+    SdsOutputStatement,
     SdsParameter,
     SdsParameterList,
     SdsPipeline,
@@ -82,7 +84,6 @@ import {
     getAssignees,
     getModuleMembers,
     getParameters,
-    getPlaceholderByName,
     getStatements,
     isStatic,
     Parameter,
@@ -114,9 +115,14 @@ import {
 } from './utilityFunctions.js';
 import { CODEGEN_PREFIX } from './constants.js';
 import { SafeDsSlicer } from '../../flow/safe-ds-slicer.js';
+import { SafeDsTypeChecker } from '../../typing/safe-ds-type-checker.js';
+import { SafeDsCoreTypes } from '../../typing/safe-ds-core-types.js';
+import { SafeDsSyntheticProperties } from '../../helpers/safe-ds-synthetic-properties.js';
 
 const LAMBDA_PREFIX = `${CODEGEN_PREFIX}lambda_`;
 const BLOCK_LAMBDA_RESULT_PREFIX = `${CODEGEN_PREFIX}block_lambda_result_`;
+const OUTPUT_PREFIX = `${CODEGEN_PREFIX}output_`;
+const PLACEHOLDER_PREFIX = `${CODEGEN_PREFIX}placeholder_`;
 const RECEIVER_PREFIX = `${CODEGEN_PREFIX}receiver_`;
 const YIELD_PREFIX = `${CODEGEN_PREFIX}yield_`;
 
@@ -129,18 +135,24 @@ const SPACING = new CompositeGeneratorNode(NL, NL);
 
 export class SafeDsPythonGenerator {
     private readonly builtinAnnotations: SafeDsAnnotations;
+    private readonly coreTypes: SafeDsCoreTypes;
     private readonly nodeMapper: SafeDsNodeMapper;
     private readonly partialEvaluator: SafeDsPartialEvaluator;
     private readonly purityComputer: SafeDsPurityComputer;
     private readonly slicer: SafeDsSlicer;
+    private readonly syntheticProperties: SafeDsSyntheticProperties;
+    private readonly typeChecker: SafeDsTypeChecker;
     private readonly typeComputer: SafeDsTypeComputer;
 
     constructor(services: SafeDsServices) {
         this.builtinAnnotations = services.builtins.Annotations;
+        this.coreTypes = services.typing.CoreTypes;
         this.nodeMapper = services.helpers.NodeMapper;
         this.partialEvaluator = services.evaluation.PartialEvaluator;
         this.purityComputer = services.purity.PurityComputer;
         this.slicer = services.flow.Slicer;
+        this.syntheticProperties = services.helpers.SyntheticProperties;
+        this.typeChecker = services.typing.TypeChecker;
         this.typeComputer = services.typing.TypeComputer;
     }
 
@@ -409,12 +421,17 @@ export class SafeDsPythonGenerator {
         typeVariableSet: Set<string>,
         generateOptions: GenerateOptions,
     ): Generated {
+        const targetStatements =
+            typeof generateOptions.targetStatements === 'number'
+                ? [generateOptions.targetStatements]
+                : generateOptions.targetStatements;
+
         const infoFrame = new GenerationInfoFrame(
             importSet,
             utilitySet,
             typeVariableSet,
             true,
-            generateOptions.targetPlaceholders,
+            targetStatements,
             generateOptions.disableRunnerIntegration,
         );
         return expandTracedToNode(pipeline)`def ${traceToNode(
@@ -466,11 +483,14 @@ export class SafeDsPythonGenerator {
         frame: GenerationInfoFrame,
         generateLambda: boolean = false,
     ): CompositeGeneratorNode {
-        let statements = getStatements(block).filter((stmt) => this.purityComputer.statementDoesSomething(stmt));
-        if (frame.targetPlaceholders) {
-            const targetPlaceholders = frame.targetPlaceholders.flatMap((it) => getPlaceholderByName(block, it) ?? []);
-            if (!isEmpty(targetPlaceholders)) {
-                statements = this.slicer.computeBackwardSlice(statements, targetPlaceholders);
+        // TODO: if there are no target statements, only generate code that causes side-effects
+        let statements = getStatements(block).filter((stmt) => this.statementDoesSomething(stmt));
+        if (frame.targetStatements) {
+            const targetStatements = frame.targetStatements.flatMap((it) => {
+                return getStatements(block)[it] ?? [];
+            });
+            if (!isEmpty(targetStatements)) {
+                statements = this.slicer.computeBackwardSliceToTargets(statements, targetStatements);
             }
         }
         if (statements.length === 0) {
@@ -484,6 +504,29 @@ export class SafeDsPythonGenerator {
             },
         )!;
     }
+
+    /**
+     * Returns whether the given statement does something. It must either
+     *     - create a placeholder,
+     *     - assign to a result, or
+     *     - call a function that has side effects.
+     *
+     * @param node
+     * The statement to check.
+     */
+    private statementDoesSomething(node: SdsStatement): boolean {
+        if (isSdsAssignment(node)) {
+            return (
+                !getAssignees(node).every(isSdsWildcard) ||
+                this.purityComputer.expressionHasSideEffects(node.expression)
+            );
+        } else if (isSdsExpressionStatement(node)) {
+            return this.purityComputer.expressionHasSideEffects(node.expression);
+        } else {
+            return isSdsOutputStatement(node);
+        }
+    }
+
     private generateStatement(statement: SdsStatement, frame: GenerationInfoFrame, generateLambda: boolean): Generated {
         const result: Generated[] = [];
 
@@ -493,6 +536,14 @@ export class SafeDsPythonGenerator {
         } else if (isSdsExpressionStatement(statement)) {
             const expressionStatement = this.generateExpression(statement.expression, frame);
             result.push(...frame.getExtraStatements(), expressionStatement);
+        } else if (isSdsOutputStatement(statement)) {
+            if (frame.disableRunnerIntegration || !frame.targetStatements?.includes(statement.$containerIndex ?? -1)) {
+                const expressionStatement = this.generateExpression(statement.expression, frame);
+                result.push(...frame.getExtraStatements(), expressionStatement);
+            } else {
+                const outputStatement = this.generateOutputStatement(statement, frame);
+                result.push(...frame.getExtraStatements(), outputStatement);
+            }
         } /* c8 ignore start */ else {
             throw new Error(`Unknown statement: ${statement}`);
         } /* c8 ignore stop */
@@ -538,7 +589,7 @@ export class SafeDsPythonGenerator {
                     assignmentStatements.push(
                         expandTracedToNode(
                             savableAssignment,
-                        )`${RUNNER_PACKAGE}.save_placeholder('${savableAssignment.name}', ${CODEGEN_PREFIX}${savableAssignment.name})`,
+                        )`${RUNNER_PACKAGE}.save_placeholder('${savableAssignment.name}', ${PLACEHOLDER_PREFIX}${savableAssignment.name})`,
                     );
                 }
             }
@@ -550,6 +601,33 @@ export class SafeDsPythonGenerator {
         }
     }
 
+    private generateOutputStatement(node: SdsOutputStatement, frame: GenerationInfoFrame): Generated {
+        const valueNames = this.syntheticProperties.getValueNamesForExpression(node.expression);
+        const assignmentStatements: Generated[] = [];
+
+        assignmentStatements.push(
+            expandTracedToNode(node)`${joinToNode(
+                valueNames,
+                (valueName) => `${OUTPUT_PREFIX}${node.$containerIndex}_${valueName}`,
+                {
+                    separator: ', ',
+                },
+            )} = ${this.generateExpression(node.expression!, frame)}`,
+        );
+
+        for (const valueName of valueNames) {
+            frame.addImport({ importPath: RUNNER_PACKAGE });
+
+            assignmentStatements.push(
+                expandToNode`${RUNNER_PACKAGE}.save_placeholder('${CODEGEN_PREFIX}${node.$containerIndex}_${valueName}', ${OUTPUT_PREFIX}${node.$containerIndex}_${valueName})`,
+            );
+        }
+
+        return joinTracedToNode(node)(assignmentStatements, (stmt) => stmt, {
+            separator: NL,
+        })!;
+    }
+
     private generateAssignee(assignee: SdsAssignee): Generated {
         if (isSdsBlockLambdaResult(assignee)) {
             return expandTracedToNode(assignee)`${BLOCK_LAMBDA_RESULT_PREFIX}${traceToNode(
@@ -557,7 +635,7 @@ export class SafeDsPythonGenerator {
                 'name',
             )(assignee.name)}`;
         } else if (isSdsPlaceholder(assignee)) {
-            return expandTracedToNode(assignee)`${CODEGEN_PREFIX}${assignee.name}`;
+            return expandTracedToNode(assignee)`${PLACEHOLDER_PREFIX}${assignee.name}`;
         } else if (isSdsWildcard(assignee)) {
             return traceToNode(assignee)('_');
         } else if (isSdsYield(assignee)) {
@@ -572,7 +650,8 @@ export class SafeDsPythonGenerator {
 
     private generateBlockLambda(blockLambda: SdsBlockLambda, frame: GenerationInfoFrame): Generated {
         const results = streamBlockLambdaResults(blockLambda).toArray();
-        const lambdaBlock = this.generateBlock(blockLambda.body, frame, true);
+        const lambdaFrame = frame.newScope();
+        const lambdaBlock = this.generateBlock(blockLambda.body, lambdaFrame, true);
         if (results.length !== 0) {
             lambdaBlock.appendNewLine();
             lambdaBlock.append(
@@ -720,19 +799,43 @@ export class SafeDsPythonGenerator {
         } else if (isSdsInfixOperation(expression)) {
             const leftOperand = this.generateExpression(expression.leftOperand, frame);
             const rightOperand = this.generateExpression(expression.rightOperand, frame);
+
+            const leftOperandType = this.typeComputer.computeType(expression.leftOperand);
+            const rightOperandType = this.typeComputer.computeType(expression.rightOperand);
+
             switch (expression.operator) {
                 case 'or':
-                    frame.addUtility(eagerOr);
-                    return expandTracedToNode(expression)`${traceToNode(
-                        expression,
-                        'operator',
-                    )(eagerOr.name)}(${leftOperand}, ${rightOperand})`;
+                    if (
+                        this.typeChecker.isSubtypeOf(leftOperandType, this.coreTypes.Boolean) &&
+                        this.typeChecker.isSubtypeOf(rightOperandType, this.coreTypes.Boolean)
+                    ) {
+                        frame.addUtility(eagerOr);
+                        return expandTracedToNode(expression)`${traceToNode(
+                            expression,
+                            'operator',
+                        )(eagerOr.name)}(${leftOperand}, ${rightOperand})`;
+                    } else {
+                        return expandTracedToNode(expression)`(${leftOperand}) ${traceToNode(
+                            expression,
+                            'operator',
+                        )('|')} (${rightOperand})`;
+                    }
                 case 'and':
-                    frame.addUtility(eagerAnd);
-                    return expandTracedToNode(expression)`${traceToNode(
-                        expression,
-                        'operator',
-                    )(eagerAnd.name)}(${leftOperand}, ${rightOperand})`;
+                    if (
+                        this.typeChecker.isSubtypeOf(leftOperandType, this.coreTypes.Boolean) &&
+                        this.typeChecker.isSubtypeOf(rightOperandType, this.coreTypes.Boolean)
+                    ) {
+                        frame.addUtility(eagerAnd);
+                        return expandTracedToNode(expression)`${traceToNode(
+                            expression,
+                            'operator',
+                        )(eagerAnd.name)}(${leftOperand}, ${rightOperand})`;
+                    } else {
+                        return expandTracedToNode(expression)`(${leftOperand}) ${traceToNode(
+                            expression,
+                            'operator',
+                        )('&')} (${rightOperand})`;
+                    }
                 case '?:':
                     frame.addUtility(eagerElvis);
                     return expandTracedToNode(expression)`${traceToNode(
@@ -805,7 +908,14 @@ export class SafeDsPythonGenerator {
             const operand = this.generateExpression(expression.operand, frame);
             switch (expression.operator) {
                 case 'not':
-                    return expandTracedToNode(expression)`${traceToNode(expression, 'operator')('not')} (${operand})`;
+                    const operandType = this.typeComputer.computeType(expression.operand);
+                    if (this.typeChecker.isSubtypeOf(operandType, this.coreTypes.Boolean)) {
+                        return expandTracedToNode(
+                            expression,
+                        )`${traceToNode(expression, 'operator')('not')} (${operand})`;
+                    } else {
+                        return expandTracedToNode(expression)`${traceToNode(expression, 'operator')('~')}(${operand})`;
+                    }
                 case '-':
                     return expandTracedToNode(expression)`${traceToNode(expression, 'operator')('-')}(${operand})`;
             }
@@ -815,7 +925,7 @@ export class SafeDsPythonGenerator {
             frame.addImport(referenceImport);
 
             if (isSdsPlaceholder(declaration)) {
-                return traceToNode(expression)(`${CODEGEN_PREFIX}${declaration.name}`);
+                return traceToNode(expression)(`${PLACEHOLDER_PREFIX}${declaration.name}`);
             } else {
                 return traceToNode(expression)(referenceImport?.alias ?? this.getPythonNameOrDefault(declaration));
             }
@@ -1195,7 +1305,7 @@ class GenerationInfoFrame {
     private readonly utilitySet: Set<UtilityFunction>;
     private readonly typeVariableSet: Set<string>;
     public readonly isInsidePipeline: boolean;
-    public readonly targetPlaceholders: string[] | undefined;
+    public readonly targetStatements: number[] | undefined;
     public readonly disableRunnerIntegration: boolean;
     private extraStatements = new Map<SdsExpression, Generated>();
 
@@ -1204,7 +1314,7 @@ class GenerationInfoFrame {
         utilitySet: Set<UtilityFunction> = new Set<UtilityFunction>(),
         typeVariableSet: Set<string> = new Set<string>(),
         insidePipeline: boolean = false,
-        targetPlaceholders: string[] | undefined = undefined,
+        targetStatements: number[] | undefined = undefined,
         disableRunnerIntegration: boolean = false,
         idManager: IdManager<SdsExpression> = new IdManager(),
     ) {
@@ -1213,7 +1323,7 @@ class GenerationInfoFrame {
         this.utilitySet = utilitySet;
         this.typeVariableSet = typeVariableSet;
         this.isInsidePipeline = insidePipeline;
-        this.targetPlaceholders = targetPlaceholders;
+        this.targetStatements = targetStatements;
         this.disableRunnerIntegration = disableRunnerIntegration;
     }
 
@@ -1272,7 +1382,7 @@ class GenerationInfoFrame {
             this.utilitySet,
             this.typeVariableSet,
             this.isInsidePipeline,
-            this.targetPlaceholders,
+            this.targetStatements,
             this.disableRunnerIntegration,
             this.idManager,
         );
@@ -1280,8 +1390,26 @@ class GenerationInfoFrame {
 }
 
 export interface GenerateOptions {
+    /**
+     * Where the generated code should be written to.
+     */
     destination: URI;
+
+    /**
+     * Whether to create source maps for the generated code.
+     */
     createSourceMaps: boolean;
-    targetPlaceholders: string[] | undefined;
+
+    /**
+     * The indices of the statements to generate code for. Code will also be generated for any statements that affect
+     * the target statements.
+     *
+     * If undefined, only code for statements with side effects and those that affect them will be generated.
+     */
+    targetStatements: number[] | number | undefined;
+
+    /**
+     * Whether to disable the integration with the `safe-ds-runner` package and instead generate plain Python code.
+     */
     disableRunnerIntegration: boolean;
 }

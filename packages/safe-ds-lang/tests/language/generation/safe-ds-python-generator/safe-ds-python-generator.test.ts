@@ -2,9 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { NodeFileSystem } from 'langium/node';
 import { createPythonGenerationTests } from './creator.js';
 import { loadDocuments } from '../../../helpers/testResources.js';
-import { stream, URI } from 'langium';
+import { AstUtils, stream, URI } from 'langium';
 import { createSafeDsServices } from '../../../../src/language/index.js';
 import { isEmpty } from '../../../../src/helpers/collections.js';
+import { isSdsStatement } from '../../../../src/language/generated/ast.js';
+import { isRangeEqual } from 'langium/test';
 
 const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const langiumDocuments = services.shared.workspace.LangiumDocuments;
@@ -22,11 +24,24 @@ describe('generation', async () => {
         // Load all documents
         const documents = await loadDocuments(services, test.inputUris);
 
-        // Get target placeholder name for "run until"
-        let targetNames: string[] | undefined = undefined;
+        // Get target statements for "run until"
+        let targetStatements: number[] | undefined = undefined;
         if (test.targets && !isEmpty(test.targets)) {
             const document = langiumDocuments.getDocument(URI.parse(test.targets[0]!.uri))!;
-            targetNames = test.targets.map((target) => document.textDocument.getText(target.range));
+
+            targetStatements = test.targets.flatMap((target) => {
+                const statements = AstUtils.streamAllContents(document.parseResult.value, {
+                    range: target.range,
+                }).filter(isSdsStatement);
+
+                for (const statement of statements) {
+                    if (isRangeEqual(statement.$cstNode!.range, target.range)) {
+                        return statement.$containerIndex!;
+                    }
+                }
+
+                return [];
+            });
         }
 
         // Generate code for all documents
@@ -35,7 +50,7 @@ describe('generation', async () => {
                 pythonGenerator.generate(document, {
                     destination: test.outputRoot,
                     createSourceMaps: true,
-                    targetPlaceholders: targetNames,
+                    targetStatements,
                     disableRunnerIntegration: test.disableRunnerIntegration,
                 }),
             )

@@ -19,3 +19,4 @@ The input conversion for a neural network, defines the input parameters for the 
         @PythonName("image_size") imageSize: ModelImageSize
     ) sub InputConversion<ImageDataset<Column>, ImageList>
     ```
+    { data-search-exclude }

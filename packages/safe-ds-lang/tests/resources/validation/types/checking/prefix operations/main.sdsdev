@@ -1,21 +1,27 @@
 package tests.validation.types.checking.prefixOperations
 
+@Pure fun cell() -> cell: Cell
+
 segment mySegment() {
 
-    // $TEST$ no error r"Expected type 'Boolean' but got .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
     not »true«;
-    // $TEST$ error "Expected type 'Boolean' but got 'literal<0>'."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    not »cell()«;
+    // $TEST$ error "This operator is not defined for type 'literal<0>'."
     not »0«;
-    // $TEST$ error "Expected type 'Boolean' but got 'unknown'."
+    // $TEST$ error "This operator is not defined for type 'unknown'."
     not »unresolved«;
 
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
     -»0.0«;
-    // $TEST$ no error r"Expected type 'Float' or 'Int' but got .*\."
+    // $TEST$ no error r"This operator is not defined for type .*\."
     -»0«;
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'literal<"">'."
+    // $TEST$ no error r"This operator is not defined for type .*\."
+    -»cell()«;
+    // $TEST$ error "This operator is not defined for type 'literal<"">'."
     -»""«;
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'unknown'."
+    // $TEST$ error "This operator is not defined for type 'unknown'."
     -»unresolved«;
 }
 
@@ -23,9 +29,9 @@ segment mySegment() {
 class MyClass<T sub Any>(
     p1: T,
 
-    // $TEST$ error "Expected type 'Boolean' but got 'T'."
+    // $TEST$ error "This operator is not defined for type 'T'."
     a: Any? = not »p1«,
 
-    // $TEST$ error "Expected type 'Float' or 'Int' but got 'T'."
+    // $TEST$ error "This operator is not defined for type 'T'."
     b: Any? = -»p1«,
 )

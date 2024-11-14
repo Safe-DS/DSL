@@ -1,0 +1,9 @@
+pipeline myPipeline {
+   out  call() ;
+ }
+
+// -----------------------------------------------------------------------------
+
+pipeline myPipeline {
+    out call();
+}

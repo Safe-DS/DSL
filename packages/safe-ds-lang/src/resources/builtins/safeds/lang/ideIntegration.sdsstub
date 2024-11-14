@@ -21,10 +21,9 @@ annotation Category(category: DataScienceCategory)
 
 /**
  * A step in the data science process.
+ * The letter "Q" is used as a separator for subcategories.
  */
 enum DataScienceCategory {
-    /* Subcategories are formatted like this: CategoryQSubcategory as other symboles are currently disallowed */
-
     /**
      * Basic building blocks.
      */
@@ -35,12 +34,12 @@ enum DataScienceCategory {
      */
     DataImport
 
-     /**
+    /**
      * Save your data for later use.
      */
     DataExport
 
-    /**
+     /**
      * Explore your data.
      */
     DataExplorationQMetric
@@ -71,7 +70,7 @@ enum DataScienceCategory {
     ModelEvaluationQVisualization
 
     /**
-     * Used in lambdas or in any parts of the pipeline.
+     * Utility iterms for general use and lambda functions
      */
     UtilitiesQConversion
     UtilitiesQTable

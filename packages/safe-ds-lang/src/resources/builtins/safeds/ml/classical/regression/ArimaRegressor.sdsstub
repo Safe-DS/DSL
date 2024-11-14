@@ -57,6 +57,7 @@ class ArimaRegressor() {
     @Pure
     @Category(DataScienceCategory.ModelEvaluationQVisualization)
     @PythonName("plot_predictions")
+    @Category(DataScienceCategory.ModelEvaluationQVisualization)
     fun plotPredictions(
         @PythonName("test_series") testSeries: TimeSeriesDataset
     ) -> image: Image

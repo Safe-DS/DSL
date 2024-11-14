@@ -36,17 +36,24 @@ This class cannot be instantiated directly. It is only used for arguments of cal
          */
         @Pure
         @PythonName("first_not_none")
-        static fun firstNotNone(
-            cells: List<Cell<Any?>>
-        ) -> cell: Cell<Any?>
+        static fun firstNotNone<T>(
+            cells: List<Cell<T>>
+        ) -> cell: Cell<T?>
 
         /**
-         * Negate a boolean. This WILL LATER BE equivalent to the ^not operator.
+         * Negate a boolean. This is equivalent to the `not` operator.
          *
          * @example
          * pipeline example {
          *     val column = Column("example", [true, false]);
          *     val result = column.transform((cell) -> cell.^not());
+         *     // Column("example", [false, true])
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("example", [true, false]);
+         *     val result = column.transform((cell) -> not cell);
          *     // Column("example", [false, true])
          * }
          */
@@ -55,7 +62,7 @@ This class cannot be instantiated directly. It is only used for arguments of cal
         fun ^not() -> result: Cell<Boolean>
 
         /**
-         * Perform a boolean AND operation. This WILL LATER BE equivalent to the ^and operator.
+         * Perform a boolean AND operation. This is equivalent to the `and` operator.
          *
          * @example
          * pipeline example {
@@ -63,15 +70,22 @@ This class cannot be instantiated directly. It is only used for arguments of cal
          *     val result = column.transform((cell) -> cell.^and(false));
          *     // Column("example", [false, false])
          * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("example", [true, false]);
+         *     val result = column.transform((cell) -> cell and false);
+         *     // Column("example", [false, false])
+         * }
          */
         @Pure
         @PythonName("and_")
         fun ^and(
-            other: union<Boolean, Cell<Boolean>>
+            other: union<Boolean, Cell> // TODO, once cell types can be inferred: union<Boolean, Cell<Boolean>>
         ) -> result: Cell<Boolean>
 
         /**
-         * Perform a boolean OR operation. This WILL LATER BE equivalent to the ^or operator.
+         * Perform a boolean OR operation. This is equivalent to the `or` operator.
          *
          * @example
          * pipeline example {
@@ -79,11 +93,18 @@ This class cannot be instantiated directly. It is only used for arguments of cal
          *     val result = column.transform((cell) -> cell.^or(true));
          *     // Column("example", [true, true])
          * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("example", [true, false]);
+         *     val result = column.transform((cell) -> cell or true);
+         *     // Column("example", [true, true])
+         * }
          */
         @Pure
         @PythonName("or_")
         fun ^or(
-            other: union<Boolean, Cell<Boolean>>
+            other: union<Boolean, Cell> // TODO, once cell types can be inferred: union<Boolean, Cell<Boolean>>
         ) -> result: Cell<Boolean>
 
         /**
@@ -98,7 +119,7 @@ This class cannot be instantiated directly. It is only used for arguments of cal
          */
         @Pure
         fun xor(
-            other: union<Boolean, Cell<Boolean>>
+            other: union<Boolean, Cell> // TODO, once cell types can be inferred: union<Boolean, Cell<Boolean>>
         ) -> result: Cell<Boolean>
 
         /**
@@ -112,7 +133,7 @@ This class cannot be instantiated directly. It is only used for arguments of cal
          * }
          */
         @Pure
-        fun abs() -> result: Cell
+        fun abs() -> result: Cell<Number>
 
         /**
          * Round up to the nearest integer.
@@ -125,7 +146,7 @@ This class cannot be instantiated directly. It is only used for arguments of cal
          * }
          */
         @Pure
-        fun ceil() -> result: Cell
+        fun ceil() -> result: Cell<Int>
 
         /**
          * Round down to the nearest integer.
@@ -138,10 +159,10 @@ This class cannot be instantiated directly. It is only used for arguments of cal
          * }
          */
         @Pure
-        fun floor() -> result: Cell
+        fun floor() -> result: Cell<Int>
 
         /**
-         * Negate the value.
+         * Negate the value. This is equivalent to the unary `-` operator.
          *
          * @example
          * pipeline example {
@@ -149,12 +170,19 @@ This class cannot be instantiated directly. It is only used for arguments of cal
          *     val result = column.transform((cell) -> cell.neg());
          *     // Column("example", [-1, 2])
          * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("example", [1, -2]);
+         *     val result = column.transform((cell) -> -cell);
+         *     // Column("example", [-1, 2])
+         * }
          */
         @Pure
-        fun neg() -> result: Cell
+        fun neg() -> result: Cell<Number>
 
         /**
-         * Add a value. This WILL LATER BE equivalent to the `+` operator.
+         * Add a value. This is equivalent to the `+` operator.
          *
          * @example
          * pipeline example {
@@ -162,14 +190,21 @@ This class cannot be instantiated directly. It is only used for arguments of cal
          *     val result = column.transform((cell) -> cell.add(3));
          *     // Column("example", [4, 5])
          * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("example", [1, 2]);
+         *     val result = column.transform((cell) -> cell + 3);
+         *     // Column("example", [4, 5])
+         * }
          */
         @Pure
         fun add(
-            other: Any
-        ) -> result: Cell
+            other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
+        ) -> result: Cell<Number>
 
         /**
-         * Divide by a value. This WILL LATER BE equivalent to the `/` operator.
+         * Divide by a value. This is equivalent to the `/` operator.
          *
          * @example
          * pipeline example {
@@ -177,14 +212,21 @@ This class cannot be instantiated directly. It is only used for arguments of cal
          *     val result = column.transform((cell) -> cell.div(2));
          *     // Column("example", [3, 4])
          * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("example", [6, 8]);
+         *     val result = column.transform((cell) -> cell / 2);
+         *     // Column("example", [3, 4])
+         * }
          */
         @Pure
         fun div(
-            other: Any
-        ) -> result: Cell
+            other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
+        ) -> result: Cell<Number>
 
         /**
-         * Perform a modulo operation.
+         * Perform a modulo operation.  This is equivalent to the `%` operator.
          *
          * @example
          * pipeline example {
@@ -192,14 +234,21 @@ This class cannot be instantiated directly. It is only used for arguments of cal
          *     val result = column.transform((cell) -> cell.mod(3));
          *     // Column("example", [2, 0])
          * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("example", [5, 6]);
+         *     val result = column.transform((cell) -> cell % 3);
+         *     // Column("example", [2, 0])
+         * }
          */
         @Pure
         fun mod(
-            other: Any
-        ) -> result: Cell
+            other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
+        ) -> result: Cell<Number>
 
         /**
-         * Multiply by a value. This WILL LATER BE equivalent to the `*` operator.
+         * Multiply by a value. This is equivalent to the `*` operator.
          *
          * @example
          * pipeline example {
@@ -207,11 +256,18 @@ This class cannot be instantiated directly. It is only used for arguments of cal
          *     val result = column.transform((cell) -> cell.mul(4));
          *     // Column("example", [8, 12])
          * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("example", [2, 3]);
+         *     val result = column.transform((cell) -> cell * 4);
+         *     // Column("example", [8, 12])
+         * }
          */
         @Pure
         fun mul(
-            other: Any
-        ) -> result: Cell
+            other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
+        ) -> result: Cell<Number>
 
         /**
          * Raise to a power.
@@ -225,11 +281,11 @@ This class cannot be instantiated directly. It is only used for arguments of cal
          */
         @Pure
         fun pow(
-            other: union<Cell, Float>
-        ) -> result: Cell
+            other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
+        ) -> result: Cell<Number>
 
         /**
-         * Subtract a value. This WILL LATER BE equivalent to the `-` operator.
+         * Subtract a value. This is equivalent to the binary `-` operator.
          *
          * @example
          * pipeline example {
@@ -237,14 +293,21 @@ This class cannot be instantiated directly. It is only used for arguments of cal
          *     val result = column.transform((cell) -> cell.^sub(3));
          *     // Column("example", [2, 3])
          * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("example", [5, 6]);
+         *     val result = column.transform((cell) -> cell - 3);
+         *     // Column("example", [2, 3])
+         * }
          */
         @Pure
         fun ^sub(
-            other: Any
-        ) -> result: Cell
+            other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
+        ) -> result: Cell<Number>
 
         /**
-         * Check if equal to a value. This WILL LATER BE equivalent to the `==` operator.
+         * Check if equal to a value. This is equivalent to the `==` operator.
          *
          * @example
          * pipeline example {
@@ -252,14 +315,43 @@ This class cannot be instantiated directly. It is only used for arguments of cal
          *     val result = column.transform((cell) -> cell.eq(2));
          *     // Column("example", [false, true])
          * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("example", [1, 2]);
+         *     val result = column.transform((cell) -> cell == 2);
+         *     // Column("example", [false, true])
+         * }
          */
         @Pure
         fun eq(
-            other: Any
+            other: Any?
         ) -> result: Cell<Boolean>
 
         /**
-         * Check if greater than or equal to a value. This WILL LATER BE equivalent to the `>=` operator.
+         * Check if not equal to a value. This is equivalent to the `!=` operator.
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("example", [1, 2]);
+         *     val result = column.transform((cell) -> cell.neq(2));
+         *     // Column("example", [true, false])
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("example", [1, 2]);
+         *     val result = column.transform((cell) -> cell != 2);
+         *     // Column("example", [true, false])
+         * }
+         */
+        @Pure
+        fun neq(
+            other: Any?
+        ) -> result: Cell<Boolean>
+
+        /**
+         * Check if greater than or equal to a value. This is equivalent to the `>=` operator.
          *
          * @example
          * pipeline example {
@@ -267,14 +359,21 @@ This class cannot be instantiated directly. It is only used for arguments of cal
          *     val result = column.transform((cell) -> cell.ge(2));
          *     // Column("example", [false, true])
          * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("example", [1, 2]);
+         *     val result = column.transform((cell) -> cell >= 2);
+         *     // Column("example", [false, true])
+         * }
          */
         @Pure
         fun ge(
-            other: Any
+            other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
         ) -> result: Cell<Boolean>
 
         /**
-         * Check if greater than a value. This WILL LATER BE equivalent to the `>` operator.
+         * Check if greater than a value. This is equivalent to the `>` operator.
          *
          * @example
          * pipeline example {
@@ -282,14 +381,21 @@ This class cannot be instantiated directly. It is only used for arguments of cal
          *     val result = column.transform((cell) -> cell.gt(2));
          *     // Column("example", [false, false])
          * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("example", [1, 2]);
+         *     val result = column.transform((cell) -> cell > 2);
+         *     // Column("example", [false, false])
+         * }
          */
         @Pure
         fun gt(
-            other: Any
+            other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
         ) -> result: Cell<Boolean>
 
         /**
-         * Check if less than or equal to a value. This WILL LATER BE equivalent to the `<=` operator.
+         * Check if less than or equal to a value. This is equivalent to the `<=` operator.
          *
          * @example
          * pipeline example {
@@ -297,14 +403,21 @@ This class cannot be instantiated directly. It is only used for arguments of cal
          *     val result = column.transform((cell) -> cell.le(2));
          *     // Column("example", [true, true])
          * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("example", [1, 2]);
+         *     val result = column.transform((cell) -> cell <= 2);
+         *     // Column("example", [true, true])
+         * }
          */
         @Pure
         fun le(
-            other: Any
+            other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
         ) -> result: Cell<Boolean>
 
         /**
-         * Check if less than a value. This WILL LATER BE equivalent to the `<` operator.
+         * Check if less than a value. This is equivalent to the `<` operator.
          *
          * @example
          * pipeline example {
@@ -312,13 +425,21 @@ This class cannot be instantiated directly. It is only used for arguments of cal
          *     val result = column.transform((cell) -> cell.lt(2));
          *     // Column("example", [true, false])
          * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("example", [1, 2]);
+         *     val result = column.transform((cell) -> cell < 2);
+         *     // Column("example", [true, false])
+         * }
          */
         @Pure
         fun lt(
-            other: Any
+            other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
         ) -> result: Cell<Boolean>
     }
     ```
+    { data-search-exclude }
 
 ## :test_tube:{ title="Experimental" } <code class="doc-symbol doc-symbol-attribute"></code> `dt` {#safeds.data.tabular.containers.Cell.dt data-toc-label='[attribute] dt'}
 
@@ -340,7 +461,7 @@ Get the absolute value.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result` | [`Cell<Any?>`][safeds.data.tabular.containers.Cell] | - |
+| `result` | [`Cell<Number>`][safeds.data.tabular.containers.Cell] | - |
 
 **Examples:**
 
@@ -354,26 +475,27 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="104"
+    ```sds linenums="125"
     @Pure
-    fun abs() -> result: Cell
+    fun abs() -> result: Cell<Number>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `add` {#safeds.data.tabular.containers.Cell.add data-toc-label='[function] add'}
 
-Add a value. This WILL LATER BE equivalent to the `+` operator.
+Add a value. This is equivalent to the `+` operator.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `other` | [`Any`][safeds.lang.Any] | - | - |
+| `other` | `#!sds union<Number, Cell<Any?>>` | - | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result` | [`Cell<Any?>`][safeds.data.tabular.containers.Cell] | - |
+| `result` | [`Cell<Number>`][safeds.data.tabular.containers.Cell] | - |
 
 **Examples:**
 
@@ -384,25 +506,33 @@ pipeline example {
     // Column("example", [4, 5])
 }
 ```
+```sds
+pipeline example {
+    val column = Column("example", [1, 2]);
+    val result = column.transform((cell) -> cell + 3);
+    // Column("example", [4, 5])
+}
+```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="156"
+    ```sds linenums="191"
     @Pure
     fun add(
-        other: Any
-    ) -> result: Cell
+        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
+    ) -> result: Cell<Number>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `and` {#safeds.data.tabular.containers.Cell.and data-toc-label='[function] and'}
 
-Perform a boolean AND operation. This WILL LATER BE equivalent to the ^and operator.
+Perform a boolean AND operation. This is equivalent to the `and` operator.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `other` | `#!sds union<Boolean, Cell<Boolean>>` | - | - |
+| `other` | `#!sds union<Boolean, Cell<Any?>>` | - | - |
 
 **Results:**
 
@@ -419,16 +549,24 @@ pipeline example {
     // Column("example", [false, false])
 }
 ```
+```sds hl_lines="3"
+pipeline example {
+    val column = Column("example", [true, false]);
+    val result = column.transform((cell) -> cell and false);
+    // Column("example", [false, false])
+}
+```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="57"
+    ```sds linenums="71"
     @Pure
     @PythonName("and_")
     fun ^and(
-        other: union<Boolean, Cell<Boolean>>
+        other: union<Boolean, Cell> // TODO, once cell types can be inferred: union<Boolean, Cell<Boolean>>
     ) -> result: Cell<Boolean>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `ceil` {#safeds.data.tabular.containers.Cell.ceil data-toc-label='[function] ceil'}
 
@@ -438,7 +576,7 @@ Round up to the nearest integer.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result` | [`Cell<Any?>`][safeds.data.tabular.containers.Cell] | - |
+| `result` | [`Cell<Int>`][safeds.data.tabular.containers.Cell] | - |
 
 **Examples:**
 
@@ -452,26 +590,27 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="117"
+    ```sds linenums="138"
     @Pure
-    fun ceil() -> result: Cell
+    fun ceil() -> result: Cell<Int>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `div` {#safeds.data.tabular.containers.Cell.div data-toc-label='[function] div'}
 
-Divide by a value. This WILL LATER BE equivalent to the `/` operator.
+Divide by a value. This is equivalent to the `/` operator.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `other` | [`Any`][safeds.lang.Any] | - | - |
+| `other` | `#!sds union<Number, Cell<Any?>>` | - | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result` | [`Cell<Any?>`][safeds.data.tabular.containers.Cell] | - |
+| `result` | [`Cell<Number>`][safeds.data.tabular.containers.Cell] | - |
 
 **Examples:**
 
@@ -482,25 +621,33 @@ pipeline example {
     // Column("example", [3, 4])
 }
 ```
+```sds
+pipeline example {
+    val column = Column("example", [6, 8]);
+    val result = column.transform((cell) -> cell / 2);
+    // Column("example", [3, 4])
+}
+```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="171"
+    ```sds linenums="213"
     @Pure
     fun div(
-        other: Any
-    ) -> result: Cell
+        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
+    ) -> result: Cell<Number>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `eq` {#safeds.data.tabular.containers.Cell.eq data-toc-label='[function] eq'}
 
-Check if equal to a value. This WILL LATER BE equivalent to the `==` operator.
+Check if equal to a value. This is equivalent to the `==` operator.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `other` | [`Any`][safeds.lang.Any] | - | - |
+| `other` | [`Any?`][safeds.lang.Any] | - | - |
 
 **Results:**
 
@@ -517,15 +664,23 @@ pipeline example {
     // Column("example", [false, true])
 }
 ```
+```sds
+pipeline example {
+    val column = Column("example", [1, 2]);
+    val result = column.transform((cell) -> cell == 2);
+    // Column("example", [false, true])
+}
+```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="246"
+    ```sds linenums="316"
     @Pure
     fun eq(
-        other: Any
+        other: Any?
     ) -> result: Cell<Boolean>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `floor` {#safeds.data.tabular.containers.Cell.floor data-toc-label='[function] floor'}
 
@@ -535,7 +690,7 @@ Round down to the nearest integer.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result` | [`Cell<Any?>`][safeds.data.tabular.containers.Cell] | - |
+| `result` | [`Cell<Int>`][safeds.data.tabular.containers.Cell] | - |
 
 **Examples:**
 
@@ -549,20 +704,21 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="130"
+    ```sds linenums="151"
     @Pure
-    fun floor() -> result: Cell
+    fun floor() -> result: Cell<Int>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `ge` {#safeds.data.tabular.containers.Cell.ge data-toc-label='[function] ge'}
 
-Check if greater than or equal to a value. This WILL LATER BE equivalent to the `>=` operator.
+Check if greater than or equal to a value. This is equivalent to the `>=` operator.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `other` | [`Any`][safeds.lang.Any] | - | - |
+| `other` | `#!sds union<Number, Cell<Any?>>` | - | - |
 
 **Results:**
 
@@ -579,25 +735,33 @@ pipeline example {
     // Column("example", [false, true])
 }
 ```
+```sds
+pipeline example {
+    val column = Column("example", [1, 2]);
+    val result = column.transform((cell) -> cell >= 2);
+    // Column("example", [false, true])
+}
+```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="261"
+    ```sds linenums="360"
     @Pure
     fun ge(
-        other: Any
+        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
     ) -> result: Cell<Boolean>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `gt` {#safeds.data.tabular.containers.Cell.gt data-toc-label='[function] gt'}
 
-Check if greater than a value. This WILL LATER BE equivalent to the `>` operator.
+Check if greater than a value. This is equivalent to the `>` operator.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `other` | [`Any`][safeds.lang.Any] | - | - |
+| `other` | `#!sds union<Number, Cell<Any?>>` | - | - |
 
 **Results:**
 
@@ -614,25 +778,33 @@ pipeline example {
     // Column("example", [false, false])
 }
 ```
+```sds
+pipeline example {
+    val column = Column("example", [1, 2]);
+    val result = column.transform((cell) -> cell > 2);
+    // Column("example", [false, false])
+}
+```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="276"
+    ```sds linenums="382"
     @Pure
     fun gt(
-        other: Any
+        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
     ) -> result: Cell<Boolean>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `le` {#safeds.data.tabular.containers.Cell.le data-toc-label='[function] le'}
 
-Check if less than or equal to a value. This WILL LATER BE equivalent to the `<=` operator.
+Check if less than or equal to a value. This is equivalent to the `<=` operator.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `other` | [`Any`][safeds.lang.Any] | - | - |
+| `other` | `#!sds union<Number, Cell<Any?>>` | - | - |
 
 **Results:**
 
@@ -649,25 +821,33 @@ pipeline example {
     // Column("example", [true, true])
 }
 ```
+```sds
+pipeline example {
+    val column = Column("example", [1, 2]);
+    val result = column.transform((cell) -> cell <= 2);
+    // Column("example", [true, true])
+}
+```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="291"
+    ```sds linenums="404"
     @Pure
     fun le(
-        other: Any
+        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
     ) -> result: Cell<Boolean>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `lt` {#safeds.data.tabular.containers.Cell.lt data-toc-label='[function] lt'}
 
-Check if less than a value. This WILL LATER BE equivalent to the `<` operator.
+Check if less than a value. This is equivalent to the `<` operator.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `other` | [`Any`][safeds.lang.Any] | - | - |
+| `other` | `#!sds union<Number, Cell<Any?>>` | - | - |
 
 **Results:**
 
@@ -684,31 +864,39 @@ pipeline example {
     // Column("example", [true, false])
 }
 ```
+```sds
+pipeline example {
+    val column = Column("example", [1, 2]);
+    val result = column.transform((cell) -> cell < 2);
+    // Column("example", [true, false])
+}
+```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="306"
+    ```sds linenums="426"
     @Pure
     fun lt(
-        other: Any
+        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
     ) -> result: Cell<Boolean>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `mod` {#safeds.data.tabular.containers.Cell.mod data-toc-label='[function] mod'}
 
-Perform a modulo operation.
+Perform a modulo operation.  This is equivalent to the `%` operator.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `other` | [`Any`][safeds.lang.Any] | - | - |
+| `other` | `#!sds union<Number, Cell<Any?>>` | - | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result` | [`Cell<Any?>`][safeds.data.tabular.containers.Cell] | - |
+| `result` | [`Cell<Number>`][safeds.data.tabular.containers.Cell] | - |
 
 **Examples:**
 
@@ -719,31 +907,39 @@ pipeline example {
     // Column("example", [2, 0])
 }
 ```
+```sds
+pipeline example {
+    val column = Column("example", [5, 6]);
+    val result = column.transform((cell) -> cell % 3);
+    // Column("example", [2, 0])
+}
+```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="186"
+    ```sds linenums="235"
     @Pure
     fun mod(
-        other: Any
-    ) -> result: Cell
+        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
+    ) -> result: Cell<Number>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `mul` {#safeds.data.tabular.containers.Cell.mul data-toc-label='[function] mul'}
 
-Multiply by a value. This WILL LATER BE equivalent to the `*` operator.
+Multiply by a value. This is equivalent to the `*` operator.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `other` | [`Any`][safeds.lang.Any] | - | - |
+| `other` | `#!sds union<Number, Cell<Any?>>` | - | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result` | [`Cell<Any?>`][safeds.data.tabular.containers.Cell] | - |
+| `result` | [`Cell<Number>`][safeds.data.tabular.containers.Cell] | - |
 
 **Examples:**
 
@@ -754,25 +950,33 @@ pipeline example {
     // Column("example", [8, 12])
 }
 ```
+```sds
+pipeline example {
+    val column = Column("example", [2, 3]);
+    val result = column.transform((cell) -> cell * 4);
+    // Column("example", [8, 12])
+}
+```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="201"
+    ```sds linenums="257"
     @Pure
     fun mul(
-        other: Any
-    ) -> result: Cell
+        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
+    ) -> result: Cell<Number>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `neg` {#safeds.data.tabular.containers.Cell.neg data-toc-label='[function] neg'}
 
-Negate the value.
+Negate the value. This is equivalent to the unary `-` operator.
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result` | [`Cell<Any?>`][safeds.data.tabular.containers.Cell] | - |
+| `result` | [`Cell<Number>`][safeds.data.tabular.containers.Cell] | - |
 
 **Examples:**
 
@@ -783,17 +987,68 @@ pipeline example {
     // Column("example", [-1, 2])
 }
 ```
+```sds
+pipeline example {
+    val column = Column("example", [1, -2]);
+    val result = column.transform((cell) -> -cell);
+    // Column("example", [-1, 2])
+}
+```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="143"
+    ```sds linenums="171"
     @Pure
-    fun neg() -> result: Cell
+    fun neg() -> result: Cell<Number>
     ```
+    { data-search-exclude }
+
+## <code class="doc-symbol doc-symbol-function"></code> `neq` {#safeds.data.tabular.containers.Cell.neq data-toc-label='[function] neq'}
+
+Check if not equal to a value. This is equivalent to the `!=` operator.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `other` | [`Any?`][safeds.lang.Any] | - | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `result` | [`Cell<Boolean>`][safeds.data.tabular.containers.Cell] | - |
+
+**Examples:**
+
+```sds hl_lines="3"
+pipeline example {
+    val column = Column("example", [1, 2]);
+    val result = column.transform((cell) -> cell.neq(2));
+    // Column("example", [true, false])
+}
+```
+```sds
+pipeline example {
+    val column = Column("example", [1, 2]);
+    val result = column.transform((cell) -> cell != 2);
+    // Column("example", [true, false])
+}
+```
+
+??? quote "Stub code in `Cell.sdsstub`"
+
+    ```sds linenums="338"
+    @Pure
+    fun neq(
+        other: Any?
+    ) -> result: Cell<Boolean>
+    ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `not` {#safeds.data.tabular.containers.Cell.not data-toc-label='[function] not'}
 
-Negate a boolean. This WILL LATER BE equivalent to the ^not operator.
+Negate a boolean. This is equivalent to the `not` operator.
 
 **Results:**
 
@@ -810,24 +1065,32 @@ pipeline example {
     // Column("example", [false, true])
 }
 ```
+```sds hl_lines="3"
+pipeline example {
+    val column = Column("example", [true, false]);
+    val result = column.transform((cell) -> not cell);
+    // Column("example", [false, true])
+}
+```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="43"
+    ```sds linenums="50"
     @Pure
     @PythonName("not_")
     fun ^not() -> result: Cell<Boolean>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `or` {#safeds.data.tabular.containers.Cell.or data-toc-label='[function] or'}
 
-Perform a boolean OR operation. This WILL LATER BE equivalent to the ^or operator.
+Perform a boolean OR operation. This is equivalent to the `or` operator.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `other` | `#!sds union<Boolean, Cell<Boolean>>` | - | - |
+| `other` | `#!sds union<Boolean, Cell<Any?>>` | - | - |
 
 **Results:**
 
@@ -844,16 +1107,24 @@ pipeline example {
     // Column("example", [true, true])
 }
 ```
+```sds hl_lines="3"
+pipeline example {
+    val column = Column("example", [true, false]);
+    val result = column.transform((cell) -> cell or true);
+    // Column("example", [true, true])
+}
+```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="73"
+    ```sds linenums="94"
     @Pure
     @PythonName("or_")
     fun ^or(
-        other: union<Boolean, Cell<Boolean>>
+        other: union<Boolean, Cell> // TODO, once cell types can be inferred: union<Boolean, Cell<Boolean>>
     ) -> result: Cell<Boolean>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `pow` {#safeds.data.tabular.containers.Cell.pow data-toc-label='[function] pow'}
 
@@ -863,13 +1134,13 @@ Raise to a power.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `other` | `#!sds union<Cell<Any?>, Float>` | - | - |
+| `other` | `#!sds union<Number, Cell<Any?>>` | - | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result` | [`Cell<Any?>`][safeds.data.tabular.containers.Cell] | - |
+| `result` | [`Cell<Number>`][safeds.data.tabular.containers.Cell] | - |
 
 **Examples:**
 
@@ -883,28 +1154,29 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="216"
+    ```sds linenums="272"
     @Pure
     fun pow(
-        other: union<Cell, Float>
-    ) -> result: Cell
+        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
+    ) -> result: Cell<Number>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `sub` {#safeds.data.tabular.containers.Cell.sub data-toc-label='[function] sub'}
 
-Subtract a value. This WILL LATER BE equivalent to the `-` operator.
+Subtract a value. This is equivalent to the binary `-` operator.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `other` | [`Any`][safeds.lang.Any] | - | - |
+| `other` | `#!sds union<Number, Cell<Any?>>` | - | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result` | [`Cell<Any?>`][safeds.data.tabular.containers.Cell] | - |
+| `result` | [`Cell<Number>`][safeds.data.tabular.containers.Cell] | - |
 
 **Examples:**
 
@@ -915,15 +1187,23 @@ pipeline example {
     // Column("example", [2, 3])
 }
 ```
+```sds
+pipeline example {
+    val column = Column("example", [5, 6]);
+    val result = column.transform((cell) -> cell - 3);
+    // Column("example", [2, 3])
+}
+```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="231"
+    ```sds linenums="294"
     @Pure
     fun ^sub(
-        other: Any
-    ) -> result: Cell
+        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
+    ) -> result: Cell<Number>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `xor` {#safeds.data.tabular.containers.Cell.xor data-toc-label='[function] xor'}
 
@@ -933,7 +1213,7 @@ Perform a boolean XOR operation.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `other` | `#!sds union<Boolean, Cell<Boolean>>` | - | - |
+| `other` | `#!sds union<Boolean, Cell<Any?>>` | - | - |
 
 **Results:**
 
@@ -953,12 +1233,13 @@ pipeline example {
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="89"
+    ```sds linenums="110"
     @Pure
     fun xor(
-        other: union<Boolean, Cell<Boolean>>
+        other: union<Boolean, Cell> // TODO, once cell types can be inferred: union<Boolean, Cell<Boolean>>
     ) -> result: Cell<Boolean>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-static-function"></code> `firstNotNone` {#safeds.data.tabular.containers.Cell.firstNotNone data-toc-label='[static-function] firstNotNone'}
 
@@ -968,20 +1249,27 @@ Return the first cell from the given list that is not None.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `cells` | [`List<Cell<Any?>>`][safeds.lang.List] | The list of cells to be searched. | - |
+| `cells` | [`List<Cell<T>>`][safeds.lang.List] | The list of cells to be searched. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `cell` | [`Cell<Any?>`][safeds.data.tabular.containers.Cell] | Returns the contents of the first cell that is not None. If all cells in the list are None or the list is empty returns None. |
+| `cell` | [`Cell<T?>`][safeds.data.tabular.containers.Cell] | Returns the contents of the first cell that is not None. If all cells in the list are None or the list is empty returns None. |
+
+**Type parameters:**
+
+| Name | Upper Bound | Description | Default |
+|------|-------------|-------------|---------|
+| `T` | [`Any?`][safeds.lang.Any] | - | - |
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
     ```sds linenums="27"
     @Pure
     @PythonName("first_not_none")
-    static fun firstNotNone(
-        cells: List<Cell<Any?>>
-    ) -> cell: Cell<Any?>
+    static fun firstNotNone<T>(
+        cells: List<Cell<T>>
+    ) -> cell: Cell<T?>
     ```
+    { data-search-exclude }

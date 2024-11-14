@@ -371,30 +371,30 @@ export class SafeDsTypeComputer {
             return this.computeTypeOfIndexedAccess(node);
         } else if (isSdsInfixOperation(node)) {
             switch (node.operator) {
-                // Boolean operators
-                case 'or':
-                case 'and':
-                    return this.coreTypes.Boolean;
-
                 // Equality operators
-                case '==':
-                case '!=':
                 case '===':
                 case '!==':
                     return this.coreTypes.Boolean;
+                case '==':
+                case '!=':
+
+                // Logical operators
+                case 'or':
+                case 'and':
 
                 // Comparison operators
                 case '<':
                 case '<=':
                 case '>=':
                 case '>':
-                    return this.coreTypes.Boolean;
+                    return this.computeTypeOfBooleanOperation(node);
 
                 // Arithmetic operators
                 case '+':
                 case '-':
                 case '*':
                 case '/':
+                case '%':
                     return this.computeTypeOfArithmeticInfixOperation(node);
 
                 // Elvis operator
@@ -429,7 +429,7 @@ export class SafeDsTypeComputer {
         } else if (isSdsPrefixOperation(node)) {
             switch (node.operator) {
                 case 'not':
-                    return this.coreTypes.Boolean;
+                    return this.computeTypeOfBooleanPrefixOperation(node);
                 case '-':
                     return this.computeTypeOfArithmeticPrefixOperation(node);
 
@@ -490,30 +490,68 @@ export class SafeDsTypeComputer {
             return UnknownType;
         }
 
+        // Receiver is a column
+        const columnType = this.computeMatchingSupertype(receiverType, this.coreClasses.Column);
+        if (columnType) {
+            const elementType = columnType.getTypeParameterTypeByIndex(0);
+            return elementType.withExplicitNullability(
+                elementType.isExplicitlyNullable || (columnType.isExplicitlyNullable && node.isNullSafe),
+            );
+        }
+
         // Receiver is a list
         const listType = this.computeMatchingSupertype(receiverType, this.coreClasses.List);
         if (listType) {
-            return listType
-                .getTypeParameterTypeByIndex(0)
-                .withExplicitNullability(listType.isExplicitlyNullable && node.isNullSafe);
+            const elementType = listType.getTypeParameterTypeByIndex(0);
+            return elementType.withExplicitNullability(
+                elementType.isExplicitlyNullable || (listType.isExplicitlyNullable && node.isNullSafe),
+            );
         }
 
         // Receiver is a map
         const mapType = this.computeMatchingSupertype(receiverType, this.coreClasses.Map);
         if (mapType) {
-            return mapType
-                .getTypeParameterTypeByIndex(1)
-                .withExplicitNullability(mapType.isExplicitlyNullable && node.isNullSafe);
+            const valueType = mapType.getTypeParameterTypeByIndex(1);
+            return valueType.withExplicitNullability(
+                valueType.isExplicitlyNullable || (mapType.isExplicitlyNullable && node.isNullSafe),
+            );
+        }
+
+        // Receiver is a row
+        const rowType = this.computeMatchingSupertype(receiverType, this.coreClasses.Row);
+        if (rowType) {
+            return this.coreTypes.Cell().withExplicitNullability(rowType.isExplicitlyNullable && node.isNullSafe);
         }
 
         return UnknownType;
     }
 
+    private computeTypeOfBooleanOperation(node: SdsInfixOperation): Type {
+        const leftOperandType = this.computeType(node.leftOperand);
+        const rightOperandType = this.computeType(node.rightOperand);
+        const cellType = this.coreTypes.Cell();
+
+        if (
+            this.typeChecker.isSubtypeOf(leftOperandType, cellType) ||
+            this.typeChecker.isSubtypeOf(rightOperandType, cellType)
+        ) {
+            return this.coreTypes.Cell(this.coreTypes.Boolean);
+        } else {
+            return this.coreTypes.Boolean;
+        }
+    }
+
     private computeTypeOfArithmeticInfixOperation(node: SdsInfixOperation): Type {
         const leftOperandType = this.computeType(node.leftOperand);
         const rightOperandType = this.computeType(node.rightOperand);
+        const cellType = this.coreTypes.Cell();
 
         if (
+            this.typeChecker.isSubtypeOf(leftOperandType, cellType) ||
+            this.typeChecker.isSubtypeOf(rightOperandType, cellType)
+        ) {
+            return this.coreTypes.Cell(this.coreTypes.Number);
+        } else if (
             this.typeChecker.isSubtypeOf(leftOperandType, this.coreTypes.Int) &&
             this.typeChecker.isSubtypeOf(rightOperandType, this.coreTypes.Int)
         ) {
@@ -596,10 +634,24 @@ export class SafeDsTypeComputer {
         );
     }
 
+    private computeTypeOfBooleanPrefixOperation(node: SdsPrefixOperation): Type {
+        const operandType = this.computeType(node.operand);
+        const cellType = this.coreTypes.Cell();
+
+        if (this.typeChecker.isSubtypeOf(operandType, cellType)) {
+            return this.coreTypes.Cell(this.coreTypes.Boolean);
+        } else {
+            return this.coreTypes.Boolean;
+        }
+    }
+
     private computeTypeOfArithmeticPrefixOperation(node: SdsPrefixOperation): Type {
         const operandType = this.computeType(node.operand);
+        const cellType = this.coreTypes.Cell();
 
-        if (this.typeChecker.isSubtypeOf(operandType, this.coreTypes.Int)) {
+        if (this.typeChecker.isSubtypeOf(operandType, cellType)) {
+            return this.coreTypes.Cell(this.coreTypes.Number);
+        } else if (this.typeChecker.isSubtypeOf(operandType, this.coreTypes.Int)) {
             return this.coreTypes.Int;
         } else {
             return this.coreTypes.Float;

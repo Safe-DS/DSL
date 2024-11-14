@@ -1,6 +1,8 @@
 package tests.typing.operations.comparison
 
-pipeline myPipeline {
+@Pure fun cell() -> r: Cell<Boolean>
+
+pipeline constantOperands {
     // $TEST$ serialization literal<false>
     val lessThan = »1 < 1«;
     // $TEST$ serialization literal<true>
@@ -9,7 +11,9 @@ pipeline myPipeline {
     val greaterThanOrEquals = »1 >= 1«;
     // $TEST$ serialization literal<false>
     val greaterThan = »1 > 1«;
+}
 
+pipeline invalidOperands {
     // $TEST$ serialization Boolean
     val lessThanInvalid = »true < true«;
     // $TEST$ serialization Boolean
@@ -18,4 +22,51 @@ pipeline myPipeline {
     val greaterThanOrEqualsInvalid  = »true >= true«;
     // $TEST$ serialization Boolean
     val greaterThanInvalid  = »true > true«;
+}
+
+pipeline cellOperands {
+    // $TEST$ serialization Cell<Boolean>
+    val lessThanNumberCell = »10 < cell()«;
+    // $TEST$ serialization Cell<Boolean>
+    val lessThanOrEqualsNumberCell = »10 <= cell()«;
+    // $TEST$ serialization Cell<Boolean>
+    val greaterThanOrEqualsNumberCell = »10 >= cell()«;
+    // $TEST$ serialization Cell<Boolean>
+    val greaterThanNumberCell = »10 > cell()«;
+
+    // $TEST$ serialization Cell<Boolean>
+    val lessThanInvalidCell = »true < cell()«;
+    // $TEST$ serialization Cell<Boolean>
+    val lessThanOrEqualsInvalidCell = »true <= cell()«;
+    // $TEST$ serialization Cell<Boolean>
+    val greaterThanOrEqualsInvalidCell = »true >= cell()«;
+    // $TEST$ serialization Cell<Boolean>
+    val greaterThanInvalidCell = »true > cell()«;
+
+    // $TEST$ serialization Cell<Boolean>
+    val lessThanCellNumber = »cell() < 10«;
+    // $TEST$ serialization Cell<Boolean>
+    val lessThanOrEqualsCellNumber = »cell() <= 10«;
+    // $TEST$ serialization Cell<Boolean>
+    val greaterThanOrEqualsCellNumber = »cell() >= 10«;
+    // $TEST$ serialization Cell<Boolean>
+    val greaterThanCellNumber = »cell() > 10«;
+
+    // $TEST$ serialization Cell<Boolean>
+    val lessThanCellInvalid = »cell() < true«;
+    // $TEST$ serialization Cell<Boolean>
+    val lessThanOrEqualsCellInvalid = »cell() <= true«;
+    // $TEST$ serialization Cell<Boolean>
+    val greaterThanOrEqualsCellInvalid = »cell() >= true«;
+    // $TEST$ serialization Cell<Boolean>
+    val greaterThanCellInvalid = »cell() > true«;
+
+    // $TEST$ serialization Cell<Boolean>
+    val lessThanCellCell = »cell() < cell()«;
+    // $TEST$ serialization Cell<Boolean>
+    val lessThanOrEqualsCellCell = »cell() <= cell()«;
+    // $TEST$ serialization Cell<Boolean>
+    val greaterThanOrEqualsCellCell = »cell() >= cell()«;
+    // $TEST$ serialization Cell<Boolean>
+    val greaterThanCellCell = »cell() > cell()«;
 }

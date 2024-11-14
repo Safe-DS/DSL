@@ -27,14 +27,15 @@ This assignment to a placeholder has the following syntactic elements:
 - The name of the placeholder, here `titanic`. It can be any combination of lower- and uppercase letters, underscores,
   and numbers, as long as it does not start with a number.
 - An `#!sds =` sign.
-- The expression to evaluate (right-hand side).
+- The [expression][expressions] to evaluate (right-hand side).
 - A semicolon at the end.
 
 ??? info "Name convention"
 
     Use `#!sds lowerCamelCase` for the name of the placeholder. You may prefix the name of an unused placeholder with an
     underscore (`_`) to indicate that it is intentionally unused, e.g. to
-    [inspect its value](#inspecting-placeholder-values-in-vs-code). This disables the "unused" warning.
+    [inspect its value](#inspecting-placeholder-values-in-vs-code). This disables the "unused" warning. For value
+    inspection, also consider using an [output statement][output-statements] instead.
 
 ### References to Placeholder
 
@@ -104,6 +105,7 @@ such cases.
 [expressions]: ../expressions/README.md
 [expression-statements]: expression-statements.md
 [installation]: ../../getting-started/installation.md
+[output-statements]: output-statements.md
 [references]: ../expressions/references.md#references
 [runner]: https://github.com/Safe-DS/Runner
 [results]: ../segments.md#results

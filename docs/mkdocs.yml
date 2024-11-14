@@ -25,6 +25,7 @@ nav:
       - pipeline-language/statements/README.md
       - Expression Statements: pipeline-language/statements/expression-statements.md
       - Assignments: pipeline-language/statements/assignments.md
+      - Output Statements: pipeline-language/statements/output-statements.md
     - Expressions:
       - pipeline-language/expressions/README.md
       - Literals: pipeline-language/expressions/literals.md

@@ -32,6 +32,7 @@ A container for image size in neural networks.
         attr channel: Int
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `channel` {#safeds.ml.nn.typing.ModelImageSize.channel data-toc-label='[attribute] channel'}
 

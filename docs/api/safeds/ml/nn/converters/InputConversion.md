@@ -29,3 +29,4 @@ The input conversion for a neural network, defines the input parameters for the 
     ```sds linenums="10"
     class InputConversion<D, in F>
     ```
+    { data-search-exclude }

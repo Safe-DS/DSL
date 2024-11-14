@@ -13,3 +13,4 @@ This parameter should only be used by expert users.
     ```sds linenums="8"
     annotation Expert
     ```
+    { data-search-exclude }

@@ -15,3 +15,4 @@ Description of MySchema3.
     ```sds linenums="23"
     schema MySchema3 {}
     ```
+    { data-search-exclude }

@@ -3,8 +3,11 @@ import { SafeDsModuleMembers } from './safe-ds-module-members.js';
 import { resourceNameToUri } from '../../helpers/resources.js';
 import { URI } from 'langium';
 
+const CELL_URI = resourceNameToUri('builtins/safeds/data/tabular/containers/Cell.sdsstub');
+const COLUMN_URI = resourceNameToUri('builtins/safeds/data/tabular/containers/Column.sdsstub');
 const CORE_CLASSES_URI = resourceNameToUri('builtins/safeds/lang/coreClasses.sdsstub');
 const IMAGE_URI = resourceNameToUri('builtins/safeds/data/image/containers/Image.sdsstub');
+const ROW_URI = resourceNameToUri('builtins/safeds/data/tabular/containers/Row.sdsstub');
 const TABLE_URI = resourceNameToUri('builtins/safeds/data/tabular/containers/Table.sdsstub');
 
 export class SafeDsClasses extends SafeDsModuleMembers<SdsClass> {
@@ -14,6 +17,14 @@ export class SafeDsClasses extends SafeDsModuleMembers<SdsClass> {
 
     get Boolean(): SdsClass | undefined {
         return this.getClass('Boolean');
+    }
+
+    get Cell(): SdsClass | undefined {
+        return this.getClass('Cell', CELL_URI);
+    }
+
+    get Column(): SdsClass | undefined {
+        return this.getClass('Column', COLUMN_URI);
     }
 
     get Float(): SdsClass | undefined {
@@ -42,6 +53,10 @@ export class SafeDsClasses extends SafeDsModuleMembers<SdsClass> {
 
     get Number(): SdsClass | undefined {
         return this.getClass('Number');
+    }
+
+    get Row(): SdsClass | undefined {
+        return this.getClass('Row', ROW_URI);
     }
 
     get String(): SdsClass | undefined {

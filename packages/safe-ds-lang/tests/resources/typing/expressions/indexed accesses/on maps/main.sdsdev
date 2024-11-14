@@ -2,17 +2,17 @@ package tests.typing.expressions.indexedAccesses.onMaps
 
 class MyMap sub Map<String, Int>
 
-segment mySegment(param1: Map<String, Int>, param2: Map<String, Int>?, param3: MyMap) {
+segment mySegment(param1: Map<String, Int>, param2: Map<String, Int?>, param3: Map<String, Int>?, param4: MyMap) {
     // $TEST$ serialization Int
     »param1[""]«;
 
     // $TEST$ serialization Int
     »param1[unresolved]«;
 
-    // $TEST$ serialization Int
+    // $TEST$ serialization Int?
     »param2[""]«;
 
-    // $TEST$ serialization Int
+    // $TEST$ serialization Int?
     »param2[unresolved]«;
 
     // $TEST$ serialization Int
@@ -20,6 +20,12 @@ segment mySegment(param1: Map<String, Int>, param2: Map<String, Int>?, param3: M
 
     // $TEST$ serialization Int
     »param3[unresolved]«;
+
+    // $TEST$ serialization Int
+    »param4[""]«;
+
+    // $TEST$ serialization Int
+    »param4[unresolved]«;
 
 
     // $TEST$ serialization Int
@@ -34,11 +40,17 @@ segment mySegment(param1: Map<String, Int>, param2: Map<String, Int>?, param3: M
     // $TEST$ serialization Int?
     »param2?[unresolved]«;
 
-    // $TEST$ serialization Int
+    // $TEST$ serialization Int?
     »param3?[""]«;
 
-    // $TEST$ serialization Int
+    // $TEST$ serialization Int?
     »param3?[unresolved]«;
+
+    // $TEST$ serialization Int
+    »param4?[""]«;
+
+    // $TEST$ serialization Int
+    »param4?[unresolved]«;
 }
 
 class MyClass<MyMap sub Map<String, Int>, MyNullableMap sub Map<String, Int>?>(

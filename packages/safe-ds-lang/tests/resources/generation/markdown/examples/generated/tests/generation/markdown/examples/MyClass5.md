@@ -18,3 +18,4 @@ Do not hightligt MyClass5Suffix.
     ```sds linenums="32"
     class MyClass5
     ```
+    { data-search-exclude }

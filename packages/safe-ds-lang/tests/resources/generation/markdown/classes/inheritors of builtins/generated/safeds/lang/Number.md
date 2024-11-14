@@ -10,10 +10,10 @@ search:
 **Inheritors:**
 
 - `#!sds Float`
-- `#!sds Int`
 
 ??? quote "Stub code in `main.sdsstub`"
 
     ```sds linenums="3"
     class Number
     ```
+    { data-search-exclude }

@@ -18,3 +18,4 @@ Highlight MyClass2.
     ```sds linenums="13"
     class MyClass2
     ```
+    { data-search-exclude }

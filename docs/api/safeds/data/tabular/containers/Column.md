@@ -57,7 +57,7 @@ pipeline example {
          */
         attr type: DataType
 
-        /*
+        /**
          * Return the distinct values in the column.
          *
          * @param ignoreMissingValues Whether to ignore missing values.
@@ -78,7 +78,7 @@ pipeline example {
         ) -> distinctValues: List<T?>
 
         /**
-         * Return the column value at specified index. This WILL LATER BE equivalent to the `[]` operator (indexed access).
+         * Return the column value at specified index. This is equivalent to the `[]` operator (indexed access).
          *
          * Nonnegative indices are counted from the beginning (starting at 0), negative indices from the end (starting at
          * -1).
@@ -91,6 +91,12 @@ pipeline example {
          * pipeline example {
          *     val column = Column("test", [1, 2, 3]);
          *     val result = column.getValue(1); // 2
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("test", [1, 2, 3]);
+         *     val result = column[1]; // 2
          * }
          */
         @Pure
@@ -127,13 +133,13 @@ pipeline example {
          * @example
          * pipeline example {
          *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.all((cell) -> cell.gt(0)); // true
+         *     val result = column.all((cell) -> cell > 0); // true
          * }
          *
          * @example
          * pipeline example {
          *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.all((cell) -> cell.lt(3)); // false
+         *     val result = column.all((cell) -> cell < 3); // false
          * }
          */
         @Pure
@@ -170,13 +176,13 @@ pipeline example {
          * @example
          * pipeline example {
          *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.any((cell) -> cell.gt(2)); // true
+         *     val result = column.any((cell) -> cell > 2); // true
          * }
          *
          * @example
          * pipeline example {
          *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.any((cell) -> cell.lt(0)); // false
+         *     val result = column.any((cell) -> cell < 0); // false
          * }
          */
         @Pure
@@ -208,13 +214,13 @@ pipeline example {
          * @example
          * pipeline example {
          *    val column = Column("test", [1, 2, 3]);
-         *    val result = column.countIf((cell) -> cell.gt(1)); // 2
+         *    val result = column.countIf((cell) -> cell > 1); // 2
          * }
          *
          * @example
          * pipeline example {
          *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.countIf((cell) -> cell.lt(0)); // 0
+         *     val result = column.countIf((cell) -> cell < 0); // 0
          * }
          */
         @Pure
@@ -251,13 +257,13 @@ pipeline example {
          * @example
          * pipeline example {
          *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.none((cell) -> cell.lt(0)); // true
+         *     val result = column.none((cell) -> cell < 0); // true
          * }
          *
          * @example
          * pipeline example {
          *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.none((cell) -> cell.gt(2)); // false
+         *     val result = column.none((cell) -> cell > 2); // false
          * }
          */
         @Pure
@@ -299,7 +305,7 @@ pipeline example {
          * @example
          * pipeline example {
          *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.transform((cell) -> cell.mul(2));
+         *     val result = column.transform((cell) -> cell * 2);
          *     // Column("test", [2, 4, 6])
          * }
          */
@@ -607,6 +613,7 @@ pipeline example {
         fun toTable() -> table: Table
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `isNumeric` {#safeds.data.tabular.containers.Column.isNumeric data-toc-label='[attribute] isNumeric'}
 
@@ -683,25 +690,26 @@ You can instead enable Kleene logic by setting `ignoreUnknown = false`. In this 
 ```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
-    val result = column.all((cell) -> cell.gt(0)); // true
+    val result = column.all((cell) -> cell > 0); // true
 }
 ```
 ```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
-    val result = column.all((cell) -> cell.lt(3)); // false
+    val result = column.all((cell) -> cell < 3); // false
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="126"
+    ```sds linenums="132"
     @Pure
     fun all(
         predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
         @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
     ) -> allSatisfyPredicate: Boolean?
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `any` {#safeds.data.tabular.containers.Column.any data-toc-label='[function] any'}
 
@@ -742,25 +750,26 @@ You can instead enable Kleene logic by setting `ignoreUnknown = false`. In this 
 ```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
-    val result = column.any((cell) -> cell.gt(2)); // true
+    val result = column.any((cell) -> cell > 2); // true
 }
 ```
 ```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
-    val result = column.any((cell) -> cell.lt(0)); // false
+    val result = column.any((cell) -> cell < 0); // false
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="169"
+    ```sds linenums="175"
     @Pure
     fun any(
         predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
         @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
     ) -> anySatisfyPredicate: Boolean?
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `correlationWith` {#safeds.data.tabular.containers.Column.correlationWith data-toc-label='[function] correlationWith'}
 
@@ -804,13 +813,14 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="341"
+    ```sds linenums="347"
     @Pure
     @PythonName("correlation_with")
     fun correlationWith(
         other: Column<Any>
     ) -> correlation: Float
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `countIf` {#safeds.data.tabular.containers.Column.countIf data-toc-label='[function] countIf'}
 
@@ -846,25 +856,26 @@ if the predicate returns null at least once. Otherwise, it still returns how oft
 ```sds hl_lines="3"
 pipeline example {
    val column = Column("test", [1, 2, 3]);
-   val result = column.countIf((cell) -> cell.gt(1)); // 2
+   val result = column.countIf((cell) -> cell > 1); // 2
 }
 ```
 ```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
-    val result = column.countIf((cell) -> cell.lt(0)); // 0
+    val result = column.countIf((cell) -> cell < 0); // 0
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="207"
+    ```sds linenums="213"
     @Pure
     fun countIf(
         predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
         @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
     ) -> count: Int?
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `distinctValueCount` {#safeds.data.tabular.containers.Column.distinctValueCount data-toc-label='[function] distinctValueCount'}
 
@@ -893,27 +904,40 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="360"
+    ```sds linenums="366"
     @Pure
     @PythonName("distinct_value_count")
     fun distinctValueCount(
         @PythonName("ignore_missing_values") ignoreMissingValues: Boolean = true
     ) -> distinctValueCount: Int
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `getDistinctValues` {#safeds.data.tabular.containers.Column.getDistinctValues data-toc-label='[function] getDistinctValues'}
+
+Return the distinct values in the column.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `ignoreMissingValues` | [`Boolean`][safeds.lang.Boolean] | - | `#!sds true` |
+| `ignoreMissingValues` | [`Boolean`][safeds.lang.Boolean] | Whether to ignore missing values. | `#!sds true` |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `distinctValues` | [`List<T?>`][safeds.lang.List] | - |
+| `distinctValues` | [`List<T?>`][safeds.lang.List] | The distinct values in the column. |
+
+**Examples:**
+
+```sds hl_lines="3"
+pipeline example {
+    val column = Column("test", [1, 2, 3, 2]);
+    val result = column.getDistinctValues();
+    // [1, 2, 3]
+}
+```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
@@ -924,10 +948,11 @@ pipeline example {
         @PythonName("ignore_missing_values") ignoreMissingValues: Boolean = true,
     ) -> distinctValues: List<T?>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `getValue` {#safeds.data.tabular.containers.Column.getValue data-toc-label='[function] getValue'}
 
-Return the column value at specified index. This WILL LATER BE equivalent to the `[]` operator (indexed access).
+Return the column value at specified index. This is equivalent to the `[]` operator (indexed access).
 
 Nonnegative indices are counted from the beginning (starting at 0), negative indices from the end (starting at
 -1).
@@ -952,16 +977,23 @@ pipeline example {
     val result = column.getValue(1); // 2
 }
 ```
+```sds
+pipeline example {
+    val column = Column("test", [1, 2, 3]);
+    val result = column[1]; // 2
+}
+```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="83"
+    ```sds linenums="89"
     @Pure
     @PythonName("get_value")
     fun getValue(
         index: Int
     ) -> value: T
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `idness` {#safeds.data.tabular.containers.Column.idness data-toc-label='[function] idness'}
 
@@ -996,10 +1028,11 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="389"
+    ```sds linenums="395"
     @Pure
     fun idness() -> idness: Float
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `max` {#safeds.data.tabular.containers.Column.max data-toc-label='[function] max'}
 
@@ -1022,10 +1055,11 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="403"
+    ```sds linenums="409"
     @Pure
     fun max() -> max: T?
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `mean` {#safeds.data.tabular.containers.Column.mean data-toc-label='[function] mean'}
 
@@ -1050,10 +1084,11 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="419"
+    ```sds linenums="425"
     @Pure
     fun mean() -> mean: T
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `median` {#safeds.data.tabular.containers.Column.median data-toc-label='[function] median'}
 
@@ -1079,10 +1114,11 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="436"
+    ```sds linenums="442"
     @Pure
     fun median() -> median: T
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `min` {#safeds.data.tabular.containers.Column.min data-toc-label='[function] min'}
 
@@ -1105,10 +1141,11 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="450"
+    ```sds linenums="456"
     @Pure
     fun min() -> min: T?
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `missingValueCount` {#safeds.data.tabular.containers.Column.missingValueCount data-toc-label='[function] missingValueCount'}
 
@@ -1131,11 +1168,12 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="464"
+    ```sds linenums="470"
     @Pure
     @PythonName("missing_value_count")
     fun missingValueCount() -> missingValueCount: Int
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `missingValueRatio` {#safeds.data.tabular.containers.Column.missingValueRatio data-toc-label='[function] missingValueRatio'}
 
@@ -1164,11 +1202,12 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="485"
+    ```sds linenums="491"
     @Pure
     @PythonName("missing_value_ratio")
     fun missingValueRatio() -> missingValueRatio: Float
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `mode` {#safeds.data.tabular.containers.Column.mode data-toc-label='[function] mode'}
 
@@ -1200,12 +1239,13 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="505"
+    ```sds linenums="511"
     @Pure
     fun mode(
         @PythonName("ignore_missing_values") ignoreMissingValues: Boolean = true,
     ) -> mode: List<T?>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `none` {#safeds.data.tabular.containers.Column.none data-toc-label='[function] none'}
 
@@ -1246,25 +1286,26 @@ You can instead enable Kleene logic by setting `ignoreUnknown = false`. In this 
 ```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
-    val result = column.none((cell) -> cell.lt(0)); // true
+    val result = column.none((cell) -> cell < 0); // true
 }
 ```
 ```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
-    val result = column.none((cell) -> cell.gt(2)); // false
+    val result = column.none((cell) -> cell > 2); // false
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="250"
+    ```sds linenums="256"
     @Pure
     fun none(
         predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
         @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
     ) -> noneSatisfyPredicate: Int?
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `rename` {#safeds.data.tabular.containers.Column.rename data-toc-label='[function] rename'}
 
@@ -1296,12 +1337,13 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="272"
+    ```sds linenums="278"
     @Pure
     fun rename(
         @PythonName("new_name") newName: String
     ) -> renamedColumn: Column<T>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `stability` {#safeds.data.tabular.containers.Column.stability data-toc-label='[function] stability'}
 
@@ -1330,10 +1372,11 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="527"
+    ```sds linenums="533"
     @Pure
     fun stability() -> stability: Float
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `standardDeviation` {#safeds.data.tabular.containers.Column.standardDeviation data-toc-label='[function] standardDeviation'}
 
@@ -1358,11 +1401,12 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="544"
+    ```sds linenums="550"
     @Pure
     @PythonName("standard_deviation")
     fun standardDeviation() -> standardDeviation: Float
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `summarizeStatistics` {#safeds.data.tabular.containers.Column.summarizeStatistics data-toc-label='[function] summarizeStatistics'}
 
@@ -1385,11 +1429,12 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="309"
+    ```sds linenums="315"
     @Pure
     @PythonName("summarize_statistics")
     fun summarizeStatistics() -> statistics: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toList` {#safeds.data.tabular.containers.Column.toList data-toc-label='[function] toList'}
 
@@ -1412,11 +1457,12 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="576"
+    ```sds linenums="582"
     @Pure
     @PythonName("to_list")
     fun toList() -> values: List<T>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toTable` {#safeds.data.tabular.containers.Column.toTable data-toc-label='[function] toTable'}
 
@@ -1440,11 +1486,12 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="592"
+    ```sds linenums="598"
     @Pure
     @PythonName("to_table")
     fun toTable() -> table: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `transform` {#safeds.data.tabular.containers.Column.transform data-toc-label='[function] transform'}
 
@@ -1475,19 +1522,20 @@ Return a new column with values transformed by the transformer.
 ```sds hl_lines="3"
 pipeline example {
     val column = Column("test", [1, 2, 3]);
-    val result = column.transform((cell) -> cell.mul(2));
+    val result = column.transform((cell) -> cell * 2);
     // Column("test", [2, 4, 6])
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="293"
+    ```sds linenums="299"
     @Pure
     fun transform<R>(
         transformer: (cell: Cell<T>) -> transformedCell: Cell<R>
     ) -> transformedColumn: Column<R>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `variance` {#safeds.data.tabular.containers.Column.variance data-toc-label='[function] variance'}
 
@@ -1512,7 +1560,8 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="562"
+    ```sds linenums="568"
     @Pure
     fun variance() -> variance: Float
     ```
+    { data-search-exclude }

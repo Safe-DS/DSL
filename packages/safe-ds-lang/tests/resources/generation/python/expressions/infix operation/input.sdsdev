@@ -8,24 +8,80 @@ package tests.generator.infixOperation
 
 @Pure fun i() -> result: Int?
 
+@Pure fun cell() -> result: Cell
+
 pipeline test {
     f(g() or g());
+    f(cell() or g());
+    f(g() or cell());
+    f(cell() or cell());
+
     f(g() and g());
+    f(cell() and g());
+    f(g() and cell());
+    f(cell() and cell());
+
 
     f(h() == h());
+    f(cell() == h());
+    f(h() == cell());
+    f(cell() == cell());
+
     f(h() != h());
+    f(cell() != h());
+    f(h() != cell());
+    f(cell() != cell());
+
     f(h() === h());
     f(h() !== h());
 
+
     f(h() < h());
+    f(cell() < h());
+    f(h() < cell());
+    f(cell() < cell());
+
     f(h() <= h());
+    f(cell() <= h());
+    f(h() <= cell());
+    f(cell() <= cell());
+
     f(h() >= h());
+    f(cell() >= h());
+    f(h() >= cell());
+    f(cell() >= cell());
+
     f(h() > h());
+    f(cell() > h());
+    f(h() > cell());
+    f(cell() > cell());
+
 
     f(h() + h());
+    f(cell() + h());
+    f(h() + cell());
+    f(cell() + cell());
+
     f(h() - h());
+    f(cell() - h());
+    f(h() - cell());
+    f(cell() - cell());
+
     f(h() * h());
+    f(cell() * h());
+    f(h() * cell());
+    f(cell() * cell());
+
     f(h() / h());
+    f(cell() / h());
+    f(h() / cell());
+    f(cell() / cell());
+
+    f(h() % h());
+    f(cell() % h());
+    f(h() % cell());
+    f(cell() % cell());
+
 
     f(i() ?: i());
 }

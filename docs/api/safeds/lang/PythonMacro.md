@@ -25,3 +25,4 @@ call. `$this` is replaced by the receiver of the call. `$param` is replaced by t
         template: String
     )
     ```
+    { data-search-exclude }

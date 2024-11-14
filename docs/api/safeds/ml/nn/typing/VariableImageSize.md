@@ -18,6 +18,7 @@ With a `VariableImageSize`, all image sizes that are a multiple of `width` and `
     ```sds linenums="9"
     class VariableImageSize sub ModelImageSize
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `channel` {#safeds.ml.nn.typing.VariableImageSize.channel data-toc-label='[attribute] channel'}
 

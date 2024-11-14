@@ -6,7 +6,12 @@ package tests.generator.prefixOperation
 
 @Pure fun h() -> result: Int
 
+@Pure fun cell() -> result: Cell
+
 pipeline test {
     f(not g());
+    f(not cell());
+
     f(-h());
+    f(-cell());
 }

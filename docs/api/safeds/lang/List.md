@@ -73,6 +73,7 @@ pipeline example {
         fun size() -> size: Int
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `join` {#safeds.lang.List.join data-toc-label='[function] join'}
 
@@ -110,6 +111,7 @@ pipeline example {
     @PythonMacro("$separator.join($this)")
     fun join(separator: String = ", ") -> string: String
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `size` {#safeds.lang.List.size data-toc-label='[function] size'}
 
@@ -136,6 +138,7 @@ pipeline example {
     @PythonMacro("len($this)")
     fun size() -> size: Int
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `slice` {#safeds.lang.List.slice data-toc-label='[function] slice'}
 
@@ -169,3 +172,4 @@ pipeline example {
     @PythonMacro("$this[$start:$end]")
     fun slice(start: Int = 0, end: Int = this.size()) -> slice: List<E>
     ```
+    { data-search-exclude }

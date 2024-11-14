@@ -13,3 +13,4 @@ The annotation can be called multiple times for the same declaration.
     ```sds linenums="88"
     annotation Repeatable
     ```
+    { data-search-exclude }

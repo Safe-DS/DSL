@@ -45,7 +45,7 @@ class Column<out T = Any?>(
      */
     attr type: DataType
 
-    /*
+    /**
      * Return the distinct values in the column.
      *
      * @param ignoreMissingValues Whether to ignore missing values.
@@ -66,7 +66,7 @@ class Column<out T = Any?>(
     ) -> distinctValues: List<T?>
 
     /**
-     * Return the column value at specified index. This WILL LATER BE equivalent to the `[]` operator (indexed access).
+     * Return the column value at specified index. This is equivalent to the `[]` operator (indexed access).
      *
      * Nonnegative indices are counted from the beginning (starting at 0), negative indices from the end (starting at
      * -1).
@@ -79,6 +79,12 @@ class Column<out T = Any?>(
      * pipeline example {
      *     val column = Column("test", [1, 2, 3]);
      *     val result = column.getValue(1); // 2
+     * }
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("test", [1, 2, 3]);
+     *     val result = column[1]; // 2
      * }
      */
     @Pure
@@ -115,13 +121,13 @@ class Column<out T = Any?>(
      * @example
      * pipeline example {
      *     val column = Column("test", [1, 2, 3]);
-     *     val result = column.all((cell) -> cell.gt(0)); // true
+     *     val result = column.all((cell) -> cell > 0); // true
      * }
      *
      * @example
      * pipeline example {
      *     val column = Column("test", [1, 2, 3]);
-     *     val result = column.all((cell) -> cell.lt(3)); // false
+     *     val result = column.all((cell) -> cell < 3); // false
      * }
      */
     @Pure
@@ -159,16 +165,17 @@ class Column<out T = Any?>(
      * @example
      * pipeline example {
      *     val column = Column("test", [1, 2, 3]);
-     *     val result = column.any((cell) -> cell.gt(2)); // true
+     *     val result = column.any((cell) -> cell > 2); // true
      * }
      *
      * @example
      * pipeline example {
      *     val column = Column("test", [1, 2, 3]);
-     *     val result = column.any((cell) -> cell.lt(0)); // false
+     *     val result = column.any((cell) -> cell < 0); // false
      * }
      */
     @Pure
+    @Category(DataScienceCategory.DataExplorationQGeneral)
     fun any(
         predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
         @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
@@ -197,16 +204,17 @@ class Column<out T = Any?>(
      * @example
      * pipeline example {
      *    val column = Column("test", [1, 2, 3]);
-     *    val result = column.countIf((cell) -> cell.gt(1)); // 2
+     *    val result = column.countIf((cell) -> cell > 1); // 2
      * }
      *
      * @example
      * pipeline example {
      *     val column = Column("test", [1, 2, 3]);
-     *     val result = column.countIf((cell) -> cell.lt(0)); // 0
+     *     val result = column.countIf((cell) -> cell < 0); // 0
      * }
      */
     @Pure
+    @Category(DataScienceCategory.DataExplorationQGeneral)
     fun countIf(
         predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
         @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
@@ -240,16 +248,17 @@ class Column<out T = Any?>(
      * @example
      * pipeline example {
      *     val column = Column("test", [1, 2, 3]);
-     *     val result = column.none((cell) -> cell.lt(0)); // true
+     *     val result = column.none((cell) -> cell < 0); // true
      * }
      *
      * @example
      * pipeline example {
      *     val column = Column("test", [1, 2, 3]);
-     *     val result = column.none((cell) -> cell.gt(2)); // false
+     *     val result = column.none((cell) -> cell > 2); // false
      * }
      */
     @Pure
+    @Category(DataScienceCategory.DataExplorationQGeneral)
     fun none(
         predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
         @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
@@ -289,11 +298,12 @@ class Column<out T = Any?>(
      * @example
      * pipeline example {
      *     val column = Column("test", [1, 2, 3]);
-     *     val result = column.transform((cell) -> cell.mul(2));
+     *     val result = column.transform((cell) -> cell * 2);
      *     // Column("test", [2, 4, 6])
      * }
      */
     @Pure
+    @Category(DataScienceCategory.DataProcessingQColumn)
     fun transform<R>(
         transformer: (cell: Cell<T>) -> transformedCell: Cell<R>
     ) -> transformedColumn: Column<R>
@@ -495,6 +505,7 @@ class Column<out T = Any?>(
      */
     @Pure
     @PythonName("missing_value_ratio")
+    @Category(DataScienceCategory.DataExplorationQMetric)
     fun missingValueRatio() -> missingValueRatio: Float
 
     /**
@@ -514,6 +525,7 @@ class Column<out T = Any?>(
      * }
      */
     @Pure
+    @Category(DataScienceCategory.DataExplorationQMetric)
     fun mode(
         @PythonName("ignore_missing_values") ignoreMissingValues: Boolean = true,
     ) -> mode: List<T?>
@@ -536,6 +548,7 @@ class Column<out T = Any?>(
      * }
      */
     @Pure
+    @Category(DataScienceCategory.DataExplorationQMetric)
     fun stability() -> stability: Float
 
     /**
@@ -554,6 +567,7 @@ class Column<out T = Any?>(
      */
     @Pure
     @PythonName("standard_deviation")
+    @Category(DataScienceCategory.DataExplorationQMetric)
     fun standardDeviation() -> standardDeviation: Float
 
     /**
@@ -571,6 +585,7 @@ class Column<out T = Any?>(
      * }
      */
     @Pure
+    @Category(DataScienceCategory.DataExplorationQMetric)
     fun variance() -> variance: Float
 
     /**
@@ -586,6 +601,7 @@ class Column<out T = Any?>(
      */
     @Pure
     @PythonName("to_list")
+    @Category(DataScienceCategory.UtilitiesQConversion)
     fun toList() -> values: List<T>
 
     /**
@@ -602,5 +618,6 @@ class Column<out T = Any?>(
      */
     @Pure
     @PythonName("to_table")
+    @Category(DataScienceCategory.UtilitiesQConversion)
     fun toTable() -> table: Table
 }

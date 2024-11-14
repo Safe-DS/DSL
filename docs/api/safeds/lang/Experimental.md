@@ -22,3 +22,4 @@ The declaration might change without a major version bump.
     ```sds linenums="45"
     annotation Experimental
     ```
+    { data-search-exclude }

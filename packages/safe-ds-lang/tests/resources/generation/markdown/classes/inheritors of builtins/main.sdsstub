@@ -2,4 +2,4 @@ package safeds.lang
 
 class Number
 
-class Int sub Number
+class Float sub Number

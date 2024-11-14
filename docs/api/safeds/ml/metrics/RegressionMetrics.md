@@ -135,6 +135,7 @@ A collection of regression metrics.
         ) -> medianAbsoluteDeviation: Float
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-static-function"></code> `coefficientOfDetermination` {#safeds.ml.metrics.RegressionMetrics.coefficientOfDetermination data-toc-label='[static-function] coefficientOfDetermination'}
 
@@ -178,6 +179,7 @@ to 1.0. You can interpret the coefficient of determination as follows:
         expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
     ) -> coefficientOfDetermination: Float
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-static-function"></code> `meanAbsoluteError` {#safeds.ml.metrics.RegressionMetrics.meanAbsoluteError data-toc-label='[static-function] meanAbsoluteError'}
 
@@ -210,6 +212,7 @@ infinity.
         expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
     ) -> meanAbsoluteError: Float
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-static-function"></code> `meanDirectionalAccuracy` {#safeds.ml.metrics.RegressionMetrics.meanDirectionalAccuracy data-toc-label='[static-function] meanDirectionalAccuracy'}
 
@@ -246,6 +249,7 @@ for other types of data. Because of this, it is not included in the `summarize` 
         expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
     ) -> meanDirectionalAccuracy: Float
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-static-function"></code> `meanSquaredError` {#safeds.ml.metrics.RegressionMetrics.meanSquaredError data-toc-label='[static-function] meanSquaredError'}
 
@@ -280,6 +284,7 @@ infinity.
         expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
     ) -> meanSquaredError: Float
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-static-function"></code> `medianAbsoluteDeviation` {#safeds.ml.metrics.RegressionMetrics.medianAbsoluteDeviation data-toc-label='[static-function] medianAbsoluteDeviation'}
 
@@ -312,6 +317,7 @@ positive infinity.
         expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
     ) -> medianAbsoluteDeviation: Float
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-static-function"></code> `summarize` {#safeds.ml.metrics.RegressionMetrics.summarize data-toc-label='[static-function] summarize'}
 
@@ -339,3 +345,4 @@ Summarize regression metrics on the given data.
         expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
     ) -> metrics: Table
     ```
+    { data-search-exclude }

@@ -29,6 +29,7 @@ Description of MyEnum2.
         MyVariant3
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-variant"></code> `MyVariant1` {#tests.generation.markdown.enums.documented.MyEnum2.MyVariant1 data-toc-label='[variant] MyVariant1'}
 

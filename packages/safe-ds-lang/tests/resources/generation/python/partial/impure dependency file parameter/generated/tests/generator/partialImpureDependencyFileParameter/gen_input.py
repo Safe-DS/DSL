@@ -5,7 +5,7 @@ from tests.generator.partialImpureDependencyFileParameter import iFileRead, iFil
 # Pipelines --------------------------------------------------------------------
 
 def testPipeline():
-    __gen_impureFileWrite = iFileWrite('b.txt')
-    __gen_impureFileWrite2 = iFileWrite('c.txt')
-    __gen_impureFileReadAgain = iFileRead('d.txt')
-    __gen_result = (__gen_impureFileReadAgain) + (2)
+    __gen_placeholder_impureFileWrite = iFileWrite('b.txt')
+    __gen_placeholder_impureFileWrite2 = iFileWrite('c.txt')
+    __gen_placeholder_impureFileReadAgain = iFileRead('d.txt')
+    __gen_placeholder_result = (__gen_placeholder_impureFileReadAgain) + (2)

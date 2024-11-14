@@ -8,7 +8,7 @@ A NeuralNetworkRegressor is a neural network that is used for regression tasks.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `inputConversion` | `#!sds InputConversion<D, F>` | to convert the input data for the neural network | - |
+| `inputConversion` | [`InputConversion<D, F>`][safeds.ml.nn.converters.InputConversion] | to convert the input data for the neural network | - |
 | `layers` | [`List<Layer>`][safeds.lang.List] | a list of layers for the neural network to learn | - |
 
 **Type parameters:**
@@ -97,6 +97,7 @@ A NeuralNetworkRegressor is a neural network that is used for regression tasks.
         ) -> prediction: D
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `isFitted` {#safeds.ml.nn.NeuralNetworkRegressor.isFitted data-toc-label='[attribute] isFitted'}
 
@@ -151,6 +152,7 @@ pipeline example {
         batchSize >= 1
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `predict` {#safeds.ml.nn.NeuralNetworkRegressor.predict data-toc-label='[function] predict'}
 
@@ -186,6 +188,7 @@ pipeline example {
         @PythonName("test_data") testData: F
     ) -> prediction: D
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-static-function"></code> `loadPretrainedModel` {#safeds.ml.nn.NeuralNetworkRegressor.loadPretrainedModel data-toc-label='[static-function] loadPretrainedModel'}
 
@@ -212,3 +215,4 @@ Load a pretrained model from a [Huggingface repository](https://huggingface.co/m
         @PythonName("huggingface_repo") huggingfaceRepo: String
     ) -> pretrainedModel: NeuralNetworkRegressor<Any, Any>
     ```
+    { data-search-exclude }

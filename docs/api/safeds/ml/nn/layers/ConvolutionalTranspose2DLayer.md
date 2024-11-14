@@ -27,6 +27,7 @@ A convolutional transpose 2D Layer.
         @PythonName("output_padding") outputPadding: Int = 0
     ) sub Convolutional2DLayer
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `inputSize` {#safeds.ml.nn.layers.ConvolutionalTranspose2DLayer.inputSize data-toc-label='[attribute] inputSize'}
 

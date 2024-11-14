@@ -20,6 +20,7 @@ A container for constant image size in neural networks.
     ```sds linenums="7"
     class ConstantImageSize sub ModelImageSize
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `channel` {#safeds.ml.nn.typing.ConstantImageSize.channel data-toc-label='[attribute] channel'}
 

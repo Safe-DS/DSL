@@ -58,6 +58,7 @@ pipeline example {
         ) -> fittedClassifier: GradientBoostingClassifier
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `isFitted` {#safeds.ml.classical.classification.GradientBoostingClassifier.isFitted data-toc-label='[attribute] isFitted'}
 
@@ -106,6 +107,7 @@ better. Results range from 0.0 to 1.0.
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
     ) -> accuracy: Float
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `f1Score` {#safeds.ml.classical.classification.GradientBoostingClassifier.f1Score data-toc-label='[function] f1Score'}
 
@@ -139,6 +141,7 @@ classifier. Results range from 0.0 to 1.0.
         @PythonName("positive_class") positiveClass: Any
     ) -> f1Score: Float
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `fit` {#safeds.ml.classical.classification.GradientBoostingClassifier.fit data-toc-label='[function] fit'}
 
@@ -166,6 +169,7 @@ This classifier is not modified.
         @PythonName("training_set") trainingSet: TabularDataset
     ) -> fittedClassifier: GradientBoostingClassifier
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `getFeatureNames` {#safeds.ml.classical.classification.GradientBoostingClassifier.getFeatureNames data-toc-label='[function] getFeatureNames'}
 
@@ -186,6 +190,7 @@ Return the names of the feature columns.
     @PythonName("get_feature_names")
     fun getFeatureNames() -> featureNames: List<String>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `getFeaturesSchema` {#safeds.ml.classical.classification.GradientBoostingClassifier.getFeaturesSchema data-toc-label='[function] getFeaturesSchema'}
 
@@ -206,6 +211,7 @@ Return the schema of the feature columns.
     @PythonName("get_features_schema")
     fun getFeaturesSchema() -> featureSchema: Schema
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `getTargetName` {#safeds.ml.classical.classification.GradientBoostingClassifier.getTargetName data-toc-label='[function] getTargetName'}
 
@@ -226,6 +232,7 @@ Return the name of the target column.
     @PythonName("get_target_name")
     fun getTargetName() -> targetName: String
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `getTargetType` {#safeds.ml.classical.classification.GradientBoostingClassifier.getTargetType data-toc-label='[function] getTargetType'}
 
@@ -246,6 +253,7 @@ Return the type of the target column.
     @PythonName("get_target_type")
     fun getTargetType() -> targetType: DataType
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `precision` {#safeds.ml.classical.classification.GradientBoostingClassifier.precision data-toc-label='[function] precision'}
 
@@ -278,6 +286,7 @@ better the classifier. Results range from 0.0 to 1.0.
         @PythonName("positive_class") positiveClass: Any
     ) -> precision: Float
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `predict` {#safeds.ml.classical.classification.GradientBoostingClassifier.predict data-toc-label='[function] predict'}
 
@@ -305,6 +314,7 @@ Predict the target values on the given dataset.
         dataset: union<Table, TabularDataset>
     ) -> prediction: TabularDataset
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `recall` {#safeds.ml.classical.classification.GradientBoostingClassifier.recall data-toc-label='[function] recall'}
 
@@ -337,6 +347,7 @@ better the classifier. Results range from 0.0 to 1.0.
         @PythonName("positive_class") positiveClass: Any
     ) -> recall: Float
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `summarizeMetrics` {#safeds.ml.classical.classification.GradientBoostingClassifier.summarizeMetrics data-toc-label='[function] summarizeMetrics'}
 
@@ -367,3 +378,4 @@ Summarize the classifier's metrics on the given data.
         @PythonName("positive_class") positiveClass: Any
     ) -> metrics: Table
     ```
+    { data-search-exclude }

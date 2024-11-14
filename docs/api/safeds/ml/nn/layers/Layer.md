@@ -23,3 +23,4 @@ search:
     ```sds linenums="6"
     class Layer
     ```
+    { data-search-exclude }

@@ -26,6 +26,21 @@ pipeline myPipeline {
     unresolved[»""«];
 }
 
+class MyList sub List<Int>
+
+segment mySegment(
+    myList: MyList,
+) {
+    // $TEST$ no error r"Expected type .* but got .*\."
+    myList[»0«];
+
+    // $TEST$ error "Expected type 'Int' but got 'literal<"">'."
+    myList[»""«];
+
+    // $TEST$ no error r"Expected type .* but got .*\."
+    myList[»index()«];
+}
+
 // Strict checking of type parameter types
 class MyClass<T sub Any>(
     p1: T,

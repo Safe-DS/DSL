@@ -32,6 +32,7 @@ class ColumnPlotter(
      */
     @Pure
     @PythonName("box_plot")
+    @Category(DataScienceCategory.DataExplorationQVisualization)
     fun boxPlot(
         theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
@@ -51,6 +52,7 @@ class ColumnPlotter(
      */
     @Pure
     @PythonName("violin_plot")
+    @Category(DataScienceCategory.DataExplorationQVisualization)
     fun violinPlot(
         theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
@@ -70,6 +72,7 @@ class ColumnPlotter(
      * }
      */
     @Pure
+    @Category(DataScienceCategory.DataExplorationQVisualization)
     fun histogram(
         @PythonName("max_bin_count") const maxBinCount: Int = 10,
         theme: literal<"dark", "light"> = "light"
@@ -93,6 +96,7 @@ class ColumnPlotter(
      */
     @Pure
     @PythonName("lag_plot")
+    @Category(DataScienceCategory.DataExplorationQVisualization)
     fun lagPlot(
         lag: Int,
         theme: literal<"dark", "light"> = "light"

@@ -6,13 +6,13 @@ A two-dimensional collection of data. It can either be seen as a list of rows or
 
 To create a `Table` call the constructor or use one of the following static methods:
 
-| Method                                                                  | Description                            |
-| ----------------------------------------------------------------------- | -------------------------------------- |
-| [fromCsvFile][safeds.data.tabular.containers.Table.fromCsvFile]         | Create a table from a CSV file.        |
-| [fromJsonFile][safeds.data.tabular.containers.Table.fromJsonFile]       | Create a table from a JSON file.       |
-| [fromParquetFile][safeds.data.tabular.containers.Table.fromParquetFile] | Create a table from a Parquet file.    |
-| [fromColumns][safeds.data.tabular.containers.Table.fromColumns]         | Create a table from a list of columns. |
-| [fromMap][safeds.data.tabular.containers.Table.fromMap]                 | Create a table from a map.      |
+| Method                        | Description                            |
+| ----------------------------- | -------------------------------------- |
+| [Table.fromCsvFile][safeds.data.tabular.containers.Table.fromCsvFile]     | Create a table from a CSV file.        |
+| [Table.fromJsonFile][safeds.data.tabular.containers.Table.fromJsonFile]    | Create a table from a JSON file.       |
+| [Table.fromParquetFile][safeds.data.tabular.containers.Table.fromParquetFile] | Create a table from a Parquet file.    |
+| [Table.fromColumns][safeds.data.tabular.containers.Table.fromColumns]     | Create a table from a list of columns. |
+| [Table.fromMap][safeds.data.tabular.containers.Table.fromMap]         | Create a table from a map.             |
 
 **Parameters:**
 
@@ -190,7 +190,7 @@ pipeline example {
          * @example
          * pipeline example {
          *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
-         *     val result = table.addComputedColumn("c", (row) -> row.getValue("a").add(row.getValue("b")));
+         *     val result = table.addComputedColumn("c", (row) -> row["a"] + row["b"]);
          * }
          */
         @Pure
@@ -434,7 +434,7 @@ pipeline example {
          * @example
          * pipeline example {
          *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
-         *     val result = table.transformColumn("a", (cell) -> cell.add(1));
+         *     val result = table.transformColumn("a", (cell) -> cell + 1);
          *     // Table({"a": [2, 3, 4], "b": [4, 5, 6]})
          * }
          */
@@ -468,13 +468,13 @@ pipeline example {
          * @example
          * pipeline example {
          *     val table = Table({"col1": [1, 2, 3], "col2": [1, 3, 3]});
-         *     val result = table.countRowIf((row) -> row.getValue("col1").eq(row.getValue("col2"))); // 2
+         *     val result = table.countRowIf((row) -> row["col1"] == row["col2"]); // 2
          * }
          *
          * @example
          * pipeline example {
          *     val table = Table({"col1": [1, 2, 3], "col2": [1, 3, 3]});
-         *     val result = table.countRowIf((row) -> row.getValue("col1").gt(row.getValue("col2"))); // 0
+         *     val result = table.countRowIf((row) -> row["col1"] > row["col2"]); // 0
          * }
          */
         @Pure
@@ -514,7 +514,7 @@ pipeline example {
          * @example
          * pipeline example {
          *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
-         *     val result = table.removeRows((row) -> row.getValue("a").eq(2));
+         *     val result = table.removeRows((row) -> row["a"] == 2);
          *     // Table({"a": [1, 3], "b": [4, 6]})
          * }
          */
@@ -537,7 +537,7 @@ pipeline example {
          * @example
          * pipeline example {
          *     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
-         *     val result = table.removeRowsByColumn("a", (cell) -> cell.eq(2));
+         *     val result = table.removeRowsByColumn("a", (cell) -> cell == 2);
          *     // Table({"a": [1, 3], "b": [4, 6]})
          * }
          */
@@ -673,7 +673,7 @@ pipeline example {
          * @example
          * pipeline example {
          *     val table = Table({"a": [2, 1, 3], "b": [1, 1, 2]});
-         *     val result = table.sortRows((row) -> row.getValue("a").^sub(row.getValue("b")));
+         *     val result = table.sortRows((row) -> row["a"] - row["b"]);
          *     // Table({"a": [1, 2, 3], "b": [1, 1, 2]})
          * }
          */
@@ -1049,6 +1049,7 @@ pipeline example {
         ) -> dataset: TimeSeriesDataset
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `columnCount` {#safeds.data.tabular.containers.Table.columnCount data-toc-label='[attribute] columnCount'}
 
@@ -1122,6 +1123,7 @@ pipeline example {
         columns: union<Column, List<Column>>
     ) -> newTable: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `addComputedColumn` {#safeds.data.tabular.containers.Table.addComputedColumn data-toc-label='[function] addComputedColumn'}
 
@@ -1147,7 +1149,7 @@ Return a new table with an additional computed column.
 ```sds hl_lines="3"
 pipeline example {
     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
-    val result = table.addComputedColumn("c", (row) -> row.getValue("a").add(row.getValue("b")));
+    val result = table.addComputedColumn("c", (row) -> row["a"] + row["b"]);
 }
 ```
 
@@ -1161,6 +1163,7 @@ pipeline example {
         computer: (row: Row) -> computedCell: Cell
     ) -> newTable: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `addTableAsColumns` {#safeds.data.tabular.containers.Table.addTableAsColumns data-toc-label='[function] addTableAsColumns'}
 
@@ -1203,6 +1206,7 @@ pipeline example {
         other: Table
     ) -> newTable: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `addTableAsRows` {#safeds.data.tabular.containers.Table.addTableAsRows data-toc-label='[function] addTableAsRows'}
 
@@ -1245,6 +1249,7 @@ pipeline example {
         other: Table
     ) -> newTable: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `countRowIf` {#safeds.data.tabular.containers.Table.countRowIf data-toc-label='[function] countRowIf'}
 
@@ -1280,13 +1285,13 @@ if the predicate returns null at least once. Otherwise, it still returns how oft
 ```sds hl_lines="3"
 pipeline example {
     val table = Table({"col1": [1, 2, 3], "col2": [1, 3, 3]});
-    val result = table.countRowIf((row) -> row.getValue("col1").eq(row.getValue("col2"))); // 2
+    val result = table.countRowIf((row) -> row["col1"] == row["col2"]); // 2
 }
 ```
 ```sds hl_lines="3"
 pipeline example {
     val table = Table({"col1": [1, 2, 3], "col2": [1, 3, 3]});
-    val result = table.countRowIf((row) -> row.getValue("col1").gt(row.getValue("col2"))); // 0
+    val result = table.countRowIf((row) -> row["col1"] > row["col2"]); // 0
 }
 ```
 
@@ -1300,6 +1305,7 @@ pipeline example {
         @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
     ) -> count: Int?
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `getColumn` {#safeds.data.tabular.containers.Table.getColumn data-toc-label='[function] getColumn'}
 
@@ -1336,6 +1342,7 @@ pipeline example {
         name: String
     ) -> column: Column
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `getColumnType` {#safeds.data.tabular.containers.Table.getColumnType data-toc-label='[function] getColumnType'}
 
@@ -1371,6 +1378,7 @@ pipeline example {
         name: String
     ) -> type: DataType
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `hasColumn` {#safeds.data.tabular.containers.Table.hasColumn data-toc-label='[function] hasColumn'}
 
@@ -1406,6 +1414,7 @@ pipeline example {
         name: String
     ) -> hasColumn: Boolean
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `inverseTransformTable` {#safeds.data.tabular.containers.Table.inverseTransformTable data-toc-label='[function] inverseTransformTable'}
 
@@ -1448,6 +1457,7 @@ pipeline example {
         @PythonName("fitted_transformer") fittedTransformer: InvertibleTableTransformer
     ) -> newTable: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `join` {#safeds.data.tabular.containers.Table.join data-toc-label='[function] join'}
 
@@ -1490,6 +1500,7 @@ pipeline example {
         mode: literal<"inner", "left", "outer"> = "inner"
     ) -> newTable: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `removeColumns` {#safeds.data.tabular.containers.Table.removeColumns data-toc-label='[function] removeColumns'}
 
@@ -1537,6 +1548,7 @@ pipeline example {
         @PythonName("ignore_unknown_names") ignoreUnknownNames: Boolean = false
     ) -> newTable: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `removeColumnsExcept` {#safeds.data.tabular.containers.Table.removeColumnsExcept data-toc-label='[function] removeColumnsExcept'}
 
@@ -1573,6 +1585,7 @@ pipeline example {
         names: union<List<String>, String>
     ) -> newTable: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `removeColumnsWithMissingValues` {#safeds.data.tabular.containers.Table.removeColumnsWithMissingValues data-toc-label='[function] removeColumnsWithMissingValues'}
 
@@ -1606,6 +1619,7 @@ pipeline example {
     @PythonName("remove_columns_with_missing_values")
     fun removeColumnsWithMissingValues() -> newTable: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `removeDuplicateRows` {#safeds.data.tabular.containers.Table.removeDuplicateRows data-toc-label='[function] removeDuplicateRows'}
 
@@ -1636,6 +1650,7 @@ pipeline example {
     @PythonName("remove_duplicate_rows")
     fun removeDuplicateRows() -> newTable: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `removeNonNumericColumns` {#safeds.data.tabular.containers.Table.removeNonNumericColumns data-toc-label='[function] removeNonNumericColumns'}
 
@@ -1666,6 +1681,7 @@ pipeline example {
     @PythonName("remove_non_numeric_columns")
     fun removeNonNumericColumns() -> newTable: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `removeRows` {#safeds.data.tabular.containers.Table.removeRows data-toc-label='[function] removeRows'}
 
@@ -1690,7 +1706,7 @@ Return a new table without rows that satisfy a condition.
 ```sds hl_lines="3"
 pipeline example {
     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
-    val result = table.removeRows((row) -> row.getValue("a").eq(2));
+    val result = table.removeRows((row) -> row["a"] == 2);
     // Table({"a": [1, 3], "b": [4, 6]})
 }
 ```
@@ -1704,6 +1720,7 @@ pipeline example {
         query: (row: Row) -> shouldRemoveRow: Cell<Boolean>
     ) -> newTable: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `removeRowsByColumn` {#safeds.data.tabular.containers.Table.removeRowsByColumn data-toc-label='[function] removeRowsByColumn'}
 
@@ -1729,7 +1746,7 @@ Return a new table without rows that satisfy a condition on a specific column.
 ```sds hl_lines="3"
 pipeline example {
     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
-    val result = table.removeRowsByColumn("a", (cell) -> cell.eq(2));
+    val result = table.removeRowsByColumn("a", (cell) -> cell == 2);
     // Table({"a": [1, 3], "b": [4, 6]})
 }
 ```
@@ -1744,6 +1761,7 @@ pipeline example {
         query: (cell: Cell) -> shouldRemoveRow: Cell<Boolean>
     ) -> newTable: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `removeRowsWithMissingValues` {#safeds.data.tabular.containers.Table.removeRowsWithMissingValues data-toc-label='[function] removeRowsWithMissingValues'}
 
@@ -1782,6 +1800,7 @@ pipeline example {
         @PythonName("column_names") columnNames: List<String>? = null
     ) -> newTable: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `removeRowsWithOutliers` {#safeds.data.tabular.containers.Table.removeRowsWithOutliers data-toc-label='[function] removeRowsWithOutliers'}
 
@@ -1838,6 +1857,7 @@ pipeline example {
         @PythonName("z_score_threshold") zScoreThreshold: Float = 3.0
     ) -> newTable: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `renameColumn` {#safeds.data.tabular.containers.Table.renameColumn data-toc-label='[function] renameColumn'}
 
@@ -1878,6 +1898,7 @@ pipeline example {
         @PythonName("new_name") newName: String
     ) -> newTable: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `replaceColumn` {#safeds.data.tabular.containers.Table.replaceColumn data-toc-label='[function] replaceColumn'}
 
@@ -1942,6 +1963,7 @@ pipeline example {
         @PythonName("new_columns") newColumns: union<Column, List<Column>, Table>
     ) -> newTable: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `shuffleRows` {#safeds.data.tabular.containers.Table.shuffleRows data-toc-label='[function] shuffleRows'}
 
@@ -1972,6 +1994,7 @@ pipeline example {
     @PythonName("shuffle_rows")
     fun shuffleRows() -> newTable: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `sliceRows` {#safeds.data.tabular.containers.Table.sliceRows data-toc-label='[function] sliceRows'}
 
@@ -2019,6 +2042,7 @@ pipeline example {
         length: Int? = null
     ) -> newTable: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `sortRows` {#safeds.data.tabular.containers.Table.sortRows data-toc-label='[function] sortRows'}
 
@@ -2044,7 +2068,7 @@ Return a new table with the rows sorted.
 ```sds hl_lines="3"
 pipeline example {
     val table = Table({"a": [2, 1, 3], "b": [1, 1, 2]});
-    val result = table.sortRows((row) -> row.getValue("a").^sub(row.getValue("b")));
+    val result = table.sortRows((row) -> row["a"] - row["b"]);
     // Table({"a": [1, 2, 3], "b": [1, 1, 2]})
 }
 ```
@@ -2059,6 +2083,7 @@ pipeline example {
         descending: Boolean = false
     ) -> newTable: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `sortRowsByColumn` {#safeds.data.tabular.containers.Table.sortRowsByColumn data-toc-label='[function] sortRowsByColumn'}
 
@@ -2099,6 +2124,7 @@ pipeline example {
         descending: Boolean = false
     ) -> newTable: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `splitRows` {#safeds.data.tabular.containers.Table.splitRows data-toc-label='[function] splitRows'}
 
@@ -2145,6 +2171,7 @@ pipeline example {
         shuffle: Boolean = true
     ) -> (firstTable: Table, secondTable: Table)
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `summarizeStatistics` {#safeds.data.tabular.containers.Table.summarizeStatistics data-toc-label='[function] summarizeStatistics'}
 
@@ -2172,6 +2199,7 @@ pipeline example {
     @PythonName("summarize_statistics")
     fun summarizeStatistics() -> statistics: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toColumns` {#safeds.data.tabular.containers.Table.toColumns data-toc-label='[function] toColumns'}
 
@@ -2199,6 +2227,7 @@ pipeline example {
     @PythonName("to_columns")
     fun toColumns() -> columns: List<Column>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toCsvFile` {#safeds.data.tabular.containers.Table.toCsvFile data-toc-label='[function] toCsvFile'}
 
@@ -2231,6 +2260,7 @@ pipeline example {
         path: String
     )
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toJsonFile` {#safeds.data.tabular.containers.Table.toJsonFile data-toc-label='[function] toJsonFile'}
 
@@ -2265,6 +2295,7 @@ pipeline example {
         path: String
     )
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toMap` {#safeds.data.tabular.containers.Table.toMap data-toc-label='[function] toMap'}
 
@@ -2293,6 +2324,7 @@ pipeline example {
     @PythonName("to_dict")
     fun toMap() -> map: Map<String, List<Any>>
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toParquetFile` {#safeds.data.tabular.containers.Table.toParquetFile data-toc-label='[function] toParquetFile'}
 
@@ -2325,6 +2357,7 @@ pipeline example {
         path: String
     )
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toTabularDataset` {#safeds.data.tabular.containers.Table.toTabularDataset data-toc-label='[function] toTabularDataset'}
 
@@ -2376,6 +2409,7 @@ pipeline example {
         @PythonName("extra_names") extraNames: List<String>? = null
     ) -> dataset: TabularDataset
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `toTimeSeriesDataset` {#safeds.data.tabular.containers.Table.toTimeSeriesDataset data-toc-label='[function] toTimeSeriesDataset'}
 
@@ -2427,6 +2461,7 @@ pipeline example {
         continuous: Boolean = false
     ) -> dataset: TimeSeriesDataset
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `transformColumn` {#safeds.data.tabular.containers.Table.transformColumn data-toc-label='[function] transformColumn'}
 
@@ -2452,7 +2487,7 @@ Return a new table with a column transformed.
 ```sds hl_lines="3"
 pipeline example {
     val table = Table({"a": [1, 2, 3], "b": [4, 5, 6]});
-    val result = table.transformColumn("a", (cell) -> cell.add(1));
+    val result = table.transformColumn("a", (cell) -> cell + 1);
     // Table({"a": [2, 3, 4], "b": [4, 5, 6]})
 }
 ```
@@ -2467,6 +2502,7 @@ pipeline example {
         transformer: (cell: Cell) -> transformedCell: Cell
     ) -> newTable: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `transformTable` {#safeds.data.tabular.containers.Table.transformTable data-toc-label='[function] transformTable'}
 
@@ -2509,6 +2545,7 @@ pipeline example {
         @PythonName("fitted_transformer") fittedTransformer: TableTransformer
     ) -> newTable: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-static-function"></code> `fromColumns` {#safeds.data.tabular.containers.Table.fromColumns data-toc-label='[static-function] fromColumns'}
 
@@ -2545,6 +2582,7 @@ pipeline example {
         columns: union<Column, List<Column>>
     ) -> table: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-static-function"></code> `fromCsvFile` {#safeds.data.tabular.containers.Table.fromCsvFile data-toc-label='[static-function] fromCsvFile'}
 
@@ -2581,6 +2619,7 @@ pipeline example {
         separator: String = ","
     ) -> table: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-static-function"></code> `fromJsonFile` {#safeds.data.tabular.containers.Table.fromJsonFile data-toc-label='[static-function] fromJsonFile'}
 
@@ -2615,6 +2654,7 @@ pipeline example {
         path: String
     ) -> table: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-static-function"></code> `fromMap` {#safeds.data.tabular.containers.Table.fromMap data-toc-label='[static-function] fromMap'}
 
@@ -2650,6 +2690,7 @@ pipeline example {
         data: Map<String, List<Any>>
     ) -> table: Table
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-static-function"></code> `fromParquetFile` {#safeds.data.tabular.containers.Table.fromParquetFile data-toc-label='[static-function] fromParquetFile'}
 
@@ -2684,3 +2725,4 @@ pipeline example {
         path: String
     ) -> table: Table
     ```
+    { data-search-exclude }

@@ -519,17 +519,15 @@ export class SafeDsPythonServer {
             this.messageCallbacks.set(messageType, []);
         }
         this.messageCallbacks.get(messageType)!.push(<(message: PythonServerMessage) => void>callback);
-        return {
-            dispose: () => {
-                if (!this.messageCallbacks.has(messageType)) {
-                    return;
-                }
-                this.messageCallbacks.set(
-                    messageType,
-                    this.messageCallbacks.get(messageType)!.filter((storedCallback) => storedCallback !== callback),
-                );
-            },
-        };
+        return Disposable.create(() => {
+            if (!this.messageCallbacks.has(messageType)) {
+                return;
+            }
+            this.messageCallbacks.set(
+                messageType,
+                this.messageCallbacks.get(messageType)!.filter((storedCallback) => storedCallback !== callback),
+            );
+        });
     }
 
     /**
@@ -559,7 +557,7 @@ export class SafeDsPythonServer {
 
         try {
             await this.doConnectToServer(port);
-        } catch (error) {
+        } catch (_error) {
             await this.stop();
         }
     }

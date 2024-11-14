@@ -33,7 +33,7 @@ pipeline testPipeline {
     i1(4);
 
     // $TEST$ target
-    val »result« = i1(impureA2);
+    »val result = i1(impureA2);«
     i1(4); // Should not be generated - impure cannot affect result after result is already calculated
     val someImpureValue = i1(4); // Should not be generated - impure cannot affect result after result is already calculated
 }

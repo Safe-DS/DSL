@@ -17,3 +17,4 @@ reordering of calls or parallelization.
     ```sds linenums="12"
     annotation Pure
     ```
+    { data-search-exclude }

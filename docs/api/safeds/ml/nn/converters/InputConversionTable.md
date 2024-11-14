@@ -11,3 +11,4 @@ The input conversion for a neural network defines the input parameters for the n
     ```sds linenums="7"
     class InputConversionTable() sub InputConversion<TabularDataset, Table>
     ```
+    { data-search-exclude }

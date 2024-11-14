@@ -225,6 +225,7 @@ pipeline example {
         ) -> plot: Image
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `boxPlots` {#safeds.data.tabular.plotting.TablePlotter.boxPlots data-toc-label='[function] boxPlots'}
 
@@ -260,6 +261,7 @@ pipeline example {
         theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `correlationHeatmap` {#safeds.data.tabular.plotting.TablePlotter.correlationHeatmap data-toc-label='[function] correlationHeatmap'}
 
@@ -295,6 +297,7 @@ pipeline example {
         theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `histogram2d` {#safeds.data.tabular.plotting.TablePlotter.histogram2d data-toc-label='[function] histogram2d'}
 
@@ -343,6 +346,7 @@ pipeline example {
         theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `histograms` {#safeds.data.tabular.plotting.TablePlotter.histograms data-toc-label='[function] histograms'}
 
@@ -381,6 +385,7 @@ pipeline example {
         maxBinCount > 0
     }
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `linePlot` {#safeds.data.tabular.plotting.TablePlotter.linePlot data-toc-label='[function] linePlot'}
 
@@ -427,6 +432,7 @@ pipeline example {
         theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `movingAveragePlot` {#safeds.data.tabular.plotting.TablePlotter.movingAveragePlot data-toc-label='[function] movingAveragePlot'}
 
@@ -473,6 +479,7 @@ pipeline example {
         theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `scatterPlot` {#safeds.data.tabular.plotting.TablePlotter.scatterPlot data-toc-label='[function] scatterPlot'}
 
@@ -517,6 +524,7 @@ pipeline example {
         theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
     ```
+    { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `violinPlots` {#safeds.data.tabular.plotting.TablePlotter.violinPlots data-toc-label='[function] violinPlots'}
 
@@ -552,3 +560,4 @@ pipeline example {
         theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
     ```
+    { data-search-exclude }

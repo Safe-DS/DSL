@@ -12,8 +12,17 @@ fun f(
     callback: (p: MyClass) -> (r: Int)
 ) -> result: Any
 
+class C() {
+    @Pure fun parent() -> parent: C
+
+    @Pure fun f1(param: (a: C) -> ()) -> parent: C
+}
+
 pipeline myPipeline {
-    val result = f(
+    val _result = f(
         (p) -> p.g()
     );
+
+    val result2 = C().f1((a) -> a.parent());
+    val result3 = result2.parent();
 }
