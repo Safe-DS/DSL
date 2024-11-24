@@ -9,7 +9,6 @@ import {
     isSdsFunction,
     isSdsModule,
     isSdsPipeline,
-    isSdsSchema,
     isSdsSegment,
     SdsAnnotation,
     SdsAttribute,
@@ -22,14 +21,12 @@ import {
     SdsModuleMember,
     SdsParameter,
     SdsResult,
-    SdsSchema,
     SdsSegment,
     SdsTypeParameter,
 } from '../generated/ast.js';
 import {
     Class,
     getClassMembers,
-    getColumns,
     getEnumVariants,
     getModuleMembers,
     getPackageName,
@@ -138,8 +135,6 @@ export class SafeDsMarkdownGenerator {
         } else if (isSdsPipeline(node)) {
             // Pipelines cannot be called, so they are not documented
             return undefined;
-        } else if (isSdsSchema(node)) {
-            return this.describeSchema(node, state);
         } else if (isSdsSegment(node)) {
             return this.describeSegment(node, state);
         } else {
@@ -412,39 +407,6 @@ export class SafeDsMarkdownGenerator {
         const typeParameters = this.renderTypeParameters(getTypeParameters(node), state.knownPaths);
         if (typeParameters) {
             result += `\n**Type parameters:**\n\n${typeParameters}`;
-        }
-
-        // Examples
-        const examples = this.renderExamples(node);
-        if (examples) {
-            result += `\n**Examples:**\n\n${examples}`;
-        }
-
-        // Source code
-        const sourceCode = this.renderSourceCode(node);
-        if (sourceCode) {
-            result += `\n${sourceCode}`;
-        }
-
-        return result;
-    }
-
-    private describeSchema(node: SdsSchema, state: DetailsState): string {
-        let result = this.renderPreamble(node, state, 'schema');
-
-        // Columns
-        const columns = getColumns(node);
-        if (!isEmpty(columns)) {
-            result += '\n**Columns:**\n\n';
-            result += '| Name | Type |\n';
-            result += '|------|------|\n';
-
-            for (const column of columns) {
-                const name = column.columnName.value;
-                const type = this.typeComputer.computeType(column.columnType);
-
-                result += `| \`${name}\` | ${this.renderType(type, state.knownPaths)} |\n`;
-            }
         }
 
         // Examples

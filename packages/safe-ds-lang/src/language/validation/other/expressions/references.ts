@@ -6,7 +6,6 @@ import {
     isSdsFunction,
     isSdsMemberAccess,
     isSdsPipeline,
-    isSdsSchema,
     isSdsSegment,
     SdsReference,
 } from '../../../generated/ast.js';
@@ -90,11 +89,6 @@ export const referenceTargetMustNotBeAnnotationPipelineOrSchema = (
         });
     } else if (isSdsPipeline(target)) {
         accept('error', 'A pipeline must not be the target of a reference.', {
-            node,
-            code: CODE_REFERENCE_TARGET,
-        });
-    } else if (isSdsSchema(target)) {
-        accept('error', 'A schema must not be the target of a reference.', {
             node,
             code: CODE_REFERENCE_TARGET,
         });

@@ -28,7 +28,6 @@ import { annotationCallMustHaveCorrectTarget, targetsShouldNotHaveDuplicateEntri
 import {
     constraintListsShouldBeUsedWithCaution,
     literalTypesShouldBeUsedWithCaution,
-    schemasShouldBeUsedWithCaution,
     unionTypesShouldBeUsedWithCaution,
 } from './experimentalLanguageFeatures.js';
 import {
@@ -53,7 +52,6 @@ import {
     nameMustNotStartWithCodegenPrefix,
     nameShouldHaveCorrectCasing,
     pipelineMustContainUniqueNames,
-    schemaMustContainUniqueNames,
     segmentMustContainUniqueNames,
     staticClassMemberNamesMustNotCollideWithInheritedMembers,
 } from './names.js';
@@ -366,7 +364,6 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             referenceTargetShouldNotExperimental(services),
         ],
         SdsResult: [resultMustHaveTypeHint],
-        SdsSchema: [schemaMustContainUniqueNames, schemasShouldBeUsedWithCaution(services)],
         SdsSegment: [
             segmentMustContainUniqueNames,
             segmentParameterShouldBeUsed(services),
