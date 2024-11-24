@@ -138,9 +138,6 @@ SdsAnnotatedModuleMember returns SdsModuleMember:
         visibility=SdsVisibility?
         SdsFunctionFragment
 
-      | {SdsSchema.annotationCallList=current}
-        SdsSchemaFragment
-
       | {SdsPipeline.annotationCallList=current}
         SdsPipelineFragment
 
@@ -164,9 +161,6 @@ SdsUnannotatedModuleMember returns SdsModuleMember:
     | {SdsFunction}
       visibility=SdsVisibility?
       SdsFunctionFragment
-
-    | {SdsSchema}
-      SdsSchemaFragment
 
     | {SdsPipeline}
       SdsPipelineFragment
@@ -1068,39 +1062,6 @@ interface SdsTypeArgument extends SdsObject {
 SdsTypeArgument returns SdsTypeArgument:
     (typeParameter=[SdsTypeParameter:ID] '=' )?
     value=SdsType
-;
-
-
-// -----------------------------------------------------------------------------
-// Schemas
-// -----------------------------------------------------------------------------
-
-interface SdsSchema extends SdsModuleMember {
-    columnList: SdsColumnList
-}
-
-fragment SdsSchemaFragment:
-    visibility=SdsVisibility?
-    'schema'
-    name=ID
-    columnList=SdsColumnList
-;
-
-interface SdsColumnList extends SdsObject {
-    columns: SdsColumn[]
-}
-
-SdsColumnList returns SdsColumnList:
-    {SdsColumnList} '{' (columns+=SdsColumn  (',' columns+=SdsColumn)* ','? )? '}'
-;
-
-interface SdsColumn extends SdsObject {
-    columnName: SdsString
-    columnType: SdsType
-}
-
-SdsColumn returns SdsColumn:
-    columnName=SdsString ":" columnType=SdsType
 ;
 
 
