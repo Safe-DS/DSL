@@ -57,6 +57,7 @@ import { SafeDsServiceRegistry } from './safe-ds-service-registry.js';
 import { SafeDsPythonServer } from './runtime/safe-ds-python-server.js';
 import { SafeDsSlicer } from './flow/safe-ds-slicer.js';
 import { SafeDsSyntheticProperties } from './helpers/safe-ds-synthetic-properties.js';
+import { SafeDsLinker } from './scoping/safe-ds-linker.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -184,6 +185,7 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         PurityComputer: (services) => new SafeDsPurityComputer(services),
     },
     references: {
+        Linker: (services) => new SafeDsLinker(services),
         ScopeComputation: (services) => new SafeDsScopeComputation(services),
         ScopeProvider: (services) => new SafeDsScopeProvider(services),
     },

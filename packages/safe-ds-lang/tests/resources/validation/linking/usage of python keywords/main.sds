@@ -1,0 +1,21 @@
+package tests.validation.linking.usageOfPythonKeywords
+
+pipeline test {
+    // $TEST$ error r"Did you mean to write 'false'\?"
+    out »False«;
+
+    // $TEST$ error r"Did you mean to write 'true'\?"
+    out »True«;
+
+    // $TEST$ error r"Did you mean to write 'null'\?"
+    out »None«;
+
+    // $TEST$ no error r"Did you mean to write 'false'\?"
+    out a.»False«;
+
+    // $TEST$ no error r"Did you mean to write 'true'\?"
+    out a.»True«;
+
+    // $TEST$ no error r"Did you mean to write 'null'\?"
+    out a».None«;
+}
