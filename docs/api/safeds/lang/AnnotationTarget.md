@@ -60,11 +60,6 @@ The declaration types that can be targeted by annotations.
         Result
 
         /**
-         * The annotation can be called on schemas.
-         */
-        Schema
-
-        /**
          * The annotation can be called on segments.
          */
         Segment
@@ -116,10 +111,6 @@ The annotation can be called on pipelines.
 ## <code class="doc-symbol doc-symbol-variant"></code> `Result` {#safeds.lang.AnnotationTarget.Result data-toc-label='[variant] Result'}
 
 The annotation can be called on results.
-
-## <code class="doc-symbol doc-symbol-variant"></code> `Schema` {#safeds.lang.AnnotationTarget.Schema data-toc-label='[variant] Schema'}
-
-The annotation can be called on schemas.
 
 ## <code class="doc-symbol doc-symbol-variant"></code> `Segment` {#safeds.lang.AnnotationTarget.Segment data-toc-label='[variant] Segment'}
 
