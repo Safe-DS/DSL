@@ -23,7 +23,6 @@ Description of MyAnnotation2.
 - `Parameter`
 - `Pipeline`
 - `Result`
-- `Schema`
 - `Segment`
 - `TypeParameter`
 

@@ -55,7 +55,7 @@ The letter "Q" is used as a separator for subcategories.
         ModelEvaluationQVisualization
 
         /**
-         * Utility iterms for general use and lambda functions
+         * Utility terms for general use and lambda functions.
          */
         UtilitiesQConversion
         UtilitiesQTable
@@ -115,7 +115,7 @@ Configure a model and train it on your data.
 
 ## <code class="doc-symbol doc-symbol-variant"></code> `UtilitiesQConversion` {#safeds.lang.DataScienceCategory.UtilitiesQConversion data-toc-label='[variant] UtilitiesQConversion'}
 
-Utility iterms for general use and lambda functions
+Utility terms for general use and lambda functions.
 
 ## <code class="doc-symbol doc-symbol-variant"></code> `UtilitiesQImage` {#safeds.lang.DataScienceCategory.UtilitiesQImage data-toc-label='[variant] UtilitiesQImage'}
 

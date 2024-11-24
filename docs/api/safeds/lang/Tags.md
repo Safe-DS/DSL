@@ -17,12 +17,11 @@ Tags to associate with a declaration. They can be used for filtering.
 - `Enum`
 - `Function`
 - `Pipeline`
-- `Schema`
 - `Segment`
 
 ??? quote "Stub code in `ideIntegration.sdsstub`"
 
-    ```sds linenums="95"
+    ```sds linenums="94"
     annotation Tags(tags: List<String>)
     ```
     { data-search-exclude }
