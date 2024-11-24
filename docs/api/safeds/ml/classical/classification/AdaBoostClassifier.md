@@ -59,6 +59,7 @@ pipeline example {
          * @result fittedClassifier The fitted classifier.
          */
         @Pure
+        @Category(DataScienceCategory.ModelingQClassicalClassification)
         fun fit(
             @PythonName("training_set") trainingSet: TabularDataset
         ) -> fittedClassifier: AdaBoostClassifier
@@ -113,8 +114,9 @@ better. Results range from 0.0 to 1.0.
 
 ??? quote "Stub code in `Classifier.sdsstub`"
 
-    ```sds linenums="54"
+    ```sds linenums="56"
     @Pure
+    @Category(DataScienceCategory.ModelEvaluationQMetric)
     fun accuracy(
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
     ) -> accuracy: Float
@@ -145,9 +147,10 @@ classifier. Results range from 0.0 to 1.0.
 
 ??? quote "Stub code in `Classifier.sdsstub`"
 
-    ```sds linenums="72"
+    ```sds linenums="75"
     @Pure
     @PythonName("f1_score")
+    @Category(DataScienceCategory.ModelEvaluationQMetric)
     fun f1Score(
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>,
         @PythonName("positive_class") positiveClass: Any
@@ -177,6 +180,7 @@ This classifier is not modified.
 
     ```sds linenums="54"
     @Pure
+    @Category(DataScienceCategory.ModelingQClassicalClassification)
     fun fit(
         @PythonName("training_set") trainingSet: TabularDataset
     ) -> fittedClassifier: AdaBoostClassifier
@@ -291,8 +295,9 @@ better the classifier. Results range from 0.0 to 1.0.
 
 ??? quote "Stub code in `Classifier.sdsstub`"
 
-    ```sds linenums="92"
+    ```sds linenums="96"
     @Pure
+    @Category(DataScienceCategory.ModelEvaluationQMetric)
     fun precision(
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>,
         @PythonName("positive_class") positiveClass: Any
@@ -352,8 +357,9 @@ better the classifier. Results range from 0.0 to 1.0.
 
 ??? quote "Stub code in `Classifier.sdsstub`"
 
-    ```sds linenums="111"
+    ```sds linenums="116"
     @Pure
+    @Category(DataScienceCategory.ModelEvaluationQMetric)
     fun recall(
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>,
         @PythonName("positive_class") positiveClass: Any
@@ -382,9 +388,10 @@ Summarize the classifier's metrics on the given data.
 
 ??? quote "Stub code in `Classifier.sdsstub`"
 
-    ```sds linenums="35"
+    ```sds linenums="36"
     @Pure
     @PythonName("summarize_metrics")
+    @Category(DataScienceCategory.ModelEvaluationQMetric)
     fun summarizeMetrics(
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>,
         @PythonName("positive_class") positiveClass: Any

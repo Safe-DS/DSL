@@ -22,7 +22,6 @@ class ^out
 class ^package
 class ^pipeline
 class ^private
-class ^schema
 class ^static
 class ^segment
 class ^sub

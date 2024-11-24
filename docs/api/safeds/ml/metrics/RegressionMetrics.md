@@ -17,6 +17,7 @@ A collection of regression metrics.
          * @result metrics A table containing the regression metrics.
          */
         @Pure
+        @Category(DataScienceCategory.ModelEvaluationQMetric)
         static fun summarize(
             predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
             expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
@@ -47,6 +48,7 @@ A collection of regression metrics.
          */
         @Pure
         @PythonName("coefficient_of_determination")
+        @Category(DataScienceCategory.ModelEvaluationQMetric)
         static fun coefficientOfDetermination(
             predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
             expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
@@ -66,6 +68,7 @@ A collection of regression metrics.
          */
         @Pure
         @PythonName("mean_absolute_error")
+        @Category(DataScienceCategory.ModelEvaluationQMetric)
         static fun meanAbsoluteError(
             predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
             expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
@@ -89,6 +92,7 @@ A collection of regression metrics.
          */
         @Pure
         @PythonName("mean_directional_accuracy")
+        @Category(DataScienceCategory.ModelEvaluationQMetric)
         static fun meanDirectionalAccuracy(
             predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
             expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
@@ -110,6 +114,7 @@ A collection of regression metrics.
          */
         @Pure
         @PythonName("mean_squared_error")
+        @Category(DataScienceCategory.ModelEvaluationQMetric)
         static fun meanSquaredError(
             predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
             expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
@@ -129,6 +134,7 @@ A collection of regression metrics.
          */
         @Pure
         @PythonName("median_absolute_deviation")
+        @Category(DataScienceCategory.ModelEvaluationQMetric)
         static fun medianAbsoluteDeviation(
             predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
             expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
@@ -171,9 +177,10 @@ to 1.0. You can interpret the coefficient of determination as follows:
 
 ??? quote "Stub code in `RegressionMetrics.sdsstub`"
 
-    ```sds linenums="47"
+    ```sds linenums="48"
     @Pure
     @PythonName("coefficient_of_determination")
+    @Category(DataScienceCategory.ModelEvaluationQMetric)
     static fun coefficientOfDetermination(
         predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
         expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
@@ -204,9 +211,10 @@ infinity.
 
 ??? quote "Stub code in `RegressionMetrics.sdsstub`"
 
-    ```sds linenums="66"
+    ```sds linenums="68"
     @Pure
     @PythonName("mean_absolute_error")
+    @Category(DataScienceCategory.ModelEvaluationQMetric)
     static fun meanAbsoluteError(
         predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
         expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
@@ -241,9 +249,10 @@ for other types of data. Because of this, it is not included in the `summarize` 
 
 ??? quote "Stub code in `RegressionMetrics.sdsstub`"
 
-    ```sds linenums="89"
+    ```sds linenums="92"
     @Pure
     @PythonName("mean_directional_accuracy")
+    @Category(DataScienceCategory.ModelEvaluationQMetric)
     static fun meanDirectionalAccuracy(
         predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
         expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
@@ -276,9 +285,10 @@ infinity.
 
 ??? quote "Stub code in `RegressionMetrics.sdsstub`"
 
-    ```sds linenums="110"
+    ```sds linenums="114"
     @Pure
     @PythonName("mean_squared_error")
+    @Category(DataScienceCategory.ModelEvaluationQMetric)
     static fun meanSquaredError(
         predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
         expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
@@ -309,9 +319,10 @@ positive infinity.
 
 ??? quote "Stub code in `RegressionMetrics.sdsstub`"
 
-    ```sds linenums="129"
+    ```sds linenums="134"
     @Pure
     @PythonName("median_absolute_deviation")
+    @Category(DataScienceCategory.ModelEvaluationQMetric)
     static fun medianAbsoluteDeviation(
         predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
         expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>
@@ -340,6 +351,7 @@ Summarize regression metrics on the given data.
 
     ```sds linenums="18"
     @Pure
+    @Category(DataScienceCategory.ModelEvaluationQMetric)
     static fun summarize(
         predicted: union<Column<Any>, TabularDataset, TimeSeriesDataset>,
         expected: union<Column<Any>, TabularDataset, TimeSeriesDataset>

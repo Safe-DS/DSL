@@ -71,7 +71,7 @@ enum DataScienceCategory {
     ModelEvaluationQVisualization
 
     /**
-     * Utility iterms for general use and lambda functions
+     * Utility terms for general use and lambda functions.
      */
     UtilitiesQConversion
     UtilitiesQTable
@@ -89,7 +89,6 @@ enum DataScienceCategory {
     AnnotationTarget.Enum,
     AnnotationTarget.Function,
     AnnotationTarget.Pipeline,
-    AnnotationTarget.Schema,
     AnnotationTarget.Segment,
 ])
 annotation Tags(tags: List<String>)

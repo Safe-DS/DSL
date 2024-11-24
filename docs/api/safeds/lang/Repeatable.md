@@ -10,7 +10,7 @@ The annotation can be called multiple times for the same declaration.
 
 ??? quote "Stub code in `annotationUsage.sdsstub`"
 
-    ```sds linenums="88"
+    ```sds linenums="83"
     annotation Repeatable
     ```
     { data-search-exclude }

@@ -47,6 +47,7 @@ pipeline example {
          */
         @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
         @PythonName("from_file")
+        @Category(DataScienceCategory.DataImport)
         static fun fromFile(
             path: String
         ) -> image: Image
@@ -64,6 +65,7 @@ pipeline example {
          */
         @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
         @PythonName("to_jpeg_file")
+        @Category(DataScienceCategory.DataExport)
         fun toJpegFile(
             path: String
         )
@@ -81,6 +83,7 @@ pipeline example {
          */
         @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
         @PythonName("to_png_file")
+        @Category(DataScienceCategory.DataExport)
         fun toPngFile(
             path: String
         )
@@ -102,6 +105,7 @@ pipeline example {
          */
         @Pure
         @PythonName("change_channel")
+        @Category(DataScienceCategory.DataProcessingQImage)
         fun changeChannel(
             channel: Int
         ) -> newImage: Image
@@ -123,6 +127,7 @@ pipeline example {
          * }
          */
         @Pure
+        @Category(DataScienceCategory.DataProcessingQImage)
         fun resize(
             @PythonName("new_width") const newWidth: Int,
             @PythonName("new_height") const newHeight: Int
@@ -149,6 +154,7 @@ pipeline example {
          */
         @Pure
         @PythonName("convert_to_grayscale")
+        @Category(DataScienceCategory.DataProcessingQImage)
         fun convertToGrayscale() -> newImage: Image
 
         /**
@@ -170,6 +176,7 @@ pipeline example {
          * }
          */
         @Pure
+        @Category(DataScienceCategory.DataProcessingQImage)
         fun crop(
             const x: Int,
             const y: Int,
@@ -197,6 +204,7 @@ pipeline example {
          */
         @Pure
         @PythonName("flip_vertically")
+        @Category(DataScienceCategory.DataProcessingQImage)
         fun flipVertically() -> newImage: Image
 
         /**
@@ -214,6 +222,7 @@ pipeline example {
          */
         @Pure
         @PythonName("flip_horizontally")
+        @Category(DataScienceCategory.DataProcessingQImage)
         fun flipHorizontally() -> newImage: Image
 
         /**
@@ -237,6 +246,7 @@ pipeline example {
          */
         @Pure
         @PythonName("adjust_brightness")
+        @Category(DataScienceCategory.DataProcessingQImage)
         fun adjustBrightness(
             const factor: Float
         ) -> newImage: Image where {
@@ -260,6 +270,7 @@ pipeline example {
          */
         @Pure
         @PythonName("add_noise")
+        @Category(DataScienceCategory.DataProcessingQImage)
         fun addNoise(
             @PythonName("standard_deviation") const standardDeviation: Float
         ) -> newImage: Image where {
@@ -286,6 +297,7 @@ pipeline example {
          */
         @Pure
         @PythonName("adjust_contrast")
+        @Category(DataScienceCategory.DataProcessingQImage)
         fun adjustContrast(
             const factor: Float
         ) -> newImage: Image where {
@@ -312,6 +324,7 @@ pipeline example {
          */
         @Pure
         @PythonName("adjust_color_balance")
+        @Category(DataScienceCategory.DataProcessingQImage)
         fun adjustColorBalance(
             const factor: Float
         ) -> newImage: Image where {
@@ -335,6 +348,7 @@ pipeline example {
          * }
          */
         @Pure
+        @Category(DataScienceCategory.DataProcessingQImage)
         fun blur(
             const radius: Int
         ) -> newImage: Image where {
@@ -360,6 +374,7 @@ pipeline example {
          * }
          */
         @Pure
+        @Category(DataScienceCategory.DataProcessingQImage)
         fun sharpen(
             const factor: Float
         ) -> newImage: Image where {
@@ -381,6 +396,7 @@ pipeline example {
          */
         @Pure
         @PythonName("invert_colors")
+        @Category(DataScienceCategory.DataProcessingQImage)
         fun invertColors() -> newImage: Image
 
         /**
@@ -398,6 +414,7 @@ pipeline example {
          */
         @Pure
         @PythonName("rotate_right")
+        @Category(DataScienceCategory.DataProcessingQImage)
         fun rotateRight() -> newImage: Image
 
         /**
@@ -415,6 +432,7 @@ pipeline example {
          */
         @Pure
         @PythonName("rotate_left")
+        @Category(DataScienceCategory.DataProcessingQImage)
         fun rotateLeft() -> newImage: Image
 
         /**
@@ -432,6 +450,7 @@ pipeline example {
          */
         @Pure
         @PythonName("find_edges")
+        @Category(DataScienceCategory.DataProcessingQImage)
         fun findEdges() -> newImage: Image
     }
     ```
@@ -490,9 +509,10 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="257"
+    ```sds linenums="267"
     @Pure
     @PythonName("add_noise")
+    @Category(DataScienceCategory.DataProcessingQImage)
     fun addNoise(
         @PythonName("standard_deviation") const standardDeviation: Float
     ) -> newImage: Image where {
@@ -530,9 +550,10 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="234"
+    ```sds linenums="243"
     @Pure
     @PythonName("adjust_brightness")
+    @Category(DataScienceCategory.DataProcessingQImage)
     fun adjustBrightness(
         const factor: Float
     ) -> newImage: Image where {
@@ -570,9 +591,10 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="309"
+    ```sds linenums="321"
     @Pure
     @PythonName("adjust_color_balance")
+    @Category(DataScienceCategory.DataProcessingQImage)
     fun adjustColorBalance(
         const factor: Float
     ) -> newImage: Image where {
@@ -610,9 +632,10 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="283"
+    ```sds linenums="294"
     @Pure
     @PythonName("adjust_contrast")
+    @Category(DataScienceCategory.DataProcessingQImage)
     fun adjustContrast(
         const factor: Float
     ) -> newImage: Image where {
@@ -650,8 +673,9 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="333"
+    ```sds linenums="346"
     @Pure
+    @Category(DataScienceCategory.DataProcessingQImage)
     fun blur(
         const radius: Int
     ) -> newImage: Image where {
@@ -689,9 +713,10 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="99"
+    ```sds linenums="102"
     @Pure
     @PythonName("change_channel")
+    @Category(DataScienceCategory.DataProcessingQImage)
     fun changeChannel(
         channel: Int
     ) -> newImage: Image
@@ -724,9 +749,10 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="146"
+    ```sds linenums="151"
     @Pure
     @PythonName("convert_to_grayscale")
+    @Category(DataScienceCategory.DataProcessingQImage)
     fun convertToGrayscale() -> newImage: Image
     ```
     { data-search-exclude }
@@ -763,8 +789,9 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="168"
+    ```sds linenums="174"
     @Pure
+    @Category(DataScienceCategory.DataProcessingQImage)
     fun crop(
         const x: Int,
         const y: Int,
@@ -802,9 +829,10 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="429"
+    ```sds linenums="447"
     @Pure
     @PythonName("find_edges")
+    @Category(DataScienceCategory.DataProcessingQImage)
     fun findEdges() -> newImage: Image
     ```
     { data-search-exclude }
@@ -832,9 +860,10 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="211"
+    ```sds linenums="219"
     @Pure
     @PythonName("flip_horizontally")
+    @Category(DataScienceCategory.DataProcessingQImage)
     fun flipHorizontally() -> newImage: Image
     ```
     { data-search-exclude }
@@ -862,9 +891,10 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="194"
+    ```sds linenums="201"
     @Pure
     @PythonName("flip_vertically")
+    @Category(DataScienceCategory.DataProcessingQImage)
     fun flipVertically() -> newImage: Image
     ```
     { data-search-exclude }
@@ -892,9 +922,10 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="378"
+    ```sds linenums="393"
     @Pure
     @PythonName("invert_colors")
+    @Category(DataScienceCategory.DataProcessingQImage)
     fun invertColors() -> newImage: Image
     ```
     { data-search-exclude }
@@ -929,8 +960,9 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="121"
+    ```sds linenums="125"
     @Pure
+    @Category(DataScienceCategory.DataProcessingQImage)
     fun resize(
         @PythonName("new_width") const newWidth: Int,
         @PythonName("new_height") const newHeight: Int
@@ -964,9 +996,10 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="412"
+    ```sds linenums="429"
     @Pure
     @PythonName("rotate_left")
+    @Category(DataScienceCategory.DataProcessingQImage)
     fun rotateLeft() -> newImage: Image
     ```
     { data-search-exclude }
@@ -994,9 +1027,10 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="395"
+    ```sds linenums="411"
     @Pure
     @PythonName("rotate_right")
+    @Category(DataScienceCategory.DataProcessingQImage)
     fun rotateRight() -> newImage: Image
     ```
     { data-search-exclude }
@@ -1030,8 +1064,9 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="358"
+    ```sds linenums="372"
     @Pure
+    @Category(DataScienceCategory.DataProcessingQImage)
     fun sharpen(
         const factor: Float
     ) -> newImage: Image where {
@@ -1061,9 +1096,10 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="61"
+    ```sds linenums="62"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_jpeg_file")
+    @Category(DataScienceCategory.DataExport)
     fun toJpegFile(
         path: String
     )
@@ -1091,9 +1127,10 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="78"
+    ```sds linenums="80"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_png_file")
+    @Category(DataScienceCategory.DataExport)
     fun toPngFile(
         path: String
     )
@@ -1129,6 +1166,7 @@ pipeline example {
     ```sds linenums="44"
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
     @PythonName("from_file")
+    @Category(DataScienceCategory.DataImport)
     static fun fromFile(
         path: String
     ) -> image: Image

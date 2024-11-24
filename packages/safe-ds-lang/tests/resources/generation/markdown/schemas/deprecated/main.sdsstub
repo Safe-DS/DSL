@@ -1,4 +1,0 @@
-package tests.generation.markdown.schemas.deprecated
-
-@Deprecated
-schema MySchema1 {}

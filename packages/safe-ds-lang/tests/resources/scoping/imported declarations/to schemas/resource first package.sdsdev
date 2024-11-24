@@ -1,7 +1,0 @@
-package tests.scoping.importedDeclarations.toSchemas.first
-
-// $TEST$ target firstPackage_SchemaInFirstPackage
-schema »SchemaInFirstPackage« {}
-
-// $TEST$ target firstPackage_SchemaInBothPackages
-schema »SchemaInBothPackages« {}

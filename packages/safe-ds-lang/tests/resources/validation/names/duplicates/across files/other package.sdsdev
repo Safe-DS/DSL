@@ -11,8 +11,6 @@ fun »uniqueFunction«()
 // $TEST$ no error r"Multiple declarations in this package have the name '\w*'\."
 pipeline »uniquePipeline« {}
 // $TEST$ no error r"Multiple declarations in this package have the name '\w*'\."
-schema »UniqueSchema« {}
-// $TEST$ no error r"Multiple declarations in this package have the name '\w*'\."
 segment »uniquePublicSegment«() {}
 // $TEST$ no error r"Multiple declarations in this package have the name '\w*'\."
 internal segment »uniqueInternalSegment«() {}

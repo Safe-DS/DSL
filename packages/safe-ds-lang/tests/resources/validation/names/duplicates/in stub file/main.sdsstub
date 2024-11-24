@@ -61,13 +61,6 @@ fun »duplicateFunction«()
 // $TEST$ error "A declaration with name 'duplicateFunction' exists already in this file."
 fun »duplicateFunction«()
 
-// $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
-schema »UniqueSchema« {}
-// $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
-schema »DuplicateSchema« {}
-// $TEST$ error "A declaration with name 'DuplicateSchema' exists already in this file."
-schema »DuplicateSchema« {}
-
 
 // $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
 pipeline »DuplicateDeclaration« {}
@@ -81,5 +74,3 @@ class »DuplicateDeclaration«
 enum »DuplicateDeclaration«
 // $TEST$ error "A declaration with name 'DuplicateDeclaration' exists already in this file."
 fun »DuplicateDeclaration«()
-// $TEST$ error "A declaration with name 'DuplicateDeclaration' exists already in this file."
-schema »DuplicateDeclaration« {}

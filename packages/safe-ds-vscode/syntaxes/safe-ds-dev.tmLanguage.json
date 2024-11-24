@@ -8,7 +8,7 @@
         },
         {
             "name": "storage.type.safe-ds-dev",
-            "match": "\\b(annotation|attr|class|enum|fun|package|pipeline|schema|segment|val)\\b"
+            "match": "\\b(annotation|attr|class|enum|fun|package|pipeline|segment|val)\\b"
         },
         {
             "name": "storage.modifier.safe-ds-dev",

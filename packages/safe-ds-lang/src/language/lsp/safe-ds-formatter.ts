@@ -180,17 +180,6 @@ export class SafeDsFormatter extends AbstractFormatter {
         } else if (ast.isSdsTypeArgument(node)) {
             this.formatSdsTypeArgument(node);
         }
-
-        // -----------------------------------------------------------------------------
-        // Schemas
-        // -----------------------------------------------------------------------------
-        else if (ast.isSdsSchema(node)) {
-            this.formatSdsSchema(node);
-        } else if (ast.isSdsColumnList(node)) {
-            this.formatSdsColumnList(node);
-        } else if (ast.isSdsColumn(node)) {
-            this.formatSdsColumn(node);
-        }
     }
 
     // -----------------------------------------------------------------------------
@@ -958,38 +947,6 @@ export class SafeDsFormatter extends AbstractFormatter {
             /* c8 ignore next 2 */
             return false;
         }
-    }
-
-    // -----------------------------------------------------------------------------
-    // Schemas
-    // -----------------------------------------------------------------------------
-
-    private formatSdsSchema(node: ast.SdsSchema) {
-        const formatter = this.getNodeFormatter(node);
-
-        this.formatVisibilityAndKeyword(formatter, node, 'schema');
-        formatter.property('name').prepend(oneSpace());
-        formatter.property('columnList').prepend(oneSpace());
-    }
-
-    private formatSdsColumnList(node: ast.SdsColumnList) {
-        const formatter = this.getNodeFormatter(node);
-        const columns = node.columns ?? [];
-
-        if (columns.length === 0) {
-            formatter.keyword('{').append(noSpace());
-            formatter.keyword('}').prepend(noSpace());
-        } else {
-            formatter.nodes(...columns).prepend(indent());
-            formatter.keywords(',').prepend(noSpace());
-            formatter.keyword('}').prepend(newLine());
-        }
-    }
-
-    private formatSdsColumn(node: ast.SdsColumn) {
-        const formatter = this.getNodeFormatter(node);
-
-        formatter.keyword(':').prepend(noSpace()).append(oneSpace());
     }
 
     // -----------------------------------------------------------------------------

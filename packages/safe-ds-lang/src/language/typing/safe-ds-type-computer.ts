@@ -34,7 +34,6 @@ import {
     isSdsPrefixOperation,
     isSdsReference,
     isSdsResult,
-    isSdsSchema,
     isSdsSegment,
     isSdsTemplateString,
     isSdsThis,
@@ -249,8 +248,6 @@ export class SafeDsTypeComputer {
             return UnknownType;
         } else if (isSdsResult(node)) {
             return this.computeType(node.type);
-        } else if (isSdsSchema(node)) {
-            return UnknownType;
         } else if (isSdsSegment(node)) {
             return this.computeTypeOfCallableWithManifestTypes(node);
         } else if (isSdsTypeParameter(node)) {

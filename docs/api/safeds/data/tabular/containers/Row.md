@@ -26,7 +26,7 @@ This class cannot be instantiated directly. It is only used for arguments of cal
         /**
          * The schema of the row.
          */
-        attr ^schema: Schema
+        attr schema: Schema
 
         /**
          * Get the value of the specified column. This is equivalent to the `[]` operator (indexed access).

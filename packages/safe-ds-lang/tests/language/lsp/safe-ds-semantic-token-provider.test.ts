@@ -108,11 +108,6 @@ describe('SafeDsSemanticTokenProvider', async () => {
             expectedTokenTypes: [SemanticTokenTypes.parameter],
         },
         {
-            testName: 'schema declaration',
-            code: 'schema <|S|>() {}',
-            expectedTokenTypes: [SemanticTokenTypes.type],
-        },
-        {
             testName: 'segment declaration',
             code: 'segment <|s|>() {}',
             expectedTokenTypes: [SemanticTokenTypes.function],

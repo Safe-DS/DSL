@@ -27,7 +27,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="18"
+    ```sds linenums="19"
     class Column<out T = Any?>(
         name: String,
         data: List<T> = []
@@ -143,6 +143,7 @@ pipeline example {
          * }
          */
         @Pure
+        @Category(DataScienceCategory.DataExplorationQGeneral)
         fun all(
             predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
             @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
@@ -186,6 +187,7 @@ pipeline example {
          * }
          */
         @Pure
+        @Category(DataScienceCategory.DataExplorationQGeneral)
         fun any(
             predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
             @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
@@ -224,6 +226,7 @@ pipeline example {
          * }
          */
         @Pure
+        @Category(DataScienceCategory.DataExplorationQGeneral)
         fun countIf(
             predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
             @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
@@ -267,6 +270,7 @@ pipeline example {
          * }
          */
         @Pure
+        @Category(DataScienceCategory.DataExplorationQGeneral)
         fun none(
             predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
             @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
@@ -289,6 +293,7 @@ pipeline example {
          * }
          */
         @Pure
+        @Category(DataScienceCategory.DataProcessingQColumn)
         fun rename(
             @PythonName("new_name") newName: String
         ) -> renamedColumn: Column<T>
@@ -310,6 +315,7 @@ pipeline example {
          * }
          */
         @Pure
+        @Category(DataScienceCategory.DataProcessingQColumn)
         fun transform<R>(
             transformer: (cell: Cell<T>) -> transformedCell: Cell<R>
         ) -> transformedColumn: Column<R>
@@ -359,6 +365,7 @@ pipeline example {
          */
         @Pure
         @PythonName("correlation_with")
+        @Category(DataScienceCategory.DataExplorationQMetric)
         fun correlationWith(
             other: Column<Any>
         ) -> correlation: Float
@@ -378,6 +385,7 @@ pipeline example {
          */
         @Pure
         @PythonName("distinct_value_count")
+        @Category(DataScienceCategory.DataExplorationQMetric)
         fun distinctValueCount(
             @PythonName("ignore_missing_values") ignoreMissingValues: Boolean = true
         ) -> distinctValueCount: Int
@@ -406,6 +414,7 @@ pipeline example {
          * }
          */
         @Pure
+        @Category(DataScienceCategory.DataExplorationQMetric)
         fun idness() -> idness: Float
 
         /**
@@ -420,6 +429,7 @@ pipeline example {
          * }
          */
         @Pure
+        @Category(DataScienceCategory.DataExplorationQMetric)
         fun max() -> max: T?
 
         /**
@@ -436,6 +446,7 @@ pipeline example {
          * }
          */
         @Pure
+        @Category(DataScienceCategory.DataExplorationQMetric)
         fun mean() -> mean: T
 
         /**
@@ -453,6 +464,7 @@ pipeline example {
          * }
          */
         @Pure
+        @Category(DataScienceCategory.DataExplorationQMetric)
         fun median() -> median: T
 
         /**
@@ -467,6 +479,7 @@ pipeline example {
          * }
          */
         @Pure
+        @Category(DataScienceCategory.DataExplorationQMetric)
         fun min() -> min: T?
 
         /**
@@ -482,6 +495,7 @@ pipeline example {
          */
         @Pure
         @PythonName("missing_value_count")
+        @Category(DataScienceCategory.DataExplorationQMetric)
         fun missingValueCount() -> missingValueCount: Int
 
         /**
@@ -503,6 +517,7 @@ pipeline example {
          */
         @Pure
         @PythonName("missing_value_ratio")
+        @Category(DataScienceCategory.DataExplorationQMetric)
         fun missingValueRatio() -> missingValueRatio: Float
 
         /**
@@ -522,6 +537,7 @@ pipeline example {
          * }
          */
         @Pure
+        @Category(DataScienceCategory.DataExplorationQMetric)
         fun mode(
             @PythonName("ignore_missing_values") ignoreMissingValues: Boolean = true,
         ) -> mode: List<T?>
@@ -544,6 +560,7 @@ pipeline example {
          * }
          */
         @Pure
+        @Category(DataScienceCategory.DataExplorationQMetric)
         fun stability() -> stability: Float
 
         /**
@@ -562,6 +579,7 @@ pipeline example {
          */
         @Pure
         @PythonName("standard_deviation")
+        @Category(DataScienceCategory.DataExplorationQMetric)
         fun standardDeviation() -> standardDeviation: Float
 
         /**
@@ -579,6 +597,7 @@ pipeline example {
          * }
          */
         @Pure
+        @Category(DataScienceCategory.DataExplorationQMetric)
         fun variance() -> variance: Float
 
         /**
@@ -594,6 +613,7 @@ pipeline example {
          */
         @Pure
         @PythonName("to_list")
+        @Category(DataScienceCategory.UtilitiesQConversion)
         fun toList() -> values: List<T>
 
         /**
@@ -610,6 +630,7 @@ pipeline example {
          */
         @Pure
         @PythonName("to_table")
+        @Category(DataScienceCategory.UtilitiesQConversion)
         fun toTable() -> table: Table
     }
     ```
@@ -702,8 +723,9 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="132"
+    ```sds linenums="133"
     @Pure
+    @Category(DataScienceCategory.DataExplorationQGeneral)
     fun all(
         predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
         @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
@@ -762,8 +784,9 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="175"
+    ```sds linenums="177"
     @Pure
+    @Category(DataScienceCategory.DataExplorationQGeneral)
     fun any(
         predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
         @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
@@ -813,9 +836,10 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="347"
+    ```sds linenums="354"
     @Pure
     @PythonName("correlation_with")
+    @Category(DataScienceCategory.DataExplorationQMetric)
     fun correlationWith(
         other: Column<Any>
     ) -> correlation: Float
@@ -868,8 +892,9 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="213"
+    ```sds linenums="216"
     @Pure
+    @Category(DataScienceCategory.DataExplorationQGeneral)
     fun countIf(
         predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
         @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
@@ -904,9 +929,10 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="366"
+    ```sds linenums="374"
     @Pure
     @PythonName("distinct_value_count")
+    @Category(DataScienceCategory.DataExplorationQMetric)
     fun distinctValueCount(
         @PythonName("ignore_missing_values") ignoreMissingValues: Boolean = true
     ) -> distinctValueCount: Int
@@ -941,7 +967,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="61"
+    ```sds linenums="62"
     @Pure
     @PythonName("get_distinct_values")
     fun getDistinctValues(
@@ -986,7 +1012,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="89"
+    ```sds linenums="90"
     @Pure
     @PythonName("get_value")
     fun getValue(
@@ -1028,8 +1054,9 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="395"
+    ```sds linenums="404"
     @Pure
+    @Category(DataScienceCategory.DataExplorationQMetric)
     fun idness() -> idness: Float
     ```
     { data-search-exclude }
@@ -1055,8 +1082,9 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="409"
+    ```sds linenums="419"
     @Pure
+    @Category(DataScienceCategory.DataExplorationQMetric)
     fun max() -> max: T?
     ```
     { data-search-exclude }
@@ -1084,8 +1112,9 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="425"
+    ```sds linenums="436"
     @Pure
+    @Category(DataScienceCategory.DataExplorationQMetric)
     fun mean() -> mean: T
     ```
     { data-search-exclude }
@@ -1114,8 +1143,9 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="442"
+    ```sds linenums="454"
     @Pure
+    @Category(DataScienceCategory.DataExplorationQMetric)
     fun median() -> median: T
     ```
     { data-search-exclude }
@@ -1141,8 +1171,9 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="456"
+    ```sds linenums="469"
     @Pure
+    @Category(DataScienceCategory.DataExplorationQMetric)
     fun min() -> min: T?
     ```
     { data-search-exclude }
@@ -1168,9 +1199,10 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="470"
+    ```sds linenums="484"
     @Pure
     @PythonName("missing_value_count")
+    @Category(DataScienceCategory.DataExplorationQMetric)
     fun missingValueCount() -> missingValueCount: Int
     ```
     { data-search-exclude }
@@ -1202,9 +1234,10 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="491"
+    ```sds linenums="506"
     @Pure
     @PythonName("missing_value_ratio")
+    @Category(DataScienceCategory.DataExplorationQMetric)
     fun missingValueRatio() -> missingValueRatio: Float
     ```
     { data-search-exclude }
@@ -1239,8 +1272,9 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="511"
+    ```sds linenums="527"
     @Pure
+    @Category(DataScienceCategory.DataExplorationQMetric)
     fun mode(
         @PythonName("ignore_missing_values") ignoreMissingValues: Boolean = true,
     ) -> mode: List<T?>
@@ -1298,8 +1332,9 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="256"
+    ```sds linenums="260"
     @Pure
+    @Category(DataScienceCategory.DataExplorationQGeneral)
     fun none(
         predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
         @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
@@ -1337,8 +1372,9 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="278"
+    ```sds linenums="283"
     @Pure
+    @Category(DataScienceCategory.DataProcessingQColumn)
     fun rename(
         @PythonName("new_name") newName: String
     ) -> renamedColumn: Column<T>
@@ -1372,8 +1408,9 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="533"
+    ```sds linenums="550"
     @Pure
+    @Category(DataScienceCategory.DataExplorationQMetric)
     fun stability() -> stability: Float
     ```
     { data-search-exclude }
@@ -1401,9 +1438,10 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="550"
+    ```sds linenums="568"
     @Pure
     @PythonName("standard_deviation")
+    @Category(DataScienceCategory.DataExplorationQMetric)
     fun standardDeviation() -> standardDeviation: Float
     ```
     { data-search-exclude }
@@ -1429,7 +1467,7 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="315"
+    ```sds linenums="322"
     @Pure
     @PythonName("summarize_statistics")
     fun summarizeStatistics() -> statistics: Table
@@ -1457,9 +1495,10 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="582"
+    ```sds linenums="602"
     @Pure
     @PythonName("to_list")
+    @Category(DataScienceCategory.UtilitiesQConversion)
     fun toList() -> values: List<T>
     ```
     { data-search-exclude }
@@ -1486,9 +1525,10 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="598"
+    ```sds linenums="619"
     @Pure
     @PythonName("to_table")
+    @Category(DataScienceCategory.UtilitiesQConversion)
     fun toTable() -> table: Table
     ```
     { data-search-exclude }
@@ -1529,8 +1569,9 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="299"
+    ```sds linenums="305"
     @Pure
+    @Category(DataScienceCategory.DataProcessingQColumn)
     fun transform<R>(
         transformer: (cell: Cell<T>) -> transformedCell: Cell<R>
     ) -> transformedColumn: Column<R>
@@ -1560,8 +1601,9 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="568"
+    ```sds linenums="587"
     @Pure
+    @Category(DataScienceCategory.DataExplorationQMetric)
     fun variance() -> variance: Float
     ```
     { data-search-exclude }

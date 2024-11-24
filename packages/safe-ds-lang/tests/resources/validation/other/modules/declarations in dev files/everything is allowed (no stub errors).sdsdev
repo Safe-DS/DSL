@@ -29,5 +29,3 @@ enum »MyEnum« {
 }
 // $TEST$ no error "A stub file must not declare pipelines or segments."
 fun »myFunction«()
-// $TEST$ no error "A stub file must not declare pipelines or segments."
-schema »MySchema« {}

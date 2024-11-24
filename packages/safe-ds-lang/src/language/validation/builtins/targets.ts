@@ -11,7 +11,6 @@ import {
     isSdsParameter,
     isSdsPipeline,
     isSdsResult,
-    isSdsSchema,
     isSdsSegment,
     isSdsTypeParameter,
     SdsAnnotation,
@@ -143,11 +142,6 @@ const getActualTarget = (node: SdsAnnotationCall): GetActualTargetResult | void 
         return {
             enumVariantName: 'Result',
             prettyName: 'a result',
-        };
-    } else if (isSdsSchema(annotatedObject)) {
-        return {
-            enumVariantName: 'Schema',
-            prettyName: 'a schema',
         };
     } else if (isSdsSegment(annotatedObject)) {
         return {
