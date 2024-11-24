@@ -76,10 +76,7 @@ export const referenceMustNotBeStaticClassOrEnumReference = (node: SdsReference,
     }
 };
 
-export const referenceTargetMustNotBeAnnotationPipelineOrSchema = (
-    node: SdsReference,
-    accept: ValidationAcceptor,
-): void => {
+export const referenceTargetMustNotBeAnnotationOrPipeline = (node: SdsReference, accept: ValidationAcceptor): void => {
     const target = node.target.ref;
 
     if (isSdsAnnotation(target)) {
