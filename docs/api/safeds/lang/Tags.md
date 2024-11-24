@@ -22,7 +22,7 @@ Tags to associate with a declaration. They can be used for filtering.
 
 ??? quote "Stub code in `ideIntegration.sdsstub`"
 
-    ```sds linenums="71"
+    ```sds linenums="95"
     annotation Tags(tags: List<String>)
     ```
     { data-search-exclude }

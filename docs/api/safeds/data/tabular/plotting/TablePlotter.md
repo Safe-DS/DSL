@@ -21,7 +21,7 @@ pipeline example {
 
 ??? quote "Stub code in `TablePlotter.sdsstub`"
 
-    ```sds linenums="17"
+    ```sds linenums="18"
     class TablePlotter(
         table: Table
     ) {
@@ -40,6 +40,7 @@ pipeline example {
          */
         @Pure
         @PythonName("box_plots")
+        @Category(DataScienceCategory.DataExplorationQVisualization)
         fun boxPlots(
             theme: literal<"dark", "light"> = "light"
         ) -> plot: Image
@@ -59,6 +60,7 @@ pipeline example {
          */
         @Pure
         @PythonName("violin_plots")
+        @Category(DataScienceCategory.DataExplorationQVisualization)
         fun violinPlots(
             theme: literal<"dark", "light"> = "light"
         ) -> plot: Image
@@ -78,6 +80,7 @@ pipeline example {
          */
         @Pure
         @PythonName("correlation_heatmap")
+        @Category(DataScienceCategory.DataExplorationQVisualization)
         fun correlationHeatmap(
             theme: literal<"dark", "light"> = "light"
         ) -> plot: Image
@@ -97,6 +100,7 @@ pipeline example {
          * }
          */
         @Pure
+        @Category(DataScienceCategory.DataExplorationQVisualization)
         fun histograms(
             @PythonName("max_bin_count") const maxBinCount: Int = 10,
             theme: literal<"dark", "light"> = "light"
@@ -127,6 +131,7 @@ pipeline example {
          */
         @Pure
         @PythonName("line_plot")
+        @Category(DataScienceCategory.DataExplorationQVisualization)
         fun linePlot(
             @PythonName("x_name") xName: String,
             @PythonName("y_names") yNames: List<String>,
@@ -156,6 +161,7 @@ pipeline example {
          */
         @Pure
         @PythonName("scatter_plot")
+        @Category(DataScienceCategory.DataExplorationQVisualization)
         fun scatterPlot(
             @PythonName("x_name") xName: String,
             @PythonName("y_names") yNames: List<String>,
@@ -185,6 +191,7 @@ pipeline example {
          */
         @Pure
         @PythonName("moving_average_plot")
+        @Category(DataScienceCategory.DataExplorationQVisualization)
         fun movingAveragePlot(
             @PythonName("x_name") xName: String,
             @PythonName("y_name") yName: String,
@@ -216,6 +223,7 @@ pipeline example {
          */
         @Pure
         @PythonName("histogram_2d")
+        @Category(DataScienceCategory.DataExplorationQVisualization)
         fun histogram2d(
             @PythonName("x_name") xName: String,
             @PythonName("y_name") yName: String,
@@ -254,9 +262,10 @@ pipeline example {
 
 ??? quote "Stub code in `TablePlotter.sdsstub`"
 
-    ```sds linenums="33"
+    ```sds linenums="34"
     @Pure
     @PythonName("box_plots")
+    @Category(DataScienceCategory.DataExplorationQVisualization)
     fun boxPlots(
         theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
@@ -290,9 +299,10 @@ pipeline example {
 
 ??? quote "Stub code in `TablePlotter.sdsstub`"
 
-    ```sds linenums="71"
+    ```sds linenums="74"
     @Pure
     @PythonName("correlation_heatmap")
+    @Category(DataScienceCategory.DataExplorationQVisualization)
     fun correlationHeatmap(
         theme: literal<"dark", "light"> = "light"
     ) -> plot: Image
@@ -335,9 +345,10 @@ pipeline example {
 
 ??? quote "Stub code in `TablePlotter.sdsstub`"
 
-    ```sds linenums="209"
+    ```sds linenums="217"
     @Pure
     @PythonName("histogram_2d")
+    @Category(DataScienceCategory.DataExplorationQVisualization)
     fun histogram2d(
         @PythonName("x_name") xName: String,
         @PythonName("y_name") yName: String,
@@ -376,8 +387,9 @@ pipeline example {
 
 ??? quote "Stub code in `TablePlotter.sdsstub`"
 
-    ```sds linenums="91"
+    ```sds linenums="95"
     @Pure
+    @Category(DataScienceCategory.DataExplorationQVisualization)
     fun histograms(
         @PythonName("max_bin_count") const maxBinCount: Int = 10,
         theme: literal<"dark", "light"> = "light"
@@ -422,9 +434,10 @@ pipeline example {
 
 ??? quote "Stub code in `TablePlotter.sdsstub`"
 
-    ```sds linenums="120"
+    ```sds linenums="125"
     @Pure
     @PythonName("line_plot")
+    @Category(DataScienceCategory.DataExplorationQVisualization)
     fun linePlot(
         @PythonName("x_name") xName: String,
         @PythonName("y_names") yNames: List<String>,
@@ -469,9 +482,10 @@ pipeline example {
 
 ??? quote "Stub code in `TablePlotter.sdsstub`"
 
-    ```sds linenums="178"
+    ```sds linenums="185"
     @Pure
     @PythonName("moving_average_plot")
+    @Category(DataScienceCategory.DataExplorationQVisualization)
     fun movingAveragePlot(
         @PythonName("x_name") xName: String,
         @PythonName("y_name") yName: String,
@@ -515,9 +529,10 @@ pipeline example {
 
 ??? quote "Stub code in `TablePlotter.sdsstub`"
 
-    ```sds linenums="149"
+    ```sds linenums="155"
     @Pure
     @PythonName("scatter_plot")
+    @Category(DataScienceCategory.DataExplorationQVisualization)
     fun scatterPlot(
         @PythonName("x_name") xName: String,
         @PythonName("y_names") yNames: List<String>,
@@ -553,9 +568,10 @@ pipeline example {
 
 ??? quote "Stub code in `TablePlotter.sdsstub`"
 
-    ```sds linenums="52"
+    ```sds linenums="54"
     @Pure
     @PythonName("violin_plots")
+    @Category(DataScienceCategory.DataExplorationQVisualization)
     fun violinPlots(
         theme: literal<"dark", "light"> = "light"
     ) -> plot: Image

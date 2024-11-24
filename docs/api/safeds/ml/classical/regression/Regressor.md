@@ -38,6 +38,7 @@ A model for regression tasks.
          * @result fittedModel The fitted model.
          */
         @Pure
+        @Category(DataScienceCategory.ModelingQClassicalRegression)
         fun fit(
             @PythonName("training_set") trainingSet: TabularDataset
         ) -> fittedModel: Regressor
@@ -53,6 +54,7 @@ A model for regression tasks.
          */
         @Pure
         @PythonName("summarize_metrics")
+        @Category(DataScienceCategory.ModelEvaluationQMetric)
         fun summarizeMetrics(
             @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
         ) -> metrics: Table
@@ -84,6 +86,7 @@ A model for regression tasks.
          */
         @Pure
         @PythonName("coefficient_of_determination")
+        @Category(DataScienceCategory.ModelEvaluationQMetric)
         fun coefficientOfDetermination(
             @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
         ) -> coefficientOfDetermination: Float
@@ -104,6 +107,7 @@ A model for regression tasks.
          */
         @Pure
         @PythonName("mean_absolute_error")
+        @Category(DataScienceCategory.ModelEvaluationQMetric)
         fun meanAbsoluteError(
             @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
         ) -> meanAbsoluteError: Float
@@ -128,6 +132,7 @@ A model for regression tasks.
          */
         @Pure
         @PythonName("mean_directional_accuracy")
+        @Category(DataScienceCategory.ModelEvaluationQMetric)
         fun meanDirectionalAccuracy(
             @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
         ) -> meanDirectionalAccuracy: Float
@@ -150,6 +155,7 @@ A model for regression tasks.
          */
         @Pure
         @PythonName("mean_squared_error")
+        @Category(DataScienceCategory.ModelEvaluationQMetric)
         fun meanSquaredError(
             @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
         ) -> meanSquaredError: Float
@@ -170,6 +176,7 @@ A model for regression tasks.
          */
         @Pure
         @PythonName("median_absolute_deviation")
+        @Category(DataScienceCategory.ModelEvaluationQMetric)
         fun medianAbsoluteDeviation(
             @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
         ) -> medianAbsoluteDeviation: Float
@@ -219,9 +226,10 @@ to 1.0. You can interpret the coefficient of determination as follows:
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="65"
+    ```sds linenums="67"
     @Pure
     @PythonName("coefficient_of_determination")
+    @Category(DataScienceCategory.ModelEvaluationQMetric)
     fun coefficientOfDetermination(
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
     ) -> coefficientOfDetermination: Float
@@ -250,6 +258,7 @@ Create a copy of this model and fit it with the given training data.
 
     ```sds linenums="20"
     @Pure
+    @Category(DataScienceCategory.ModelingQClassicalRegression)
     fun fit(
         @PythonName("training_set") trainingSet: TabularDataset
     ) -> fittedModel: Regressor
@@ -365,9 +374,10 @@ infinity.
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="85"
+    ```sds linenums="88"
     @Pure
     @PythonName("mean_absolute_error")
+    @Category(DataScienceCategory.ModelEvaluationQMetric)
     fun meanAbsoluteError(
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
     ) -> meanAbsoluteError: Float
@@ -403,9 +413,10 @@ for other types of data. Because of this, it is not included in the `summarize_m
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="109"
+    ```sds linenums="113"
     @Pure
     @PythonName("mean_directional_accuracy")
+    @Category(DataScienceCategory.ModelEvaluationQMetric)
     fun meanDirectionalAccuracy(
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
     ) -> meanDirectionalAccuracy: Float
@@ -439,9 +450,10 @@ infinity.
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="131"
+    ```sds linenums="136"
     @Pure
     @PythonName("mean_squared_error")
+    @Category(DataScienceCategory.ModelEvaluationQMetric)
     fun meanSquaredError(
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
     ) -> meanSquaredError: Float
@@ -473,9 +485,10 @@ positive infinity.
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="151"
+    ```sds linenums="157"
     @Pure
     @PythonName("median_absolute_deviation")
+    @Category(DataScienceCategory.ModelEvaluationQMetric)
     fun medianAbsoluteDeviation(
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
     ) -> medianAbsoluteDeviation: Float
@@ -530,9 +543,10 @@ Summarize the regressor's metrics on the given data.
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="34"
+    ```sds linenums="35"
     @Pure
     @PythonName("summarize_metrics")
+    @Category(DataScienceCategory.ModelEvaluationQMetric)
     fun summarizeMetrics(
         @PythonName("validation_or_test_set") validationOrTestSet: union<Table, TabularDataset>
     ) -> metrics: Table

@@ -71,6 +71,7 @@ pipeline example {
          * @result fittedTransformer The fitted transformer.
          */
         @Pure
+        @Category(DataScienceCategory.DataProcessingQTransformer)
         fun fit(
             table: Table
         ) -> fittedTransformer: OneHotEncoder
@@ -87,6 +88,7 @@ pipeline example {
          */
         @Pure
         @PythonName("fit_and_transform")
+        @Category(DataScienceCategory.DataProcessingQTransformer)
         fun fitAndTransform(
             table: Table
         ) -> (fittedTransformer: OneHotEncoder, transformedTable: Table)
@@ -128,6 +130,7 @@ This transformer is not modified.
 
     ```sds linenums="63"
     @Pure
+    @Category(DataScienceCategory.DataProcessingQTransformer)
     fun fit(
         table: Table
     ) -> fittedTransformer: OneHotEncoder
@@ -155,9 +158,10 @@ Learn a transformation for a set of columns in a table and apply the learned tra
 
 ??? quote "Stub code in `OneHotEncoder.sdsstub`"
 
-    ```sds linenums="78"
+    ```sds linenums="79"
     @Pure
     @PythonName("fit_and_transform")
+    @Category(DataScienceCategory.DataProcessingQTransformer)
     fun fitAndTransform(
         table: Table
     ) -> (fittedTransformer: OneHotEncoder, transformedTable: Table)

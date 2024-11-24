@@ -31,6 +31,7 @@ pipeline example {
          * @result fittedArima The fitted ARIMA Model.
          */
         @Pure
+        @Category(DataScienceCategory.ModelingQClassicalRegression)
         fun fit(
             @PythonName("time_series") timeSeries: TimeSeriesDataset
         ) -> fittedArima: ArimaRegressor
@@ -43,6 +44,7 @@ pipeline example {
          * @result prediction A timeseries containing the predicted target vector and a time dummy as time column.
          */
         @Pure
+        @Category(DataScienceCategory.ModelingQClassicalRegression)
         fun predict(
             @PythonName("time_series") timeSeries: TimeSeriesDataset
         ) -> prediction: Table
@@ -56,6 +58,7 @@ pipeline example {
          */
         @Pure
         @PythonName("plot_predictions")
+        @Category(DataScienceCategory.ModelEvaluationQVisualization)
         fun plotPredictions(
             @PythonName("test_series") testSeries: TimeSeriesDataset
         ) -> image: Image
@@ -91,6 +94,7 @@ This ARIMA Model is not modified.
 
     ```sds linenums="31"
     @Pure
+    @Category(DataScienceCategory.ModelingQClassicalRegression)
     fun fit(
         @PythonName("time_series") timeSeries: TimeSeriesDataset
     ) -> fittedArima: ArimaRegressor
@@ -115,9 +119,10 @@ Plot the predictions of the trained model to the given target of the time series
 
 ??? quote "Stub code in `ArimaRegressor.sdsstub`"
 
-    ```sds linenums="55"
+    ```sds linenums="57"
     @Pure
     @PythonName("plot_predictions")
+    @Category(DataScienceCategory.ModelEvaluationQVisualization)
     fun plotPredictions(
         @PythonName("test_series") testSeries: TimeSeriesDataset
     ) -> image: Image
@@ -142,8 +147,9 @@ Predict a target vector using a time series target column. The model has to be t
 
 ??? quote "Stub code in `ArimaRegressor.sdsstub`"
 
-    ```sds linenums="43"
+    ```sds linenums="44"
     @Pure
+    @Category(DataScienceCategory.ModelingQClassicalRegression)
     fun predict(
         @PythonName("time_series") timeSeries: TimeSeriesDataset
     ) -> prediction: Table

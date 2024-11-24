@@ -8,7 +8,7 @@ A flatten layer.
 
 ??? quote "Stub code in `FlattenLayer.sdsstub`"
 
-    ```sds linenums="10"
+    ```sds linenums="11"
     class FlattenLayer() sub Layer {
         /**
          * Get the input_size of this layer.

@@ -30,7 +30,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="32"
+    ```sds linenums="33"
     class Table(
         data: Map<String, List<Any?>>? = null
     ) {
@@ -55,7 +55,7 @@ pipeline example {
         /**
          * The schema of the table.
          */
-        attr ^schema: Schema
+        attr schema: Schema
 
         /**
          * Create a table from a list of columns.
@@ -73,6 +73,7 @@ pipeline example {
          */
         @Pure
         @PythonName("from_columns")
+        @Category(DataScienceCategory.UtilitiesQConversion)
         static fun fromColumns(
             columns: union<Column, List<Column>>
         ) -> table: Table
@@ -92,6 +93,7 @@ pipeline example {
          */
         @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
         @PythonName("from_csv_file")
+        @Category(DataScienceCategory.DataImport)
         static fun fromCsvFile(
             path: String,
             separator: String = ","
@@ -112,6 +114,7 @@ pipeline example {
          */
         @Pure
         @PythonName("from_dict")
+        @Category(DataScienceCategory.DataImport)
         static fun fromMap(
             data: Map<String, List<Any>>
         ) -> table: Table
@@ -130,6 +133,7 @@ pipeline example {
          */
         @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
         @PythonName("from_json_file")
+        @Category(DataScienceCategory.DataImport)
         static fun fromJsonFile(
             path: String
         ) -> table: Table
@@ -148,6 +152,7 @@ pipeline example {
          */
         @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
         @PythonName("from_parquet_file")
+        @Category(DataScienceCategory.DataImport)
         static fun fromParquetFile(
             path: String
         ) -> table: Table
@@ -173,6 +178,7 @@ pipeline example {
          */
         @Pure
         @PythonName("add_columns")
+        @Category(DataScienceCategory.DataProcessingQTable)
         fun addColumns(
             columns: union<Column, List<Column>>
         ) -> newTable: Table
@@ -195,6 +201,7 @@ pipeline example {
          */
         @Pure
         @PythonName("add_computed_column")
+        @Category(DataScienceCategory.DataProcessingQTable)
         fun addComputedColumn(
             name: String,
             computer: (row: Row) -> computedCell: Cell
@@ -216,6 +223,7 @@ pipeline example {
          */
         @Pure
         @PythonName("get_column")
+        @Category(DataScienceCategory.UtilitiesQTable)
         fun getColumn(
             name: String
         ) -> column: Column
@@ -235,6 +243,7 @@ pipeline example {
          */
         @Pure
         @PythonName("get_column_type")
+        @Category(DataScienceCategory.UtilitiesQTable)
         fun getColumnType(
             name: String
         ) -> type: DataType
@@ -254,6 +263,7 @@ pipeline example {
          */
         @Pure
         @PythonName("has_column")
+        @Category(DataScienceCategory.UtilitiesQTable)
         fun hasColumn(
             name: String
         ) -> hasColumn: Boolean
@@ -285,6 +295,7 @@ pipeline example {
          */
         @Pure
         @PythonName("remove_columns")
+        @Category(DataScienceCategory.DataProcessingQTable)
         fun removeColumns(
             names: union<List<String>, String>,
             @PythonName("ignore_unknown_names") ignoreUnknownNames: Boolean = false
@@ -306,6 +317,7 @@ pipeline example {
          */
         @Pure
         @PythonName("remove_columns_except")
+        @Category(DataScienceCategory.DataProcessingQTable)
         fun removeColumnsExcept(
             names: union<List<String>, String>
         ) -> newTable: Table
@@ -329,6 +341,7 @@ pipeline example {
          */
         @Pure
         @PythonName("remove_columns_with_missing_values")
+        @Category(DataScienceCategory.DataProcessingQTable)
         fun removeColumnsWithMissingValues() -> newTable: Table
 
         /**
@@ -347,6 +360,7 @@ pipeline example {
          */
         @Pure
         @PythonName("remove_non_numeric_columns")
+        @Category(DataScienceCategory.DataProcessingQTable)
         fun removeNonNumericColumns() -> newTable: Table
 
         /**
@@ -368,6 +382,7 @@ pipeline example {
          */
         @Pure
         @PythonName("rename_column")
+        @Category(DataScienceCategory.DataProcessingQTable)
         fun renameColumn(
             @PythonName("old_name") oldName: String,
             @PythonName("new_name") newName: String
@@ -416,6 +431,7 @@ pipeline example {
          */
         @Pure
         @PythonName("replace_column")
+        @Category(DataScienceCategory.DataProcessingQTable)
         fun replaceColumn(
             @PythonName("old_name") oldName: String,
             @PythonName("new_columns") newColumns: union<Column, List<Column>, Table>
@@ -440,6 +456,7 @@ pipeline example {
          */
         @Pure
         @PythonName("transform_column")
+        @Category(DataScienceCategory.DataProcessingQTable)
         fun transformColumn(
             name: String,
             transformer: (cell: Cell) -> transformedCell: Cell
@@ -479,6 +496,7 @@ pipeline example {
          */
         @Pure
         @PythonName("count_row_if")
+        @Category(DataScienceCategory.DataExplorationQGeneral)
         fun countRowIf(
             predicate: (cell: Row) -> satisfiesPredicate: Cell<Boolean?>,
             @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
@@ -500,6 +518,7 @@ pipeline example {
          */
         @Pure
         @PythonName("remove_duplicate_rows")
+        @Category(DataScienceCategory.DataProcessingQTable)
         fun removeDuplicateRows() -> newTable: Table
 
         /**
@@ -520,6 +539,7 @@ pipeline example {
          */
         @Pure
         @PythonName("remove_rows")
+        @Category(DataScienceCategory.DataProcessingQTable)
         fun removeRows(
             query: (row: Row) -> shouldRemoveRow: Cell<Boolean>
         ) -> newTable: Table
@@ -543,6 +563,7 @@ pipeline example {
          */
         @Pure
         @PythonName("remove_rows_by_column")
+        @Category(DataScienceCategory.DataProcessingQTable)
         fun removeRowsByColumn(
             name: String,
             query: (cell: Cell) -> shouldRemoveRow: Cell<Boolean>
@@ -566,6 +587,7 @@ pipeline example {
          */
         @Pure
         @PythonName("remove_rows_with_missing_values")
+        @Category(DataScienceCategory.DataProcessingQTable)
         fun removeRowsWithMissingValues(
             @PythonName("column_names") columnNames: List<String>? = null
         ) -> newTable: Table
@@ -605,6 +627,7 @@ pipeline example {
          */
         @Pure
         @PythonName("remove_rows_with_outliers")
+        @Category(DataScienceCategory.DataProcessingQTable)
         fun removeRowsWithOutliers(
             @PythonName("column_names") columnNames: List<String>? = null,
             @PythonName("z_score_threshold") zScoreThreshold: Float = 3.0
@@ -626,6 +649,7 @@ pipeline example {
          */
         @Pure
         @PythonName("shuffle_rows")
+        @Category(DataScienceCategory.DataProcessingQTable)
         fun shuffleRows() -> newTable: Table
 
         /**
@@ -655,6 +679,7 @@ pipeline example {
          */
         @Pure
         @PythonName("slice_rows")
+        @Category(DataScienceCategory.DataProcessingQTable)
         fun sliceRows(
             start: Int = 0,
             length: Int? = null
@@ -679,6 +704,7 @@ pipeline example {
          */
         @Pure
         @PythonName("sort_rows")
+        @Category(DataScienceCategory.DataProcessingQTable)
         fun sortRows(
             @PythonName("key_selector") keySelector: (row: Row) -> key: Cell,
             descending: Boolean = false
@@ -703,6 +729,7 @@ pipeline example {
          */
         @Pure
         @PythonName("sort_rows_by_column")
+        @Category(DataScienceCategory.DataProcessingQTable)
         fun sortRowsByColumn(
             name: String,
             descending: Boolean = false
@@ -733,6 +760,7 @@ pipeline example {
          */
         @Pure
         @PythonName("split_rows")
+        @Category(DataScienceCategory.DataProcessingQTable)
         fun splitRows(
             @PythonName("percentage_in_first") percentageInFirst: Float,
             shuffle: Boolean = true
@@ -760,6 +788,7 @@ pipeline example {
          */
         @Pure
         @PythonName("add_table_as_columns")
+        @Category(DataScienceCategory.DataProcessingQTable)
         fun addTableAsColumns(
             other: Table
         ) -> newTable: Table
@@ -786,6 +815,7 @@ pipeline example {
          */
         @Pure
         @PythonName("add_table_as_rows")
+        @Category(DataScienceCategory.DataProcessingQTable)
         fun addTableAsRows(
             other: Table
         ) -> newTable: Table
@@ -812,6 +842,7 @@ pipeline example {
          */
         @Pure
         @PythonName("inverse_transform_table")
+        @Category(DataScienceCategory.DataProcessingQTable)
         fun inverseTransformTable(
             @PythonName("fitted_transformer") fittedTransformer: InvertibleTableTransformer
         ) -> newTable: Table
@@ -835,6 +866,7 @@ pipeline example {
          * }
          */
         @Pure
+        @Category(DataScienceCategory.DataProcessingQTable)
         fun join(
             @PythonName("right_table") rightTable: Table,
             @PythonName("left_names") leftNames: union<List<String>, String>,
@@ -864,6 +896,7 @@ pipeline example {
          */
         @Pure
         @PythonName("transform_table")
+        @Category(DataScienceCategory.DataProcessingQTable)
         fun transformTable(
             @PythonName("fitted_transformer") fittedTransformer: TableTransformer
         ) -> newTable: Table
@@ -881,6 +914,7 @@ pipeline example {
          */
         @Pure
         @PythonName("summarize_statistics")
+        @Category(DataScienceCategory.DataExplorationQMetric)
         fun summarizeStatistics() -> statistics: Table
 
         /**
@@ -896,6 +930,7 @@ pipeline example {
          */
         @Pure
         @PythonName("to_columns")
+        @Category(DataScienceCategory.UtilitiesQConversion)
         fun toColumns() -> columns: List<Column>
 
         /**
@@ -914,6 +949,7 @@ pipeline example {
          */
         @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
         @PythonName("to_csv_file")
+        @Category(DataScienceCategory.DataExport)
         fun toCsvFile(
             path: String
         )
@@ -932,6 +968,7 @@ pipeline example {
          */
         @Pure
         @PythonName("to_dict")
+        @Category(DataScienceCategory.UtilitiesQConversion)
         fun toMap() -> map: Map<String, List<Any>>
 
         /**
@@ -952,6 +989,7 @@ pipeline example {
          */
         @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
         @PythonName("to_json_file")
+        @Category(DataScienceCategory.DataExport)
         fun toJsonFile(
             path: String
         )
@@ -972,6 +1010,7 @@ pipeline example {
          */
         @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
         @PythonName("to_parquet_file")
+        @Category(DataScienceCategory.DataExport)
         fun toParquetFile(
             path: String
         )
@@ -1007,6 +1046,7 @@ pipeline example {
          */
         @Pure
         @PythonName("to_tabular_dataset")
+        @Category(DataScienceCategory.UtilitiesQConversion)
         fun toTabularDataset(
             @PythonName("target_name") targetName: String,
             @PythonName("extra_names") extraNames: List<String>? = null
@@ -1040,6 +1080,7 @@ pipeline example {
          */
         @Pure
         @PythonName("to_time_series_dataset")
+        @Category(DataScienceCategory.UtilitiesQConversion)
         fun toTimeSeriesDataset(
             @PythonName("target_name") targetName: String,
             @PythonName("window_size") windowSize: Int,
@@ -1116,9 +1157,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="172"
+    ```sds linenums="178"
     @Pure
     @PythonName("add_columns")
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun addColumns(
         columns: union<Column, List<Column>>
     ) -> newTable: Table
@@ -1155,9 +1197,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="194"
+    ```sds linenums="201"
     @Pure
     @PythonName("add_computed_column")
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun addComputedColumn(
         name: String,
         computer: (row: Row) -> computedCell: Cell
@@ -1199,9 +1242,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="759"
+    ```sds linenums="788"
     @Pure
     @PythonName("add_table_as_columns")
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun addTableAsColumns(
         other: Table
     ) -> newTable: Table
@@ -1242,9 +1286,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="785"
+    ```sds linenums="815"
     @Pure
     @PythonName("add_table_as_rows")
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun addTableAsRows(
         other: Table
     ) -> newTable: Table
@@ -1297,9 +1342,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="478"
+    ```sds linenums="496"
     @Pure
     @PythonName("count_row_if")
+    @Category(DataScienceCategory.DataExplorationQGeneral)
     fun countRowIf(
         predicate: (cell: Row) -> satisfiesPredicate: Cell<Boolean?>,
         @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
@@ -1335,9 +1381,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="215"
+    ```sds linenums="223"
     @Pure
     @PythonName("get_column")
+    @Category(DataScienceCategory.UtilitiesQTable)
     fun getColumn(
         name: String
     ) -> column: Column
@@ -1371,9 +1418,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="234"
+    ```sds linenums="243"
     @Pure
     @PythonName("get_column_type")
+    @Category(DataScienceCategory.UtilitiesQTable)
     fun getColumnType(
         name: String
     ) -> type: DataType
@@ -1407,9 +1455,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="253"
+    ```sds linenums="263"
     @Pure
     @PythonName("has_column")
+    @Category(DataScienceCategory.UtilitiesQTable)
     fun hasColumn(
         name: String
     ) -> hasColumn: Boolean
@@ -1450,9 +1499,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="811"
+    ```sds linenums="842"
     @Pure
     @PythonName("inverse_transform_table")
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun inverseTransformTable(
         @PythonName("fitted_transformer") fittedTransformer: InvertibleTableTransformer
     ) -> newTable: Table
@@ -1491,8 +1541,9 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="835"
+    ```sds linenums="867"
     @Pure
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun join(
         @PythonName("right_table") rightTable: Table,
         @PythonName("left_names") leftNames: union<List<String>, String>,
@@ -1540,9 +1591,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="284"
+    ```sds linenums="295"
     @Pure
     @PythonName("remove_columns")
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun removeColumns(
         names: union<List<String>, String>,
         @PythonName("ignore_unknown_names") ignoreUnknownNames: Boolean = false
@@ -1578,9 +1630,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="305"
+    ```sds linenums="317"
     @Pure
     @PythonName("remove_columns_except")
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun removeColumnsExcept(
         names: union<List<String>, String>
     ) -> newTable: Table
@@ -1614,9 +1667,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="328"
+    ```sds linenums="341"
     @Pure
     @PythonName("remove_columns_with_missing_values")
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun removeColumnsWithMissingValues() -> newTable: Table
     ```
     { data-search-exclude }
@@ -1645,9 +1699,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="499"
+    ```sds linenums="518"
     @Pure
     @PythonName("remove_duplicate_rows")
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun removeDuplicateRows() -> newTable: Table
     ```
     { data-search-exclude }
@@ -1676,9 +1731,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="346"
+    ```sds linenums="360"
     @Pure
     @PythonName("remove_non_numeric_columns")
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun removeNonNumericColumns() -> newTable: Table
     ```
     { data-search-exclude }
@@ -1713,9 +1769,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="519"
+    ```sds linenums="539"
     @Pure
     @PythonName("remove_rows")
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun removeRows(
         query: (row: Row) -> shouldRemoveRow: Cell<Boolean>
     ) -> newTable: Table
@@ -1753,9 +1810,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="542"
+    ```sds linenums="563"
     @Pure
     @PythonName("remove_rows_by_column")
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun removeRowsByColumn(
         name: String,
         query: (cell: Cell) -> shouldRemoveRow: Cell<Boolean>
@@ -1793,9 +1851,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="565"
+    ```sds linenums="587"
     @Pure
     @PythonName("remove_rows_with_missing_values")
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun removeRowsWithMissingValues(
         @PythonName("column_names") columnNames: List<String>? = null
     ) -> newTable: Table
@@ -1849,9 +1908,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="604"
+    ```sds linenums="627"
     @Pure
     @PythonName("remove_rows_with_outliers")
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun removeRowsWithOutliers(
         @PythonName("column_names") columnNames: List<String>? = null,
         @PythonName("z_score_threshold") zScoreThreshold: Float = 3.0
@@ -1890,9 +1950,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="367"
+    ```sds linenums="382"
     @Pure
     @PythonName("rename_column")
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun renameColumn(
         @PythonName("old_name") oldName: String,
         @PythonName("new_name") newName: String
@@ -1955,9 +2016,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="415"
+    ```sds linenums="431"
     @Pure
     @PythonName("replace_column")
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun replaceColumn(
         @PythonName("old_name") oldName: String,
         @PythonName("new_columns") newColumns: union<Column, List<Column>, Table>
@@ -1989,9 +2051,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="625"
+    ```sds linenums="649"
     @Pure
     @PythonName("shuffle_rows")
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun shuffleRows() -> newTable: Table
     ```
     { data-search-exclude }
@@ -2034,9 +2097,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="654"
+    ```sds linenums="679"
     @Pure
     @PythonName("slice_rows")
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun sliceRows(
         start: Int = 0,
         length: Int? = null
@@ -2075,9 +2139,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="678"
+    ```sds linenums="704"
     @Pure
     @PythonName("sort_rows")
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun sortRows(
         @PythonName("key_selector") keySelector: (row: Row) -> key: Cell,
         descending: Boolean = false
@@ -2116,9 +2181,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="702"
+    ```sds linenums="729"
     @Pure
     @PythonName("sort_rows_by_column")
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun sortRowsByColumn(
         name: String,
         descending: Boolean = false
@@ -2163,9 +2229,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="732"
+    ```sds linenums="760"
     @Pure
     @PythonName("split_rows")
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun splitRows(
         @PythonName("percentage_in_first") percentageInFirst: Float,
         shuffle: Boolean = true
@@ -2194,9 +2261,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="880"
+    ```sds linenums="914"
     @Pure
     @PythonName("summarize_statistics")
+    @Category(DataScienceCategory.DataExplorationQMetric)
     fun summarizeStatistics() -> statistics: Table
     ```
     { data-search-exclude }
@@ -2222,9 +2290,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="895"
+    ```sds linenums="930"
     @Pure
     @PythonName("to_columns")
+    @Category(DataScienceCategory.UtilitiesQConversion)
     fun toColumns() -> columns: List<Column>
     ```
     { data-search-exclude }
@@ -2253,9 +2322,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="913"
+    ```sds linenums="949"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_csv_file")
+    @Category(DataScienceCategory.DataExport)
     fun toCsvFile(
         path: String
     )
@@ -2288,9 +2358,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="951"
+    ```sds linenums="989"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_json_file")
+    @Category(DataScienceCategory.DataExport)
     fun toJsonFile(
         path: String
     )
@@ -2319,9 +2390,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="931"
+    ```sds linenums="968"
     @Pure
     @PythonName("to_dict")
+    @Category(DataScienceCategory.UtilitiesQConversion)
     fun toMap() -> map: Map<String, List<Any>>
     ```
     { data-search-exclude }
@@ -2350,9 +2422,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="971"
+    ```sds linenums="1010"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_parquet_file")
+    @Category(DataScienceCategory.DataExport)
     fun toParquetFile(
         path: String
     )
@@ -2401,9 +2474,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="1006"
+    ```sds linenums="1046"
     @Pure
     @PythonName("to_tabular_dataset")
+    @Category(DataScienceCategory.UtilitiesQConversion)
     fun toTabularDataset(
         @PythonName("target_name") targetName: String,
         @PythonName("extra_names") extraNames: List<String>? = null
@@ -2450,9 +2524,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="1039"
+    ```sds linenums="1080"
     @Pure
     @PythonName("to_time_series_dataset")
+    @Category(DataScienceCategory.UtilitiesQConversion)
     fun toTimeSeriesDataset(
         @PythonName("target_name") targetName: String,
         @PythonName("window_size") windowSize: Int,
@@ -2494,9 +2569,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="439"
+    ```sds linenums="456"
     @Pure
     @PythonName("transform_column")
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun transformColumn(
         name: String,
         transformer: (cell: Cell) -> transformedCell: Cell
@@ -2538,9 +2614,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="863"
+    ```sds linenums="896"
     @Pure
     @PythonName("transform_table")
+    @Category(DataScienceCategory.DataProcessingQTable)
     fun transformTable(
         @PythonName("fitted_transformer") fittedTransformer: TableTransformer
     ) -> newTable: Table
@@ -2575,9 +2652,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="72"
+    ```sds linenums="73"
     @Pure
     @PythonName("from_columns")
+    @Category(DataScienceCategory.UtilitiesQConversion)
     static fun fromColumns(
         columns: union<Column, List<Column>>
     ) -> table: Table
@@ -2611,9 +2689,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="91"
+    ```sds linenums="93"
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
     @PythonName("from_csv_file")
+    @Category(DataScienceCategory.DataImport)
     static fun fromCsvFile(
         path: String,
         separator: String = ","
@@ -2647,9 +2726,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="129"
+    ```sds linenums="133"
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
     @PythonName("from_json_file")
+    @Category(DataScienceCategory.DataImport)
     static fun fromJsonFile(
         path: String
     ) -> table: Table
@@ -2683,9 +2763,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="111"
+    ```sds linenums="114"
     @Pure
     @PythonName("from_dict")
+    @Category(DataScienceCategory.DataImport)
     static fun fromMap(
         data: Map<String, List<Any>>
     ) -> table: Table
@@ -2718,9 +2799,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="147"
+    ```sds linenums="152"
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
     @PythonName("from_parquet_file")
+    @Category(DataScienceCategory.DataImport)
     static fun fromParquetFile(
         path: String
     ) -> table: Table

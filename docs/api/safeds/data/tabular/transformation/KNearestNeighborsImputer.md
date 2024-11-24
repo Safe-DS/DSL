@@ -41,6 +41,7 @@ The KNearestNeighborsImputer replaces missing values in given Columns with the m
          * @result fittedTransformer The fitted transformer.
          */
         @Pure
+        @Category(DataScienceCategory.DataProcessingQTransformer)
         fun fit(
             table: Table
         ) -> fittedTransformer: KNearestNeighborsImputer
@@ -57,6 +58,7 @@ The KNearestNeighborsImputer replaces missing values in given Columns with the m
          */
         @Pure
         @PythonName("fit_and_transform")
+        @Category(DataScienceCategory.DataProcessingQTransformer)
         fun fitAndTransform(
             table: Table
         ) -> (fittedTransformer: KNearestNeighborsImputer, transformedTable: Table)
@@ -104,6 +106,7 @@ Learn a transformation for a set of columns in a table.
 
     ```sds linenums="36"
     @Pure
+    @Category(DataScienceCategory.DataProcessingQTransformer)
     fun fit(
         table: Table
     ) -> fittedTransformer: KNearestNeighborsImputer
@@ -131,9 +134,10 @@ Learn a transformation for a set of columns in a table and apply the learned tra
 
 ??? quote "Stub code in `KNearestNeighborsImputer.sdsstub`"
 
-    ```sds linenums="51"
+    ```sds linenums="52"
     @Pure
     @PythonName("fit_and_transform")
+    @Category(DataScienceCategory.DataProcessingQTransformer)
     fun fitAndTransform(
         table: Table
     ) -> (fittedTransformer: KNearestNeighborsImputer, transformedTable: Table)
