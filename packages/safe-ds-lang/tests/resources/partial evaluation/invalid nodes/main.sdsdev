@@ -1,4 +1,4 @@
 package tests.partialValidation.invalidNodes
 
 // $TEST$ serialization ?
-»schema mySchema {}«
+»pipeline myPipeline {}«

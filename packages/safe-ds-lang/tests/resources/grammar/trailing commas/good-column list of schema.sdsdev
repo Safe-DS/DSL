@@ -1,6 +1,0 @@
-// $TEST$ no_syntax_error
-
-schema MySchemaWithTrailingComma {
-    "column1" : Int,
-    "column2" : String,
-}

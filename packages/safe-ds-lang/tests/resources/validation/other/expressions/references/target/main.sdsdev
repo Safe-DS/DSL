@@ -4,15 +4,10 @@ annotation MyAnnotation
 
 pipeline myPipeline {}
 
-schema MySchema {}
-
 segment mySegment() {
     // $TEST$ error "An annotation must not be the target of a reference."
     »MyAnnotation«;
 
     // $TEST$ error "A pipeline must not be the target of a reference."
     »myPipeline«;
-
-    // $TEST$ error "A schema must not be the target of a reference."
-    »MySchema«;
 }

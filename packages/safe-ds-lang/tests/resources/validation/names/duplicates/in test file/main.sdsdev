@@ -54,13 +54,6 @@ pipeline »duplicatePipeline« {}
 pipeline »duplicatePipeline« {}
 
 // $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
-schema »UniqueSchema« {}
-// $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
-schema »DuplicateSchema« {}
-// $TEST$ error "A declaration with name 'DuplicateSchema' exists already in this file."
-schema »DuplicateSchema« {}
-
-// $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
 segment »uniqueSegment«() {}
 // $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
 segment »duplicateSegment«() {}
@@ -80,5 +73,3 @@ fun »DuplicateDeclaration«()
 pipeline »DuplicateDeclaration« {}
 // $TEST$ error "A declaration with name 'DuplicateDeclaration' exists already in this file."
 segment »DuplicateDeclaration«() {}
-// $TEST$ error "A declaration with name 'DuplicateDeclaration' exists already in this file."
-schema »DuplicateDeclaration« {}

@@ -16,8 +16,6 @@ fun myFunction()
 
 pipeline myPipeline {}
 
-schema MySchema {}
-
 segment mySegment1() {}
 
 segment mySegment2(myParameter: Int) {
@@ -43,8 +41,6 @@ segment mySegment2(myParameter: Int) {
     // $TEST$ error "Aliases are not allowed to provide a cleaner graphical view."
     // $TEST$ no error "Aliases are not allowed to provide a cleaner graphical view."
     val »i1«, val »i2« = myPlaceholder;
-    // $TEST$ no error "Aliases are not allowed to provide a cleaner graphical view."
-    val »j« = MySchema;
     // $TEST$ no error "Aliases are not allowed to provide a cleaner graphical view."
     val »k« = mySegment1;
     // $TEST$ no error "Aliases are not allowed to provide a cleaner graphical view."
