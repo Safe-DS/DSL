@@ -484,7 +484,7 @@ export class RunnerApi {
     }
 
     private sdsStringForTableSchema(tablePlaceholder: string, newPlaceholderName: string) {
-        return 'val ' + newPlaceholderName + ' = ' + tablePlaceholder + '.^schema; \n';
+        return 'val ' + newPlaceholderName + ' = ' + tablePlaceholder + '.schema; \n';
     }
     //#endregion
 
