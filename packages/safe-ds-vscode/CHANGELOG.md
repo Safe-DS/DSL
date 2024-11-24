@@ -1,3 +1,13 @@
+## [0.22.0](https://github.com/Safe-DS/DSL/compare/v0.21.1...v0.22.0) (2024-11-24)
+
+### Features
+
+* categorize API elements ([#1263](https://github.com/Safe-DS/DSL/issues/1263)) ([d0d971e](https://github.com/Safe-DS/DSL/commit/d0d971e161c31cb527f2299e76c87557d4597b5f)), closes [#1243](https://github.com/Safe-DS/DSL/issues/1243)
+* disable inlay hints for assignee types by default ([#1260](https://github.com/Safe-DS/DSL/issues/1260)) ([a651ade](https://github.com/Safe-DS/DSL/commit/a651adea9383f10f7f63293413ac251f430503d3))
+* improve error messages from linker ([#1272](https://github.com/Safe-DS/DSL/issues/1272)) ([eddd868](https://github.com/Safe-DS/DSL/commit/eddd86859e8173b8d7f3ea65008b7a07f8504f5e)), closes [#1268](https://github.com/Safe-DS/DSL/issues/1268)
+* output statement ([#1262](https://github.com/Safe-DS/DSL/issues/1262)) ([011ba31](https://github.com/Safe-DS/DSL/commit/011ba31ec1d54629ec083807c23e6de04a004580)), closes [#1259](https://github.com/Safe-DS/DSL/issues/1259)
+* remove schema concept from grammar ([#1273](https://github.com/Safe-DS/DSL/issues/1273)) ([1a3bf80](https://github.com/Safe-DS/DSL/commit/1a3bf8047bf04c605a63853075f94641fe6325f9)), closes [#1133](https://github.com/Safe-DS/DSL/issues/1133)
+
 ## [0.21.1](https://github.com/Safe-DS/DSL/compare/v0.21.0...v0.21.1) (2024-11-05)
 
 ### Bug Fixes
