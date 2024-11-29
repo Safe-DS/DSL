@@ -19,7 +19,7 @@
             "match": "\\b(and|not|or|sub)\\b"
         },
         {
-            "name": "variable.language.safe-ds-dev",
+            "name": "variable.language.safe-ds-stub",
             "match": "\\b(this)\\b"
         }
     ]
