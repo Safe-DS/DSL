@@ -33,6 +33,7 @@ keywords_namespace = (
 
 keywords_generic = (
     "as",
+    "else",
     "const",
     "import",
     "in",

@@ -384,7 +384,9 @@ SdsConstraintList returns SdsConstraintList:
     '}'
 ;
 
-interface SdsConstraint extends SdsObject {}
+interface SdsConstraint extends SdsObject {
+    message?: SdsString | SdsTemplateString
+}
 
 SdsConstraint returns SdsConstraint:
     SdsParameterBound
@@ -400,6 +402,7 @@ SdsParameterBound returns SdsParameterBound:
     leftOperand=[SdsParameter:ID]
     operator=SdsComparisonOperator
     rightOperand=SdsExpression
+    ('else' message=(SdsString | SdsTemplateString))?
 ;
 
 

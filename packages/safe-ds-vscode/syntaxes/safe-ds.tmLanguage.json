@@ -33,7 +33,7 @@
                 },
                 {
                     "name": "keyword.other.safe-ds",
-                    "match": "\\b(as|from|import|literal|union|where|yield)\\b"
+                    "match": "\\b(as|else|from|import|literal|union|where|yield)\\b"
                 },
                 {
                     "name": "meta.safe-ds",

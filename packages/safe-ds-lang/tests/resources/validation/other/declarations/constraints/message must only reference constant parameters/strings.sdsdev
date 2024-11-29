@@ -1,0 +1,10 @@
+package tests.validation.other.declarations.constraints.messageMustOnlyReferenceConstantParameters
+
+// $TEST$ no error "The message of a constraint must only reference constant parameters."
+
+class MyClass1(
+    const constant: Int,
+) where {
+    constant < 0 else "",
+
+}

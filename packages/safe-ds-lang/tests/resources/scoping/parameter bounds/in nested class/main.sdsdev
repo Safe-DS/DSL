@@ -13,31 +13,40 @@ class MyClass1(container: Int, overridden: Int){
         »overridden«: Int,
     ) where {
         // $TEST$ references own
-        »own« < 0,
+        // $TEST$ references own
+        »own« < 0 else "{{ »own« }}",
 
         // $TEST$ references overridden
-        »overridden« < 0,
+        // $TEST$ references overridden
+        »overridden« < 0 else "{{ »overridden« }}",
 
         // $TEST$ unresolved
-        »container« < 0,
+        // $TEST$ unresolved
+        »container« < 0 else "{{ »container« }}",
 
         // $TEST$ unresolved
-        »beforeMember« < 0,
+        // $TEST$ unresolved
+        »beforeMember« < 0 else "{{ »beforeMember« }}",
 
         // $TEST$ unresolved
-        »afterMember« < 0,
+        // $TEST$ unresolved
+        »afterMember« < 0 else "{{ »afterMember« }}",
 
         // $TEST$ unresolved
-        »beforeGlobal« < 0,
+        // $TEST$ unresolved
+        »beforeGlobal« < 0 else "{{ »beforeGlobal« }}",
 
         // $TEST$ unresolved
-        »afterGlobal« < 0,
+        // $TEST$ unresolved
+        »afterGlobal« < 0 else "{{ »afterGlobal« }}",
 
         // $TEST$ unresolved
-        »notAParameter« < 0,
+        // $TEST$ references notAParameter
+        »notAParameter« < 0 else "{{ »notAParameter« }}",
 
         // $TEST$ unresolved
-        »unresolved« < 0
+        // $TEST$ unresolved
+        »unresolved« < 0 else "{{ »unresolved« }}"
     }
 
     fun myFunction3(afterMember: Int)
@@ -45,4 +54,5 @@ class MyClass1(container: Int, overridden: Int){
 
 fun myFunction4(afterGlobal: Int)
 
-class notAParameter
+// $TEST$ target notAParameter
+class »notAParameter«
