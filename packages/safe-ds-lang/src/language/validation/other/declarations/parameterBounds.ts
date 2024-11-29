@@ -8,7 +8,13 @@ import {
 } from '../../../generated/ast.js';
 import { AstUtils, ValidationAcceptor } from 'langium';
 import { getArguments, getParameters, Parameter } from '../../../helpers/nodeProperties.js';
-import { Constant, EvaluatedNode, FloatConstant, IntConstant } from '../../../partialEvaluation/model.js';
+import {
+    Constant,
+    EvaluatedNode,
+    FloatConstant,
+    IntConstant,
+    StringConstant,
+} from '../../../partialEvaluation/model.js';
 
 export const CODE_PARAMETER_BOUND_INVALID_VALUE = 'parameter-bound/invalid-value';
 export const CODE_PARAMETER_BOUND_PARAMETER = 'parameter-bound/parameter';
@@ -34,10 +40,13 @@ export const callArgumentMustRespectParameterBounds = (services: SafeDsServices)
 
             for (const bound of Parameter.getBounds(parameter)) {
                 const rightOperand = partialEvaluator.evaluate(bound.rightOperand, substitutions);
-                const errorMessage = checkBound(parameter.name, value, bound.operator, rightOperand);
+                const messageEvaluatedNode = partialEvaluator.evaluate(bound.message, substitutions);
+                const customMessage =
+                    messageEvaluatedNode instanceof StringConstant ? messageEvaluatedNode.value : undefined;
 
-                if (errorMessage) {
-                    accept('error', errorMessage, {
+                const error = checkBound(parameter.name, value, bound.operator, rightOperand, customMessage);
+                if (error) {
+                    accept('error', error, {
                         node: argument,
                         property: 'value',
                         code: CODE_PARAMETER_BOUND_INVALID_VALUE,
@@ -74,12 +83,18 @@ export const parameterDefaultValueMustRespectParameterBounds = (services: SafeDs
             }
         }
 
+        const substitutions = new Map([[node, value]]);
+
         // Error if the default value violates some bounds
         for (const bound of Parameter.getBounds(node)) {
             const rightOperand = partialEvaluator.evaluate(bound.rightOperand);
-            const errorMessage = checkBound(node.name, value, bound.operator, rightOperand);
-            if (errorMessage) {
-                accept('error', errorMessage, {
+            const messageEvaluatedNode = partialEvaluator.evaluate(bound.message, substitutions);
+            const customMessage =
+                messageEvaluatedNode instanceof StringConstant ? messageEvaluatedNode.value : undefined;
+
+            const error = checkBound(node.name, value, bound.operator, rightOperand, customMessage);
+            if (error) {
+                accept('error', error, {
                     node,
                     property: 'defaultValue',
                     code: CODE_PARAMETER_BOUND_INVALID_VALUE,
@@ -94,6 +109,7 @@ const checkBound = (
     leftOperand: EvaluatedNode,
     operator: string,
     rightOperand: EvaluatedNode,
+    customMessage?: string,
 ): string | undefined => {
     // Arguments must be valid
     if (
@@ -101,11 +117,15 @@ const checkBound = (
         !isSdsComparisonOperator(operator) ||
         (!(rightOperand instanceof FloatConstant) && !(rightOperand instanceof IntConstant))
     ) {
-        return;
+        return undefined;
     }
 
     const createMessage = (relation: string) => {
-        return `The value of '${parameterName}' must be ${relation} ${rightOperand.toString()} but was ${leftOperand.toString()}.`;
+        if (customMessage) {
+            return customMessage;
+        } else {
+            return `The value of '${parameterName}' must be ${relation} ${rightOperand.toString()} but was ${leftOperand.toString()}.`;
+        }
     };
 
     if (operator === '<') {

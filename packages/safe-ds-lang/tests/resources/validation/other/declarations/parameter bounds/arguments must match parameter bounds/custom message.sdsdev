@@ -1,0 +1,33 @@
+package tests.validation.other.declarations.parameterBounds.argumentsMustMatchParameterBounds
+
+@Pure fun f6(
+    const p1: Int,
+    const p2: Int = -2,
+) where {
+    p1 >= 0 else "This parameter must be non-negative.",
+    p1 > p2 else "p1 must be greater than p2, but p1 was {{ p1 }} and p2 was {{ p2 }}.",
+}
+
+@Pure fun f7(
+    // $TEST$ error "This parameter must be non-negative."
+    const p1: Int = »-1«,
+    // $TEST$ error "This parameter must be non-negative, but was -2."
+    const p2: Int = »-2«,
+    // $TEST$ error "The value of 'p3' must be greater than or equal to 0 but was -3."
+    const p3: Int = »-3«,
+) where {
+    p1 >= 0 else "This parameter must be non-negative.",
+    p2 >= 0 else "This parameter must be non-negative, but was {{ p2 }}.",
+    p3 >= 0 else "This parameter must be non-negative, but was {{ p3 }}. p2 was {{ p2 }} by the way.",
+}
+
+segment mySegment(p: Int) {
+    // $TEST$ error "This parameter must be non-negative."
+    f6(»-1«);
+
+    // $TEST$ error "p1 must be greater than p2, but p1 was -3 and p2 was -2."
+    f6(»-3«);
+
+    // $TEST$ error "p1 must be greater than p2, but p1 was 1 and p2 was 1."
+    f6(»1«, 1);
+}
