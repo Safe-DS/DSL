@@ -1,0 +1,19 @@
+package tests.validation.other.declarations.constraints.messageMustOnlyReferenceConstantParameters
+
+class MyClass2(
+    const constant: Int,
+    nonConstant: Int,
+) where {
+    // $TEST$ no error "The message of a constraint must only reference constant parameters."
+    constant < 0 else "{{ »constant« }}",
+    // $TEST$ error "The message of a constraint must only reference constant parameters."
+    constant < 1 else "{{ »nonConstant« }}",
+    // $TEST$ error "The message of a constraint must only reference constant parameters."
+    constant < 2 else "{{ »NotAParameter()« }}",
+    // $TEST$ error "The message of a constraint must only reference constant parameters."
+    constant < 3 else "{{ »NotAParameter.a« }}",
+}
+
+class NotAParameter() {
+    static attr a: Int
+}

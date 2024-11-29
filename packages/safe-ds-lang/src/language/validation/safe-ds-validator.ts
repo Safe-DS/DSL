@@ -191,6 +191,7 @@ import {
     outputStatementMustHaveValue,
     outputStatementMustOnlyBeUsedInPipeline,
 } from './other/statements/outputStatements.js';
+import { messageOfConstraintsMustOnlyReferenceConstantParameters } from './other/declarations/constraints.js';
 
 /**
  * Register custom validation checks.
@@ -267,6 +268,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             classMemberMustMatchOverriddenMemberAndShouldBeNeeded(services),
             overridingMemberPythonNameMustMatchOverriddenMember(services),
         ],
+        SdsConstraint: [messageOfConstraintsMustOnlyReferenceConstantParameters],
         SdsConstraintList: [constraintListsShouldBeUsedWithCaution(services), constraintListShouldNotBeEmpty(services)],
         SdsDeclaration: [
             nameMustNotOccurOnCoreDeclaration(services),
