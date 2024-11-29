@@ -510,6 +510,7 @@ export class SafeDsFormatter extends AbstractFormatter {
         const formatter = this.getNodeFormatter(node);
 
         formatter.property('operator').surround(oneSpace());
+        formatter.keyword('else').surround(oneSpace());
     }
 
     // -----------------------------------------------------------------------------
