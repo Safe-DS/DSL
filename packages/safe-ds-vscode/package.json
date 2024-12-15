@@ -223,6 +223,9 @@
                 "editor.wordBasedSuggestions": "off",
                 "editor.wordSeparators": "`~!@#%^&*()-=+[]{}\\|;:'\",.<>/?»«",
                 "files.trimTrailingWhitespace": true
+            },
+            "files.readonlyInclude": {
+                "**/dist/resources/builtins/**/*.sdsstub": true
             }
         },
         "commands": [
