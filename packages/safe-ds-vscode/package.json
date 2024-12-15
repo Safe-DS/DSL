@@ -217,21 +217,7 @@
             }
         },
         "configurationDefaults": {
-            "[safe-ds]": {
-                "editor.semanticHighlighting.enabled": true,
-                "editor.suggest.snippetsPreventQuickSuggestions": true,
-                "editor.wordBasedSuggestions": "off",
-                "editor.wordSeparators": "`~!@#%^&*()-=+[]{}\\|;:'\",.<>/?»«",
-                "files.trimTrailingWhitespace": true
-            },
-            "[safe-ds-stub]": {
-                "editor.semanticHighlighting.enabled": true,
-                "editor.suggest.snippetsPreventQuickSuggestions": true,
-                "editor.wordBasedSuggestions": "off",
-                "editor.wordSeparators": "`~!@#%^&*()-=+[]{}\\|;:'\",.<>/?»«",
-                "files.trimTrailingWhitespace": true
-            },
-            "[safe-ds-dev]": {
+            "[safe-ds][safe-ds-stub][safe-ds-dev]": {
                 "editor.semanticHighlighting.enabled": true,
                 "editor.suggest.snippetsPreventQuickSuggestions": true,
                 "editor.wordBasedSuggestions": "off",
