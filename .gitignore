@@ -5,6 +5,8 @@
 # VSCode
 .vscode/**/*
 !.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/settings.json
 
 # Compilation/build outputs
 build/
@@ -14,6 +16,7 @@ dist-ssr/
 generated/
 !**/tests/resources/generation/**/generated/
 lib/
+!packages/safe-ds-editor/src/lib/
 out/
 *.tsbuildinfo
 *.vsix
