@@ -172,6 +172,8 @@ export class Call {
                         Port.fromName(id, "self"),
                     );
                 }
+            } else if (isSdsMemberAccess(node.receiver)) {
+                const COTINUE_HERE = ""; //Todo: conitnue here
             }
         }
         return "";

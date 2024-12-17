@@ -20,7 +20,7 @@
         <span>{element.parent + '.' + element.name}</span>
     {/each}
     {#if category.filteredCount > 0}
-        <span>{'Filtered Elements: ' + category.filteredCount}</span>
+        <span class=" text-text-muted">{'... Filtered Elements: ' + category.filteredCount}</span>
     {/if}
 {:else}
     <div class="pl-3">

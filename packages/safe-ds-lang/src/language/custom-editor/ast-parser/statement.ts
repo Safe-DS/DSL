@@ -4,6 +4,7 @@ import {
     isSdsAssignment,
     isSdsExpressionStatement,
     isSdsPlaceholder,
+    isSdsWildcard,
     isSdsYield,
 } from "../../generated/ast.js";
 import { CustomError } from "../global.js";
@@ -47,6 +48,7 @@ export class Statement {
 
                 zip(expression.resultList, assigneeList).forEach(
                     ([result, assignee]) => {
+                        if (!assignee) return;
                         Edge.create(
                             Port.fromResult(result, expression.id),
                             Port.fromAssignee(assignee, true),
@@ -111,6 +113,8 @@ const Assignee = {
         if (isSdsYield(node) && (!node.result || !node.result.ref))
             return Utils.pushError("Missing assignee", node);
         if (isSdsYield(node)) return Result.parse(node.result!.ref!);
+
+        if (isSdsWildcard(node)) return undefined;
 
         return Utils.pushError(`Invalid assignee <${node.$type}>`, node);
     },
