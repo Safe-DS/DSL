@@ -150,7 +150,7 @@ describe('safe-ds', () => {
         it('should show an error if a Safe-DS file has errors', () => {
             const process = spawnDocumentProcess([], ['.']);
             expect(process.stderr.toString()).toContain(
-                "Could not resolve reference to SdsNamedTypeDeclaration named 'Unresolved'",
+                "Could not find a declaration named 'Unresolved' in this context.",
             );
             expect(process.status).toBe(ExitCode.FileHasErrors);
         });
@@ -259,7 +259,7 @@ describe('safe-ds', () => {
         it('should show an error if a Safe-DS file has errors', () => {
             const process = spawnGenerateProcess([], ['.']);
             expect(process.stderr.toString()).toContain(
-                "Could not resolve reference to SdsNamedTypeDeclaration named 'Unresolved'",
+                "Could not find a declaration named 'Unresolved' in this context.",
             );
             expect(process.status).toBe(ExitCode.FileHasErrors);
         });

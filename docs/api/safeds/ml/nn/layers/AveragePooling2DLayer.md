@@ -16,7 +16,7 @@ An average pooling 2D Layer.
 
 ??? quote "Stub code in `AveragePooling2DLayer.sdsstub`"
 
-    ```sds linenums="14"
+    ```sds linenums="15"
     class AveragePooling2DLayer(
         @PythonName("kernel_size") kernelSize: Int,
         stride: Int = -1,

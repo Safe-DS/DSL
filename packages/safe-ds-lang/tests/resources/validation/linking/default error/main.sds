@@ -1,0 +1,6 @@
+package tests.validation.linking.defaultError
+
+pipeline test {
+    // $TEST$ error r"Could not find a declaration named 'Unknown' in this context\.\nDid you spell the name correctly and add all needed imports\?"
+    »Unknown«;
+}

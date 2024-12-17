@@ -1,4 +1,0 @@
-package tests.generation.markdown.schemas.experimental
-
-@Experimental
-schema MySchema1 {}

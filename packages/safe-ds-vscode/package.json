@@ -1,6 +1,6 @@
 {
     "name": "safe-ds",
-    "version": "0.21.1",
+    "version": "0.22.0",
     "private": true,
     "description": "Statically checked Data Science programs.",
     "author": {
@@ -217,26 +217,15 @@
             }
         },
         "configurationDefaults": {
-            "[safe-ds]": {
+            "[safe-ds][safe-ds-stub][safe-ds-dev]": {
                 "editor.semanticHighlighting.enabled": true,
                 "editor.suggest.snippetsPreventQuickSuggestions": true,
                 "editor.wordBasedSuggestions": "off",
                 "editor.wordSeparators": "`~!@#%^&*()-=+[]{}\\|;:'\",.<>/?»«",
                 "files.trimTrailingWhitespace": true
             },
-            "[safe-ds-stub]": {
-                "editor.semanticHighlighting.enabled": true,
-                "editor.suggest.snippetsPreventQuickSuggestions": true,
-                "editor.wordBasedSuggestions": "off",
-                "editor.wordSeparators": "`~!@#%^&*()-=+[]{}\\|;:'\",.<>/?»«",
-                "files.trimTrailingWhitespace": true
-            },
-            "[safe-ds-dev]": {
-                "editor.semanticHighlighting.enabled": true,
-                "editor.suggest.snippetsPreventQuickSuggestions": true,
-                "editor.wordBasedSuggestions": "off",
-                "editor.wordSeparators": "`~!@#%^&*()-=+[]{}\\|;:'\",.<>/?»«",
-                "files.trimTrailingWhitespace": true
+            "files.readonlyInclude": {
+                "**/dist/resources/builtins/**/*.sdsstub": true
             }
         },
         "customEditors": [

@@ -66,11 +66,6 @@ enum AnnotationTarget {
     Result
 
     /**
-     * The annotation can be called on schemas.
-     */
-    Schema
-
-    /**
      * The annotation can be called on segments.
      */
     Segment

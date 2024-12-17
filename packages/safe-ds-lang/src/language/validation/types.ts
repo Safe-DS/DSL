@@ -9,7 +9,6 @@ import {
     isSdsMemberAccess,
     isSdsPipeline,
     isSdsReference,
-    isSdsSchema,
     SdsAbstractCall,
     SdsAttribute,
     SdsCall,
@@ -79,7 +78,7 @@ export const callReceiverMustBeCallable = (services: SafeDsServices) => {
             const target = receiver.target.ref;
 
             // We already report other errors at this position in those cases
-            if (!target || isSdsAnnotation(target) || isSdsPipeline(target) || isSdsSchema(target)) {
+            if (!target || isSdsAnnotation(target) || isSdsPipeline(target)) {
                 return;
             }
         }

@@ -9,7 +9,7 @@
 
         {
             "name": "storage.type.safe-ds",
-            "match": "\\b(package|pipeline|schema|segment|val)\\b"
+            "match": "\\b(package|pipeline|segment|val)\\b"
         },
         {
             "name": "storage.modifier.safe-ds",
@@ -33,7 +33,7 @@
                 },
                 {
                     "name": "keyword.other.safe-ds",
-                    "match": "\\b(as|from|import|literal|union|where|yield)\\b"
+                    "match": "\\b(as|else|from|import|literal|union|where|yield)\\b"
                 },
                 {
                     "name": "meta.safe-ds",

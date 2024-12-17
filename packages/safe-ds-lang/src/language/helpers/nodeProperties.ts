@@ -23,7 +23,6 @@ import {
     isSdsPipeline,
     isSdsPlaceholder,
     isSdsQualifiedImport,
-    isSdsSchema,
     isSdsSegment,
     isSdsTypeArgumentList,
     isSdsTypeParameter,
@@ -43,7 +42,6 @@ import {
     SdsCallable,
     SdsClass,
     SdsClassMember,
-    SdsColumn,
     SdsConstraint,
     SdsDeclaration,
     SdsEnum,
@@ -62,7 +60,6 @@ import {
     SdsQualifiedImport,
     SdsResult,
     SdsResultList,
-    SdsSchema,
     SdsStatement,
     SdsType,
     SdsTypeArgument,
@@ -200,14 +197,14 @@ export namespace TypeParameter {
  * Checks whether the declaration is valid in a pipeline file.
  */
 export const isValidPipelineDeclaration = (node: SdsDeclaration): boolean => {
-    return isSdsPipeline(node) || isSdsSchema(node) || isSdsSegment(node);
+    return isSdsPipeline(node) || isSdsSegment(node);
 };
 
 /**
  * Checks whether the declaration is valid in a stub file.
  */
 export const isValidStubDeclaration = (node: SdsDeclaration): boolean => {
-    return isSdsAnnotation(node) || isSdsClass(node) || isSdsEnum(node) || isSdsFunction(node) || isSdsSchema(node);
+    return isSdsAnnotation(node) || isSdsClass(node) || isSdsEnum(node) || isSdsFunction(node);
 };
 
 // -------------------------------------------------------------------------------------------------
@@ -301,10 +298,6 @@ export const getConstraints = (node: SdsCallable | undefined): SdsConstraint[] =
     } else {
         return [];
     }
-};
-
-export const getColumns = (node: SdsSchema | undefined): SdsColumn[] => {
-    return node?.columnList?.columns ?? [];
 };
 
 export const getEnumVariants = (node: SdsEnum | undefined): SdsEnumVariant[] => {

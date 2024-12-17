@@ -149,20 +149,6 @@ describe('SafeDsSemanticTokenProvider', async () => {
             ],
         },
         {
-            testName: 'schema declaration',
-            code: `
-                schema S {
-                    "a": Int
-                }
-            `,
-            expectedSymbols: [
-                {
-                    name: 'S',
-                    kind: SymbolKind.Struct,
-                },
-            ],
-        },
-        {
             testName: 'segment declaration',
             code: `
                 segment s(p: Int) -> r: Int {

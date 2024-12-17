@@ -9,9 +9,9 @@ search:
     - generation
         - markdown
             - deprecated
-                - [MySchema1](tests/generation/markdown/deprecated/MySchema1.md)
-                - [MySchema2](tests/generation/markdown/deprecated/MySchema2.md)
-                - [MySchema3](tests/generation/markdown/deprecated/MySchema3.md)
-                - [MySchema4](tests/generation/markdown/deprecated/MySchema4.md)
-                - [MySchema5](tests/generation/markdown/deprecated/MySchema5.md)
-                - [MySchema6](tests/generation/markdown/deprecated/MySchema6.md)
+                - [MyClass1](tests/generation/markdown/deprecated/MyClass1.md)
+                - [MyClass2](tests/generation/markdown/deprecated/MyClass2.md)
+                - [MyClass3](tests/generation/markdown/deprecated/MyClass3.md)
+                - [MyClass4](tests/generation/markdown/deprecated/MyClass4.md)
+                - [MyClass5](tests/generation/markdown/deprecated/MyClass5.md)
+                - [MyClass6](tests/generation/markdown/deprecated/MyClass6.md)

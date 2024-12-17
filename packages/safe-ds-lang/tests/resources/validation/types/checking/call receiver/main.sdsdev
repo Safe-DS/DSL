@@ -18,8 +18,6 @@ fun myFunction()
 
 pipeline myPipeline {}
 
-schema MySchema {}
-
 segment mySegment1() {}
 
 segment mySegment2(
@@ -64,12 +62,6 @@ segment mySegment2(
     // $TEST$ error "This expression is not callable."
     val myPipelineAlias = MyPipeline;
     »myPipelineAlias«();
-
-    // $TEST$ no error "This expression is not callable."
-    »MySchema«();
-    // $TEST$ error "This expression is not callable."
-    val mySchemaAlias = MySchema;
-    »mySchemaAlias«();
 
     // $TEST$ no error "This expression is not callable."
     »mySegment1«();

@@ -14,7 +14,7 @@ A dropout layer.
 
 ??? quote "Stub code in `DropoutLayer.sdsstub`"
 
-    ```sds linenums="11"
+    ```sds linenums="12"
     class DropoutLayer(
         probability: Float
     ) sub Layer {

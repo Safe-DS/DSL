@@ -33,6 +33,7 @@ keywords_namespace = (
 
 keywords_generic = (
     "as",
+    "else",
     "const",
     "import",
     "in",
@@ -40,7 +41,6 @@ keywords_generic = (
     "literal",
     "out",
     "private",
-    "schema",
     "static",
     "this",
     "union",

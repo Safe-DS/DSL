@@ -28,7 +28,6 @@ import { annotationCallMustHaveCorrectTarget, targetsShouldNotHaveDuplicateEntri
 import {
     constraintListsShouldBeUsedWithCaution,
     literalTypesShouldBeUsedWithCaution,
-    schemasShouldBeUsedWithCaution,
     unionTypesShouldBeUsedWithCaution,
 } from './experimentalLanguageFeatures.js';
 import {
@@ -53,7 +52,6 @@ import {
     nameMustNotStartWithCodegenPrefix,
     nameShouldHaveCorrectCasing,
     pipelineMustContainUniqueNames,
-    schemaMustContainUniqueNames,
     segmentMustContainUniqueNames,
     staticClassMemberNamesMustNotCollideWithInheritedMembers,
 } from './names.js';
@@ -93,7 +91,7 @@ import { memberAccessOfEnumVariantMustNotLackInstantiation } from './other/expre
 import {
     referenceMustNotBeFunctionPointer,
     referenceMustNotBeStaticClassOrEnumReference,
-    referenceTargetMustNotBeAnnotationPipelineOrSchema,
+    referenceTargetMustNotBeAnnotationOrPipeline,
 } from './other/expressions/references.js';
 import { templateStringMustHaveExpressionBetweenTwoStringParts } from './other/expressions/templateStrings.js';
 import { importPackageMustNotBeEmpty } from './other/imports.js';
@@ -193,6 +191,7 @@ import {
     outputStatementMustHaveValue,
     outputStatementMustOnlyBeUsedInPipeline,
 } from './other/statements/outputStatements.js';
+import { messageOfConstraintsMustOnlyReferenceConstantParameters } from './other/declarations/constraints.js';
 
 /**
  * Register custom validation checks.
@@ -269,6 +268,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             classMemberMustMatchOverriddenMemberAndShouldBeNeeded(services),
             overridingMemberPythonNameMustMatchOverriddenMember(services),
         ],
+        SdsConstraint: [messageOfConstraintsMustOnlyReferenceConstantParameters],
         SdsConstraintList: [constraintListsShouldBeUsedWithCaution(services), constraintListShouldNotBeEmpty(services)],
         SdsDeclaration: [
             nameMustNotOccurOnCoreDeclaration(services),
@@ -361,12 +361,11 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsReference: [
             referenceMustNotBeFunctionPointer,
             referenceMustNotBeStaticClassOrEnumReference,
-            referenceTargetMustNotBeAnnotationPipelineOrSchema,
+            referenceTargetMustNotBeAnnotationOrPipeline,
             referenceTargetShouldNotBeDeprecated(services),
             referenceTargetShouldNotExperimental(services),
         ],
         SdsResult: [resultMustHaveTypeHint],
-        SdsSchema: [schemaMustContainUniqueNames, schemasShouldBeUsedWithCaution(services)],
         SdsSegment: [
             segmentMustContainUniqueNames,
             segmentParameterShouldBeUsed(services),

@@ -21,7 +21,6 @@ import {
     SdsPipeline,
     SdsPlaceholder,
     SdsResult,
-    SdsSchema,
     SdsSegment,
     SdsTypeParameter,
 } from '../generated/ast.js';
@@ -29,7 +28,6 @@ import { CODEGEN_PREFIX } from '../generation/python/constants.js';
 import { isInDevFile, isInPipelineFile, isInStubFile } from '../helpers/fileExtensions.js';
 import {
     getClassMembers,
-    getColumns,
     getEnumVariants,
     getImportedDeclarations,
     getImports,
@@ -152,8 +150,6 @@ export const nameShouldHaveCorrectCasing = (services: SafeDsServices) => {
                 }
             case SdsResult:
                 return nameShouldBeLowerCamelCase(node, 'results', accept);
-            case SdsSchema:
-                return nameShouldBeUpperCamelCase(node, 'schemas', accept);
             case SdsSegment:
                 return nameShouldBeLowerCamelCase(node, 'segments', accept);
             case SdsTypeParameter:
@@ -389,17 +385,6 @@ export const pipelineMustContainUniqueNames = (node: SdsPipeline, accept: Valida
         (name) => `A placeholder with name '${name}' exists already.`,
         accept,
     );
-};
-
-export const schemaMustContainUniqueNames = (node: SdsSchema, accept: ValidationAcceptor): void => {
-    const duplicates = duplicatesBy(getColumns(node), (it) => it.columnName.value);
-    for (const duplicate of duplicates) {
-        accept('error', `A column with name '${duplicate.columnName.value}' exists already.`, {
-            node: duplicate,
-            property: 'columnName',
-            code: CODE_NAME_DUPLICATE,
-        });
-    }
 };
 
 export const segmentMustContainUniqueNames = (node: SdsSegment, accept: ValidationAcceptor): void => {

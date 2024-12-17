@@ -14,7 +14,7 @@ A gated recurrent unit (GRU) layer.
 
 ??? quote "Stub code in `GRULayer.sdsstub`"
 
-    ```sds linenums="10"
+    ```sds linenums="11"
     class GRULayer(
         @PythonName("neuron_count") neuronCount: Int
     ) sub Layer {

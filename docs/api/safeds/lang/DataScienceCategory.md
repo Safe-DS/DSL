@@ -3,47 +3,79 @@
 # :test_tube:{ title="Experimental" } <code class="doc-symbol doc-symbol-enum"></code> `DataScienceCategory` {#safeds.lang.DataScienceCategory data-toc-label='[enum] DataScienceCategory'}
 
 A step in the data science process.
+The letter "Q" is used as a separator for subcategories.
 
 ??? quote "Stub code in `ideIntegration.sdsstub`"
 
-    ```sds linenums="26"
+    ```sds linenums="27"
     enum DataScienceCategory {
+        /**
+         * Basic building blocks.
+         */
+        BasicElement
+
         /**
          * Load your data into the program.
          */
         DataImport
 
         /**
-         * Prepare your data for analysis.
-         */
-        DataPreparation
-
-        /**
-         * Explore your data.
-         */
-        DataExploration
-
-        /**
          * Save your data for later use.
          */
         DataExport
 
+         /**
+         * Explore your data.
+         */
+        DataExplorationQMetric
+        DataExplorationQVisualization
+        DataExplorationQGeneral
+
+        /**
+         * Prepare your data for analysis.
+         */
+        DataProcessingQColumn
+        DataProcessingQTable
+        DataProcessingQImage
+        DataProcessingQImageList
+        DataProcessingQTransformer
+
         /**
          * Configure a model and train it on your data.
          */
-        Modeling
+        ModelingQGeneral
+        ModelingQClassicalClassification
+        ModelingQClassicalRegression
+        ModelingQNeuralNetwork
 
         /**
          * Evaluate the performance of your model.
          */
-        ModelEvaluation
+        ModelEvaluationQMetric
+        ModelEvaluationQVisualization
+
+        /**
+         * Utility terms for general use and lambda functions.
+         */
+        UtilitiesQConversion
+        UtilitiesQTable
+        UtilitiesQImage
+        UtilitiesQString
     }
     ```
     { data-search-exclude }
 
-## <code class="doc-symbol doc-symbol-variant"></code> `DataExploration` {#safeds.lang.DataScienceCategory.DataExploration data-toc-label='[variant] DataExploration'}
+## <code class="doc-symbol doc-symbol-variant"></code> `BasicElement` {#safeds.lang.DataScienceCategory.BasicElement data-toc-label='[variant] BasicElement'}
+
+Basic building blocks.
+
+## <code class="doc-symbol doc-symbol-variant"></code> `DataExplorationQGeneral` {#safeds.lang.DataScienceCategory.DataExplorationQGeneral data-toc-label='[variant] DataExplorationQGeneral'}
+
+## <code class="doc-symbol doc-symbol-variant"></code> `DataExplorationQMetric` {#safeds.lang.DataScienceCategory.DataExplorationQMetric data-toc-label='[variant] DataExplorationQMetric'}
 
 Explore your data.
+
+## <code class="doc-symbol doc-symbol-variant"></code> `DataExplorationQVisualization` {#safeds.lang.DataScienceCategory.DataExplorationQVisualization data-toc-label='[variant] DataExplorationQVisualization'}
 
 ## <code class="doc-symbol doc-symbol-variant"></code> `DataExport` {#safeds.lang.DataScienceCategory.DataExport data-toc-label='[variant] DataExport'}
 
@@ -53,14 +85,40 @@ Save your data for later use.
 
 Load your data into the program.
 
-## <code class="doc-symbol doc-symbol-variant"></code> `DataPreparation` {#safeds.lang.DataScienceCategory.DataPreparation data-toc-label='[variant] DataPreparation'}
+## <code class="doc-symbol doc-symbol-variant"></code> `DataProcessingQColumn` {#safeds.lang.DataScienceCategory.DataProcessingQColumn data-toc-label='[variant] DataProcessingQColumn'}
 
 Prepare your data for analysis.
 
-## <code class="doc-symbol doc-symbol-variant"></code> `ModelEvaluation` {#safeds.lang.DataScienceCategory.ModelEvaluation data-toc-label='[variant] ModelEvaluation'}
+## <code class="doc-symbol doc-symbol-variant"></code> `DataProcessingQImage` {#safeds.lang.DataScienceCategory.DataProcessingQImage data-toc-label='[variant] DataProcessingQImage'}
+
+## <code class="doc-symbol doc-symbol-variant"></code> `DataProcessingQImageList` {#safeds.lang.DataScienceCategory.DataProcessingQImageList data-toc-label='[variant] DataProcessingQImageList'}
+
+## <code class="doc-symbol doc-symbol-variant"></code> `DataProcessingQTable` {#safeds.lang.DataScienceCategory.DataProcessingQTable data-toc-label='[variant] DataProcessingQTable'}
+
+## <code class="doc-symbol doc-symbol-variant"></code> `DataProcessingQTransformer` {#safeds.lang.DataScienceCategory.DataProcessingQTransformer data-toc-label='[variant] DataProcessingQTransformer'}
+
+## <code class="doc-symbol doc-symbol-variant"></code> `ModelEvaluationQMetric` {#safeds.lang.DataScienceCategory.ModelEvaluationQMetric data-toc-label='[variant] ModelEvaluationQMetric'}
 
 Evaluate the performance of your model.
 
-## <code class="doc-symbol doc-symbol-variant"></code> `Modeling` {#safeds.lang.DataScienceCategory.Modeling data-toc-label='[variant] Modeling'}
+## <code class="doc-symbol doc-symbol-variant"></code> `ModelEvaluationQVisualization` {#safeds.lang.DataScienceCategory.ModelEvaluationQVisualization data-toc-label='[variant] ModelEvaluationQVisualization'}
+
+## <code class="doc-symbol doc-symbol-variant"></code> `ModelingQClassicalClassification` {#safeds.lang.DataScienceCategory.ModelingQClassicalClassification data-toc-label='[variant] ModelingQClassicalClassification'}
+
+## <code class="doc-symbol doc-symbol-variant"></code> `ModelingQClassicalRegression` {#safeds.lang.DataScienceCategory.ModelingQClassicalRegression data-toc-label='[variant] ModelingQClassicalRegression'}
+
+## <code class="doc-symbol doc-symbol-variant"></code> `ModelingQGeneral` {#safeds.lang.DataScienceCategory.ModelingQGeneral data-toc-label='[variant] ModelingQGeneral'}
 
 Configure a model and train it on your data.
+
+## <code class="doc-symbol doc-symbol-variant"></code> `ModelingQNeuralNetwork` {#safeds.lang.DataScienceCategory.ModelingQNeuralNetwork data-toc-label='[variant] ModelingQNeuralNetwork'}
+
+## <code class="doc-symbol doc-symbol-variant"></code> `UtilitiesQConversion` {#safeds.lang.DataScienceCategory.UtilitiesQConversion data-toc-label='[variant] UtilitiesQConversion'}
+
+Utility terms for general use and lambda functions.
+
+## <code class="doc-symbol doc-symbol-variant"></code> `UtilitiesQImage` {#safeds.lang.DataScienceCategory.UtilitiesQImage data-toc-label='[variant] UtilitiesQImage'}
+
+## <code class="doc-symbol doc-symbol-variant"></code> `UtilitiesQString` {#safeds.lang.DataScienceCategory.UtilitiesQString data-toc-label='[variant] UtilitiesQString'}
+
+## <code class="doc-symbol doc-symbol-variant"></code> `UtilitiesQTable` {#safeds.lang.DataScienceCategory.UtilitiesQTable data-toc-label='[variant] UtilitiesQTable'}

@@ -57,13 +57,6 @@ pipeline p {}
 
 segment s() {}
 
-
-@Annotation1
-
-@Annotation2
-
-schema S {}
-
 // -----------------------------------------------------------------------------
 
 @Annotation1
@@ -99,7 +92,3 @@ pipeline p {}
 @Annotation1
 @Annotation2
 segment s() {}
-
-@Annotation1
-@Annotation2
-schema S {}

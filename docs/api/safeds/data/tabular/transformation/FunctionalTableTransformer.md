@@ -26,6 +26,7 @@ Wraps a callable so that it conforms to the TableTransformer interface.
          * @result fittedTransformer Returns self, because this transformer is always fitted.
          */
         @Pure
+        @Category(DataScienceCategory.DataProcessingQTransformer)
         fun fit(
             table: Table
         ) -> fittedTransformer: FunctionalTableTransformer
@@ -40,6 +41,7 @@ Wraps a callable so that it conforms to the TableTransformer interface.
          */
         @Pure
         @PythonName("fit_and_transform")
+        @Category(DataScienceCategory.DataProcessingQTransformer)
         fun fitAndTransform(
             table: Table
         ) -> (fittedTransformer: FunctionalTableTransformer, transformedTable: Table)
@@ -73,6 +75,7 @@ Whether the transformer is fitted.
 
     ```sds linenums="21"
     @Pure
+    @Category(DataScienceCategory.DataProcessingQTransformer)
     fun fit(
         table: Table
     ) -> fittedTransformer: FunctionalTableTransformer
@@ -98,9 +101,10 @@ Whether the transformer is fitted.
 
 ??? quote "Stub code in `FunctionalTableTransformer.sdsstub`"
 
-    ```sds linenums="34"
+    ```sds linenums="35"
     @Pure
     @PythonName("fit_and_transform")
+    @Category(DataScienceCategory.DataProcessingQTransformer)
     fun fitAndTransform(
         table: Table
     ) -> (fittedTransformer: FunctionalTableTransformer, transformedTable: Table)

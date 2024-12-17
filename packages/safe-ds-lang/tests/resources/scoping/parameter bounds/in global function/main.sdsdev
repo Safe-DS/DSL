@@ -7,21 +7,27 @@ fun myFunction2(
     »own«: Int
 ) where {
     // $TEST$ references own
-    »own« < 0,
+    // $TEST$ references own
+    »own« < 0 else "{{ »own« }}",
 
     // $TEST$ unresolved
-    »before« < 0,
+    // $TEST$ unresolved
+    »before« < 0 else "{{ »before« }}",
 
     // $TEST$ unresolved
-    »after« < 0,
+    // $TEST$ unresolved
+    »after« < 0 else "{{ »after« }}",
 
     // $TEST$ unresolved
-    »notAParameter« < 0,
+    // $TEST$ references notAParameter
+    »notAParameter« < 0 else "{{ »notAParameter« }}",
 
     // $TEST$ unresolved
-    »unresolved« < 0
+    // $TEST$ unresolved
+    »unresolved« < 0 else "{{ »unresolved« }}"
 }
 
 fun myFunction3(after: Int)
 
-class notAParameter
+// $TEST$ target notAParameter
+class »notAParameter«

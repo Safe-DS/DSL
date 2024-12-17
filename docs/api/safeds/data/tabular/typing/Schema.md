@@ -28,7 +28,7 @@ The schema of a row or table.
          * @example
          * pipeline example {
          *     val table = Table({"A": [1, 2, 3], "B": ["a", "b", "c"]});
-         *     val type = table.^schema.getColumnType("A");
+         *     val type = table.schema.getColumnType("A");
          * }
          */
         @Pure
@@ -47,13 +47,13 @@ The schema of a row or table.
          * @example
          * pipeline example {
          *     val table = Table({"A": [1, 2, 3], "B": ["a", "b", "c"]});
-         *     val contains = table.^schema.hasColumn("A"); // true
+         *     val contains = table.schema.hasColumn("A"); // true
          * }
          *
          * @example
          * pipeline example {
          *     val table = Table({"A": [1, 2, 3], "B": ["a", "b", "c"]});
-         *     val contains = table.^schema.hasColumn("C"); // false
+         *     val contains = table.schema.hasColumn("C"); // false
          * }
          */
         @Pure
@@ -70,7 +70,7 @@ The schema of a row or table.
          * @example
          * pipeline example {
          *     val table = Table({"A": [1, 2, 3], "B": ["a", "b", "c"]});
-         *     val map = table.^schema.toMap();
+         *     val map = table.schema.toMap();
          * }
          */
         @Pure
@@ -107,7 +107,7 @@ Return the type of the given column.
 ```sds hl_lines="3"
 pipeline example {
     val table = Table({"A": [1, 2, 3], "B": ["a", "b", "c"]});
-    val type = table.^schema.getColumnType("A");
+    val type = table.schema.getColumnType("A");
 }
 ```
 
@@ -143,13 +143,13 @@ Return whether the schema contains a given column.
 ```sds hl_lines="3"
 pipeline example {
     val table = Table({"A": [1, 2, 3], "B": ["a", "b", "c"]});
-    val contains = table.^schema.hasColumn("A"); // true
+    val contains = table.schema.hasColumn("A"); // true
 }
 ```
 ```sds hl_lines="3"
 pipeline example {
     val table = Table({"A": [1, 2, 3], "B": ["a", "b", "c"]});
-    val contains = table.^schema.hasColumn("C"); // false
+    val contains = table.schema.hasColumn("C"); // false
 }
 ```
 
@@ -179,7 +179,7 @@ Return a dictionary that maps column names to column types.
 ```sds hl_lines="3"
 pipeline example {
     val table = Table({"A": [1, 2, 3], "B": ["a", "b", "c"]});
-    val map = table.^schema.toMap();
+    val map = table.schema.toMap();
 }
 ```
 

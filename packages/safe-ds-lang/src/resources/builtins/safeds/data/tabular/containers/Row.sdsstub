@@ -20,7 +20,7 @@ class Row {
     /**
      * The schema of the row.
      */
-    attr ^schema: Schema
+    attr schema: Schema
 
     /**
      * Get the value of the specified column. This is equivalent to the `[]` operator (indexed access).

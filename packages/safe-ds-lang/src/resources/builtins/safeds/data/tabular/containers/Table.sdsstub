@@ -54,7 +54,7 @@ class Table(
     /**
      * The schema of the table.
      */
-    attr ^schema: Schema
+    attr schema: Schema
 
     /**
      * Create a table from a list of columns.

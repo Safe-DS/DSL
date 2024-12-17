@@ -1,27 +1,27 @@
 package tests.generation.markdown.deprecated
 
 @Deprecated
-schema MySchema1 {}
+class MyClass1 {}
 
 @Deprecated(
     alternative = "Something else",
 )
-schema MySchema2 {}
+class MyClass2 {}
 
 @Deprecated(
     reason = "To annoy you",
 )
-schema MySchema3 {}
+class MyClass3 {}
 
 @Deprecated(
     sinceVersion = "1.0.0"
 )
-schema MySchema4 {}
+class MyClass4 {}
 
 @Deprecated(
     removalVersion = "2.0.0",
 )
-schema MySchema5 {}
+class MyClass5 {}
 
 @Deprecated(
     alternative = "Something else",
@@ -29,4 +29,4 @@ schema MySchema5 {}
     sinceVersion = "1.0.0",
     removalVersion = "2.0.0",
 )
-schema MySchema6 {}
+class MyClass6 {}
