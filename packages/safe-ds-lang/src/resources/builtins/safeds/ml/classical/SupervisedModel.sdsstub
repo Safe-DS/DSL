@@ -24,6 +24,7 @@ class SupervisedModel {
      * @result fittedModel The fitted model.
      */
     @Pure
+    @Category(DataScienceCategory.ModelingQGeneral)
     fun fit(
         @PythonName("training_set") trainingSet: TabularDataset
     ) -> fittedModel: SupervisedModel
@@ -38,6 +39,7 @@ class SupervisedModel {
      * @result prediction The given dataset with an additional column for the predicted target values.
      */
     @Pure
+    @Category(DataScienceCategory.ModelingQGeneral)
     fun predict(
         dataset: union<Table, TabularDataset>
     ) -> prediction: TabularDataset
