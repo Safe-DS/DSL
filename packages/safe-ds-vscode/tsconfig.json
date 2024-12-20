@@ -4,7 +4,11 @@
     "compilerOptions": {
         "rootDir": ".",
         "noEmit": true,
-        "allowImportingTsExtensions": true
+        "allowImportingTsExtensions": true,
+        "paths": {
+            "$lang/*": ["../safe-ds-lang/src/*"],
+            "$editor/*": ["../safe-ds-editor/*"]
+        }
     },
     "include": ["src/**/*", "test/**/*"]
 }
