@@ -137,6 +137,7 @@ describe('SafeDsSemanticTokenProvider', async () => {
                     val a = 1;
 
                     (q: Int) {
+                        val b = 1;
                         yield r = 1;
                     };
                 }
@@ -145,6 +146,12 @@ describe('SafeDsSemanticTokenProvider', async () => {
                 {
                     name: 'p',
                     kind: SymbolKind.Function,
+                    children: [
+                        {
+                            name: 'a',
+                            kind: SymbolKind.Variable,
+                        },
+                    ],
                 },
             ],
         },
@@ -155,6 +162,7 @@ describe('SafeDsSemanticTokenProvider', async () => {
                     val a = 1;
 
                     (p: Int) {
+                        val b = 1;
                         yield r = 1;
                     };
                 }
@@ -164,6 +172,12 @@ describe('SafeDsSemanticTokenProvider', async () => {
                     name: 's',
                     kind: SymbolKind.Function,
                     detail: '(p: Int) -> (r: Int)',
+                    children: [
+                        {
+                            name: 'a',
+                            kind: SymbolKind.Variable,
+                        },
+                    ],
                 },
             ],
         },
