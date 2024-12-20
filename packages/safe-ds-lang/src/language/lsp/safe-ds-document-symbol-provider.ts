@@ -5,6 +5,7 @@ import {
     isSdsAttribute,
     isSdsClass,
     isSdsEnumVariant,
+    isSdsExpression,
     isSdsFunction,
     isSdsPipeline,
     isSdsSegment,
@@ -52,6 +53,18 @@ export class SafeDsDocumentSymbolProvider extends DefaultDocumentSymbolProvider 
             } else {
                 return undefined;
             }
+        } else if (isSdsPipeline(node)) {
+            if (node.body) {
+                return super.getChildSymbols(document, node.body);
+            } else {
+                return undefined;
+            }
+        } else if (isSdsSegment(node)) {
+            if (node.body) {
+                return super.getChildSymbols(document, node.body);
+            } else {
+                return undefined;
+            }
         } else {
             return super.getChildSymbols(document, node);
         }
@@ -62,9 +75,8 @@ export class SafeDsDocumentSymbolProvider extends DefaultDocumentSymbolProvider 
             isSdsAnnotation(node) ||
             isSdsAttribute(node) ||
             isSdsEnumVariant(node) ||
-            isSdsFunction(node) ||
-            isSdsPipeline(node) ||
-            isSdsSegment(node)
+            isSdsExpression(node) ||
+            isSdsFunction(node)
         );
     }
 }
