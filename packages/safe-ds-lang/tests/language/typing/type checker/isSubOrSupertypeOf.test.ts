@@ -508,6 +508,11 @@ const basic = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             type2: factory.createUnionType(coreTypes.String),
             expected: false,
         },
+        {
+            type1: factory.createLiteralType(new IntConstant(1n), new StringConstant('')),
+            type2: factory.createUnionType(coreTypes.Int, coreTypes.String),
+            expected: true,
+        },
         // Literal type to other
         {
             type1: factory.createLiteralType(), // Empty literal type

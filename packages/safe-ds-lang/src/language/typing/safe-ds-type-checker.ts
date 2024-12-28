@@ -75,7 +75,8 @@ export class SafeDsTypeChecker {
         // Handle union types
         if (type instanceof UnionType) {
             return type.types.every((it) => this.isSubtypeOf(it, other, options));
-        } else if (other instanceof UnionType) {
+        } else if (other instanceof UnionType && !(type instanceof LiteralType)) {
+            // For literal types the quantifiers would be the wrong way around
             return other.types.some((it) => this.isSubtypeOf(type, it, options));
         }
 
@@ -264,17 +265,21 @@ export class SafeDsTypeChecker {
                 return true;
             }
 
-            return type.constants.every((constant) => this.constantIsSubtypeOfClassType(constant, other, options));
+            return type.constants.every((constant) => this.constantIsSubtypeOf(constant, other, options));
         } else if (other instanceof LiteralType) {
             return type.constants.every((constant) =>
                 other.constants.some((otherConstant) => constant.equals(otherConstant)),
+            );
+        } else if (other instanceof UnionType) {
+            return type.constants.every((constant) =>
+                other.types.some((it) => this.constantIsSubtypeOf(constant, it, options)),
             );
         } else {
             return false;
         }
     }
 
-    private constantIsSubtypeOfClassType(constant: Constant, other: ClassType, options: TypeCheckOptions): boolean {
+    private constantIsSubtypeOf(constant: Constant, other: Type, options: TypeCheckOptions): boolean {
         const classType = this.typeComputer().computeClassTypeForConstant(constant);
         return this.isSubtypeOf(classType, other, options);
     }
