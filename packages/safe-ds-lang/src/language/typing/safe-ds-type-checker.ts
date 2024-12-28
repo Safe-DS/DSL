@@ -280,8 +280,14 @@ export class SafeDsTypeChecker {
     }
 
     private constantIsSubtypeOf(constant: Constant, other: Type, options: TypeCheckOptions): boolean {
-        const classType = this.typeComputer().computeClassTypeForConstant(constant);
-        return this.isSubtypeOf(classType, other, options);
+        if (other instanceof ClassType) {
+            const classType = this.typeComputer().computeClassTypeForConstant(constant);
+            return this.isSubtypeOf(classType, other, options);
+        } else if (other instanceof LiteralType) {
+            return other.constants.some((otherConstant) => constant.equals(otherConstant));
+        } else {
+            return false;
+        }
     }
 
     private namedTupleTypeIsSubtypeOf(
