@@ -521,6 +521,11 @@ const basic = async (): Promise<IsSubOrSupertypeOfTest[]> => {
             ),
             expected: true,
         },
+        {
+            type1: factory.createLiteralType(new IntConstant(1n)),
+            type2: factory.createUnionType(factory.createNamedTupleType()),
+            expected: false,
+        },
         // Literal type to other
         {
             type1: factory.createLiteralType(), // Empty literal type
