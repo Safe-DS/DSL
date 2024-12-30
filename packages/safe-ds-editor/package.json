@@ -1,0 +1,54 @@
+{
+    "name": "@safe-ds/custom-editor",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build && node migrationTools/copyToExtension.js",
+        "watch": "concurrently -n Vite,Nodemon -c blue,red \"vite build --watch\" \"npx nodemon --quiet --watch dist migrationTools/copyToExtension.js\"",
+        "preview": "vite preview",
+        "check": "svelte-check --tsconfig ./tsconfig.json",
+        "clean": "shx rm -rf dist",
+        "build:clean": "npm run clean && npm run build",
+        "copyToExtension": "node migrationTools/copyToExtension.js"
+    },
+    "devDependencies": {
+        "@magidoc/plugin-svelte-marked": "^6.1.0",
+        "@safe-ds/lang": ">=0.3.0",
+        "@sveltejs/vite-plugin-svelte": "^3.0.2",
+        "@tsconfig/svelte": "^5.0.2",
+        "autoprefixer": "^10.4.17",
+        "bits-ui": "^0.21.16",
+        "clsx": "^2.1.0",
+        "concurrently": "^8.2.2",
+        "fs-extra": "^11.2.0",
+        "nodemon": "^3.0.3",
+        "postcss": "^8.4.33",
+        "prettier-plugin-svelte": "^3.2.1",
+        "prettier-plugin-tailwindcss": "^0.5.11",
+        "radix-icons-svelte": "^1.2.1",
+        "svelte": "^4.2.9",
+        "svelte-check": "^3.6.3",
+        "svelte-preprocess": "^5.1.3",
+        "svelte-radix": "^1.1.1",
+        "svelte-svg": "^0.0.7",
+        "tailwind-merge": "^2.2.1",
+        "tailwind-variants": "^0.1.20",
+        "tailwindcss": "^3.4.1",
+        "terser": "^5.28.1",
+        "tslib": "^2.6.2",
+        "typescript": "^5.3.3",
+        "vite": "^5.0.12"
+    },
+    "dependencies": {
+        "@xyflow/svelte": "^0.1.13",
+        "elkjs": "^0.9.3",
+        "flatten": "^1.0.3",
+        "marked": "^14.0.0",
+        "paneforge": "^0.0.5"
+    },
+    "optionalDependencies": {
+        "@rollup/rollup-linux-x64-gnu": "^4.24.2"
+    }
+}
