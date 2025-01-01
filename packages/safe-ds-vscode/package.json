@@ -270,7 +270,7 @@
         "@types/node": "^18.19.62",
         "@types/vscode": "^1.87.0",
         "@vscode/vsce": "^3.2.1",
-        "esbuild": "^0.24.0",
+        "esbuild": "^0.24.2",
         "esbuild-plugin-copy": "^2.1.1"
     },
     "engines": {
