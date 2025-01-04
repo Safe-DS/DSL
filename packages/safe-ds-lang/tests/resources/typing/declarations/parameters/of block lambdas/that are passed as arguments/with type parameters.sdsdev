@@ -22,6 +22,6 @@ segment mySegment() {
     // $TEST$ serialization literal<1>
     myFunction(1, (»p«) {});
 
-    // $TEST$ serialization literal<"">
+    // $TEST$ serialization Nothing
     myFunction2((»p«) -> "");
 }

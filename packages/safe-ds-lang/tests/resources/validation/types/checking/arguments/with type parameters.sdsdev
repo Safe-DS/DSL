@@ -64,7 +64,7 @@ segment mySegment(
     // $TEST$ no error r"Expected type .* but got .*\."
     f(»(p) -> p«);
 
-    // $TEST$ no error r"Expected type .* but got .*\."
+    // $TEST$ error "Expected type '(p: literal<1>) -> (r: literal<1>)' but got '(p: Nothing) -> (result: literal<1>)'."
     f(»(p) -> 1«);
 
     // $TEST$ no error r"Expected type .* but got .*\."

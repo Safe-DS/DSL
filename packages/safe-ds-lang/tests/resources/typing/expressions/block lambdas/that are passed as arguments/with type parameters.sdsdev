@@ -8,7 +8,9 @@ class MyClass<T>(param: T) sub MySuperclass<T> {
     @Pure fun myMethod(callback: (p: T) -> ())
 }
 
-@Pure fun myFunction<T>(p: T, id: (p: T) -> (r: T))
+@Pure fun myFunction1<T>(p: T, id: (p: T) -> (r: T))
+@Pure fun myFunction2<T>(id: (p: T) -> (r: T))
+@Pure fun myFunction3<T>(producer: () -> (r: T), consumer: (p: T) -> ())
 
 segment mySegment() {
     // $TEST$ serialization (p: literal<1>) -> (r: literal<1>)
@@ -22,7 +24,19 @@ segment mySegment() {
     }«);
 
     // $TEST$ serialization (p: literal<1>) -> (r: literal<1>)
-    myFunction(1, »(p) {
+    myFunction1(1, »(p) {
         yield r = p;
     }«);
+
+    // $TEST$ serialization (p: Nothing) -> (r: literal<1>)
+    myFunction2(»(p) {
+        yield r = 1;
+    }«);
+
+    // $TEST$ serialization () -> (r: literal<1>)
+    // $TEST$ serialization (p: literal<1>) -> ()
+    myFunction3(
+        »() { yield r = 1; }«,
+        »(p) {}«,
+    );
 }
