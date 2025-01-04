@@ -1,26 +1,41 @@
 version: 2
 updates:
-  - package-ecosystem: 'github-actions'
+  - package-ecosystem: github-actions
     directory: '/'
     schedule:
-      interval: 'monthly'
+      interval: monthly
     commit-message:
       prefix: 'build'
-      include: 'scope'
+      include: scope
 
-  - package-ecosystem: 'npm'
+  - package-ecosystem: npm
     directory: '/'
     schedule:
-      interval: 'monthly'
-    versioning-strategy: 'increase'
+      interval: monthly
+    versioning-strategy: increase
     commit-message:
       prefix: 'build'
-      include: 'scope'
+      include: scope
+    groups:
+      development:
+        applies-to: version-updates
+        dependency-type: development
+        update-types:
+          - patch
+          - minor
 
-  - package-ecosystem: 'pip'
+  - package-ecosystem: pip
     directory: '/docs'
     schedule:
-      interval: 'monthly'
+      interval: monthly
     commit-message:
       prefix: 'build'
-      include: 'scope'
+      include: scope
+    groups:
+      mkdocs:
+        applies-to: version-updates
+        patterns:
+          - 'mkdocs*'
+        update-types:
+          - patch
+          - minor
