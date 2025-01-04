@@ -1,5 +1,5 @@
 import { AstNode, CstNode, CstUtils, isAstNode } from 'langium';
-import { last } from '../../helpers/collections.js';
+import { isEmpty } from '../../helpers/collections.js';
 import * as ast from '../generated/ast.js';
 import { getAnnotationCalls, getLiterals, getTypeArguments } from '../helpers/nodeProperties.js';
 import { AbstractFormatter, Formatting, FormattingAction, FormattingActionOptions, NodeFormatter } from 'langium/lsp';
@@ -543,16 +543,14 @@ export class SafeDsFormatter extends AbstractFormatter {
     private formatParameter(node: ast.SdsParameter): void {
         const formatter = this.getNodeFormatter(node);
 
-        formatter.nodes(...getAnnotationCalls(node).slice(1)).prepend(newLine());
+        const annotationCalls = getAnnotationCalls(node);
+        formatter.nodes(...annotationCalls.slice(1)).prepend(newLine());
 
-        const lastAnnotationCall = last(getAnnotationCalls(node));
-        if (lastAnnotationCall) {
-            const annotationCallFormatter = this.getNodeFormatter(lastAnnotationCall);
-
-            if (lastAnnotationCall.argumentList) {
-                annotationCallFormatter.property('argumentList').append(newLine());
+        if (!isEmpty(annotationCalls)) {
+            if (node.isConstant) {
+                formatter.keyword('const').prepend(newLine());
             } else {
-                annotationCallFormatter.property('annotation').append(newLine());
+                formatter.property('name').prepend(newLine());
             }
         }
 
