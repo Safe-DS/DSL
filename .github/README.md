@@ -24,9 +24,10 @@ To run Safe-DS programs, you also need the [Safe-DS Runner](https://github.com/S
    command line. You should get output similar to `Python 3.12.2`.
 2. **Open VS Code**.
 3. **Open the command palette** (Menu bar > View > Command Palette).
-4. **Type `Install the Safe-DS Runner`**.
-5. **Press Enter**. Installation may take a few minutes, since it downloads and installs several large libraries
-   like PyTorch.
+4. **Type `Install the Safe-DS Runner`** and **Press Enter**.
+5. **Select where to install the Safe-DS Runner**.
+
+Installation may take a few minutes, since it downloads and installs several large libraries like PyTorch.
 
 ## Documentation
 
