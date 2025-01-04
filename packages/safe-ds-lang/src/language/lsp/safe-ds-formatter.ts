@@ -549,7 +549,6 @@ export class SafeDsFormatter extends AbstractFormatter {
         }
 
         formatter.keyword('const').append(oneSpace());
-        formatter.keyword('vararg').append(oneSpace());
         formatter.keyword(':').prepend(noSpace()).append(oneSpace());
         formatter.keyword('=').surround(oneSpace());
     }
