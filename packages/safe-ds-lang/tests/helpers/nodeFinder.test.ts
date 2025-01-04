@@ -65,14 +65,14 @@ describe('getNodeOfType', async () => {
 
     it('should throw if no node is found', async () => {
         const code = '';
-        expect(async () => {
+        await expect(async () => {
             await getNodeOfType(services, code, isSdsClass);
         }).rejects.toThrowErrorMatchingSnapshot();
     });
 
     it('should throw if not enough nodes are found', async () => {
         const code = `class C`;
-        expect(async () => {
+        await expect(async () => {
             await getNodeOfType(services, code, isSdsClass, 1);
         }).rejects.toThrowErrorMatchingSnapshot();
     });

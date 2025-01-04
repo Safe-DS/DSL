@@ -51,7 +51,7 @@ export const argumentTypesMustMatchParameterTypes = (services: SafeDsServices) =
                 return;
             }
 
-            const argumentType = typeComputer.computeType(argument).substituteTypeParameters(substitutions);
+            const argumentType = typeComputer.computeType(argument);
             const parameterType = typeComputer.computeType(parameter).substituteTypeParameters(substitutions);
 
             if (!typeChecker.isSubtypeOf(argumentType, parameterType, { ignoreParameterNames: true })) {
