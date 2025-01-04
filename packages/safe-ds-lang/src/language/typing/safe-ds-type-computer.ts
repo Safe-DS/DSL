@@ -306,16 +306,16 @@ export class SafeDsTypeComputer {
                 return UnknownType;
             }
 
-            const unsubstitutedType = this.computeType(parameter);
+            let result = this.computeType(parameter);
 
             // Substitute type parameters
             const call = AstUtils.getContainerOfType(containerOfLambda, isSdsCall);
             if (call) {
                 const substitutions = this.computeSubstitutionsForCall(call, containerOfLambda.$containerIndex);
-                return unsubstitutedType.substituteTypeParameters(substitutions);
+                result = result.substituteTypeParameters(substitutions);
             }
 
-            return unsubstitutedType;
+            return result;
         }
 
         // Lambda passed as default value
