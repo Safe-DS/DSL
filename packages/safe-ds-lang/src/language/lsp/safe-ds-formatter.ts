@@ -84,7 +84,7 @@ export class SafeDsFormatter extends AbstractFormatter {
         }
 
         // -----------------------------------------------------------------------------
-        // Callables, parameters, and results
+        // Parameters, and results
         // -----------------------------------------------------------------------------
         else if (ast.isSdsParameterList(node)) {
             this.formatParameterList(node);
@@ -543,9 +543,17 @@ export class SafeDsFormatter extends AbstractFormatter {
     private formatParameter(node: ast.SdsParameter): void {
         const formatter = this.getNodeFormatter(node);
 
+        formatter.nodes(...getAnnotationCalls(node).slice(1)).prepend(newLine());
+
         const lastAnnotationCall = last(getAnnotationCalls(node));
         if (lastAnnotationCall) {
-            formatter.node(lastAnnotationCall).append(newLine());
+            const annotationCallFormatter = this.getNodeFormatter(lastAnnotationCall);
+
+            if (lastAnnotationCall.argumentList) {
+                annotationCallFormatter.property('argumentList').append(newLine());
+            } else {
+                annotationCallFormatter.property('annotation').append(newLine());
+            }
         }
 
         formatter.keyword('const').append(oneSpace());
@@ -580,6 +588,8 @@ export class SafeDsFormatter extends AbstractFormatter {
 
     private formatResult(node: ast.SdsResult): void {
         const formatter = this.getNodeFormatter(node);
+
+        formatter.nodes(...getAnnotationCalls(node).slice(1)).prepend(newLine());
 
         if (getAnnotationCalls(node).length > 0) {
             formatter.property('name').prepend(newLine());
@@ -891,6 +901,8 @@ export class SafeDsFormatter extends AbstractFormatter {
 
     private formatTypeParameter(node: ast.SdsTypeParameter) {
         const formatter = this.getNodeFormatter(node);
+
+        formatter.nodes(...getAnnotationCalls(node).slice(1)).prepend(newLine());
 
         if (getAnnotationCalls(node).length > 0) {
             if (node.variance) {
