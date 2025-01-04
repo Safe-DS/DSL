@@ -13,7 +13,8 @@ Description of myFunction4.
 
 ??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="39"
+    ```sds linenums="38"
+    @Pure
     fun myFunction4() -> (result1: MyClass1, result2: Float)
     ```
     { data-search-exclude }

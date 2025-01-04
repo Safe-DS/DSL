@@ -10,7 +10,8 @@ Description of MyAnnotation3.
 
 ??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="20"
+    ```sds linenums="19"
+    @Targets([AnnotationTarget.Annotation])
     annotation MyAnnotation3
     ```
     { data-search-exclude }

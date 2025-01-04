@@ -19,7 +19,8 @@
 
 ??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="4"
+    ```sds linenums="3"
+    @Experimental
     annotation MyAnnotation1
     ```
     { data-search-exclude }
