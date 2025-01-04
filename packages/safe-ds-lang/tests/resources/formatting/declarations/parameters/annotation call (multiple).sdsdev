@@ -1,0 +1,12 @@
+class C(
+    @Annotation  @Annotation()  @Annotation  a: Int
+)
+
+// -----------------------------------------------------------------------------
+
+class C(
+    @Annotation
+    @Annotation()
+    @Annotation
+    a: Int
+)

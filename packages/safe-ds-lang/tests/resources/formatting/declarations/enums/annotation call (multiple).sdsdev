@@ -1,0 +1,12 @@
+package test
+
+@Annotation  @Annotation()  @Annotation  enum  MyEnum
+
+// -----------------------------------------------------------------------------
+
+package test
+
+@Annotation
+@Annotation()
+@Annotation
+enum MyEnum

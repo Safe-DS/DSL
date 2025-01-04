@@ -1,0 +1,12 @@
+package test
+
+@Annotation  @Annotation()  @Annotation  pipeline  myPipeline  { }
+
+// -----------------------------------------------------------------------------
+
+package test
+
+@Annotation
+@Annotation()
+@Annotation
+pipeline myPipeline {}

@@ -1,0 +1,12 @@
+enum MyEnum {
+    @Annotation  @Annotation()  @Annotation  MyEnumVariant
+}
+
+// -----------------------------------------------------------------------------
+
+enum MyEnum {
+    @Annotation
+    @Annotation()
+    @Annotation
+    MyEnumVariant
+}

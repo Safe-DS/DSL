@@ -1,0 +1,14 @@
+class MyOuterClass {
+    @Annotation  @Annotation()  @Annotation  enum  MyEnum  {  MyEnumVariant  }
+}
+
+// -----------------------------------------------------------------------------
+
+class MyOuterClass {
+    @Annotation
+    @Annotation()
+    @Annotation
+    enum MyEnum {
+        MyEnumVariant
+    }
+}

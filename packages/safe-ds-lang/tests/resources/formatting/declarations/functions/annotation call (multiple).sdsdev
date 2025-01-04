@@ -1,0 +1,12 @@
+package test
+
+@Annotation  @Annotation()  @Annotation  fun  myFunction ( )
+
+// -----------------------------------------------------------------------------
+
+package test
+
+@Annotation
+@Annotation()
+@Annotation
+fun myFunction()

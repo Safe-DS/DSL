@@ -1,0 +1,10 @@
+fun f<@Annotation  @Annotation()  @Annotation  T>()
+
+// -----------------------------------------------------------------------------
+
+fun f<
+    @Annotation
+    @Annotation()
+    @Annotation
+    T
+>()
