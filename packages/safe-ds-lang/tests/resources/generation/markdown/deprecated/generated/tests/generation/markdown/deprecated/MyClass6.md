@@ -16,7 +16,13 @@ search:
 
 ??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="32"
+    ```sds linenums="26"
+    @Deprecated(
+        alternative = "Something else",
+        reason = "To annoy you",
+        sinceVersion = "1.0.0",
+        removalVersion = "2.0.0",
+    )
     class MyClass6 {}
     ```
     { data-search-exclude }

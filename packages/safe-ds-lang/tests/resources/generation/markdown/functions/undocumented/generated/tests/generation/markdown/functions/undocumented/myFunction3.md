@@ -11,7 +11,8 @@
 
 ??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="14"
+    ```sds linenums="13"
+    @Pure
     fun myFunction3(param1: Int, param2: Float = 1.0)
     ```
     { data-search-exclude }

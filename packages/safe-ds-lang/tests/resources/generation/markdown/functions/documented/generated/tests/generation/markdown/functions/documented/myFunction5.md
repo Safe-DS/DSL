@@ -12,7 +12,8 @@ Description of myFunction5.
 
 ??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="47"
+    ```sds linenums="46"
+    @Pure
     fun myFunction5()
     ```
     { data-search-exclude }

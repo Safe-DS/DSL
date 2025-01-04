@@ -1,10 +1,9 @@
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsLanguageMetaData } from '../generated/module.js';
-import { SafeDsConfigurationProvider } from './safe-ds-configuration-provider.js';
-import { DeepPartial, Disposable } from 'langium';
+import { ConfigurationProvider, DeepPartial, Disposable } from 'langium';
 
 export class SafeDsSettingsProvider {
-    private readonly configurationProvider: SafeDsConfigurationProvider;
+    private readonly configurationProvider: ConfigurationProvider;
 
     private cachedSettings: DeepPartial<SafeDsSettings> = {};
     private watchers = new Set<SettingsWatcher<any>>();

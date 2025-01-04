@@ -15,7 +15,10 @@ search:
 
 ??? quote "Stub code in `main.sdsstub`"
 
-    ```sds linenums="9"
+    ```sds linenums="6"
+    @Deprecated(
+        alternative = "Something else",
+    )
     class MyClass2 {}
     ```
     { data-search-exclude }

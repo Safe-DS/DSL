@@ -1,0 +1,12 @@
+package test
+
+@Annotation  @Annotation()  @Annotation  class  MyClass
+
+// -----------------------------------------------------------------------------
+
+package test
+
+@Annotation
+@Annotation()
+@Annotation
+class MyClass

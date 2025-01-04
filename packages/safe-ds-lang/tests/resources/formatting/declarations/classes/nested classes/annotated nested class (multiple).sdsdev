@@ -1,0 +1,12 @@
+class MyOuterClass {
+    @Annotation  @Annotation()  @Annotation  class  MyClass
+}
+
+// -----------------------------------------------------------------------------
+
+class MyOuterClass {
+    @Annotation
+    @Annotation()
+    @Annotation
+    class MyClass
+}

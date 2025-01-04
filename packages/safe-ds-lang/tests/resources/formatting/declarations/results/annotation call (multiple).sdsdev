@@ -1,0 +1,12 @@
+fun f() -> (
+    @Annotation  @Annotation()  @Annotation  a: Int
+)
+
+// -----------------------------------------------------------------------------
+
+fun f() -> (
+    @Annotation
+    @Annotation()
+    @Annotation
+    a: Int
+)
