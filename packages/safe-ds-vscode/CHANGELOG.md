@@ -1,3 +1,18 @@
+## [0.23.0](https://github.com/Safe-DS/DSL/compare/v0.22.0...v0.23.0) (2025-01-04)
+
+### Features
+
+* categorize API elements ([#1285](https://github.com/Safe-DS/DSL/issues/1285)) ([3275900](https://github.com/Safe-DS/DSL/commit/3275900115b396c7f9a8c55ac33a420f55d2dd6b)), closes [#1243](https://github.com/Safe-DS/DSL/issues/1243)
+* optional error messages for constraints ([#1275](https://github.com/Safe-DS/DSL/issues/1275)) ([fce761c](https://github.com/Safe-DS/DSL/commit/fce761c0cbd0f4f8409a16661c0c1290e1b862d0)), closes [#1082](https://github.com/Safe-DS/DSL/issues/1082)
+* prevent editing built-in stubs ([#1282](https://github.com/Safe-DS/DSL/issues/1282)) ([d02c30a](https://github.com/Safe-DS/DSL/commit/d02c30ae747a7d317e1263e588f83d9ffec9f98e))
+* show placeholders in outline ([#1286](https://github.com/Safe-DS/DSL/issues/1286)) ([3880bfe](https://github.com/Safe-DS/DSL/commit/3880bfe89c787fc0fd1d572f6af1f4b27051aa56))
+
+### Bug Fixes
+
+* subtype check for literal and union types ([#1288](https://github.com/Safe-DS/DSL/issues/1288)) ([911881c](https://github.com/Safe-DS/DSL/commit/911881cdff349e4e1a81a737e1ebf0c5d1e02339))
+* subtype check for literal and union types (part 2) ([#1289](https://github.com/Safe-DS/DSL/issues/1289)) ([56284cf](https://github.com/Safe-DS/DSL/commit/56284cf2e09e4f7f139e5b937571d9526e913002))
+* type inference for lambdas and their parameters ([#1304](https://github.com/Safe-DS/DSL/issues/1304)) ([a9e070f](https://github.com/Safe-DS/DSL/commit/a9e070f5dcdfcabe26f80c0521e4f540e3e58c02))
+
 ## [0.22.0](https://github.com/Safe-DS/DSL/compare/v0.21.1...v0.22.0) (2024-11-24)
 
 ### Features
