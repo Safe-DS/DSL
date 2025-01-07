@@ -10,7 +10,7 @@ pipeline myPipeline {
     val replace = "Hello, world!".replace("world", "planet");
     val split = "Hello, world!".split(", ");
     val startsWith = "Hello, world!".startsWith("Hello");
-    val substring = "Hello, world!".substring(7);
+    val substring = "Hello, world!".substring(start = 7);
     val casefolded = "Hello, world!".toCasefolded();
     val float = "3.14".toFloat();
     val int = "42".toInt();
