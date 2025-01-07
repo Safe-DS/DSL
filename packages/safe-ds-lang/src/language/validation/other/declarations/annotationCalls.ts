@@ -18,7 +18,7 @@ import {
 } from '../../../helpers/nodeProperties.js';
 import type { SafeDsServices } from '../../../safe-ds-module.js';
 
-export const CODE_ANNOTATION_CALL_CONSTANT_ARGUMENT = 'annotation-call/constant-argument';
+export const CODE_ANNOTATION_CALL_CONSTANT_ARGUMENT = 'annotation-call/non-constant-argument';
 export const CODE_ANNOTATION_CALL_MISSING_ARGUMENT_LIST = 'annotation-call/missing-argument-list';
 export const CODE_ANNOTATION_CALL_TARGET_PARAMETER = 'annotation-call/target-parameter';
 export const CODE_ANNOTATION_CALL_TARGET_RESULT = 'annotation-call/target-result';

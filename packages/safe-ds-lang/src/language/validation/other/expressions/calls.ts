@@ -3,7 +3,7 @@ import { type SdsCall } from '../../../generated/ast.js';
 import { getArguments, Parameter } from '../../../helpers/nodeProperties.js';
 import { SafeDsServices } from '../../../safe-ds-module.js';
 
-export const CODE_CALL_CONSTANT_ARGUMENT = 'call/constant-argument';
+export const CODE_CALL_CONSTANT_ARGUMENT = 'call/non-constant-argument';
 export const CODE_CALL_INFINITE_RECURSION = 'call/infinite-recursion';
 
 export const callArgumentMustBeConstantIfParameterIsConstant = (services: SafeDsServices) => {
