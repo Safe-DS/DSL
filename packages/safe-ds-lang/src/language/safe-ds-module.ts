@@ -57,6 +57,8 @@ import { SafeDsPythonServer } from './runtime/safe-ds-python-server.js';
 import { SafeDsSlicer } from './flow/safe-ds-slicer.js';
 import { SafeDsSyntheticProperties } from './helpers/safe-ds-synthetic-properties.js';
 import { SafeDsLinker } from './scoping/safe-ds-linker.js';
+import { SafeDsCodeActionProvider } from './codeActions/safe-ds-code-action-provider.js';
+import { SafeDsQuickfixProvider } from './codeActions/quickfixes/safe-ds-quickfix-provider.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -67,6 +69,9 @@ export type SafeDsAddedServices = {
         Classes: SafeDsClasses;
         Enums: SafeDsEnums;
         ImpurityReasons: SafeDsImpurityReasons;
+    };
+    codeActions: {
+        QuickfixProvider: SafeDsQuickfixProvider;
     };
     communication: {
         MessagingProvider: SafeDsMessagingProvider;
@@ -139,6 +144,9 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         Enums: (services) => new SafeDsEnums(services),
         ImpurityReasons: (services) => new SafeDsImpurityReasons(services),
     },
+    codeActions: {
+        QuickfixProvider: (services) => new SafeDsQuickfixProvider(services),
+    },
     communication: {
         MessagingProvider: (services) => new SafeDsMessagingProvider(services),
     },
@@ -163,6 +171,7 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
     },
     lsp: {
         CallHierarchyProvider: (services) => new SafeDsCallHierarchyProvider(services),
+        CodeActionProvider: (services) => new SafeDsCodeActionProvider(services),
         CodeLensProvider: (services) => new SafeDsCodeLensProvider(services),
         CompletionProvider: (services) => new SafeDsCompletionProvider(services),
         DocumentSymbolProvider: (services) => new SafeDsDocumentSymbolProvider(services),
