@@ -12,6 +12,10 @@ pipeline testPipeline {
     // $TEST$ no error "Argument must be named if the parameter is optional."
     myFunction(»1«, »2«, »3«, »4«);
     // $TEST$ no error "Argument must be named if the parameter is optional."
+    // $TEST$ error "Argument must be named if the parameter is optional."
+    // $TEST$ no error "Argument must be named if the parameter is optional."
+    myFunction(»1«, »2«, »optional2 = 3«);
+    // $TEST$ no error "Argument must be named if the parameter is optional."
     // $TEST$ no error "Argument must be named if the parameter is optional."
     myFunction(»required = 1«, »optional1 = 2«);
 

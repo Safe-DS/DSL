@@ -16,23 +16,19 @@ export class SafeDsQuickfixProvider {
 
     createQuickfixes(diagnostic: Diagnostic, document: LangiumDocument, acceptor: CodeActionAcceptor) {
         if (!diagnostic.code) {
+            /* c8 ignore next 2 */
             return;
         }
 
-        const quickfixes = this.registry[diagnostic.code];
-
-        if (Array.isArray(quickfixes)) {
-            for (const quickfix of quickfixes) {
-                quickfix(diagnostic, document, acceptor);
-            }
-        } else if (quickfixes) {
-            quickfixes(diagnostic, document, acceptor);
+        const quickfixes = this.registry[diagnostic.code] ?? [];
+        for (const quickfix of quickfixes) {
+            quickfix(diagnostic, document, acceptor);
         }
     }
 }
 
 type QuickfixRegistry = {
-    [code: string | number]: QuickfixCreator | QuickfixCreator[];
+    [code: string | number]: QuickfixCreator[];
 };
 
 type QuickfixCreator = (diagnostic: Diagnostic, document: LangiumDocument, acceptor: CodeActionAcceptor) => void;

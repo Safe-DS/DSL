@@ -14,6 +14,7 @@ export const makeArgumentsAssignedToOptionalParametersNamed = (services: SafeDsS
     return (diagnostic: Diagnostic, document: LangiumDocument, acceptor: CodeActionAcceptor) => {
         const node = locator.getAstNode(document.parseResult.value, diagnostic.data.path);
         if (!isSdsArgumentList(node)) {
+            /* c8 ignore next 2 */
             return;
         }
 
@@ -31,7 +32,6 @@ export const makeArgumentsAssignedToOptionalParametersNamed = (services: SafeDsS
 
 const ensureArgumentIsNamed = (nodeMapper: SafeDsNodeMapper, argument: SdsArgument): TextEdit[] | TextEdit => {
     const cstNode = argument.$cstNode;
-
     if (!cstNode || Argument.isNamed(argument)) {
         return [];
     }
