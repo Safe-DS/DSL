@@ -10,7 +10,7 @@ export const argumentMustBeNamedIfParameterIsOptional = (services: SafeDsService
     const nodeMapper = services.helpers.NodeMapper;
 
     return (node: SdsArgumentList, accept: ValidationAcceptor) => {
-        for (const argument of getArguments(node).reverse()) {
+        for (const argument of getArguments(node).toReversed()) {
             const parameter = nodeMapper.argumentToParameter(argument);
             if (!parameter) {
                 // Still keep going if there are extra arguments.
