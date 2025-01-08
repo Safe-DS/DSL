@@ -192,6 +192,7 @@ import {
     outputStatementMustOnlyBeUsedInPipeline,
 } from './other/statements/outputStatements.js';
 import { messageOfConstraintsMustOnlyReferenceConstantParameters } from './other/declarations/constraints.js';
+import { argumentMustBeNamedIfParameterIsOptional } from './other/expressions/arguments.js';
 
 /**
  * Register custom validation checks.
@@ -199,15 +200,6 @@ import { messageOfConstraintsMustOnlyReferenceConstantParameters } from './other
 export const registerValidationChecks = function (services: SafeDsServices) {
     const registry = services.validation.ValidationRegistry;
     const checks: ValidationChecks<SafeDsAstType> = {
-        SdsAssignee: [
-            assigneeAssignedResultShouldNotBeDeprecated(services),
-            assigneeAssignedResultShouldNotBeExperimental(services),
-        ],
-        SdsAssignment: [
-            assignmentAssigneeMustGetValue(services),
-            assignmentShouldNotImplicitlyIgnoreResult(services),
-            assignmentShouldHaveMoreThanWildcardsAsAssignees(services),
-        ],
         SdsAbstractCall: [
             argumentListMustNotHaveTooManyArguments(services),
             argumentListMustSetAllRequiredParameters(services),
@@ -234,6 +226,16 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsArgumentList: [
             argumentListMustNotHavePositionalArgumentsAfterNamedArguments,
             argumentListMustNotSetParameterMultipleTimes(services),
+            argumentMustBeNamedIfParameterIsOptional(services),
+        ],
+        SdsAssignee: [
+            assigneeAssignedResultShouldNotBeDeprecated(services),
+            assigneeAssignedResultShouldNotBeExperimental(services),
+        ],
+        SdsAssignment: [
+            assignmentAssigneeMustGetValue(services),
+            assignmentShouldNotImplicitlyIgnoreResult(services),
+            assignmentShouldHaveMoreThanWildcardsAsAssignees(services),
         ],
         SdsAttribute: [attributeMustHaveTypeHint],
         SdsBlockLambda: [blockLambdaMustContainUniqueNames],

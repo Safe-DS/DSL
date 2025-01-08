@@ -3,5 +3,5 @@
 package tests.generator.safeds
 
 pipeline test {
-    val a = Table();
+    val a = Table({"a": []});
 }

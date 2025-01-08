@@ -28,14 +28,12 @@ document explains how to add a new generation test.
     ```ts
     // $TEST$ target
     ```
-5. Add another folder called `generated` inside the folder that you created in step 1. Place folders and Python files
-   inside the `generated` folder to specify the expected output of the program. The relative paths to the Python files
-   and the contents of the Python files will be compared to the actual generation output.
-6. Run the tests. The test runner will automatically pick up the new test.
+5. Run the tests. The test runner will automatically pick up the new test, and create a snapshot of the current output of the generator.
+6. Verify that the snapshot is correct, modify it if needed, and commit it.
 
-### Updating the expected output
+### Updating the snapshots
 
-To quickly update the expected output after changes to the code generator, run `vitest` with the `--update` flag.
+To quickly update the snapshots after changes to the code generator, run `vitest` with the `--update` flag.
 
 ## Markdown Generation
 
@@ -53,11 +51,9 @@ To quickly update the expected output after changes to the code generator, run `
    loaded into different workspaces, so they cannot reference each other. Generation will be triggered for all files in
    the folder.
 3. Add the Safe-DS code that you want to test to the files.
-4. Add another folder called `generated` inside the folder that you created in step 1. Place folders and Python files
-   inside the `generated` folder to specify the expected output of the program. The relative paths to the Python files
-   and the contents of the Python files will be compared to the actual generation output.
-5. Run the tests. The test runner will automatically pick up the new test.
+4. Run the tests. The test runner will automatically pick up the new test, and create a snapshot of the current output of the generator.
+5. Verify that the snapshot is correct, modify it if needed, and commit it.
 
-### Updating the expected output
+### Updating the snapshots
 
-To quickly update the expected output after changes to the code generator, run `vitest` with the `--update` flag.
+To quickly update the snapshots after changes to the code generator, run `vitest` with the `--update` flag.

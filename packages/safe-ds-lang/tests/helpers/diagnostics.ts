@@ -97,15 +97,15 @@ export class SyntaxErrorsInCodeError extends TestDescriptionError {
 }
 
 /**
- * The code contains syntax errors.
+ * The code contains errors.
  */
 export class ErrorsInCodeError extends TestDescriptionError {
     constructor(
         readonly errors: Diagnostic[],
         uri: URI,
     ) {
-        const syntaxErrorsAsString = errors.map((e) => `    - ${e.message}`).join(`\n`);
+        const errorsAsString = errors.map((e) => `    - ${e.message}`).join(`\n`);
 
-        super(`Code has errors:\n${syntaxErrorsAsString}`, uri);
+        super(`Code has errors:\n${errorsAsString}`, uri);
     }
 }
