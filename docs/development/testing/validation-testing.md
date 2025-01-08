@@ -32,7 +32,7 @@ validation test.
 ## Format of test comments
 
 1. As usual, test comments are single-line comments that start with `$TEST$`.
-2. Then, you specify whether the issue should be absent by writing `no` or present by writing nothing.
+2. Then, you specify whether the issue should be absent by writing `no`, or present by writing nothing.
 3. Next, you specify the severity of the issue by writing `error`, `warning`, `info`, or `hint`.
 4. Finally, you can optionally specify the message of the issue enclosed in double-quotes. You can also add an `r`
    before the opening double-quote to indicate that the expected message should be interpreted as a regular expression

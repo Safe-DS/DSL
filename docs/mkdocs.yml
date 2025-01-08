@@ -62,6 +62,7 @@ nav:
   - Development:
     - Testing:
       - Call Graph Testing: development/testing/call-graph-testing.md
+      - Code Actions Testing: development/testing/code-actions-testing.md
       - Formatting Testing: development/testing/formatting-testing.md
       - Generation Testing: development/testing/generation-testing.md
       - Grammar Testing: development/testing/grammar-testing.md
