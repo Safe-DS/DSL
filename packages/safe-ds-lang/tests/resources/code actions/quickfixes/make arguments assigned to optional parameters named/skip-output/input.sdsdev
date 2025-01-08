@@ -1,0 +1,18 @@
+// $TEST$ apply "Add names to arguments that are assigned to optional parameters."
+
+package tests.codeActions.quickfixes.makeArgumentsAssignedToOptionalParametersNamed
+
+@Repeatable
+annotation MyAnnotation(required: Int, optional1: Int = 0, optional2: Int = 0)
+
+@Pure
+fun myFunction(required: Int, optional1: Int = 0, optional2: Int = 0)
+
+@MyAnnotation(1, optional1 = 2, optional2 = 3, 4)
+
+@MyAnnotation(1, 2, optional2 = 3)
+pipeline testPipeline {
+    myFunction(1, optional1 = 2, optional2 = 3, 4);
+
+    myFunction(1, 2, optional2 = 3);
+}

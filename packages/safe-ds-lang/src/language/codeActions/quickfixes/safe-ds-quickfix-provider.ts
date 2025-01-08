@@ -20,6 +20,7 @@ export class SafeDsQuickfixProvider {
         }
 
         const quickfixes = this.registry[diagnostic.code];
+
         if (Array.isArray(quickfixes)) {
             for (const quickfix of quickfixes) {
                 quickfix(diagnostic, document, acceptor);
@@ -31,7 +32,7 @@ export class SafeDsQuickfixProvider {
 }
 
 type QuickfixRegistry = {
-    [code: string | number]: Quickfix | Quickfix[];
+    [code: string | number]: QuickfixCreator | QuickfixCreator[];
 };
 
-type Quickfix = (diagnostic: Diagnostic, document: LangiumDocument, acceptor: CodeActionAcceptor) => void;
+type QuickfixCreator = (diagnostic: Diagnostic, document: LangiumDocument, acceptor: CodeActionAcceptor) => void;

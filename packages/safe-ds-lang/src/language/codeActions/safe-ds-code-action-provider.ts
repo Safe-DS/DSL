@@ -1,8 +1,9 @@
 import { CodeActionProvider } from 'langium/lsp';
 import { LangiumDocument, MaybePromise } from 'langium';
-import { CancellationToken, CodeAction, CodeActionParams, Command } from 'vscode-languageserver';
+import { CancellationToken, CodeAction, CodeActionParams } from 'vscode-languageserver';
 import { SafeDsServices } from '../safe-ds-module.js';
 import { SafeDsQuickfixProvider } from './quickfixes/safe-ds-quickfix-provider.js';
+import { isEmpty } from '../../helpers/collections.js';
 
 export class SafeDsCodeActionProvider implements CodeActionProvider {
     private readonly quickfixProvider: SafeDsQuickfixProvider;
@@ -15,7 +16,7 @@ export class SafeDsCodeActionProvider implements CodeActionProvider {
         document: LangiumDocument,
         params: CodeActionParams,
         _cancelToken?: CancellationToken,
-    ): MaybePromise<Array<Command | CodeAction> | undefined> {
+    ): MaybePromise<CodeAction[] | undefined> {
         const result: CodeAction[] = [];
         const acceptor = (action: CodeAction) => result.push(action);
 
@@ -23,7 +24,7 @@ export class SafeDsCodeActionProvider implements CodeActionProvider {
             this.quickfixProvider.createQuickfixes(diagnostic, document, acceptor);
         }
 
-        return result;
+        return isEmpty(result) ? undefined : result;
     }
 }
 
