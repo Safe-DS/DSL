@@ -1,6 +1,6 @@
 package tests.validation.other.expressions.arguments.mustBeNamedIfParameterIsOptional
 
-@Pure fun myFunction(required: Int, optional: Int = 0)
+@Pure fun myFunction(required: Int, optional1: Int = 0, optional2: Int = 0)
 
 pipeline testPipeline {
     // $TEST$ no error "Argument must be named if the parameter is optional."
@@ -8,12 +8,15 @@ pipeline testPipeline {
     myFunction(»1«, »2«);
     // $TEST$ no error "Argument must be named if the parameter is optional."
     // $TEST$ no error "Argument must be named if the parameter is optional."
-    myFunction(»required = 1«, »optional = 2«);
+    // $TEST$ error "Argument must be named if the parameter is optional."
+    // $TEST$ no error "Argument must be named if the parameter is optional."
+    myFunction(»1«, »2«, »3«, »4«);
+    // $TEST$ no error "Argument must be named if the parameter is optional."
+    // $TEST$ no error "Argument must be named if the parameter is optional."
+    myFunction(»required = 1«, »optional1 = 2«);
 
     // $TEST$ no error "Argument must be named if the parameter is optional."
     unresolved(»1«);
-    // $TEST$ no error "Argument must be named if the parameter is optional."
-    myFunction(1, 2, »3«);
     // $TEST$ no error "Argument must be named if the parameter is optional."
     myFunction(unresolved = »1«);
 }

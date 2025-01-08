@@ -1,19 +1,22 @@
 package tests.validation.other.expressions.arguments.mustBeNamedIfParameterIsOptional
 
 @Repeatable
-annotation MyAnnotation(required: Int, optional: Int = 0)
+annotation MyAnnotation(required: Int, optional1: Int = 0, optional2: Int = 0)
 
 // $TEST$ no error "Argument must be named if the parameter is optional."
 // $TEST$ error "Argument must be named if the parameter is optional."
 @MyAnnotation(»1«, »2«)
 // $TEST$ no error "Argument must be named if the parameter is optional."
 // $TEST$ no error "Argument must be named if the parameter is optional."
-@MyAnnotation(»required = 1«, »optional = 2«)
+// $TEST$ error "Argument must be named if the parameter is optional."
+// $TEST$ no error "Argument must be named if the parameter is optional."
+@MyAnnotation(»1«, »2«, »3«, »4«)
+// $TEST$ no error "Argument must be named if the parameter is optional."
+// $TEST$ no error "Argument must be named if the parameter is optional."
+@MyAnnotation(»required = 1«, »optional1 = 2«)
 
 // $TEST$ no error "Argument must be named if the parameter is optional."
 @Unresolved(»1«)
-// $TEST$ no error "Argument must be named if the parameter is optional."
-@MyAnnotation(1, 2, »3«)
 // $TEST$ no error "Argument must be named if the parameter is optional."
 @MyAnnotation(unresolved = »1«)
 pipeline testPipeline {}

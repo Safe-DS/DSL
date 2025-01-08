@@ -1,7 +1,7 @@
 import { SafeDsServices } from '../../../safe-ds-module.js';
-import type { SdsArgument } from '../../../generated/ast.js';
+import type { SdsArgumentList } from '../../../generated/ast.js';
 import { ValidationAcceptor } from 'langium';
-import { Argument, Parameter } from '../../../helpers/nodeProperties.js';
+import { Argument, getArguments, Parameter } from '../../../helpers/nodeProperties.js';
 
 export const CODE_ARGUMENT_POSITIONAL = 'argument/positional';
 
@@ -9,19 +9,30 @@ export const argumentMustBeNamedIfParameterIsOptional = (services: SafeDsService
     const locator = services.workspace.AstNodeLocator;
     const nodeMapper = services.helpers.NodeMapper;
 
-    return (node: SdsArgument, accept: ValidationAcceptor) => {
-        const parameter = nodeMapper.argumentToParameter(node);
-        if (!parameter || !Parameter.isOptional(parameter)) {
-            return;
-        }
+    return (node: SdsArgumentList, accept: ValidationAcceptor) => {
+        for (const argument of getArguments(node).reverse()) {
+            const parameter = nodeMapper.argumentToParameter(argument);
+            if (!parameter) {
+                // Still keep going if there are extra arguments.
+                continue;
+            }
+            if (Parameter.isRequired(parameter)) {
+                // Required parameters must appear before optional parameters.
+                return;
+            }
 
-        if (!Argument.isNamed(node)) {
-            accept('error', 'Argument must be named if the parameter is optional.', {
-                node,
-                property: 'value',
-                code: CODE_ARGUMENT_POSITIONAL,
-                data: { path: locator.getAstNodePath(node) },
-            });
+            if (!Argument.isNamed(argument)) {
+                accept('error', 'Argument must be named if the parameter is optional.', {
+                    node: argument,
+                    property: 'value',
+                    code: CODE_ARGUMENT_POSITIONAL,
+                    data: { path: locator.getAstNodePath(node) },
+                });
+
+                // Only show the error for the last argument. If users added names starting in the middle, we would no
+                // longer be able to assign the arguments to the correct parameters.
+                return;
+            }
         }
     };
 };

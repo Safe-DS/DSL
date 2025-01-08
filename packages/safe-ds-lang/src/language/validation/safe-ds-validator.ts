@@ -222,11 +222,11 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsArgument: [
             argumentCorrespondingParameterShouldNotBeDeprecated(services),
             argumentCorrespondingParameterShouldNotBeExperimental(services),
-            argumentMustBeNamedIfParameterIsOptional(services),
         ],
         SdsArgumentList: [
             argumentListMustNotHavePositionalArgumentsAfterNamedArguments,
             argumentListMustNotSetParameterMultipleTimes(services),
+            argumentMustBeNamedIfParameterIsOptional(services),
         ],
         SdsAssignee: [
             assigneeAssignedResultShouldNotBeDeprecated(services),
