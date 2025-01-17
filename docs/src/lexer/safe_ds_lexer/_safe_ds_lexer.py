@@ -1,4 +1,4 @@
-from pygments.lexer import RegexLexer, words
+from pygments.lexer import RegexLexer, include, words
 from pygments.token import Comment, Keyword, Name, Number, Operator, String, Whitespace
 
 keywords_annotation = ("annotation",)
@@ -88,7 +88,8 @@ class SafeDsLexer(RegexLexer):
         "root": [
             # Literals
             (r"\b([0-9]+(\.[0-9]+)?([eE][+-]?[0-9]+)?)\b", Number),
-            (r'"|}}', String, "string"),
+            (r'"', String, "string"),
+            (r'`', String, "template_string"),
             # Keywords
             (
                 words(keywords_annotation, prefix=r"\b", suffix=r"\b"),
@@ -138,7 +139,16 @@ class SafeDsLexer(RegexLexer):
             (identifier_regex, Name.Constant, "#pop"),
         ],
         "string": [
-            (r'([^"{]|\{(?!\{))+', String),
-            (r'\{\{|"', String, "#pop"),
+            (r'(\\"|[^"])+', String),
+            (r'"', String, "#pop"),
+        ],
+        "template_string": [
+            (r'(\\{|\\`|[^`{])+', String),
+            (r'{', String, "template_expression"),
+            (r'`', String, "#pop"),
+        ],
+        "template_expression": [
+            include("root"),
+            (r'}', String, "#pop"),
         ],
     }
