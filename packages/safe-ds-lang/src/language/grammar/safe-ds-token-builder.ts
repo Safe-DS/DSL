@@ -8,6 +8,7 @@ const DEFAULT_MODE = 'default';
 const TEMPLATE_STRING_MODE = 'template-string';
 
 // Tokens
+const BLOCK_START = '{';
 const BLOCK_END = '}';
 const TEMPLATE_STRING_START = 'TEMPLATE_STRING_START';
 const TEMPLATE_STRING_INNER = 'TEMPLATE_STRING_INNER';
@@ -43,7 +44,13 @@ export class SafeDsTokenBuilder extends DefaultTokenBuilder {
     ): TokenType {
         let tokenType = super.buildKeywordToken(keyword, terminalTokens, caseInsensitive);
 
-        if (tokenType.name === BLOCK_END) {
+        if (tokenType.name === BLOCK_START) {
+            // Enter default mode (for map literals and block lambdas)
+            tokenType.PUSH_MODE = DEFAULT_MODE;
+        } else if (tokenType.name === BLOCK_END) {
+            // Return to previous mode
+            tokenType.POP_MODE = true;
+
             // BLOCK_END has TEMPLATE_STRING_INNER and TEMPLATE_STRING_END as longer alternatives, which are not valid
             // in the default mode.
             delete tokenType.LONGER_ALT;
@@ -55,10 +62,11 @@ export class SafeDsTokenBuilder extends DefaultTokenBuilder {
     protected override buildTerminalToken(terminal: GrammarAST.TerminalRule): TokenType {
         let tokenType = super.buildTerminalToken(terminal);
 
-        // Enter/leave template string mode
         if (tokenType.name === TEMPLATE_STRING_START) {
+            // Enter template string mode
             tokenType.PUSH_MODE = TEMPLATE_STRING_MODE;
         } else if (tokenType.name === TEMPLATE_STRING_END) {
+            // Return to previous mode
             tokenType.POP_MODE = true;
         }
 

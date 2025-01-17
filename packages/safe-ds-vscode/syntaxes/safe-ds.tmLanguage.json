@@ -36,9 +36,20 @@
                     "match": "\\b(as|else|from|import|literal|union|where|yield)\\b"
                 },
                 {
+                    "comment": "Using a keyword as an identifier.",
                     "name": "meta.safe-ds",
                     "begin": "\\^",
                     "end": "\\b"
+                },
+                {
+                    "name": "string.quoted.double.safe-ds",
+                    "begin": "\"",
+                    "end": "\"",
+                    "patterns": [
+                        {
+                            "include": "#string-character-escape"
+                        }
+                    ]
                 },
                 {
                     "name": "string.interpolated.safe-ds",
@@ -49,24 +60,19 @@
                             "include": "#string-character-escape"
                         },
                         {
-                            "name": "meta.embedded.safe-ds",
-                            "begin": "\\{",
-                            "end": "\\}",
-                            "patterns": [
-                                {
-                                    "include": "#shared"
-                                }
-                            ]
+                            "include": "#shared"
                         }
                     ]
                 },
                 {
-                    "name": "string.quoted.double.safe-ds",
-                    "begin": "\"",
-                    "end": "\"",
+                    "comment": "Go back to regular mode from string interpolation. Including it in the string interpolation rule only matches up to the first closing curly brace, which fails for nested map literals or block lambdas.",
+                    "name": "meta.embedded.safe-ds",
+                    "contentName": "source.safe-ds",
+                    "begin": "\\{",
+                    "end": "\\}",
                     "patterns": [
                         {
-                            "include": "#string-character-escape"
+                            "include": "$self"
                         }
                     ]
                 },
