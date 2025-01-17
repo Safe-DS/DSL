@@ -42,11 +42,20 @@
                 },
                 {
                     "name": "string.interpolated.safe-ds",
-                    "begin": "\"|}}",
-                    "end": "{{|\"",
+                    "begin": "`",
+                    "end": "`",
                     "patterns": [
                         {
                             "include": "#string-character-escape"
+                        },
+                        {
+                            "begin": "\\{",
+                            "end": "\\}",
+                            "patterns": [
+                                {
+                                    "include": "#shared"
+                                }
+                            ]
                         }
                     ]
                 },
@@ -118,7 +127,7 @@
         },
         "string-character-escape": {
             "name": "constant.character.escape.safe-ds",
-            "match": "\\\\(b|f|n|r|t|v|0|'|\"|{|\\\\|u[0-9a-fA-F]{4})"
+            "match": "\\\\(b|f|n|r|t|v|0|'|\"|`|\\{|}|\\\\|u[0-9a-fA-F]{4})"
         }
     }
 }
