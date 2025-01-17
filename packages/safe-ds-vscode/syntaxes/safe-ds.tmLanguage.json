@@ -49,6 +49,7 @@
                             "include": "#string-character-escape"
                         },
                         {
+                            "name": "meta.embedded.safe-ds",
                             "begin": "\\{",
                             "end": "\\}",
                             "patterns": [
