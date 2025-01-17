@@ -122,6 +122,9 @@ class SafeDsLexer(RegexLexer):
             (r"/\*[\s\S]*?\*/", Comment.Multiline),
             # Whitespace
             (r"\s+", Whitespace),
+            # Block (needed to highlight curly braces in template string expressions)
+            (r"{", Operator, "block"),
+            (r"}", Operator, "#pop"),
         ],
         "annotation": [
             (identifier_regex, Name.Decorator, "#pop"),
@@ -148,7 +151,11 @@ class SafeDsLexer(RegexLexer):
             (r'`', String, "#pop"),
         ],
         "template_expression": [
-            include("root"),
+            # Order matters
             (r'}', String, "#pop"),
+            include("root"),
+        ],
+        "block": [
+            include("root"),
         ],
     }
