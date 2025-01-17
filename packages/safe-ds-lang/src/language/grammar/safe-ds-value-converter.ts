@@ -9,12 +9,14 @@ export class SafeDsValueConverter extends DefaultValueConverter {
                 return ValueConverter.convertBigint(input);
             case 'STRING':
                 return convertString(input, 1, 1);
+            case 'TEMPLATE_STRING_FULL':
+                return convertTemplateStringPart(input);            
             case 'TEMPLATE_STRING_START':
-                return convertString(input, 1, 2);
+                return convertTemplateStringPart(input);
             case 'TEMPLATE_STRING_INNER':
-                return convertString(input, 2, 2);
+                return convertTemplateStringPart(input);
             case 'TEMPLATE_STRING_END':
-                return convertString(input, 2, 1);
+                return convertTemplateStringPart(input);
             default:
                 return super.runConverter(rule, input, cstNode);
         }
@@ -38,6 +40,10 @@ const convertString = (input: string, openingDelimiterLength: number, closingDel
 
     return result;
 };
+
+const convertTemplateStringPart = (input: string): string => {
+    return convertString(input, 1, 1);
+}
 
 /**
  * Handle an escape sequence.

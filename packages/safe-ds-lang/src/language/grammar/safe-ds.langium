@@ -873,15 +873,26 @@ interface SdsTemplateString extends SdsExpression {
 }
 
 SdsTemplateString returns SdsTemplateString:
-    expressions+=SdsTemplateStringStart
-    expressions+=SdsExpression?
-    (expressions+=SdsTemplateStringInner expressions+=SdsExpression?)*
-    expressions+=SdsTemplateStringEnd
+    (
+        expressions+=SdsTemplateStringFull
+    ) | (
+        expressions+=SdsTemplateStringStart
+        expressions+=SdsExpression?
+        (expressions+=SdsTemplateStringInner expressions+=SdsExpression?)*
+        expressions+=SdsTemplateStringEnd
+    )
 ;
 
 interface SdsTemplateStringPart extends SdsLiteral {
     value: string
 }
+
+interface SdsTemplateStringFull extends SdsTemplateStringPart {}
+
+SdsTemplateStringFull returns SdsExpression:
+    {SdsTemplateStringFull}
+    value=TEMPLATE_STRING_FULL
+;
 
 interface SdsTemplateStringStart extends SdsTemplateStringPart {}
 
@@ -1081,20 +1092,20 @@ terminal FLOAT returns number
 terminal fragment DECIMAL_DIGIT: /[0-9]/;
 terminal fragment FLOAT_EXPONENT: ('e' | 'E' )('+' | '-' )? DECIMAL_DIGIT+;
 terminal INT returns bigint: DECIMAL_DIGIT+;
-terminal STRING returns string: STRING_START STRING_TEXT* STRING_END;
-terminal fragment STRING_START: STRING_DELIMITER;
-terminal fragment STRING_END: '{'? STRING_DELIMITER;
-terminal fragment STRING_DELIMITER: '"';
+terminal STRING returns string: '"' STRING_TEXT* '"';
 terminal fragment STRING_TEXT
-    : '{'? ESCAPE_SEQUENCE
-    | /{?[^\\"{]/
+    : ESCAPE_SEQUENCE
+    | /[^\\"]/
 ;
 terminal fragment ESCAPE_SEQUENCE: '\\' .;
-terminal fragment TEMPLATE_EXPRESSION_START: '{{';
-terminal fragment TEMPLATE_EXPRESSION_END: '}}';
-terminal TEMPLATE_STRING_START returns string: STRING_START STRING_TEXT* TEMPLATE_EXPRESSION_START;
-terminal TEMPLATE_STRING_INNER returns string: TEMPLATE_EXPRESSION_END STRING_TEXT* TEMPLATE_EXPRESSION_START;
-terminal TEMPLATE_STRING_END returns string: TEMPLATE_EXPRESSION_END STRING_TEXT* STRING_END;
+terminal TEMPLATE_STRING_FULL returns string: '`' TEMPLATE_STRING_TEXT* '`';
+terminal TEMPLATE_STRING_START returns string: '`' TEMPLATE_STRING_TEXT* '{';
+terminal TEMPLATE_STRING_INNER returns string: '}' TEMPLATE_STRING_TEXT* '{';
+terminal TEMPLATE_STRING_END returns string: '}' TEMPLATE_STRING_TEXT* '`';
+terminal fragment TEMPLATE_STRING_TEXT
+    : ESCAPE_SEQUENCE
+    | /[^\\`{]/
+;
 
 hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
 hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
