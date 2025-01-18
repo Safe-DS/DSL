@@ -184,7 +184,7 @@ describe('runConverter', () => {
         it.each(escapeSequences)('should unescape $escaped', async ({ escaped, unescaped }) => {
             const code = `
                 pipeline myPipeline {
-                    \`${escaped}{{ 1 }}inner{{ 2 }}end\`;
+                    \`${escaped}{ 1 }inner{ 2 }end\`;
                 }
             `;
 
@@ -208,7 +208,7 @@ describe('runConverter', () => {
         it.each(escapeSequences)('should unescape $escaped', async ({ escaped, unescaped }) => {
             const code = `
                 pipeline myPipeline {
-                    \`start{{ 1 }}${escaped}{{ 2 }}end\`;
+                    \`start{ 1 }${escaped}{ 2 }end\`;
                 }
             `;
 
@@ -232,7 +232,7 @@ describe('runConverter', () => {
         it.each(escapeSequences)('should unescape $escaped', async ({ escaped, unescaped }) => {
             const code = `
                 pipeline myPipeline {
-                    \`start{{ 1 }}inner{{ 2 }}${escaped}\`;
+                    \`start{ 1 }inner{ 2 }${escaped}\`;
                 }
             `;
 
