@@ -11,4 +11,7 @@ pipeline test {
     f("");
     f("multi
 line");
+
+    // https://github.com/Safe-DS/DSL/issues/1310
+    f("'");
 }

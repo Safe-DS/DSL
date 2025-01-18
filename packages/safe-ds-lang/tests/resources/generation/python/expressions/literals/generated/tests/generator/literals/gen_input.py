@@ -12,3 +12,4 @@ def test():
     f(None)
     f('')
     f('multi\nline')
+    f('\'')

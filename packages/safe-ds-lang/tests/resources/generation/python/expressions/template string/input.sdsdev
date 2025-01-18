@@ -9,4 +9,7 @@ pipeline test {
 { g() }
 inner { g() }
 end`);
+
+    // https://github.com/Safe-DS/DSL/issues/1310
+    f(`'`);
 }
