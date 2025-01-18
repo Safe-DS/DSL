@@ -5,8 +5,8 @@ package tests.generator.templateString
 @Pure fun g() -> result: Int
 
 pipeline test {
-    f("start
-{{ g() }}
-inner {{ g() }}
-end");
+    f(`start
+{ g() }
+inner { g() }
+end`);
 }

@@ -3,9 +3,9 @@ package tests.validation.other.expressions.templateStrings.missingTemplateExpres
 pipeline test {
     // $TEST$ error "There must be an expression between two string parts."
     // $TEST$ error "There must be an expression between two string parts."
-    "start {{ »}} inner {{« »}} end"«;
+    `start { »} inner {« »} end`«;
 
     // $TEST$ no error "There must be an expression between two string parts."
     // $TEST$ no error "There must be an expression between two string parts."
-    "start {{ 1 »}} inner {{« 1 »}} end"«;
+    `start { 1 »} inner {« 1 »} end`«;
 }

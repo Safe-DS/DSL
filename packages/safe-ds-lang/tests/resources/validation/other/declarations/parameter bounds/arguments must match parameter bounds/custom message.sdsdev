@@ -5,7 +5,7 @@ package tests.validation.other.declarations.parameterBounds.argumentsMustMatchPa
     const p2: Int = -2,
 ) where {
     p1 >= 0 else "This parameter must be non-negative.",
-    p1 > p2 else "p1 must be greater than p2, but p1 was {{ p1 }} and p2 was {{ p2 }}.",
+    p1 > p2 else `p1 must be greater than p2, but p1 was { p1 } and p2 was { p2 }.`,
 }
 
 @Pure fun f7(
@@ -17,8 +17,8 @@ package tests.validation.other.declarations.parameterBounds.argumentsMustMatchPa
     const p3: Int = »-3«,
 ) where {
     p1 >= 0 else "This parameter must be non-negative.",
-    p2 >= 0 else "This parameter must be non-negative, but was {{ p2 }}.",
-    p3 >= 0 else "This parameter must be non-negative, but was {{ p3 }}. p2 was {{ p2 }} by the way.",
+    p2 >= 0 else `This parameter must be non-negative, but was { p2 }.`,
+    p3 >= 0 else `This parameter must be non-negative, but was { p3 }. p2 was { p2 } by the way.`,
 }
 
 segment mySegment(p: Int) {
