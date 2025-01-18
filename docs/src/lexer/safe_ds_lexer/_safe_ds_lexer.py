@@ -89,7 +89,7 @@ class SafeDsLexer(RegexLexer):
             # Literals
             (r"\b([0-9]+(\.[0-9]+)?([eE][+-]?[0-9]+)?)\b", Number),
             (r'"', String, "string"),
-            (r'`', String, "template_string"),
+            (r"`", String, "template_string"),
             # Keywords
             (
                 words(keywords_annotation, prefix=r"\b", suffix=r"\b"),
@@ -146,13 +146,13 @@ class SafeDsLexer(RegexLexer):
             (r'"', String, "#pop"),
         ],
         "template_string": [
-            (r'(\\{|\\`|[^`{])+', String),
-            (r'{', String, "template_expression"),
-            (r'`', String, "#pop"),
+            (r"(\\{|\\`|[^`{])+", String),
+            (r"{", String, "template_expression"),
+            (r"`", String, "#pop"),
         ],
         "template_expression": [
             # Order matters
-            (r'}', String, "#pop"),
+            (r"}", String, "#pop"),
             include("root"),
         ],
         "block": [
