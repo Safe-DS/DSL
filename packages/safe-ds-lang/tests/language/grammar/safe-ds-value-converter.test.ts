@@ -8,6 +8,7 @@ import {
     isSdsModule,
     isSdsString,
     isSdsTemplateStringEnd,
+    isSdsTemplateStringFull,
     isSdsTemplateStringInner,
     isSdsTemplateStringStart,
 } from '../../../src/language/generated/ast.js';
@@ -144,11 +145,35 @@ describe('runConverter', () => {
         });
     });
 
+    describe('TEMPLATE_STRING_FULL', () => {
+        it('should remove delimiters', async () => {
+            const code = `
+                pipeline myPipeline {
+                    \`full\`;
+                }
+            `;
+
+            const firstTemplateStringStart = await getNodeOfType(services, code, isSdsTemplateStringFull);
+            expect(firstTemplateStringStart.value).toBe('full');
+        });
+
+        it.each(escapeSequences)('should unescape $escaped', async ({ escaped, unescaped }) => {
+            const code = `
+                pipeline myPipeline {
+                    \`${escaped}\`;
+                }
+            `;
+
+            const firstTemplateStringStart = await getNodeOfType(services, code, isSdsTemplateStringFull);
+            expect(firstTemplateStringStart.value).toBe(unescaped);
+        });
+    });
+
     describe('TEMPLATE_STRING_START', () => {
         it('should remove delimiters', async () => {
             const code = `
                 pipeline myPipeline {
-                    "start{{ 1 }}inner{{ 2 }}end";
+                    \`start{ 1 }inner{ 2 }end\`;
                 }
             `;
 
@@ -159,7 +184,7 @@ describe('runConverter', () => {
         it.each(escapeSequences)('should unescape $escaped', async ({ escaped, unescaped }) => {
             const code = `
                 pipeline myPipeline {
-                    "${escaped}{{ 1 }}inner{{ 2 }}end";
+                    \`${escaped}{{ 1 }}inner{{ 2 }}end\`;
                 }
             `;
 
@@ -172,7 +197,7 @@ describe('runConverter', () => {
         it('should remove delimiters', async () => {
             const code = `
                 pipeline myPipeline {
-                    "start{{ 1 }}inner{{ 2 }}end";
+                    \`start{ 1 }inner{ 2 }end\`;
                 }
             `;
 
@@ -183,7 +208,7 @@ describe('runConverter', () => {
         it.each(escapeSequences)('should unescape $escaped', async ({ escaped, unescaped }) => {
             const code = `
                 pipeline myPipeline {
-                    "start{{ 1 }}${escaped}{{ 2 }}end";
+                    \`start{{ 1 }}${escaped}{{ 2 }}end\`;
                 }
             `;
 
@@ -196,7 +221,7 @@ describe('runConverter', () => {
         it('should remove delimiters', async () => {
             const code = `
                 pipeline myPipeline {
-                    "start{{ 1 }}inner{{ 2 }}end";
+                    \`start{ 1 }inner{ 2 }end\`;
                 }
             `;
 
@@ -207,7 +232,7 @@ describe('runConverter', () => {
         it.each(escapeSequences)('should unescape $escaped', async ({ escaped, unescaped }) => {
             const code = `
                 pipeline myPipeline {
-                    "start{{ 1 }}inner{{ 2 }}${escaped}";
+                    \`start{{ 1 }}inner{{ 2 }}${escaped}\`;
                 }
             `;
 
@@ -227,7 +252,6 @@ describe('escapeString', () => {
         { unescaped: '\v', escaped: '\\v' },
         { unescaped: '\0', escaped: '\\0' },
         { unescaped: '"', escaped: '\\"' },
-        { unescaped: '{', escaped: '\\{' },
         { unescaped: '\\', escaped: '\\\\' },
     ];
 

@@ -10,7 +10,7 @@ export class SafeDsValueConverter extends DefaultValueConverter {
             case 'STRING':
                 return convertString(input, 1, 1);
             case 'TEMPLATE_STRING_FULL':
-                return convertTemplateStringPart(input);            
+                return convertTemplateStringPart(input);
             case 'TEMPLATE_STRING_START':
                 return convertTemplateStringPart(input);
             case 'TEMPLATE_STRING_INNER':
@@ -43,7 +43,7 @@ const convertString = (input: string, openingDelimiterLength: number, closingDel
 
 const convertTemplateStringPart = (input: string): string => {
     return convertString(input, 1, 1);
-}
+};
 
 /**
  * Handle an escape sequence.
@@ -91,12 +91,11 @@ const replacements = new Map([
     ['\v', '\\v'],
     ['\0', '\\0'],
     ['"', '\\"'],
-    ['{', '\\{'],
     ['\\', '\\\\'],
 ]);
 
 /**
- * Escape a string.
+ * Escape a string. Not applicable to template strings.
  */
 export const escapeString = (input: string): string => {
     let result = '';
