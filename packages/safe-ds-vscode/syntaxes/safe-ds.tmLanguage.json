@@ -60,10 +60,20 @@
                             "include": "#string-character-escape"
                         },
                         {
-                            "include": "#shared"
+                            "include": "#block"
                         }
                     ]
                 },
+                {
+                    "include": "#block"
+                },
+                {
+                    "include": "#comments"
+                }
+            ]
+        },
+        "block": {
+            "patterns": [
                 {
                     "comment": "Go back to regular mode from string interpolation. Including it in the string interpolation rule only matches up to the first closing curly brace, which fails for nested map literals or block lambdas.",
                     "name": "meta.embedded.safe-ds",
@@ -75,9 +85,6 @@
                             "include": "$self"
                         }
                     ]
-                },
-                {
-                    "include": "#comments"
                 }
             ]
         },
