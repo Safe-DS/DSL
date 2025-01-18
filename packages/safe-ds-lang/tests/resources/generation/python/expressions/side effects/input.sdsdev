@@ -12,5 +12,5 @@ pipeline test {
     mySegment(1.0 - 1.0);
     mySegment(1 + 1);
     mySegment(null);
-    mySegment("person: {{ "me" }}");
+    mySegment(`person: { "me" }`);
 }
