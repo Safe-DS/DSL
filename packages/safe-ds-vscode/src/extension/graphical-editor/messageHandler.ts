@@ -1,7 +1,7 @@
 import { Uri, Webview } from 'vscode';
 import { LanguageClient } from 'vscode-languageclient/node.js';
 import { rpc } from '@safe-ds/lang';
-import { safeDsLogger } from '../../helpers/logging.ts';
+import { safeDsLogger } from '../helpers/logging.ts';
 
 interface Message {
     command: string;
