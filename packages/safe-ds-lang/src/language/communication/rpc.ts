@@ -121,7 +121,7 @@ export namespace GraphicalEditorGetDocumentationRequest {
 export namespace GraphicalEditorGetBuildinsRequest {
     export const method = 'graphical-editor/getBuildins' as const;
     export const messageDirection = MessageDirection.clientToServer;
-    export const type = new RequestType<void, Buildin[], void>(method);
+    export const type = new RequestType0<Buildin[], void>(method);
 }
 
 export namespace GraphicalEditorParseDocumentRequest {
