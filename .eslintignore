@@ -12,3 +12,8 @@
 /packages/safe-ds-eda/consts.config.ts
 /packages/safe-ds-eda/vite.config.ts
 /packages/safe-ds-eda/types/*.d.ts
+/packages/safe-ds-editor/postcss.config.js
+/packages/safe-ds-editor/vite.config.js
+/packages/safe-ds-editor/tailwind.config.js
+/packages/safe-ds-editor/types/**/*.d.ts
+/packages/safe-ds-editor/svelte.config.js

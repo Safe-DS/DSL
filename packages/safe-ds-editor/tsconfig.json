@@ -1,0 +1,20 @@
+{
+    "extends": "@tsconfig/svelte/tsconfig.json",
+    "compilerOptions": {
+        "target": "ESNext",
+        "useDefineForClassFields": true,
+        "module": "ESNext",
+        "resolveJsonModule": true,
+        "baseUrl": ".",
+        "allowJs": false,
+        "checkJs": false,
+        "paths": {
+            "$/*": ["./*"],
+            "$src/*": ["./src/*"],
+            "$assets/*": ["./src/assets/*"],
+            "$pages/*": ["./src/pages/*"],
+            "$global": ["../safe-ds-lang/src/language/graphical-editor/global.ts"]
+        }
+    },
+    "include": ["**/*.ts", "src/**/*.svelte", "types/**/*.d.ts"]
+}
