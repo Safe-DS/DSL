@@ -23,11 +23,14 @@ export default defineConfig({
         }),
     ],
     build: {
+        outDir: 'dist',
         rollupOptions: {
             input: '/src/main.ts',
             output: {
                 format: 'cjs',
                 entryFileNames: `graphical-editor.js`,
+                dir: 'dist',
+                preserveModules: false,
             },
         },
         chunkSizeWarningLimit: 3000,
