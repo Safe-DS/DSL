@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import path from 'path';
 import fs from 'fs';
 
-import { MessageHandler } from './messaging/messageHandler.ts';
+import { MessageHandler } from './messageHandler.ts';
 import { LanguageClient } from 'vscode-languageclient/node.js';
 
 export class SafeDSGraphicalEditorProvider implements vscode.CustomTextEditorProvider {

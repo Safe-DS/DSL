@@ -1,5 +1,6 @@
 {
     "extends": "@tsconfig/svelte/tsconfig.json",
+    "references": [{ "path": "../safe-ds-lang/tsconfig.src.json" }],
     "compilerOptions": {
         "target": "ESNext",
         "useDefineForClassFields": true,

@@ -1,10 +1,4 @@
-import type {
-    AstInterface,
-    ExtensionToWebview,
-    GlobalReferenceInterface,
-    NodeDescriptionInterface,
-    SyncChannelInterface,
-} from '$global';
+import {rpc} from 
 
 export class MessageHandler {
     public static vsocde: {
@@ -14,6 +8,7 @@ export class MessageHandler {
     public static initialize() {
         MessageHandler.vsocde = window.injVscode;
 
+        const OpenSyncChannel = rpc.;
         const messageObject = {
             command: ,
             value: 'open',
