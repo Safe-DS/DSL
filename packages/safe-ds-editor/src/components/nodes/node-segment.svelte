@@ -14,10 +14,7 @@
     $: ({ segment } = data as SegmentProps);
 </script>
 
-<div
-    data-state={selected}
-    class=" border-text-normal relative flex h-full w-full flex-col justify-center border"
->
+<div data-state={selected} class=" border-text-normal relative flex h-full w-full flex-col justify-center border">
     <div class="flex flex-row">
         <div class=" flex-grow">
             <div class="absolute right-full top-1/2 flex -translate-y-1/2 flex-col gap-5">

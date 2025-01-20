@@ -1,8 +1,8 @@
 <script lang="ts">
-    import { CustomError, GlobalReference, Graph, Segment } from '$global';
+    import { CustomError, Buildin, Graph, Segment } from '$global';
     import { onMount, setContext } from 'svelte';
     import ErrorPage from '$pages/ErrorPage.svelte';
-    import MessageHandler from '$/src/messageHandler';
+    import { MessageHandler } from '$/src/messageHandler';
     import { writable } from 'svelte/store';
     import { SvelteFlowProvider, type Node as XYNode } from '@xyflow/svelte';
     import type { PaneAPI } from 'paneforge';
@@ -19,10 +19,10 @@
     let pipeline = writable<Graph>(new Graph('pipeline'));
     let segmentList = writable<Segment[]>([]);
     let errorList = writable<CustomError[]>([]);
-    let globalReferences = writable<GlobalReference[]>([]);
+    let globalReferences = writable<Buildin[]>([]);
 
     const fetchParsedDocument = async () => {
-        const response = await MessageHandler.getAst();
+        const response = await MessageHandler.parseDocument();
         errorList.set(response.errorList);
         pipeline.set(response.pipeline);
         currentGraph.set(response.pipeline);
@@ -46,8 +46,8 @@
     });
 
     const fetchGlobalReferences = async () => {
-        const response = await MessageHandler.getGlobalReferences();
-        globalReferences.set(response.globalReferences);
+        const response = await MessageHandler.getBuildins();
+        globalReferences.set(response);
     };
 
     onMount(async () => {

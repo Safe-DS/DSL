@@ -3,7 +3,7 @@ import type { CallProps } from '../nodes/node-call.svelte';
 import type { PlaceholderProps } from '../nodes/node-placeholder.svelte';
 import type { GenericExpressionProps } from '../nodes/node-generic-expression.svelte';
 import type { CustomError } from '$global';
-import MessageHandler from '$/src/messageHandler';
+import { MessageHandler } from '$src/messageHandler';
 import { getContext } from 'svelte';
 import type { Parameter } from './section-parameter.svelte';
 
@@ -55,8 +55,8 @@ export const getDescription = async (xyNodeList: XYNode[]): Promise<string> => {
         return '';
     }
 
-    const response = await MessageHandler.getNodeDescription(uniquePath);
-    return response.description;
+    const response = await MessageHandler.getDocumentation(uniquePath);
+    return response ?? '';
 };
 
 export const getParameterList = (xyNode: XYNode) => {

@@ -1,114 +1,141 @@
-import {rpc} from 
+import type { Buildin, Collection, ExtractParams, ExtractResult } from '$global';
+import { rpc } from '@safe-ds/lang';
+
+const ParseDocument = rpc.GraphicalEditorParseDocumentRequest;
+const GetBuildins = rpc.GraphicalEditorGetBuildinsRequest;
+const OpenSyncChannel = rpc.GraphicalEditorOpenSyncChannelRequest;
+const CloseSyncChannel = rpc.GraphicalEditorCloseSyncChannelRequest;
+const GetDocumentation = rpc.GraphicalEditorGetDocumentationRequest;
+const SyncEvent = rpc.GraphicalEditorSyncEventNotification;
 
 export class MessageHandler {
     public static vsocde: {
         postMessage: (message: any) => void;
     };
+    public static controller: AbortController;
 
     public static initialize() {
         MessageHandler.vsocde = window.injVscode;
+        MessageHandler.controller = new AbortController();
 
-        const OpenSyncChannel = rpc.;
         const messageObject = {
-            command: ,
-            value: 'open',
+            command: OpenSyncChannel.method,
         };
         MessageHandler.vsocde.postMessage(messageObject);
+    }
+
+    public static removeMessageListeners() {
+        MessageHandler.controller.abort();
     }
 
     public static listenToMessages() {
-        window.addEventListener('message', (event) => {
-            const message = event.data as ExtensionToWebview;
-            switch (message.command) {
-                case 'SendAst':
-                case 'SendGlobalReferences':
-                case 'SendNodeDescription':
-                case 'SendSyncEvent':
-                    // These message types are handled elsewhere
-                    break;
-                case 'test':
+        window.addEventListener(
+            'message',
+            (event) => {
+                const message = event.data as { command: string; value: string };
+                if (message.command === 'test') {
+                    // eslint-disable-next-line no-console
                     console.log(message.value);
-                    break;
-            }
-        });
+                }
+            },
+            { signal: MessageHandler.controller.signal },
+        );
     }
 
-    public static sendMessageTest(message: string) {
-        const messageObject: WebviewToExtension = {
+    public static sendTestMessage(message: string) {
+        const messageObject = {
             command: 'test',
             value: message,
         };
-
         MessageHandler.vsocde.postMessage(messageObject);
     }
 
-    public static async getAst(): Promise<AstInterface.Response> {
-        const response = await new Promise<AstInterface.Response>((resolve) => {
+    public static async parseDocument(): Promise<ExtractResult<typeof ParseDocument.type>> {
+        const controller = new AbortController();
+
+        const response = await new Promise<ExtractResult<typeof ParseDocument.type>>((resolve) => {
             const responseHandler = (event: any) => {
-                const message = event.data as ExtensionToWebview;
-                if (message.command === 'SendAst') {
+                const message = event.data as { command: string; value: ExtractResult<typeof ParseDocument.type> };
+                if (message.command === ParseDocument.method) {
                     window.removeEventListener('message', responseHandler);
                     resolve(message.value);
                 }
             };
 
-            window.addEventListener('message', responseHandler);
-            const messageObject: WebviewToExtension = {
-                command: 'RequestAst',
-                value: '',
+            window.addEventListener('message', responseHandler, { signal: controller.signal });
+            const messageObject = {
+                command: ParseDocument.method,
             };
             MessageHandler.vsocde.postMessage(messageObject);
         });
 
+        controller.abort();
         return response;
     }
 
-    public static async getGlobalReferences(): Promise<GlobalReferenceInterface.Response> {
-        const response = await new Promise<GlobalReferenceInterface.Response>((resolve) => {
+    public static async getBuildins(): Promise<Buildin[]> {
+        const controller = new AbortController();
+
+        const response = await new Promise<Buildin[]>((resolve) => {
             const responseHandler = (event: any) => {
-                const message = event.data as ExtensionToWebview;
-                if (message.command === 'SendGlobalReferences') {
+                const message = event.data as { command: string; value: Buildin[] };
+                if (message.command === GetBuildins.method) {
                     window.removeEventListener('message', responseHandler);
                     resolve(message.value);
                 }
             };
 
-            window.addEventListener('message', responseHandler);
-            const messageObject: WebviewToExtension = {
-                command: 'RequestGlobalReferences',
-                value: '',
+            window.addEventListener('message', responseHandler, { signal: controller.signal });
+            const messageObject = {
+                command: GetBuildins.method,
             };
             MessageHandler.vsocde.postMessage(messageObject);
         });
 
+        controller.abort();
         return response;
     }
 
-    public static async getNodeDescription(uniquePath: string): Promise<NodeDescriptionInterface.Response> {
-        const response = await new Promise<NodeDescriptionInterface.Response>((resolve) => {
+    public static async getDocumentation(uniquePath: string): Promise<ExtractResult<typeof GetDocumentation.type>> {
+        const controller = new AbortController();
+
+        const response = await new Promise<ExtractResult<typeof GetDocumentation.type>>((resolve) => {
             const responseHandler = (event: any) => {
-                const message = event.data as ExtensionToWebview;
-                if (message.command === 'SendNodeDescription') {
+                const message = event.data as { command: string; value: ExtractResult<typeof GetDocumentation.type> };
+                if (message.command === GetDocumentation.method) {
                     window.removeEventListener('message', responseHandler);
                     resolve(message.value);
                 }
             };
 
-            window.addEventListener('message', responseHandler);
-            const messageObject: WebviewToExtension = {
-                command: 'RequestNodeDescription',
-                value: uniquePath,
-            };
+            window.addEventListener('message', responseHandler, { signal: controller.signal });
+            const messageObject: { command: string; value: Omit<ExtractParams<typeof GetDocumentation.type>, 'uri'> } =
+                {
+                    command: GetDocumentation.method,
+                    value: { uniquePath },
+                };
             MessageHandler.vsocde.postMessage(messageObject);
         });
 
+        controller.abort();
         return response;
     }
 
-    public static handleSyncEvent(handler: (elements: SyncChannelInterface.Response) => void): void {
-        window.addEventListener('message', (event) => {
-            const message = event.data as ExtensionToWebview;
-            if (message.command === 'SendSyncEvent') handler(message.value as SyncChannelInterface.Response);
-        });
+    public static handleSyncEvent(handler: (elements: Collection) => void): void {
+        window.addEventListener(
+            'message',
+            (event) => {
+                const message = event.data as { command: string; value: Collection };
+                if (message.command === SyncEvent.method) handler(message.value);
+            },
+            { signal: MessageHandler.controller.signal },
+        );
+    }
+
+    public static closeSyncChannel() {
+        const messageObject = {
+            command: CloseSyncChannel.method,
+        };
+        MessageHandler.vsocde.postMessage(messageObject);
     }
 }

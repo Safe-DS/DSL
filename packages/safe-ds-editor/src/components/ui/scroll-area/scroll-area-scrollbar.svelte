@@ -15,18 +15,11 @@
     {orientation}
     class={cn(
         'flex touch-none select-none transition-colors',
-        orientation === 'vertical' &&
-            'h-full w-2.5 border-l border-l-transparent p-px',
-        orientation === 'horizontal' &&
-            'h-2.5 w-full border-t border-t-transparent p-px',
+        orientation === 'vertical' && 'h-full w-2.5 border-l border-l-transparent p-px',
+        orientation === 'horizontal' && 'h-2.5 w-full border-t border-t-transparent p-px',
         className,
     )}
 >
     <slot />
-    <ScrollAreaPrimitive.Thumb
-        class={cn(
-            'bg-border relative rounded-full',
-            orientation === 'vertical' && 'flex-1',
-        )}
-    />
+    <ScrollAreaPrimitive.Thumb class={cn('bg-border relative rounded-full', orientation === 'vertical' && 'flex-1')} />
 </ScrollAreaPrimitive.Scrollbar>

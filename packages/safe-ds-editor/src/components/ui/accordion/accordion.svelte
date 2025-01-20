@@ -21,9 +21,7 @@
         showPane = !showPane;
     }}
 >
-    <ChevronRight
-        class="duration-35 mr-2 h-4 w-4 shrink-0 transition-transform focus:outline-none"
-    />
+    <ChevronRight class="duration-35 mr-2 h-4 w-4 shrink-0 transition-transform focus:outline-none" />
     {#if withIcon}
         <div class="flex h-9 w-9 justify-center align-middle">
             <slot name="icon" />

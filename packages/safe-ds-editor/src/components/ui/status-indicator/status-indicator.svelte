@@ -11,8 +11,7 @@
     export let status;
     export let direction: 'horizontal' | 'vertical' = 'horizontal';
 
-    $: loadingAnimationClass =
-        direction === 'vertical' ? 'loading-animation-v' : 'loading-animation-h';
+    $: loadingAnimationClass = direction === 'vertical' ? 'loading-animation-v' : 'loading-animation-h';
 </script>
 
 <div

@@ -1,7 +1,7 @@
 <script lang="ts">
     import { cn } from '$pages/utils';
     import type { ClassValue } from 'clsx';
-    import type { GlobalReference, Segment } from '$global';
+    import { Buildin, Segment } from '$global';
     import type { Writable } from 'svelte/store';
     import * as Resizable from '$src/components/ui/resizable';
     import { type Node as XYNode } from '@xyflow/svelte';
@@ -15,7 +15,7 @@
     export let className: ClassValue;
     export { className as class };
     export let segmentList: Writable<Segment[]>;
-    export let globalReferences: Writable<GlobalReference[]>;
+    export let globalReferences: Writable<Buildin[]>;
     export let selectedNodeList: XYNode[];
 
     let paneElements = true;
@@ -57,12 +57,7 @@
         >
             <SectionParameter {selectedNodeList} />
         </SidebarSection>
-        <SidebarSection
-            name={'Dokumentation'}
-            order={3}
-            bind:showPane={paneDocumentation}
-            showResizeHandle={false}
-        >
+        <SidebarSection name={'Dokumentation'} order={3} bind:showPane={paneDocumentation} showResizeHandle={false}>
             <SectionDocumentation {selectedNodeList} />
         </SidebarSection>
     </Resizable.PaneGroup>

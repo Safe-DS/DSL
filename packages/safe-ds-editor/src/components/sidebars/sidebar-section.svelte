@@ -23,9 +23,7 @@
         showPane = !showPane;
     }}
 >
-    <ChevronRight
-        class="duration-35 mr-2 h-4 w-4 shrink-0 transition-transform focus:outline-none"
-    />
+    <ChevronRight class="duration-35 mr-2 h-4 w-4 shrink-0 transition-transform focus:outline-none" />
     {name}
 </button>
 {#if showPane}

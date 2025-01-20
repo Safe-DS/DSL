@@ -2,7 +2,7 @@ import ELK, { type ElkNode, type ElkPort } from 'elkjs/lib/elk.bundled.js';
 import { type Node as XYNode, type Edge as XYEdge } from '@xyflow/svelte';
 
 import '@xyflow/svelte/dist/style.css';
-import type { NodeCustom } from './utils.';
+import type { NodeCustom } from './utils';
 import { Call, GenericExpression, Placeholder, SegmentGroupId } from '$global';
 
 export const calculateLayout = async (
@@ -11,6 +11,7 @@ export const calculateLayout = async (
     isSegemnt: boolean,
 ): Promise<NodeCustom[] | undefined> => {
     if (nodeList.length === 0) return [];
+    // eslint-disable-next-line no-console
     console.time(`calculateLayout - With ${nodeList.length} nodes and ${edgeList.length} edges`);
 
     const elk = new ELK();
@@ -43,6 +44,7 @@ export const calculateLayout = async (
     try {
         layout = await elk.layout(graph);
     } catch (e) {
+        // eslint-disable-next-line no-console
         console.log(e);
     } finally {
         if (!layout) return undefined;
@@ -65,9 +67,7 @@ export const calculateLayout = async (
     });
 
     if (isSegemnt) {
-        const segmentIndex = positionList.findIndex(
-            (node) => node.id === SegmentGroupId.toString(),
-        );
+        const segmentIndex = positionList.findIndex((node) => node.id === SegmentGroupId.toString());
         if (segmentIndex < 0) return undefined;
 
         const boundingBox = nodeListLayouted
@@ -115,6 +115,7 @@ export const calculateLayout = async (
         });
     }
 
+    // eslint-disable-next-line no-console
     console.timeEnd(`calculateLayout - With ${nodeList.length} nodes and ${edgeList.length} edges`);
     return nodeListLayouted as NodeCustom[];
 };
@@ -190,7 +191,9 @@ const getPorts = (node: XYNode): ElkPort[] => {
         return [];
     }
 
+    // eslint-disable-next-line no-console
     console.log(`Unknown key: ${key}`);
+    // eslint-disable-next-line no-console
     console.log(
         'You probably forgot to add a new Node Data key to the ignore list for the layout node parsing in the getPorts() function.',
     );

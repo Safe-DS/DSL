@@ -3,14 +3,7 @@ import type { CallProps } from '$src/components/nodes/node-call.svelte';
 import type { PlaceholderProps } from '$src/components/nodes/node-placeholder.svelte';
 import type { GenericExpressionProps } from '$src/components/nodes/node-generic-expression.svelte';
 import type { SegmentProps } from '$src/components/nodes/node-segment.svelte';
-import {
-    SegmentGroupId,
-    type Call,
-    type Edge,
-    type GenericExpression,
-    type Placeholder,
-    type Segment,
-} from '$global';
+import { SegmentGroupId, type Call, type Edge, type GenericExpression, type Placeholder, type Segment } from '$global';
 import NodePlaceholder from '$/src/components/nodes/node-placeholder.svelte';
 import NodeCall from '$src/components/nodes/node-call.svelte';
 import NodeGenericExpression from '$src/components/nodes/node-generic-expression.svelte';
@@ -30,11 +23,7 @@ export const nodeTypes = {
     segment: SegmentCustonNode,
 };
 
-export const callToNode = (
-    call: Call,
-    isSegment: boolean,
-    openSegmentEditor: () => void,
-): NodeCustom => {
+export const callToNode = (call: Call, isSegment: boolean, openSegmentEditor: () => void): NodeCustom => {
     return {
         id: call.id.toString(),
         parentId: isSegment ? SegmentGroupId.toString() : undefined,
@@ -64,10 +53,7 @@ export const placeholderToNode = (
     };
 };
 
-export const genericExpressionToNode = (
-    genericExpression: GenericExpression,
-    isSegment: boolean,
-): NodeCustom => {
+export const genericExpressionToNode = (genericExpression: GenericExpression, isSegment: boolean): NodeCustom => {
     return {
         id: genericExpression.id.toString(),
         parentId: isSegment ? SegmentGroupId.toString() : undefined,

@@ -3,14 +3,14 @@
         name: string;
         subcategories: Category[] | undefined;
         filteredCount: number;
-        elements: GlobalReference[];
+        elements: Buildin[];
     };
 </script>
 
 <script lang="ts">
     import Accordion from '$/src/components/ui/accordion/accordion.svelte';
 
-    import type { GlobalReference } from '$global';
+    import { Buildin } from '$global';
 
     export let category: Category;
 </script>

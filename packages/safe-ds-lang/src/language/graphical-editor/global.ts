@@ -3,6 +3,7 @@ import { GenericExpression } from './ast-parser/expression.js';
 import { Edge } from './ast-parser/edge.js';
 import { Placeholder } from './ast-parser/placeholder.js';
 import { Segment } from './ast-parser/segment.js';
+import { RequestType } from 'vscode-languageserver';
 
 export { SegmentGroupId } from './ast-parser/segment.js';
 export { Segment } from './ast-parser/segment.js';
@@ -52,3 +53,6 @@ export class CustomError {
         public readonly message: string,
     ) {}
 }
+
+export type ExtractParams<T> = T extends RequestType<infer P, any, any> ? P : never;
+export type ExtractResult<T> = T extends RequestType<any, infer R, any> ? R : never;

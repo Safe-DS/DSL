@@ -11,9 +11,7 @@
     import { Handle, Position, type NodeProps } from '@xyflow/svelte';
     import { Placeholder } from '$global';
     import DataTypeIcon from '$src/assets/type/typeIcon.svelte';
-    import StatusIndicator, {
-        type Status,
-    } from '$src/components/ui/status-indicator/status-indicator.svelte';
+    import StatusIndicator, { type Status } from '$src/components/ui/status-indicator/status-indicator.svelte';
     import * as ContextMenu from '$src/components/ui/context-menu';
 
     type $$Props = NodeProps;
@@ -51,18 +49,8 @@
                             name={placeholder.type}
                             className={'overflow-hidden h-full w-full stroke-text-normal p-2'}
                         />
-                        <Handle
-                            type="target"
-                            id="target"
-                            position={Position.Left}
-                            class=" absolute -ml-2.5 h-3 w-3"
-                        />
-                        <Handle
-                            type="source"
-                            id="source"
-                            position={Position.Right}
-                            class=" absolute -mr-2.5 h-3 w-3"
-                        />
+                        <Handle type="target" id="target" position={Position.Left} class=" absolute -ml-2.5 h-3 w-3" />
+                        <Handle type="source" id="source" position={Position.Right} class=" absolute -mr-2.5 h-3 w-3" />
                     </div>
                 </div>
             </div>

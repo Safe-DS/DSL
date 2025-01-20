@@ -10,7 +10,7 @@ pipeline smallTest {
     val modelTrained = modelUntrained.fit(
         train.toTabularDataset(targetName = "target")
     );
-    val score = modelTrained.accuracy(validate);
+    val _score = modelTrained.accuracy(validate);
 
     val testdata = Table.fromCsvFile("beginner_classification/test.csv");
     val testdataTransformed = testdata.transformColumn("pixel0", (row) -> row.add(1));

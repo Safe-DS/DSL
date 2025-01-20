@@ -18,7 +18,7 @@
         placeholderToNode,
         segmentToNode,
         type NodeCustom,
-    } from '$/src/components/flow/utils.';
+    } from '$/src/components/flow/utils';
     import { createEventDispatcher, getContext } from 'svelte';
     import { calculateLayout } from './layout';
     import MenuIcon from '$/src/assets/menu/menuIcon.svelte';
@@ -134,33 +134,27 @@
         const isSegment = graph.type === 'segment';
         const nodeList = ([] as NodeCustom[])
             .concat(
-                graph.ast.callList.map((call) =>
+                graph.callList.map((call) =>
                     callToNode(call, isSegment, () => {
                         dispatch('editSegment', call.name);
                     }),
                 ),
             )
+            .concat(graph.placeholderList.map((placeholder) => placeholderToNode(placeholder, isSegment, runUntilHere)))
             .concat(
-                graph.ast.placeholderList.map((placeholder) =>
-                    placeholderToNode(placeholder, isSegment, runUntilHere),
-                ),
-            )
-            .concat(
-                graph.ast.genericExpressionList.map((genericExpression) =>
+                graph.genericExpressionList.map((genericExpression) =>
                     genericExpressionToNode(genericExpression, isSegment),
                 ),
             )
             .concat(isSegment ? [segmentToNode(graph as Segment)] : [])
             .sort((a, b) => a.id.localeCompare(b.id));
 
-        const edgeList: XYEdge[] = graph.ast.edgeList.map(edgeToEdge);
+        const edgeList: XYEdge[] = graph.edgeList.map(edgeToEdge);
 
         const nodeListLayouted = await calculateLayout(
             nodeList,
             edgeList.filter(
-                (edge) =>
-                    !(edge.source === SegmentGroupId.toString()) &&
-                    !(edge.target === SegmentGroupId.toString()),
+                (edge) => !(edge.source === SegmentGroupId.toString()) && !(edge.target === SegmentGroupId.toString()),
             ),
             isSegment,
         );
@@ -180,8 +174,7 @@
     };
 
     const triggerSelection = (event: CustomEvent) => {
-        const selectedNodeList =
-            event.type === 'paneclick' ? [] : $nodes.filter((node) => node.selected);
+        const selectedNodeList = event.type === 'paneclick' ? [] : $nodes.filter((node) => node.selected);
         dispatch('selectionChange', selectedNodeList);
     };
 </script>
