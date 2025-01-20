@@ -1,6 +1,8 @@
 import { MessageDirection, NotificationType0, RequestType0 } from 'vscode-languageserver';
-import { NotificationType } from 'vscode-languageserver-protocol';
+import { NotificationType, RequestType } from 'vscode-languageserver-protocol';
 import { UUID } from 'node:crypto';
+import { Buildin, Collection } from '../graphical-editor/global.js';
+import { Uri } from 'vscode';
 
 export namespace InstallRunnerNotification {
     export const method = 'runner/install' as const;
@@ -90,4 +92,40 @@ export namespace IsRunnerReadyRequest {
     export const method = 'runner/isReady' as const;
     export const messageDirection = MessageDirection.clientToServer;
     export const type = new RequestType0(method);
+}
+
+export namespace GraphicalEditorSyncEventNotification {
+    export const method = 'graphical-editor/sync-event' as const;
+    export const messageDirection = MessageDirection.serverToClient;
+    export const type = new NotificationType<Collection>(method);
+}
+
+export namespace GraphicalEditorOpenSyncChannelRequest {
+    export const method = 'graphical-editor/openSyncChannel' as const;
+    export const messageDirection = MessageDirection.clientToServer;
+    export const type = new RequestType<Uri, void, void>(method);
+}
+
+export namespace GraphicalEditorCloseSyncChannelRequest {
+    export const method = 'graphical-editor/closeSyncChannel' as const;
+    export const messageDirection = MessageDirection.clientToServer;
+    export const type = new RequestType<Uri, void, void>(method);
+}
+
+export namespace GraphicalEditorGetDocumentationRequest {
+    export const method = 'graphical-editor/getDocumentation' as const;
+    export const messageDirection = MessageDirection.clientToServer;
+    export const type = new RequestType<{ uri: Uri; uniquePath: string }, string | undefined, void>(method);
+}
+
+export namespace GraphicalEditorGetBuildinsRequest {
+    export const method = 'graphical-editor/getBuildins' as const;
+    export const messageDirection = MessageDirection.clientToServer;
+    export const type = new RequestType<void, Buildin[], void>(method);
+}
+
+export namespace GraphicalEditorParseDocumentRequest {
+    export const method = 'graphical-editor/parseDocument' as const;
+    export const messageDirection = MessageDirection.clientToServer;
+    export const type = new RequestType<Uri, Collection, void>(method);
 }
