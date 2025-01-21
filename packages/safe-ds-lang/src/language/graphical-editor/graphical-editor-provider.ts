@@ -1,5 +1,5 @@
 import { SafeDsLogger, SafeDsMessagingProvider } from '../communication/safe-ds-messaging-provider.js';
-import { SafeDsServices } from '../safe-ds-module.js';
+import { type SafeDsServices } from '../safe-ds-module.js';
 import { Uri } from 'vscode';
 import { extname } from 'path';
 import {
@@ -23,7 +23,7 @@ import {
     isSdsSegment,
 } from '../generated/ast.js';
 import { Connection, DidSaveTextDocumentParams } from 'vscode-languageserver';
-import { Buildin, Collection } from './global.js';
+import { Collection } from './global.js';
 import {
     GraphicalEditorCloseSyncChannelRequest,
     GraphicalEditorGetBuildinsRequest,
@@ -36,6 +36,7 @@ import { isPrivate } from '../helpers/nodeProperties.js';
 import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import { Parser } from './ast-parser/parser.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
+import { Buildin } from './types.js';
 
 export class SafeDsGraphicalEditorProvider {
     private readonly logger: SafeDsLogger;
