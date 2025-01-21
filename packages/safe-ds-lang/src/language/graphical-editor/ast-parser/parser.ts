@@ -1,12 +1,13 @@
 import { ILexingError, IRecognitionException } from 'chevrotain';
 import { URI, AstNode, LangiumDocument, AstNodeLocator } from 'langium';
 import { SafeDsLogger } from '../../communication/safe-ds-messaging-provider.js';
-import { CustomError, Graph, Segment } from '../global.js';
 import { SdsModule, isSdsPipeline, SdsStatement, isSdsSegment, SdsAnnotatedObject } from '../../generated/ast.js';
 import { documentToJson, saveJson } from './tools/debug-utils.js';
 import { Statement } from './statement.js';
 import { SafeDsAnnotations } from '../../builtins/safe-ds-annotations.js';
 import { SafeDsTypeComputer } from '../../typing/safe-ds-type-computer.js';
+import { CustomError, Graph } from '../types.js';
+import { Segment } from './segment.js';
 
 export class Parser {
     private lastId: number;

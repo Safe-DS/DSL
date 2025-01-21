@@ -1,4 +1,4 @@
-import { CustomError } from '../global.js';
+import { CustomError } from '../types.js';
 
 export const zip = <A, B>(arrayA: A[], arrayB: B[]): [A, B][] => {
     const minLength = Math.min(arrayA.length, arrayB.length);

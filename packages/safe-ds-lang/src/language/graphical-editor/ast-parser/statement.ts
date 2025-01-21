@@ -7,7 +7,6 @@ import {
     isSdsWildcard,
     isSdsYield,
 } from '../../generated/ast.js';
-import { CustomError } from '../global.js';
 import { Call } from './call.js';
 import { Edge, Port } from './edge.js';
 import { Expression, GenericExpression } from './expression.js';
@@ -17,6 +16,7 @@ import { Result } from './result.js';
 import { SegmentGroupId } from './segment.js';
 import { zip } from './utils.js';
 import { Parser } from './parser.js';
+import { CustomError } from '../types.js';
 
 export class Statement {
     public static parse(node: SdsStatement, parser: Parser) {
