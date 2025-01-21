@@ -14,6 +14,15 @@ export { Edge } from './ast-parser/edge.js';
 export { Parameter } from './ast-parser/parameter.js';
 export { Result } from './ast-parser/result.js';
 
+export {
+    GraphicalEditorSyncEventNotification,
+    GraphicalEditorOpenSyncChannelRequest,
+    GraphicalEditorCloseSyncChannelRequest,
+    GraphicalEditorGetDocumentationRequest,
+    GraphicalEditorGetBuildinsRequest,
+    GraphicalEditorParseDocumentRequest,
+} from '../communication/rpc.js';
+
 export interface Collection {
     pipeline: Graph;
     segmentList: Segment[];

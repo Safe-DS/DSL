@@ -16,7 +16,6 @@ const unminifyExportedJs = {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    css: {},
     plugins: [
         svelte({
             emitCss: false,
@@ -27,7 +26,6 @@ export default defineConfig({
         rollupOptions: {
             input: '/src/main.ts',
             output: {
-                format: 'cjs',
                 entryFileNames: `graphical-editor.js`,
                 dir: 'dist',
                 preserveModules: false,

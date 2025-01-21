@@ -1,12 +1,22 @@
-import type { Buildin, Collection, ExtractParams, ExtractResult } from '$global';
-import { rpc } from '@safe-ds/lang';
+import {
+    Buildin,
+    type Collection,
+    type ExtractParams,
+    type ExtractResult,
+    GraphicalEditorParseDocumentRequest,
+    GraphicalEditorGetBuildinsRequest,
+    GraphicalEditorOpenSyncChannelRequest,
+    GraphicalEditorCloseSyncChannelRequest,
+    GraphicalEditorGetDocumentationRequest,
+    GraphicalEditorSyncEventNotification,
+} from '$global';
 
-const ParseDocument = rpc.GraphicalEditorParseDocumentRequest;
-const GetBuildins = rpc.GraphicalEditorGetBuildinsRequest;
-const OpenSyncChannel = rpc.GraphicalEditorOpenSyncChannelRequest;
-const CloseSyncChannel = rpc.GraphicalEditorCloseSyncChannelRequest;
-const GetDocumentation = rpc.GraphicalEditorGetDocumentationRequest;
-const SyncEvent = rpc.GraphicalEditorSyncEventNotification;
+const ParseDocument = GraphicalEditorParseDocumentRequest;
+const GetBuildins = GraphicalEditorGetBuildinsRequest;
+const OpenSyncChannel = GraphicalEditorOpenSyncChannelRequest;
+const CloseSyncChannel = GraphicalEditorCloseSyncChannelRequest;
+const GetDocumentation = GraphicalEditorGetDocumentationRequest;
+const SyncEvent = GraphicalEditorSyncEventNotification;
 
 export class MessageHandler {
     public static vsocde: {
