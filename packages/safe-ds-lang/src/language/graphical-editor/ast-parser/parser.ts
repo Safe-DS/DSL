@@ -116,7 +116,9 @@ export class Parser {
         const pipeline = pipelines[0]!;
         const block = pipeline.body;
         const statementList: SdsStatement[] = block.statements;
-        statementList.forEach((statement) => Statement.parse(statement, this));
+        statementList.forEach((statement) => {
+            Statement.parse(statement, this);
+        });
 
         this.graph.uniquePath = this.getUniquePath(pipeline);
         this.graph.name = pipeline.name;
