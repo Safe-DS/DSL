@@ -1,5 +1,5 @@
 // $TEST$ no_syntax_error
 
 pipeline myPipeline {
-    "\{";
+    `start { 1 } inner1 { 2 } inner2 { 3 } end`;
 }

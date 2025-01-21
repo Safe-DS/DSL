@@ -60,6 +60,7 @@ import { SafeDsLinker } from './scoping/safe-ds-linker.js';
 import { SafeDsCodeActionProvider } from './codeActions/safe-ds-code-action-provider.js';
 import { SafeDsQuickfixProvider } from './codeActions/quickfixes/safe-ds-quickfix-provider.js';
 import { SafeDsGraphicalEditorProvider } from './graphical-editor/graphical-editor-provider.js';
+import { SafeDsTokenBuilder } from './grammar/safe-ds-token-builder.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -188,6 +189,7 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         TypeHierarchyProvider: (services) => new SafeDsTypeHierarchyProvider(services),
     },
     parser: {
+        TokenBuilder: () => new SafeDsTokenBuilder(),
         ValueConverter: () => new SafeDsValueConverter(),
     },
     purity: {

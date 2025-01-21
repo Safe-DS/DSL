@@ -14,39 +14,39 @@ class MyClass1(container: Int, overridden: Int) {
     ) where {
         // $TEST$ references own
         // $TEST$ references own
-        »own« < 0 else "{{ »own« }}",
+        »own« < 0 else `{ »own« }`,
 
         // $TEST$ references overridden
         // $TEST$ references overridden
-        »overridden« < 0 else "{{ »overridden« }}",
+        »overridden« < 0 else `{ »overridden« }`,
 
         // $TEST$ unresolved
         // $TEST$ unresolved
-        »container« < 0 else "{{ »container« }}",
+        »container« < 0 else `{ »container« }`,
 
         // $TEST$ unresolved
         // $TEST$ unresolved
-        »beforeMember« < 0 else "{{ »beforeMember« }}",
+        »beforeMember« < 0 else `{ »beforeMember« }`,
 
         // $TEST$ unresolved
         // $TEST$ unresolved
-        »afterMember« < 0 else "{{ »afterMember« }}",
+        »afterMember« < 0 else `{ »afterMember« }`,
 
         // $TEST$ unresolved
         // $TEST$ unresolved
-        »beforeGlobal« < 0 else "{{ »beforeGlobal« }}",
+        »beforeGlobal« < 0 else `{ »beforeGlobal« }`,
 
         // $TEST$ unresolved
         // $TEST$ unresolved
-        »afterGlobal« < 0 else "{{ »afterGlobal« }}",
+        »afterGlobal« < 0 else `{ »afterGlobal« }`,
 
         // $TEST$ unresolved
         // $TEST$ references notAParameter
-        »notAParameter« < 0 else "{{ »notAParameter« }}",
+        »notAParameter« < 0 else `{ »notAParameter« }`,
 
         // $TEST$ unresolved
         // $TEST$ unresolved
-        »unresolved« < 0 else "{{ »unresolved« }}"
+        »unresolved« < 0 else `{ »unresolved« }`
     }
 
     fun myFunction5(afterMember: Int)

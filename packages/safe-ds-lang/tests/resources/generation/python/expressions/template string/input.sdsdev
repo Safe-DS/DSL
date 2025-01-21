@@ -5,8 +5,11 @@ package tests.generator.templateString
 @Pure fun g() -> result: Int
 
 pipeline test {
-    f("start
-{{ g() }}
-inner {{ g() }}
-end");
+    f(`start
+{ g() }
+inner { g() }
+end`);
+
+    // https://github.com/Safe-DS/DSL/issues/1310
+    f(`'`);
 }
