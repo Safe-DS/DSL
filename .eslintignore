@@ -17,4 +17,3 @@
 /packages/safe-ds-editor/tailwind.config.ts
 /packages/safe-ds-editor/types/**/*.d.ts
 /packages/safe-ds-editor/svelte.config.js
-/packages/safe-ds-editor/src/tailwind.css
