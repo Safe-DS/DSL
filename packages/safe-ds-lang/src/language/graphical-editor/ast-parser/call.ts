@@ -1,4 +1,5 @@
 import {
+    SdsAttribute,
     SdsCall,
     SdsClass,
     SdsExpression,
@@ -7,6 +8,7 @@ import {
     SdsPlaceholder,
     SdsReference,
     SdsSegment,
+    isSdsAttribute,
     isSdsCall,
     isSdsClass,
     isSdsFunction,
@@ -55,11 +57,16 @@ export class Call {
         if (isSdsMemberAccess(node.receiver)) {
             const tmp = Call.parseSelf(node.receiver, id, parser);
             if (tmp instanceof CustomError) return tmp;
-            self = tmp;
 
             const functionDeclaration = node.receiver.member.target.ref;
             name = functionDeclaration.name;
-            category = parser.getCategory(functionDeclaration)?.name ?? '';
+            category = parser.getCategory(functionDeclaration)?.name.split('Q')[0] ?? '';
+
+            if (isSdsMemberAccess(node.receiver.receiver)) {
+                name = `${tmp}.${name}`;
+            } else {
+                self = tmp;
+            }
 
             resultList = filterErrors(
                 (functionDeclaration.resultList?.results ?? []).map((result) => Result.parse(result, parser)),
@@ -130,6 +137,13 @@ export class Call {
                     const placeholder = Placeholder.parse(receiver, parser);
                     Edge.create(Port.fromPlaceholder(placeholder, false), Port.fromName(id, 'self'), parser);
                 }
+            } else if (isSdsMemberAccess(node.receiver)) {
+                const receiver = node.receiver;
+                const placeholder = Placeholder.parse(receiver.receiver.target.ref, parser);
+
+                Edge.create(Port.fromPlaceholder(placeholder, false), Port.fromName(id, 'self'), parser);
+
+                return receiver.member.target.ref.name;
             }
         }
         return '';
@@ -143,17 +157,14 @@ const matchArgumentsToParameter = (
     id: number,
     parser: Parser,
 ): Parameter[] | CustomError => {
-    for (const [i, parameter] of parameterList.entries()) {
-        const argumentIndexMatched = argumentList[i];
-        if (argumentIndexMatched instanceof CustomError) return argumentIndexMatched;
+    let usedNameForArgument = false;
 
-        const argumentNameMatched = argumentList.find(
-            (argument) => !(argument instanceof CustomError) && argument.parameterName === parameter.name,
-        ) as Argument | undefined;
+    for (const [index, parameter] of parameterList.entries()) {
+        const indexMatched = argumentList[index];
+        const nameMatched = argumentList.find((argument) => argument.parameterName === parameter.name);
 
-        if (argumentIndexMatched && argumentNameMatched && argumentIndexMatched !== argumentNameMatched)
-            return parser.pushError(`To many matches for ${parameter.name}`, callNode.argumentList);
-        const argument = argumentIndexMatched ?? argumentNameMatched;
+        if (indexMatched && indexMatched.parameterName) usedNameForArgument = true;
+        const argument = usedNameForArgument ? nameMatched : indexMatched;
 
         if (argument) {
             parameter.argumentText = argument.text;
@@ -185,6 +196,7 @@ const matchArgumentsToParameter = (
             return parser.pushError(`Missing Argument for ${parameter.name}`, callNode);
         }
     }
+
     return parameterList;
 };
 
@@ -194,7 +206,15 @@ type CallReceiver =
           member: {
               target: { ref: SdsFunction };
           };
-          receiver: SdsCall | { target: { ref: SdsPlaceholder | SdsClass } };
+          receiver:
+              | SdsCall
+              | { target: { ref: SdsPlaceholder | SdsClass } }
+              | (SdsMemberAccess & {
+                    member: {
+                        target: { ref: SdsAttribute };
+                    };
+                    receiver: { target: { ref: SdsPlaceholder } };
+                });
       });
 
 const isValidCallReceiver = (receiver: SdsExpression): receiver is CallReceiver => {
@@ -206,7 +226,12 @@ const isValidCallReceiver = (receiver: SdsExpression): receiver is CallReceiver 
             isSdsFunction(receiver.member.target.ref) &&
             ((isSdsReference(receiver.receiver) &&
                 (isSdsClass(receiver.receiver.target.ref) || isSdsPlaceholder(receiver.receiver.target.ref))) ||
-                isSdsCall(receiver.receiver))) ||
+                isSdsCall(receiver.receiver) ||
+                (isSdsMemberAccess(receiver.receiver) &&
+                    isSdsReference(receiver.receiver.member) &&
+                    isSdsAttribute(receiver.receiver.member.target.ref) &&
+                    isSdsReference(receiver.receiver.receiver) &&
+                    isSdsPlaceholder(receiver.receiver.receiver.target.ref)))) ||
         (isSdsReference(receiver) && (isSdsClass(receiver.target.ref) || isSdsSegment(receiver.target.ref)))
     );
 };
