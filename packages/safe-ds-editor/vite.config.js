@@ -22,7 +22,6 @@ export default defineConfig({
         }),
     ],
     build: {
-        outDir: 'dist',
         rollupOptions: {
             input: '/src/main.ts',
             output: {
