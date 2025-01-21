@@ -29,7 +29,7 @@
 <div class={cn('h-full w-full', className)}>
     <Resizable.PaneGroup class="h-full w-full" direction="vertical">
         <SidebarSection
-            name={'Elemente'}
+            name={'Elements'}
             order={0}
             bind:showPane={paneElements}
             showResizeHandle={paneSegments || paneDocumentation || paneParameters}
@@ -37,7 +37,7 @@
             <SectionElements {globalReferences} {selectedNodeList} />
         </SidebarSection>
         <SidebarSection
-            name={'Segmente'}
+            name={'Segments'}
             order={1}
             bind:showPane={paneSegments}
             showResizeHandle={paneDocumentation || paneParameters}
@@ -50,14 +50,14 @@
             />
         </SidebarSection>
         <SidebarSection
-            name={'Parameter'}
+            name={'Parameters'}
             order={2}
             bind:showPane={paneParameters}
             showResizeHandle={paneDocumentation}
         >
             <SectionParameter {selectedNodeList} />
         </SidebarSection>
-        <SidebarSection name={'Dokumentation'} order={3} bind:showPane={paneDocumentation} showResizeHandle={false}>
+        <SidebarSection name={'Documentation'} order={3} bind:showPane={paneDocumentation} showResizeHandle={false}>
             <SectionDocumentation {selectedNodeList} />
         </SidebarSection>
     </Resizable.PaneGroup>
