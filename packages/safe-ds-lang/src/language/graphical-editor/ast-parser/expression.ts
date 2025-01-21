@@ -1,5 +1,19 @@
 import { AstUtils } from 'langium';
-import { SdsExpression, isSdsCall, isSdsParameter, isSdsPlaceholder, isSdsReference } from '../../generated/ast.js';
+import {
+    SdsClass,
+    SdsEnum,
+    SdsEnumVariant,
+    SdsExpression,
+    SdsMemberAccess,
+    isSdsCall,
+    isSdsClass,
+    isSdsEnum,
+    isSdsEnumVariant,
+    isSdsMemberAccess,
+    isSdsParameter,
+    isSdsPlaceholder,
+    isSdsReference,
+} from '../../generated/ast.js';
 import { Call } from './call.js';
 import { Edge, Port } from './edge.js';
 import { Placeholder } from './placeholder.js';
@@ -17,7 +31,7 @@ export class GenericExpression {
 
 export class Expression {
     public static parse(node: SdsExpression, parser: Parser) {
-        if (isSdsCall(node)) return Call.parse(node, parser);
+        if (isSdsCall(node) && !isEnumVariant(node.receiver)) return Call.parse(node, parser);
 
         if (isSdsReference(node) && isSdsPlaceholder(node.target.ref)) {
             return Placeholder.parse(node.target.ref, parser);
@@ -51,3 +65,38 @@ export class Expression {
         return genericExpression;
     }
 }
+
+type EnumVariantCall = SdsMemberAccess & {
+    member: {
+        target: {
+            ref: SdsEnumVariant;
+        };
+    };
+    receiver: SdsMemberAccess & {
+        member: {
+            target: {
+                ref: SdsEnum;
+            };
+        };
+        receiver: {
+            target: {
+                ref: SdsClass;
+            };
+        };
+    };
+};
+
+const isEnumVariant = (receiver: SdsExpression): receiver is EnumVariantCall => {
+    /* eslint-disable no-implicit-coercion */
+    return (
+        isSdsMemberAccess(receiver) &&
+        !!receiver.member &&
+        !!receiver.member.target.ref &&
+        isSdsEnumVariant(receiver.member.target.ref) &&
+        isSdsMemberAccess(receiver.receiver) &&
+        isSdsReference(receiver.receiver.member) &&
+        isSdsEnum(receiver.receiver.member.target.ref) &&
+        isSdsReference(receiver.receiver.receiver) &&
+        isSdsClass(receiver.receiver.receiver.target.ref)
+    );
+};
