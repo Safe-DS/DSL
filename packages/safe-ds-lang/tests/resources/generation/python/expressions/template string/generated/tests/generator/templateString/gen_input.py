@@ -6,3 +6,4 @@ from tests.generator.templateString import f, g
 
 def test():
     f(f'start\n{ g() }\ninner { g() }\nend')
+    f('\'')

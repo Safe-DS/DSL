@@ -1289,7 +1289,7 @@ export class SafeDsPythonGenerator {
     }
 
     private formatStringSingleLine(value: string): string {
-        return value.replaceAll('\r\n', '\\n').replaceAll('\n', '\\n');
+        return value.replaceAll('\r\n', '\\n').replaceAll('\n', '\\n').replaceAll("'", "\\'");
     }
 }
 

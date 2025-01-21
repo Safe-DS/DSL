@@ -8,23 +8,23 @@ annotation MyAnnotation(
 ) where {
     // $TEST$ references own
     // $TEST$ references own
-    »own« < 0 else "{{ »own« }}",
+    »own« < 0 else `{ »own« }`,
 
     // $TEST$ unresolved
     // $TEST$ unresolved
-    »before« < 0 else "{{ »before« }}",
+    »before« < 0 else `{ »before« }`,
 
     // $TEST$ unresolved
     // $TEST$ unresolved
-    »after« < 0 else "{{ »after« }}",
+    »after« < 0 else `{ »after« }`,
 
     // $TEST$ unresolved
     // $TEST$ references notAParameter
-    »notAParameter« < 0 else "{{ »notAParameter« }}",
+    »notAParameter« < 0 else `{ »notAParameter« }`,
 
     // $TEST$ unresolved
     // $TEST$ unresolved
-    »unresolved« < 0 else "{{ »unresolved« }}"
+    »unresolved« < 0 else `{ »unresolved« }`
 }
 
 fun myFunction2(after: Int)

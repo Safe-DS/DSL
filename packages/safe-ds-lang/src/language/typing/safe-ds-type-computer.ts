@@ -349,7 +349,8 @@ export class SafeDsTypeComputer {
             return this.computeType(node.type);
         }
 
-        // Partial evaluation (definitely handles SdsBoolean, SdsFloat, SdsInt, SdsNull, and SdsString)
+        // Partial evaluation. This definitely handles SdsBoolean, SdsFloat, SdsInt, SdsNull, SdsString, and
+        // SdsTemplateStringPart.
         const evaluatedNode = this.partialEvaluator.evaluate(node);
         if (evaluatedNode instanceof Constant) {
             return this.factory.createLiteralType(evaluatedNode);

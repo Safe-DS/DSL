@@ -28,7 +28,9 @@ String literals describe text. Their syntax is simply text enclosed by double qu
 | `\0`            | Null character                                                      |
 | `\'`            | Single quote                                                        |
 | `\"`            | Double quote                                                        |
+| `` \` ``        | Backtick                                                            |
 | `\{`            | Opening curly brace (used for [template strings][template-strings]) |
+| `\}`            | Closing curly brace (used for [template strings][template-strings]) |
 | `\\`            | Backslash                                                           |
 | `\uXXXX`        | Unicode character, where `XXXX` is its hexadecimal code             |
 
