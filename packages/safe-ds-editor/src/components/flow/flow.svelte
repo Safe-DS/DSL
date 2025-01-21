@@ -40,7 +40,6 @@
     const runUntilHere = (id: string) => {
         const target = $nodes.find((node) => node.id === id);
         if (!target) {
-            console.log(`Unknown node: ${id}`);
             return;
         }
 

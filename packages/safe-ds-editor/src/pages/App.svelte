@@ -62,7 +62,9 @@
                 return array;
             });
 
-        if (error.action === 'notify') console.log(error.message);
+        if (error.action === 'notify') {
+            // Behaviour not implemented - Not necessary for the View
+        }
     };
     setContext('handleError', handleError);
 

@@ -61,7 +61,6 @@
             disabled={isSegment}
             class="data-[highlighted]:bg-node-normal data-[highlighted]:text-text-normal"
             on:click={() => {
-                console.log('run until here');
                 runUntilHere(id);
             }}>Run until here</ContextMenu.Item
         >

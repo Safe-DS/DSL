@@ -23,7 +23,6 @@
     export let className = '';
 
     const SvgComponent = svgMap[name.toLowerCase()];
-    if (!SvgComponent) console.log(`Unable to retrieve Icon for Category <${name}>`);
 </script>
 
 {#if SvgComponent}
