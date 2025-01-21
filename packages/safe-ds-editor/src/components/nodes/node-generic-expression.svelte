@@ -25,7 +25,7 @@
     <Handle type="target" id="target" position={Position.Left} class=" absolute -ml-2.5 h-3 w-3" />
     <Handle type="source" id="source" position={Position.Right} class=" absolute -mr-2.5 h-3 w-3" />
     <StatusIndicator {status} direction="vertical" class="w-1 rounded-l-sm" />
-    <div class="flex h-full flex-grow items-center p-2">
+    <div class="flex h-full flex-grow items-center overflow-hidden p-2">
         <div class=" bg-node-dark w-full p-1 py-4">
             <span class="text-text-muted w-full whitespace-pre text-left text-xl">{genericExpression.text}</span>
         </div>
