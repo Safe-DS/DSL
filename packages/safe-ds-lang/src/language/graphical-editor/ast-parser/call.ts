@@ -15,7 +15,6 @@ import {
     isSdsReference,
     isSdsSegment,
 } from '../../generated/ast.js';
-import { CustomError } from '../global.js';
 import { Argument } from './argument.js';
 import { Edge, Port } from './edge.js';
 import { GenericExpression } from './expression.js';
@@ -24,6 +23,7 @@ import { Placeholder } from './placeholder.js';
 import { Result } from './result.js';
 import { filterErrors } from './utils.js';
 import { Parser } from './parser.js';
+import { CustomError } from '../types.js';
 
 export class Call {
     private constructor(

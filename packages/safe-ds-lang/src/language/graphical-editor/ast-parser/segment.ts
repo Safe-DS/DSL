@@ -1,7 +1,11 @@
 import { SdsSegment, SdsStatement } from '../../generated/ast.js';
-import { Call, CustomError, Edge, GenericExpression, Graph, Placeholder } from '../global.js';
+import { CustomError, Graph } from '../types.js';
+import { Call } from './call.js';
+import { Edge } from './edge.js';
+import { GenericExpression } from './expression.js';
 import { Parameter } from './parameter.js';
 import { Parser } from './parser.js';
+import { Placeholder } from './placeholder.js';
 import { Result } from './result.js';
 import { Statement } from './statement.js';
 import { filterErrors } from './utils.js';
