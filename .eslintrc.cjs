@@ -29,6 +29,7 @@ module.exports = {
             files: ['packages/safe-ds-editor/src/**/*.css'],
             rules: {
                 'at-rule-no-unknown': [
+                    0,
                     {
                         ignoreAtRules: ['tailwind', 'apply', 'layer'],
                     },
