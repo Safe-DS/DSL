@@ -30,9 +30,7 @@ import {
     isSdsSegment,
     isSdsString,
     isSdsTemplateString,
-    isSdsTemplateStringEnd,
-    isSdsTemplateStringInner,
-    isSdsTemplateStringStart,
+    isSdsTemplateStringPart,
     isSdsThis,
     isSdsTypeCast,
     isSdsUnknown,
@@ -214,11 +212,7 @@ export class SafeDsPartialEvaluator {
             return NullConstant;
         } else if (isSdsString(node)) {
             return new StringConstant(node.value);
-        } else if (isSdsTemplateStringStart(node)) {
-            return new StringConstant(node.value);
-        } else if (isSdsTemplateStringInner(node)) {
-            return new StringConstant(node.value);
-        } else if (isSdsTemplateStringEnd(node)) {
+        } else if (isSdsTemplateStringPart(node)) {
             return new StringConstant(node.value);
         } else if (isSdsThis(node) || isSdsUnknown(node)) {
             return UnknownEvaluatedNode;
