@@ -37,7 +37,7 @@
     "prettier": "@lars-reimann/prettier-config-svelte",
     "dependencies": {
         "@safe-ds/eda": "^0.0.0",
-        "@safe-ds/lang": "workspace:*"
+        "@safe-ds/lang": "workspace:*",
         "vite": "^5.4.14"
     }
 }
