@@ -1,0 +1,162 @@
+package evaluation
+
+pipeline ensemblingStacking {
+// Bug -> Indentation of Comment is wrong
+
+    val trainDataPre1 = Table.fromCsvFile("./train.csv");
+    val testDataPre1 = Table.fromCsvFile("./test.csv");
+
+    val _t1Heatmap = trainDataPre1.plot.correlationHeatmap();
+    val _t1Boxplot = testDataPre1.plot.boxPlots();
+
+    val imputerEmpty = SimpleImputer(
+        SimpleImputer.Strategy.Constant(""),
+        "Cabin"
+    );
+
+    _, val trainDataPre = imputerEmpty.fitAndTransform(trainDataPre1);
+    _, val testDataPre = imputerEmpty.fitAndTransform(testDataPre1);
+
+
+    val trainName = trainDataPre.getColumn("Name").rename("Name_length");
+    val testName = testDataPre.getColumn("Name").rename("Name_length");
+
+    val trainNameLength = trainName.transform((cell) -> cell.str.length());
+    val testNameLength = testName.transform((cell) -> cell.str.length());
+
+    val trainCabin = trainDataPre.getColumn("Cabin").rename("Cabin_length");
+    val testCabin = testDataPre.getColumn("Cabin").rename("Cabin_length");
+
+    val trainHasCabin = trainCabin.transform((cell) -> cell.str.length() > 0);
+    val testHasCabin = testCabin.transform((cell) -> cell.str.length() > 0);
+
+// Bug -> multiple entries in array lack auto complete
+    val trainDataNoTransform = trainDataPre.addColumns(
+        [trainNameLength, trainHasCabin]
+    );
+    val testDataNoTransform = testDataPre.addColumns(
+        [testNameLength, testHasCabin]
+    );
+
+    val trainDataT1 = trainDataNoTransform.addComputedColumn("FamilySize", (row) -> row["SibSp"] + row["Parch"]);
+    val testDataT1 = testDataNoTransform.addComputedColumn("FamilySize", (row) -> row["SibSp"] + row["Parch"]);
+
+    val trainDataT2 = trainDataT1.addComputedColumn("IsAlone", (row) -> row["FamilySize"] == 1);
+    val testDataT2 = testDataT1.addComputedColumn("IsAlone", (row) -> row["FamilySize"] == 1);
+
+    val _t2Heatmap = trainDataT2.plot.correlationHeatmap();
+    val _t2Boxplot = testDataT2.plot.boxPlots();
+
+    val imputerEmbark = SimpleImputer(
+        SimpleImputer.Strategy.Constant("S"),
+        "Embarked"
+    );
+    _, val trainDataT3 = imputerEmbark.fitAndTransform(trainDataT2);
+    _, val testDataT3 = imputerEmbark.fitAndTransform(testDataT2);
+
+    val imputerFare = SimpleImputer(
+        SimpleImputer.Strategy.Median,
+        ["Fare", "Age"]
+    );
+    _, val trainDataT4 = imputerFare.fitAndTransform(trainDataT3);
+    _, val testDataT4 = imputerFare.fitAndTransform(testDataT3);
+
+    val discretizerFare = Discretizer(
+        4,
+        ["Fare"]
+    );
+    _, val trainDataT5 = discretizerFare.fitAndTransform(trainDataT4);
+    _, val testDataT5 = discretizerFare.fitAndTransform(testDataT4);
+
+    val discretizerAge = Discretizer(
+        5,
+        ["Age"]
+    );
+    _, val trainDataT6 = discretizerAge.fitAndTransform(trainDataT5);
+    _, val testDataT6 = discretizerAge.fitAndTransform(testDataT5);
+
+    val _t6Heatmap = trainDataT6.plot.correlationHeatmap();
+    val _t6Boxplot = testDataT6.plot.boxPlots();
+
+    val trainDataT7 = trainDataT6.addComputedColumn("Rare", (row) {
+        yield rareTitleDetected = row["Name"].str.contains("Lady") or row["Name"].str.contains("Countess") or row["Name"].str.contains("Capt") or row["Name"].str.contains("Col") or row["Name"].str.contains("Don") or row["Name"].str.contains("Dr") or row["Name"].str.contains("Major") or row["Name"].str.contains("Rev") or row["Name"].str.contains("Sir") or row["Name"].str.contains("Jonkheer") or row["Name"].str.contains("Dona");
+    });
+    val testDataT7 = testDataT6.addComputedColumn("Rare", (row) {
+        yield rareTitleDetected = row["Name"].str.contains("Lady") or row["Name"].str.contains("Countess") or row["Name"].str.contains("Capt") or row["Name"].str.contains("Col") or row["Name"].str.contains("Don") or row["Name"].str.contains("Dr") or row["Name"].str.contains("Major") or row["Name"].str.contains("Rev") or row["Name"].str.contains("Sir") or row["Name"].str.contains("Jonkheer") or row["Name"].str.contains("Dona");
+    });
+
+    val subsetTrain = trainDataT7.removeColumnsExcept(
+        ["Sex", "Embarked"]
+    );
+    val subsetTest = testDataT7.removeColumnsExcept(
+        ["Sex", "Embarked"]
+    );
+    val combinedSex = subsetTrain.addTableAsRows(subsetTest);
+
+    val labelEncoderSex = LabelEncoder("Sex").fit(combinedSex);
+    val trainDataT8 = labelEncoderSex.transform(trainDataT7);
+    val testDataT8 = labelEncoderSex.transform(testDataT7);
+
+    val labelEncoderEmbarked = LabelEncoder("Embarked").fit(combinedSex);
+    val trainDataT9 = labelEncoderEmbarked.transform(trainDataT8);
+    val testDataT9 = labelEncoderEmbarked.transform(testDataT8);
+
+    val trainDataT10 = trainDataT9.removeColumns(
+        ["Ticket", "Cabin", "SibSp"]
+    );
+    val testDataT10 = testDataT9.removeColumns(
+        ["Ticket", "Cabin", "SibSp"]
+    );
+
+    val _t10Heatmap = trainDataT10.plot.correlationHeatmap();
+    val _t10Boxplot = trainDataT10.plot.boxPlots();
+
+    val trainTagged = trainDataT10.toTabularDataset(
+        "Survived",
+        ["PassengerId"]
+    );
+
+    val rf = RandomForestClassifier(500).fit(trainTagged);
+    val ab = AdaBoostClassifier(maxLearnerCount = 500, learningRate = 0.75).fit(trainTagged);
+    val gb = GradientBoostingClassifier(500).fit(trainTagged);
+    val svm = SupportVectorClassifier(
+        0.025,
+        kernel = SupportVectorClassifier.Kernel.Linear
+    ).fit(trainTagged);
+
+    val _rfAccuracy = rf.accuracy(testDataT10);
+    val _abAccuracy = ab.accuracy(testDataT10);
+    val _gbAccuracy = gb.accuracy(testDataT10);
+    val _svmAccuracy = svm.accuracy(testDataT10);
+
+    val rfResult = rf.predict(testDataT10).toTable().removeColumnsExcept(
+        ["PassengerId", "Survived"]
+    ).renameColumn("Survived", "Survived_RF");
+    val abResult = rf.predict(testDataT10).toTable().removeColumnsExcept(
+        ["PassengerId", "Survived"]
+    ).renameColumn("Survived", "Survived_AB");
+    val gbResult = rf.predict(testDataT10).toTable().removeColumnsExcept(
+        ["PassengerId", "Survived"]
+    ).renameColumn("Survived", "Survived_GB");
+    val svmResult = rf.predict(testDataT10).toTable().removeColumnsExcept(
+        ["PassengerId", "Survived"]
+    ).renameColumn("Survived", "Survived_SVM");
+
+    val collection = rfResult.join(
+        abResult,
+        "PassengerId",
+        "PassengerId"
+    ).join(
+        gbResult,
+        "PassengerId",
+        "PassengerId"
+    ).join(
+        svmResult,
+        "PassengerId",
+        "PassengerId"
+    );
+
+    collection.toCsvFile("./result.csv");
+    trainDataT10.toCsvFile("./trainDataset.csv");
+    testDataT10.toCsvFile("./testDataset.csv");
+}

@@ -1,0 +1,39 @@
+package evaluation
+
+pipeline titanicSimple {
+
+    val rawDataset = Table.fromCsvFile("./titanic-simple-train.csv");
+
+    val _boxplot = rawDataset.plot.boxPlots();
+    val _scatterplot = rawDataset.plot.scatterPlot(
+        "Age",
+        ["Survived"]
+    );
+
+    val reducedDataset = rawDataset.removeColumnsExcept(
+        ["PassengerId", "Age", "Survived"]
+    );
+
+    val imputer = SimpleImputer(
+        SimpleImputer.Strategy.Median,
+        ["Age"]
+    );
+    _, val filledDataset = imputer.fitAndTransform(reducedDataset);
+
+    val discretizer = Discretizer(
+        3,
+        ["Age"]
+    );
+    _, val binnedDataset = discretizer.fitAndTransform(filledDataset);
+
+    val trainDataset = binnedDataset.toTabularDataset(
+        "Survived",
+        ["PassengerId"]
+    );
+    val randomForest = RandomForestClassifier(500).fit(trainDataset);
+
+    val testDataset = Table.fromCsvFile("./titanic-simple-test.csv");
+
+    val result = randomForest.predict(testDataset).toTable();
+    result.toCsvFile("./result.csv");
+}
