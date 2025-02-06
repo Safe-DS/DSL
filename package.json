@@ -32,7 +32,7 @@
         "shx": "^0.3.4",
         "svelte": "^4.2.19",
         "typescript": "^5.7.3",
-        "vitest": "^2.1.9"
+        "vitest": "^3.0.5"
     },
     "prettier": "@lars-reimann/prettier-config-svelte",
     "dependencies": {
