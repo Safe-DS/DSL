@@ -42,10 +42,10 @@
     "dependencies": {
         "@safe-ds/lang": ">=0.3.0",
         "chalk": "^5.4.1",
-        "commander": "^13.0.0",
-        "glob": "^11.0.0",
-        "langium": "^3.3.0",
-        "true-myth": "^8.2.0"
+        "commander": "^13.1.0",
+        "glob": "^11.0.1",
+        "langium": "^3.3.1",
+        "true-myth": "^8.5.0"
     },
     "devDependencies": {
         "@types/node": "^18.19.62",
