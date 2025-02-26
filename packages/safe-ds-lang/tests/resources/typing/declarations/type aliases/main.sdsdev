@@ -1,0 +1,5 @@
+package tests.typing.declarations.typeAliases
+
+// $TEST$ equivalence_class RHS
+// $TEST$ equivalence_class RHS
+typealias »MyAlias« = »Int«
