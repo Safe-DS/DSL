@@ -13,7 +13,8 @@ To create an `ImageList` call one of the following static methods:
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="17"
+    ```sds linenums="16"
+    @Experimental
     class ImageList {
         /**
          * The number of images in this image list.

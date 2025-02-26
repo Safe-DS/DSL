@@ -15,7 +15,9 @@ A fully connected forward layer.
 
 ??? quote "Stub code in `ForwardLayer.sdsstub`"
 
-    ```sds linenums="13"
+    ```sds linenums="11"
+    @Experimental
+    @Category(DataScienceCategory.ModelingQNeuralNetwork)
     class ForwardLayer(
         @PythonName("neuron_count") neuronCount: Int,
         @PythonName("overwrite_activation_function") activationFunction: literal<"sigmoid", "relu", "softmax", "none", "notset"> = "notset"

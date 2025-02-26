@@ -33,7 +33,11 @@ pipeline example {
 
 ??? quote "Stub code in `ElasticNetRegressor.sdsstub`"
 
-    ```sds linenums="26"
+    ```sds linenums="22"
+    @Deprecated(
+        alternative="Use a LinearRegressor and set the penalty to ElasticNet.",
+        reason="Consistency with other regressors, where penalty is also just a parameter."
+    )
     class ElasticNetRegressor(
         const alpha: Float = 1.0,
         @PythonName("lasso_ratio") const lassoRatio: Float = 0.5

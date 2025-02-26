@@ -21,7 +21,8 @@ pipeline example {
 
 ??? quote "Stub code in `ColumnPlotter.sdsstub`"
 
-    ```sds linenums="17"
+    ```sds linenums="16"
+    @Category(DataScienceCategory.BasicElement)
     class ColumnPlotter(
         column: Column<Any>
     ) {

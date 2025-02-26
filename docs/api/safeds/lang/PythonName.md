@@ -23,7 +23,17 @@ The name of the corresponding API element in Python. By default, this is the nam
 
 ??? quote "Stub code in `codeGeneration.sdsstub`"
 
-    ```sds linenums="38"
+    ```sds linenums="28"
+    @Targets([
+        AnnotationTarget.Attribute,
+        AnnotationTarget.Class,
+        AnnotationTarget.Enum,
+        AnnotationTarget.EnumVariant,
+        AnnotationTarget.Function,
+        AnnotationTarget.Parameter,
+        AnnotationTarget.Pipeline,
+        AnnotationTarget.Segment,
+    ])
     annotation PythonName(
         name: String
     )

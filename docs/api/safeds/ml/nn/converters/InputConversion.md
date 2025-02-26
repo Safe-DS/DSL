@@ -26,7 +26,8 @@ The input conversion for a neural network, defines the input parameters for the 
 
 ??? quote "Stub code in `InputConversion.sdsstub`"
 
-    ```sds linenums="10"
+    ```sds linenums="9"
+    @Experimental
     class InputConversion<D, in F>
     ```
     { data-search-exclude }

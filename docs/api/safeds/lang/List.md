@@ -38,7 +38,7 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     val string = [1, 2, 3].join("-"); // "1-2-3"
+         *     val string = [1, 2, 3].join(separator = "-"); // "1-2-3"
          * }
          */
         @Pure
@@ -53,7 +53,7 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     val slice = [1, 2, 3].slice(1, 3); // [2, 3]
+         *     val slice = [1, 2, 3].slice(start = 1, end = 3); // [2, 3]
          * }
          */
         @Pure
@@ -100,7 +100,7 @@ pipeline example {
 ```
 ```sds hl_lines="2"
 pipeline example {
-    val string = [1, 2, 3].join("-"); // "1-2-3"
+    val string = [1, 2, 3].join(separator = "-"); // "1-2-3"
 }
 ```
 
@@ -161,7 +161,7 @@ Return the slice of the list starting at the start index up to but excluding the
 
 ```sds hl_lines="2"
 pipeline example {
-    val slice = [1, 2, 3].slice(1, 3); // [2, 3]
+    val slice = [1, 2, 3].slice(start = 1, end = 3); // [2, 3]
 }
 ```
 

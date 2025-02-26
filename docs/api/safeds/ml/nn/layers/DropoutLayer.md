@@ -14,7 +14,8 @@ A dropout layer.
 
 ??? quote "Stub code in `DropoutLayer.sdsstub`"
 
-    ```sds linenums="12"
+    ```sds linenums="11"
+    @Category(DataScienceCategory.ModelingQNeuralNetwork)
     class DropoutLayer(
         probability: Float
     ) sub Layer {

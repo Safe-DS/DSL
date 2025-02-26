@@ -78,7 +78,7 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     val substring = "Hello, world!".substring(7, 12); // "world"
+         *     val substring = "Hello, world!".substring(start = 7, end = 12); // "world"
          * }
          */
         @Pure
@@ -586,7 +586,7 @@ Return the substring of the string starting at the start index up to but excludi
 
 ```sds hl_lines="2"
 pipeline example {
-    val substring = "Hello, world!".substring(7, 12); // "world"
+    val substring = "Hello, world!".substring(start = 7, end = 12); // "world"
 }
 ```
 

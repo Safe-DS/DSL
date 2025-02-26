@@ -24,7 +24,8 @@ pipeline example {
 
 ??? quote "Stub code in `TemporalCell.sdsstub`"
 
-    ```sds linenums="17"
+    ```sds linenums="16"
+    @Experimental
     class TemporalCell {
         /**
          * Get the century of the underlying date(time) data.

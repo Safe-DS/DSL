@@ -18,7 +18,7 @@ The Discretizer bins continuous data into intervals.
 ```sds hl_lines="3"
 pipeline example {
     val table = Table({"a": [1, 2, 3, 4]});
-    val discretizer = Discretizer(2, columnNames = "a").fit(table);
+    val discretizer = Discretizer(binCount = 2, columnNames = "a").fit(table);
     val transformedTable = discretizer.transform(table);
     // Table({"a": [0, 0, 1, 1]})
 }

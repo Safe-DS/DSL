@@ -20,7 +20,8 @@ A NeuralNetworkClassifier is a neural network that is used for classification ta
 
 ??? quote "Stub code in `NeuralNetworkClassifier.sdsstub`"
 
-    ```sds linenums="17"
+    ```sds linenums="16"
+    @Experimental
     class NeuralNetworkClassifier<D, in F>(
         @PythonName("input_conversion") inputConversion: InputConversion<D, F>,
         layers: List<Layer>,
