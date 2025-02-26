@@ -143,6 +143,9 @@ SdsAnnotatedModuleMember returns SdsModuleMember:
 
       | {SdsSegment.annotationCallList=current}
         SdsSegmentFragment
+
+      | {SdsTypeAlias.annotationCallList=current}
+        SdsTypeAliasFragment
     )
 ;
 
@@ -167,6 +170,9 @@ SdsUnannotatedModuleMember returns SdsModuleMember:
 
     | {SdsSegment}
       SdsSegmentFragment
+
+    | {SdsTypeAlias}
+      SdsTypeAliasFragment
 ;
 
 interface SdsAnnotation extends SdsCallable, SdsModuleMember {
@@ -341,6 +347,16 @@ fragment SdsSegmentFragment:
     body=SdsBlock
 ;
 
+interface SdsTypeAlias extends SdsModuleMember {
+    ^type: SdsType
+}
+
+fragment SdsTypeAliasFragment:
+    visibility=SdsVisibility?
+    'typealias'
+    name=ID
+    '=' ^type=SdsType
+;
 
 // -----------------------------------------------------------------------------
 // Annotation calls
