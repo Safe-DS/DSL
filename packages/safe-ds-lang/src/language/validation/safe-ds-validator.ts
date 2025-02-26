@@ -91,7 +91,7 @@ import { memberAccessOfEnumVariantMustNotLackInstantiation } from './other/expre
 import {
     referenceMustNotBeFunctionPointer,
     referenceMustNotBeStaticClassOrEnumReference,
-    referenceTargetMustNotBeAnnotationOrPipeline,
+    referenceTargetMustNotBeAnnotationPipelineOrTypeAlias,
 } from './other/expressions/references.js';
 import { templateStringMustHaveExpressionBetweenTwoStringParts } from './other/expressions/templateStrings.js';
 import { importPackageMustNotBeEmpty } from './other/imports.js';
@@ -363,7 +363,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsReference: [
             referenceMustNotBeFunctionPointer,
             referenceMustNotBeStaticClassOrEnumReference,
-            referenceTargetMustNotBeAnnotationOrPipeline,
+            referenceTargetMustNotBeAnnotationPipelineOrTypeAlias,
             referenceTargetShouldNotBeDeprecated(services),
             referenceTargetShouldNotExperimental(services),
         ],
