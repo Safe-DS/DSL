@@ -72,10 +72,10 @@
         ],
         "description": "A method."
     },
-    "Schema": {
-        "prefix": ["schema"],
-        "body": ["${1|internal ,private |}schema ${2:MySchema} {", "    $0", "}"],
-        "description": "A schema."
+    "Type Alias": {
+        "prefix": ["typealias"],
+        "body": ["typealias ${1:MyAlias} = ${0:Int}"],
+        "description": "A type alias."
     },
     "Block Comment": {
         "prefix": ["block-comment"],
