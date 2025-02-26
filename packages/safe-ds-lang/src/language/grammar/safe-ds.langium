@@ -347,7 +347,7 @@ fragment SdsSegmentFragment:
     body=SdsBlock
 ;
 
-interface SdsTypeAlias extends SdsModuleMember {
+interface SdsTypeAlias extends SdsModuleMember, SdsNamedTypeDeclaration {
     ^type: SdsType
 }
 

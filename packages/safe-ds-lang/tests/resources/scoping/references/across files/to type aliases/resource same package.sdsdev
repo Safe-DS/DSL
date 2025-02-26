@@ -1,0 +1,13 @@
+package tests.scoping.references.acrossFiles.toTypeAliases
+
+// $TEST$ target same_MyAlias
+typealias »MyAlias« = Int
+
+// $TEST$ target same_PublicAliasInSamePackage
+typealias »PublicAliasInSamePackage« = Int
+
+// $TEST$ target same_InternalAliasInSamePackage
+internal typealias »InternalAliasInSamePackage« = Int
+
+// $TEST$ target same_PrivateAliasInSamePackage
+private typealias »PrivateAliasInSamePackage« = Int

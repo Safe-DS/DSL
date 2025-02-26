@@ -1,0 +1,42 @@
+package tests.scoping.namedTypes.inSameFile.toTypeAliases
+
+// $TEST$ target privateBefore
+private typealias »PrivateBeforeAlias« = Int
+
+// $TEST$ target internalBefore
+internal typealias »InternalBeforeAlias« = Int
+
+// $TEST$ target publicBefore
+typealias »PublicBeforeAlias« = Int
+
+segment mySegment(
+    // $TEST$ references privateBefore
+    p1: »PrivateBeforeAlias«,
+
+    // $TEST$ references internalBefore
+    p2: »InternalBeforeAlias«,
+
+    // $TEST$ references publicBefore
+    p3: »PublicBeforeAlias«,
+
+    // $TEST$ references privateAfter
+    p4: »PrivateAfterAlias«,
+
+    // $TEST$ references internalAfter
+    p5: »InternalAfterAlias«,
+
+    // $TEST$ references publicAfter
+    p6: »PublicAfterAlias«,
+
+    // $TEST$ unresolved
+    p7: »Unresolved«,
+) {}
+
+// $TEST$ target privateAfter
+private typealias »PrivateAfterAlias« = Int
+
+// $TEST$ target internalAfter
+internal typealias »InternalAfterAlias« = Int
+
+// $TEST$ target publicAfter
+typealias »PublicAfterAlias« = Int
