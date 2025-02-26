@@ -17,6 +17,7 @@ Description of MyAnnotation4.
 - `Pipeline`
 - `Result`
 - `Segment`
+- `TypeAlias`
 - `TypeParameter`
 
 **Examples:**

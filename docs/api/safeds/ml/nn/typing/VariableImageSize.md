@@ -15,7 +15,8 @@ With a `VariableImageSize`, all image sizes that are a multiple of `width` and `
 
 ??? quote "Stub code in `VariableImageSize.sdsstub`"
 
-    ```sds linenums="9"
+    ```sds linenums="8"
+    @Experimental
     class VariableImageSize sub ModelImageSize
     ```
     { data-search-exclude }

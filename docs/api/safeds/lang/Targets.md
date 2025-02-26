@@ -16,7 +16,8 @@ The annotation must target only the specified declaration types. By default, any
 
 ??? quote "Stub code in `annotationUsage.sdsstub`"
 
-    ```sds linenums="9"
+    ```sds linenums="8"
+    @Targets([AnnotationTarget.Annotation])
     annotation Targets(
         targets: List<AnnotationTarget>
     )

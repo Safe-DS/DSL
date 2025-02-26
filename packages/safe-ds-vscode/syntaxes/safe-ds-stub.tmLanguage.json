@@ -8,7 +8,7 @@
         },
         {
             "name": "storage.type.safe-ds-stub",
-            "match": "\\b(annotation|attr|class|enum|fun|package|val)\\b"
+            "match": "\\b(annotation|attr|class|enum|fun|package|typealias|val)\\b"
         },
         {
             "name": "storage.modifier.safe-ds-stub",

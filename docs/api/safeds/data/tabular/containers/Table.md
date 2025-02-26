@@ -18,7 +18,7 @@ To create a `Table` call the constructor or use one of the following static meth
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `data` | [`Map<String, List<Any?>>?`][safeds.lang.Map] | The data of the table. If null, an empty table is created. | `#!sds null` |
+| `data` | [`Map<String, List<Any?>>`][safeds.lang.Map] | The data of the table. If null, an empty table is created. | - |
 
 **Examples:**
 
@@ -30,9 +30,10 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="33"
+    ```sds linenums="32"
+    @Category(DataScienceCategory.BasicElement)
     class Table(
-        data: Map<String, List<Any?>>? = null
+        data: Map<String, List<Any?>>
     ) {
         /**
          * The names of the columns in the table.

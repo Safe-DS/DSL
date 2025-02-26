@@ -1,0 +1,12 @@
+package tests.validation.names.casing
+
+// $TEST$ no warning "Names of type aliases should be UpperCamelCase."
+typealias »AliasUppercase1« = Int
+// $TEST$ no warning "Names of type aliases should be UpperCamelCase."
+typealias »^AliasUppercase2« = Int
+// $TEST$ warning "Names of type aliases should be UpperCamelCase."
+typealias »aliasLowercase« = Int
+// $TEST$ warning "Names of type aliases should be UpperCamelCase."
+typealias »_aliasUnderscore« = Int
+// $TEST$ warning "Names of type aliases should be UpperCamelCase."
+typealias »Alias_Snake_Case« = Int

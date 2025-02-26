@@ -65,6 +65,11 @@ The declaration types that can be targeted by annotations.
         Segment
 
         /**
+         * The annotation can be called on type aliases.
+         */
+        TypeAlias
+
+        /**
          * The annotation can be called on type parameters.
          */
         TypeParameter
@@ -115,6 +120,10 @@ The annotation can be called on results.
 ## <code class="doc-symbol doc-symbol-variant"></code> `Segment` {#safeds.lang.AnnotationTarget.Segment data-toc-label='[variant] Segment'}
 
 The annotation can be called on segments.
+
+## <code class="doc-symbol doc-symbol-variant"></code> `TypeAlias` {#safeds.lang.AnnotationTarget.TypeAlias data-toc-label='[variant] TypeAlias'}
+
+The annotation can be called on type aliases.
 
 ## <code class="doc-symbol doc-symbol-variant"></code> `TypeParameter` {#safeds.lang.AnnotationTarget.TypeParameter data-toc-label='[variant] TypeParameter'}
 

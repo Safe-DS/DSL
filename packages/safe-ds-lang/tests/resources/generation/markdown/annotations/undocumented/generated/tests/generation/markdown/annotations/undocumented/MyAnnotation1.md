@@ -15,6 +15,7 @@
 - `Pipeline`
 - `Result`
 - `Segment`
+- `TypeAlias`
 - `TypeParameter`
 
 ??? quote "Stub code in `main.sdsstub`"

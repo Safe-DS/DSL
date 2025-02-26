@@ -34,7 +34,8 @@ pipeline example {
 
 ??? quote "Stub code in `TimeSeriesDataset.sdsstub`"
 
-    ```sds linenums="29"
+    ```sds linenums="28"
+    @Experimental
     class TimeSeriesDataset(
         data: union<Map<String, List<Any>>, Table>,
         @PythonName("target_name") targetName: String,

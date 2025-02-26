@@ -9,7 +9,7 @@ A named, one-dimensional collection of homogeneous values.
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `name` | [`String`][safeds.lang.String] | The name of the column. | - |
-| `data` | [`List<T>`][safeds.lang.List] | The data of the column. | `#!sds []` |
+| `data` | [`List<T>`][safeds.lang.List] | The data of the column. | - |
 
 **Type parameters:**
 
@@ -27,10 +27,11 @@ pipeline example {
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="19"
+    ```sds linenums="18"
+    @Category(DataScienceCategory.BasicElement)
     class Column<out T = Any?>(
         name: String,
-        data: List<T> = []
+        data: List<T>,
     ) {
         /**
          * Whether the column is numeric.

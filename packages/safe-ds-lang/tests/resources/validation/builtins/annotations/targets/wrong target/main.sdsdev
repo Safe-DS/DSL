@@ -47,6 +47,9 @@ annotation AnnotationForPipelines
 @Targets([AnnotationTarget.Segment])
 annotation AnnotationForSegments
 
+@Targets([AnnotationTarget.TypeAlias])
+annotation AnnotationForTypeAliases
+
 @Targets([AnnotationTarget.Module, AnnotationTarget.Class])
 annotation AnnotationForMultipleTargets
 
@@ -161,8 +164,8 @@ fun testFunction(
 @»Unresolved«
 pipeline testPipeline {}
 
-// $TEST$ error "The annotation 'AnnotationForAnnotations' cannot be applied to a segment."
-@»AnnotationForAnnotations«
+// $TEST$ error "The annotation 'AnnotationForTypeAliases' cannot be applied to a segment."
+@»AnnotationForTypeAliases«
 // $TEST$ no error r"This annotation '.*' cannot be applied to .*"
 @»AnnotationForSegments«
 // $TEST$ no error r"This annotation '.*' cannot be applied to .*"
@@ -170,3 +173,13 @@ pipeline testPipeline {}
 // $TEST$ no error r"This annotation '.*' cannot be applied to .*"
 @»Unresolved«
 segment testSegment() {}
+
+// $TEST$ error "The annotation 'AnnotationForAnnotations' cannot be applied to a type alias."
+@»AnnotationForAnnotations«
+// $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+@»AnnotationForSegments«
+// $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+@»AnnotationForAnything«
+// $TEST$ no error r"This annotation '.*' cannot be applied to .*"
+@»Unresolved«
+typealias TestAlias = Int

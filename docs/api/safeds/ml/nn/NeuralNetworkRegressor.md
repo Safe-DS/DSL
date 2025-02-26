@@ -20,7 +20,8 @@ A NeuralNetworkRegressor is a neural network that is used for regression tasks.
 
 ??? quote "Stub code in `NeuralNetworkRegressor.sdsstub`"
 
-    ```sds linenums="17"
+    ```sds linenums="16"
+    @Experimental
     class NeuralNetworkRegressor<D, F>(
         @PythonName("input_conversion") inputConversion: InputConversion<D, F>,
         layers: List<Layer>

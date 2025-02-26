@@ -17,7 +17,8 @@ A container for constant image size in neural networks.
 
 ??? quote "Stub code in `ConstantImageSize.sdsstub`"
 
-    ```sds linenums="7"
+    ```sds linenums="6"
+    @Experimental
     class ConstantImageSize sub ModelImageSize
     ```
     { data-search-exclude }

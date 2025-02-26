@@ -1,0 +1,11 @@
+// $TEST$ target without_MyAlias
+typealias »MyAlias« = Int
+
+// $TEST$ target without_PublicAliasWithoutPackage
+typealias »PublicAliasWithoutPackage« = Int
+
+// $TEST$ target without_InternalAliasInSamePackage
+internal typealias »InternalAliasInSamePackage« = Int
+
+// $TEST$ target without_PrivateAliasInSamePackage
+private typealias »PrivateAliasInSamePackage« = Int

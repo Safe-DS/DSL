@@ -17,7 +17,8 @@ stubs.
 
 ??? quote "Stub code in `codeGeneration.sdsstub`"
 
-    ```sds linenums="21"
+    ```sds linenums="20"
+    @Targets([AnnotationTarget.Module])
     annotation PythonModule(
         qualifiedName: String
     )

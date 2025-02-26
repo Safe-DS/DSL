@@ -14,7 +14,9 @@ pipeline example {
 
 ??? quote "Stub code in `ArimaRegressor.sdsstub`"
 
-    ```sds linenums="16"
+    ```sds linenums="14"
+    @Experimental
+    @PythonName("ArimaModelRegressor")
     class ArimaRegressor() {
         /**
          * Whether the regressor is fitted.

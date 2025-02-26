@@ -8,7 +8,9 @@ A flatten layer.
 
 ??? quote "Stub code in `FlattenLayer.sdsstub`"
 
-    ```sds linenums="11"
+    ```sds linenums="9"
+    @Experimental
+    @Category(DataScienceCategory.ModelingQNeuralNetwork)
     class FlattenLayer() sub Layer {
         /**
          * Get the input_size of this layer.

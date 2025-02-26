@@ -1,0 +1,26 @@
+package tests.scoping.importedDeclarations.toTypeAliases
+
+// $TEST$ references own_OwnAlias
+from tests.scoping.importedDeclarations.toTypeAliases import »OwnAlias«
+
+
+// $TEST$ references firstPackage_AliasInFirstPackage
+from tests.scoping.importedDeclarations.toTypeAliases.first import »AliasInFirstPackage«
+
+// $TEST$ references secondPackage_AliasInSecondPackage
+from tests.scoping.importedDeclarations.toTypeAliases.second import »AliasInSecondPackage«
+
+// $TEST$ references secondPackage_RedeclaredAliasInSameFile
+// $TEST$ references secondPackage_RedeclaredAliasInOtherFile
+from tests.scoping.importedDeclarations.toTypeAliases.second import »RedeclaredAliasInSameFile«, »RedeclaredAliasInOtherFile«
+
+// $TEST$ references secondPackage_AliasInBothPackages
+from tests.scoping.importedDeclarations.toTypeAliases.second import »AliasInBothPackages«
+
+
+// $TEST$ unresolved
+from tests.scoping.importedDeclarations.toTypeAliases.second import »AliasInFirstPackage«
+
+
+// $TEST$ target own_OwnAlias
+typealias »OwnAlias« = Int

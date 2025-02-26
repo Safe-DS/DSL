@@ -154,7 +154,7 @@ pipeline example {
          * @example
          * pipeline example {
          *     val column = Column("example", ["abc", "def", "ghi"]);
-         *     val result = column.transform((cell) -> cell.str.substring(1, 2));
+         *     val result = column.transform((cell) -> cell.str.substring(start = 1, length = 2));
          *     // Column("example", ["bc", "ef", "hi"])
          * }
          */
@@ -559,7 +559,7 @@ Get a substring of the string value in the cell.
 ```sds hl_lines="3"
 pipeline example {
     val column = Column("example", ["abc", "def", "ghi"]);
-    val result = column.transform((cell) -> cell.str.substring(1, 2));
+    val result = column.transform((cell) -> cell.str.substring(start = 1, length = 2));
     // Column("example", ["bc", "ef", "hi"])
 }
 ```

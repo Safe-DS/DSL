@@ -32,7 +32,11 @@ pipeline example {
 
 ??? quote "Stub code in `RidgeRegressor.sdsstub`"
 
-    ```sds linenums="24"
+    ```sds linenums="20"
+    @Deprecated(
+        alternative="Use a LinearRegressor and set the penalty to Ridge.",
+        reason="Consistency with other regressors, where penalty is also just a parameter."
+    )
     class RidgeRegressor(
         const alpha: Float = 1.0
     ) sub Regressor where {

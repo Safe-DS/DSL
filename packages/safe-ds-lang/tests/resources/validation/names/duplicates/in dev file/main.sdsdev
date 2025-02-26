@@ -60,6 +60,13 @@ segment »duplicateSegment«() {}
 // $TEST$ error "A declaration with name 'duplicateSegment' exists already in this file."
 segment »duplicateSegment«() {}
 
+// $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
+typealias »UniqueAlias« = Int
+// $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
+typealias »DuplicateAlias« = Int
+// $TEST$ error "A declaration with name 'DuplicateAlias' exists already in this file."
+typealias »DuplicateAlias« = Int
+
 
 // $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
 annotation »DuplicateDeclaration«
@@ -73,3 +80,5 @@ fun »DuplicateDeclaration«()
 pipeline »DuplicateDeclaration« {}
 // $TEST$ error "A declaration with name 'DuplicateDeclaration' exists already in this file."
 segment »DuplicateDeclaration«() {}
+// $TEST$ error "A declaration with name 'DuplicateDeclaration' exists already in this file."
+typealias »DuplicateDeclaration« = Int

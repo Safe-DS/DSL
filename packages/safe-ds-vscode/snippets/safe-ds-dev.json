@@ -77,11 +77,6 @@
         "body": ["pipeline ${1:myPipeline} {", "    $0", "}"],
         "description": "A pipeline."
     },
-    "Schema": {
-        "prefix": ["schema"],
-        "body": ["${1|internal ,private |}schema ${2:MySchema} {", "    $0", "}"],
-        "description": "A schema."
-    },
     "Segment": {
         "prefix": ["segment"],
         "body": ["${1|internal ,private |}segment ${2:mySegment}($3) ${4:-> ($5)} ${6:where {$7\\}} {", "    $0", "}"],
@@ -91,6 +86,11 @@
         "prefix": ["minimal-segment"],
         "body": ["segment ${1:mySegment}($2) {", "    $0", "}"],
         "description": "A segment."
+    },
+    "Type Alias": {
+        "prefix": ["typealias"],
+        "body": ["typealias ${1:MyAlias} = ${0:Int}"],
+        "description": "A type alias."
     },
     "Block Lambda": {
         "prefix": ["block-lambda"],

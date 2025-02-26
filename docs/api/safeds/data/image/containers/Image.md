@@ -14,7 +14,8 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="14"
+    ```sds linenums="13"
+    @Experimental
     class Image {
         /**
          * Get the width of the image in pixels.

@@ -8,7 +8,8 @@ The input conversion for a neural network, defines the input parameters for the 
 
 ??? quote "Stub code in `InputConversionTimeSeries.sdsstub`"
 
-    ```sds linenums="7"
+    ```sds linenums="6"
+    @Experimental
     class InputConversionTimeSeries() sub InputConversion<TimeSeriesDataset, TimeSeriesDataset>
     ```
     { data-search-exclude }

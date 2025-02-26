@@ -1,0 +1,7 @@
+package tests.scoping.importedDeclarations.toTypeAliases.first
+
+// $TEST$ target firstPackage_AliasInFirstPackage
+typealias »AliasInFirstPackage« = Int
+
+// $TEST$ target firstPackage_AliasInBothPackages
+typealias »AliasInBothPackages« = Int

@@ -19,7 +19,14 @@ The category of a declaration. It can be used for grouping.
 
 ??? quote "Stub code in `ideIntegration.sdsstub`"
 
-    ```sds linenums="20"
+    ```sds linenums="13"
+    @Experimental
+    @Targets([
+        AnnotationTarget.Class,
+        AnnotationTarget.Enum,
+        AnnotationTarget.Function,
+        AnnotationTarget.Segment,
+    ])
     annotation Category(category: DataScienceCategory)
     ```
     { data-search-exclude }
