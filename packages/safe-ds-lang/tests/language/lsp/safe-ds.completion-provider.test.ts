@@ -25,7 +25,7 @@ describe('SafeDsCompletionProvider', async () => {
                 `,
                 uri: `file:///test1.sds`,
                 expectedLabels: {
-                    shouldEqual: ['from', 'internal', 'private', 'pipeline', 'segment'],
+                    shouldEqual: ['from', 'internal', 'private', 'pipeline', 'segment', 'typealias'],
                 },
             },
             {
@@ -36,7 +36,7 @@ describe('SafeDsCompletionProvider', async () => {
                 `,
                 uri: `file:///test2.sdsstub`,
                 expectedLabels: {
-                    shouldEqual: ['from', 'internal', 'private', 'annotation', 'class', 'enum', 'fun'],
+                    shouldEqual: ['from', 'internal', 'private', 'annotation', 'class', 'enum', 'fun', 'typealias'],
                 },
             },
             {
@@ -57,6 +57,7 @@ describe('SafeDsCompletionProvider', async () => {
                         'fun',
                         'pipeline',
                         'segment',
+                        'typealias',
                     ],
                 },
             },

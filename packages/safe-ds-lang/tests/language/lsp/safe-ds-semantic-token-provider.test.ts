@@ -157,6 +157,11 @@ describe('SafeDsSemanticTokenProvider', async () => {
             expectedTokenTypes: [SemanticTokenTypes.function],
         },
         {
+            testName: 'type alias declaration',
+            code: 'typealias <|A|>',
+            expectedTokenTypes: [SemanticTokenTypes.type],
+        },
+        {
             testName: 'type argument',
             code: `
                 class C<T>

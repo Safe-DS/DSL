@@ -182,6 +182,18 @@ describe('SafeDsSemanticTokenProvider', async () => {
             ],
         },
         {
+            testName: 'type alias declaration',
+            code: `
+                typealias Alias = Int
+            `,
+            expectedSymbols: [
+                {
+                    name: 'Alias',
+                    kind: SymbolKind.Class,
+                },
+            ],
+        },
+        {
             testName: 'deprecated declaration',
             code: `
                 package test
