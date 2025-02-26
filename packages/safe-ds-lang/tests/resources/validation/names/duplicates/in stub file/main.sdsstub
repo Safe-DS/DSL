@@ -61,6 +61,13 @@ fun »duplicateFunction«()
 // $TEST$ error "A declaration with name 'duplicateFunction' exists already in this file."
 fun »duplicateFunction«()
 
+// $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
+typealias »UniqueAlias« = Int
+// $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
+typealias »DuplicateAlias« = Int
+// $TEST$ error "A declaration with name 'DuplicateAlias' exists already in this file."
+typealias »DuplicateAlias« = Int
+
 
 // $TEST$ no error r"A declaration with name '\w*' exists already in this file\."
 pipeline »DuplicateDeclaration« {}
@@ -74,3 +81,5 @@ class »DuplicateDeclaration«
 enum »DuplicateDeclaration«
 // $TEST$ error "A declaration with name 'DuplicateDeclaration' exists already in this file."
 fun »DuplicateDeclaration«()
+// $TEST$ error "A declaration with name 'DuplicateDeclaration' exists already in this file."
+typealias »DuplicateDeclaration« = Int

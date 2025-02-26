@@ -22,6 +22,7 @@ import {
     SdsPlaceholder,
     SdsResult,
     SdsSegment,
+    SdsTypeAlias,
     SdsTypeParameter,
 } from '../generated/ast.js';
 import { CODEGEN_PREFIX } from '../generation/python/constants.js';
@@ -152,6 +153,8 @@ export const nameShouldHaveCorrectCasing = (services: SafeDsServices) => {
                 return nameShouldBeLowerCamelCase(node, 'results', accept);
             case SdsSegment:
                 return nameShouldBeLowerCamelCase(node, 'segments', accept);
+            case SdsTypeAlias:
+                return nameShouldBeUpperCamelCase(node, 'type aliases', accept);
             case SdsTypeParameter:
                 return nameShouldBeUpperCamelCase(node, 'type parameters', accept);
         }

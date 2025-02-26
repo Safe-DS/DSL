@@ -16,3 +16,5 @@ segment »uniquePublicSegment«() {}
 internal segment »uniqueInternalSegment«() {}
 // $TEST$ no error r"Multiple declarations in this package have the name '\w*'\."
 private segment »uniquePrivateSegment«() {}
+// $TEST$ no error r"Multiple declarations in this package have the name '\w*'\."
+typealias »UniqueAlias« = Int
