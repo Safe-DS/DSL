@@ -63,6 +63,8 @@ export class SafeDsFormatter extends AbstractFormatter {
             this.formatPipeline(node);
         } else if (ast.isSdsSegment(node)) {
             this.formatSegment(node);
+        } else if (ast.isSdsTypeAlias(node)) {
+            this.formatTypeAlias(node);
         }
 
         // -----------------------------------------------------------------------------
@@ -443,6 +445,14 @@ export class SafeDsFormatter extends AbstractFormatter {
         formatter.property('resultList').prepend(oneSpace());
         formatter.property('constraintList').prepend(oneSpace());
         formatter.property('body').prepend(oneSpace());
+    }
+
+    private formatTypeAlias(node: ast.SdsTypeAlias): void {
+        const formatter = this.getNodeFormatter(node);
+
+        this.formatVisibilityAndKeyword(formatter, node, 'typealias');
+        formatter.property('name').prepend(oneSpace());
+        formatter.keyword('=').surround(oneSpace());
     }
 
     private formatVisibilityAndKeyword(
