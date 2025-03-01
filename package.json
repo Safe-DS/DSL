@@ -21,7 +21,7 @@
         "@lars-reimann/eslint-config-svelte": "^7.5.0",
         "@lars-reimann/prettier-config-svelte": "^5.2.1",
         "@semantic-release/changelog": "^6.0.3",
-        "@semantic-release/exec": "^6.0.3",
+        "@semantic-release/exec": "^7.0.3",
         "@semantic-release/git": "^10.0.1",
         "@semantic-release/npm": "^12.0.1",
         "@tsconfig/svelte": "^5.0.4",
