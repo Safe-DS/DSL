@@ -8,9 +8,11 @@ export const getNodesToCheckForContextProvider = (services: SafeDsServices) => {
     const referenceProvider = services.references.References;
 
     return (node: SdsType): AstNode[] => {
-        if (isSdsTypeAlias(node.$container)) {
+        const container = node.$container;
+
+        if (isSdsTypeAlias(container)) {
             return referenceProvider
-                .findReferences(node.$container, { includeDeclaration: false })
+                .findReferences(container, { includeDeclaration: false })
                 .flatMap((it) => {
                     const document = langiumDocuments.getDocument(it.sourceUri);
                     if (!document) {

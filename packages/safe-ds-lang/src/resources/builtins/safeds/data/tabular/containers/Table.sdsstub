@@ -6,7 +6,7 @@ from safeds.data.tabular.containers import Row
 from safeds.data.tabular.plotting import TablePlotter
 from safeds.data.tabular.transformation import InvertibleTableTransformer
 from safeds.data.tabular.transformation import TableTransformer
-from safeds.data.tabular.typing import DataType
+from safeds.data.tabular.typing import ColumnType
 from safeds.data.tabular.typing import Schema
 
 /**
@@ -245,7 +245,7 @@ class Table(
     @Category(DataScienceCategory.UtilitiesQTable)
     fun getColumnType(
         name: String
-    ) -> type: DataType
+    ) -> type: ColumnType
 
     /**
      * Check if the table has a column with a specific name.
@@ -834,7 +834,7 @@ class Table(
      * @example
      * pipeline example {
      *     val table = Table({"a": [1, 2, 3]});
-     *     val transformer, val transformedTable = RangeScaler(min=0.0, max=1.0, columnNames="a").fitAndTransform(table);
+     *     val transformer, val transformedTable = RangeScaler(min=0.0, max=1.0, selector="a").fitAndTransform(table);
      *     val result = transformedTable.inverseTransformTable(transformer);
      *     // Table({"a": [1, 2, 3]})
      * }
@@ -888,7 +888,7 @@ class Table(
      * @example
      * pipeline example {
      *     val table = Table({"a": [1, 2, 3]});
-     *     val transformer = RangeScaler(min=0.0, max=1.0, columnNames="a").fit(table);
+     *     val transformer = RangeScaler(min=0.0, max=1.0, selector="a").fit(table);
      *     val result = table.transformTable(transformer);
      *     // Table({"a": [0, 0.5, 1]})
      * }

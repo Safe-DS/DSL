@@ -1,18 +1,22 @@
 package safeds.data.tabular.typing
 
-from safeds.data.tabular.typing import DataType
-
 /**
  * The schema of a row or table.
  */
-class Schema {
+class Schema(
+    schema: Map<String, ColumnType>
+) {
     /**
-     * Return a list of all column names contained in this schema.
+     * The number of columns.
+     */
+    @PythonName("column_count") attr columnCount: Int
+    /**
+     * The names of the columns.
      */
     @PythonName("column_names") attr columnNames: List<String>
 
     /**
-     * Return the type of the given column.
+     * Get the type of a column.
      *
      * @param name The name of the column.
      *
@@ -20,53 +24,54 @@ class Schema {
      *
      * @example
      * pipeline example {
-     *     val table = Table({"A": [1, 2, 3], "B": ["a", "b", "c"]});
-     *     val type = table.schema.getColumnType("A");
+     *     val schema = Schema({"a": ColumnType.int64(), "b": ColumnType.float32()});
+     *     out schema.getColumnType("a");
+     *     // int64
+     *     out schema.getColumnType("b");
+     *     // float32
      * }
      */
     @Pure
     @PythonName("get_column_type")
     fun getColumnType(
         name: String
-    ) -> type: DataType
+    ) -> type: ColumnType
 
     /**
-     * Return whether the schema contains a given column.
+     * Check if the schema has a column with a specific name.
      *
      * @param name The name of the column.
      *
-     * @result contains True if the schema contains the column.
+     * @result hasColumn Whether the schema has a column with the specified name.
      *
      * @example
      * pipeline example {
-     *     val table = Table({"A": [1, 2, 3], "B": ["a", "b", "c"]});
-     *     val contains = table.schema.hasColumn("A"); // true
-     * }
-     *
-     * @example
-     * pipeline example {
-     *     val table = Table({"A": [1, 2, 3], "B": ["a", "b", "c"]});
-     *     val contains = table.schema.hasColumn("C"); // false
+     *     val schema = Schema({"a": ColumnType.int64(), "b": ColumnType.float32()});
+     *     out schema.hasColumn("a");
+     *     // true
+     *     out schema.hasColumn("c");
+     *     // false
      * }
      */
     @Pure
     @PythonName("has_column")
     fun hasColumn(
         name: String
-    ) -> contains: Boolean
+    ) -> hasColumn: Boolean
 
     /**
-     * Return a dictionary that maps column names to column types.
+     * Return a map from column names to column types.
      *
-     * @result data Dictionary representation of the schema.
+     * @result data The map representation of the schema.
      *
      * @example
      * pipeline example {
      *     val table = Table({"A": [1, 2, 3], "B": ["a", "b", "c"]});
-     *     val map = table.schema.toMap();
+     *     out table.schema.toMap();
+     *     // {'A': int64, 'B': string}
      * }
      */
     @Pure
     @PythonName("to_dict")
-    fun toMap() -> data: Map<String, DataType>
+    fun toMap() -> data: Map<String, ColumnType>
 }

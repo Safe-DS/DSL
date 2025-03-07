@@ -1,0 +1,147 @@
+package safeds.data.tabular.typing
+
+/**
+ * The type of a column in a table.
+ *
+ * Use the static factory methods to create instances of this class.
+ */
+class ColumnType {
+    /**
+     * Whether the column type is a floating point type.
+     */
+    @PythonName("is_float") attr isFloat: Boolean
+    /**
+     * Whether the column type is an integer type (signed or unsigned).
+     */
+    @PythonName("is_int") attr isInt: Boolean
+    /**
+     * Whether the column type is a numeric type.
+     */
+    @PythonName("is_numeric") attr isNumeric: Boolean
+    /**
+     * Whether the column type is a signed integer type.
+     */
+    @PythonName("is_signed_int") attr isSignedInt: Boolean
+    /**
+     * Whether the column type is a temporal type.
+     */
+    @PythonName("is_temporal") attr isTemporal: Boolean
+    /**
+     * Whether the column type is an unsigned integer type.
+     */
+    @PythonName("is_unsigned_int") attr isUnsignedInt: Boolean
+
+    /**
+     * Create a `float32` column type (32-bit floating point number).
+     */
+    @Pure
+    static fun float32() -> result1: ColumnType
+
+    /**
+     * Create a `float64` column type (64-bit floating point number).
+     */
+    @Pure
+    static fun float64() -> result1: ColumnType
+
+    /**
+     * Create an `int8` column type (8-bit signed integer).
+     */
+    @Pure
+    static fun int8() -> result1: ColumnType
+
+    /**
+     * Create an `int16` column type (16-bit signed integer).
+     */
+    @Pure
+    static fun int16() -> result1: ColumnType
+
+    /**
+     * Create an `int32` column type (32-bit signed integer).
+     */
+    @Pure
+    static fun int32() -> result1: ColumnType
+
+    /**
+     * Create an `int64` column type (64-bit signed integer).
+     */
+    @Pure
+    static fun int64() -> result1: ColumnType
+
+    /**
+     * Create a `uint8` column type (8-bit unsigned integer).
+     */
+    @Pure
+    static fun uint8() -> result1: ColumnType
+
+    /**
+     * Create a `uint16` column type (16-bit unsigned integer).
+     */
+    @Pure
+    static fun uint16() -> result1: ColumnType
+
+    /**
+     * Create a `uint32` column type (32-bit unsigned integer).
+     */
+    @Pure
+    static fun uint32() -> result1: ColumnType
+
+    /**
+     * Create a `uint64` column type (64-bit unsigned integer).
+     */
+    @Pure
+    static fun uint64() -> result1: ColumnType
+
+    /**
+     * Create a `date` column type.
+     */
+    @Pure
+    static fun date() -> result1: ColumnType
+
+    /**
+     * Create a `datetime` column type.
+     *
+     * @param timeZone The time zone. If None, values are assumed to be in local time. This is different from setting the time zone
+     * to `"UTC"`. Any TZ identifier defined in the
+     * [tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) is valid.
+     */
+    @Pure
+    static fun datetime(
+        @PythonName("time_zone") timeZone: String? = null
+    ) -> result1: ColumnType
+
+    /**
+     * Create a `duration` column type.
+     */
+    @Pure
+    static fun duration() -> result1: ColumnType
+
+    /**
+     * Create a `time` column type.
+     */
+    @Pure
+    static fun time() -> result1: ColumnType
+
+    /**
+     * Create a `string` column type.
+     */
+    @Pure
+    static fun string() -> result1: ColumnType
+
+    /**
+     * Create a `binary` column type.
+     */
+    @Pure
+    static fun binary() -> result1: ColumnType
+
+    /**
+     * Create a `boolean` column type.
+     */
+    @Pure
+    static fun boolean() -> result1: ColumnType
+
+    /**
+     * Create a `null` column type.
+     */
+    @Pure
+    static fun ^null() -> result1: ColumnType
+}

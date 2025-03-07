@@ -2,7 +2,7 @@ package safeds.data.tabular.containers
 
 from safeds.data.tabular.containers import Table
 from safeds.data.tabular.plotting import ColumnPlotter
-from safeds.data.tabular.typing import DataType
+from safeds.data.tabular.typing import ColumnType
 
 /**
  * A named, one-dimensional collection of homogeneous values.
@@ -43,7 +43,7 @@ class Column<out T = Any?>(
     /**
      * The type of the column.
      */
-    attr type: DataType
+    attr type: ColumnType
 
     /**
      * Return the distinct values in the column.

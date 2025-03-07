@@ -6,12 +6,12 @@ from safeds.data.tabular.transformation import InvertibleTableTransformer
 /**
  * The StandardScaler transforms column values to a range by removing the mean and scaling to unit variance.
  *
- * @param columnNames The list of columns used to fit the transformer. If `None`, all numeric columns are used.
+ * @param selector The list of columns used to fit the transformer. If `None`, all numeric columns are used.
  *
  * @example
  * pipeline example {
  *     val table = Table({"a": [0, 1, 0]});
- *     val scaler = StandardScaler(columnNames = "a").fit(table);
+ *     val scaler = StandardScaler(selector = "a").fit(table);
  *     val transformedTable = scaler.transform(table);
  *     // transformedTable = Table({"a": [-0.707,  1.414, -0.707]});
  *     val originalTable = scaler.inverseTransform(transformedTable);
@@ -19,7 +19,7 @@ from safeds.data.tabular.transformation import InvertibleTableTransformer
  * }
  */
 class StandardScaler(
-    @PythonName("column_names") columnNames: union<List<String>, String, Nothing?> = null
+    selector: union<List<String>, String, Nothing?> = null
 ) sub InvertibleTableTransformer {
     /**
      * Learn a transformation for a set of columns in a table.

@@ -1,6 +1,6 @@
 package safeds.data.tabular.containers
 
-from safeds.data.tabular.typing import DataType
+from safeds.data.tabular.typing import ColumnType
 from safeds.data.tabular.typing import Schema
 
 /**
@@ -59,7 +59,7 @@ class Row {
     @PythonName("get_column_type")
     fun getColumnType(
         name: String
-    ) -> type: DataType
+    ) -> type: ColumnType
 
     /**
      * Check if the row has a column with the specified name.
