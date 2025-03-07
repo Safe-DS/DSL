@@ -362,6 +362,18 @@ describe('SafeDsCompletionProvider', async () => {
                     shouldNotContain: ['myPipeline'],
                 },
             },
+            {
+                testName: 'reference to type alias',
+                code: `
+                    typealias MyAlias = Int
+
+                    pipeline myPipeline {
+                        <|>
+                `,
+                expectedLabels: {
+                    shouldNotContain: ['MyAlias'],
+                },
+            },
 
             // Special cases
             {
