@@ -248,7 +248,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             callReceiverMustBeCallable(services),
         ],
         SdsCallableType: [
-            callableTypeMustBeUsedInCorrectContext,
+            callableTypeMustBeUsedInCorrectContext(services),
             callableTypeMustContainUniqueNames,
             callableTypeMustNotHaveOptionalParameters,
             callableTypeParametersMustNotBeAnnotated,
@@ -390,7 +390,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             typeParameterListShouldNotBeEmpty(services),
         ],
         SdsUnionType: [
-            unionTypeMustBeUsedInCorrectContext,
+            unionTypeMustBeUsedInCorrectContext(services),
             unionTypeMustHaveTypes,
             unionTypesShouldBeUsedWithCaution(services),
             unionTypeShouldNotHaveDuplicateTypes(services),
