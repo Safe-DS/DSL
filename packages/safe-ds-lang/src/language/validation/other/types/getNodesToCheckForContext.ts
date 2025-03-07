@@ -14,11 +14,13 @@ export const getNodesToCheckForContextProvider = (services: SafeDsServices) => {
                 .flatMap((it) => {
                     const document = langiumDocuments.getDocument(it.sourceUri);
                     if (!document) {
+                        /* c8 ignore next 2 */
                         return [];
                     }
 
                     const root = document.parseResult?.value;
                     if (!root) {
+                        /* c8 ignore next 2 */
                         return [];
                     }
 
