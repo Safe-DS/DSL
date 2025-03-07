@@ -6,11 +6,16 @@ package tests.validation.other.types.unionTypes.context
 
 class MyClass1 {
     // $TEST$ no error "Union types must only be used for parameters of annotations, classes, and functions."
-    attr a: union<Int, »union<Int>«>
+    attr a1: union<Int, »union<Int>«>
+    // $TEST$ no error "Union types must only be used for parameters of annotations, classes, and functions."
+    attr a2: union<Int, »Alias«>
 }
 
 class MyClass2 {
     // $TEST$ no error "Union types must only be used for parameters of annotations, classes, and functions."
     // $TEST$ no error "Union types must only be used for parameters of annotations, classes, and functions."
-    attr a: union<Int, (p: »union<Int>«) -> (r: »union<Int>«)>
+    attr a1: union<Int, (p: »union<Int>«) -> (r: »union<Int>«)>
+    // $TEST$ no error "Union types must only be used for parameters of annotations, classes, and functions."
+    // $TEST$ no error "Union types must only be used for parameters of annotations, classes, and functions."
+    attr a2: union<Int, (p: »Alias«) -> (r: »Alias«)>
 }

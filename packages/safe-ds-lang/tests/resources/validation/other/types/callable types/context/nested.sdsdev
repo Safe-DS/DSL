@@ -6,11 +6,16 @@ package tests.validation.other.types.callableTypes.context
 
 class MyClass1 {
     // $TEST$ no error "Callable types must only be used for parameters."
-    attr a: () -> (r: »() -> ()«)
+    attr a1: () -> (r: »() -> ()«)
+    // $TEST$ no error "Callable types must only be used for parameters."
+    attr a2: () -> (r: »Alias«)
 }
 
 class MyClass2 {
     // $TEST$ no error "Callable types must only be used for parameters."
     // $TEST$ no error "Callable types must only be used for parameters."
-    attr a: () -> (r: (p: »() -> ()«) -> (r: »() -> ()«))
+    attr a1: () -> (r: (p: »() -> ()«) -> (r: »() -> ()«))
+    // $TEST$ no error "Callable types must only be used for parameters."
+    // $TEST$ no error "Callable types must only be used for parameters."
+    attr a2: () -> (r: (p: »Alias«) -> (r: »Alias«))
 }

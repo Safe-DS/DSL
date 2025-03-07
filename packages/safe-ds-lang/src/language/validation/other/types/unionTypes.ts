@@ -7,26 +7,39 @@ import {
     isSdsUnionType,
     SdsUnionType,
 } from '../../../generated/ast.js';
-import { AstUtils, ValidationAcceptor } from 'langium';
+import { AstNode, AstUtils, ValidationAcceptor } from 'langium';
 import { getTypeArguments } from '../../../helpers/nodeProperties.js';
 import { SafeDsServices } from '../../../safe-ds-module.js';
 import { Type } from '../../../typing/model.js';
 import { isEmpty } from '../../../../helpers/collections.js';
+import { getNodesToCheckForContextProvider } from './getNodesToCheckForContext.js';
 
 export const CODE_UNION_TYPE_CONTEXT = 'union-type/context';
 export const CODE_UNION_TYPE_DUPLICATE_TYPE = 'union-type/duplicate-type';
 export const CODE_UNION_TYPE_MISSING_TYPES = 'union-type/missing-types';
 
-export const unionTypeMustBeUsedInCorrectContext = (node: SdsUnionType, accept: ValidationAcceptor): void => {
-    if (!contextIsCorrect(node)) {
-        accept('error', 'Union types must only be used for parameters of annotations, classes, and functions.', {
-            node,
-            code: CODE_UNION_TYPE_CONTEXT,
-        });
-    }
+export const unionTypeMustBeUsedInCorrectContext = (services: SafeDsServices) => {
+    const getNodesToCheckForContext = getNodesToCheckForContextProvider(services);
+
+    return (node: SdsUnionType, accept: ValidationAcceptor): void => {
+        const nodesToCheck = getNodesToCheckForContext(node);
+
+        for (const nodeToCheck of nodesToCheck) {
+            if (!contextIsCorrect(nodeToCheck)) {
+                accept(
+                    'error',
+                    'Union types must only be used for parameters of annotations, classes, and functions.',
+                    {
+                        node: nodeToCheck,
+                        code: CODE_UNION_TYPE_CONTEXT,
+                    },
+                );
+            }
+        }
+    };
 };
 
-const contextIsCorrect = (node: SdsUnionType): boolean => {
+const contextIsCorrect = (node: AstNode): boolean => {
     if (AstUtils.hasContainerOfType(node.$container, isSdsUnionType)) {
         return true;
     }

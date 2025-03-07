@@ -5,22 +5,6 @@
     "patterns": [
         {
             "include": "source.safe-ds#shared"
-        },
-        {
-            "name": "storage.type.safe-ds-dev",
-            "match": "\\b(annotation|attr|class|enum|fun|package|pipeline|segment|typealias|val)\\b"
-        },
-        {
-            "name": "storage.modifier.safe-ds-dev",
-            "match": "\\b(const|in|internal|out|private|static)\\b"
-        },
-        {
-            "name": "keyword.operator.expression.safe-ds-dev",
-            "match": "\\b(and|not|or|sub)\\b"
-        },
-        {
-            "name": "variable.language.safe-ds-dev",
-            "match": "\\b(this)\\b"
         }
     ]
 }

@@ -1,7 +1,9 @@
-import { AstUtils, ValidationAcceptor } from 'langium';
+import { AstNode, AstUtils, ValidationAcceptor } from 'langium';
 import { isSdsCallableType, isSdsParameter, SdsCallableType } from '../../../generated/ast.js';
 
 import { getParameters, Parameter } from '../../../helpers/nodeProperties.js';
+import { SafeDsServices } from '../../../safe-ds-module.js';
+import { getNodesToCheckForContextProvider } from './getNodesToCheckForContext.js';
 
 export const CODE_CALLABLE_TYPE_CONST_MODIFIER = 'callable-type/const-modifier';
 export const CODE_CALLABLE_TYPE_CONTEXT = 'callable-type/context';
@@ -22,16 +24,24 @@ export const callableTypeParameterMustNotHaveConstModifier = (
     }
 };
 
-export const callableTypeMustBeUsedInCorrectContext = (node: SdsCallableType, accept: ValidationAcceptor): void => {
-    if (!contextIsCorrect(node)) {
-        accept('error', 'Callable types must only be used for parameters.', {
-            node,
-            code: CODE_CALLABLE_TYPE_CONTEXT,
-        });
-    }
+export const callableTypeMustBeUsedInCorrectContext = (services: SafeDsServices) => {
+    const getNodesToCheckForContext = getNodesToCheckForContextProvider(services);
+
+    return (node: SdsCallableType, accept: ValidationAcceptor): void => {
+        const nodesToCheck = getNodesToCheckForContext(node);
+
+        for (const nodeToCheck of nodesToCheck) {
+            if (!contextIsCorrect(nodeToCheck)) {
+                accept('error', 'Callable types must only be used for parameters.', {
+                    node: nodeToCheck,
+                    code: CODE_CALLABLE_TYPE_CONTEXT,
+                });
+            }
+        }
+    };
 };
 
-const contextIsCorrect = (node: SdsCallableType): boolean => {
+const contextIsCorrect = (node: AstNode): boolean => {
     if (isSdsParameter(node.$container)) {
         return true;
     }
