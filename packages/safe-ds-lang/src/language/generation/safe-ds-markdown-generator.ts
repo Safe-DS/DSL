@@ -755,6 +755,7 @@ export class SafeDsMarkdownGenerator {
                 // Always show the safeds package first
                 if (root === '') {
                     if (key1 === SAFEDS_ROOT_PACKAGE) {
+                        /* c8 ignore next */
                         return -1;
                     } else if (key2 === SAFEDS_ROOT_PACKAGE) {
                         return 1;
