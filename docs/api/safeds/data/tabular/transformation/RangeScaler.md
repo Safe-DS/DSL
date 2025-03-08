@@ -10,7 +10,7 @@ The RangeScaler transforms column values by scaling each value to a given range.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `columnNames` | `#!sds union<List<String>, String?>` | The list of columns used to fit the transformer. If `None`, all numeric columns are used. | `#!sds null` |
+| `selector` | `#!sds union<List<String>, String?>` | The list of columns used to fit the transformer. If `None`, all numeric columns are used. | `#!sds null` |
 | `min` | [`Float`][safeds.lang.Float] | The minimum of the new range after the transformation | `#!sds 0.0` |
 | `max` | [`Float`][safeds.lang.Float] | The maximum of the new range after the transformation | `#!sds 1.0` |
 
@@ -19,7 +19,7 @@ The RangeScaler transforms column values by scaling each value to a given range.
 ```sds hl_lines="3"
 pipeline example {
     val table = Table({"a": [1, 2, 3]});
-    val scaler = RangeScaler(columnNames = "a").fit(table);
+    val scaler = RangeScaler(selector = "a").fit(table);
     val transformedTable = scaler.transform(table);
     // transformedTable = Table({"a": [0.0, 0.5, 1.0]});
     val originalTable = scaler.inverseTransform(transformedTable);
@@ -31,7 +31,7 @@ pipeline example {
 
     ```sds linenums="23"
     class RangeScaler(
-        @PythonName("column_names") columnNames: union<List<String>, String, Nothing?> = null,
+        selector: union<List<String>, String, Nothing?> = null,
         @PythonName("min_") const min: Float = 0.0,
         @PythonName("max_") const max: Float = 1.0,
     ) sub InvertibleTableTransformer {
@@ -204,7 +204,7 @@ Apply the learned transformation to a table.
 
 ??? quote "Stub code in `TableTransformer.sdsstub`"
 
-    ```sds linenums="39"
+    ```sds linenums="37"
     @Pure
     fun transform(
         table: Table

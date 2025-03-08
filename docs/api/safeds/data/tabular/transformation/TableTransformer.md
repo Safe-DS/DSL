@@ -19,7 +19,7 @@ Learn a transformation for a set of columns in a `Table` and transform another `
 
 ??? quote "Stub code in `TableTransformer.sdsstub`"
 
-    ```sds linenums="10"
+    ```sds linenums="8"
     class TableTransformer {
         /**
          * Whether the transformer is fitted.
@@ -99,7 +99,7 @@ Learn a transformation for a set of columns in a table.
 
 ??? quote "Stub code in `TableTransformer.sdsstub`"
 
-    ```sds linenums="25"
+    ```sds linenums="23"
     @Pure
     fun fit(
         table: Table
@@ -128,7 +128,7 @@ Learn a transformation for a set of columns in a table and apply the learned tra
 
 ??? quote "Stub code in `TableTransformer.sdsstub`"
 
-    ```sds linenums="54"
+    ```sds linenums="52"
     @Pure
     @PythonName("fit_and_transform")
     fun fitAndTransform(
@@ -157,7 +157,7 @@ Apply the learned transformation to a table.
 
 ??? quote "Stub code in `TableTransformer.sdsstub`"
 
-    ```sds linenums="39"
+    ```sds linenums="37"
     @Pure
     fun transform(
         table: Table

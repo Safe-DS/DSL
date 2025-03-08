@@ -24,7 +24,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="56"
+    ```sds linenums="26"
     class Boolean
     ```
     { data-search-exclude }

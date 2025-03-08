@@ -131,7 +131,7 @@ Apply the learned transformation to a table.
 
 ??? quote "Stub code in `TableTransformer.sdsstub`"
 
-    ```sds linenums="39"
+    ```sds linenums="37"
     @Pure
     fun transform(
         table: Table

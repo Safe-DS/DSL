@@ -10,6 +10,7 @@ import {
     isSdsModule,
     isSdsPipeline,
     isSdsSegment,
+    isSdsTypeAlias,
     SdsAnnotation,
     SdsAttribute,
     SdsClass,
@@ -137,6 +138,9 @@ export class SafeDsMarkdownGenerator {
             return undefined;
         } else if (isSdsSegment(node)) {
             return this.describeSegment(node, state);
+        } else if (isSdsTypeAlias(node)) {
+            // Type aliases cannot be referenced in an expression context, so they are not documented
+            return undefined;
         } else {
             /* c8 ignore next 2 */
             throw new Error(`Unsupported module member type: ${node.$type}`);

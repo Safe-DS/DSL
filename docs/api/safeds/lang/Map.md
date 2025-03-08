@@ -30,7 +30,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="176"
+    ```sds linenums="146"
     class Map<K, out V> {
 
         /**
@@ -112,7 +112,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="208"
+    ```sds linenums="178"
     @Pure
     @PythonMacro("list($this.keys())")
     fun keys() -> keys: List<K>
@@ -144,7 +144,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="191"
+    ```sds linenums="161"
     @Pure
     @PythonMacro("len($this)")
     fun size() -> size: Int
@@ -176,7 +176,7 @@ pipeline example {
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="225"
+    ```sds linenums="195"
     @Pure
     @PythonMacro("list($this.values())")
     fun values() -> values: List<V>

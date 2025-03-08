@@ -11,14 +11,14 @@ The Discretizer bins continuous data into intervals.
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `binCount` | [`Int`][safeds.lang.Int] | The number of bins to be created. | `#!sds 5` |
-| `columnNames` | `#!sds union<List<String>, String?>` | The list of columns used to fit the transformer. If `None`, all numeric columns are used. | `#!sds null` |
+| `selector` | `#!sds union<List<String>, String?>` | The list of columns used to fit the transformer. If `None`, all numeric columns are used. | `#!sds null` |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
     val table = Table({"a": [1, 2, 3, 4]});
-    val discretizer = Discretizer(binCount = 2, columnNames = "a").fit(table);
+    val discretizer = Discretizer(binCount = 2, selector = "a").fit(table);
     val transformedTable = discretizer.transform(table);
     // Table({"a": [0, 0, 1, 1]})
 }
@@ -29,7 +29,7 @@ pipeline example {
     ```sds linenums="20"
     class Discretizer(
         @PythonName("bin_count") const binCount: Int = 5,
-        @PythonName("column_names") columnNames: union<List<String>, String, Nothing?> = null
+        selector: union<List<String>, String, Nothing?> = null
     ) sub TableTransformer where {
         binCount >= 2
     } {
@@ -161,7 +161,7 @@ Apply the learned transformation to a table.
 
 ??? quote "Stub code in `TableTransformer.sdsstub`"
 
-    ```sds linenums="39"
+    ```sds linenums="37"
     @Pure
     fun transform(
         table: Table

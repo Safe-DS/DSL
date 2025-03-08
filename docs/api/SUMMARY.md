@@ -24,12 +24,15 @@ search:
                 - [Cell](safeds/data/tabular/containers/Cell.md)
                 - [Column](safeds/data/tabular/containers/Column.md)
                 - [Row](safeds/data/tabular/containers/Row.md)
-                - [StringCell](safeds/data/tabular/containers/StringCell.md)
                 - [Table](safeds/data/tabular/containers/Table.md)
-                - [TemporalCell](safeds/data/tabular/containers/TemporalCell.md)
             - plotting
                 - [ColumnPlotter](safeds/data/tabular/plotting/ColumnPlotter.md)
                 - [TablePlotter](safeds/data/tabular/plotting/TablePlotter.md)
+            - query
+                - [DatetimeOperations](safeds/data/tabular/query/DatetimeOperations.md)
+                - [DurationOperations](safeds/data/tabular/query/DurationOperations.md)
+                - [MathOperations](safeds/data/tabular/query/MathOperations.md)
+                - [StringOperations](safeds/data/tabular/query/StringOperations.md)
             - transformation
                 - [Discretizer](safeds/data/tabular/transformation/Discretizer.md)
                 - [FunctionalTableTransformer](safeds/data/tabular/transformation/FunctionalTableTransformer.md)
@@ -44,7 +47,7 @@ search:
                 - [StandardScaler](safeds/data/tabular/transformation/StandardScaler.md)
                 - [TableTransformer](safeds/data/tabular/transformation/TableTransformer.md)
             - typing
-                - [DataType](safeds/data/tabular/typing/DataType.md)
+                - [ColumnType](safeds/data/tabular/typing/ColumnType.md)
                 - [Schema](safeds/data/tabular/typing/Schema.md)
     - lang
         - [AnnotationTarget](safeds/lang/AnnotationTarget.md)
@@ -88,14 +91,11 @@ search:
                 - [ArimaRegressor](safeds/ml/classical/regression/ArimaRegressor.md)
                 - [BaselineRegressor](safeds/ml/classical/regression/BaselineRegressor.md)
                 - [DecisionTreeRegressor](safeds/ml/classical/regression/DecisionTreeRegressor.md)
-                - [ElasticNetRegressor](safeds/ml/classical/regression/ElasticNetRegressor.md)
                 - [GradientBoostingRegressor](safeds/ml/classical/regression/GradientBoostingRegressor.md)
                 - [KNearestNeighborsRegressor](safeds/ml/classical/regression/KNearestNeighborsRegressor.md)
-                - [LassoRegressor](safeds/ml/classical/regression/LassoRegressor.md)
                 - [LinearRegressor](safeds/ml/classical/regression/LinearRegressor.md)
                 - [RandomForestRegressor](safeds/ml/classical/regression/RandomForestRegressor.md)
                 - [Regressor](safeds/ml/classical/regression/Regressor.md)
-                - [RidgeRegressor](safeds/ml/classical/regression/RidgeRegressor.md)
                 - [SupportVectorRegressor](safeds/ml/classical/regression/SupportVectorRegressor.md)
             - [SupervisedModel](safeds/ml/classical/SupervisedModel.md)
         - metrics
@@ -126,3 +126,8 @@ search:
                 - [VariableImageSize](safeds/ml/nn/typing/VariableImageSize.md)
             - [NeuralNetworkClassifier](safeds/ml/nn/NeuralNetworkClassifier.md)
             - [NeuralNetworkRegressor](safeds/ml/nn/NeuralNetworkRegressor.md)
+    - temporal
+        - [Date](safeds/temporal/Date.md)
+        - [Datetime](safeds/temporal/Datetime.md)
+        - [Duration](safeds/temporal/Duration.md)
+        - [Time](safeds/temporal/Time.md)
