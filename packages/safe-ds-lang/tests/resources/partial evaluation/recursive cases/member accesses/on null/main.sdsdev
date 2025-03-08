@@ -2,8 +2,16 @@ package tests.partialValidation.recursiveCases.memberAccesses.onNull
 
 pipeline test {
     // $TEST$ serialization ?
-    »null.toString«;
+    »mySegment1(null)«;
 
     // $TEST$ serialization null
-    »null?.toString«;
+    »mySegment2(null)«;
+}
+
+segment mySegment1(p: Int?) -> (r: Any?) {
+    yield r = p.toFloat;
+}
+
+segment mySegment2(p: Int?) -> (r: Any?) {
+    yield r = p?.toFloat;
 }
