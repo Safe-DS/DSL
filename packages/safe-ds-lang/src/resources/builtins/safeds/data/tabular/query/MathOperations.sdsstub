@@ -144,9 +144,10 @@ class MathOperations {
      * @result cell The cosine.
      *
      * @example
+     * from math import pi
      * pipeline example {
-     *     // val column = Column("a", [0, math.pi / 2, math.pi, 3 * math.pi / 2, null]);
-     *     // out column.transform((cell) -> cell.math.cos());
+     *     val column = Column("a", [0, pi / 2, pi, 3 * pi / 2, null]);
+     *     out column.transform((cell) -> cell.math.cos());
      * }
      */
     @Pure
@@ -215,9 +216,10 @@ class MathOperations {
      * @result cell The natural logarithm.
      *
      * @example
+     * from math import e
      * pipeline example {
-     *     // val column = Column("a", [0, 1, math.e, null]);
-     *     // out column.transform((cell) -> cell.math.ln());
+     *     val column = Column("a", [0, 1, e, null]);
+     *     out column.transform((cell) -> cell.math.ln());
      * }
      */
     @Pure
@@ -231,9 +233,10 @@ class MathOperations {
      * @result cell The logarithm.
      *
      * @example
+     * from math import e
      * pipeline example {
-     *     // val column1 = Column("a", [0, 1, math.e, null]);
-     *     // out column1.transform((cell) -> cell.math.log(math.e));
+     *     val column1 = Column("a", [0, 1, e, null]);
+     *     out column1.transform((cell) -> cell.math.log(e));
      * }
      *
      * @example
@@ -267,9 +270,10 @@ class MathOperations {
      * @result cell The value in degrees.
      *
      * @example
+     * from math import pi
      * pipeline example {
-     *     // val column = Column("a", [0, math.pi / 2, math.pi, 3 * math.pi / 2, null]);
-     *     // out column.transform((cell) -> cell.math.radiansToDegrees());
+     *     val column = Column("a", [0, pi / 2, pi, 3 * pi / 2, null]);
+     *     out column.transform((cell) -> cell.math.radiansToDegrees());
      * }
      */
     @Pure
@@ -349,9 +353,10 @@ class MathOperations {
      * @result cell The sine.
      *
      * @example
+     * from math import pi
      * pipeline example {
-     *     // val column = Column("a", [0, math.pi / 2, math.pi, 3 * math.pi / 2, null]);
-     *     // out column.transform((cell) -> cell.math.sin());
+     *     val column = Column("a", [0, pi / 2, pi, 3 * pi / 2, null]);
+     *     out column.transform((cell) -> cell.math.sin());
      * }
      */
     @Pure
@@ -391,9 +396,10 @@ class MathOperations {
      * @result cell The tangent.
      *
      * @example
+     * from math import pi
      * pipeline example {
-     *     // val column = Column("a", [0, math.pi / 4, 3 * math.pi / 4, null]);
-     *     // out column.transform((cell) -> cell.math.tan());
+     *     val column = Column("a", [0, pi / 4, 3 * pi / 4, null]);
+     *     out column.transform((cell) -> cell.math.tan());
      * }
      */
     @Pure

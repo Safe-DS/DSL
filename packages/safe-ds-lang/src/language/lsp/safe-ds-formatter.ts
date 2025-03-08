@@ -311,15 +311,16 @@ export class SafeDsFormatter extends AbstractFormatter {
     private formatAttribute(node: ast.SdsAttribute): void {
         const formatter = this.getNodeFormatter(node);
 
-        if (getAnnotationCalls(node).length > 0) {
-            if (node.isStatic) {
+        if (node.isStatic) {
+            // A static attribute cannot have a visibility modifier
+            if (getAnnotationCalls(node).length > 0) {
                 formatter.keyword('static').prepend(newLine());
-            } else {
-                formatter.keyword('attr').prepend(newLine());
             }
+            formatter.keyword('static').append(oneSpace());
+        } else {
+            this.formatVisibilityAndKeyword(formatter, node, 'attr');
         }
 
-        formatter.keyword('static').append(oneSpace());
         formatter.property('name').prepend(oneSpace());
         formatter.keyword(':').prepend(noSpace()).append(oneSpace());
     }

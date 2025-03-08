@@ -1,0 +1,46 @@
+package tests.scoping.references.acrossFiles.toGlobalAttributes
+
+pipeline myPipeline {
+    // $TEST$ references same_myAttribute
+    »myAttribute«;
+
+
+    // $TEST$ references same_publicAttributeInSamePackage
+    »publicAttributeInSamePackage«;
+
+    // $TEST$ references same_internalAttributeInSamePackage
+    »internalAttributeInSamePackage«;
+
+    // $TEST$ unresolved
+    »privateAttributeInSamePackage«;
+
+
+    // $TEST$ references safeds_publicAttributeInSafeDsPackage
+    »publicAttributeInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »internalAttributeInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »privateAttributeInSafeDsPackage«;
+
+
+    // $TEST$ unresolved
+    »publicAttributeInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »internalAttributeInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »privateAttributeInAnotherPackage«;
+
+
+    // $TEST$ unresolved
+    »publicAttributeWithoutPackage«;
+
+    // $TEST$ unresolved
+    »internalAttributeWithoutPackage«;
+
+    // $TEST$ unresolved
+    »privateAttributeWithoutPackage«;
+}

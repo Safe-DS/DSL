@@ -1,0 +1,13 @@
+package safeds.scoping.references.acrossFiles.toGlobalAttributes
+
+// $TEST$ target safeds_myAttribute
+attr »myAttribute«: Int
+
+// $TEST$ target safeds_publicAttributeInSafeDsPackage
+attr »publicAttributeInSafeDsPackage«: Int
+
+// $TEST$ target safeds_internalAttributeInSafeDsPackage
+internal attr »internalAttributeInSafeDsPackage«: Int
+
+// $TEST$ target safeds_privateAttributeInSafeDsPackage
+private attr »privateAttributeInSafeDsPackage«: Int

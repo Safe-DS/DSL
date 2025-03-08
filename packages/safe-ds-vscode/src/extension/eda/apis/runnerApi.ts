@@ -161,7 +161,8 @@ export class RunnerApi {
             const cstNode = outputStatement.$cstNode;
             const index = outputStatement.$containerIndex;
             const expressionCstNode = outputStatement.expression.$cstNode;
-            if (!cstNode || !index || !expressionCstNode) {
+            // Do not replace index check with `!index`, as 0 is a valid index.
+            if (!cstNode || index === undefined || !expressionCstNode) {
                 continue;
             }
 
@@ -1141,13 +1142,11 @@ export class RunnerApi {
             }
         }
 
-        const results = await this.executeMultipleHistoryAndReturnNewResults(
+        return this.executeMultipleHistoryAndReturnNewResults(
             filteredFutureEntries,
             currentPlaceholderOverride,
             sdsLines,
         );
-
-        return results;
     }
 
     filterPastEntries(pastEntries: HistoryEntry[], newEntry?: HistoryEntry): HistoryEntry[] {

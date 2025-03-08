@@ -156,9 +156,10 @@ pipeline example {
          * @result cell The cosine.
          *
          * @example
+         * from math import pi
          * pipeline example {
-         *     // val column = Column("a", [0, math.pi / 2, math.pi, 3 * math.pi / 2, null]);
-         *     // out column.transform((cell) -> cell.math.cos());
+         *     val column = Column("a", [0, pi / 2, pi, 3 * pi / 2, null]);
+         *     out column.transform((cell) -> cell.math.cos());
          * }
          */
         @Pure
@@ -227,9 +228,10 @@ pipeline example {
          * @result cell The natural logarithm.
          *
          * @example
+         * from math import e
          * pipeline example {
-         *     // val column = Column("a", [0, 1, math.e, null]);
-         *     // out column.transform((cell) -> cell.math.ln());
+         *     val column = Column("a", [0, 1, e, null]);
+         *     out column.transform((cell) -> cell.math.ln());
          * }
          */
         @Pure
@@ -243,9 +245,10 @@ pipeline example {
          * @result cell The logarithm.
          *
          * @example
+         * from math import e
          * pipeline example {
-         *     // val column1 = Column("a", [0, 1, math.e, null]);
-         *     // out column1.transform((cell) -> cell.math.log(math.e));
+         *     val column1 = Column("a", [0, 1, e, null]);
+         *     out column1.transform((cell) -> cell.math.log(e));
          * }
          *
          * @example
@@ -279,9 +282,10 @@ pipeline example {
          * @result cell The value in degrees.
          *
          * @example
+         * from math import pi
          * pipeline example {
-         *     // val column = Column("a", [0, math.pi / 2, math.pi, 3 * math.pi / 2, null]);
-         *     // out column.transform((cell) -> cell.math.radiansToDegrees());
+         *     val column = Column("a", [0, pi / 2, pi, 3 * pi / 2, null]);
+         *     out column.transform((cell) -> cell.math.radiansToDegrees());
          * }
          */
         @Pure
@@ -361,9 +365,10 @@ pipeline example {
          * @result cell The sine.
          *
          * @example
+         * from math import pi
          * pipeline example {
-         *     // val column = Column("a", [0, math.pi / 2, math.pi, 3 * math.pi / 2, null]);
-         *     // out column.transform((cell) -> cell.math.sin());
+         *     val column = Column("a", [0, pi / 2, pi, 3 * pi / 2, null]);
+         *     out column.transform((cell) -> cell.math.sin());
          * }
          */
         @Pure
@@ -403,9 +408,10 @@ pipeline example {
          * @result cell The tangent.
          *
          * @example
+         * from math import pi
          * pipeline example {
-         *     // val column = Column("a", [0, math.pi / 4, 3 * math.pi / 4, null]);
-         *     // out column.transform((cell) -> cell.math.tan());
+         *     val column = Column("a", [0, pi / 4, 3 * pi / 4, null]);
+         *     out column.transform((cell) -> cell.math.tan());
          * }
          */
         @Pure
@@ -683,16 +689,17 @@ Get the cosine.
 
 **Examples:**
 
-```sds hl_lines="3"
+```sds hl_lines="4"
+from math import pi
 pipeline example {
-    // val column = Column("a", [0, math.pi / 2, math.pi, 3 * math.pi / 2, null]);
-    // out column.transform((cell) -> cell.math.cos());
+    val column = Column("a", [0, pi / 2, pi, 3 * pi / 2, null]);
+    out column.transform((cell) -> cell.math.cos());
 }
 ```
 
 ??? quote "Stub code in `MathOperations.sdsstub`"
 
-    ```sds linenums="152"
+    ```sds linenums="153"
     @Pure
     fun cos() -> cell: Cell<Any>
     ```
@@ -719,7 +726,7 @@ pipeline example {
 
 ??? quote "Stub code in `MathOperations.sdsstub`"
 
-    ```sds linenums="166"
+    ```sds linenums="167"
     @Pure
     fun cosh() -> cell: Cell<Any>
     ```
@@ -746,7 +753,7 @@ pipeline example {
 
 ??? quote "Stub code in `MathOperations.sdsstub`"
 
-    ```sds linenums="180"
+    ```sds linenums="181"
     @Pure
     @PythonName("degrees_to_radians")
     fun degreesToRadians() -> cell: Cell<Any>
@@ -774,7 +781,7 @@ pipeline example {
 
 ??? quote "Stub code in `MathOperations.sdsstub`"
 
-    ```sds linenums="195"
+    ```sds linenums="196"
     @Pure
     fun exp() -> cell: Cell<Any>
     ```
@@ -801,7 +808,7 @@ pipeline example {
 
 ??? quote "Stub code in `MathOperations.sdsstub`"
 
-    ```sds linenums="209"
+    ```sds linenums="210"
     @Pure
     fun floor() -> cell: Cell<Any>
     ```
@@ -819,16 +826,17 @@ Get the natural logarithm.
 
 **Examples:**
 
-```sds hl_lines="3"
+```sds hl_lines="4"
+from math import e
 pipeline example {
-    // val column = Column("a", [0, 1, math.e, null]);
-    // out column.transform((cell) -> cell.math.ln());
+    val column = Column("a", [0, 1, e, null]);
+    out column.transform((cell) -> cell.math.ln());
 }
 ```
 
 ??? quote "Stub code in `MathOperations.sdsstub`"
 
-    ```sds linenums="223"
+    ```sds linenums="225"
     @Pure
     fun ln() -> cell: Cell<Any>
     ```
@@ -852,10 +860,11 @@ Get the logarithm to the specified base.
 
 **Examples:**
 
-```sds hl_lines="3"
+```sds hl_lines="4"
+from math import e
 pipeline example {
-    // val column1 = Column("a", [0, 1, math.e, null]);
-    // out column1.transform((cell) -> cell.math.log(math.e));
+    val column1 = Column("a", [0, 1, e, null]);
+    out column1.transform((cell) -> cell.math.log(e));
 }
 ```
 ```sds hl_lines="3"
@@ -867,7 +876,7 @@ pipeline example {
 
 ??? quote "Stub code in `MathOperations.sdsstub`"
 
-    ```sds linenums="245"
+    ```sds linenums="248"
     @Pure
     fun log(
         base: Float
@@ -896,7 +905,7 @@ pipeline example {
 
 ??? quote "Stub code in `MathOperations.sdsstub`"
 
-    ```sds linenums="261"
+    ```sds linenums="264"
     @Pure
     fun log10() -> cell: Cell<Any>
     ```
@@ -914,16 +923,17 @@ Convert radians to degrees.
 
 **Examples:**
 
-```sds hl_lines="3"
+```sds hl_lines="4"
+from math import pi
 pipeline example {
-    // val column = Column("a", [0, math.pi / 2, math.pi, 3 * math.pi / 2, null]);
-    // out column.transform((cell) -> cell.math.radiansToDegrees());
+    val column = Column("a", [0, pi / 2, pi, 3 * pi / 2, null]);
+    out column.transform((cell) -> cell.math.radiansToDegrees());
 }
 ```
 
 ??? quote "Stub code in `MathOperations.sdsstub`"
 
-    ```sds linenums="275"
+    ```sds linenums="279"
     @Pure
     @PythonName("radians_to_degrees")
     fun radiansToDegrees() -> cell: Cell<Any>
@@ -958,7 +968,7 @@ pipeline example {
 
 ??? quote "Stub code in `MathOperations.sdsstub`"
 
-    ```sds linenums="293"
+    ```sds linenums="297"
     @Pure
     @PythonName("round_to_decimal_places")
     fun roundToDecimalPlaces(
@@ -997,7 +1007,7 @@ pipeline example {
 
 ??? quote "Stub code in `MathOperations.sdsstub`"
 
-    ```sds linenums="315"
+    ```sds linenums="319"
     @Pure
     @PythonName("round_to_significant_figures")
     fun roundToSignificantFigures(
@@ -1038,7 +1048,7 @@ pipeline example {
 
 ??? quote "Stub code in `MathOperations.sdsstub`"
 
-    ```sds linenums="343"
+    ```sds linenums="347"
     @Pure
     fun sign() -> cell: Cell<Any>
     ```
@@ -1056,16 +1066,17 @@ Get the sine.
 
 **Examples:**
 
-```sds hl_lines="3"
+```sds hl_lines="4"
+from math import pi
 pipeline example {
-    // val column = Column("a", [0, math.pi / 2, math.pi, 3 * math.pi / 2, null]);
-    // out column.transform((cell) -> cell.math.sin());
+    val column = Column("a", [0, pi / 2, pi, 3 * pi / 2, null]);
+    out column.transform((cell) -> cell.math.sin());
 }
 ```
 
 ??? quote "Stub code in `MathOperations.sdsstub`"
 
-    ```sds linenums="357"
+    ```sds linenums="362"
     @Pure
     fun sin() -> cell: Cell<Any>
     ```
@@ -1092,7 +1103,7 @@ pipeline example {
 
 ??? quote "Stub code in `MathOperations.sdsstub`"
 
-    ```sds linenums="371"
+    ```sds linenums="376"
     @Pure
     fun sinh() -> cell: Cell<Any>
     ```
@@ -1119,7 +1130,7 @@ pipeline example {
 
 ??? quote "Stub code in `MathOperations.sdsstub`"
 
-    ```sds linenums="385"
+    ```sds linenums="390"
     @Pure
     fun sqrt() -> cell: Cell<Any>
     ```
@@ -1137,16 +1148,17 @@ Get the tangent.
 
 **Examples:**
 
-```sds hl_lines="3"
+```sds hl_lines="4"
+from math import pi
 pipeline example {
-    // val column = Column("a", [0, math.pi / 4, 3 * math.pi / 4, null]);
-    // out column.transform((cell) -> cell.math.tan());
+    val column = Column("a", [0, pi / 4, 3 * pi / 4, null]);
+    out column.transform((cell) -> cell.math.tan());
 }
 ```
 
 ??? quote "Stub code in `MathOperations.sdsstub`"
 
-    ```sds linenums="399"
+    ```sds linenums="405"
     @Pure
     fun tan() -> cell: Cell<Any>
     ```
@@ -1173,7 +1185,7 @@ pipeline example {
 
 ??? quote "Stub code in `MathOperations.sdsstub`"
 
-    ```sds linenums="413"
+    ```sds linenums="419"
     @Pure
     fun tanh() -> cell: Cell<Any>
     ```
