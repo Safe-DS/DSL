@@ -18,7 +18,7 @@ from safeds.data.tabular.containers import Table
  *
  * @param data The data.
  * @param targetName The name of the target column.
- * @param extraNames Names of the columns that are neither feature nor target. If None, no extra columns are used, i.e. all but the
+ * @param extraNames Names of the columns that are neither feature nor target. If null, no extra columns are used, i.e. all but the
  * target column are used as features.
  *
  * @example

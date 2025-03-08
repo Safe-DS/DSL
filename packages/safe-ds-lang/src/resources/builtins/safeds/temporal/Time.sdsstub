@@ -12,9 +12,9 @@ package safeds.temporal
 @Experimental
 @PythonName("time")
 class Time(
-    const hour: Int = 0,
-    const minute: Int = 0,
-    const second: Int = 0,
+    const hour: Int,
+    const minute: Int,
+    const second: Int,
     const microsecond: Int = 0
 ) where {
     hour >= 0,

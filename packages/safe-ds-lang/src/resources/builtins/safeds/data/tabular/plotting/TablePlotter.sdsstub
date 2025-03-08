@@ -85,7 +85,7 @@ class TablePlotter(
      *
      * @param xName The name of the column to be plotted on the x-axis.
      * @param yNames The name(s) of the column(s) to be plotted on the y-axis.
-     * @param showConfidenceInterval If the confidence interval is shown, per default True.
+     * @param showConfidenceInterval If the confidence interval is shown, per default true.
      * @param theme The color theme of the plot. Default is "light".
      *
      * @result plot The plot as an image.
