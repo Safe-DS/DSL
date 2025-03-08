@@ -13,6 +13,7 @@ import { installRunner } from './actions/installRunner.js';
 import { updateRunner } from './actions/updateRunner.js';
 import { safeDsLogger } from './helpers/logging.js';
 import { showImage } from './actions/showImage.js';
+import { SafeDSGraphicalEditorProvider } from './graphical-editor/customEditorProvider.ts';
 
 let client: LanguageClient;
 let services: SafeDsServices;
@@ -34,6 +35,9 @@ export const activate = async function (context: vscode.ExtensionContext) {
 
     registerNotificationListeners(context);
     registerCommands(context);
+
+    SafeDSGraphicalEditorProvider.registerProvider(context, client);
+    SafeDSGraphicalEditorProvider.registerCommands(context);
 
     await client.start();
 };
