@@ -205,7 +205,14 @@ export const isValidPipelineDeclaration = (node: SdsDeclaration): boolean => {
  * Checks whether the declaration is valid in a stub file.
  */
 export const isValidStubDeclaration = (node: SdsDeclaration): boolean => {
-    return isSdsAnnotation(node) || isSdsClass(node) || isSdsEnum(node) || isSdsFunction(node) || isSdsTypeAlias(node);
+    return (
+        isSdsAnnotation(node) ||
+        isSdsAttribute(node) ||
+        isSdsClass(node) ||
+        isSdsEnum(node) ||
+        isSdsFunction(node) ||
+        isSdsTypeAlias(node)
+    );
 };
 
 // -------------------------------------------------------------------------------------------------
