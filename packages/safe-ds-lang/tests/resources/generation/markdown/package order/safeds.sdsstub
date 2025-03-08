@@ -1,0 +1,3 @@
+package safeds.generation.markdown.packageOrder
+
+class MyClass1
