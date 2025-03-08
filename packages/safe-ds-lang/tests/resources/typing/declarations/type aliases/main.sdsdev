@@ -2,4 +2,10 @@ package tests.typing.declarations.typeAliases
 
 // $TEST$ equivalence_class RHS
 // $TEST$ equivalence_class RHS
-typealias »MyAlias« = »Int«
+typealias »MyAlias1« = »Int?«
+
+// $TEST$ equivalence_class Alias
+typealias »MyAlias2« = Int?
+
+// $TEST$ equivalence_class Alias
+class MyClass1(p: »MyAlias2«) /* There used to be a bug where nullable types were turned into non-nullable types. */
