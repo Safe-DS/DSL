@@ -1,10 +1,14 @@
 package tests.partialEvaluation.recursiveCases.assignees.references
 
+attr myAttribute: Int
+
 pipeline myPipeline {
     val a = 1;
 
     // $TEST$ serialization 1
     »a«;
+    // $TEST$ serialization ?
+    »myAttribute«;
     // $TEST$ serialization ?
     »unresolved«;
 }
