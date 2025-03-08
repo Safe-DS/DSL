@@ -106,7 +106,6 @@ import {
     yieldMustNotBeUsedInPipeline,
 } from './other/statements/assignments.js';
 import {
-    callableTypeMustBeUsedInCorrectContext,
     callableTypeMustNotHaveOptionalParameters,
     callableTypeParameterMustNotHaveConstModifier,
 } from './other/types/callableTypes.js';
@@ -121,11 +120,7 @@ import {
     namedTypeMustNotSetTypeParameterMultipleTimes,
     namedTypeTypeArgumentListMustNotHavePositionalArgumentsAfterNamedArguments,
 } from './other/types/namedTypes.js';
-import {
-    unionTypeMustBeUsedInCorrectContext,
-    unionTypeMustHaveTypes,
-    unionTypeShouldNotHaveDuplicateTypes,
-} from './other/types/unionTypes.js';
+import { unionTypeMustHaveTypes, unionTypeShouldNotHaveDuplicateTypes } from './other/types/unionTypes.js';
 import {
     callArgumentAssignedToPureParameterMustBePure,
     functionPurityMustBeSpecified,
@@ -193,6 +188,7 @@ import {
 } from './other/statements/outputStatements.js';
 import { messageOfConstraintsMustOnlyReferenceConstantParameters } from './other/declarations/constraints.js';
 import { argumentMustBeNamedIfParameterIsOptional } from './other/expressions/arguments.js';
+import { typeMustBeUsedInCorrectContext } from './other/types/types.js';
 
 /**
  * Register custom validation checks.
@@ -248,7 +244,6 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             callReceiverMustBeCallable(services),
         ],
         SdsCallableType: [
-            callableTypeMustBeUsedInCorrectContext(services),
             callableTypeMustContainUniqueNames,
             callableTypeMustNotHaveOptionalParameters,
             callableTypeParametersMustNotBeAnnotated,
@@ -377,6 +372,7 @@ export const registerValidationChecks = function (services: SafeDsServices) {
         SdsStatement: [statementMustDoSomething(services)],
         SdsTemplateString: [templateStringMustHaveExpressionBetweenTwoStringParts],
         SdsThis: [thisMustReferToClassInstance(services)],
+        SdsType: [typeMustBeUsedInCorrectContext(services)],
         SdsTypeCast: [typeCastMustNotAlwaysFail(services)],
         SdsTypeParameter: [
             typeParameterDefaultValueMustMatchUpperBound(services),
@@ -390,7 +386,6 @@ export const registerValidationChecks = function (services: SafeDsServices) {
             typeParameterListShouldNotBeEmpty(services),
         ],
         SdsUnionType: [
-            unionTypeMustBeUsedInCorrectContext(services),
             unionTypeMustHaveTypes,
             unionTypesShouldBeUsedWithCaution(services),
             unionTypeShouldNotHaveDuplicateTypes(services),
