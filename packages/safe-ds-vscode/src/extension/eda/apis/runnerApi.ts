@@ -423,9 +423,9 @@ export class RunnerApi {
             tablePlaceholder +
             '.plot.linePlot(xName="' +
             xAxisColumnName +
-            '", yName="' +
+            '", yNames=["' +
             yAxisColumnName +
-            '"); \n'
+            '"]); \n'
         );
     }
 
@@ -442,9 +442,9 @@ export class RunnerApi {
             tablePlaceholder +
             '.plot.scatterPlot(xName="' +
             xAxisColumnName +
-            '", yName="' +
+            '", yNames=["' +
             yAxisColumnName +
-            '"); \n'
+            '"]); \n'
         );
     }
 
@@ -454,7 +454,13 @@ export class RunnerApi {
 
     private sdsStringForIsNumeric(tablePlaceholder: string, columnName: string, newPlaceholderName: string) {
         return (
-            'val ' + newPlaceholderName + ' = ' + tablePlaceholder + '.getColumn("' + columnName + '").isNumeric; \n'
+            'val ' +
+            newPlaceholderName +
+            ' = ' +
+            tablePlaceholder +
+            '.getColumnType("' +
+            columnName +
+            '").isNumeric; \n'
         );
     }
 
@@ -473,6 +479,7 @@ export class RunnerApi {
             '.sortRowsByColumn("' +
             columnName +
             '" , ' +
+            'descending = ' +
             (direction === 'desc') +
             '); \n'
         );
