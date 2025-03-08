@@ -1,5 +1,7 @@
 package tests.generator.reference
 
+attr a: Int
+
 @Impure([ImpurityReason.Other]) fun f(param: Any?)
 
 @Pure
@@ -7,5 +9,6 @@ package tests.generator.reference
 fun explainModel() -> result: Int
 
 pipeline test {
+    f(a);
     f(explainModel());
 }
