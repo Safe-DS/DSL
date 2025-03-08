@@ -127,6 +127,8 @@ export class SafeDsMarkdownGenerator {
 
         if (isSdsAnnotation(node)) {
             return this.describeAnnotation(node, state);
+        } else if (isSdsAttribute(node)) {
+            return this.describeAttribute(node, state);
         } else if (isSdsClass(node)) {
             return this.describeClass(node, state);
         } else if (isSdsEnum(node)) {

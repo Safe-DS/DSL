@@ -1,0 +1,14 @@
+package tests.generation.markdown.attributes.documented
+
+/**
+ * Description of myAttribute1.
+ */
+attr myAttribute1: Int
+
+/**
+ * Description of myAttribute2.
+ */
+attr myAttribute2: MyClass1
+
+
+class MyClass1
