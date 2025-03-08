@@ -557,7 +557,7 @@ export class SafeDsPythonServer {
 
         try {
             await this.doConnectToServer(port);
-        } catch (_error) {
+        } catch {
             await this.stop();
         }
     }
