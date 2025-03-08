@@ -20,16 +20,15 @@ To create a `Table` call the constructor or use one of the following static meth
 
 **Examples:**
 
-```sds hl_lines="2 3"
+```sds hl_lines="2"
 pipeline example {
-    // from safeds.data.tabular.containers import Table
-    // Table({"a": [1, 2, 3], "b": [4, 5, 6]})
+    out Table({"a": [1, 2, 3], "b": [4, 5, 6]});
 }
 ```
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="29"
+    ```sds linenums="28"
     @Category(DataScienceCategory.BasicElement)
     class Table(
         data: Map<String, List<Any?>>
@@ -1184,7 +1183,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="180"
+    ```sds linenums="179"
     @Pure
     @PythonName("add_columns")
     @Category(DataScienceCategory.DataProcessingQTable)
@@ -1224,7 +1223,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="203"
+    ```sds linenums="202"
     @Pure
     @PythonName("add_computed_column")
     @Category(DataScienceCategory.DataProcessingQTable)
@@ -1266,7 +1265,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="228"
+    ```sds linenums="227"
     @Pure
     @PythonName("add_index_column")
     fun addIndexColumn(
@@ -1306,7 +1305,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="826"
+    ```sds linenums="825"
     @Pure
     @PythonName("add_tables_as_columns")
     @Category(DataScienceCategory.DataProcessingQTable)
@@ -1346,7 +1345,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="849"
+    ```sds linenums="848"
     @Pure
     @PythonName("add_tables_as_rows")
     @Category(DataScienceCategory.DataProcessingQTable)
@@ -1397,7 +1396,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="494"
+    ```sds linenums="493"
     @Pure
     @PythonName("count_rows_if")
     fun countRowsIf(
@@ -1436,7 +1435,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="516"
+    ```sds linenums="515"
     @Pure
     @PythonName("filter_rows")
     fun filterRows(
@@ -1475,7 +1474,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="538"
+    ```sds linenums="537"
     @Pure
     @PythonName("filter_rows_by_column")
     fun filterRowsByColumn(
@@ -1512,7 +1511,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="248"
+    ```sds linenums="247"
     @Pure
     @PythonName("get_column")
     @Category(DataScienceCategory.UtilitiesQTable)
@@ -1549,7 +1548,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="268"
+    ```sds linenums="267"
     @Pure
     @PythonName("get_column_type")
     @Category(DataScienceCategory.UtilitiesQTable)
@@ -1587,7 +1586,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="289"
+    ```sds linenums="288"
     @Pure
     @PythonName("has_column")
     @Category(DataScienceCategory.UtilitiesQTable)
@@ -1630,7 +1629,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="875"
+    ```sds linenums="874"
     @Pure
     @PythonName("inverse_transform_table")
     @Category(DataScienceCategory.DataProcessingQTable)
@@ -1692,7 +1691,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="920"
+    ```sds linenums="919"
     @Pure
     @Category(DataScienceCategory.DataProcessingQTable)
     fun join(
@@ -1735,7 +1734,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="314"
+    ```sds linenums="313"
     @Pure
     @PythonName("remove_columns")
     @Category(DataScienceCategory.DataProcessingQTable)
@@ -1776,7 +1775,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="344"
+    ```sds linenums="343"
     @Pure
     @PythonName("remove_columns_with_missing_values")
     @Category(DataScienceCategory.DataProcessingQTable)
@@ -1807,7 +1806,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="558"
+    ```sds linenums="557"
     @Pure
     @PythonName("remove_duplicate_rows")
     @Category(DataScienceCategory.DataProcessingQTable)
@@ -1838,7 +1837,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="362"
+    ```sds linenums="361"
     @Pure
     @PythonName("remove_non_numeric_columns")
     @Category(DataScienceCategory.DataProcessingQTable)
@@ -1875,7 +1874,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="578"
+    ```sds linenums="577"
     @Pure
     @PythonName("remove_rows")
     @Category(DataScienceCategory.DataProcessingQTable)
@@ -1915,7 +1914,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="601"
+    ```sds linenums="600"
     @Pure
     @PythonName("remove_rows_by_column")
     @Category(DataScienceCategory.DataProcessingQTable)
@@ -1960,7 +1959,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="629"
+    ```sds linenums="628"
     @Pure
     @PythonName("remove_rows_with_missing_values")
     @Category(DataScienceCategory.DataProcessingQTable)
@@ -2016,7 +2015,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="668"
+    ```sds linenums="667"
     @Pure
     @PythonName("remove_rows_with_outliers")
     @Category(DataScienceCategory.DataProcessingQTable)
@@ -2057,7 +2056,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="383"
+    ```sds linenums="382"
     @Pure
     @PythonName("rename_column")
     @Category(DataScienceCategory.DataProcessingQTable)
@@ -2102,7 +2101,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="411"
+    ```sds linenums="410"
     @Pure
     @PythonName("replace_column")
     @Category(DataScienceCategory.DataProcessingQTable)
@@ -2142,7 +2141,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="434"
+    ```sds linenums="433"
     @Pure
     @PythonName("select_columns")
     fun selectColumns(
@@ -2183,7 +2182,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="694"
+    ```sds linenums="693"
     @Pure
     @PythonName("shuffle_rows")
     @Category(DataScienceCategory.DataProcessingQTable)
@@ -2224,7 +2223,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="720"
+    ```sds linenums="719"
     @Pure
     @PythonName("slice_rows")
     @Category(DataScienceCategory.DataProcessingQTable)
@@ -2265,7 +2264,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="744"
+    ```sds linenums="743"
     @Pure
     @PythonName("sort_rows")
     @Category(DataScienceCategory.DataProcessingQTable)
@@ -2306,7 +2305,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="768"
+    ```sds linenums="767"
     @Pure
     @PythonName("sort_rows_by_column")
     @Category(DataScienceCategory.DataProcessingQTable)
@@ -2356,7 +2355,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="801"
+    ```sds linenums="800"
     @Pure
     @PythonName("split_rows")
     @Category(DataScienceCategory.DataProcessingQTable)
@@ -2394,7 +2393,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="971"
+    ```sds linenums="970"
     @Pure
     @PythonName("summarize_statistics")
     @Category(DataScienceCategory.DataExplorationQMetric)
@@ -2423,7 +2422,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="987"
+    ```sds linenums="986"
     @Pure
     @PythonName("to_columns")
     @Category(DataScienceCategory.UtilitiesQConversion)
@@ -2455,7 +2454,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="1006"
+    ```sds linenums="1005"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_csv_file")
     @Category(DataScienceCategory.DataExport)
@@ -2491,7 +2490,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="1047"
+    ```sds linenums="1046"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_json_file")
     @Category(DataScienceCategory.DataExport)
@@ -2524,7 +2523,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="1026"
+    ```sds linenums="1025"
     @Pure
     @PythonName("to_dict")
     @Category(DataScienceCategory.UtilitiesQConversion)
@@ -2556,7 +2555,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="1068"
+    ```sds linenums="1067"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_parquet_file")
     @Category(DataScienceCategory.DataExport)
@@ -2608,7 +2607,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="1102"
+    ```sds linenums="1101"
     @Pure
     @PythonName("to_tabular_dataset")
     @Category(DataScienceCategory.UtilitiesQConversion)
@@ -2651,7 +2650,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="459"
+    ```sds linenums="458"
     @Pure
     @PythonName("transform_columns")
     @Category(DataScienceCategory.DataProcessingQTable)
@@ -2695,7 +2694,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="948"
+    ```sds linenums="947"
     @Pure
     @PythonName("transform_table")
     @Category(DataScienceCategory.DataProcessingQTable)
@@ -2733,7 +2732,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="78"
+    ```sds linenums="77"
     @Pure
     @PythonName("from_columns")
     @Category(DataScienceCategory.UtilitiesQConversion)
@@ -2770,7 +2769,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="98"
+    ```sds linenums="97"
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
     @PythonName("from_csv_file")
     @Category(DataScienceCategory.DataImport)
@@ -2807,7 +2806,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="138"
+    ```sds linenums="137"
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
     @PythonName("from_json_file")
     @Category(DataScienceCategory.DataImport)
@@ -2844,7 +2843,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="119"
+    ```sds linenums="118"
     @Pure
     @PythonName("from_dict")
     @Category(DataScienceCategory.DataImport)
@@ -2880,7 +2879,7 @@ pipeline example {
 
 ??? quote "Stub code in `Table.sdsstub`"
 
-    ```sds linenums="157"
+    ```sds linenums="156"
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
     @PythonName("from_parquet_file")
     @Category(DataScienceCategory.DataImport)

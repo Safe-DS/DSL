@@ -22,8 +22,7 @@ from safeds.data.tabular.typing import Schema
  *
  * @example
  * pipeline example {
- *     // from safeds.data.tabular.containers import Table
- *     // Table({"a": [1, 2, 3], "b": [4, 5, 6]})
+ *     out Table({"a": [1, 2, 3], "b": [4, 5, 6]});
  * }
  */
 @Category(DataScienceCategory.BasicElement)
