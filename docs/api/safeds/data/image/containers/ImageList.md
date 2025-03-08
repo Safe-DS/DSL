@@ -61,6 +61,7 @@ To create an `ImageList` call one of the following static methods:
          * If you provide a path to a directory the images will be sorted alphabetically while inner directories will be sorted after image files.
          *
          * @param path the path to the directory or a list of files
+         * @param loadPercentage the percentage of the given data being loaded. If below 1 the files will be shuffled before loading
          *
          * @result imageList the image list
          */
@@ -68,7 +69,8 @@ To create an `ImageList` call one of the following static methods:
         @PythonName("from_files")
         @Category(DataScienceCategory.DataImport)
         static fun fromFiles(
-            path: union<List<String>, String>
+            path: union<List<String>, String>,
+            @PythonName("load_percentage") loadPercentage: Float = 1.0
         ) -> imageList: ImageList
 
         /**
@@ -346,26 +348,26 @@ To create an `ImageList` call one of the following static methods:
         }
 
         /**
-         * Return a new `ImageList` with all images flipped vertically (horizontal axis, flips up-down and vice versa).
+         * Return a new `ImageList` where top and bottom of all images are flipped along a horizontal axis.
          *
          * The original image list is not modified.
          *
          * @result imageList The image list with all images flipped vertically
          */
         @Pure
-        @PythonName("flip_vertically")
-        fun flipVertically() -> imageList: ImageList
+        @PythonName("flip_top_and_bottom")
+        fun flipTopAndBottom() -> imageList: ImageList
 
         /**
-         * Return a new `ImageList` with all images flipped horizontally (vertical axis, flips left-right and vice versa).
+         * Return a new `ImageList` where left and right sides of all images are flipped along a vertical axis.
          *
          * The original image list is not modified.
          *
          * @result imageList The image list with all images flipped horizontally
          */
         @Pure
-        @PythonName("flip_horizontally")
-        fun flipHorizontally() -> imageList: ImageList
+        @PythonName("flip_left_and_right")
+        fun flipLeftAndRight() -> imageList: ImageList
 
         /**
          * Return a new `ImageList` where all images have the adjusted brightness.
@@ -584,7 +586,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="178"
+    ```sds linenums="180"
     @Pure
     @PythonName("add_image")
     fun addImage(
@@ -613,7 +615,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="193"
+    ```sds linenums="195"
     @Pure
     @PythonName("add_images")
     fun addImages(
@@ -642,7 +644,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="399"
+    ```sds linenums="401"
     @Pure
     @PythonName("add_noise")
     fun addNoise(
@@ -673,7 +675,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="382"
+    ```sds linenums="384"
     @Pure
     @PythonName("adjust_brightness")
     fun adjustBrightness(
@@ -704,7 +706,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="439"
+    ```sds linenums="441"
     @Pure
     @PythonName("adjust_color_balance")
     fun adjustColorBalance(
@@ -735,7 +737,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="419"
+    ```sds linenums="421"
     @Pure
     @PythonName("adjust_contrast")
     fun adjustContrast(
@@ -766,7 +768,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="457"
+    ```sds linenums="459"
     @Pure
     fun blur(
         const radius: Int
@@ -796,7 +798,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="163"
+    ```sds linenums="165"
     @Pure
     @PythonName("change_channel")
     fun changeChannel(
@@ -822,7 +824,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="318"
+    ```sds linenums="320"
     @Pure
     @PythonName("convert_to_grayscale")
     fun convertToGrayscale() -> imageList: ImageList
@@ -852,7 +854,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="334"
+    ```sds linenums="336"
     @Pure
     fun crop(
         const x: Int,
@@ -882,16 +884,16 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="523"
+    ```sds linenums="525"
     @Pure
     @PythonName("find_edges")
     fun findEdges() -> imageList: ImageList
     ```
     { data-search-exclude }
 
-## <code class="doc-symbol doc-symbol-function"></code> `flipHorizontally` {#safeds.data.image.containers.ImageList.flipHorizontally data-toc-label='[function] flipHorizontally'}
+## <code class="doc-symbol doc-symbol-function"></code> `flipLeftAndRight` {#safeds.data.image.containers.ImageList.flipLeftAndRight data-toc-label='[function] flipLeftAndRight'}
 
-Return a new `ImageList` with all images flipped horizontally (vertical axis, flips left-right and vice versa).
+Return a new `ImageList` where left and right sides of all images are flipped along a vertical axis.
 
 The original image list is not modified.
 
@@ -903,16 +905,16 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="365"
+    ```sds linenums="367"
     @Pure
-    @PythonName("flip_horizontally")
-    fun flipHorizontally() -> imageList: ImageList
+    @PythonName("flip_left_and_right")
+    fun flipLeftAndRight() -> imageList: ImageList
     ```
     { data-search-exclude }
 
-## <code class="doc-symbol doc-symbol-function"></code> `flipVertically` {#safeds.data.image.containers.ImageList.flipVertically data-toc-label='[function] flipVertically'}
+## <code class="doc-symbol doc-symbol-function"></code> `flipTopAndBottom` {#safeds.data.image.containers.ImageList.flipTopAndBottom data-toc-label='[function] flipTopAndBottom'}
 
-Return a new `ImageList` with all images flipped vertically (horizontal axis, flips up-down and vice versa).
+Return a new `ImageList` where top and bottom of all images are flipped along a horizontal axis.
 
 The original image list is not modified.
 
@@ -924,10 +926,10 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="354"
+    ```sds linenums="356"
     @Pure
-    @PythonName("flip_vertically")
-    fun flipVertically() -> imageList: ImageList
+    @PythonName("flip_top_and_bottom")
+    fun flipTopAndBottom() -> imageList: ImageList
     ```
     { data-search-exclude }
 
@@ -949,7 +951,7 @@ Return the image at the given index.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="80"
+    ```sds linenums="82"
     @Pure
     @PythonName("get_image")
     @Category(DataScienceCategory.UtilitiesQImage)
@@ -977,7 +979,7 @@ Return whether the given image is in this image list.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="109"
+    ```sds linenums="111"
     @Pure
     @PythonName("has_image")
     @Category(DataScienceCategory.UtilitiesQImage)
@@ -1007,7 +1009,7 @@ If the image has multiple occurrences, all indices will be returned
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="96"
+    ```sds linenums="98"
     @Pure
     @Category(DataScienceCategory.UtilitiesQImage)
     fun index(
@@ -1030,7 +1032,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="490"
+    ```sds linenums="492"
     @Pure
     @PythonName("invert_colors")
     fun invertColors() -> imageList: ImageList
@@ -1053,7 +1055,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="274"
+    ```sds linenums="276"
     @Pure
     @PythonName("remove_duplicate_images")
     fun removeDuplicateImages() -> imageList: ImageList
@@ -1082,7 +1084,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="210"
+    ```sds linenums="212"
     @Pure
     @PythonName("remove_image")
     fun removeImage(
@@ -1111,7 +1113,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="242"
+    ```sds linenums="244"
     @Pure
     @PythonName("remove_image_by_index")
     fun removeImageByIndex(
@@ -1142,7 +1144,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="227"
+    ```sds linenums="229"
     @Pure
     @PythonName("remove_images")
     fun removeImages(
@@ -1172,7 +1174,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="258"
+    ```sds linenums="260"
     @Pure
     @PythonName("remove_images_with_size")
     fun removeImagesWithSize(
@@ -1203,7 +1205,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="299"
+    ```sds linenums="301"
     @Pure
     fun resize(
         @PythonName("new_width") const newWidth: Int,
@@ -1229,7 +1231,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="512"
+    ```sds linenums="514"
     @Pure
     @PythonName("rotate_left")
     fun rotateLeft() -> imageList: ImageList
@@ -1250,7 +1252,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="501"
+    ```sds linenums="503"
     @Pure
     @PythonName("rotate_right")
     fun rotateRight() -> imageList: ImageList
@@ -1277,7 +1279,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="476"
+    ```sds linenums="478"
     @Pure
     fun sharpen(
         const factor: Float
@@ -1301,7 +1303,7 @@ The original image list is not modified.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="285"
+    ```sds linenums="287"
     @Pure
     @PythonName("shuffle_images")
     fun shuffleImages() -> imageList: ImageList
@@ -1326,7 +1328,7 @@ Return a list of all images in this image list.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="147"
+    ```sds linenums="149"
     @Pure
     @PythonName("to_images")
     @Category(DataScienceCategory.UtilitiesQConversion)
@@ -1348,7 +1350,7 @@ Save all images as jpeg files.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="121"
+    ```sds linenums="123"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_jpeg_files")
     @Category(DataScienceCategory.DataExport)
@@ -1370,7 +1372,7 @@ Save all images as png files.
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="133"
+    ```sds linenums="135"
     @Impure([ImpurityReason.FileWriteToParameterizedPath("path")])
     @PythonName("to_png_files")
     @Category(DataScienceCategory.DataExport)
@@ -1391,6 +1393,7 @@ If you provide a path to a directory the images will be sorted alphabetically wh
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `path` | `#!sds union<List<String>, String>` | the path to the directory or a list of files | - |
+| `loadPercentage` | [`Float`][safeds.lang.Float] | the percentage of the given data being loaded. If below 1 the files will be shuffled before loading | `#!sds 1.0` |
 
 **Results:**
 
@@ -1400,12 +1403,13 @@ If you provide a path to a directory the images will be sorted alphabetically wh
 
 ??? quote "Stub code in `ImageList.sdsstub`"
 
-    ```sds linenums="66"
+    ```sds linenums="67"
     @Impure([ImpurityReason.FileReadFromParameterizedPath("path")])
     @PythonName("from_files")
     @Category(DataScienceCategory.DataImport)
     static fun fromFiles(
-        path: union<List<String>, String>
+        path: union<List<String>, String>,
+        @PythonName("load_percentage") loadPercentage: Float = 1.0
     ) -> imageList: ImageList
     ```
     { data-search-exclude }

@@ -1,0 +1,159 @@
+package safeds.data.tabular.query
+
+/**
+ * Namespace for operations on durations.
+ *
+ * This class cannot be instantiated directly. It can only be accessed using the `dur` attribute of a cell.
+ *
+ * @example
+ * pipeline example {
+ *     val column = Column("a", [Duration(days=-1), Duration(days = 0), Duration(days = 1)]);
+ *     out column.transform((cell) -> cell.dur.abs());
+ * }
+ */
+class DurationOperations {
+    /**
+     * Get the absolute value of the duration.
+     *
+     * @result cell The absolute value.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", [Duration(days=-1), Duration(days = 1), null]);
+     *     out column.transform((cell) -> cell.dur.abs());
+     * }
+     */
+    @Pure
+    fun abs() -> cell: Cell<Duration?>
+
+    /**
+     * Get the number of full weeks in the duration. The result is rounded toward zero.
+     *
+     * @result cell The number of full weeks.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", [Duration(days = 8), Duration(days = 6), null]);
+     *     out column.transform((cell) -> cell.dur.fullWeeks());
+     * }
+     */
+    @Pure
+    @PythonName("full_weeks")
+    fun fullWeeks() -> cell: Cell<Int?>
+
+    /**
+     * Get the number of full days in the duration. The result is rounded toward zero.
+     *
+     * @result cell The number of full days.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", [Duration(hours = 25), Duration(hours = 23), null]);
+     *     out column.transform((cell) -> cell.dur.fullDays());
+     * }
+     */
+    @Pure
+    @PythonName("full_days")
+    fun fullDays() -> cell: Cell<Int?>
+
+    /**
+     * Get the number of full hours in the duration. The result is rounded toward zero.
+     *
+     * @result cell The number of full hours.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", [Duration(minutes = 61), Duration(minutes = 59), null]);
+     *     out column.transform((cell) -> cell.dur.fullHours());
+     * }
+     */
+    @Pure
+    @PythonName("full_hours")
+    fun fullHours() -> cell: Cell<Int?>
+
+    /**
+     * Get the number of full minutes in the duration. The result is rounded toward zero.
+     *
+     * @result cell The number of full minutes.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", [Duration(seconds = 61), Duration(seconds = 59), null]);
+     *     out column.transform((cell) -> cell.dur.fullMinutes());
+     * }
+     */
+    @Pure
+    @PythonName("full_minutes")
+    fun fullMinutes() -> cell: Cell<Int?>
+
+    /**
+     * Get the number of full seconds in the duration. The result is rounded toward zero.
+     *
+     * @result cell The number of full seconds.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", [Duration(milliseconds = 1001), Duration(milliseconds = 999), null]);
+     *     out column.transform((cell) -> cell.dur.fullSeconds());
+     * }
+     */
+    @Pure
+    @PythonName("full_seconds")
+    fun fullSeconds() -> cell: Cell<Int?>
+
+    /**
+     * Get the number of full milliseconds in the duration. The result is rounded toward zero.
+     *
+     * @result cell The number of full milliseconds.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", [Duration(microseconds = 1001), Duration(microseconds = 999), null]);
+     *     out column.transform((cell) -> cell.dur.fullMilliseconds());
+     * }
+     */
+    @Pure
+    @PythonName("full_milliseconds")
+    fun fullMilliseconds() -> cell: Cell<Int?>
+
+    /**
+     * Get the number of full microseconds in the duration. The result is rounded toward zero.
+     *
+     * Since durations only have microsecond resolution at the moment, the rounding has no effect. This may change in
+     * the future.
+     *
+     * @result cell The number of full microseconds.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", [Duration(microseconds = 1001), Duration(microseconds = 999), null]);
+     *     out column.transform((cell) -> cell.dur.fullMicroseconds());
+     * }
+     */
+    @Pure
+    @PythonName("full_microseconds")
+    fun fullMicroseconds() -> cell: Cell<Int?>
+
+    /**
+     * Convert the duration to a string.
+     *
+     * The following formats are supported:
+     *
+     * - `"iso"`: The duration is represented in the ISO 8601 format. This is the default.
+     * - `"pretty"`: The duration is represented in a human-readable format.
+     *
+     * !!! warning "API Stability"
+     *
+     *     Do not rely on the exact output of the `"pretty"` format. In future versions, we may change it without prior
+     *     notice.
+     *
+     * @param format The format to use.
+     *
+     * @result cell The string representation.
+     */
+    @Pure
+    @PythonName("to_string")
+    fun toString(
+        format: literal<"iso", "pretty"> = "iso"
+    ) -> cell: Cell<String?>
+}

@@ -7,19 +7,19 @@ from safeds.data.tabular.transformation import TableTransformer
  * The Discretizer bins continuous data into intervals.
  *
  * @param binCount The number of bins to be created.
- * @param columnNames The list of columns used to fit the transformer. If `None`, all numeric columns are used.
+ * @param selector The list of columns used to fit the transformer. If `None`, all numeric columns are used.
  *
  * @example
  * pipeline example {
  *     val table = Table({"a": [1, 2, 3, 4]});
- *     val discretizer = Discretizer(binCount = 2, columnNames = "a").fit(table);
+ *     val discretizer = Discretizer(binCount = 2, selector = "a").fit(table);
  *     val transformedTable = discretizer.transform(table);
  *     // Table({"a": [0, 0, 1, 1]})
  * }
  */
 class Discretizer(
     @PythonName("bin_count") const binCount: Int = 5,
-    @PythonName("column_names") columnNames: union<List<String>, String, Nothing?> = null
+    selector: union<List<String>, String, Nothing?> = null
 ) sub TableTransformer where {
     binCount >= 2
 } {

@@ -1,23 +1,23 @@
 package tests.validation.other.types.unionTypes.context
 
 // $TEST$ no error "Union types must only be used for parameters of annotations, classes, and functions."
-typealias Alias = »union<Int>«
+typealias Alias = »union<Int, String>«
 
 annotation MyAnnotation(
     // $TEST$ no error "Union types must only be used for parameters of annotations, classes, and functions."
-    p1: »union<Int>«,
+    p1: »union<Int, String>«,
     // $TEST$ no error "Union types must only be used for parameters of annotations, classes, and functions."
     p2: »Alias«,
 )
 
 class MyClass<T>(
     // $TEST$ no error "Union types must only be used for parameters of annotations, classes, and functions."
-    p1: »union<Int>«,
+    p1: »union<Int, String>«,
     // $TEST$ no error "Union types must only be used for parameters of annotations, classes, and functions."
     p2: »Alias«,
 ) {
     // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
-    attr a1: »union<Int>«
+    attr a1: »union<Int, String>«
     // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
     attr a2: »Alias«
 }
@@ -25,7 +25,7 @@ class MyClass<T>(
 enum MyEnum {
     MyEnumVariant(
         // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
-        p1: »union<Int>«,
+        p1: »union<Int, String>«,
         // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
         p2: »Alias«,
     )
@@ -33,24 +33,24 @@ enum MyEnum {
 
 fun myFunction(
     // $TEST$ no error "Union types must only be used for parameters of annotations, classes, and functions."
-    p1: »union<Int>«,
+    p1: »union<Int, String>«,
     // $TEST$ no error "Union types must only be used for parameters of annotations, classes, and functions."
     p2: »Alias«,
 ) -> (
     // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
-    r1: »union<Int>«,
+    r1: »union<Int, String>«,
     // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
     r2: »Alias«,
 )
 
 segment mySegment1(
     // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
-    p1: »union<Int>«,
+    p1: »union<Int, String>«,
     // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
     p2: »Alias«,
 ) -> (
     // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
-    r1: »union<Int>«,
+    r1: »union<Int, String>«,
     // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
     r2: »Alias«,
 ) {}
@@ -58,7 +58,7 @@ segment mySegment1(
 segment mySegment2(
     // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
     // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
-    c1: (p: »union<Int>«) -> (r: »union<Int>«),
+    c1: (p: »union<Int, String>«) -> (r: »union<Int, String>«),
     // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
     // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
     c2: (p: »Alias«) -> (r: »Alias«),
@@ -66,28 +66,28 @@ segment mySegment2(
     // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
     // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
     (
-        p1: »union<Int>«,
+        p1: »union<Int, String>«,
         p2: »Alias«,
     ) {};
 
     // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
     // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
     (
-        p1: »union<Int>«,
+        p1: »union<Int, String>«,
         p2: »Alias«,
     ) -> 1;
 }
 
 segment mySegment3(
     // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
-    p1: MyClass<»union<Int>«>,
+    p1: MyClass<»union<Int, String>«>,
     // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
     p2: MyClass<»Alias«>,
 ) {}
 
 segment mySegment4(
     // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
-    p1: »union<Int>«.MyClass,
+    p1: »union<Int, String>«.MyClass,
     // $TEST$ error "Union types must only be used for parameters of annotations, classes, and functions."
     p2: »Alias«.MyClass
 ) {}

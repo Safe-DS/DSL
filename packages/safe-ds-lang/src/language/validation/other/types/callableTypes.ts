@@ -1,12 +1,9 @@
-import { AstNode, AstUtils, ValidationAcceptor } from 'langium';
-import { isSdsCallableType, isSdsParameter, SdsCallableType } from '../../../generated/ast.js';
+import { ValidationAcceptor } from 'langium';
+import { SdsCallableType } from '../../../generated/ast.js';
 
 import { getParameters, Parameter } from '../../../helpers/nodeProperties.js';
-import { SafeDsServices } from '../../../safe-ds-module.js';
-import { getNodesToCheckForContextProvider } from './getNodesToCheckForContext.js';
 
 export const CODE_CALLABLE_TYPE_CONST_MODIFIER = 'callable-type/const-modifier';
-export const CODE_CALLABLE_TYPE_CONTEXT = 'callable-type/context';
 export const CODE_CALLABLE_TYPE_NO_OPTIONAL_PARAMETERS = 'callable-type/no-optional-parameters';
 
 export const callableTypeParameterMustNotHaveConstModifier = (
@@ -22,40 +19,6 @@ export const callableTypeParameterMustNotHaveConstModifier = (
             });
         }
     }
-};
-
-export const callableTypeMustBeUsedInCorrectContext = (services: SafeDsServices) => {
-    const getNodesToCheckForContext = getNodesToCheckForContextProvider(services);
-
-    return (node: SdsCallableType, accept: ValidationAcceptor): void => {
-        const nodesToCheck = getNodesToCheckForContext(node);
-
-        for (const nodeToCheck of nodesToCheck) {
-            if (!contextIsCorrect(nodeToCheck)) {
-                accept('error', 'Callable types must only be used for parameters.', {
-                    node: nodeToCheck,
-                    code: CODE_CALLABLE_TYPE_CONTEXT,
-                });
-            }
-        }
-    };
-};
-
-const contextIsCorrect = (node: AstNode): boolean => {
-    if (isSdsParameter(node.$container)) {
-        return true;
-    }
-
-    // Check whether we already show an error on a containing callable type
-    let containingCallableType = AstUtils.getContainerOfType(node.$container, isSdsCallableType);
-    while (containingCallableType) {
-        if (!isSdsParameter(containingCallableType.$container)) {
-            return true; // Container already has wrong context
-        }
-        containingCallableType = AstUtils.getContainerOfType(containingCallableType.$container, isSdsCallableType);
-    }
-
-    return false;
 };
 
 export const callableTypeMustNotHaveOptionalParameters = (node: SdsCallableType, accept: ValidationAcceptor): void => {

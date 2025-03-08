@@ -47,26 +47,6 @@ pipeline example {
         ) -> plot: Image
 
         /**
-         * Create a violin plot for the values in the column. This is only possible for numeric columns.
-         *
-         * @param theme The color theme of the plot. Default is "light".
-         *
-         * @result plot The violin plot as an image.
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val violinplot = column.plot.violinPlot();
-         * }
-         */
-        @Pure
-        @PythonName("violin_plot")
-        @Category(DataScienceCategory.DataExplorationQVisualization)
-        fun violinPlot(
-            theme: literal<"dark", "light"> = "light"
-        ) -> plot: Image
-
-        /**
          * Create a histogram for the values in the column.
          *
          * @param maxBinCount The maximum number of bins to use in the histogram. Default is 10.
@@ -108,6 +88,26 @@ pipeline example {
         @Category(DataScienceCategory.DataExplorationQVisualization)
         fun lagPlot(
             lag: Int,
+            theme: literal<"dark", "light"> = "light"
+        ) -> plot: Image
+
+        /**
+         * Create a violin plot for the values in the column. This is only possible for numeric columns.
+         *
+         * @param theme The color theme of the plot. Default is "light".
+         *
+         * @result plot The violin plot as an image.
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("test", [1, 2, 3]);
+         *     val violinplot = column.plot.violinPlot();
+         * }
+         */
+        @Pure
+        @PythonName("violin_plot")
+        @Category(DataScienceCategory.DataExplorationQVisualization)
+        fun violinPlot(
             theme: literal<"dark", "light"> = "light"
         ) -> plot: Image
     }
@@ -179,7 +179,7 @@ pipeline example {
 
 ??? quote "Stub code in `ColumnPlotter.sdsstub`"
 
-    ```sds linenums="74"
+    ```sds linenums="54"
     @Pure
     @Category(DataScienceCategory.DataExplorationQVisualization)
     fun histogram(
@@ -219,7 +219,7 @@ pipeline example {
 
 ??? quote "Stub code in `ColumnPlotter.sdsstub`"
 
-    ```sds linenums="97"
+    ```sds linenums="77"
     @Pure
     @PythonName("lag_plot")
     @Category(DataScienceCategory.DataExplorationQVisualization)
@@ -257,7 +257,7 @@ pipeline example {
 
 ??? quote "Stub code in `ColumnPlotter.sdsstub`"
 
-    ```sds linenums="53"
+    ```sds linenums="98"
     @Pure
     @PythonName("violin_plot")
     @Category(DataScienceCategory.DataExplorationQVisualization)

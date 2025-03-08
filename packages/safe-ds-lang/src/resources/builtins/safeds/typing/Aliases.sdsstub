@@ -1,0 +1,12 @@
+package safeds.typing
+
+// Literals
+typealias NumericLiteral = union<Int, Float>
+typealias TemporalLiteral = union<Date, Datetime, Duration, Time>
+typealias AnyLiteral = union<NumericLiteral, TemporalLiteral, Boolean, String> // bytes
+
+// Convertible to cell (we cannot restrict `Cell`, because `Row.getCell` returns a `Cell<Any?>`)
+typealias ConvertibleToCell = union<AnyLiteral, Cell, Nothing?>
+typealias ConvertibleToBooleanCell = union<Boolean, Cell, Nothing?>
+typealias ConvertibleToIntCell = union<Int, Cell, Nothing?>
+typealias ConvertibleToStringCell = union<String, Cell, Nothing?>

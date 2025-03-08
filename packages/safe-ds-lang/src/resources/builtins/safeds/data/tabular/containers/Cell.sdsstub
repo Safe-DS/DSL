@@ -1,430 +1,555 @@
 package safeds.data.tabular.containers
 
+from safeds.typing import ConvertibleToBooleanCell
+from safeds.typing import ConvertibleToCell
+from safeds.typing import ConvertibleToIntCell
+from safeds.typing import AnyLiteral
+from safeds.data.tabular.query import DatetimeOperations
+from safeds.data.tabular.query import DurationOperations
+from safeds.data.tabular.query import MathOperations
+from safeds.data.tabular.query import StringOperations
+from safeds.data.tabular.typing import ColumnType
+
 /**
  * A single value in a table.
  *
- * This class cannot be instantiated directly. It is only used for arguments of callbacks.
+ * You only need to interact with this class in callbacks passed to higher-order functions. Most operations are grouped
+ * into namespaces, which are accessed through the following attributes:
+ *
+ * - `dt`: Operations on datetime/date/time values
+ * - `dur`: Operations on durations
+ * - `math`: Mathematical operations on numbers
+ * - `str`: Operations on strings
+ *
+ * This class only has methods that are not specific to a data type (e.g. `cast`), methods with corresponding
+ * operators (e.g. `add` for `+`), and static methods to create new cells.
  */
 class Cell<out T = Any?> {
     /**
+     * Namespace for operations on datetime/date/time values.
+     */
+    attr dt: DatetimeOperations
+    /**
+     * Namespace for operations on durations.
+     */
+    attr dur: DurationOperations
+    /**
+     * Namespace for mathematical operations.
+     */
+    attr math: MathOperations
+    /**
      * Namespace for operations on strings.
      */
-    attr str: StringCell
-    /**
-     * Namespace for operations on date time values.
-     */
-    @Experimental
-    attr dt: TemporalCell
+    attr str: StringOperations
 
     /**
-     * Return the first cell from the given list that is not None.
+     * Create a cell with a constant value.
      *
-     * @param cells The list of cells to be searched.
+     * @param value The value to create the cell from.
+     * @param type The type of the cell. If null, the type is inferred from the value.
      *
-     * @result cell Returns the contents of the first cell that is not None.
-     * If all cells in the list are None or the list is empty returns None.
+     * @result cell The created cell.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", [1, 2, null]);
+     *     out column.transform((cell) -> Cell.constant(3));
+     * }
+     */
+    @Pure
+    static fun constant(
+        value: AnyLiteral?,
+        type: ColumnType? = null
+    ) -> cell: Cell<Any>
+
+    /**
+     * Create a cell with a date.
+     *
+     * Invalid dates are converted to missing values (`null`).
+     *
+     * @param year The year.
+     * @param month The month. Must be between 1 and 12.
+     * @param day The day. Must be between 1 and 31.
+     *
+     * @result cell The created cell.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", [1, 2, null]);
+     *     out column.transform((cell) -> Cell.date(2025, 1, 15));
+     *     out column.transform((cell) -> Cell.date(2025, cell, 15));
+     * }
+     */
+    @Pure
+    static fun date(
+        year: ConvertibleToIntCell,
+        month: ConvertibleToIntCell,
+        day: ConvertibleToIntCell
+    ) -> cell: Cell<Date?>
+
+    /**
+     * Create a cell with a datetime.
+     *
+     * Invalid datetimes are converted to missing values (`null`).
+     *
+     * @param year The year.
+     * @param month The month. Must be between 1 and 12.
+     * @param day The day. Must be between 1 and 31.
+     * @param hour The hour. Must be between 0 and 23.
+     * @param minute The minute. Must be between 0 and 59.
+     * @param second The second. Must be between 0 and 59.
+     * @param microsecond The microsecond. Must be between 0 and 999,999.
+     * @param timeZone The time zone. If null, values are assumed to be in local time. This is different from setting the time zone
+     * to `"UTC"`. Any TZ identifier defined in the
+     * [tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) is valid.
+     *
+     * @result cell The created cell.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", [1, 2, null]);
+     *     out column.transform((cell) -> Cell.datetime(2025, 1, 15, hour = 12));
+     *     out column.transform((cell) -> Cell.datetime(2025, 1, 15, hour = cell));
+     * }
+     */
+    @Pure
+    static fun datetime(
+        year: ConvertibleToIntCell,
+        month: ConvertibleToIntCell,
+        day: ConvertibleToIntCell,
+        hour: ConvertibleToIntCell = 0,
+        minute: ConvertibleToIntCell = 0,
+        second: ConvertibleToIntCell = 0,
+        microsecond: ConvertibleToIntCell = 0,
+        @PythonName("time_zone") timeZone: String? = null
+    ) -> cell: Cell<Datetime?>
+
+    /**
+     * Create a cell with a duration.
+     *
+     * Invalid durations are converted to missing values (`null`).
+     *
+     * @param weeks The number of weeks.
+     * @param days The number of days.
+     * @param hours The number of hours.
+     * @param minutes The number of minutes.
+     * @param seconds The number of seconds.
+     * @param milliseconds The number of milliseconds.
+     * @param microseconds The number of microseconds.
+     *
+     * @result cell The created cell.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", [1, 2, null]);
+     *     out column.transform((cell) -> Cell.duration(hours = 1));
+     *     out column.transform((cell) -> Cell.duration(hours = cell));
+     * }
+     */
+    @Pure
+    static fun duration(
+        weeks: ConvertibleToIntCell = 0,
+        days: ConvertibleToIntCell = 0,
+        hours: ConvertibleToIntCell = 0,
+        minutes: ConvertibleToIntCell = 0,
+        seconds: ConvertibleToIntCell = 0,
+        milliseconds: ConvertibleToIntCell = 0,
+        microseconds: ConvertibleToIntCell = 0
+    ) -> cell: Cell<Duration?>
+
+    /**
+     * Create a cell with a time.
+     *
+     * Invalid times are converted to missing values (`null`).
+     *
+     * @param hour The hour. Must be between 0 and 23.
+     * @param minute The minute. Must be between 0 and 59.
+     * @param second The second. Must be between 0 and 59.
+     * @param microsecond The microsecond. Must be between 0 and 999,999.
+     *
+     * @result cell The created cell.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", [1, 2, null]);
+     *     out column.transform((cell) -> Cell.time(12, 0, 0));
+     *     out column.transform((cell) -> Cell.time(12, cell, 0, microsecond = 1));
+     * }
+     */
+    @Pure
+    static fun time(
+        hour: ConvertibleToIntCell,
+        minute: ConvertibleToIntCell,
+        second: ConvertibleToIntCell,
+        microsecond: ConvertibleToIntCell = 0
+    ) -> cell: Cell<Time?>
+
+    /**
+     * Return the first cell that is not null or null if all cells are null.
+     *
+     * @param cells The list of cells to be checked.
+     *
+     * @result cell The first cell that is not null or null if all cells are null.
      */
     @Pure
     @PythonName("first_not_none")
-    static fun firstNotNone<T>(
-        cells: List<Cell<T>>
-    ) -> cell: Cell<T?>
+    static fun firstNotNull<P>(
+        cells: List<Cell<P>>
+    ) -> cell: Cell<P?>
 
     /**
-     * Negate a boolean. This is equivalent to the `not` operator.
+     * Negate a Boolean. This is equivalent to the `not` operator.
+     *
+     * @result cell The result of the Boolean negation.
      *
      * @example
      * pipeline example {
-     *     val column = Column("example", [true, false]);
-     *     val result = column.transform((cell) -> cell.^not());
-     *     // Column("example", [false, true])
-     * }
-     *
-     * @example
-     * pipeline example {
-     *     val column = Column("example", [true, false]);
-     *     val result = column.transform((cell) -> not cell);
-     *     // Column("example", [false, true])
+     *     val column = Column("a", [true, false, null]);
+     *     out column.transform((cell) -> cell.^not());
+     *     out column.transform((cell) -> not cell);
      * }
      */
     @Pure
     @PythonName("not_")
-    fun ^not() -> result: Cell<Boolean>
+    fun ^not() -> cell: Cell<Boolean?>
 
     /**
-     * Perform a boolean AND operation. This is equivalent to the `and` operator.
+     * Perform a Boolean AND operation. This is equivalent to the `and` operator.
+     *
+     * @param other The right operand.
+     *
+     * @result cell The result of the conjunction.
      *
      * @example
      * pipeline example {
-     *     val column = Column("example", [true, false]);
-     *     val result = column.transform((cell) -> cell.^and(false));
-     *     // Column("example", [false, false])
-     * }
-     *
-     * @example
-     * pipeline example {
-     *     val column = Column("example", [true, false]);
-     *     val result = column.transform((cell) -> cell and false);
-     *     // Column("example", [false, false])
+     *     val column = Column("a", [true, false, null]);
+     *     out column.transform((cell) -> cell.^and(true));
+     *     out column.transform((cell) -> cell and true);
      * }
      */
     @Pure
     @PythonName("and_")
     fun ^and(
-        other: union<Boolean, Cell> // TODO, once cell types can be inferred: union<Boolean, Cell<Boolean>>
-    ) -> result: Cell<Boolean>
+        other: ConvertibleToBooleanCell
+    ) -> cell: Cell<Boolean?>
 
     /**
-     * Perform a boolean OR operation. This is equivalent to the `or` operator.
+     * Perform a Boolean OR operation. This is equivalent to the `or` operator.
+     *
+     * @param other The right operand.
+     *
+     * @result cell The result of the disjunction.
      *
      * @example
      * pipeline example {
-     *     val column = Column("example", [true, false]);
-     *     val result = column.transform((cell) -> cell.^or(true));
-     *     // Column("example", [true, true])
-     * }
-     *
-     * @example
-     * pipeline example {
-     *     val column = Column("example", [true, false]);
-     *     val result = column.transform((cell) -> cell or true);
-     *     // Column("example", [true, true])
+     *     val column = Column("a", [true, false, null]);
+     *     out column.transform((cell) -> cell.^or(false));
+     *     out column.transform((cell) -> cell or false);
      * }
      */
     @Pure
     @PythonName("or_")
     fun ^or(
-        other: union<Boolean, Cell> // TODO, once cell types can be inferred: union<Boolean, Cell<Boolean>>
-    ) -> result: Cell<Boolean>
+        other: ConvertibleToBooleanCell
+    ) -> cell: Cell<Boolean?>
 
     /**
-     * Perform a boolean XOR operation.
+     * Perform a Boolean XOR operation.
+     *
+     * @param other The right operand.
+     *
+     * @result cell The result of the exclusive or.
      *
      * @example
      * pipeline example {
-     *     val column = Column("example", [true, false]);
-     *     val result = column.transform((cell) -> cell.xor(true));
-     *     // Column("example", [false, true])
+     *     val column = Column("a", [true, false, null]);
+     *     out column.transform((cell) -> cell.xor(true));
      * }
      */
     @Pure
     fun xor(
-        other: union<Boolean, Cell> // TODO, once cell types can be inferred: union<Boolean, Cell<Boolean>>
-    ) -> result: Cell<Boolean>
-
-    /**
-     * Get the absolute value.
-     *
-     * @example
-     * pipeline example {
-     *     val column = Column("example", [1, -2]);
-     *     val result = column.transform((cell) -> cell.abs());
-     *     // Column("example", [1, 2])
-     * }
-     */
-    @Pure
-    fun abs() -> result: Cell<Number>
-
-    /**
-     * Round up to the nearest integer.
-     *
-     * @example
-     * pipeline example {
-     *     val column = Column("example", [1.1, 2.9]);
-     *     val result = column.transform((cell) -> cell.ceil());
-     *     // Column("example", [2, 3])
-     * }
-     */
-    @Pure
-    fun ceil() -> result: Cell<Int>
-
-    /**
-     * Round down to the nearest integer.
-     *
-     * @example
-     * pipeline example {
-     *     val column = Column("example", [1.1, 2.9]);
-     *     val result = column.transform((cell) -> cell.floor());
-     *     // Column("example", [1, 2])
-     * }
-     */
-    @Pure
-    fun floor() -> result: Cell<Int>
+        other: ConvertibleToBooleanCell
+    ) -> cell: Cell<Boolean?>
 
     /**
      * Negate the value. This is equivalent to the unary `-` operator.
      *
-     * @example
-     * pipeline example {
-     *     val column = Column("example", [1, -2]);
-     *     val result = column.transform((cell) -> cell.neg());
-     *     // Column("example", [-1, 2])
-     * }
+     * @result cell The negated value.
      *
      * @example
      * pipeline example {
-     *     val column = Column("example", [1, -2]);
-     *     val result = column.transform((cell) -> -cell);
-     *     // Column("example", [-1, 2])
+     *     val column = Column("a", [1, -2, null]);
+     *     out column.transform((cell) -> cell.neg());
+     *     out column.transform((cell) -> -cell);
      * }
      */
     @Pure
-    fun neg() -> result: Cell<Number>
+    fun neg() -> cell: Cell<Any>
 
     /**
      * Add a value. This is equivalent to the `+` operator.
      *
-     * @example
-     * pipeline example {
-     *     val column = Column("example", [1, 2]);
-     *     val result = column.transform((cell) -> cell.add(3));
-     *     // Column("example", [4, 5])
-     * }
+     * @param other The right operand.
+     *
+     * @result cell The result of the addition.
      *
      * @example
      * pipeline example {
-     *     val column = Column("example", [1, 2]);
-     *     val result = column.transform((cell) -> cell + 3);
-     *     // Column("example", [4, 5])
+     *     val column = Column("a", [1, 2, null]);
+     *     out column.transform((cell) -> cell.add(3));
+     *     out column.transform((cell) -> cell + 3);
      * }
      */
     @Pure
     fun add(
-        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-    ) -> result: Cell<Number>
+        other: ConvertibleToCell
+    ) -> cell: Cell<Any>
 
     /**
      * Divide by a value. This is equivalent to the `/` operator.
      *
-     * @example
-     * pipeline example {
-     *     val column = Column("example", [6, 8]);
-     *     val result = column.transform((cell) -> cell.div(2));
-     *     // Column("example", [3, 4])
-     * }
+     * @param other The right operand.
+     *
+     * @result cell The result of the division.
      *
      * @example
      * pipeline example {
-     *     val column = Column("example", [6, 8]);
-     *     val result = column.transform((cell) -> cell / 2);
-     *     // Column("example", [3, 4])
+     *     val column = Column("a", [6, 8, null]);
+     *     out column.transform((cell) -> cell.div(2));
+     *     out column.transform((cell) -> cell / 2);
      * }
      */
     @Pure
     fun div(
-        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-    ) -> result: Cell<Number>
+        other: ConvertibleToCell
+    ) -> cell: Cell<Any>
 
     /**
-     * Perform a modulo operation.  This is equivalent to the `%` operator.
+     * Perform a modulo operation. This is equivalent to the `%` operator.
+     *
+     * @param other The right operand.
+     *
+     * @result cell The result of the modulo operation.
      *
      * @example
      * pipeline example {
-     *     val column = Column("example", [5, 6]);
-     *     val result = column.transform((cell) -> cell.mod(3));
-     *     // Column("example", [2, 0])
-     * }
-     *
-     * @example
-     * pipeline example {
-     *     val column = Column("example", [5, 6]);
-     *     val result = column.transform((cell) -> cell % 3);
-     *     // Column("example", [2, 0])
+     *     val column = Column("a", [5, 6, -1, null]);
+     *     out column.transform((cell) -> cell.mod(3));
+     *     out column.transform((cell) -> cell % 3);
      * }
      */
     @Pure
     fun mod(
-        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-    ) -> result: Cell<Number>
+        other: ConvertibleToCell
+    ) -> cell: Cell<Any>
 
     /**
      * Multiply by a value. This is equivalent to the `*` operator.
      *
-     * @example
-     * pipeline example {
-     *     val column = Column("example", [2, 3]);
-     *     val result = column.transform((cell) -> cell.mul(4));
-     *     // Column("example", [8, 12])
-     * }
+     * @param other The right operand.
+     *
+     * @result cell The result of the multiplication.
      *
      * @example
      * pipeline example {
-     *     val column = Column("example", [2, 3]);
-     *     val result = column.transform((cell) -> cell * 4);
-     *     // Column("example", [8, 12])
+     *     val column = Column("a", [2, 3, null]);
+     *     out column.transform((cell) -> cell.mul(4));
+     *     out column.transform((cell) -> cell * 4);
      * }
      */
     @Pure
     fun mul(
-        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-    ) -> result: Cell<Number>
+        other: ConvertibleToCell
+    ) -> cell: Cell<Any>
 
     /**
      * Raise to a power.
      *
+     * @param other The right operand.
+     *
+     * @result cell The result of the exponentiation.
+     *
      * @example
      * pipeline example {
-     *     val column = Column("example", [2, 3]);
-     *     val result = column.transform((cell) -> cell.pow(3.0));
-     *     // Column("example", [8, 27])
+     *     val column = Column("a", [2, 3, null]);
+     *     out column.transform((cell) -> cell.pow(3));
      * }
      */
     @Pure
     fun pow(
-        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-    ) -> result: Cell<Number>
+        other: ConvertibleToCell
+    ) -> cell: Cell<Any>
 
     /**
      * Subtract a value. This is equivalent to the binary `-` operator.
      *
-     * @example
-     * pipeline example {
-     *     val column = Column("example", [5, 6]);
-     *     val result = column.transform((cell) -> cell.^sub(3));
-     *     // Column("example", [2, 3])
-     * }
+     * @param other The right operand.
+     *
+     * @result cell The result of the subtraction.
      *
      * @example
      * pipeline example {
-     *     val column = Column("example", [5, 6]);
-     *     val result = column.transform((cell) -> cell - 3);
-     *     // Column("example", [2, 3])
+     *     val column = Column("a", [5, 6, null]);
+     *     out column.transform((cell) -> cell.^sub(3));
+     *     out column.transform((cell) -> cell - 3);
      * }
      */
     @Pure
     fun ^sub(
-        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-    ) -> result: Cell<Number>
+        other: ConvertibleToCell
+    ) -> cell: Cell<Any>
 
     /**
-     * Check if equal to a value. This is equivalent to the `==` operator.
+     * Check if equal to a value. The default behavior is equivalent to the `==` operator.
+     *
+     * Missing values (indicated by `null`) are handled as follows:
+     *
+     * - If `propagateMissingValues` is `true` (default), the result will be a missing value if either the cell or
+     *   the other value is a missing value. Here, `null == null` is `null`. The intuition is that we do not know the
+     *   result of the comparison if we do not know the values, which is consistent with the other cell operations.
+     * - If `propagateMissingValues` is `false`, `null` will be treated as a regular value. Here, `null == null`
+     *   is `true`. This behavior is useful, if you want to work with missing values, e.g. to filter them out.
+     *
+     * @param other The value to compare to.
+     * @param propagateMissingValues Whether to propagate missing values.
+     *
+     * @result cell The result of the comparison.
      *
      * @example
      * pipeline example {
-     *     val column = Column("example", [1, 2]);
-     *     val result = column.transform((cell) -> cell.eq(2));
-     *     // Column("example", [false, true])
-     * }
-     *
-     * @example
-     * pipeline example {
-     *     val column = Column("example", [1, 2]);
-     *     val result = column.transform((cell) -> cell == 2);
-     *     // Column("example", [false, true])
+     *     val column = Column("a", [1, 2, null]);
+     *     out column.transform((cell) -> cell.eq(2));
+     *     out column.transform((cell) -> cell == 2);
+     *     out column.transform((cell) -> cell.eq(2, propagateMissingValues = false));
      * }
      */
     @Pure
     fun eq(
-        other: Any?
-    ) -> result: Cell<Boolean>
+        other: ConvertibleToCell,
+        @PythonName("propagate_missing_values") propagateMissingValues: Boolean = true
+    ) -> cell: Cell<Boolean?>
 
     /**
-     * Check if not equal to a value. This is equivalent to the `!=` operator.
+     * Check if not equal to a value. The default behavior is equivalent to the `!=` operator.
+     *
+     * Missing values (indicated by `null`) are handled as follows:
+     *
+     * - If `propagateMissingValues` is `true` (default), the result will be a missing value if either the cell or
+     *   the other value is a missing value. Here, `null != null` is `null`. The intuition is that we do not know the
+     *   result of the comparison if we do not know the values, which is consistent with the other cell operations.
+     * - If `propagateMissingValues` is `false`, `null` will be treated as a regular value. Here, `null != null`
+     *   is `false`. This behavior is useful, if you want to work with missing values, e.g. to filter them out.
+     *
+     * @param other The value to compare to.
+     * @param propagateMissingValues Whether to propagate missing values.
+     *
+     * @result cell The result of the comparison.
      *
      * @example
      * pipeline example {
-     *     val column = Column("example", [1, 2]);
-     *     val result = column.transform((cell) -> cell.neq(2));
-     *     // Column("example", [true, false])
-     * }
-     *
-     * @example
-     * pipeline example {
-     *     val column = Column("example", [1, 2]);
-     *     val result = column.transform((cell) -> cell != 2);
-     *     // Column("example", [true, false])
+     *     val column = Column("a", [1, 2, null]);
+     *     out column.transform((cell) -> cell.neq(2));
+     *     out column.transform((cell) -> cell != 2);
+     *     out column.transform((cell) -> cell.neq(2, propagateMissingValues = false));
      * }
      */
     @Pure
     fun neq(
-        other: Any?
-    ) -> result: Cell<Boolean>
+        other: ConvertibleToCell,
+        @PythonName("propagate_missing_values") propagateMissingValues: Boolean = true
+    ) -> cell: Cell<Boolean?>
 
     /**
      * Check if greater than or equal to a value. This is equivalent to the `>=` operator.
      *
-     * @example
-     * pipeline example {
-     *     val column = Column("example", [1, 2]);
-     *     val result = column.transform((cell) -> cell.ge(2));
-     *     // Column("example", [false, true])
-     * }
+     * @param other The value to compare to.
+     *
+     * @result cell The result of the comparison.
      *
      * @example
      * pipeline example {
-     *     val column = Column("example", [1, 2]);
-     *     val result = column.transform((cell) -> cell >= 2);
-     *     // Column("example", [false, true])
+     *     val column = Column("a", [1, 2, null]);
+     *     out column.transform((cell) -> cell.ge(2));
+     *     out column.transform((cell) -> cell >= 2);
      * }
      */
     @Pure
     fun ge(
-        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-    ) -> result: Cell<Boolean>
+        other: ConvertibleToCell
+    ) -> cell: Cell<Boolean?>
 
     /**
      * Check if greater than a value. This is equivalent to the `>` operator.
      *
-     * @example
-     * pipeline example {
-     *     val column = Column("example", [1, 2]);
-     *     val result = column.transform((cell) -> cell.gt(2));
-     *     // Column("example", [false, false])
-     * }
+     * @param other The value to compare to.
+     *
+     * @result cell The result of the comparison.
      *
      * @example
      * pipeline example {
-     *     val column = Column("example", [1, 2]);
-     *     val result = column.transform((cell) -> cell > 2);
-     *     // Column("example", [false, false])
+     *     val column = Column("a", [1, 2, null]);
+     *     out column.transform((cell) -> cell.gt(2));
+     *     out column.transform((cell) -> cell > 2);
      * }
      */
     @Pure
     fun gt(
-        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-    ) -> result: Cell<Boolean>
+        other: ConvertibleToCell
+    ) -> cell: Cell<Boolean?>
 
     /**
      * Check if less than or equal to a value. This is equivalent to the `<=` operator.
      *
-     * @example
-     * pipeline example {
-     *     val column = Column("example", [1, 2]);
-     *     val result = column.transform((cell) -> cell.le(2));
-     *     // Column("example", [true, true])
-     * }
+     * @param other The value to compare to.
+     *
+     * @result cell The result of the comparison.
      *
      * @example
      * pipeline example {
-     *     val column = Column("example", [1, 2]);
-     *     val result = column.transform((cell) -> cell <= 2);
-     *     // Column("example", [true, true])
+     *     val column = Column("a", [1, 2, null]);
+     *     out column.transform((cell) -> cell.le(2));
+     *     out column.transform((cell) -> cell <= 2);
      * }
      */
     @Pure
     fun le(
-        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-    ) -> result: Cell<Boolean>
+        other: ConvertibleToCell
+    ) -> cell: Cell<Boolean?>
 
     /**
      * Check if less than a value. This is equivalent to the `<` operator.
      *
-     * @example
-     * pipeline example {
-     *     val column = Column("example", [1, 2]);
-     *     val result = column.transform((cell) -> cell.lt(2));
-     *     // Column("example", [true, false])
-     * }
+     * @param other The value to compare to.
+     *
+     * @result cell The result of the comparison.
      *
      * @example
      * pipeline example {
-     *     val column = Column("example", [1, 2]);
-     *     val result = column.transform((cell) -> cell < 2);
-     *     // Column("example", [true, false])
+     *     val column = Column("a", [1, 2, null]);
+     *     out column.transform((cell) -> cell.lt(2));
+     *     out column.transform((cell) -> cell < 2);
      * }
      */
     @Pure
     fun lt(
-        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-    ) -> result: Cell<Boolean>
+        other: ConvertibleToCell
+    ) -> cell: Cell<Boolean?>
+
+    /**
+     * Cast the cell to a different type.
+     *
+     * @param type The type to cast to.
+     *
+     * @result cell The cast cell.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", [1, 2, null]);
+     *     out column.transform((cell) -> cell.cast(ColumnType.string()));
+     * }
+     */
+    @Pure
+    fun cast(
+        type: ColumnType
+    ) -> cell: Cell<Any>
 }

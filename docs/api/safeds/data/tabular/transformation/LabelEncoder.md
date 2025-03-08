@@ -10,7 +10,7 @@ The LabelEncoder encodes one or more given columns into labels.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `columnNames` | `#!sds union<List<String>, String?>` | The list of columns used to fit the transformer. If `None`, all non-numeric columns are used. | `#!sds null` |
+| `selector` | `#!sds union<List<String>, String?>` | The list of columns used to fit the transformer. If `None`, all non-numeric columns are used. | `#!sds null` |
 | `partialOrder` | [`List<Any?>`][safeds.lang.List] | The partial order of the labels. The labels are encoded in the order of the given list. Additional values are assigned labels in the order they are encountered during fitting. | `#!sds []` |
 
 **Examples:**
@@ -18,7 +18,7 @@ The LabelEncoder encodes one or more given columns into labels.
 ```sds hl_lines="3"
 pipeline example {
    val table = Table({"a": ["z", "y"], "b": [3, 4]});
-   val encoder = LabelEncoder(columnNames = "a").fit(table);
+   val encoder = LabelEncoder(selector = "a").fit(table);
    val transformedTable = encoder.transform(table);
    // Table({"a": [1, 0], "b": [3, 4]})
    val originalTable = encoder.inverseTransform(transformedTable);
@@ -30,7 +30,7 @@ pipeline example {
 
     ```sds linenums="23"
     class LabelEncoder(
-        @PythonName("column_names") columnNames: union<List<String>, String, Nothing?> = null,
+        selector: union<List<String>, String, Nothing?> = null,
         @PythonName("partial_order") partialOrder: List<Any?> = []
     ) sub InvertibleTableTransformer {
         /**
@@ -192,7 +192,7 @@ Apply the learned transformation to a table.
 
 ??? quote "Stub code in `TableTransformer.sdsstub`"
 
-    ```sds linenums="39"
+    ```sds linenums="37"
     @Pure
     fun transform(
         table: Table

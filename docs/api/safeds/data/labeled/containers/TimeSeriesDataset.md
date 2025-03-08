@@ -15,7 +15,7 @@ Data can be segmented into windows when loading it into the models.
 | `data` | `#!sds union<Map<String, List<Any>>, Table>` | The data. | - |
 | `targetName` | [`String`][safeds.lang.String] | The name of the target column. | - |
 | `windowSize` | [`Int`][safeds.lang.Int] | The number of consecutive sample to use as input for prediction. | - |
-| `extraNames` | [`List<String>?`][safeds.lang.List] | Names of the columns that are neither features nor target. If None, no extra columns are used, i.e. all but the target column are used as features. | `#!sds null` |
+| `extraNames` | [`List<String>?`][safeds.lang.List] | Names of the columns that are neither features nor target. If null, no extra columns are used, i.e. all but the target column are used as features. | `#!sds null` |
 | `forecastHorizon` | [`Int`][safeds.lang.Int] | The number of time steps to predict into the future. | `#!sds 1` |
 | `continuous` | [`Boolean`][safeds.lang.Boolean] | Whether or not to continue the forecast in the steps before forecast horizon. | `#!sds false` |
 

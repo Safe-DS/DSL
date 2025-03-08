@@ -45,6 +45,11 @@ A model for classification tasks.
          *
          * **Note:** The model must be fitted.
          *
+         * !!! warning "API Stability"
+         *
+         *     Do not rely on the exact output of this method. In future versions, we may change the displayed metrics
+         *     without prior notice.
+         *
          * @param validationOrTestSet The validation or test set.
          * @param positiveClass The class to be considered positive. All other classes are considered negative.
          *
@@ -169,7 +174,7 @@ better. Results range from 0.0 to 1.0.
 
 ??? quote "Stub code in `Classifier.sdsstub`"
 
-    ```sds linenums="56"
+    ```sds linenums="61"
     @Pure
     @Category(DataScienceCategory.ModelEvaluationQMetric)
     fun accuracy(
@@ -202,7 +207,7 @@ classifier. Results range from 0.0 to 1.0.
 
 ??? quote "Stub code in `Classifier.sdsstub`"
 
-    ```sds linenums="75"
+    ```sds linenums="80"
     @Pure
     @PythonName("f1_score")
     @Category(DataScienceCategory.ModelEvaluationQMetric)
@@ -315,14 +320,14 @@ Return the type of the target column.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `targetType` | [`DataType`][safeds.data.tabular.typing.DataType] | The type of the target column. |
+| `targetType` | [`ColumnType`][safeds.data.tabular.typing.ColumnType] | The type of the target column. |
 
 ??? quote "Stub code in `SupervisedModel.sdsstub`"
 
     ```sds linenums="85"
     @Pure
     @PythonName("get_target_type")
-    fun getTargetType() -> targetType: DataType
+    fun getTargetType() -> targetType: ColumnType
     ```
     { data-search-exclude }
 
@@ -350,7 +355,7 @@ better the classifier. Results range from 0.0 to 1.0.
 
 ??? quote "Stub code in `Classifier.sdsstub`"
 
-    ```sds linenums="96"
+    ```sds linenums="101"
     @Pure
     @Category(DataScienceCategory.ModelEvaluationQMetric)
     fun precision(
@@ -412,7 +417,7 @@ better the classifier. Results range from 0.0 to 1.0.
 
 ??? quote "Stub code in `Classifier.sdsstub`"
 
-    ```sds linenums="116"
+    ```sds linenums="121"
     @Pure
     @Category(DataScienceCategory.ModelEvaluationQMetric)
     fun recall(
@@ -427,6 +432,11 @@ better the classifier. Results range from 0.0 to 1.0.
 Summarize the classifier's metrics on the given data.
 
 **Note:** The model must be fitted.
+
+!!! warning "API Stability"
+
+    Do not rely on the exact output of this method. In future versions, we may change the displayed metrics
+    without prior notice.
 
 **Parameters:**
 
@@ -443,7 +453,7 @@ Summarize the classifier's metrics on the given data.
 
 ??? quote "Stub code in `Classifier.sdsstub`"
 
-    ```sds linenums="36"
+    ```sds linenums="41"
     @Pure
     @PythonName("summarize_metrics")
     @Category(DataScienceCategory.ModelEvaluationQMetric)

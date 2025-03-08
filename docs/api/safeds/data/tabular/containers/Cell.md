@@ -4,7 +4,16 @@
 
 A single value in a table.
 
-This class cannot be instantiated directly. It is only used for arguments of callbacks.
+You only need to interact with this class in callbacks passed to higher-order functions. Most operations are grouped
+into namespaces, which are accessed through the following attributes:
+
+- `dt`: Operations on datetime/date/time values
+- `dur`: Operations on durations
+- `math`: Mathematical operations on numbers
+- `str`: Operations on strings
+
+This class only has methods that are not specific to a data type (e.g. `cast`), methods with corresponding
+operators (e.g. `add` for `+`), and static methods to create new cells.
 
 **Type parameters:**
 
@@ -14,472 +23,562 @@ This class cannot be instantiated directly. It is only used for arguments of cal
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="8"
+    ```sds linenums="27"
     class Cell<out T = Any?> {
+        /**
+         * Namespace for operations on datetime/date/time values.
+         */
+        attr dt: DatetimeOperations
+        /**
+         * Namespace for operations on durations.
+         */
+        attr dur: DurationOperations
+        /**
+         * Namespace for mathematical operations.
+         */
+        attr math: MathOperations
         /**
          * Namespace for operations on strings.
          */
-        attr str: StringCell
-        /**
-         * Namespace for operations on date time values.
-         */
-        @Experimental
-        attr dt: TemporalCell
+        attr str: StringOperations
 
         /**
-         * Return the first cell from the given list that is not None.
+         * Create a cell with a constant value.
          *
-         * @param cells The list of cells to be searched.
+         * @param value The value to create the cell from.
+         * @param type The type of the cell. If null, the type is inferred from the value.
          *
-         * @result cell Returns the contents of the first cell that is not None.
-         * If all cells in the list are None or the list is empty returns None.
+         * @result cell The created cell.
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("a", [1, 2, null]);
+         *     out column.transform((cell) -> Cell.constant(3));
+         * }
+         */
+        @Pure
+        static fun constant(
+            value: AnyLiteral?,
+            type: ColumnType? = null
+        ) -> cell: Cell<Any>
+
+        /**
+         * Create a cell with a date.
+         *
+         * Invalid dates are converted to missing values (`null`).
+         *
+         * @param year The year.
+         * @param month The month. Must be between 1 and 12.
+         * @param day The day. Must be between 1 and 31.
+         *
+         * @result cell The created cell.
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("a", [1, 2, null]);
+         *     out column.transform((cell) -> Cell.date(2025, 1, 15));
+         *     out column.transform((cell) -> Cell.date(2025, cell, 15));
+         * }
+         */
+        @Pure
+        static fun date(
+            year: ConvertibleToIntCell,
+            month: ConvertibleToIntCell,
+            day: ConvertibleToIntCell
+        ) -> cell: Cell<Date?>
+
+        /**
+         * Create a cell with a datetime.
+         *
+         * Invalid datetimes are converted to missing values (`null`).
+         *
+         * @param year The year.
+         * @param month The month. Must be between 1 and 12.
+         * @param day The day. Must be between 1 and 31.
+         * @param hour The hour. Must be between 0 and 23.
+         * @param minute The minute. Must be between 0 and 59.
+         * @param second The second. Must be between 0 and 59.
+         * @param microsecond The microsecond. Must be between 0 and 999,999.
+         * @param timeZone The time zone. If null, values are assumed to be in local time. This is different from setting the time zone
+         * to `"UTC"`. Any TZ identifier defined in the
+         * [tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) is valid.
+         *
+         * @result cell The created cell.
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("a", [1, 2, null]);
+         *     out column.transform((cell) -> Cell.datetime(2025, 1, 15, hour = 12));
+         *     out column.transform((cell) -> Cell.datetime(2025, 1, 15, hour = cell));
+         * }
+         */
+        @Pure
+        static fun datetime(
+            year: ConvertibleToIntCell,
+            month: ConvertibleToIntCell,
+            day: ConvertibleToIntCell,
+            hour: ConvertibleToIntCell = 0,
+            minute: ConvertibleToIntCell = 0,
+            second: ConvertibleToIntCell = 0,
+            microsecond: ConvertibleToIntCell = 0,
+            @PythonName("time_zone") timeZone: String? = null
+        ) -> cell: Cell<Datetime?>
+
+        /**
+         * Create a cell with a duration.
+         *
+         * Invalid durations are converted to missing values (`null`).
+         *
+         * @param weeks The number of weeks.
+         * @param days The number of days.
+         * @param hours The number of hours.
+         * @param minutes The number of minutes.
+         * @param seconds The number of seconds.
+         * @param milliseconds The number of milliseconds.
+         * @param microseconds The number of microseconds.
+         *
+         * @result cell The created cell.
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("a", [1, 2, null]);
+         *     out column.transform((cell) -> Cell.duration(hours = 1));
+         *     out column.transform((cell) -> Cell.duration(hours = cell));
+         * }
+         */
+        @Pure
+        static fun duration(
+            weeks: ConvertibleToIntCell = 0,
+            days: ConvertibleToIntCell = 0,
+            hours: ConvertibleToIntCell = 0,
+            minutes: ConvertibleToIntCell = 0,
+            seconds: ConvertibleToIntCell = 0,
+            milliseconds: ConvertibleToIntCell = 0,
+            microseconds: ConvertibleToIntCell = 0
+        ) -> cell: Cell<Duration?>
+
+        /**
+         * Create a cell with a time.
+         *
+         * Invalid times are converted to missing values (`null`).
+         *
+         * @param hour The hour. Must be between 0 and 23.
+         * @param minute The minute. Must be between 0 and 59.
+         * @param second The second. Must be between 0 and 59.
+         * @param microsecond The microsecond. Must be between 0 and 999,999.
+         *
+         * @result cell The created cell.
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("a", [1, 2, null]);
+         *     out column.transform((cell) -> Cell.time(12, 0, 0));
+         *     out column.transform((cell) -> Cell.time(12, cell, 0, microsecond = 1));
+         * }
+         */
+        @Pure
+        static fun time(
+            hour: ConvertibleToIntCell,
+            minute: ConvertibleToIntCell,
+            second: ConvertibleToIntCell,
+            microsecond: ConvertibleToIntCell = 0
+        ) -> cell: Cell<Time?>
+
+        /**
+         * Return the first cell that is not null or null if all cells are null.
+         *
+         * @param cells The list of cells to be checked.
+         *
+         * @result cell The first cell that is not null or null if all cells are null.
          */
         @Pure
         @PythonName("first_not_none")
-        static fun firstNotNone<T>(
-            cells: List<Cell<T>>
-        ) -> cell: Cell<T?>
+        static fun firstNotNull<P>(
+            cells: List<Cell<P>>
+        ) -> cell: Cell<P?>
 
         /**
-         * Negate a boolean. This is equivalent to the `not` operator.
+         * Negate a Boolean. This is equivalent to the `not` operator.
+         *
+         * @result cell The result of the Boolean negation.
          *
          * @example
          * pipeline example {
-         *     val column = Column("example", [true, false]);
-         *     val result = column.transform((cell) -> cell.^not());
-         *     // Column("example", [false, true])
-         * }
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("example", [true, false]);
-         *     val result = column.transform((cell) -> not cell);
-         *     // Column("example", [false, true])
+         *     val column = Column("a", [true, false, null]);
+         *     out column.transform((cell) -> cell.^not());
+         *     out column.transform((cell) -> not cell);
          * }
          */
         @Pure
         @PythonName("not_")
-        fun ^not() -> result: Cell<Boolean>
+        fun ^not() -> cell: Cell<Boolean?>
 
         /**
-         * Perform a boolean AND operation. This is equivalent to the `and` operator.
+         * Perform a Boolean AND operation. This is equivalent to the `and` operator.
+         *
+         * @param other The right operand.
+         *
+         * @result cell The result of the conjunction.
          *
          * @example
          * pipeline example {
-         *     val column = Column("example", [true, false]);
-         *     val result = column.transform((cell) -> cell.^and(false));
-         *     // Column("example", [false, false])
-         * }
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("example", [true, false]);
-         *     val result = column.transform((cell) -> cell and false);
-         *     // Column("example", [false, false])
+         *     val column = Column("a", [true, false, null]);
+         *     out column.transform((cell) -> cell.^and(true));
+         *     out column.transform((cell) -> cell and true);
          * }
          */
         @Pure
         @PythonName("and_")
         fun ^and(
-            other: union<Boolean, Cell> // TODO, once cell types can be inferred: union<Boolean, Cell<Boolean>>
-        ) -> result: Cell<Boolean>
+            other: ConvertibleToBooleanCell
+        ) -> cell: Cell<Boolean?>
 
         /**
-         * Perform a boolean OR operation. This is equivalent to the `or` operator.
+         * Perform a Boolean OR operation. This is equivalent to the `or` operator.
+         *
+         * @param other The right operand.
+         *
+         * @result cell The result of the disjunction.
          *
          * @example
          * pipeline example {
-         *     val column = Column("example", [true, false]);
-         *     val result = column.transform((cell) -> cell.^or(true));
-         *     // Column("example", [true, true])
-         * }
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("example", [true, false]);
-         *     val result = column.transform((cell) -> cell or true);
-         *     // Column("example", [true, true])
+         *     val column = Column("a", [true, false, null]);
+         *     out column.transform((cell) -> cell.^or(false));
+         *     out column.transform((cell) -> cell or false);
          * }
          */
         @Pure
         @PythonName("or_")
         fun ^or(
-            other: union<Boolean, Cell> // TODO, once cell types can be inferred: union<Boolean, Cell<Boolean>>
-        ) -> result: Cell<Boolean>
+            other: ConvertibleToBooleanCell
+        ) -> cell: Cell<Boolean?>
 
         /**
-         * Perform a boolean XOR operation.
+         * Perform a Boolean XOR operation.
+         *
+         * @param other The right operand.
+         *
+         * @result cell The result of the exclusive or.
          *
          * @example
          * pipeline example {
-         *     val column = Column("example", [true, false]);
-         *     val result = column.transform((cell) -> cell.xor(true));
-         *     // Column("example", [false, true])
+         *     val column = Column("a", [true, false, null]);
+         *     out column.transform((cell) -> cell.xor(true));
          * }
          */
         @Pure
         fun xor(
-            other: union<Boolean, Cell> // TODO, once cell types can be inferred: union<Boolean, Cell<Boolean>>
-        ) -> result: Cell<Boolean>
-
-        /**
-         * Get the absolute value.
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("example", [1, -2]);
-         *     val result = column.transform((cell) -> cell.abs());
-         *     // Column("example", [1, 2])
-         * }
-         */
-        @Pure
-        fun abs() -> result: Cell<Number>
-
-        /**
-         * Round up to the nearest integer.
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("example", [1.1, 2.9]);
-         *     val result = column.transform((cell) -> cell.ceil());
-         *     // Column("example", [2, 3])
-         * }
-         */
-        @Pure
-        fun ceil() -> result: Cell<Int>
-
-        /**
-         * Round down to the nearest integer.
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("example", [1.1, 2.9]);
-         *     val result = column.transform((cell) -> cell.floor());
-         *     // Column("example", [1, 2])
-         * }
-         */
-        @Pure
-        fun floor() -> result: Cell<Int>
+            other: ConvertibleToBooleanCell
+        ) -> cell: Cell<Boolean?>
 
         /**
          * Negate the value. This is equivalent to the unary `-` operator.
          *
-         * @example
-         * pipeline example {
-         *     val column = Column("example", [1, -2]);
-         *     val result = column.transform((cell) -> cell.neg());
-         *     // Column("example", [-1, 2])
-         * }
+         * @result cell The negated value.
          *
          * @example
          * pipeline example {
-         *     val column = Column("example", [1, -2]);
-         *     val result = column.transform((cell) -> -cell);
-         *     // Column("example", [-1, 2])
+         *     val column = Column("a", [1, -2, null]);
+         *     out column.transform((cell) -> cell.neg());
+         *     out column.transform((cell) -> -cell);
          * }
          */
         @Pure
-        fun neg() -> result: Cell<Number>
+        fun neg() -> cell: Cell<Any>
 
         /**
          * Add a value. This is equivalent to the `+` operator.
          *
-         * @example
-         * pipeline example {
-         *     val column = Column("example", [1, 2]);
-         *     val result = column.transform((cell) -> cell.add(3));
-         *     // Column("example", [4, 5])
-         * }
+         * @param other The right operand.
+         *
+         * @result cell The result of the addition.
          *
          * @example
          * pipeline example {
-         *     val column = Column("example", [1, 2]);
-         *     val result = column.transform((cell) -> cell + 3);
-         *     // Column("example", [4, 5])
+         *     val column = Column("a", [1, 2, null]);
+         *     out column.transform((cell) -> cell.add(3));
+         *     out column.transform((cell) -> cell + 3);
          * }
          */
         @Pure
         fun add(
-            other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-        ) -> result: Cell<Number>
+            other: ConvertibleToCell
+        ) -> cell: Cell<Any>
 
         /**
          * Divide by a value. This is equivalent to the `/` operator.
          *
-         * @example
-         * pipeline example {
-         *     val column = Column("example", [6, 8]);
-         *     val result = column.transform((cell) -> cell.div(2));
-         *     // Column("example", [3, 4])
-         * }
+         * @param other The right operand.
+         *
+         * @result cell The result of the division.
          *
          * @example
          * pipeline example {
-         *     val column = Column("example", [6, 8]);
-         *     val result = column.transform((cell) -> cell / 2);
-         *     // Column("example", [3, 4])
+         *     val column = Column("a", [6, 8, null]);
+         *     out column.transform((cell) -> cell.div(2));
+         *     out column.transform((cell) -> cell / 2);
          * }
          */
         @Pure
         fun div(
-            other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-        ) -> result: Cell<Number>
+            other: ConvertibleToCell
+        ) -> cell: Cell<Any>
 
         /**
-         * Perform a modulo operation.  This is equivalent to the `%` operator.
+         * Perform a modulo operation. This is equivalent to the `%` operator.
+         *
+         * @param other The right operand.
+         *
+         * @result cell The result of the modulo operation.
          *
          * @example
          * pipeline example {
-         *     val column = Column("example", [5, 6]);
-         *     val result = column.transform((cell) -> cell.mod(3));
-         *     // Column("example", [2, 0])
-         * }
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("example", [5, 6]);
-         *     val result = column.transform((cell) -> cell % 3);
-         *     // Column("example", [2, 0])
+         *     val column = Column("a", [5, 6, -1, null]);
+         *     out column.transform((cell) -> cell.mod(3));
+         *     out column.transform((cell) -> cell % 3);
          * }
          */
         @Pure
         fun mod(
-            other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-        ) -> result: Cell<Number>
+            other: ConvertibleToCell
+        ) -> cell: Cell<Any>
 
         /**
          * Multiply by a value. This is equivalent to the `*` operator.
          *
-         * @example
-         * pipeline example {
-         *     val column = Column("example", [2, 3]);
-         *     val result = column.transform((cell) -> cell.mul(4));
-         *     // Column("example", [8, 12])
-         * }
+         * @param other The right operand.
+         *
+         * @result cell The result of the multiplication.
          *
          * @example
          * pipeline example {
-         *     val column = Column("example", [2, 3]);
-         *     val result = column.transform((cell) -> cell * 4);
-         *     // Column("example", [8, 12])
+         *     val column = Column("a", [2, 3, null]);
+         *     out column.transform((cell) -> cell.mul(4));
+         *     out column.transform((cell) -> cell * 4);
          * }
          */
         @Pure
         fun mul(
-            other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-        ) -> result: Cell<Number>
+            other: ConvertibleToCell
+        ) -> cell: Cell<Any>
 
         /**
          * Raise to a power.
          *
+         * @param other The right operand.
+         *
+         * @result cell The result of the exponentiation.
+         *
          * @example
          * pipeline example {
-         *     val column = Column("example", [2, 3]);
-         *     val result = column.transform((cell) -> cell.pow(3.0));
-         *     // Column("example", [8, 27])
+         *     val column = Column("a", [2, 3, null]);
+         *     out column.transform((cell) -> cell.pow(3));
          * }
          */
         @Pure
         fun pow(
-            other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-        ) -> result: Cell<Number>
+            other: ConvertibleToCell
+        ) -> cell: Cell<Any>
 
         /**
          * Subtract a value. This is equivalent to the binary `-` operator.
          *
-         * @example
-         * pipeline example {
-         *     val column = Column("example", [5, 6]);
-         *     val result = column.transform((cell) -> cell.^sub(3));
-         *     // Column("example", [2, 3])
-         * }
+         * @param other The right operand.
+         *
+         * @result cell The result of the subtraction.
          *
          * @example
          * pipeline example {
-         *     val column = Column("example", [5, 6]);
-         *     val result = column.transform((cell) -> cell - 3);
-         *     // Column("example", [2, 3])
+         *     val column = Column("a", [5, 6, null]);
+         *     out column.transform((cell) -> cell.^sub(3));
+         *     out column.transform((cell) -> cell - 3);
          * }
          */
         @Pure
         fun ^sub(
-            other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-        ) -> result: Cell<Number>
+            other: ConvertibleToCell
+        ) -> cell: Cell<Any>
 
         /**
-         * Check if equal to a value. This is equivalent to the `==` operator.
+         * Check if equal to a value. The default behavior is equivalent to the `==` operator.
+         *
+         * Missing values (indicated by `null`) are handled as follows:
+         *
+         * - If `propagateMissingValues` is `true` (default), the result will be a missing value if either the cell or
+         *   the other value is a missing value. Here, `null == null` is `null`. The intuition is that we do not know the
+         *   result of the comparison if we do not know the values, which is consistent with the other cell operations.
+         * - If `propagateMissingValues` is `false`, `null` will be treated as a regular value. Here, `null == null`
+         *   is `true`. This behavior is useful, if you want to work with missing values, e.g. to filter them out.
+         *
+         * @param other The value to compare to.
+         * @param propagateMissingValues Whether to propagate missing values.
+         *
+         * @result cell The result of the comparison.
          *
          * @example
          * pipeline example {
-         *     val column = Column("example", [1, 2]);
-         *     val result = column.transform((cell) -> cell.eq(2));
-         *     // Column("example", [false, true])
-         * }
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("example", [1, 2]);
-         *     val result = column.transform((cell) -> cell == 2);
-         *     // Column("example", [false, true])
+         *     val column = Column("a", [1, 2, null]);
+         *     out column.transform((cell) -> cell.eq(2));
+         *     out column.transform((cell) -> cell == 2);
+         *     out column.transform((cell) -> cell.eq(2, propagateMissingValues = false));
          * }
          */
         @Pure
         fun eq(
-            other: Any?
-        ) -> result: Cell<Boolean>
+            other: ConvertibleToCell,
+            @PythonName("propagate_missing_values") propagateMissingValues: Boolean = true
+        ) -> cell: Cell<Boolean?>
 
         /**
-         * Check if not equal to a value. This is equivalent to the `!=` operator.
+         * Check if not equal to a value. The default behavior is equivalent to the `!=` operator.
+         *
+         * Missing values (indicated by `null`) are handled as follows:
+         *
+         * - If `propagateMissingValues` is `true` (default), the result will be a missing value if either the cell or
+         *   the other value is a missing value. Here, `null != null` is `null`. The intuition is that we do not know the
+         *   result of the comparison if we do not know the values, which is consistent with the other cell operations.
+         * - If `propagateMissingValues` is `false`, `null` will be treated as a regular value. Here, `null != null`
+         *   is `false`. This behavior is useful, if you want to work with missing values, e.g. to filter them out.
+         *
+         * @param other The value to compare to.
+         * @param propagateMissingValues Whether to propagate missing values.
+         *
+         * @result cell The result of the comparison.
          *
          * @example
          * pipeline example {
-         *     val column = Column("example", [1, 2]);
-         *     val result = column.transform((cell) -> cell.neq(2));
-         *     // Column("example", [true, false])
-         * }
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("example", [1, 2]);
-         *     val result = column.transform((cell) -> cell != 2);
-         *     // Column("example", [true, false])
+         *     val column = Column("a", [1, 2, null]);
+         *     out column.transform((cell) -> cell.neq(2));
+         *     out column.transform((cell) -> cell != 2);
+         *     out column.transform((cell) -> cell.neq(2, propagateMissingValues = false));
          * }
          */
         @Pure
         fun neq(
-            other: Any?
-        ) -> result: Cell<Boolean>
+            other: ConvertibleToCell,
+            @PythonName("propagate_missing_values") propagateMissingValues: Boolean = true
+        ) -> cell: Cell<Boolean?>
 
         /**
          * Check if greater than or equal to a value. This is equivalent to the `>=` operator.
          *
-         * @example
-         * pipeline example {
-         *     val column = Column("example", [1, 2]);
-         *     val result = column.transform((cell) -> cell.ge(2));
-         *     // Column("example", [false, true])
-         * }
+         * @param other The value to compare to.
+         *
+         * @result cell The result of the comparison.
          *
          * @example
          * pipeline example {
-         *     val column = Column("example", [1, 2]);
-         *     val result = column.transform((cell) -> cell >= 2);
-         *     // Column("example", [false, true])
+         *     val column = Column("a", [1, 2, null]);
+         *     out column.transform((cell) -> cell.ge(2));
+         *     out column.transform((cell) -> cell >= 2);
          * }
          */
         @Pure
         fun ge(
-            other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-        ) -> result: Cell<Boolean>
+            other: ConvertibleToCell
+        ) -> cell: Cell<Boolean?>
 
         /**
          * Check if greater than a value. This is equivalent to the `>` operator.
          *
-         * @example
-         * pipeline example {
-         *     val column = Column("example", [1, 2]);
-         *     val result = column.transform((cell) -> cell.gt(2));
-         *     // Column("example", [false, false])
-         * }
+         * @param other The value to compare to.
+         *
+         * @result cell The result of the comparison.
          *
          * @example
          * pipeline example {
-         *     val column = Column("example", [1, 2]);
-         *     val result = column.transform((cell) -> cell > 2);
-         *     // Column("example", [false, false])
+         *     val column = Column("a", [1, 2, null]);
+         *     out column.transform((cell) -> cell.gt(2));
+         *     out column.transform((cell) -> cell > 2);
          * }
          */
         @Pure
         fun gt(
-            other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-        ) -> result: Cell<Boolean>
+            other: ConvertibleToCell
+        ) -> cell: Cell<Boolean?>
 
         /**
          * Check if less than or equal to a value. This is equivalent to the `<=` operator.
          *
-         * @example
-         * pipeline example {
-         *     val column = Column("example", [1, 2]);
-         *     val result = column.transform((cell) -> cell.le(2));
-         *     // Column("example", [true, true])
-         * }
+         * @param other The value to compare to.
+         *
+         * @result cell The result of the comparison.
          *
          * @example
          * pipeline example {
-         *     val column = Column("example", [1, 2]);
-         *     val result = column.transform((cell) -> cell <= 2);
-         *     // Column("example", [true, true])
+         *     val column = Column("a", [1, 2, null]);
+         *     out column.transform((cell) -> cell.le(2));
+         *     out column.transform((cell) -> cell <= 2);
          * }
          */
         @Pure
         fun le(
-            other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-        ) -> result: Cell<Boolean>
+            other: ConvertibleToCell
+        ) -> cell: Cell<Boolean?>
 
         /**
          * Check if less than a value. This is equivalent to the `<` operator.
          *
-         * @example
-         * pipeline example {
-         *     val column = Column("example", [1, 2]);
-         *     val result = column.transform((cell) -> cell.lt(2));
-         *     // Column("example", [true, false])
-         * }
+         * @param other The value to compare to.
+         *
+         * @result cell The result of the comparison.
          *
          * @example
          * pipeline example {
-         *     val column = Column("example", [1, 2]);
-         *     val result = column.transform((cell) -> cell < 2);
-         *     // Column("example", [true, false])
+         *     val column = Column("a", [1, 2, null]);
+         *     out column.transform((cell) -> cell.lt(2));
+         *     out column.transform((cell) -> cell < 2);
          * }
          */
         @Pure
         fun lt(
-            other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-        ) -> result: Cell<Boolean>
+            other: ConvertibleToCell
+        ) -> cell: Cell<Boolean?>
+
+        /**
+         * Cast the cell to a different type.
+         *
+         * @param type The type to cast to.
+         *
+         * @result cell The cast cell.
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("a", [1, 2, null]);
+         *     out column.transform((cell) -> cell.cast(ColumnType.string()));
+         * }
+         */
+        @Pure
+        fun cast(
+            type: ColumnType
+        ) -> cell: Cell<Any>
     }
     ```
     { data-search-exclude }
 
-## :test_tube:{ title="Experimental" } <code class="doc-symbol doc-symbol-attribute"></code> `dt` {#safeds.data.tabular.containers.Cell.dt data-toc-label='[attribute] dt'}
+## <code class="doc-symbol doc-symbol-attribute"></code> `dt` {#safeds.data.tabular.containers.Cell.dt data-toc-label='[attribute] dt'}
 
-Namespace for operations on date time values.
+Namespace for operations on datetime/date/time values.
 
-**Type:** [`TemporalCell`][safeds.data.tabular.containers.TemporalCell]
+**Type:** [`DatetimeOperations`][safeds.data.tabular.query.DatetimeOperations]
+
+## <code class="doc-symbol doc-symbol-attribute"></code> `dur` {#safeds.data.tabular.containers.Cell.dur data-toc-label='[attribute] dur'}
+
+Namespace for operations on durations.
+
+**Type:** [`DurationOperations`][safeds.data.tabular.query.DurationOperations]
+
+## <code class="doc-symbol doc-symbol-attribute"></code> `math` {#safeds.data.tabular.containers.Cell.math data-toc-label='[attribute] math'}
+
+Namespace for mathematical operations.
+
+**Type:** [`MathOperations`][safeds.data.tabular.query.MathOperations]
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `str` {#safeds.data.tabular.containers.Cell.str data-toc-label='[attribute] str'}
 
 Namespace for operations on strings.
 
-**Type:** [`StringCell`][safeds.data.tabular.containers.StringCell]
-
-## <code class="doc-symbol doc-symbol-function"></code> `abs` {#safeds.data.tabular.containers.Cell.abs data-toc-label='[function] abs'}
-
-Get the absolute value.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result` | [`Cell<Number>`][safeds.data.tabular.containers.Cell] | - |
-
-**Examples:**
-
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("example", [1, -2]);
-    val result = column.transform((cell) -> cell.abs());
-    // Column("example", [1, 2])
-}
-```
-
-??? quote "Stub code in `Cell.sdsstub`"
-
-    ```sds linenums="125"
-    @Pure
-    fun abs() -> result: Cell<Number>
-    ```
-    { data-search-exclude }
+**Type:** [`StringOperations`][safeds.data.tabular.query.StringOperations]
 
 ## <code class="doc-symbol doc-symbol-function"></code> `add` {#safeds.data.tabular.containers.Cell.add data-toc-label='[function] add'}
 
@@ -489,110 +588,103 @@ Add a value. This is equivalent to the `+` operator.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `other` | `#!sds union<Number, Cell<Any?>>` | - | - |
+| `other` | `#!sds union<Float, Date, Datetime, Duration, Time, Boolean, String, Cell<Any?>?>` | The right operand. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result` | [`Cell<Number>`][safeds.data.tabular.containers.Cell] | - |
+| `cell` | [`Cell<Any>`][safeds.data.tabular.containers.Cell] | The result of the addition. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("example", [1, 2]);
-    val result = column.transform((cell) -> cell.add(3));
-    // Column("example", [4, 5])
-}
-```
-```sds
-pipeline example {
-    val column = Column("example", [1, 2]);
-    val result = column.transform((cell) -> cell + 3);
-    // Column("example", [4, 5])
+    val column = Column("a", [1, 2, null]);
+    out column.transform((cell) -> cell.add(3));
+    out column.transform((cell) -> cell + 3);
 }
 ```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="191"
+    ```sds linenums="303"
     @Pure
     fun add(
-        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-    ) -> result: Cell<Number>
+        other: ConvertibleToCell
+    ) -> cell: Cell<Any>
     ```
     { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `and` {#safeds.data.tabular.containers.Cell.and data-toc-label='[function] and'}
 
-Perform a boolean AND operation. This is equivalent to the `and` operator.
+Perform a Boolean AND operation. This is equivalent to the `and` operator.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `other` | `#!sds union<Boolean, Cell<Any?>>` | - | - |
+| `other` | `#!sds union<Boolean, Cell<Any?>?>` | The right operand. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result` | [`Cell<Boolean>`][safeds.data.tabular.containers.Cell] | - |
+| `cell` | [`Cell<Boolean?>`][safeds.data.tabular.containers.Cell] | The result of the conjunction. |
 
 **Examples:**
 
-```sds hl_lines="3"
+```sds hl_lines="3 4"
 pipeline example {
-    val column = Column("example", [true, false]);
-    val result = column.transform((cell) -> cell.^and(false));
-    // Column("example", [false, false])
-}
-```
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("example", [true, false]);
-    val result = column.transform((cell) -> cell and false);
-    // Column("example", [false, false])
+    val column = Column("a", [true, false, null]);
+    out column.transform((cell) -> cell.^and(true));
+    out column.transform((cell) -> cell and true);
 }
 ```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="71"
+    ```sds linenums="230"
     @Pure
     @PythonName("and_")
     fun ^and(
-        other: union<Boolean, Cell> // TODO, once cell types can be inferred: union<Boolean, Cell<Boolean>>
-    ) -> result: Cell<Boolean>
+        other: ConvertibleToBooleanCell
+    ) -> cell: Cell<Boolean?>
     ```
     { data-search-exclude }
 
-## <code class="doc-symbol doc-symbol-function"></code> `ceil` {#safeds.data.tabular.containers.Cell.ceil data-toc-label='[function] ceil'}
+## <code class="doc-symbol doc-symbol-function"></code> `cast` {#safeds.data.tabular.containers.Cell.cast data-toc-label='[function] cast'}
 
-Round up to the nearest integer.
+Cast the cell to a different type.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `type` | [`ColumnType`][safeds.data.tabular.typing.ColumnType] | The type to cast to. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result` | [`Cell<Int>`][safeds.data.tabular.containers.Cell] | - |
+| `cell` | [`Cell<Any>`][safeds.data.tabular.containers.Cell] | The cast cell. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("example", [1.1, 2.9]);
-    val result = column.transform((cell) -> cell.ceil());
-    // Column("example", [2, 3])
+    val column = Column("a", [1, 2, null]);
+    out column.transform((cell) -> cell.cast(ColumnType.string()));
 }
 ```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="138"
+    ```sds linenums="551"
     @Pure
-    fun ceil() -> result: Cell<Int>
+    fun cast(
+        type: ColumnType
+    ) -> cell: Cell<Any>
     ```
     { data-search-exclude }
 
@@ -604,109 +696,78 @@ Divide by a value. This is equivalent to the `/` operator.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `other` | `#!sds union<Number, Cell<Any?>>` | - | - |
+| `other` | `#!sds union<Float, Date, Datetime, Duration, Time, Boolean, String, Cell<Any?>?>` | The right operand. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result` | [`Cell<Number>`][safeds.data.tabular.containers.Cell] | - |
+| `cell` | [`Cell<Any>`][safeds.data.tabular.containers.Cell] | The result of the division. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("example", [6, 8]);
-    val result = column.transform((cell) -> cell.div(2));
-    // Column("example", [3, 4])
-}
-```
-```sds
-pipeline example {
-    val column = Column("example", [6, 8]);
-    val result = column.transform((cell) -> cell / 2);
-    // Column("example", [3, 4])
+    val column = Column("a", [6, 8, null]);
+    out column.transform((cell) -> cell.div(2));
+    out column.transform((cell) -> cell / 2);
 }
 ```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="213"
+    ```sds linenums="322"
     @Pure
     fun div(
-        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-    ) -> result: Cell<Number>
+        other: ConvertibleToCell
+    ) -> cell: Cell<Any>
     ```
     { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `eq` {#safeds.data.tabular.containers.Cell.eq data-toc-label='[function] eq'}
 
-Check if equal to a value. This is equivalent to the `==` operator.
+Check if equal to a value. The default behavior is equivalent to the `==` operator.
+
+Missing values (indicated by `null`) are handled as follows:
+
+- If `propagateMissingValues` is `true` (default), the result will be a missing value if either the cell or
+  the other value is a missing value. Here, `null == null` is `null`. The intuition is that we do not know the
+  result of the comparison if we do not know the values, which is consistent with the other cell operations.
+- If `propagateMissingValues` is `false`, `null` will be treated as a regular value. Here, `null == null`
+  is `true`. This behavior is useful, if you want to work with missing values, e.g. to filter them out.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `other` | [`Any?`][safeds.lang.Any] | - | - |
+| `other` | `#!sds union<Float, Date, Datetime, Duration, Time, Boolean, String, Cell<Any?>?>` | The value to compare to. | - |
+| `propagateMissingValues` | [`Boolean`][safeds.lang.Boolean] | Whether to propagate missing values. | `#!sds true` |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result` | [`Cell<Boolean>`][safeds.data.tabular.containers.Cell] | - |
+| `cell` | [`Cell<Boolean?>`][safeds.data.tabular.containers.Cell] | The result of the comparison. |
 
 **Examples:**
 
-```sds hl_lines="3"
+```sds hl_lines="3 5"
 pipeline example {
-    val column = Column("example", [1, 2]);
-    val result = column.transform((cell) -> cell.eq(2));
-    // Column("example", [false, true])
-}
-```
-```sds
-pipeline example {
-    val column = Column("example", [1, 2]);
-    val result = column.transform((cell) -> cell == 2);
-    // Column("example", [false, true])
+    val column = Column("a", [1, 2, null]);
+    out column.transform((cell) -> cell.eq(2));
+    out column.transform((cell) -> cell == 2);
+    out column.transform((cell) -> cell.eq(2, propagateMissingValues = false));
 }
 ```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="316"
+    ```sds linenums="426"
     @Pure
     fun eq(
-        other: Any?
-    ) -> result: Cell<Boolean>
-    ```
-    { data-search-exclude }
-
-## <code class="doc-symbol doc-symbol-function"></code> `floor` {#safeds.data.tabular.containers.Cell.floor data-toc-label='[function] floor'}
-
-Round down to the nearest integer.
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `result` | [`Cell<Int>`][safeds.data.tabular.containers.Cell] | - |
-
-**Examples:**
-
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("example", [1.1, 2.9]);
-    val result = column.transform((cell) -> cell.floor());
-    // Column("example", [1, 2])
-}
-```
-
-??? quote "Stub code in `Cell.sdsstub`"
-
-    ```sds linenums="151"
-    @Pure
-    fun floor() -> result: Cell<Int>
+        other: ConvertibleToCell,
+        @PythonName("propagate_missing_values") propagateMissingValues: Boolean = true
+    ) -> cell: Cell<Boolean?>
     ```
     { data-search-exclude }
 
@@ -718,38 +779,31 @@ Check if greater than or equal to a value. This is equivalent to the `>=` operat
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `other` | `#!sds union<Number, Cell<Any?>>` | - | - |
+| `other` | `#!sds union<Float, Date, Datetime, Duration, Time, Boolean, String, Cell<Any?>?>` | The value to compare to. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result` | [`Cell<Boolean>`][safeds.data.tabular.containers.Cell] | - |
+| `cell` | [`Cell<Boolean?>`][safeds.data.tabular.containers.Cell] | The result of the comparison. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("example", [1, 2]);
-    val result = column.transform((cell) -> cell.ge(2));
-    // Column("example", [false, true])
-}
-```
-```sds
-pipeline example {
-    val column = Column("example", [1, 2]);
-    val result = column.transform((cell) -> cell >= 2);
-    // Column("example", [false, true])
+    val column = Column("a", [1, 2, null]);
+    out column.transform((cell) -> cell.ge(2));
+    out column.transform((cell) -> cell >= 2);
 }
 ```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="360"
+    ```sds linenums="476"
     @Pure
     fun ge(
-        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-    ) -> result: Cell<Boolean>
+        other: ConvertibleToCell
+    ) -> cell: Cell<Boolean?>
     ```
     { data-search-exclude }
 
@@ -761,38 +815,31 @@ Check if greater than a value. This is equivalent to the `>` operator.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `other` | `#!sds union<Number, Cell<Any?>>` | - | - |
+| `other` | `#!sds union<Float, Date, Datetime, Duration, Time, Boolean, String, Cell<Any?>?>` | The value to compare to. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result` | [`Cell<Boolean>`][safeds.data.tabular.containers.Cell] | - |
+| `cell` | [`Cell<Boolean?>`][safeds.data.tabular.containers.Cell] | The result of the comparison. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("example", [1, 2]);
-    val result = column.transform((cell) -> cell.gt(2));
-    // Column("example", [false, false])
-}
-```
-```sds
-pipeline example {
-    val column = Column("example", [1, 2]);
-    val result = column.transform((cell) -> cell > 2);
-    // Column("example", [false, false])
+    val column = Column("a", [1, 2, null]);
+    out column.transform((cell) -> cell.gt(2));
+    out column.transform((cell) -> cell > 2);
 }
 ```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="382"
+    ```sds linenums="495"
     @Pure
     fun gt(
-        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-    ) -> result: Cell<Boolean>
+        other: ConvertibleToCell
+    ) -> cell: Cell<Boolean?>
     ```
     { data-search-exclude }
 
@@ -804,38 +851,31 @@ Check if less than or equal to a value. This is equivalent to the `<=` operator.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `other` | `#!sds union<Number, Cell<Any?>>` | - | - |
+| `other` | `#!sds union<Float, Date, Datetime, Duration, Time, Boolean, String, Cell<Any?>?>` | The value to compare to. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result` | [`Cell<Boolean>`][safeds.data.tabular.containers.Cell] | - |
+| `cell` | [`Cell<Boolean?>`][safeds.data.tabular.containers.Cell] | The result of the comparison. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("example", [1, 2]);
-    val result = column.transform((cell) -> cell.le(2));
-    // Column("example", [true, true])
-}
-```
-```sds
-pipeline example {
-    val column = Column("example", [1, 2]);
-    val result = column.transform((cell) -> cell <= 2);
-    // Column("example", [true, true])
+    val column = Column("a", [1, 2, null]);
+    out column.transform((cell) -> cell.le(2));
+    out column.transform((cell) -> cell <= 2);
 }
 ```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="404"
+    ```sds linenums="514"
     @Pure
     fun le(
-        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-    ) -> result: Cell<Boolean>
+        other: ConvertibleToCell
+    ) -> cell: Cell<Boolean?>
     ```
     { data-search-exclude }
 
@@ -847,81 +887,67 @@ Check if less than a value. This is equivalent to the `<` operator.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `other` | `#!sds union<Number, Cell<Any?>>` | - | - |
+| `other` | `#!sds union<Float, Date, Datetime, Duration, Time, Boolean, String, Cell<Any?>?>` | The value to compare to. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result` | [`Cell<Boolean>`][safeds.data.tabular.containers.Cell] | - |
+| `cell` | [`Cell<Boolean?>`][safeds.data.tabular.containers.Cell] | The result of the comparison. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("example", [1, 2]);
-    val result = column.transform((cell) -> cell.lt(2));
-    // Column("example", [true, false])
-}
-```
-```sds
-pipeline example {
-    val column = Column("example", [1, 2]);
-    val result = column.transform((cell) -> cell < 2);
-    // Column("example", [true, false])
+    val column = Column("a", [1, 2, null]);
+    out column.transform((cell) -> cell.lt(2));
+    out column.transform((cell) -> cell < 2);
 }
 ```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="426"
+    ```sds linenums="533"
     @Pure
     fun lt(
-        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-    ) -> result: Cell<Boolean>
+        other: ConvertibleToCell
+    ) -> cell: Cell<Boolean?>
     ```
     { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `mod` {#safeds.data.tabular.containers.Cell.mod data-toc-label='[function] mod'}
 
-Perform a modulo operation.  This is equivalent to the `%` operator.
+Perform a modulo operation. This is equivalent to the `%` operator.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `other` | `#!sds union<Number, Cell<Any?>>` | - | - |
+| `other` | `#!sds union<Float, Date, Datetime, Duration, Time, Boolean, String, Cell<Any?>?>` | The right operand. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result` | [`Cell<Number>`][safeds.data.tabular.containers.Cell] | - |
+| `cell` | [`Cell<Any>`][safeds.data.tabular.containers.Cell] | The result of the modulo operation. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("example", [5, 6]);
-    val result = column.transform((cell) -> cell.mod(3));
-    // Column("example", [2, 0])
-}
-```
-```sds
-pipeline example {
-    val column = Column("example", [5, 6]);
-    val result = column.transform((cell) -> cell % 3);
-    // Column("example", [2, 0])
+    val column = Column("a", [5, 6, -1, null]);
+    out column.transform((cell) -> cell.mod(3));
+    out column.transform((cell) -> cell % 3);
 }
 ```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="235"
+    ```sds linenums="341"
     @Pure
     fun mod(
-        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-    ) -> result: Cell<Number>
+        other: ConvertibleToCell
+    ) -> cell: Cell<Any>
     ```
     { data-search-exclude }
 
@@ -933,38 +959,31 @@ Multiply by a value. This is equivalent to the `*` operator.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `other` | `#!sds union<Number, Cell<Any?>>` | - | - |
+| `other` | `#!sds union<Float, Date, Datetime, Duration, Time, Boolean, String, Cell<Any?>?>` | The right operand. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result` | [`Cell<Number>`][safeds.data.tabular.containers.Cell] | - |
+| `cell` | [`Cell<Any>`][safeds.data.tabular.containers.Cell] | The result of the multiplication. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("example", [2, 3]);
-    val result = column.transform((cell) -> cell.mul(4));
-    // Column("example", [8, 12])
-}
-```
-```sds
-pipeline example {
-    val column = Column("example", [2, 3]);
-    val result = column.transform((cell) -> cell * 4);
-    // Column("example", [8, 12])
+    val column = Column("a", [2, 3, null]);
+    out column.transform((cell) -> cell.mul(4));
+    out column.transform((cell) -> cell * 4);
 }
 ```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="257"
+    ```sds linenums="360"
     @Pure
     fun mul(
-        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-    ) -> result: Cell<Number>
+        other: ConvertibleToCell
+    ) -> cell: Cell<Any>
     ```
     { data-search-exclude }
 
@@ -976,153 +995,136 @@ Negate the value. This is equivalent to the unary `-` operator.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result` | [`Cell<Number>`][safeds.data.tabular.containers.Cell] | - |
+| `cell` | [`Cell<Any>`][safeds.data.tabular.containers.Cell] | The negated value. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("example", [1, -2]);
-    val result = column.transform((cell) -> cell.neg());
-    // Column("example", [-1, 2])
-}
-```
-```sds
-pipeline example {
-    val column = Column("example", [1, -2]);
-    val result = column.transform((cell) -> -cell);
-    // Column("example", [-1, 2])
+    val column = Column("a", [1, -2, null]);
+    out column.transform((cell) -> cell.neg());
+    out column.transform((cell) -> -cell);
 }
 ```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="171"
+    ```sds linenums="286"
     @Pure
-    fun neg() -> result: Cell<Number>
+    fun neg() -> cell: Cell<Any>
     ```
     { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `neq` {#safeds.data.tabular.containers.Cell.neq data-toc-label='[function] neq'}
 
-Check if not equal to a value. This is equivalent to the `!=` operator.
+Check if not equal to a value. The default behavior is equivalent to the `!=` operator.
+
+Missing values (indicated by `null`) are handled as follows:
+
+- If `propagateMissingValues` is `true` (default), the result will be a missing value if either the cell or
+  the other value is a missing value. Here, `null != null` is `null`. The intuition is that we do not know the
+  result of the comparison if we do not know the values, which is consistent with the other cell operations.
+- If `propagateMissingValues` is `false`, `null` will be treated as a regular value. Here, `null != null`
+  is `false`. This behavior is useful, if you want to work with missing values, e.g. to filter them out.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `other` | [`Any?`][safeds.lang.Any] | - | - |
+| `other` | `#!sds union<Float, Date, Datetime, Duration, Time, Boolean, String, Cell<Any?>?>` | The value to compare to. | - |
+| `propagateMissingValues` | [`Boolean`][safeds.lang.Boolean] | Whether to propagate missing values. | `#!sds true` |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result` | [`Cell<Boolean>`][safeds.data.tabular.containers.Cell] | - |
+| `cell` | [`Cell<Boolean?>`][safeds.data.tabular.containers.Cell] | The result of the comparison. |
 
 **Examples:**
 
-```sds hl_lines="3"
+```sds hl_lines="3 5"
 pipeline example {
-    val column = Column("example", [1, 2]);
-    val result = column.transform((cell) -> cell.neq(2));
-    // Column("example", [true, false])
-}
-```
-```sds
-pipeline example {
-    val column = Column("example", [1, 2]);
-    val result = column.transform((cell) -> cell != 2);
-    // Column("example", [true, false])
+    val column = Column("a", [1, 2, null]);
+    out column.transform((cell) -> cell.neq(2));
+    out column.transform((cell) -> cell != 2);
+    out column.transform((cell) -> cell.neq(2, propagateMissingValues = false));
 }
 ```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="338"
+    ```sds linenums="456"
     @Pure
     fun neq(
-        other: Any?
-    ) -> result: Cell<Boolean>
+        other: ConvertibleToCell,
+        @PythonName("propagate_missing_values") propagateMissingValues: Boolean = true
+    ) -> cell: Cell<Boolean?>
     ```
     { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `not` {#safeds.data.tabular.containers.Cell.not data-toc-label='[function] not'}
 
-Negate a boolean. This is equivalent to the `not` operator.
+Negate a Boolean. This is equivalent to the `not` operator.
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result` | [`Cell<Boolean>`][safeds.data.tabular.containers.Cell] | - |
+| `cell` | [`Cell<Boolean?>`][safeds.data.tabular.containers.Cell] | The result of the Boolean negation. |
 
 **Examples:**
 
-```sds hl_lines="3"
+```sds hl_lines="3 4"
 pipeline example {
-    val column = Column("example", [true, false]);
-    val result = column.transform((cell) -> cell.^not());
-    // Column("example", [false, true])
-}
-```
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("example", [true, false]);
-    val result = column.transform((cell) -> not cell);
-    // Column("example", [false, true])
+    val column = Column("a", [true, false, null]);
+    out column.transform((cell) -> cell.^not());
+    out column.transform((cell) -> not cell);
 }
 ```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="50"
+    ```sds linenums="212"
     @Pure
     @PythonName("not_")
-    fun ^not() -> result: Cell<Boolean>
+    fun ^not() -> cell: Cell<Boolean?>
     ```
     { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `or` {#safeds.data.tabular.containers.Cell.or data-toc-label='[function] or'}
 
-Perform a boolean OR operation. This is equivalent to the `or` operator.
+Perform a Boolean OR operation. This is equivalent to the `or` operator.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `other` | `#!sds union<Boolean, Cell<Any?>>` | - | - |
+| `other` | `#!sds union<Boolean, Cell<Any?>?>` | The right operand. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result` | [`Cell<Boolean>`][safeds.data.tabular.containers.Cell] | - |
+| `cell` | [`Cell<Boolean?>`][safeds.data.tabular.containers.Cell] | The result of the disjunction. |
 
 **Examples:**
 
-```sds hl_lines="3"
+```sds hl_lines="3 4"
 pipeline example {
-    val column = Column("example", [true, false]);
-    val result = column.transform((cell) -> cell.^or(true));
-    // Column("example", [true, true])
-}
-```
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("example", [true, false]);
-    val result = column.transform((cell) -> cell or true);
-    // Column("example", [true, true])
+    val column = Column("a", [true, false, null]);
+    out column.transform((cell) -> cell.^or(false));
+    out column.transform((cell) -> cell or false);
 }
 ```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="94"
+    ```sds linenums="250"
     @Pure
     @PythonName("or_")
     fun ^or(
-        other: union<Boolean, Cell> // TODO, once cell types can be inferred: union<Boolean, Cell<Boolean>>
-    ) -> result: Cell<Boolean>
+        other: ConvertibleToBooleanCell
+    ) -> cell: Cell<Boolean?>
     ```
     { data-search-exclude }
 
@@ -1134,31 +1136,30 @@ Raise to a power.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `other` | `#!sds union<Number, Cell<Any?>>` | - | - |
+| `other` | `#!sds union<Float, Date, Datetime, Duration, Time, Boolean, String, Cell<Any?>?>` | The right operand. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result` | [`Cell<Number>`][safeds.data.tabular.containers.Cell] | - |
+| `cell` | [`Cell<Any>`][safeds.data.tabular.containers.Cell] | The result of the exponentiation. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("example", [2, 3]);
-    val result = column.transform((cell) -> cell.pow(3.0));
-    // Column("example", [8, 27])
+    val column = Column("a", [2, 3, null]);
+    out column.transform((cell) -> cell.pow(3));
 }
 ```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="272"
+    ```sds linenums="378"
     @Pure
     fun pow(
-        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-    ) -> result: Cell<Number>
+        other: ConvertibleToCell
+    ) -> cell: Cell<Any>
     ```
     { data-search-exclude }
 
@@ -1170,106 +1171,323 @@ Subtract a value. This is equivalent to the binary `-` operator.
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `other` | `#!sds union<Number, Cell<Any?>>` | - | - |
+| `other` | `#!sds union<Float, Date, Datetime, Duration, Time, Boolean, String, Cell<Any?>?>` | The right operand. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result` | [`Cell<Number>`][safeds.data.tabular.containers.Cell] | - |
+| `cell` | [`Cell<Any>`][safeds.data.tabular.containers.Cell] | The result of the subtraction. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("example", [5, 6]);
-    val result = column.transform((cell) -> cell.^sub(3));
-    // Column("example", [2, 3])
-}
-```
-```sds
-pipeline example {
-    val column = Column("example", [5, 6]);
-    val result = column.transform((cell) -> cell - 3);
-    // Column("example", [2, 3])
+    val column = Column("a", [5, 6, null]);
+    out column.transform((cell) -> cell.^sub(3));
+    out column.transform((cell) -> cell - 3);
 }
 ```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="294"
+    ```sds linenums="397"
     @Pure
     fun ^sub(
-        other: union<Number, Cell> // TODO, once cell types can be inferred: union<Number, Cell<Number>>
-    ) -> result: Cell<Number>
+        other: ConvertibleToCell
+    ) -> cell: Cell<Any>
     ```
     { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `xor` {#safeds.data.tabular.containers.Cell.xor data-toc-label='[function] xor'}
 
-Perform a boolean XOR operation.
+Perform a Boolean XOR operation.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `other` | `#!sds union<Boolean, Cell<Any?>>` | - | - |
+| `other` | `#!sds union<Boolean, Cell<Any?>?>` | The right operand. | - |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `result` | [`Cell<Boolean>`][safeds.data.tabular.containers.Cell] | - |
+| `cell` | [`Cell<Boolean?>`][safeds.data.tabular.containers.Cell] | The result of the exclusive or. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("example", [true, false]);
-    val result = column.transform((cell) -> cell.xor(true));
-    // Column("example", [false, true])
+    val column = Column("a", [true, false, null]);
+    out column.transform((cell) -> cell.xor(true));
 }
 ```
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="110"
+    ```sds linenums="269"
     @Pure
     fun xor(
-        other: union<Boolean, Cell> // TODO, once cell types can be inferred: union<Boolean, Cell<Boolean>>
-    ) -> result: Cell<Boolean>
+        other: ConvertibleToBooleanCell
+    ) -> cell: Cell<Boolean?>
     ```
     { data-search-exclude }
 
-## <code class="doc-symbol doc-symbol-static-function"></code> `firstNotNone` {#safeds.data.tabular.containers.Cell.firstNotNone data-toc-label='[static-function] firstNotNone'}
+## <code class="doc-symbol doc-symbol-static-function"></code> `constant` {#safeds.data.tabular.containers.Cell.constant data-toc-label='[static-function] constant'}
 
-Return the first cell from the given list that is not None.
+Create a cell with a constant value.
 
 **Parameters:**
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `cells` | [`List<Cell<T>>`][safeds.lang.List] | The list of cells to be searched. | - |
+| `value` | `#!sds union<Float?, Date?, Datetime?, Duration?, Time?, Boolean?, String?>` | The value to create the cell from. | - |
+| `type` | [`ColumnType?`][safeds.data.tabular.typing.ColumnType] | The type of the cell. If null, the type is inferred from the value. | `#!sds null` |
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `cell` | [`Cell<T?>`][safeds.data.tabular.containers.Cell] | Returns the contents of the first cell that is not None. If all cells in the list are None or the list is empty returns None. |
+| `cell` | [`Cell<Any>`][safeds.data.tabular.containers.Cell] | The created cell. |
+
+**Examples:**
+
+```sds hl_lines="3"
+pipeline example {
+    val column = Column("a", [1, 2, null]);
+    out column.transform((cell) -> Cell.constant(3));
+}
+```
+
+??? quote "Stub code in `Cell.sdsstub`"
+
+    ```sds linenums="59"
+    @Pure
+    static fun constant(
+        value: AnyLiteral?,
+        type: ColumnType? = null
+    ) -> cell: Cell<Any>
+    ```
+    { data-search-exclude }
+
+## <code class="doc-symbol doc-symbol-static-function"></code> `date` {#safeds.data.tabular.containers.Cell.date data-toc-label='[static-function] date'}
+
+Create a cell with a date.
+
+Invalid dates are converted to missing values (`null`).
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `year` | `#!sds union<Int, Cell<Any?>?>` | The year. | - |
+| `month` | `#!sds union<Int, Cell<Any?>?>` | The month. Must be between 1 and 12. | - |
+| `day` | `#!sds union<Int, Cell<Any?>?>` | The day. Must be between 1 and 31. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `cell` | [`Cell<Date?>`][safeds.data.tabular.containers.Cell] | The created cell. |
+
+**Examples:**
+
+```sds hl_lines="3 4"
+pipeline example {
+    val column = Column("a", [1, 2, null]);
+    out column.transform((cell) -> Cell.date(2025, 1, 15));
+    out column.transform((cell) -> Cell.date(2025, cell, 15));
+}
+```
+
+??? quote "Stub code in `Cell.sdsstub`"
+
+    ```sds linenums="83"
+    @Pure
+    static fun date(
+        year: ConvertibleToIntCell,
+        month: ConvertibleToIntCell,
+        day: ConvertibleToIntCell
+    ) -> cell: Cell<Date?>
+    ```
+    { data-search-exclude }
+
+## <code class="doc-symbol doc-symbol-static-function"></code> `datetime` {#safeds.data.tabular.containers.Cell.datetime data-toc-label='[static-function] datetime'}
+
+Create a cell with a datetime.
+
+Invalid datetimes are converted to missing values (`null`).
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `year` | `#!sds union<Int, Cell<Any?>?>` | The year. | - |
+| `month` | `#!sds union<Int, Cell<Any?>?>` | The month. Must be between 1 and 12. | - |
+| `day` | `#!sds union<Int, Cell<Any?>?>` | The day. Must be between 1 and 31. | - |
+| `hour` | `#!sds union<Int, Cell<Any?>?>` | The hour. Must be between 0 and 23. | `#!sds 0` |
+| `minute` | `#!sds union<Int, Cell<Any?>?>` | The minute. Must be between 0 and 59. | `#!sds 0` |
+| `second` | `#!sds union<Int, Cell<Any?>?>` | The second. Must be between 0 and 59. | `#!sds 0` |
+| `microsecond` | `#!sds union<Int, Cell<Any?>?>` | The microsecond. Must be between 0 and 999,999. | `#!sds 0` |
+| `timeZone` | [`String?`][safeds.lang.String] | The time zone. If null, values are assumed to be in local time. This is different from setting the time zone to `"UTC"`. Any TZ identifier defined in the [tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) is valid. | `#!sds null` |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `cell` | [`Cell<Datetime?>`][safeds.data.tabular.containers.Cell] | The created cell. |
+
+**Examples:**
+
+```sds hl_lines="3 4"
+pipeline example {
+    val column = Column("a", [1, 2, null]);
+    out column.transform((cell) -> Cell.datetime(2025, 1, 15, hour = 12));
+    out column.transform((cell) -> Cell.datetime(2025, 1, 15, hour = cell));
+}
+```
+
+??? quote "Stub code in `Cell.sdsstub`"
+
+    ```sds linenums="115"
+    @Pure
+    static fun datetime(
+        year: ConvertibleToIntCell,
+        month: ConvertibleToIntCell,
+        day: ConvertibleToIntCell,
+        hour: ConvertibleToIntCell = 0,
+        minute: ConvertibleToIntCell = 0,
+        second: ConvertibleToIntCell = 0,
+        microsecond: ConvertibleToIntCell = 0,
+        @PythonName("time_zone") timeZone: String? = null
+    ) -> cell: Cell<Datetime?>
+    ```
+    { data-search-exclude }
+
+## <code class="doc-symbol doc-symbol-static-function"></code> `duration` {#safeds.data.tabular.containers.Cell.duration data-toc-label='[static-function] duration'}
+
+Create a cell with a duration.
+
+Invalid durations are converted to missing values (`null`).
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `weeks` | `#!sds union<Int, Cell<Any?>?>` | The number of weeks. | `#!sds 0` |
+| `days` | `#!sds union<Int, Cell<Any?>?>` | The number of days. | `#!sds 0` |
+| `hours` | `#!sds union<Int, Cell<Any?>?>` | The number of hours. | `#!sds 0` |
+| `minutes` | `#!sds union<Int, Cell<Any?>?>` | The number of minutes. | `#!sds 0` |
+| `seconds` | `#!sds union<Int, Cell<Any?>?>` | The number of seconds. | `#!sds 0` |
+| `milliseconds` | `#!sds union<Int, Cell<Any?>?>` | The number of milliseconds. | `#!sds 0` |
+| `microseconds` | `#!sds union<Int, Cell<Any?>?>` | The number of microseconds. | `#!sds 0` |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `cell` | [`Cell<Duration?>`][safeds.data.tabular.containers.Cell] | The created cell. |
+
+**Examples:**
+
+```sds hl_lines="3 4"
+pipeline example {
+    val column = Column("a", [1, 2, null]);
+    out column.transform((cell) -> Cell.duration(hours = 1));
+    out column.transform((cell) -> Cell.duration(hours = cell));
+}
+```
+
+??? quote "Stub code in `Cell.sdsstub`"
+
+    ```sds linenums="149"
+    @Pure
+    static fun duration(
+        weeks: ConvertibleToIntCell = 0,
+        days: ConvertibleToIntCell = 0,
+        hours: ConvertibleToIntCell = 0,
+        minutes: ConvertibleToIntCell = 0,
+        seconds: ConvertibleToIntCell = 0,
+        milliseconds: ConvertibleToIntCell = 0,
+        microseconds: ConvertibleToIntCell = 0
+    ) -> cell: Cell<Duration?>
+    ```
+    { data-search-exclude }
+
+## <code class="doc-symbol doc-symbol-static-function"></code> `firstNotNull` {#safeds.data.tabular.containers.Cell.firstNotNull data-toc-label='[static-function] firstNotNull'}
+
+Return the first cell that is not null or null if all cells are null.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `cells` | [`List<Cell<P>>`][safeds.lang.List] | The list of cells to be checked. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `cell` | [`Cell<P?>`][safeds.data.tabular.containers.Cell] | The first cell that is not null or null if all cells are null. |
 
 **Type parameters:**
 
 | Name | Upper Bound | Description | Default |
 |------|-------------|-------------|---------|
-| `T` | [`Any?`][safeds.lang.Any] | - | - |
+| `P` | [`Any?`][safeds.lang.Any] | - | - |
 
 ??? quote "Stub code in `Cell.sdsstub`"
 
-    ```sds linenums="27"
+    ```sds linenums="194"
     @Pure
     @PythonName("first_not_none")
-    static fun firstNotNone<T>(
-        cells: List<Cell<T>>
-    ) -> cell: Cell<T?>
+    static fun firstNotNull<P>(
+        cells: List<Cell<P>>
+    ) -> cell: Cell<P?>
+    ```
+    { data-search-exclude }
+
+## <code class="doc-symbol doc-symbol-static-function"></code> `time` {#safeds.data.tabular.containers.Cell.time data-toc-label='[static-function] time'}
+
+Create a cell with a time.
+
+Invalid times are converted to missing values (`null`).
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `hour` | `#!sds union<Int, Cell<Any?>?>` | The hour. Must be between 0 and 23. | - |
+| `minute` | `#!sds union<Int, Cell<Any?>?>` | The minute. Must be between 0 and 59. | - |
+| `second` | `#!sds union<Int, Cell<Any?>?>` | The second. Must be between 0 and 59. | - |
+| `microsecond` | `#!sds union<Int, Cell<Any?>?>` | The microsecond. Must be between 0 and 999,999. | `#!sds 0` |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `cell` | [`Cell<Time?>`][safeds.data.tabular.containers.Cell] | The created cell. |
+
+**Examples:**
+
+```sds hl_lines="3 4"
+pipeline example {
+    val column = Column("a", [1, 2, null]);
+    out column.transform((cell) -> Cell.time(12, 0, 0));
+    out column.transform((cell) -> Cell.time(12, cell, 0, microsecond = 1));
+}
+```
+
+??? quote "Stub code in `Cell.sdsstub`"
+
+    ```sds linenums="179"
+    @Pure
+    static fun time(
+        hour: ConvertibleToIntCell,
+        minute: ConvertibleToIntCell,
+        second: ConvertibleToIntCell,
+        microsecond: ConvertibleToIntCell = 0
+    ) -> cell: Cell<Time?>
     ```
     { data-search-exclude }

@@ -39,8 +39,8 @@ A NeuralNetworkRegressor is a neural network that is used for regression tasks.
          * @result pretrainedModel the pretrained model as a NeuralNetworkRegressor
          */
         @Pure
-        @PythonName("load_pretrained_model")
-        static fun loadPretrainedModel(
+        @PythonName("from_pretrained_model")
+        static fun fromPretrainedModel(
             @PythonName("huggingface_repo") huggingfaceRepo: String
         ) -> pretrainedModel: NeuralNetworkRegressor<Any, Any>
 
@@ -50,7 +50,7 @@ A NeuralNetworkRegressor is a neural network that is used for regression tasks.
          * The original model is not modified.
          *
          * @param trainData The data the network should be trained on.
-         * @param epochSize The number of times the training cycle should be done.
+         * @param epochCount The number of times the training cycle should be done.
          * @param batchSize The size of data batches that should be loaded at one time.
          * @param learningRate The learning rate of the neural network.
          * @param callbackOnBatchCompletion Function used to view metrics while training. Gets called after a batch is completed with the index of the
@@ -68,13 +68,13 @@ A NeuralNetworkRegressor is a neural network that is used for regression tasks.
         @Pure
         fun fit(
             @PythonName("train_data") trainData: D,
-            @PythonName("epoch_size") const epochSize: Int = 25,
+            @PythonName("epoch_count") const epochCount: Int = 25,
             @PythonName("batch_size") const batchSize: Int = 1,
             @PythonName("learning_rate") learningRate: Float = 0.001,
             @PythonName("callback_on_batch_completion") callbackOnBatchCompletion: (param1: Int, param2: Float) -> () = (param1, param2) {},
             @PythonName("callback_on_epoch_completion") callbackOnEpochCompletion: (param1: Int, param2: Float) -> () = (param1, param2) {}
         ) -> fittedRegressor: NeuralNetworkRegressor<D, F> where {
-            epochSize >= 1,
+            epochCount >= 1,
             batchSize >= 1
         }
 
@@ -117,7 +117,7 @@ The original model is not modified.
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `trainData` | `#!sds D` | The data the network should be trained on. | - |
-| `epochSize` | [`Int`][safeds.lang.Int] | The number of times the training cycle should be done. | `#!sds 25` |
+| `epochCount` | [`Int`][safeds.lang.Int] | The number of times the training cycle should be done. | `#!sds 25` |
 | `batchSize` | [`Int`][safeds.lang.Int] | The size of data batches that should be loaded at one time. | `#!sds 1` |
 | `learningRate` | [`Float`][safeds.lang.Float] | The learning rate of the neural network. | `#!sds 0.001` |
 | `callbackOnBatchCompletion` | `#!sds (param1: Int, param2: Float) -> ()` | Function used to view metrics while training. Gets called after a batch is completed with the index of the last batch and the overall loss average. | `#!sds (param1, param2) {}` |
@@ -143,13 +143,13 @@ pipeline example {
     @Pure
     fun fit(
         @PythonName("train_data") trainData: D,
-        @PythonName("epoch_size") const epochSize: Int = 25,
+        @PythonName("epoch_count") const epochCount: Int = 25,
         @PythonName("batch_size") const batchSize: Int = 1,
         @PythonName("learning_rate") learningRate: Float = 0.001,
         @PythonName("callback_on_batch_completion") callbackOnBatchCompletion: (param1: Int, param2: Float) -> () = (param1, param2) {},
         @PythonName("callback_on_epoch_completion") callbackOnEpochCompletion: (param1: Int, param2: Float) -> () = (param1, param2) {}
     ) -> fittedRegressor: NeuralNetworkRegressor<D, F> where {
-        epochSize >= 1,
+        epochCount >= 1,
         batchSize >= 1
     }
     ```
@@ -191,7 +191,7 @@ pipeline example {
     ```
     { data-search-exclude }
 
-## <code class="doc-symbol doc-symbol-static-function"></code> `loadPretrainedModel` {#safeds.ml.nn.NeuralNetworkRegressor.loadPretrainedModel data-toc-label='[static-function] loadPretrainedModel'}
+## <code class="doc-symbol doc-symbol-static-function"></code> `fromPretrainedModel` {#safeds.ml.nn.NeuralNetworkRegressor.fromPretrainedModel data-toc-label='[static-function] fromPretrainedModel'}
 
 Load a pretrained model from a [Huggingface repository](https://huggingface.co/models/).
 
@@ -211,8 +211,8 @@ Load a pretrained model from a [Huggingface repository](https://huggingface.co/m
 
     ```sds linenums="33"
     @Pure
-    @PythonName("load_pretrained_model")
-    static fun loadPretrainedModel(
+    @PythonName("from_pretrained_model")
+    static fun fromPretrainedModel(
         @PythonName("huggingface_repo") huggingfaceRepo: String
     ) -> pretrainedModel: NeuralNetworkRegressor<Any, Any>
     ```
