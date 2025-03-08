@@ -1,3 +1,20 @@
+## [0.24.0](https://github.com/Safe-DS/DSL/compare/v0.23.0...v0.24.0) (2025-03-08)
+
+### Features
+
+* global attributes ([#1346](https://github.com/Safe-DS/DSL/issues/1346)) ([fda30ab](https://github.com/Safe-DS/DSL/commit/fda30ab7f4bd24974ae0d095d4c849cc625aaef1))
+* new syntax for template strings ([#1311](https://github.com/Safe-DS/DSL/issues/1311)) ([88295bc](https://github.com/Safe-DS/DSL/commit/88295bc799a2688d38b3c746b68fe527146bb7fe))
+* optional parameters must be passed by name ([#1307](https://github.com/Safe-DS/DSL/issues/1307)) ([674cda8](https://github.com/Safe-DS/DSL/commit/674cda89c45248a5a41b7afebeb2db4d6c1f8c96)), closes [#1163](https://github.com/Safe-DS/DSL/issues/1163)
+* type aliases ([#1334](https://github.com/Safe-DS/DSL/issues/1334)) ([3d42bb0](https://github.com/Safe-DS/DSL/commit/3d42bb03e405e43a7be9de315502f13180672460)), closes [#1308](https://github.com/Safe-DS/DSL/issues/1308)
+* update stubs for library version 0.30.0 ([#1345](https://github.com/Safe-DS/DSL/issues/1345)) ([42178d1](https://github.com/Safe-DS/DSL/commit/42178d1b8d6c0dff176146258ca1074d84327eed))
+
+### Bug Fixes
+
+* allow callable types and union types in type aliases ([#1342](https://github.com/Safe-DS/DSL/issues/1342)) ([b9374b5](https://github.com/Safe-DS/DSL/commit/b9374b57cf4da5015cbd94c36b6f0932852eef8d))
+* do not suggest references to type alias ([#1343](https://github.com/Safe-DS/DSL/issues/1343)) ([c5ef21d](https://github.com/Safe-DS/DSL/commit/c5ef21d2fc4f9526acd4a4b78245bbd2162df7a3))
+* escape single quotes in strings in generated Python code ([#1312](https://github.com/Safe-DS/DSL/issues/1312)) ([938f082](https://github.com/Safe-DS/DSL/commit/938f082a8d953d112de911e41b009a518ca5495a)), closes [#1310](https://github.com/Safe-DS/DSL/issues/1310)
+* handling of aliases of nullable types ([#1344](https://github.com/Safe-DS/DSL/issues/1344)) ([99e1006](https://github.com/Safe-DS/DSL/commit/99e10065d34b525c0ecbe737af04e29f6052cd01))
+
 ## [0.23.0](https://github.com/Safe-DS/DSL/compare/v0.22.0...v0.23.0) (2025-01-04)
 
 ### Features
