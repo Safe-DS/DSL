@@ -22,23 +22,30 @@ describe('SafeDsSemanticTokenProvider', async () => {
         {
             testName: 'attribute declaration',
             code: `
+                attr a: C
+
                 class C {
-                    attr a: Int
-                    static attr b: (p: Int) -> r: Int
+                    attr b: Int
+                    static attr c: (p: Int) -> r: Int
                 }
             `,
             expectedSymbols: [
+                {
+                    name: 'a',
+                    kind: SymbolKind.Property,
+                    detail: ': C',
+                },
                 {
                     name: 'C',
                     kind: SymbolKind.Class,
                     children: [
                         {
-                            name: 'a',
+                            name: 'b',
                             kind: SymbolKind.Property,
                             detail: ': Int',
                         },
                         {
-                            name: 'b',
+                            name: 'c',
                             kind: SymbolKind.Property,
                             detail: ': (p: Int) -> (r: Int)',
                         },
