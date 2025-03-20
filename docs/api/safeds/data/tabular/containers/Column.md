@@ -9,7 +9,8 @@ A named, one-dimensional collection of homogeneous values.
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `name` | [`String`][safeds.lang.String] | The name of the column. | - |
-| `data` | [`List<T>`][safeds.lang.List] | The data of the column. | `#!sds []` |
+| `data` | [`List<T>`][safeds.lang.List] | The data of the column. | - |
+| `type` | [`ColumnType?`][safeds.data.tabular.typing.ColumnType] | The type of the column. If `null` (default), the type is inferred from the data. | `#!sds null` |
 
 **Type parameters:**
 
@@ -19,43 +20,42 @@ A named, one-dimensional collection of homogeneous values.
 
 **Examples:**
 
-```sds hl_lines="2"
+```sds hl_lines="2 3"
 pipeline example {
-    val column = Column("test", [1, 2, 3]);
+    out Column("a", [1, 2, 3]);
+    out Column("a", [1, 2, 3], type = ColumnType.string());
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
     ```sds linenums="19"
+    @Category(DataScienceCategory.BasicElement)
     class Column<out T = Any?>(
         name: String,
-        data: List<T> = []
+        data: List<T>,
+        type: ColumnType? = null
     ) {
-        /**
-         * Whether the column is numeric.
-         */
-        @PythonName("is_numeric") attr isNumeric: Boolean
-        /**
-         * Whether the column is temporal.
-         */
-        @PythonName("is_temporal") attr isTemporal: Boolean
         /**
          * The name of the column.
          */
         attr name: String
         /**
-         * The number of rows in the column.
+         * The number of rows.
+         *
+         * **Note:** This operation must fully load the data into memory, which can be expensive.
          */
         @PythonName("row_count") attr rowCount: Int
         /**
          * The plotter for the column.
+         *
+         * Call methods of the plotter to create various plots for the column.
          */
         attr plot: ColumnPlotter
         /**
          * The type of the column.
          */
-        attr type: DataType
+        attr type: ColumnType
 
         /**
          * Return the distinct values in the column.
@@ -66,15 +66,14 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     val column = Column("test", [1, 2, 3, 2]);
-         *     val result = column.getDistinctValues();
-         *     // [1, 2, 3]
+         *     val column = Column("a", [1, 2, 3, 2]);
+         *     out column.getDistinctValues();
          * }
          */
         @Pure
         @PythonName("get_distinct_values")
         fun getDistinctValues(
-            @PythonName("ignore_missing_values") ignoreMissingValues: Boolean = true,
+            @PythonName("ignore_missing_values") ignoreMissingValues: Boolean = true
         ) -> distinctValues: List<T?>
 
         /**
@@ -89,14 +88,11 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.getValue(1); // 2
-         * }
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val result = column[1]; // 2
+         *     val column = Column("a", [1, 2, 3]);
+         *     out column.getValue(0);
+         *     out column[0];
+         *     out column.getValue(-1);
+         *     out column[-1];
          * }
          */
         @Pure
@@ -106,24 +102,24 @@ pipeline example {
         ) -> value: T
 
         /**
-         * Return whether all values in the column satisfy the predicate.
+         * Check whether all values in the column satisfy the predicate.
          *
          * The predicate can return one of three values:
          *
-         * - true, if the value satisfies the predicate.
-         * - false, if the value does not satisfy the predicate.
-         * - null, if the truthiness of the predicate is unknown, e.g. due to missing values.
+         * * true, if the value satisfies the predicate.
+         * * false, if the value does not satisfy the predicate.
+         * * null, if the truthiness of the predicate is unknown, e.g. due to missing values.
          *
-         * By default, cases where the truthiness of the predicate is unknown are ignored and this method returns:
+         * By default, cases where the truthiness of the predicate is unknown are ignored and this method returns
          *
-         * - true, if the predicate always returns true or null.
-         * - false, if the predicate returns false at least once.
+         * * true, if the predicate always returns true or null.
+         * * false, if the predicate returns false at least once.
          *
-         * You can instead enable Kleene logic by setting `ignoreUnknown = false`. In this case, this method returns:
+         * You can instead enable Kleene logic by setting `ignoreUnknown = false`. In this case, this method returns
          *
-         * - true, if the predicate always returns true.
-         * - false, if the predicate returns false at least once.
-         * - null, if the predicate never returns false, but at least once null.
+         * * true, if the predicate always returns true.
+         * * false, if the predicate returns false at least once.
+         * * null, if the predicate never returns false, but at least once null.
          *
          * @param predicate The predicate to apply to each value.
          * @param ignoreUnknown Whether to ignore cases where the truthiness of the predicate is unknown.
@@ -132,42 +128,39 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.all((cell) -> cell > 0); // true
-         * }
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.all((cell) -> cell < 3); // false
+         *     val column = Column("a", [1, 2, 3, null]);
+         *     out column.all((cell) -> cell > 0);
+         *     out column.all((cell) -> cell < 3);
+         *     out column.all((cell) -> cell > 0, ignoreUnknown = false);
+         *     out column.all((cell) -> cell < 3, ignoreUnknown = false);
          * }
          */
         @Pure
         @Category(DataScienceCategory.DataExplorationQGeneral)
         fun all(
             predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
-            @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
+            @PythonName("ignore_unknown") ignoreUnknown: Boolean = true
         ) -> allSatisfyPredicate: Boolean?
 
         /**
-         * Return whether any value in the column satisfies the predicate.
+         * Check whether any value in the column satisfies the predicate.
          *
          * The predicate can return one of three values:
          *
-         * - true, if the value satisfies the predicate.
-         * - false, if the value does not satisfy the predicate.
-         * - null, if the truthiness of the predicate is unknown, e.g. due to missing values.
+         * * true, if the value satisfies the predicate.
+         * * false, if the value does not satisfy the predicate.
+         * * null, if the truthiness of the predicate is unknown, e.g. due to missing values.
          *
-         * By default, cases where the truthiness of the predicate is unknown are ignored and this method returns:
+         * By default, cases where the truthiness of the predicate is unknown are ignored and this method returns
          *
-         * - true, if the predicate returns true at least once.
-         * - false, if the predicate always returns false or null.
+         * * true, if the predicate returns true at least once.
+         * * false, if the predicate always returns false or null.
          *
-         * You can instead enable Kleene logic by setting `ignoreUnknown = false`. In this case, this method returns:
+         * You can instead enable Kleene logic by setting `ignoreUnknown = false`. In this case, this method returns
          *
-         * - true, if the predicate returns true at least once.
-         * - false, if the predicate always returns false.
-         * - null, if the predicate never returns true, but at least once null.
+         * * true, if the predicate returns true at least once.
+         * * false, if the predicate always returns false.
+         * * null, if the predicate never returns true, but at least once null.
          *
          * @param predicate The predicate to apply to each value.
          * @param ignoreUnknown Whether to ignore cases where the truthiness of the predicate is unknown.
@@ -176,37 +169,34 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.any((cell) -> cell > 2); // true
-         * }
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.any((cell) -> cell < 0); // false
+         *     val column = Column("a", [1, 2, 3, null]);
+         *     out column.any((cell) -> cell > 2);
+         *     out column.any((cell) -> cell < 0);
+         *     out column.any((cell) -> cell > 2, ignoreUnknown = false);
+         *     out column.any((cell) -> cell < 0, ignoreUnknown = false);
          * }
          */
         @Pure
         @Category(DataScienceCategory.DataExplorationQGeneral)
         fun any(
             predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
-            @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
+            @PythonName("ignore_unknown") ignoreUnknown: Boolean = true
         ) -> anySatisfyPredicate: Boolean?
 
         /**
-         * Return how many values in the column satisfy the predicate.
+         * Count how many values in the column satisfy the predicate.
          *
          * The predicate can return one of three results:
          *
-         * - true, if the value satisfies the predicate.
-         * - false, if the value does not satisfy the predicate.
-         * - null, if the truthiness of the predicate is unknown, e.g. due to missing values.
+         * * true, if the value satisfies the predicate.
+         * * false, if the value does not satisfy the predicate.
+         * * null, if the truthiness of the predicate is unknown, e.g. due to missing values.
          *
          * By default, cases where the truthiness of the predicate is unknown are ignored and this method returns how
          * often the predicate returns true.
          *
-         * You can instead enable Kleene logic by setting `ignore_unknown = False`. In this case, this method returns null
-         * if the predicate returns null at least once. Otherwise, it still returns how often the predicate returns true.
+         * You can instead enable Kleene logic by setting `ignoreUnknown = false`. In this case, this method returns null if
+         * the predicate returns null at least once. Otherwise, it still returns how often the predicate returns true.
          *
          * @param predicate The predicate to apply to each value.
          * @param ignoreUnknown Whether to ignore cases where the truthiness of the predicate is unknown.
@@ -215,42 +205,37 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *    val column = Column("test", [1, 2, 3]);
-         *    val result = column.countIf((cell) -> cell > 1); // 2
-         * }
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.countIf((cell) -> cell < 0); // 0
+         *     val column = Column("a", [1, 2, 3, null]);
+         *     out column.countIf((cell) -> cell > 1);
+         *     out column.countIf((cell) -> cell < 0, ignoreUnknown = false);
          * }
          */
         @Pure
-        @Category(DataScienceCategory.DataExplorationQGeneral)
+        @PythonName("count_if")
         fun countIf(
             predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
-            @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
+            @PythonName("ignore_unknown") ignoreUnknown: Boolean = true
         ) -> count: Int?
 
         /**
-         * Return whether no value in the column satisfies the predicate.
+         * Check whether no value in the column satisfies the predicate.
          *
          * The predicate can return one of three values:
          *
-         * - true, if the value satisfies the predicate.
-         * - false, if the value does not satisfy the predicate.
-         * - null, if the truthiness of the predicate is unknown, e.g. due to missing values.
+         * * true, if the value satisfies the predicate.
+         * * false, if the value does not satisfy the predicate.
+         * * null, if the truthiness of the predicate is unknown, e.g. due to missing values.
          *
-         * By default, cases where the truthiness of the predicate is unknown are ignored and this method returns:
+         * By default, cases where the truthiness of the predicate is unknown are ignored and this method returns
          *
-         * - true, if the predicate always returns false or null.
-         * - false, if the predicate returns true at least once.
+         * * true, if the predicate always returns false or null.
+         * * false, if the predicate returns true at least once.
          *
-         * You can instead enable Kleene logic by setting `ignoreUnknown = false`. In this case, this method returns:
+         * You can instead enable Kleene logic by setting `ignoreUnknown = false`. In this case, this method returns
          *
-         * - true, if the predicate always returns false.
-         * - false, if the predicate returns true at least once.
-         * - null, if the predicate never returns true, but at least once null.
+         * * true, if the predicate always returns false.
+         * * false, if the predicate returns true at least once.
+         * * null, if the predicate never returns true, but at least once null.
          *
          * @param predicate The predicate to apply to each value.
          * @param ignoreUnknown Whether to ignore cases where the truthiness of the predicate is unknown.
@@ -259,76 +244,76 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.none((cell) -> cell < 0); // true
-         * }
-         *
-         * @example
-         * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.none((cell) -> cell > 2); // false
+         *     val column = Column("a", [1, 2, 3, null]);
+         *     out column.none((cell) -> cell < 0);
+         *     out column.none((cell) -> cell > 2);
+         *     out column.none((cell) -> cell < 0, ignoreUnknown = false);
+         *     out column.none((cell) -> cell > 2, ignoreUnknown = false);
          * }
          */
         @Pure
         @Category(DataScienceCategory.DataExplorationQGeneral)
         fun none(
             predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
-            @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
-        ) -> noneSatisfyPredicate: Int?
+            @PythonName("ignore_unknown") ignoreUnknown: Boolean = true
+        ) -> noneSatisfyPredicate: Boolean?
 
         /**
-         * Return a new column with a new name.
+         * Rename the column and return the result as a new column.
          *
          * **Note:** The original column is not modified.
          *
          * @param newName The new name of the column.
          *
-         * @result renamedColumn A new column with the new name.
+         * @result newColumn A column with the new name.
          *
          * @example
          * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.rename("new_name");
-         *     // Column("new_name", [1, 2, 3])
+         *     val column = Column("a", [1, 2, 3]);
+         *     out column.rename("b");
          * }
          */
         @Pure
         @Category(DataScienceCategory.DataProcessingQColumn)
         fun rename(
             @PythonName("new_name") newName: String
-        ) -> renamedColumn: Column<T>
+        ) -> newColumn: Column<T>
 
         /**
-         * Return a new column with values transformed by the transformer.
+         * Transform the values in the column and return the result as a new column.
          *
          * **Note:** The original column is not modified.
          *
          * @param transformer The transformer to apply to each value.
          *
-         * @result transformedColumn A new column with transformed values.
+         * @result newColumn A column with the transformed values.
          *
          * @example
          * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.transform((cell) -> cell * 2);
-         *     // Column("test", [2, 4, 6])
+         *     val column = Column("a", [1, 2, 3]);
+         *     out column.transform((cell) -> 2 * cell);
          * }
          */
         @Pure
         @Category(DataScienceCategory.DataProcessingQColumn)
         fun transform<R>(
             transformer: (cell: Cell<T>) -> transformedCell: Cell<R>
-        ) -> transformedColumn: Column<R>
+        ) -> newColumn: Column<R>
 
         /**
          * Return a table with important statistics about the column.
+         *
+         * !!! warning "API Stability"
+         *
+         *     Do not rely on the exact output of this method. In future versions, we may change the displayed statistics
+         *     without prior notice.
          *
          * @result statistics The table with statistics.
          *
          * @example
          * pipeline example {
          *     val column = Column("a", [1, 3]);
-         *     val result = column.summarizeStatistics();
+         *     out column.summarizeStatistics();
          * }
          */
         @Pure
@@ -338,12 +323,15 @@ pipeline example {
         /**
          * Calculate the Pearson correlation between this column and another column.
          *
-         * The Pearson correlation is a value between -1 and 1 that indicates how much the two columns are linearly
+         * The Pearson correlation is a value between -1 and 1 that indicates how much the two columns are **linearly**
          * related:
          *
          * - A correlation of -1 indicates a perfect negative linear relationship.
          * - A correlation of 0 indicates no linear relationship.
          * - A correlation of 1 indicates a perfect positive linear relationship.
+         *
+         * A value of 0 does not necessarily mean that the columns are independent. It only means that there is no linear
+         * relationship between the columns.
          *
          * @param other The other column to calculate the correlation with.
          *
@@ -351,16 +339,16 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     val column1 = Column("test", [1, 2, 3]);
-         *     val column2 = Column("test", [2, 4, 6]);
-         *     val result = column1.correlationWith(column2);
+         *     val column1 = Column("a", [1, 2, 3]);
+         *     val column2 = Column("a", [2, 4, 6]);
+         *     out column1.correlationWith(column2);
          * }
          *
          * @example
          * pipeline example {
-         *     val column1 = Column("test", [1, 2, 3]);
-         *     val column2 = Column("test", [3, 2, 1]);
-         *     val result = column1.correlationWith(column2);
+         *     val column1 = Column("a", [1, 2, 3]);
+         *     val column2 = Column("a", [3, 2, 1]);
+         *     out column1.correlationWith(column2);
          * }
          */
         @Pure
@@ -379,8 +367,9 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     val column = Column("test", [1, 2, 3, 2]);
-         *     val result = column.distinctValueCount(); // 3
+         *     val column = Column("a", [1, 2, 3, 2, null]);
+         *     out column.distinctValueCount();
+         *     out column.distinctValueCount(ignoreMissingValues = false);
          * }
          */
         @Pure
@@ -391,26 +380,27 @@ pipeline example {
         ) -> distinctValueCount: Int
 
         /**
-         * Calculate the idness of this column.
+         * Return the idness of this column.
          *
          * We define the idness as the number of distinct values (including missing values) divided by the number of rows.
          * If the column is empty, the idness is 1.0.
          *
-         * A high idness indicates that the column most values in the column are unique. In this case, you must be careful
-         * when using the column for analysis, as a model may learn a mapping from this column to the target.
+         * A high idness indicates that most values in the column are unique. In this case, you must be careful when using
+         * the column for analysis, as a model might learn a mapping from this column to the target, which might not
+         * generalize well. You can generally ignore this metric for floating point columns.
          *
          * @result idness The idness of the column.
          *
          * @example
          * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.idness(); // 1.0
+         *     val column1 = Column("a", [1, 2, 3]);
+         *     out column1.idness();
          * }
          *
          * @example
          * pipeline example {
-         *     val column = Column("test", [1, 2, 3, 2]);
-         *     val result = column.idness(); // 0.75
+         *     val column2 = Column("a", [1, 2, 3, 2]);
+         *     out column2.idness();
          * }
          */
         @Pure
@@ -424,8 +414,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.max(); // 3
+         *     val column = Column("a", [1, 2, 3]);
+         *     out column.max();
          * }
          */
         @Pure
@@ -441,8 +431,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.mean(); // 2.0
+         *     val column = Column("a", [1, 2, 3]);
+         *     out column.mean();
          * }
          */
         @Pure
@@ -459,8 +449,14 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.median(); // 2.0
+         *     val column = Column("a", [1, 2, 3]);
+         *     out column.median();
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val column = Column("a", [1, 2, 3, 4]);
+         *     out column.median();
          * }
          */
         @Pure
@@ -474,8 +470,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.min(); // 1
+         *     val column = Column("a", [1, 2, 3]);
+         *     out column.min();
          * }
          */
         @Pure
@@ -489,8 +485,14 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     val column = Column("test", [1, null, 3]);
-         *     val result = column.missingValueCount(); // 1
+         *     val column1 = Column("a", [1, 2, 3]);
+         *     out column1.missingValueCount();
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val column2 = Column("a", [1, null, 3]);
+         *     out column2.missingValueCount();
          * }
          */
         @Pure
@@ -511,8 +513,20 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     val column = Column("test", [1, null, 3, null]);
-         *     val result = column.missingValueRatio(); // 0.5
+         *     val column1 = Column("a", [1, 2, 3]);
+         *     out column1.missingValueRatio();
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val column2 = Column("a", [1, null]);
+         *     out column2.missingValueRatio();
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val column3 = Column("a", []);
+         *     out column3.missingValueRatio();
          * }
          */
         @Pure
@@ -532,14 +546,14 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     val column = Column("test", [3, 1, 2, 1, 3]);
-         *     val result = column.mode(); // [1, 3]
+         *     val column = Column("a", [3, 1, 2, 1, 3]);
+         *     out column.mode();
          * }
          */
         @Pure
         @Category(DataScienceCategory.DataExplorationQMetric)
         fun mode(
-            @PythonName("ignore_missing_values") ignoreMissingValues: Boolean = true,
+            @PythonName("ignore_missing_values") ignoreMissingValues: Boolean = true
         ) -> mode: List<T?>
 
         /**
@@ -555,8 +569,20 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     val column = Column("test", [1, 1, 2, 3, null]);
-         *     val result = column.stability(); // 0.5
+         *     val column1 = Column("a", [1, 1, 2, 3, null]);
+         *     out column1.stability();
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val column2 = Column("a", [1, 1, 1, 1]);
+         *     out column2.stability();
+         * }
+         *
+         * @example
+         * pipeline example {
+         *     val column3 = Column("a", []);
+         *     out column3.stability();
          * }
          */
         @Pure
@@ -568,13 +594,12 @@ pipeline example {
          *
          * The standard deviation is the square root of the variance.
          *
-         * @result standardDeviation The standard deviation of the values in the column. If no standard deviation can be calculated due to the
-         * type of the column, null is returned.
+         * @result standardDeviation The standard deviation of the values in the column.
          *
          * @example
          * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.standardDeviation(); // 1.0
+         *     val column = Column("a", [1, 2, 3]);
+         *     out column.standardDeviation();
          * }
          */
         @Pure
@@ -585,15 +610,14 @@ pipeline example {
         /**
          * Return the variance of the values in the column.
          *
-         * The variance is the average of the squared differences from the mean.
+         * The variance is the sum of the squared differences from the mean divided by the number of values minus one.
          *
-         * @result variance The variance of the values in the column. If no variance can be calculated due to the type of the column,
-         * null is returned.
+         * @result variance The variance of the values in the column.
          *
          * @example
          * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.variance(); // 1.0
+         *     val column = Column("a", [1, 2, 3]);
+         *     out column.variance();
          * }
          */
         @Pure
@@ -603,12 +627,12 @@ pipeline example {
         /**
          * Return the values of the column in a list.
          *
-         * @result values The values of the column in a list.
+         * @result values The values of the column.
          *
          * @example
          * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.toList(); // [1, 2, 3]
+         *     val column = Column("a", [1, 2, 3]);
+         *     out column.toList();
          * }
          */
         @Pure
@@ -623,9 +647,8 @@ pipeline example {
          *
          * @example
          * pipeline example {
-         *     val column = Column("test", [1, 2, 3]);
-         *     val result = column.toTable();
-         *     // Table({"test": [1, 2, 3]})
+         *     val column = Column("a", [1, 2, 3]);
+         *     out column.toTable();
          * }
          */
         @Pure
@@ -635,18 +658,6 @@ pipeline example {
     }
     ```
     { data-search-exclude }
-
-## <code class="doc-symbol doc-symbol-attribute"></code> `isNumeric` {#safeds.data.tabular.containers.Column.isNumeric data-toc-label='[attribute] isNumeric'}
-
-Whether the column is numeric.
-
-**Type:** [`Boolean`][safeds.lang.Boolean]
-
-## <code class="doc-symbol doc-symbol-attribute"></code> `isTemporal` {#safeds.data.tabular.containers.Column.isTemporal data-toc-label='[attribute] isTemporal'}
-
-Whether the column is temporal.
-
-**Type:** [`Boolean`][safeds.lang.Boolean]
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `name` {#safeds.data.tabular.containers.Column.name data-toc-label='[attribute] name'}
 
@@ -658,11 +669,15 @@ The name of the column.
 
 The plotter for the column.
 
+Call methods of the plotter to create various plots for the column.
+
 **Type:** [`ColumnPlotter`][safeds.data.tabular.plotting.ColumnPlotter]
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `rowCount` {#safeds.data.tabular.containers.Column.rowCount data-toc-label='[attribute] rowCount'}
 
-The number of rows in the column.
+The number of rows.
+
+**Note:** This operation must fully load the data into memory, which can be expensive.
 
 **Type:** [`Int`][safeds.lang.Int]
 
@@ -670,28 +685,28 @@ The number of rows in the column.
 
 The type of the column.
 
-**Type:** [`DataType`][safeds.data.tabular.typing.DataType]
+**Type:** [`ColumnType`][safeds.data.tabular.typing.ColumnType]
 
 ## <code class="doc-symbol doc-symbol-function"></code> `all` {#safeds.data.tabular.containers.Column.all data-toc-label='[function] all'}
 
-Return whether all values in the column satisfy the predicate.
+Check whether all values in the column satisfy the predicate.
 
 The predicate can return one of three values:
 
-- true, if the value satisfies the predicate.
-- false, if the value does not satisfy the predicate.
-- null, if the truthiness of the predicate is unknown, e.g. due to missing values.
+* true, if the value satisfies the predicate.
+* false, if the value does not satisfy the predicate.
+* null, if the truthiness of the predicate is unknown, e.g. due to missing values.
 
-By default, cases where the truthiness of the predicate is unknown are ignored and this method returns:
+By default, cases where the truthiness of the predicate is unknown are ignored and this method returns
 
-- true, if the predicate always returns true or null.
-- false, if the predicate returns false at least once.
+* true, if the predicate always returns true or null.
+* false, if the predicate returns false at least once.
 
-You can instead enable Kleene logic by setting `ignoreUnknown = false`. In this case, this method returns:
+You can instead enable Kleene logic by setting `ignoreUnknown = false`. In this case, this method returns
 
-- true, if the predicate always returns true.
-- false, if the predicate returns false at least once.
-- null, if the predicate never returns false, but at least once null.
+* true, if the predicate always returns true.
+* false, if the predicate returns false at least once.
+* null, if the predicate never returns false, but at least once null.
 
 **Parameters:**
 
@@ -708,51 +723,48 @@ You can instead enable Kleene logic by setting `ignoreUnknown = false`. In this 
 
 **Examples:**
 
-```sds hl_lines="3"
+```sds hl_lines="3 4 5 6"
 pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val result = column.all((cell) -> cell > 0); // true
-}
-```
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val result = column.all((cell) -> cell < 3); // false
+    val column = Column("a", [1, 2, 3, null]);
+    out column.all((cell) -> cell > 0);
+    out column.all((cell) -> cell < 3);
+    out column.all((cell) -> cell > 0, ignoreUnknown = false);
+    out column.all((cell) -> cell < 3, ignoreUnknown = false);
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="133"
+    ```sds linenums="124"
     @Pure
     @Category(DataScienceCategory.DataExplorationQGeneral)
     fun all(
         predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
-        @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
+        @PythonName("ignore_unknown") ignoreUnknown: Boolean = true
     ) -> allSatisfyPredicate: Boolean?
     ```
     { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `any` {#safeds.data.tabular.containers.Column.any data-toc-label='[function] any'}
 
-Return whether any value in the column satisfies the predicate.
+Check whether any value in the column satisfies the predicate.
 
 The predicate can return one of three values:
 
-- true, if the value satisfies the predicate.
-- false, if the value does not satisfy the predicate.
-- null, if the truthiness of the predicate is unknown, e.g. due to missing values.
+* true, if the value satisfies the predicate.
+* false, if the value does not satisfy the predicate.
+* null, if the truthiness of the predicate is unknown, e.g. due to missing values.
 
-By default, cases where the truthiness of the predicate is unknown are ignored and this method returns:
+By default, cases where the truthiness of the predicate is unknown are ignored and this method returns
 
-- true, if the predicate returns true at least once.
-- false, if the predicate always returns false or null.
+* true, if the predicate returns true at least once.
+* false, if the predicate always returns false or null.
 
-You can instead enable Kleene logic by setting `ignoreUnknown = false`. In this case, this method returns:
+You can instead enable Kleene logic by setting `ignoreUnknown = false`. In this case, this method returns
 
-- true, if the predicate returns true at least once.
-- false, if the predicate always returns false.
-- null, if the predicate never returns true, but at least once null.
+* true, if the predicate returns true at least once.
+* false, if the predicate always returns false.
+* null, if the predicate never returns true, but at least once null.
 
 **Parameters:**
 
@@ -769,27 +781,24 @@ You can instead enable Kleene logic by setting `ignoreUnknown = false`. In this 
 
 **Examples:**
 
-```sds hl_lines="3"
+```sds hl_lines="3 4 5 6"
 pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val result = column.any((cell) -> cell > 2); // true
-}
-```
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val result = column.any((cell) -> cell < 0); // false
+    val column = Column("a", [1, 2, 3, null]);
+    out column.any((cell) -> cell > 2);
+    out column.any((cell) -> cell < 0);
+    out column.any((cell) -> cell > 2, ignoreUnknown = false);
+    out column.any((cell) -> cell < 0, ignoreUnknown = false);
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="177"
+    ```sds linenums="165"
     @Pure
     @Category(DataScienceCategory.DataExplorationQGeneral)
     fun any(
         predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
-        @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
+        @PythonName("ignore_unknown") ignoreUnknown: Boolean = true
     ) -> anySatisfyPredicate: Boolean?
     ```
     { data-search-exclude }
@@ -798,12 +807,15 @@ pipeline example {
 
 Calculate the Pearson correlation between this column and another column.
 
-The Pearson correlation is a value between -1 and 1 that indicates how much the two columns are linearly
+The Pearson correlation is a value between -1 and 1 that indicates how much the two columns are **linearly**
 related:
 
 - A correlation of -1 indicates a perfect negative linear relationship.
 - A correlation of 0 indicates no linear relationship.
 - A correlation of 1 indicates a perfect positive linear relationship.
+
+A value of 0 does not necessarily mean that the columns are independent. It only means that there is no linear
+relationship between the columns.
 
 **Parameters:**
 
@@ -821,22 +833,22 @@ related:
 
 ```sds hl_lines="4"
 pipeline example {
-    val column1 = Column("test", [1, 2, 3]);
-    val column2 = Column("test", [2, 4, 6]);
-    val result = column1.correlationWith(column2);
+    val column1 = Column("a", [1, 2, 3]);
+    val column2 = Column("a", [2, 4, 6]);
+    out column1.correlationWith(column2);
 }
 ```
 ```sds hl_lines="4"
 pipeline example {
-    val column1 = Column("test", [1, 2, 3]);
-    val column2 = Column("test", [3, 2, 1]);
-    val result = column1.correlationWith(column2);
+    val column1 = Column("a", [1, 2, 3]);
+    val column2 = Column("a", [3, 2, 1]);
+    out column1.correlationWith(column2);
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="354"
+    ```sds linenums="340"
     @Pure
     @PythonName("correlation_with")
     @Category(DataScienceCategory.DataExplorationQMetric)
@@ -848,19 +860,19 @@ pipeline example {
 
 ## <code class="doc-symbol doc-symbol-function"></code> `countIf` {#safeds.data.tabular.containers.Column.countIf data-toc-label='[function] countIf'}
 
-Return how many values in the column satisfy the predicate.
+Count how many values in the column satisfy the predicate.
 
 The predicate can return one of three results:
 
-- true, if the value satisfies the predicate.
-- false, if the value does not satisfy the predicate.
-- null, if the truthiness of the predicate is unknown, e.g. due to missing values.
+* true, if the value satisfies the predicate.
+* false, if the value does not satisfy the predicate.
+* null, if the truthiness of the predicate is unknown, e.g. due to missing values.
 
 By default, cases where the truthiness of the predicate is unknown are ignored and this method returns how
 often the predicate returns true.
 
-You can instead enable Kleene logic by setting `ignore_unknown = False`. In this case, this method returns null
-if the predicate returns null at least once. Otherwise, it still returns how often the predicate returns true.
+You can instead enable Kleene logic by setting `ignoreUnknown = false`. In this case, this method returns null if
+the predicate returns null at least once. Otherwise, it still returns how often the predicate returns true.
 
 **Parameters:**
 
@@ -877,27 +889,22 @@ if the predicate returns null at least once. Otherwise, it still returns how oft
 
 **Examples:**
 
-```sds hl_lines="3"
+```sds hl_lines="3 4"
 pipeline example {
-   val column = Column("test", [1, 2, 3]);
-   val result = column.countIf((cell) -> cell > 1); // 2
-}
-```
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val result = column.countIf((cell) -> cell < 0); // 0
+    val column = Column("a", [1, 2, 3, null]);
+    out column.countIf((cell) -> cell > 1);
+    out column.countIf((cell) -> cell < 0, ignoreUnknown = false);
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="216"
+    ```sds linenums="199"
     @Pure
-    @Category(DataScienceCategory.DataExplorationQGeneral)
+    @PythonName("count_if")
     fun countIf(
         predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
-        @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
+        @PythonName("ignore_unknown") ignoreUnknown: Boolean = true
     ) -> count: Int?
     ```
     { data-search-exclude }
@@ -920,16 +927,17 @@ Return the number of distinct values in the column.
 
 **Examples:**
 
-```sds hl_lines="3"
+```sds hl_lines="3 4"
 pipeline example {
-    val column = Column("test", [1, 2, 3, 2]);
-    val result = column.distinctValueCount(); // 3
+    val column = Column("a", [1, 2, 3, 2, null]);
+    out column.distinctValueCount();
+    out column.distinctValueCount(ignoreMissingValues = false);
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="374"
+    ```sds linenums="361"
     @Pure
     @PythonName("distinct_value_count")
     @Category(DataScienceCategory.DataExplorationQMetric)
@@ -959,19 +967,18 @@ Return the distinct values in the column.
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("test", [1, 2, 3, 2]);
-    val result = column.getDistinctValues();
-    // [1, 2, 3]
+    val column = Column("a", [1, 2, 3, 2]);
+    out column.getDistinctValues();
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="62"
+    ```sds linenums="59"
     @Pure
     @PythonName("get_distinct_values")
     fun getDistinctValues(
-        @PythonName("ignore_missing_values") ignoreMissingValues: Boolean = true,
+        @PythonName("ignore_missing_values") ignoreMissingValues: Boolean = true
     ) -> distinctValues: List<T?>
     ```
     { data-search-exclude }
@@ -997,22 +1004,19 @@ Nonnegative indices are counted from the beginning (starting at 0), negative ind
 
 **Examples:**
 
-```sds hl_lines="3"
+```sds hl_lines="3 5"
 pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val result = column.getValue(1); // 2
-}
-```
-```sds
-pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val result = column[1]; // 2
+    val column = Column("a", [1, 2, 3]);
+    out column.getValue(0);
+    out column[0];
+    out column.getValue(-1);
+    out column[-1];
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="90"
+    ```sds linenums="84"
     @Pure
     @PythonName("get_value")
     fun getValue(
@@ -1023,13 +1027,14 @@ pipeline example {
 
 ## <code class="doc-symbol doc-symbol-function"></code> `idness` {#safeds.data.tabular.containers.Column.idness data-toc-label='[function] idness'}
 
-Calculate the idness of this column.
+Return the idness of this column.
 
 We define the idness as the number of distinct values (including missing values) divided by the number of rows.
 If the column is empty, the idness is 1.0.
 
-A high idness indicates that the column most values in the column are unique. In this case, you must be careful
-when using the column for analysis, as a model may learn a mapping from this column to the target.
+A high idness indicates that most values in the column are unique. In this case, you must be careful when using
+the column for analysis, as a model might learn a mapping from this column to the target, which might not
+generalize well. You can generally ignore this metric for floating point columns.
 
 **Results:**
 
@@ -1041,20 +1046,20 @@ when using the column for analysis, as a model may learn a mapping from this col
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val result = column.idness(); // 1.0
+    val column1 = Column("a", [1, 2, 3]);
+    out column1.idness();
 }
 ```
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("test", [1, 2, 3, 2]);
-    val result = column.idness(); // 0.75
+    val column2 = Column("a", [1, 2, 3, 2]);
+    out column2.idness();
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="404"
+    ```sds linenums="392"
     @Pure
     @Category(DataScienceCategory.DataExplorationQMetric)
     fun idness() -> idness: Float
@@ -1075,14 +1080,14 @@ Return the maximum value in the column.
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val result = column.max(); // 3
+    val column = Column("a", [1, 2, 3]);
+    out column.max();
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="419"
+    ```sds linenums="407"
     @Pure
     @Category(DataScienceCategory.DataExplorationQMetric)
     fun max() -> max: T?
@@ -1105,14 +1110,14 @@ The mean is the sum of the values divided by the number of values.
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val result = column.mean(); // 2.0
+    val column = Column("a", [1, 2, 3]);
+    out column.mean();
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="436"
+    ```sds linenums="424"
     @Pure
     @Category(DataScienceCategory.DataExplorationQMetric)
     fun mean() -> mean: T
@@ -1136,14 +1141,20 @@ is the mean of the two middle values.
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val result = column.median(); // 2.0
+    val column = Column("a", [1, 2, 3]);
+    out column.median();
+}
+```
+```sds hl_lines="3"
+pipeline example {
+    val column = Column("a", [1, 2, 3, 4]);
+    out column.median();
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="454"
+    ```sds linenums="448"
     @Pure
     @Category(DataScienceCategory.DataExplorationQMetric)
     fun median() -> median: T
@@ -1164,14 +1175,14 @@ Return the minimum value in the column.
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val result = column.min(); // 1
+    val column = Column("a", [1, 2, 3]);
+    out column.min();
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="469"
+    ```sds linenums="463"
     @Pure
     @Category(DataScienceCategory.DataExplorationQMetric)
     fun min() -> min: T?
@@ -1192,8 +1203,14 @@ Return the number of missing values in the column.
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("test", [1, null, 3]);
-    val result = column.missingValueCount(); // 1
+    val column1 = Column("a", [1, 2, 3]);
+    out column1.missingValueCount();
+}
+```
+```sds hl_lines="3"
+pipeline example {
+    val column2 = Column("a", [1, null, 3]);
+    out column2.missingValueCount();
 }
 ```
 
@@ -1227,14 +1244,26 @@ may not be useful for analysis.
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("test", [1, null, 3, null]);
-    val result = column.missingValueRatio(); // 0.5
+    val column1 = Column("a", [1, 2, 3]);
+    out column1.missingValueRatio();
+}
+```
+```sds hl_lines="3"
+pipeline example {
+    val column2 = Column("a", [1, null]);
+    out column2.missingValueRatio();
+}
+```
+```sds hl_lines="3"
+pipeline example {
+    val column3 = Column("a", []);
+    out column3.missingValueRatio();
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="506"
+    ```sds linenums="518"
     @Pure
     @PythonName("missing_value_ratio")
     @Category(DataScienceCategory.DataExplorationQMetric)
@@ -1265,42 +1294,42 @@ of them are returned. The values are sorted in ascending order.
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("test", [3, 1, 2, 1, 3]);
-    val result = column.mode(); // [1, 3]
+    val column = Column("a", [3, 1, 2, 1, 3]);
+    out column.mode();
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="527"
+    ```sds linenums="539"
     @Pure
     @Category(DataScienceCategory.DataExplorationQMetric)
     fun mode(
-        @PythonName("ignore_missing_values") ignoreMissingValues: Boolean = true,
+        @PythonName("ignore_missing_values") ignoreMissingValues: Boolean = true
     ) -> mode: List<T?>
     ```
     { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `none` {#safeds.data.tabular.containers.Column.none data-toc-label='[function] none'}
 
-Return whether no value in the column satisfies the predicate.
+Check whether no value in the column satisfies the predicate.
 
 The predicate can return one of three values:
 
-- true, if the value satisfies the predicate.
-- false, if the value does not satisfy the predicate.
-- null, if the truthiness of the predicate is unknown, e.g. due to missing values.
+* true, if the value satisfies the predicate.
+* false, if the value does not satisfy the predicate.
+* null, if the truthiness of the predicate is unknown, e.g. due to missing values.
 
-By default, cases where the truthiness of the predicate is unknown are ignored and this method returns:
+By default, cases where the truthiness of the predicate is unknown are ignored and this method returns
 
-- true, if the predicate always returns false or null.
-- false, if the predicate returns true at least once.
+* true, if the predicate always returns false or null.
+* false, if the predicate returns true at least once.
 
-You can instead enable Kleene logic by setting `ignoreUnknown = false`. In this case, this method returns:
+You can instead enable Kleene logic by setting `ignoreUnknown = false`. In this case, this method returns
 
-- true, if the predicate always returns false.
-- false, if the predicate returns true at least once.
-- null, if the predicate never returns true, but at least once null.
+* true, if the predicate always returns false.
+* false, if the predicate returns true at least once.
+* null, if the predicate never returns true, but at least once null.
 
 **Parameters:**
 
@@ -1313,38 +1342,35 @@ You can instead enable Kleene logic by setting `ignoreUnknown = false`. In this 
 
 | Name | Type | Description |
 |------|------|-------------|
-| `noneSatisfyPredicate` | [`Int?`][safeds.lang.Int] | Whether no value in the column satisfies the predicate. |
+| `noneSatisfyPredicate` | [`Boolean?`][safeds.lang.Boolean] | Whether no value in the column satisfies the predicate. |
 
 **Examples:**
 
-```sds hl_lines="3"
+```sds hl_lines="3 4 5 6"
 pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val result = column.none((cell) -> cell < 0); // true
-}
-```
-```sds hl_lines="3"
-pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val result = column.none((cell) -> cell > 2); // false
+    val column = Column("a", [1, 2, 3, null]);
+    out column.none((cell) -> cell < 0);
+    out column.none((cell) -> cell > 2);
+    out column.none((cell) -> cell < 0, ignoreUnknown = false);
+    out column.none((cell) -> cell > 2, ignoreUnknown = false);
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="260"
+    ```sds linenums="240"
     @Pure
     @Category(DataScienceCategory.DataExplorationQGeneral)
     fun none(
         predicate: (cell: Cell<T>) -> satisfiesPredicate: Cell<Boolean?>,
-        @PythonName("ignore_unknown") ignoreUnknown: Boolean = true,
-    ) -> noneSatisfyPredicate: Int?
+        @PythonName("ignore_unknown") ignoreUnknown: Boolean = true
+    ) -> noneSatisfyPredicate: Boolean?
     ```
     { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `rename` {#safeds.data.tabular.containers.Column.rename data-toc-label='[function] rename'}
 
-Return a new column with a new name.
+Rename the column and return the result as a new column.
 
 **Note:** The original column is not modified.
 
@@ -1358,26 +1384,25 @@ Return a new column with a new name.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `renamedColumn` | [`Column<T>`][safeds.data.tabular.containers.Column] | A new column with the new name. |
+| `newColumn` | [`Column<T>`][safeds.data.tabular.containers.Column] | A column with the new name. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val result = column.rename("new_name");
-    // Column("new_name", [1, 2, 3])
+    val column = Column("a", [1, 2, 3]);
+    out column.rename("b");
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="283"
+    ```sds linenums="262"
     @Pure
     @Category(DataScienceCategory.DataProcessingQColumn)
     fun rename(
         @PythonName("new_name") newName: String
-    ) -> renamedColumn: Column<T>
+    ) -> newColumn: Column<T>
     ```
     { data-search-exclude }
 
@@ -1401,14 +1426,26 @@ useful for analysis.
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("test", [1, 1, 2, 3, null]);
-    val result = column.stability(); // 0.5
+    val column1 = Column("a", [1, 1, 2, 3, null]);
+    out column1.stability();
+}
+```
+```sds hl_lines="3"
+pipeline example {
+    val column2 = Column("a", [1, 1, 1, 1]);
+    out column2.stability();
+}
+```
+```sds hl_lines="3"
+pipeline example {
+    val column3 = Column("a", []);
+    out column3.stability();
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="550"
+    ```sds linenums="574"
     @Pure
     @Category(DataScienceCategory.DataExplorationQMetric)
     fun stability() -> stability: Float
@@ -1425,20 +1462,20 @@ The standard deviation is the square root of the variance.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `standardDeviation` | [`Float`][safeds.lang.Float] | The standard deviation of the values in the column. If no standard deviation can be calculated due to the type of the column, null is returned. |
+| `standardDeviation` | [`Float`][safeds.lang.Float] | The standard deviation of the values in the column. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val result = column.standardDeviation(); // 1.0
+    val column = Column("a", [1, 2, 3]);
+    out column.standardDeviation();
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="568"
+    ```sds linenums="591"
     @Pure
     @PythonName("standard_deviation")
     @Category(DataScienceCategory.DataExplorationQMetric)
@@ -1449,6 +1486,11 @@ pipeline example {
 ## <code class="doc-symbol doc-symbol-function"></code> `summarizeStatistics` {#safeds.data.tabular.containers.Column.summarizeStatistics data-toc-label='[function] summarizeStatistics'}
 
 Return a table with important statistics about the column.
+
+!!! warning "API Stability"
+
+    Do not rely on the exact output of this method. In future versions, we may change the displayed statistics
+    without prior notice.
 
 **Results:**
 
@@ -1461,13 +1503,13 @@ Return a table with important statistics about the column.
 ```sds hl_lines="3"
 pipeline example {
     val column = Column("a", [1, 3]);
-    val result = column.summarizeStatistics();
+    out column.summarizeStatistics();
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="322"
+    ```sds linenums="305"
     @Pure
     @PythonName("summarize_statistics")
     fun summarizeStatistics() -> statistics: Table
@@ -1482,20 +1524,20 @@ Return the values of the column in a list.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `values` | [`List<T>`][safeds.lang.List] | The values of the column in a list. |
+| `values` | [`List<T>`][safeds.lang.List] | The values of the column. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val result = column.toList(); // [1, 2, 3]
+    val column = Column("a", [1, 2, 3]);
+    out column.toList();
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="602"
+    ```sds linenums="624"
     @Pure
     @PythonName("to_list")
     @Category(DataScienceCategory.UtilitiesQConversion)
@@ -1517,15 +1559,14 @@ Create a table that contains only this column.
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val result = column.toTable();
-    // Table({"test": [1, 2, 3]})
+    val column = Column("a", [1, 2, 3]);
+    out column.toTable();
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="619"
+    ```sds linenums="640"
     @Pure
     @PythonName("to_table")
     @Category(DataScienceCategory.UtilitiesQConversion)
@@ -1535,7 +1576,7 @@ pipeline example {
 
 ## <code class="doc-symbol doc-symbol-function"></code> `transform` {#safeds.data.tabular.containers.Column.transform data-toc-label='[function] transform'}
 
-Return a new column with values transformed by the transformer.
+Transform the values in the column and return the result as a new column.
 
 **Note:** The original column is not modified.
 
@@ -1549,7 +1590,7 @@ Return a new column with values transformed by the transformer.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `transformedColumn` | [`Column<R>`][safeds.data.tabular.containers.Column] | A new column with transformed values. |
+| `newColumn` | [`Column<R>`][safeds.data.tabular.containers.Column] | A column with the transformed values. |
 
 **Type parameters:**
 
@@ -1561,20 +1602,19 @@ Return a new column with values transformed by the transformer.
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val result = column.transform((cell) -> cell * 2);
-    // Column("test", [2, 4, 6])
+    val column = Column("a", [1, 2, 3]);
+    out column.transform((cell) -> 2 * cell);
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="305"
+    ```sds linenums="283"
     @Pure
     @Category(DataScienceCategory.DataProcessingQColumn)
     fun transform<R>(
         transformer: (cell: Cell<T>) -> transformedCell: Cell<R>
-    ) -> transformedColumn: Column<R>
+    ) -> newColumn: Column<R>
     ```
     { data-search-exclude }
 
@@ -1582,26 +1622,26 @@ pipeline example {
 
 Return the variance of the values in the column.
 
-The variance is the average of the squared differences from the mean.
+The variance is the sum of the squared differences from the mean divided by the number of values minus one.
 
 **Results:**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `variance` | [`Float`][safeds.lang.Float] | The variance of the values in the column. If no variance can be calculated due to the type of the column, null is returned. |
+| `variance` | [`Float`][safeds.lang.Float] | The variance of the values in the column. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
-    val column = Column("test", [1, 2, 3]);
-    val result = column.variance(); // 1.0
+    val column = Column("a", [1, 2, 3]);
+    out column.variance();
 }
 ```
 
 ??? quote "Stub code in `Column.sdsstub`"
 
-    ```sds linenums="587"
+    ```sds linenums="609"
     @Pure
     @Category(DataScienceCategory.DataExplorationQMetric)
     fun variance() -> variance: Float

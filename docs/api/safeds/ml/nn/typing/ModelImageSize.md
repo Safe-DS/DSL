@@ -16,7 +16,8 @@ A container for image size in neural networks.
 
 ??? quote "Stub code in `ModelImageSize.sdsstub`"
 
-    ```sds linenums="9"
+    ```sds linenums="8"
+    @Experimental
     class ModelImageSize {
         /**
          * Get the width of this `ImageSize` in pixels.

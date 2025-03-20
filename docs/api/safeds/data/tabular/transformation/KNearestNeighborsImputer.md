@@ -11,7 +11,7 @@ The KNearestNeighborsImputer replaces missing values in given Columns with the m
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `neighborCount` | [`Int`][safeds.lang.Int] | The number of neighbors to consider when imputing missing values. | - |
-| `columnNames` | `#!sds union<List<String>, String?>` | The list of columns used to impute missing values. If 'None', all columns are used. | `#!sds null` |
+| `selector` | `#!sds union<List<String>, String?>` | The list of columns used to impute missing values. If 'None', all columns are used. | `#!sds null` |
 | `valueToReplace` | `#!sds union<Float, String?>` | The placeholder for the missing values. All occurrences of`missing_values` will be imputed. | `#!sds null` |
 
 ??? quote "Stub code in `KNearestNeighborsImputer.sdsstub`"
@@ -19,7 +19,7 @@ The KNearestNeighborsImputer replaces missing values in given Columns with the m
     ```sds linenums="13"
     class KNearestNeighborsImputer(
         @PythonName("neighbor_count") neighborCount: Int,
-        @PythonName("column_names") columnNames: union<List<String>, String, Nothing?> = null,
+        selector: union<List<String>, String, Nothing?> = null,
         @PythonName("value_to_replace") valueToReplace: union<Float, String, Nothing?> = null
     ) sub TableTransformer {
         /**
@@ -164,7 +164,7 @@ Apply the learned transformation to a table.
 
 ??? quote "Stub code in `TableTransformer.sdsstub`"
 
-    ```sds linenums="39"
+    ```sds linenums="37"
     @Pure
     fun transform(
         table: Table

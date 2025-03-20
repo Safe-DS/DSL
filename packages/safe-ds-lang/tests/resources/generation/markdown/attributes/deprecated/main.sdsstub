@@ -1,0 +1,4 @@
+package tests.generation.markdown.attributes.deprecated
+
+@Deprecated
+attr myAttribute1: Int

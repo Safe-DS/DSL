@@ -16,7 +16,9 @@ The function has side effects and/or does not always return the same results giv
 
 ??? quote "Stub code in `purity.sdsstub`"
 
-    ```sds linenums="23"
+    ```sds linenums="21"
+    @Experimental
+    @Targets([AnnotationTarget.Function])
     annotation Impure(allReasons: List<ImpurityReason>)
     ```
     { data-search-exclude }

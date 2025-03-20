@@ -16,6 +16,8 @@ segment »duplicatePublicSegment«() {}
 internal segment »duplicateInternalSegment«() {}
 // $TEST$ no error r"Multiple declarations in this package have the name '\w*'\."
 private segment »duplicatePrivateSegment«() {}
+// $TEST$ error "Multiple declarations in this package have the name 'DuplicateAlias'."
+typealias »DuplicateAlias« = Int
 
 
 // $TEST$ no error r"Multiple declarations in this package have the name '\w*'\."
@@ -34,7 +36,8 @@ segment »uniquePublicSegment«() {}
 internal segment »uniqueInternalSegment«() {}
 // $TEST$ no error r"Multiple declarations in this package have the name '\w*'\."
 private segment »uniquePrivateSegment«() {}
-
+// $TEST$ no error r"Multiple declarations in this package have the name '\w*'\."
+typealias »UniqueAlias« = Int
 
 // $TEST$ no error r"Multiple declarations in this package have the name '\w*'\."
 annotation »MyAnnotation«
@@ -68,3 +71,7 @@ internal segment »myInternalSegment«() {}
 private segment »myPrivateSegment«() {}
 // $TEST$ no error r"Multiple declarations in this package have the name '\w*'\."
 private segment »myPrivateSegment«() {}
+// $TEST$ no error r"Multiple declarations in this package have the name '\w*'\."
+typealias »MyAlias« = Int
+// $TEST$ no error r"Multiple declarations in this package have the name '\w*'\."
+typealias »MyAlias« = Int

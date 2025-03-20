@@ -10,14 +10,14 @@ The StandardScaler transforms column values to a range by removing the mean and 
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `columnNames` | `#!sds union<List<String>, String?>` | The list of columns used to fit the transformer. If `None`, all numeric columns are used. | `#!sds null` |
+| `selector` | `#!sds union<List<String>, String?>` | The list of columns used to fit the transformer. If `None`, all numeric columns are used. | `#!sds null` |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
     val table = Table({"a": [0, 1, 0]});
-    val scaler = StandardScaler(columnNames = "a").fit(table);
+    val scaler = StandardScaler(selector = "a").fit(table);
     val transformedTable = scaler.transform(table);
     // transformedTable = Table({"a": [-0.707,  1.414, -0.707]});
     val originalTable = scaler.inverseTransform(transformedTable);
@@ -29,7 +29,7 @@ pipeline example {
 
     ```sds linenums="21"
     class StandardScaler(
-        @PythonName("column_names") columnNames: union<List<String>, String, Nothing?> = null
+        selector: union<List<String>, String, Nothing?> = null
     ) sub InvertibleTableTransformer {
         /**
          * Learn a transformation for a set of columns in a table.
@@ -179,7 +179,7 @@ Apply the learned transformation to a table.
 
 ??? quote "Stub code in `TableTransformer.sdsstub`"
 
-    ```sds linenums="39"
+    ```sds linenums="37"
     @Pure
     fun transform(
         table: Table

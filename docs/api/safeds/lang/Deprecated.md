@@ -27,7 +27,18 @@ The declaration should no longer be used.
 
 ??? quote "Stub code in `maturity.sdsstub`"
 
-    ```sds linenums="22"
+    ```sds linenums="11"
+    @Targets([
+        AnnotationTarget.Annotation,
+        AnnotationTarget.Attribute,
+        AnnotationTarget.Class,
+        AnnotationTarget.Enum,
+        AnnotationTarget.EnumVariant,
+        AnnotationTarget.Function,
+        AnnotationTarget.Parameter,
+        AnnotationTarget.Result,
+        AnnotationTarget.Segment,
+    ])
     annotation Deprecated(
         alternative: String? = null,
         reason: String? = null,

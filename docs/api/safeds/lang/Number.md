@@ -15,7 +15,7 @@ A number.
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="61"
+    ```sds linenums="31"
     class Number
     ```
     { data-search-exclude }

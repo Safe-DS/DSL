@@ -10,7 +10,7 @@ from safeds.data.tabular.containers import Table
  * @param data The data.
  * @param targetName The name of the target column.
  * @param windowSize The number of consecutive sample to use as input for prediction.
- * @param extraNames Names of the columns that are neither features nor target. If None, no extra columns are used, i.e. all but
+ * @param extraNames Names of the columns that are neither features nor target. If null, no extra columns are used, i.e. all but
  * the target column are used as features.
  * @param forecastHorizon The number of time steps to predict into the future.
  * @param continuous Whether or not to continue the forecast in the steps before forecast horizon.

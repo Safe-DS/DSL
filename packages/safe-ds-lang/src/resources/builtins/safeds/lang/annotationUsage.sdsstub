@@ -71,6 +71,11 @@ enum AnnotationTarget {
     Segment
 
     /**
+     * The annotation can be called on type aliases.
+     */
+    TypeAlias
+
+    /**
      * The annotation can be called on type parameters.
      */
     TypeParameter

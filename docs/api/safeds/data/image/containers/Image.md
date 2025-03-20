@@ -14,7 +14,8 @@ pipeline example {
 
 ??? quote "Stub code in `Image.sdsstub`"
 
-    ```sds linenums="14"
+    ```sds linenums="13"
+    @Experimental
     class Image {
         /**
          * Get the width of the image in pixels.
@@ -190,7 +191,7 @@ pipeline example {
         }
 
         /**
-         * Return a new `Image` that is flipped vertically (horizontal axis, flips up-down and vice versa).
+         * Return a new `Image` where top and bottom are flipped along a horizontal axis.
          *
          * The original image is not modified.
          *
@@ -199,16 +200,16 @@ pipeline example {
          * @example
          * pipeline example {
          *     val image = Image.fromFile("example.png");
-         *     val newImage = image.flipVertically();
+         *     val newImage = image.flipTopAndBottom();
          * }
          */
         @Pure
-        @PythonName("flip_vertically")
+        @PythonName("flip_top_and_bottom")
         @Category(DataScienceCategory.DataProcessingQImage)
-        fun flipVertically() -> newImage: Image
+        fun flipTopAndBottom() -> result: Image
 
         /**
-         * Return a new `Image` that is flipped horizontally (vertical axis, flips left-right and vice versa).
+         * Return a new `Image` where left and right sides are flipped along a vertical axis.
          *
          * The original image is not modified.
          *
@@ -217,13 +218,13 @@ pipeline example {
          * @example
          * pipeline example {
          *     val image = Image.fromFile("example.png");
-         *     val newImage = image.flipHorizontally();
+         *     val newImage = image.flipLeftAndRight();
          * }
          */
         @Pure
-        @PythonName("flip_horizontally")
+        @PythonName("flip_left_and_right")
         @Category(DataScienceCategory.DataProcessingQImage)
-        fun flipHorizontally() -> newImage: Image
+        fun flipLeftAndRight() -> result: Image
 
         /**
          * Return a new `Image` with an adjusted brightness.
@@ -837,9 +838,9 @@ pipeline example {
     ```
     { data-search-exclude }
 
-## <code class="doc-symbol doc-symbol-function"></code> `flipHorizontally` {#safeds.data.image.containers.Image.flipHorizontally data-toc-label='[function] flipHorizontally'}
+## <code class="doc-symbol doc-symbol-function"></code> `flipLeftAndRight` {#safeds.data.image.containers.Image.flipLeftAndRight data-toc-label='[function] flipLeftAndRight'}
 
-Return a new `Image` that is flipped horizontally (vertical axis, flips left-right and vice versa).
+Return a new `Image` where left and right sides are flipped along a vertical axis.
 
 The original image is not modified.
 
@@ -847,14 +848,14 @@ The original image is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `newImage` | [`Image`][safeds.data.image.containers.Image] | The flipped image. |
+| `result` | [`Image`][safeds.data.image.containers.Image] | - |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
     val image = Image.fromFile("example.png");
-    val newImage = image.flipHorizontally();
+    val newImage = image.flipLeftAndRight();
 }
 ```
 
@@ -862,15 +863,15 @@ pipeline example {
 
     ```sds linenums="219"
     @Pure
-    @PythonName("flip_horizontally")
+    @PythonName("flip_left_and_right")
     @Category(DataScienceCategory.DataProcessingQImage)
-    fun flipHorizontally() -> newImage: Image
+    fun flipLeftAndRight() -> result: Image
     ```
     { data-search-exclude }
 
-## <code class="doc-symbol doc-symbol-function"></code> `flipVertically` {#safeds.data.image.containers.Image.flipVertically data-toc-label='[function] flipVertically'}
+## <code class="doc-symbol doc-symbol-function"></code> `flipTopAndBottom` {#safeds.data.image.containers.Image.flipTopAndBottom data-toc-label='[function] flipTopAndBottom'}
 
-Return a new `Image` that is flipped vertically (horizontal axis, flips up-down and vice versa).
+Return a new `Image` where top and bottom are flipped along a horizontal axis.
 
 The original image is not modified.
 
@@ -878,14 +879,14 @@ The original image is not modified.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `newImage` | [`Image`][safeds.data.image.containers.Image] | The flipped image. |
+| `result` | [`Image`][safeds.data.image.containers.Image] | - |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
     val image = Image.fromFile("example.png");
-    val newImage = image.flipVertically();
+    val newImage = image.flipTopAndBottom();
 }
 ```
 
@@ -893,9 +894,9 @@ pipeline example {
 
     ```sds linenums="201"
     @Pure
-    @PythonName("flip_vertically")
+    @PythonName("flip_top_and_bottom")
     @Category(DataScienceCategory.DataProcessingQImage)
-    fun flipVertically() -> newImage: Image
+    fun flipTopAndBottom() -> result: Image
     ```
     { data-search-exclude }
 

@@ -1,0 +1,16 @@
+package tests.scoping.references.acrossFiles.toGlobalAttributes.other
+
+// $TEST$ target other_myAttribute
+attr »myAttribute«: Int
+
+// $TEST$ target other_publicAttributeInAnotherPackage
+attr »publicAttributeInAnotherPackage«: Int
+
+// $TEST$ target other_publicAttributeInAnotherPackage2
+attr »publicAttributeInAnotherPackage2«: Int
+
+// $TEST$ target other_internalAttributeInAnotherPackage
+internal attr »internalAttributeInAnotherPackage«: Int
+
+// $TEST$ target other_privateAttributeInAnotherPackage
+private attr »privateAttributeInAnotherPackage«: Int

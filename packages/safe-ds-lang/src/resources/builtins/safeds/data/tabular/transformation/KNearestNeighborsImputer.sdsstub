@@ -7,12 +7,12 @@ from safeds.data.tabular.transformation import TableTransformer
  * The KNearestNeighborsImputer replaces missing values in given Columns with the mean value of the K-nearest neighbors.
  *
  * @param neighborCount The number of neighbors to consider when imputing missing values.
- * @param columnNames The list of columns used to impute missing values. If 'None', all columns are used.
+ * @param selector The list of columns used to impute missing values. If 'None', all columns are used.
  * @param valueToReplace The placeholder for the missing values. All occurrences of`missing_values` will be imputed.
  */
 class KNearestNeighborsImputer(
     @PythonName("neighbor_count") neighborCount: Int,
-    @PythonName("column_names") columnNames: union<List<String>, String, Nothing?> = null,
+    selector: union<List<String>, String, Nothing?> = null,
     @PythonName("value_to_replace") valueToReplace: union<Float, String, Nothing?> = null
 ) sub TableTransformer {
     /**

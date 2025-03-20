@@ -10,7 +10,9 @@ This parameter should only be used by expert users.
 
 ??? quote "Stub code in `ideIntegration.sdsstub`"
 
-    ```sds linenums="8"
+    ```sds linenums="6"
+    @Experimental
+    @Targets([AnnotationTarget.Parameter])
     annotation Expert
     ```
     { data-search-exclude }
