@@ -8,8 +8,8 @@ Columns in a tabular dataset are divided into three categories:
 
 - The target column is the column that a model should predict.
 - Feature columns are columns that a model should use to make predictions.
-- Extra columns are columns that are neither feature nor target. They can be used to provide additional context,
-  like an ID column.
+- Extra columns are columns that are neither feature nor target. They are ignored by models and can be used to
+  provide additional context. An ID or name column is a common example.
 
 Feature columns are implicitly defined as all columns except the target and extra columns. If no extra columns
 are specified, all columns except the target column are used as features.
@@ -22,7 +22,7 @@ are specified, all columns except the target column are used as features.
 |------|------|-------------|---------|
 | `data` | `#!sds union<Map<String, List<Any>>, Table>` | The data. | - |
 | `targetName` | [`String`][safeds.lang.String] | The name of the target column. | - |
-| `extraNames` | [`List<String>`][safeds.lang.List] | Names of the columns that are neither features nor target. If null, no extra columns are used, i.e. all but the target column are used as features. | `#!sds []` |
+| `extraNames` | `#!sds union<List<String>, String>` | Names of the columns that are neither feature nor target. If null, no extra columns are used, i.e. all but the target column are used as features. | `#!sds []` |
 
 **Examples:**
 
@@ -32,10 +32,10 @@ pipeline example {
         {
             "id": [1, 2, 3],
             "feature": [4, 5, 6],
-            "target": [1, 2, 3],
+            "target": [7, 8, 9],
         },
     );
-    val dataset = table.toTabularDataset(targetName="target", extraNames=["id"]);
+    val dataset = table.toTabularDataset("target", extraNames="id");
 }
 ```
 
@@ -45,7 +45,7 @@ pipeline example {
     class TabularDataset(
         data: union<Map<String, List<Any>>, Table>,
         @PythonName("target_name") targetName: String,
-        @PythonName("extra_names") extraNames: List<String> = []
+        @PythonName("extra_names") extraNames: union<List<String>, String> = []
     ) sub Dataset<Table, Column> {
         /**
          * The feature columns of the tabular dataset.
@@ -73,7 +73,7 @@ pipeline example {
          *         {
          *             "id": [1, 2, 3],
          *             "feature": [4, 5, 6],
-         *             "target": [1, 2, 3],
+         *             "target": [7, 8, 9],
          *         },
          *     );
          *     val tabularDataset = table.toTabularDataset(targetName="target", extraNames=["id"]);
@@ -125,7 +125,7 @@ pipeline example {
         {
             "id": [1, 2, 3],
             "feature": [4, 5, 6],
-            "target": [1, 2, 3],
+            "target": [7, 8, 9],
         },
     );
     val tabularDataset = table.toTabularDataset(targetName="target", extraNames=["id"]);

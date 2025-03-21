@@ -115,7 +115,7 @@ to 1.0. You can interpret the coefficient of determination as follows:
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="67"
+    ```sds linenums="72"
     @Pure
     @PythonName("coefficient_of_determination")
     @Category(DataScienceCategory.ModelEvaluationQMetric)
@@ -227,14 +227,14 @@ Return the type of the target column.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `targetType` | [`DataType`][safeds.data.tabular.typing.DataType] | The type of the target column. |
+| `targetType` | [`ColumnType`][safeds.data.tabular.typing.ColumnType] | The type of the target column. |
 
 ??? quote "Stub code in `SupervisedModel.sdsstub`"
 
     ```sds linenums="85"
     @Pure
     @PythonName("get_target_type")
-    fun getTargetType() -> targetType: DataType
+    fun getTargetType() -> targetType: ColumnType
     ```
     { data-search-exclude }
 
@@ -263,7 +263,7 @@ infinity.
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="88"
+    ```sds linenums="93"
     @Pure
     @PythonName("mean_absolute_error")
     @Category(DataScienceCategory.ModelEvaluationQMetric)
@@ -302,7 +302,7 @@ for other types of data. Because of this, it is not included in the `summarize_m
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="113"
+    ```sds linenums="118"
     @Pure
     @PythonName("mean_directional_accuracy")
     @Category(DataScienceCategory.ModelEvaluationQMetric)
@@ -339,7 +339,7 @@ infinity.
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="136"
+    ```sds linenums="141"
     @Pure
     @PythonName("mean_squared_error")
     @Category(DataScienceCategory.ModelEvaluationQMetric)
@@ -374,7 +374,7 @@ positive infinity.
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="157"
+    ```sds linenums="162"
     @Pure
     @PythonName("median_absolute_deviation")
     @Category(DataScienceCategory.ModelEvaluationQMetric)
@@ -418,6 +418,11 @@ Summarize the regressor's metrics on the given data.
 
 **Note:** The model must be fitted.
 
+!!! warning "API Stability"
+
+    Do not rely on the exact output of this method. In future versions, we may change the displayed metrics
+    without prior notice.
+
 **Parameters:**
 
 | Name | Type | Description | Default |
@@ -432,7 +437,7 @@ Summarize the regressor's metrics on the given data.
 
 ??? quote "Stub code in `Regressor.sdsstub`"
 
-    ```sds linenums="35"
+    ```sds linenums="40"
     @Pure
     @PythonName("summarize_metrics")
     @Category(DataScienceCategory.ModelEvaluationQMetric)

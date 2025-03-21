@@ -161,7 +161,8 @@ export class RunnerApi {
             const cstNode = outputStatement.$cstNode;
             const index = outputStatement.$containerIndex;
             const expressionCstNode = outputStatement.expression.$cstNode;
-            if (!cstNode || !index || !expressionCstNode) {
+            // Do not replace index check with `!index`, as 0 is a valid index.
+            if (!cstNode || index === undefined || !expressionCstNode) {
                 continue;
             }
 
@@ -423,9 +424,9 @@ export class RunnerApi {
             tablePlaceholder +
             '.plot.linePlot(xName="' +
             xAxisColumnName +
-            '", yName="' +
+            '", yNames=["' +
             yAxisColumnName +
-            '"); \n'
+            '"]); \n'
         );
     }
 
@@ -442,9 +443,9 @@ export class RunnerApi {
             tablePlaceholder +
             '.plot.scatterPlot(xName="' +
             xAxisColumnName +
-            '", yName="' +
+            '", yNames=["' +
             yAxisColumnName +
-            '"); \n'
+            '"]); \n'
         );
     }
 
@@ -454,7 +455,13 @@ export class RunnerApi {
 
     private sdsStringForIsNumeric(tablePlaceholder: string, columnName: string, newPlaceholderName: string) {
         return (
-            'val ' + newPlaceholderName + ' = ' + tablePlaceholder + '.getColumn("' + columnName + '").isNumeric; \n'
+            'val ' +
+            newPlaceholderName +
+            ' = ' +
+            tablePlaceholder +
+            '.getColumnType("' +
+            columnName +
+            '").isNumeric; \n'
         );
     }
 
@@ -473,6 +480,7 @@ export class RunnerApi {
             '.sortRowsByColumn("' +
             columnName +
             '" , ' +
+            'descending = ' +
             (direction === 'desc') +
             '); \n'
         );
@@ -1134,13 +1142,11 @@ export class RunnerApi {
             }
         }
 
-        const results = await this.executeMultipleHistoryAndReturnNewResults(
+        return this.executeMultipleHistoryAndReturnNewResults(
             filteredFutureEntries,
             currentPlaceholderOverride,
             sdsLines,
         );
-
-        return results;
     }
 
     filterPastEntries(pastEntries: HistoryEntry[], newEntry?: HistoryEntry): HistoryEntry[] {

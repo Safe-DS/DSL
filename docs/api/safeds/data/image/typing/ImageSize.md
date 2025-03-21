@@ -13,7 +13,8 @@ A container for image size data.
 
 ??? quote "Stub code in `ImageSize.sdsstub`"
 
-    ```sds linenums="15"
+    ```sds linenums="14"
+    @Experimental
     class ImageSize sub ConstantImageSize
     ```
     { data-search-exclude }

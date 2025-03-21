@@ -11,7 +11,7 @@ The common subclass of all classes.
 
 ??? quote "Stub code in `coreClasses.sdsstub`"
 
-    ```sds linenums="41"
+    ```sds linenums="11"
     class Nothing
     ```
     { data-search-exclude }

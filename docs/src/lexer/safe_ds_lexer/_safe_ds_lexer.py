@@ -6,6 +6,7 @@ keywords_annotation = ("annotation",)
 keywords_class = (
     "class",
     "enum",
+    "typealias",
 )
 
 keywords_constant = (

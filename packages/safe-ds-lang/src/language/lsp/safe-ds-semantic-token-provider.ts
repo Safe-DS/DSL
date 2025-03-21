@@ -24,6 +24,7 @@ import {
     isSdsReference,
     isSdsResult,
     isSdsSegment,
+    isSdsTypeAlias,
     isSdsTypeArgument,
     isSdsTypeParameter,
     isSdsYield,
@@ -217,6 +218,11 @@ export class SafeDsSemanticTokenProvider extends AbstractSemanticTokenProvider {
         } else if (isSdsSegment(node)) {
             return {
                 type: SemanticTokenTypes.function,
+                modifier: additionalModifiers,
+            };
+        } else if (isSdsTypeAlias(node)) {
+            return {
+                type: SemanticTokenTypes.type,
                 modifier: additionalModifiers,
             };
         } else if (isSdsTypeParameter(node)) {

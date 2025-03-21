@@ -7,6 +7,7 @@ import {
     isSdsMemberAccess,
     isSdsPipeline,
     isSdsSegment,
+    isSdsTypeAlias,
     SdsReference,
 } from '../../../generated/ast.js';
 import { AstNode, ValidationAcceptor } from 'langium';
@@ -76,7 +77,10 @@ export const referenceMustNotBeStaticClassOrEnumReference = (node: SdsReference,
     }
 };
 
-export const referenceTargetMustNotBeAnnotationOrPipeline = (node: SdsReference, accept: ValidationAcceptor): void => {
+export const referenceTargetMustNotBeAnnotationPipelineOrTypeAlias = (
+    node: SdsReference,
+    accept: ValidationAcceptor,
+): void => {
     const target = node.target.ref;
 
     if (isSdsAnnotation(target)) {
@@ -86,6 +90,11 @@ export const referenceTargetMustNotBeAnnotationOrPipeline = (node: SdsReference,
         });
     } else if (isSdsPipeline(target)) {
         accept('error', 'A pipeline must not be the target of a reference.', {
+            node,
+            code: CODE_REFERENCE_TARGET,
+        });
+    } else if (isSdsTypeAlias(target)) {
+        accept('error', 'A type alias must not be the target of a reference.', {
             node,
             code: CODE_REFERENCE_TARGET,
         });

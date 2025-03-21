@@ -1,0 +1,55 @@
+package tests.scoping.references.acrossFiles.toGlobalAttributes
+
+from safeds.scoping.references.acrossFiles.toGlobalAttributes import myAttribute as myOwnAttribute
+from tests.scoping.references.acrossFiles.toGlobalAttributes.other import publicAttributeInAnotherPackage, publicAttributeInAnotherPackage2
+
+// $TEST$ target own_myOwnAttribute
+attr »myOwnAttribute«: Int
+
+pipeline myPipeline {
+    // $TEST$ references own_myOwnAttribute
+    »myOwnAttribute«;
+
+
+    // $TEST$ references same_publicAttributeInSamePackage
+    »publicAttributeInSamePackage«;
+
+    // $TEST$ references same_internalAttributeInSamePackage
+    »internalAttributeInSamePackage«;
+
+    // $TEST$ unresolved
+    »privateAttributeInSamePackage«;
+
+
+    // $TEST$ references safeds_publicAttributeInSafeDsPackage
+    »publicAttributeInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »internalAttributeInSafeDsPackage«;
+
+    // $TEST$ unresolved
+    »privateAttributeInSafeDsPackage«;
+
+
+    // $TEST$ references other_publicAttributeInAnotherPackage
+    »publicAttributeInAnotherPackage«;
+
+    // $TEST$ references other_publicAttributeInAnotherPackage2
+    »publicAttributeInAnotherPackage2«;
+
+    // $TEST$ unresolved
+    »internalAttributeInAnotherPackage«;
+
+    // $TEST$ unresolved
+    »privateAttributeInAnotherPackage«;
+
+
+    // $TEST$ unresolved
+    »publicAttributeWithoutPackage«;
+
+    // $TEST$ unresolved
+    »internalAttributeWithoutPackage«;
+
+    // $TEST$ unresolved
+    »privateAttributeWithoutPackage«;
+}
