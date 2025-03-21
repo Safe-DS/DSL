@@ -137,7 +137,9 @@ describe('Parser', async () => {
         it('should report error when no pipeline is defined', async () => {
             const document = await parseHelper(services)(`
                 package test
-                class Test {}
+                segment Test() -> result: Int {
+                    yield result = 42;
+                }
             `);
 
             const parser = new Parser(
@@ -184,7 +186,7 @@ describe('Parser', async () => {
             const document = await parseHelper(services)(`
                 package test
                 segment TestSegment(input: Int) -> output: Int {
-                    output = input * 2
+                    yield output = input * 2;
                 }
             `);
 

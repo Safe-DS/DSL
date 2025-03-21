@@ -17,7 +17,7 @@ describe('Segment', async () => {
         it('should parse a segment with no parameters or results', async () => {
             const document = await parseHelper(services)(`
                 package test
-                segment SimpleSegment {
+                segment SimpleSegment () {
                     // Empty segment
                 }
             `);
@@ -54,14 +54,10 @@ describe('Segment', async () => {
         it('should parse a segment with parameters and results', async () => {
             const document = await parseHelper(services)(`
                 package test
-                segment ComplexSegment(
-                    param1: Int,
-                    param2: String
-                ) -> (
-                    result1: Int,
-                    result2: String
-                ) {
-                    // Test segment
+
+                segment ComplexSegment(param1: Int, param2: String) -> (result1: Int, result2: String) {
+                    yield result1 = param1;
+                    yield result2 = param2;
                 }
             `);
 
@@ -102,8 +98,8 @@ describe('Segment', async () => {
             const document = await parseHelper(services)(`
                 package test
                 segment SegmentWithStatements(input: Int) -> output: Int {
-                    val x = input + 1
-                    output = x
+                    val x = input + 1;
+                    yield output = x;
                 }
             `);
 
