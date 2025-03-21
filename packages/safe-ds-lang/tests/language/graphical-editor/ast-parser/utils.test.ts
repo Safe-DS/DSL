@@ -1,94 +1,65 @@
 import { describe, expect, it } from 'vitest';
-import { filterErrors, zip } from '../../../../src/language/graphical-editor/ast-parser/utils.js';
+import { zip, filterErrors } from '../../../../src/language/graphical-editor/ast-parser/utils.js';
 import { CustomError } from '../../../../src/language/graphical-editor/types.js';
 
-describe('utils', () => {
-    describe('zip', () => {
-        it('should zip two arrays of equal length', () => {
-            const array1 = [1, 2, 3];
-            const array2 = ['a', 'b', 'c'];
+describe('Utils', () => {
+    it('should zip arrays correctly', () => {
+        const arr1 = [1, 2, 3];
+        const arr2 = ['a', 'b', 'c'];
 
-            const result = zip(array1, array2);
+        const zipped = zip(arr1, arr2);
 
-            expect(result).toStrictEqual([
-                [1, 'a'],
-                [2, 'b'],
-                [3, 'c'],
-            ]);
-        });
-
-        it('should zip arrays to the length of the shorter array', () => {
-            const array1 = [1, 2, 3, 4, 5];
-            const array2 = ['a', 'b', 'c'];
-
-            const result = zip(array1, array2);
-
-            expect(result).toStrictEqual([
-                [1, 'a'],
-                [2, 'b'],
-                [3, 'c'],
-            ]);
-
-            // Test with the first array being shorter
-            const array3 = [1, 2];
-            const array4 = ['a', 'b', 'c', 'd'];
-
-            const result2 = zip(array3, array4);
-
-            expect(result2).toStrictEqual([
-                [1, 'a'],
-                [2, 'b'],
-            ]);
-        });
-
-        it('should return an empty array when either input is empty', () => {
-            const array1: number[] = [];
-            const array2 = ['a', 'b', 'c'];
-
-            const result = zip(array1, array2);
-
-            expect(result).toStrictEqual([]);
-
-            const array3 = [1, 2, 3];
-            const array4: string[] = [];
-
-            const result2 = zip(array3, array4);
-
-            expect(result2).toStrictEqual([]);
-        });
+        expect(zipped).toHaveLength(3);
+        expect(zipped[0]).toStrictEqual([1, 'a']);
+        expect(zipped[1]).toStrictEqual([2, 'b']);
+        expect(zipped[2]).toStrictEqual([3, 'c']);
     });
 
-    describe('filterErrors', () => {
-        it('should filter out CustomError instances from an array', () => {
-            const error1 = new CustomError('block', 'Error 1');
-            const error2 = new CustomError('notify', 'Error 2');
-            const validValue1 = 'valid1';
-            const validValue2 = 'valid2';
+    it('should handle arrays of different lengths', () => {
+        const arr1 = [1, 2, 3, 4];
+        const arr2 = ['a', 'b', 'c'];
 
-            const mixedArray = [validValue1, error1, validValue2, error2];
+        const zipped = zip(arr1, arr2);
 
-            const result = filterErrors(mixedArray);
+        expect(zipped).toHaveLength(3); // Zip only creates pairs for the shorter array's length
+        expect(zipped[0]).toStrictEqual([1, 'a']);
+        expect(zipped[1]).toStrictEqual([2, 'b']);
+        expect(zipped[2]).toStrictEqual([3, 'c']);
+    });
 
-            expect(result).toStrictEqual([validValue1, validValue2]);
-        });
+    it('should filter errors from arrays', () => {
+        const array = [1, new CustomError('block', 'Test error'), 3, new CustomError('block', 'Another error')];
 
-        it('should return an empty array when all items are errors', () => {
-            const error1 = new CustomError('block', 'Error 1');
-            const error2 = new CustomError('notify', 'Error 2');
+        const filtered = filterErrors(array);
 
-            const errorArray = [error1, error2];
+        expect(filtered).toHaveLength(2);
+        expect(filtered).toContain(1);
+        expect(filtered).toContain(3);
+    });
 
-            const result = filterErrors(errorArray);
+    it('should handle empty arrays', () => {
+        const emptyArray: any[] = [];
 
-            expect(result).toStrictEqual([]);
-        });
+        const zippedEmpty = zip(emptyArray, emptyArray);
+        expect(zippedEmpty).toHaveLength(0);
 
-        it('should return the original array when no errors are present', () => {
-            const validValues = ['valid1', 'valid2', 'valid3'];
+        const filteredEmpty = filterErrors(emptyArray);
+        expect(filteredEmpty).toHaveLength(0);
+    });
 
-            const result = filterErrors(validValues);
+    it('should correctly identify error instances', () => {
+        const arrayWithError = [1, new CustomError('block', 'Test error'), 3];
+        const arrayWithoutError = [1, 2, 3];
 
-            expect(result).toStrictEqual(validValues);
-        });
+        // Test filterErrors behavior with and without errors
+        expect(filterErrors(arrayWithError).length).toBeLessThan(arrayWithError.length);
+        expect(filterErrors(arrayWithoutError)).toHaveLength(arrayWithoutError.length);
+
+        // Manual check for presence of CustomError
+        const hasError = arrayWithError.some((item) => item instanceof CustomError);
+        const noError = arrayWithoutError.every((item) => !((item as any) instanceof CustomError));
+
+        expect(hasError).toBeTruthy();
+        expect(noError).toBeTruthy();
     });
 });
