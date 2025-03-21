@@ -11,7 +11,7 @@ Replace missing values with the given strategy.
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
 | `strategy` | [`Strategy`][safeds.data.tabular.transformation.SimpleImputer.Strategy] | The strategy used to impute missing values. | - |
-| `columnNames` | `#!sds union<List<String>, String?>` | The list of columns used to fit the transformer. If `None`, all columns are used. | `#!sds null` |
+| `selector` | `#!sds union<List<String>, String?>` | The list of columns used to fit the transformer. If `None`, all columns are used. | `#!sds null` |
 | `valueToReplace` | `#!sds union<Float, String?>` | The value that should be replaced. | `#!sds null` |
 
 **Examples:**
@@ -19,7 +19,7 @@ Replace missing values with the given strategy.
 ```sds hl_lines="3"
 pipeline example {
    val table = Table({"a": [1, null], "b": [3, 4]});
-   val imputer = SimpleImputer(SimpleImputer.Strategy.Mean, columnNames = "a").fit(table);
+   val imputer = SimpleImputer(SimpleImputer.Strategy.Mean, selector = "a").fit(table);
    val transformedTable = imputer.transform(table);
    // Table({"a": [1, 1], "b": [3, 4]})
 }
@@ -27,7 +27,7 @@ pipeline example {
 ```sds hl_lines="3"
 pipeline example {
    val table = Table({"a": [1, null], "b": [3, 4]});
-   val imputer = SimpleImputer(SimpleImputer.Strategy.Constant(0), columnNames = "a").fit(table);
+   val imputer = SimpleImputer(SimpleImputer.Strategy.Constant(0), selector = "a").fit(table);
    val transformedTable = imputer.transform(table);
    // Table({"a": [1, 0], "b": [3, 4]})
 }
@@ -38,7 +38,7 @@ pipeline example {
     ```sds linenums="29"
     class SimpleImputer(
         strategy: SimpleImputer.Strategy,
-        @PythonName("column_names") columnNames: union<List<String>, String, Nothing?> = null,
+        selector: union<List<String>, String, Nothing?> = null,
         @PythonName("value_to_replace") valueToReplace: union<Float, String, Nothing?> = null
     ) sub TableTransformer {
         /**
@@ -210,7 +210,7 @@ Apply the learned transformation to a table.
 
 ??? quote "Stub code in `TableTransformer.sdsstub`"
 
-    ```sds linenums="39"
+    ```sds linenums="37"
     @Pure
     fun transform(
         table: Table

@@ -21,7 +21,9 @@ A convolutional 2D Layer.
 
 ??? quote "Stub code in `Convolutional2DLayer.sdsstub`"
 
-    ```sds linenums="16"
+    ```sds linenums="14"
+    @Experimental
+    @Category(DataScienceCategory.ModelingQNeuralNetwork)
     class Convolutional2DLayer(
         @PythonName("output_channel") outputChannel: Int,
         @PythonName("kernel_size") kernelSize: Int,

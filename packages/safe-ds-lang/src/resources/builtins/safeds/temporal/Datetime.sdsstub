@@ -1,0 +1,73 @@
+@PythonModule("datetime")
+package safeds.temporal
+
+/**
+ * A date and time.
+ *
+ * @param year The year.
+ * @param month The month. Must be between 1 and 12.
+ * @param day The day. Must be between 1 and 31.
+ * @param hour The hour. Must be between 0 and 23.
+ * @param minute The minute. Must be between 0 and 59.
+ * @param second The second. Must be between 0 and 59.
+ * @param microsecond The microsecond. Must be between 0 and 999,999.
+ */
+@Experimental
+@PythonName("datetime")
+class Datetime(
+    year: Int,
+    const month: Int,
+    const day: Int,
+    const hour: Int,
+    const minute: Int,
+    const second: Int,
+    const microsecond: Int = 0
+) where {
+    month >= 1,
+    month <= 12,
+    day >= 1,
+    day <= 31,
+    hour >= 0,
+    hour <= 23,
+    minute >= 0,
+    minute <= 59,
+    second >= 0,
+    second <= 59,
+    microsecond >= 0,
+    microsecond <= 999999
+} {
+    /**
+     * The year.
+     */
+    attr year: Int
+
+    /**
+     * The month.
+     */
+    attr month: Int
+
+    /**
+     * The day.
+     */
+    attr day: Int
+
+    /**
+     * The hour.
+     */
+    attr hour: Int
+
+    /**
+     * The minute.
+     */
+    attr minute: Int
+
+    /**
+     * The second.
+     */
+    attr second: Int
+
+    /**
+     * The microsecond.
+     */
+    attr microsecond: Int
+}

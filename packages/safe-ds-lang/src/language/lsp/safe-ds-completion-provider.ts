@@ -16,6 +16,7 @@ import {
     isSdsTypeParameter,
     SdsAnnotation,
     SdsPipeline,
+    SdsTypeAlias,
 } from '../generated/ast.js';
 import { Class, getPackageName } from '../helpers/nodeProperties.js';
 import { isInPipelineFile, isInStubFile } from '../helpers/fileExtensions.js';
@@ -46,7 +47,7 @@ export class SafeDsCompletionProvider extends DefaultCompletionProvider {
             .filter((description) => this.filterReferenceCandidate(refInfo, description));
     }
 
-    private illegalNodeTypesForReferences = new Set([SdsAnnotation, SdsPipeline]);
+    private illegalNodeTypesForReferences = new Set([SdsAnnotation, SdsPipeline, SdsTypeAlias]);
 
     private filterReferenceCandidate(refInfo: ReferenceInfo, description: AstNodeDescription): boolean {
         if (isSdsNamedType(refInfo.container)) {
@@ -72,7 +73,14 @@ export class SafeDsCompletionProvider extends DefaultCompletionProvider {
         return true;
     }
 
-    private illegalKeywordsInModuleContextOfPipelineFile = new Set(['annotation', 'class', 'enum', 'fun', 'this']);
+    private illegalKeywordsInModuleContextOfPipelineFile = new Set([
+        'annotation',
+        'attr',
+        'class',
+        'enum',
+        'fun',
+        'this',
+    ]);
     private illegalKeywordsInModuleContextOfStubFile = new Set(['pipeline', 'segment']);
 
     protected override filterKeyword(context: CompletionContext, keyword: Keyword): boolean {

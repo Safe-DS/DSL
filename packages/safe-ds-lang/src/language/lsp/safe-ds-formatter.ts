@@ -63,6 +63,8 @@ export class SafeDsFormatter extends AbstractFormatter {
             this.formatPipeline(node);
         } else if (ast.isSdsSegment(node)) {
             this.formatSegment(node);
+        } else if (ast.isSdsTypeAlias(node)) {
+            this.formatTypeAlias(node);
         }
 
         // -----------------------------------------------------------------------------
@@ -309,15 +311,16 @@ export class SafeDsFormatter extends AbstractFormatter {
     private formatAttribute(node: ast.SdsAttribute): void {
         const formatter = this.getNodeFormatter(node);
 
-        if (getAnnotationCalls(node).length > 0) {
-            if (node.isStatic) {
+        if (node.isStatic) {
+            // A static attribute cannot have a visibility modifier
+            if (getAnnotationCalls(node).length > 0) {
                 formatter.keyword('static').prepend(newLine());
-            } else {
-                formatter.keyword('attr').prepend(newLine());
             }
+            formatter.keyword('static').append(oneSpace());
+        } else {
+            this.formatVisibilityAndKeyword(formatter, node, 'attr');
         }
 
-        formatter.keyword('static').append(oneSpace());
         formatter.property('name').prepend(oneSpace());
         formatter.keyword(':').prepend(noSpace()).append(oneSpace());
     }
@@ -443,6 +446,14 @@ export class SafeDsFormatter extends AbstractFormatter {
         formatter.property('resultList').prepend(oneSpace());
         formatter.property('constraintList').prepend(oneSpace());
         formatter.property('body').prepend(oneSpace());
+    }
+
+    private formatTypeAlias(node: ast.SdsTypeAlias): void {
+        const formatter = this.getNodeFormatter(node);
+
+        this.formatVisibilityAndKeyword(formatter, node, 'typealias');
+        formatter.property('name').prepend(oneSpace());
+        formatter.keyword('=').surround(oneSpace());
     }
 
     private formatVisibilityAndKeyword(

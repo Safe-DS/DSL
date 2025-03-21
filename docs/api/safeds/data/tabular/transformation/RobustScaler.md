@@ -4,7 +4,8 @@
 
 The RobustScaler transforms column values to a range by removing the median and scaling to the interquartile range.
 
-Currently, for columns with high stability (IQR == 0), it will only substract the median and not scale to avoid dividing by zero.
+Currently, for columns with high stability (IQR == 0), it will only subtract the median and not scale to avoid
+dividing by zero.
 
 **Parent type:** [`InvertibleTableTransformer`][safeds.data.tabular.transformation.InvertibleTableTransformer]
 
@@ -12,13 +13,13 @@ Currently, for columns with high stability (IQR == 0), it will only substract th
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `columnNames` | `#!sds union<List<String>, String?>` | The list of columns used to fit the transformer. If `None`, all numeric columns are used. | `#!sds null` |
+| `selector` | `#!sds union<List<String>, String?>` | The list of columns used to fit the transformer. If `None`, all numeric columns are used. | `#!sds null` |
 
 ??? quote "Stub code in `RobustScaler.sdsstub`"
 
-    ```sds linenums="13"
+    ```sds linenums="14"
     class RobustScaler(
-        @PythonName("column_names") columnNames: union<List<String>, String, Nothing?> = null
+        selector: union<List<String>, String, Nothing?> = null
     ) sub InvertibleTableTransformer {
         /**
          * Learn a transformation for a set of columns in a table.
@@ -79,7 +80,7 @@ Learn a transformation for a set of columns in a table.
 
 ??? quote "Stub code in `RobustScaler.sdsstub`"
 
-    ```sds linenums="25"
+    ```sds linenums="26"
     @Pure
     fun fit(
         table: Table
@@ -108,7 +109,7 @@ Learn a transformation for a set of columns in a table and apply the learned tra
 
 ??? quote "Stub code in `RobustScaler.sdsstub`"
 
-    ```sds linenums="40"
+    ```sds linenums="41"
     @Pure
     @PythonName("fit_and_transform")
     fun fitAndTransform(
@@ -168,7 +169,7 @@ Apply the learned transformation to a table.
 
 ??? quote "Stub code in `TableTransformer.sdsstub`"
 
-    ```sds linenums="39"
+    ```sds linenums="37"
     @Pure
     fun transform(
         table: Table

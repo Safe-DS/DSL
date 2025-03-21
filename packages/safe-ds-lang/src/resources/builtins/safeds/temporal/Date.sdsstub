@@ -1,0 +1,37 @@
+@PythonModule("datetime")
+package safeds.temporal
+
+/**
+ * A date (without a time).
+ *
+ * @param year The year.
+ * @param month The month. Must be between 1 and 12.
+ * @param day The day. Must be between 1 and 31.
+ */
+@Experimental
+@PythonName("date")
+class Date(
+    year: Int,
+    const month: Int,
+    const day: Int,
+) where {
+    month >= 1,
+    month <= 12,
+    day >= 1,
+    day <= 31,
+} {
+    /**
+     * The year.
+     */
+    attr year: Int
+
+    /**
+     * The month.
+     */
+    attr month: Int
+
+    /**
+     * The day.
+     */
+    attr day: Int
+}

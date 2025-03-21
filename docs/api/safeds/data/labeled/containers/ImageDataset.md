@@ -34,7 +34,8 @@ pipeline example {
 
 ??? quote "Stub code in `ImageDataset.sdsstub`"
 
-    ```sds linenums="25"
+    ```sds linenums="24"
+    @Experimental
     class ImageDataset<out O>(
         @PythonName("input_data") inputData: ImageList,
         @PythonName("output_data") outputData: O,

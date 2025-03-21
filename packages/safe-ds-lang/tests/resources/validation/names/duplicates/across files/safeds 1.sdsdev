@@ -23,3 +23,5 @@ segment »duplicatePublicSegment«() {}
 internal segment »duplicateInternalSegment«() {}
 // $TEST$ no error r"Multiple builtin declarations have the name '\w*'\."
 private segment »duplicatePrivateSegment«() {}
+// $TEST$ error "Multiple builtin declarations have the name 'DuplicateAlias'."
+typealias »DuplicateAlias« = Int

@@ -14,7 +14,8 @@ Get a baseline by fitting data on multiple different models and comparing the be
 
 ??? quote "Stub code in `BaselineClassifier.sdsstub`"
 
-    ```sds linenums="14"
+    ```sds linenums="13"
+    @Experimental
     class BaselineClassifier(
         @PythonName("extended_search") extendedSearch: Boolean = false
     ) {

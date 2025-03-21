@@ -1,0 +1,48 @@
+@PythonModule("datetime")
+package safeds.temporal
+
+/**
+ * A time (without a date).
+ *
+ * @param hour The hour. Must be between 0 and 23.
+ * @param minute The minute. Must be between 0 and 59.
+ * @param second The second. Must be between 0 and 59.
+ * @param microsecond The microsecond. Must be between 0 and 999,999.
+ */
+@Experimental
+@PythonName("time")
+class Time(
+    const hour: Int,
+    const minute: Int,
+    const second: Int,
+    const microsecond: Int = 0
+) where {
+    hour >= 0,
+    hour <= 23,
+    minute >= 0,
+    minute <= 59,
+    second >= 0,
+    second <= 59,
+    microsecond >= 0,
+    microsecond <= 999999
+} {
+    /**
+     * The hour.
+     */
+    attr hour: Int
+
+    /**
+     * The minute.
+     */
+    attr minute: Int
+
+    /**
+     * The second.
+     */
+    attr second: Int
+
+    /**
+     * The microsecond.
+     */
+    attr microsecond: Int
+}

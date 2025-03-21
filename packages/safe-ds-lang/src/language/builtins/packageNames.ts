@@ -1,2 +1,2 @@
-export const BUILTINS_ROOT_PACKAGE = 'safeds';
-export const BUILTINS_LANG_PACKAGE = `${BUILTINS_ROOT_PACKAGE}.lang`;
+export const SAFEDS_ROOT_PACKAGE = 'safeds';
+export const SAFEDS_LANG_PACKAGE = `${SAFEDS_ROOT_PACKAGE}.lang`;

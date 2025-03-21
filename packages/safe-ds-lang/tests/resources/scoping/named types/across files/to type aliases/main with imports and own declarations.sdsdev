@@ -1,0 +1,55 @@
+package tests.scoping.namedTypes.acrossFiles.toTypeAliases
+
+from safeds.scoping.namedTypes.acrossFiles.toTypeAliases import MyAlias as MyOwnAlias
+from tests.scoping.namedTypes.acrossFiles.toTypeAliases.other import PublicAliasInAnotherPackage, PublicAliasInAnotherPackage2
+
+// $TEST$ target own_MyOwnAlias
+typealias »MyOwnAlias« = Int
+
+segment mySegment(
+    // $TEST$ references own_MyOwnAlias
+    p1: »MyOwnAlias«,
+
+
+    // $TEST$ references same_PublicAliasInSamePackage
+    p2: »PublicAliasInSamePackage«,
+
+    // $TEST$ references same_InternalAliasInSamePackage
+    p3: »InternalAliasInSamePackage«,
+
+    // $TEST$ unresolved
+    p4: »PrivateAliasInSamePackage«,
+
+
+    // $TEST$ references safeds_PublicAliasInSafeDsPackage
+    p4: »PublicAliasInSafeDsPackage«,
+
+    // $TEST$ unresolved
+    p5: »InternalAliasInSafeDsPackage«,
+
+    // $TEST$ unresolved
+    p6: »PrivateAliasInSafeDsPackage«,
+
+
+    // $TEST$ references other_PublicAliasInAnotherPackage
+    p7: »PublicAliasInAnotherPackage«,
+
+    // $TEST$ references other_PublicAliasInAnotherPackage2
+    p8: »PublicAliasInAnotherPackage2«,
+
+    // $TEST$ unresolved
+    p9: »InternalAliasInAnotherPackage«,
+
+    // $TEST$ unresolved
+    p10: »PrivateAliasInAnotherPackage«,
+
+
+    // $TEST$ unresolved
+    p11: »PublicAliasWithoutPackage«,
+
+    // $TEST$ unresolved
+    p12: »InternalAliasWithoutPackage«,
+
+    // $TEST$ unresolved
+    p13: »PrivateAliasWithoutPackage«,
+) {}

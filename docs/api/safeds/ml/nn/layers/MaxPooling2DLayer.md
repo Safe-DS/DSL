@@ -16,7 +16,9 @@ A maximum Pooling 2D Layer.
 
 ??? quote "Stub code in `MaxPooling2DLayer.sdsstub`"
 
-    ```sds linenums="14"
+    ```sds linenums="13"
+    @Experimental
+    @Category(DataScienceCategory.ModelingQNeuralNetwork)
     class MaxPooling2DLayer(
         @PythonName("kernel_size") kernelSize: Int,
         stride: Int = -1,

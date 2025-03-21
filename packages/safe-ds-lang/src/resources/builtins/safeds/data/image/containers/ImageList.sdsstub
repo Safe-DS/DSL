@@ -60,6 +60,7 @@ class ImageList {
      * If you provide a path to a directory the images will be sorted alphabetically while inner directories will be sorted after image files.
      *
      * @param path the path to the directory or a list of files
+     * @param loadPercentage the percentage of the given data being loaded. If below 1 the files will be shuffled before loading
      *
      * @result imageList the image list
      */
@@ -67,7 +68,8 @@ class ImageList {
     @PythonName("from_files")
     @Category(DataScienceCategory.DataImport)
     static fun fromFiles(
-        path: union<List<String>, String>
+        path: union<List<String>, String>,
+        @PythonName("load_percentage") loadPercentage: Float = 1.0
     ) -> imageList: ImageList
 
     /**
@@ -345,26 +347,26 @@ class ImageList {
     }
 
     /**
-     * Return a new `ImageList` with all images flipped vertically (horizontal axis, flips up-down and vice versa).
+     * Return a new `ImageList` where top and bottom of all images are flipped along a horizontal axis.
      *
      * The original image list is not modified.
      *
      * @result imageList The image list with all images flipped vertically
      */
     @Pure
-    @PythonName("flip_vertically")
-    fun flipVertically() -> imageList: ImageList
+    @PythonName("flip_top_and_bottom")
+    fun flipTopAndBottom() -> imageList: ImageList
 
     /**
-     * Return a new `ImageList` with all images flipped horizontally (vertical axis, flips left-right and vice versa).
+     * Return a new `ImageList` where left and right sides of all images are flipped along a vertical axis.
      *
      * The original image list is not modified.
      *
      * @result imageList The image list with all images flipped horizontally
      */
     @Pure
-    @PythonName("flip_horizontally")
-    fun flipHorizontally() -> imageList: ImageList
+    @PythonName("flip_left_and_right")
+    fun flipLeftAndRight() -> imageList: ImageList
 
     /**
      * Return a new `ImageList` where all images have the adjusted brightness.

@@ -7,7 +7,8 @@ The letter "Q" is used as a separator for subcategories.
 
 ??? quote "Stub code in `ideIntegration.sdsstub`"
 
-    ```sds linenums="27"
+    ```sds linenums="26"
+    @Experimental
     enum DataScienceCategory {
         /**
          * Basic building blocks.

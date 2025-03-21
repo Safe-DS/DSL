@@ -1,0 +1,10 @@
+package tests.scoping.namedTypes.acrossFiles.toTypeAliases
+
+from safeds.scoping.namedTypes.acrossFiles.toTypeAliases import MyAlias
+from tests.scoping.namedTypes.acrossFiles.toTypeAliases.other import MyAlias
+from tests.scoping.namedTypes.acrossFiles.toTypeAliases import MyAlias
+
+segment mySegment(
+    // $TEST$ references safeds_MyAlias
+    p: »MyAlias«,
+) {}

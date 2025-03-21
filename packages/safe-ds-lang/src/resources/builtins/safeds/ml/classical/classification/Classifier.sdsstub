@@ -28,6 +28,11 @@ class Classifier sub SupervisedModel {
      *
      * **Note:** The model must be fitted.
      *
+     * !!! warning "API Stability"
+     *
+     *     Do not rely on the exact output of this method. In future versions, we may change the displayed metrics
+     *     without prior notice.
+     *
      * @param validationOrTestSet The validation or test set.
      * @param positiveClass The class to be considered positive. All other classes are considered negative.
      *

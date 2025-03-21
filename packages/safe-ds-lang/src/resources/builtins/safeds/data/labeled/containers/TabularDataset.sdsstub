@@ -10,16 +10,16 @@ from safeds.data.tabular.containers import Table
  *
  * - The target column is the column that a model should predict.
  * - Feature columns are columns that a model should use to make predictions.
- * - Extra columns are columns that are neither feature nor target. They can be used to provide additional context,
- *   like an ID column.
+ * - Extra columns are columns that are neither feature nor target. They are ignored by models and can be used to
+ *   provide additional context. An ID or name column is a common example.
  *
  * Feature columns are implicitly defined as all columns except the target and extra columns. If no extra columns
  * are specified, all columns except the target column are used as features.
  *
  * @param data The data.
  * @param targetName The name of the target column.
- * @param extraNames Names of the columns that are neither features nor target. If null, no extra columns are used, i.e. all but
- * the target column are used as features.
+ * @param extraNames Names of the columns that are neither feature nor target. If null, no extra columns are used, i.e. all but the
+ * target column are used as features.
  *
  * @example
  * pipeline example {
@@ -27,16 +27,16 @@ from safeds.data.tabular.containers import Table
  *         {
  *             "id": [1, 2, 3],
  *             "feature": [4, 5, 6],
- *             "target": [1, 2, 3],
+ *             "target": [7, 8, 9],
  *         },
  *     );
- *     val dataset = table.toTabularDataset(targetName="target", extraNames=["id"]);
+ *     val dataset = table.toTabularDataset("target", extraNames="id");
  * }
  */
 class TabularDataset(
     data: union<Map<String, List<Any>>, Table>,
     @PythonName("target_name") targetName: String,
-    @PythonName("extra_names") extraNames: List<String> = []
+    @PythonName("extra_names") extraNames: union<List<String>, String> = []
 ) sub Dataset<Table, Column> {
     /**
      * The feature columns of the tabular dataset.
@@ -64,7 +64,7 @@ class TabularDataset(
      *         {
      *             "id": [1, 2, 3],
      *             "feature": [4, 5, 6],
-     *             "target": [1, 2, 3],
+     *             "target": [7, 8, 9],
      *         },
      *     );
      *     val tabularDataset = table.toTabularDataset(targetName="target", extraNames=["id"]);

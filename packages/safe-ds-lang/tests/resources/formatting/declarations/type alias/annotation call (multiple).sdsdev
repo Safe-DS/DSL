@@ -1,0 +1,12 @@
+package test
+
+@Annotation  @Annotation()  @Annotation  typealias  MyAlias  =  Int
+
+// -----------------------------------------------------------------------------
+
+package test
+
+@Annotation
+@Annotation()
+@Annotation
+typealias MyAlias = Int

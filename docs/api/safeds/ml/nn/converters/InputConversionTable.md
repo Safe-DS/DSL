@@ -8,7 +8,8 @@ The input conversion for a neural network defines the input parameters for the n
 
 ??? quote "Stub code in `InputConversionTable.sdsstub`"
 
-    ```sds linenums="7"
+    ```sds linenums="6"
+    @Experimental
     class InputConversionTable() sub InputConversion<TabularDataset, Table>
     ```
     { data-search-exclude }

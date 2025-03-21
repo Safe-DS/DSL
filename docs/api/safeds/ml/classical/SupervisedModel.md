@@ -93,7 +93,7 @@ A model for supervised learning tasks.
          */
         @Pure
         @PythonName("get_target_type")
-        fun getTargetType() -> targetType: DataType
+        fun getTargetType() -> targetType: ColumnType
     }
     ```
     { data-search-exclude }
@@ -205,14 +205,14 @@ Return the type of the target column.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `targetType` | [`DataType`][safeds.data.tabular.typing.DataType] | The type of the target column. |
+| `targetType` | [`ColumnType`][safeds.data.tabular.typing.ColumnType] | The type of the target column. |
 
 ??? quote "Stub code in `SupervisedModel.sdsstub`"
 
     ```sds linenums="85"
     @Pure
     @PythonName("get_target_type")
-    fun getTargetType() -> targetType: DataType
+    fun getTargetType() -> targetType: ColumnType
     ```
     { data-search-exclude }
 

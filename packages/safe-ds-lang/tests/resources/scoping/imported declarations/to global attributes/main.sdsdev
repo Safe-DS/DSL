@@ -1,0 +1,26 @@
+package tests.scoping.importedDeclarations.toGlobalAttributes
+
+// $TEST$ references own_ownAttribute
+from tests.scoping.importedDeclarations.toGlobalAttributes import »ownAttribute«
+
+
+// $TEST$ references firstPackage_attributeInFirstPackage
+from tests.scoping.importedDeclarations.toGlobalAttributes.first import »attributeInFirstPackage«
+
+// $TEST$ references secondPackage_attributeInSecondPackage
+from tests.scoping.importedDeclarations.toGlobalAttributes.second import »attributeInSecondPackage«
+
+// $TEST$ references secondPackage_redeclaredAttributeInSameFile
+// $TEST$ references secondPackage_redeclaredAttributeInOtherFile
+from tests.scoping.importedDeclarations.toGlobalAttributes.second import »redeclaredAttributeInSameFile«, »redeclaredAttributeInOtherFile«
+
+// $TEST$ references secondPackage_attributeInBothPackages
+from tests.scoping.importedDeclarations.toGlobalAttributes.second import »attributeInBothPackages«
+
+
+// $TEST$ unresolved
+from tests.scoping.importedDeclarations.toGlobalAttributes.second import »attributeInFirstPackage«
+
+
+// $TEST$ target own_ownAttribute
+attr »ownAttribute«: Int

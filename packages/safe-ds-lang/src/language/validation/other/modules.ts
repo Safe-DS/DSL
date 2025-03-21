@@ -2,7 +2,7 @@ import { ValidationAcceptor } from 'langium';
 import { SdsModule } from '../../generated/ast.js';
 import { isInPipelineFile, isInStubFile } from '../../helpers/fileExtensions.js';
 import { getModuleMembers, isValidPipelineDeclaration, isValidStubDeclaration } from '../../helpers/nodeProperties.js';
-import { BUILTINS_ROOT_PACKAGE } from '../../builtins/packageNames.js';
+import { SAFEDS_ROOT_PACKAGE } from '../../builtins/packageNames.js';
 
 export const CODE_MODULE_FORBIDDEN_IN_PIPELINE_FILE = 'module/forbidden-in-pipeline-file';
 export const CODE_MODULE_FORBIDDEN_IN_STUB_FILE = 'module/forbidden-in-stub-file';
@@ -47,8 +47,8 @@ export const moduleWithDeclarationsMustStatePackage = (node: SdsModule, accept: 
 };
 
 export const pipelineFileMustNotBeInBuiltinPackage = (node: SdsModule, accept: ValidationAcceptor): void => {
-    if (isInPipelineFile(node) && node.name?.startsWith(BUILTINS_ROOT_PACKAGE)) {
-        accept('error', `A pipeline file must not be in a '${BUILTINS_ROOT_PACKAGE}' package.`, {
+    if (isInPipelineFile(node) && node.name?.startsWith(SAFEDS_ROOT_PACKAGE)) {
+        accept('error', `A pipeline file must not be in a '${SAFEDS_ROOT_PACKAGE}' package.`, {
             node,
             property: 'name',
             code: CODE_MODULE_PIPELINE_FILE_IN_BUILTIN_PACKAGE,

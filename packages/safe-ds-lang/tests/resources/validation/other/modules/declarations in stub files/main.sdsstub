@@ -8,6 +8,8 @@ segment »mySegment«() {}
 // $TEST$ no error "A stub file must not declare pipelines or segments."
 annotation »MyAnnotation«
 // $TEST$ no error "A stub file must not declare pipelines or segments."
+attr »myAttribute«: Int
+// $TEST$ no error "A stub file must not declare pipelines or segments."
 class »MyClass« {
 
     // $TEST$ no error "A stub file must not declare pipelines or segments."

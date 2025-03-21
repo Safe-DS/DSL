@@ -20,7 +20,8 @@ search:
 
 ??? quote "Stub code in `Layer.sdsstub`"
 
-    ```sds linenums="6"
+    ```sds linenums="5"
+    @Experimental
     class Layer
     ```
     { data-search-exclude }

@@ -14,7 +14,9 @@ reordering of calls or parallelization.
 
 ??? quote "Stub code in `purity.sdsstub`"
 
-    ```sds linenums="12"
+    ```sds linenums="10"
+    @Experimental
+    @Targets([AnnotationTarget.Function])
     annotation Pure
     ```
     { data-search-exclude }

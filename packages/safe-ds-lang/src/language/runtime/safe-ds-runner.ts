@@ -27,6 +27,7 @@ import { ExploreTableNotification, IsRunnerReadyRequest, ShowImageNotification }
 import { expandToStringLF, joinToNode } from 'langium/generate';
 import { UUID } from 'node:crypto';
 import { CODEGEN_PREFIX } from '../generation/python/constants.js';
+import { addLinePrefix } from '../../helpers/strings.js';
 
 // Most of the functionality cannot be tested automatically as a functioning runner setup would always be required
 
@@ -161,10 +162,18 @@ export class SafeDsRunner {
             async (pipelineExecutionId, currentPlaceholderName) => {
                 if (currentPlaceholderName === placeholderName) {
                     const data = await this.getPlaceholderValue(placeholderName, pipelineExecutionId);
-                    this.logger.result(`val ${name} = ${JSON.stringify(data, null, 2)};`);
+                    if (this.isMultilineString(data)) {
+                        this.logger.result(`val ${name} = \`\n${addLinePrefix(data, '    ')}\n\`;`);
+                    } else {
+                        this.logger.result(`val ${name} = ${JSON.stringify(data, null, 2)};`);
+                    }
                 }
             },
         );
+    }
+
+    private isMultilineString(data: any): data is string {
+        return typeof data === 'string' && data.includes('\n');
     }
 
     async showImage(name: string, documentUri: string, nodePath: string) {

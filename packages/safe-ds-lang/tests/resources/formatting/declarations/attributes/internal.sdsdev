@@ -1,0 +1,5 @@
+internal  attr  myAttribute :  Int
+
+// -----------------------------------------------------------------------------
+
+internal attr myAttribute: Int
