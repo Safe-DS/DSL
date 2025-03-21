@@ -1,0 +1,35 @@
+package tests.scoping.references.inSameFile.toTypeAliases
+
+// $TEST$ target PrivateBefore
+private typealias »PrivateBefore« = Int
+// $TEST$ target InternalBefore
+internal typealias »InternalBefore« = Int
+// $TEST$ target PublicBefore
+typealias »PublicBefore« = Int
+
+pipeline myPipeline {
+    // $TEST$ references PrivateBefore
+    »PrivateBefore«;
+
+    // $TEST$ references InternalBefore
+    »InternalBefore«;
+
+    // $TEST$ references PublicBefore
+    »PublicBefore«;
+
+    // $TEST$ references PrivateAfter
+    »PrivateAfter«;
+
+    // $TEST$ references InternalAfter
+    »InternalAfter«;
+
+    // $TEST$ references PublicAfter
+    »PublicAfter«;
+}
+
+// $TEST$ target PrivateAfter
+private typealias »PrivateAfter« = Int
+// $TEST$ target InternalAfter
+internal typealias »InternalAfter« = Int
+// $TEST$ target PublicAfter
+typealias »PublicAfter« = Int

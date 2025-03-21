@@ -18,7 +18,9 @@ A convolutional transpose 2D Layer.
 
 ??? quote "Stub code in `ConvolutionalTranspose2DLayer.sdsstub`"
 
-    ```sds linenums="17"
+    ```sds linenums="15"
+    @Experimental
+    @Category(DataScienceCategory.ModelingQNeuralNetwork)
     class ConvolutionalTranspose2DLayer(
         @PythonName("output_channel") outputChannel: Int,
         @PythonName("kernel_size") kernelSize: Int,

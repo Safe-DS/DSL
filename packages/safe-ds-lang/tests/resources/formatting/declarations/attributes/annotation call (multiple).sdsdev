@@ -1,0 +1,12 @@
+package test
+
+@Annotation  @Annotation()  @Annotation  attr  myAttribute :  Int
+
+// -----------------------------------------------------------------------------
+
+package test
+
+@Annotation
+@Annotation()
+@Annotation
+attr myAttribute: Int

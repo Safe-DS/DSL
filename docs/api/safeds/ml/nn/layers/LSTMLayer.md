@@ -14,7 +14,8 @@ A long short-term memory (LSTM) layer.
 
 ??? quote "Stub code in `LSTMLayer.sdsstub`"
 
-    ```sds linenums="11"
+    ```sds linenums="10"
+    @Experimental
     class LSTMLayer(
         @PythonName("neuron_count") neuronCount: Int
     ) sub Layer {

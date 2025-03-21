@@ -1,0 +1,43 @@
+@PythonModule("datetime")
+package safeds.temporal
+
+/**
+ * A duration.
+ *
+ * @param weeks The number of weeks.
+ * @param days The number of days.
+ * @param hours The number of hours.
+ * @param minutes The number of minutes.
+ * @param seconds The number of seconds.
+ * @param milliseconds The number of milliseconds.
+ * @param microseconds The number of microseconds.
+ */
+@Experimental
+@PythonName("timedelta")
+class Duration(
+    weeks: Int = 0,
+    days: Int = 0,
+    hours: Int = 0,
+    minutes: Int = 0,
+    seconds: Int = 0,
+    milliseconds: Int = 0,
+    microseconds: Int = 0
+) {
+    /**
+     * The number of full days.
+     */
+    @PythonName("days")
+    attr fullDays: Int
+
+    /**
+     * The remaining seconds after subtracting the days.
+     */
+    @PythonName("seconds")
+    attr remainingSeconds: Int
+
+    /**
+     * The remaining microseconds after subtracting the days and seconds.
+     */
+    @PythonName("microseconds")
+    attr remainingMicroseconds: Int
+}

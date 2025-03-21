@@ -1,0 +1,10 @@
+package test
+
+@Annotation  attr  myAttribute :  Int
+
+// -----------------------------------------------------------------------------
+
+package test
+
+@Annotation
+attr myAttribute: Int

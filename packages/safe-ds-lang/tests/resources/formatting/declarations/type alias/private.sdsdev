@@ -1,0 +1,5 @@
+private  typealias  MyAlias  =  Int
+
+// -----------------------------------------------------------------------------
+
+private typealias MyAlias = Int

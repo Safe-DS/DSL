@@ -1,5 +1,12 @@
 package tests.typing.declarations.attributes
 
+// $TEST$ serialization unknown
+attr »a«
+
+// $TEST$ equivalence_class globalAttribute
+// $TEST$ equivalence_class globalAttribute
+attr »b«: »Int«
+
 class C {
     // $TEST$ serialization unknown
     attr »a«

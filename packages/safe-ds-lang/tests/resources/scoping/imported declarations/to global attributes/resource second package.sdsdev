@@ -1,0 +1,14 @@
+package tests.scoping.importedDeclarations.toGlobalAttributes.second
+
+// $TEST$ target secondPackage_attributeInSecondPackage
+attr »attributeInSecondPackage«: Int
+
+// $TEST$ target secondPackage_redeclaredAttributeInSameFile
+attr »redeclaredAttributeInSameFile«: Int
+attr redeclaredAttributeInSameFile: Int
+
+// $TEST$ target secondPackage_redeclaredAttributeInOtherFile
+attr »redeclaredAttributeInOtherFile«: Int
+
+// $TEST$ target secondPackage_attributeInBothPackages
+attr »attributeInBothPackages«: Int

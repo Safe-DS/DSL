@@ -21,7 +21,7 @@ pipeline example {
 
 ??? quote "Stub code in `TablePlotter.sdsstub`"
 
-    ```sds linenums="18"
+    ```sds linenums="17"
     class TablePlotter(
         table: Table
     ) {
@@ -42,46 +42,6 @@ pipeline example {
         @PythonName("box_plots")
         @Category(DataScienceCategory.DataExplorationQVisualization)
         fun boxPlots(
-            theme: literal<"dark", "light"> = "light"
-        ) -> plot: Image
-
-        /**
-         * Create a violin plot for every numerical column.
-         *
-         * @param theme The color theme of the plot. Default is "light".
-         *
-         * @result plot The violin plot(s) as an image.
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"a": [1, 2], "b": [3, 42]});
-         *     val image = table.plot.violinPlots();
-         * }
-         */
-        @Pure
-        @PythonName("violin_plots")
-        @Category(DataScienceCategory.DataExplorationQVisualization)
-        fun violinPlots(
-            theme: literal<"dark", "light"> = "light"
-        ) -> plot: Image
-
-        /**
-         * Plot a correlation heatmap for all numerical columns of this `Table`.
-         *
-         * @param theme The color theme of the plot. Default is "light".
-         *
-         * @result plot The plot as an image.
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"temperature": [10, 15, 20, 25, 30], "sales": [54, 74, 90, 206, 210]});
-         *     val image = table.plot.correlationHeatmap();
-         * }
-         */
-        @Pure
-        @PythonName("correlation_heatmap")
-        @Category(DataScienceCategory.DataExplorationQVisualization)
-        fun correlationHeatmap(
             theme: literal<"dark", "light"> = "light"
         ) -> plot: Image
 
@@ -109,11 +69,31 @@ pipeline example {
         }
 
         /**
+         * Create a violin plot for every numerical column.
+         *
+         * @param theme The color theme of the plot. Default is "light".
+         *
+         * @result plot The violin plot(s) as an image.
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table({"a": [1, 2], "b": [3, 42]});
+         *     val image = table.plot.violinPlots();
+         * }
+         */
+        @Pure
+        @PythonName("violin_plots")
+        @Category(DataScienceCategory.DataExplorationQVisualization)
+        fun violinPlots(
+            theme: literal<"dark", "light"> = "light"
+        ) -> plot: Image
+
+        /**
          * Create a line plot for two columns in the table.
          *
          * @param xName The name of the column to be plotted on the x-axis.
          * @param yNames The name(s) of the column(s) to be plotted on the y-axis.
-         * @param showConfidenceInterval Whether a confidence interval is shown.
+         * @param showConfidenceInterval If the confidence interval is shown, per default true.
          * @param theme The color theme of the plot. Default is "light".
          *
          * @result plot The plot as an image.
@@ -136,66 +116,6 @@ pipeline example {
             @PythonName("x_name") xName: String,
             @PythonName("y_names") yNames: List<String>,
             @PythonName("show_confidence_interval") showConfidenceInterval: Boolean = true,
-            theme: literal<"dark", "light"> = "light"
-        ) -> plot: Image
-
-        /**
-         * Create a scatter plot for two columns in the table.
-         *
-         * @param xName The name of the column to be plotted on the x-axis.
-         * @param yNames The name(s) of the column(s) to be plotted on the y-axis.
-         * @param theme The color theme of the plot. Default is "light".
-         *
-         * @result plot The plot as an image.
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table(
-         *         {
-         *             "a": [1, 2, 3, 4, 5],
-         *             "b": [2, 3, 4, 5, 6],
-         *         }
-         *     );
-         *     val image = table.plot.scatterPlot("a", ["b"]);
-         * }
-         */
-        @Pure
-        @PythonName("scatter_plot")
-        @Category(DataScienceCategory.DataExplorationQVisualization)
-        fun scatterPlot(
-            @PythonName("x_name") xName: String,
-            @PythonName("y_names") yNames: List<String>,
-            theme: literal<"dark", "light"> = "light"
-        ) -> plot: Image
-
-        /**
-         * Create a moving average plot for the y column and plot it by the x column in the table.
-         *
-         * @param xName The name of the column to be plotted on the x-axis.
-         * @param yName The name of the column to be plotted on the y-axis.
-         * @param windowSize The size of the moving average window
-         * @param theme The color theme of the plot. Default is "light".
-         *
-         * @result plot The plot as an image.
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table(
-         *         {
-         *             "a": [1, 2, 3, 4, 5],
-         *             "b": [2, 3, 4, 5, 6],
-         *         }
-         *     );
-         *     val image = table.plot.movingAveragePlot("a", "b", windowSize = 2);
-         * }
-         */
-        @Pure
-        @PythonName("moving_average_plot")
-        @Category(DataScienceCategory.DataExplorationQVisualization)
-        fun movingAveragePlot(
-            @PythonName("x_name") xName: String,
-            @PythonName("y_name") yName: String,
-            @PythonName("window_size") windowSize: Int,
             theme: literal<"dark", "light"> = "light"
         ) -> plot: Image
 
@@ -231,6 +151,86 @@ pipeline example {
             @PythonName("y_max_bin_count") yMaxBinCount: Int = 10,
             theme: literal<"dark", "light"> = "light"
         ) -> plot: Image
+
+        /**
+         * Create a moving average plot for the y column and plot it by the x column in the table.
+         *
+         * @param xName The name of the column to be plotted on the x-axis.
+         * @param yName The name of the column to be plotted on the y-axis.
+         * @param windowSize The size of the moving average window
+         * @param theme The color theme of the plot. Default is "light".
+         *
+         * @result plot The plot as an image.
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table(
+         *         {
+         *             "a": [1, 2, 3, 4, 5],
+         *             "b": [2, 3, 4, 5, 6],
+         *         }
+         *     );
+         *     val image = table.plot.movingAveragePlot("a", "b", windowSize = 2);
+         * }
+         */
+        @Pure
+        @PythonName("moving_average_plot")
+        @Category(DataScienceCategory.DataExplorationQVisualization)
+        fun movingAveragePlot(
+            @PythonName("x_name") xName: String,
+            @PythonName("y_name") yName: String,
+            @PythonName("window_size") windowSize: Int,
+            theme: literal<"dark", "light"> = "light"
+        ) -> plot: Image
+
+        /**
+         * Create a scatter plot for two columns in the table.
+         *
+         * @param xName The name of the column to be plotted on the x-axis.
+         * @param yNames The name(s) of the column(s) to be plotted on the y-axis.
+         * @param theme The color theme of the plot. Default is "light".
+         *
+         * @result plot The plot as an image.
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table(
+         *         {
+         *             "a": [1, 2, 3, 4, 5],
+         *             "b": [2, 3, 4, 5, 6],
+         *         }
+         *     );
+         *     val image = table.plot.scatterPlot("a", ["b"]);
+         * }
+         */
+        @Pure
+        @PythonName("scatter_plot")
+        @Category(DataScienceCategory.DataExplorationQVisualization)
+        fun scatterPlot(
+            @PythonName("x_name") xName: String,
+            @PythonName("y_names") yNames: List<String>,
+            theme: literal<"dark", "light"> = "light"
+        ) -> plot: Image
+
+        /**
+         * Plot a correlation heatmap for all numerical columns of this `Table`.
+         *
+         * @param theme The color theme of the plot. Default is "light".
+         *
+         * @result plot The plot as an image.
+         *
+         * @example
+         * pipeline example {
+         *     val table = Table({"temperature": [10, 15, 20, 25, 30], "sales": [54, 74, 90, 206, 210]});
+         *     val image = table.plot.correlationHeatmap();
+         * }
+         */
+        @Pure
+        @PythonName("correlation_heatmap")
+        @Category(DataScienceCategory.DataExplorationQVisualization)
+        fun correlationHeatmap(
+            theme: literal<"dark", "light"> = "light"
+        ) -> plot: Image
     }
     ```
     { data-search-exclude }
@@ -262,7 +262,7 @@ pipeline example {
 
 ??? quote "Stub code in `TablePlotter.sdsstub`"
 
-    ```sds linenums="34"
+    ```sds linenums="33"
     @Pure
     @PythonName("box_plots")
     @Category(DataScienceCategory.DataExplorationQVisualization)
@@ -299,7 +299,7 @@ pipeline example {
 
 ??? quote "Stub code in `TablePlotter.sdsstub`"
 
-    ```sds linenums="74"
+    ```sds linenums="220"
     @Pure
     @PythonName("correlation_heatmap")
     @Category(DataScienceCategory.DataExplorationQVisualization)
@@ -345,7 +345,7 @@ pipeline example {
 
 ??? quote "Stub code in `TablePlotter.sdsstub`"
 
-    ```sds linenums="217"
+    ```sds linenums="136"
     @Pure
     @PythonName("histogram_2d")
     @Category(DataScienceCategory.DataExplorationQVisualization)
@@ -387,7 +387,7 @@ pipeline example {
 
 ??? quote "Stub code in `TablePlotter.sdsstub`"
 
-    ```sds linenums="95"
+    ```sds linenums="54"
     @Pure
     @Category(DataScienceCategory.DataExplorationQVisualization)
     fun histograms(
@@ -409,7 +409,7 @@ Create a line plot for two columns in the table.
 |------|------|-------------|---------|
 | `xName` | [`String`][safeds.lang.String] | The name of the column to be plotted on the x-axis. | - |
 | `yNames` | [`List<String>`][safeds.lang.List] | The name(s) of the column(s) to be plotted on the y-axis. | - |
-| `showConfidenceInterval` | [`Boolean`][safeds.lang.Boolean] | Whether a confidence interval is shown. | `#!sds true` |
+| `showConfidenceInterval` | [`Boolean`][safeds.lang.Boolean] | If the confidence interval is shown, per default true. | `#!sds true` |
 | `theme` | `#!sds literal<"dark", "light">` | The color theme of the plot. Default is "light". | `#!sds "light"` |
 
 **Results:**
@@ -434,7 +434,7 @@ pipeline example {
 
 ??? quote "Stub code in `TablePlotter.sdsstub`"
 
-    ```sds linenums="125"
+    ```sds linenums="104"
     @Pure
     @PythonName("line_plot")
     @Category(DataScienceCategory.DataExplorationQVisualization)
@@ -482,7 +482,7 @@ pipeline example {
 
 ??? quote "Stub code in `TablePlotter.sdsstub`"
 
-    ```sds linenums="185"
+    ```sds linenums="168"
     @Pure
     @PythonName("moving_average_plot")
     @Category(DataScienceCategory.DataExplorationQVisualization)
@@ -529,7 +529,7 @@ pipeline example {
 
 ??? quote "Stub code in `TablePlotter.sdsstub`"
 
-    ```sds linenums="155"
+    ```sds linenums="198"
     @Pure
     @PythonName("scatter_plot")
     @Category(DataScienceCategory.DataExplorationQVisualization)
@@ -568,7 +568,7 @@ pipeline example {
 
 ??? quote "Stub code in `TablePlotter.sdsstub`"
 
-    ```sds linenums="54"
+    ```sds linenums="76"
     @Pure
     @PythonName("violin_plots")
     @Category(DataScienceCategory.DataExplorationQVisualization)

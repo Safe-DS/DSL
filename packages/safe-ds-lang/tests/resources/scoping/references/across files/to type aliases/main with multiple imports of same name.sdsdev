@@ -1,0 +1,10 @@
+package tests.scoping.references.acrossFiles.toTypeAliases
+
+from safeds.scoping.references.acrossFiles.toTypeAliases import MyAlias
+from tests.scoping.references.acrossFiles.toTypeAliases.other import MyAlias
+from tests.scoping.references.acrossFiles.toTypeAliases import MyAlias
+
+pipeline myPipeline {
+    // $TEST$ references safeds_MyAlias
+    »MyAlias«;
+}

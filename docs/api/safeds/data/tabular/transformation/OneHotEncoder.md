@@ -33,7 +33,7 @@ One-hot encoding is closely related to dummy variable / indicator variables, whi
 
 | Name | Type | Description | Default |
 |------|------|-------------|---------|
-| `columnNames` | `#!sds union<List<String>, String?>` | The list of columns used to fit the transformer. If `None`, all non-numeric columns are used. | `#!sds null` |
+| `selector` | `#!sds union<List<String>, String?>` | The list of columns used to fit the transformer. If `None`, all non-numeric columns are used. | `#!sds null` |
 | `separator` | [`String`][safeds.lang.String] | The separator used to separate the original column name from the value in the new column names. | `#!sds "__"` |
 
 **Examples:**
@@ -41,7 +41,7 @@ One-hot encoding is closely related to dummy variable / indicator variables, whi
 ```sds hl_lines="3"
 pipeline example {
    val table = Table({"a": ["z", "y"], "b": [3, 4]});
-   val encoder = OneHotEncoder(columnNames=["a"]).fit(table);
+   val encoder = OneHotEncoder(selector=["a"]).fit(table);
    val transformedTable = encoder.transform(table);
    // Table({"a__z": [1, 0], "a__y": [0, 1], "b": [3, 4]})
    val originalTable = encoder.inverseTransform(transformedTable);
@@ -53,7 +53,7 @@ pipeline example {
 
     ```sds linenums="45"
     class OneHotEncoder(
-        @PythonName("column_names") columnNames: union<List<String>, String, Nothing?> = null,
+        selector: union<List<String>, String, Nothing?> = null,
         separator: String = "__"
     ) sub InvertibleTableTransformer {
         /**
@@ -219,7 +219,7 @@ Apply the learned transformation to a table.
 
 ??? quote "Stub code in `TableTransformer.sdsstub`"
 
-    ```sds linenums="39"
+    ```sds linenums="37"
     @Pure
     fun transform(
         table: Table

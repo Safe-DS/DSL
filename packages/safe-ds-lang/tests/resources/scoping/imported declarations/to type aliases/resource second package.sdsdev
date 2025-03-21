@@ -1,0 +1,14 @@
+package tests.scoping.importedDeclarations.toTypeAliases.second
+
+// $TEST$ target secondPackage_AliasInSecondPackage
+typealias »AliasInSecondPackage« = Int
+
+// $TEST$ target secondPackage_RedeclaredAliasInSameFile
+typealias »RedeclaredAliasInSameFile« = Int
+typealias RedeclaredAliasInSameFile = Int
+
+// $TEST$ target secondPackage_RedeclaredAliasInOtherFile
+typealias »RedeclaredAliasInOtherFile« = Int
+
+// $TEST$ target secondPackage_AliasInBothPackages
+typealias »AliasInBothPackages« = Int

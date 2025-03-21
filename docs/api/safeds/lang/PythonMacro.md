@@ -20,7 +20,9 @@ call. `$this` is replaced by the receiver of the call. `$param` is replaced by t
 
 ??? quote "Stub code in `codeGeneration.sdsstub`"
 
-    ```sds linenums="12"
+    ```sds linenums="10"
+    @Experimental
+    @Targets([AnnotationTarget.Function])
     annotation PythonMacro(
         template: String
     )

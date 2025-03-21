@@ -1,0 +1,6 @@
+package tests.generation.markdown.typeAliases
+
+typealias MyAlias = Int
+
+// The snapshot test does not work for an empty SUMMARY file in CI, so we add this dummy.
+segment mySegment1() {}

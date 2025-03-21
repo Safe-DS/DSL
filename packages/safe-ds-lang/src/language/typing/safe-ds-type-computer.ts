@@ -38,6 +38,7 @@ import {
     isSdsTemplateString,
     isSdsThis,
     isSdsType,
+    isSdsTypeAlias,
     isSdsTypeArgument,
     isSdsTypeCast,
     isSdsTypeParameter,
@@ -250,6 +251,8 @@ export class SafeDsTypeComputer {
             return this.computeType(node.type);
         } else if (isSdsSegment(node)) {
             return this.computeTypeOfCallableWithManifestTypes(node);
+        } else if (isSdsTypeAlias(node)) {
+            return this.computeType(node.type);
         } else if (isSdsTypeParameter(node)) {
             return this.factory.createTypeVariable(node, false);
         } /* c8 ignore start */ else {
@@ -705,13 +708,20 @@ export class SafeDsTypeComputer {
     }
 
     private computeTypeOfNamedType(node: SdsNamedType) {
-        const unparameterizedType = this.computeType(node.declaration?.ref).withExplicitNullability(node.isNullable);
-        if (!(unparameterizedType instanceof ClassType)) {
-            return unparameterizedType;
+        let baseType = this.computeType(node.declaration?.ref);
+
+        // Update nullability
+        if (node.isNullable) {
+            baseType = baseType.withExplicitNullability(true);
         }
 
-        const substitutions = this.computeSubstitutionsForNamedType(node, unparameterizedType.declaration);
-        return this.factory.createClassType(unparameterizedType.declaration, substitutions, node.isNullable);
+        // Substitute type parameters
+        if (!(baseType instanceof ClassType)) {
+            return baseType;
+        }
+
+        const substitutions = this.computeSubstitutionsForNamedType(node, baseType.declaration);
+        return this.factory.createClassType(baseType.declaration, substitutions, baseType.isExplicitlyNullable);
     }
 
     // -----------------------------------------------------------------------------------------------------------------

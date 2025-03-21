@@ -1,0 +1,574 @@
+package safeds.data.tabular.query
+
+from safeds.typing import ConvertibleToIntCell
+from safeds.typing import ConvertibleToStringCell
+
+/**
+ * Namespace for operations on strings.
+ *
+ * This class cannot be instantiated directly. It can only be accessed using the `str` attribute of a cell.
+ *
+ * @example
+ * pipeline example {
+ *     val column = Column("a", ["ab", "bc", "cd"]);
+ *     out column.transform((cell) -> cell.str.toUppercase());
+ * }
+ */
+class StringOperations {
+    /**
+     * Check if the string contains the substring.
+     *
+     * @param substring The substring to search for.
+     *
+     * @result contains Whether the string contains the substring.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", ["ab", "cd", null]);
+     *     out column.transform((cell) -> cell.str.contains("b"));
+     * }
+     */
+    @Pure
+    fun contains(
+        substring: ConvertibleToStringCell
+    ) -> contains: Cell<Boolean?>
+
+    /**
+     * Check if the string ends with the suffix.
+     *
+     * @param suffix The expected suffix.
+     *
+     * @result cell Whether the string ends with the suffix.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", ["ab", "bc", null]);
+     *     out column.transform((cell) -> cell.str.endsWith("b"));
+     * }
+     */
+    @Pure
+    @PythonName("ends_with")
+    fun endsWith(
+        suffix: ConvertibleToStringCell
+    ) -> cell: Cell<Boolean?>
+
+    /**
+     * Get the index of the first occurrence of the substring.
+     *
+     * @param substring The substring to search for.
+     *
+     * @result cell The index of the first occurrence of the substring. If the substring is not found, null is returned.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", ["ab", "cd", null]);
+     *     out column.transform((cell) -> cell.str.indexOf("b"));
+     * }
+     */
+    @Pure
+    @PythonName("index_of")
+    fun indexOf(
+        substring: ConvertibleToStringCell
+    ) -> cell: Cell<Int?>
+
+    /**
+     * Get the number of characters.
+     *
+     * @param optimizeForAscii Greatly speed up this operation if the string is ASCII-only. If the string contains non-ASCII characters,
+     * this option will return incorrect results, though.
+     *
+     * @result cell The number of characters.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", ["", "a", "abc", null]);
+     *     out column.transform((cell) -> cell.str.length());
+     * }
+     */
+    @Pure
+    fun length(
+        @PythonName("optimize_for_ascii") optimizeForAscii: Boolean = false
+    ) -> cell: Cell<Int?>
+
+    /**
+     * Pad the end of the string with the given character until it has the given length.
+     *
+     * @param length The minimum length of the string. If the string is already at least as long, it is returned unchanged. Must
+     * be greater than or equal to 0.
+     * @param character How to pad the string. Must be a single character.
+     *
+     * @result cell The padded string.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", ["ab", "bcde", null]);
+     *     out column.transform((cell) -> cell.str.padEnd(3));
+     *     out column.transform((cell) -> cell.str.padEnd(3, character="~"));
+     * }
+     */
+    @Pure
+    @PythonName("pad_end")
+    fun padEnd(
+        const length: Int,
+        character: String = " "
+    ) -> cell: Cell<String?> where {
+        length >= 0
+    }
+
+    /**
+     * Pad the start of the string with the given character until it has the given length.
+     *
+     * @param length The minimum length of the string. If the string is already at least as long, it is returned unchanged. Must
+     * be greater than or equal to 0.
+     * @param character How to pad the string. Must be a single character.
+     *
+     * @result cell The padded string.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", ["ab", "bcde", null]);
+     *     out column.transform((cell) -> cell.str.padStart(3));
+     *     out column.transform((cell) -> cell.str.padStart(3, character="~"));
+     * }
+     */
+    @Pure
+    @PythonName("pad_start")
+    fun padStart(
+        const length: Int,
+        character: String = " "
+    ) -> cell: Cell<String?> where {
+        length >= 0
+    }
+
+    /**
+     * Remove a prefix from the string. Strings without the prefix are not changed.
+     *
+     * @param prefix The prefix to remove.
+     *
+     * @result cell The string without the prefix.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", ["ab", "bc", null]);
+     *     out column.transform((cell) -> cell.str.removePrefix("a"));
+     * }
+     */
+    @Pure
+    @PythonName("remove_prefix")
+    fun removePrefix(
+        prefix: ConvertibleToStringCell
+    ) -> cell: Cell<String?>
+
+    /**
+     * Remove a suffix from the string. Strings without the suffix are not changed.
+     *
+     * @param suffix The suffix to remove.
+     *
+     * @result cell The string without the suffix.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", ["ab", "bc", null]);
+     *     out column.transform((cell) -> cell.str.removeSuffix("b"));
+     * }
+     */
+    @Pure
+    @PythonName("remove_suffix")
+    fun removeSuffix(
+        suffix: ConvertibleToStringCell
+    ) -> cell: Cell<String?>
+
+    /**
+     * Repeat the string a number of times.
+     *
+     * @param count The number of times to repeat the string. Must be greater than or equal to 0.
+     *
+     * @result cell The repeated string.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", ["ab", "bc", null]);
+     *     out column.transform((cell) -> cell.str.repeat(2));
+     * }
+     */
+    @Pure
+    fun repeat(
+        count: ConvertibleToIntCell
+    ) -> cell: Cell<String?>
+
+    /**
+     * Replace all occurrences of the old substring with the new substring.
+     *
+     * @param old The substring to replace.
+     * @param new The substring to replace with.
+     *
+     * @result cell The string with all occurrences replaced.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", ["ab", "bc", null]);
+     *     out column.transform((cell) -> cell.str.replaceAll("b", "z"));
+     * }
+     */
+    @Pure
+    @PythonName("replace_all")
+    fun replaceAll(
+        old: ConvertibleToStringCell,
+        new: ConvertibleToStringCell
+    ) -> cell: Cell<String?>
+
+    /**
+     * Reverse the string.
+     *
+     * @result cell The reversed string.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", ["ab", "bc", null]);
+     *     out column.transform((cell) -> cell.str.reverse());
+     * }
+     */
+    @Pure
+    fun reverse() -> cell: Cell<String?>
+
+    /**
+     * Get a slice of the string.
+     *
+     * @param start The start index of the slice. Nonnegative indices are counted from the beginning (starting at 0), negative
+     * indices from the end (starting at -1).
+     * @param length The length of the slice. If None, the slice contains all characters starting from `start`. Must greater than
+     * or equal to 0.
+     *
+     * @result cell The sliced string.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", ["abc", "de", null]);
+     *     out column.transform((cell) -> cell.str.slice(start = 1));
+     *     out column.transform((cell) -> cell.str.slice(start = 1, length = 1));
+     * }
+     */
+    @Pure
+    fun slice(
+        start: ConvertibleToIntCell = 0,
+        length: ConvertibleToIntCell = null
+    ) -> cell: Cell<String?>
+
+    /**
+     * Check if the string starts with the prefix.
+     *
+     * @param prefix The expected prefix.
+     *
+     * @result cell Whether the string starts with the prefix.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", ["ab", "bc", null]);
+     *     out column.transform((cell) -> cell.str.startsWith("a"));
+     * }
+     */
+    @Pure
+    @PythonName("starts_with")
+    fun startsWith(
+        prefix: ConvertibleToStringCell
+    ) -> cell: Cell<Boolean?>
+
+    /**
+     * Remove leading and trailing characters.
+     *
+     * @param characters The characters to remove. If None, whitespace is removed.
+     *
+     * @result cell The stripped string.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", ["  ab  ", "~ bc ~", null]);
+     *     out column.transform((cell) -> cell.str.strip());
+     *     out column.transform((cell) -> cell.str.strip(characters=" ~"));
+     * }
+     */
+    @Pure
+    fun strip(
+        characters: ConvertibleToStringCell = null
+    ) -> cell: Cell<String?>
+
+    /**
+     * Remove trailing characters.
+     *
+     * @param characters The characters to remove. If None, whitespace is removed.
+     *
+     * @result cell The stripped string.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", ["  ab  ", "~ bc ~", null]);
+     *     out column.transform((cell) -> cell.str.stripEnd());
+     *     out column.transform((cell) -> cell.str.stripEnd(characters=" ~"));
+     * }
+     */
+    @Pure
+    @PythonName("strip_end")
+    fun stripEnd(
+        characters: ConvertibleToStringCell = null
+    ) -> cell: Cell<String?>
+
+    /**
+     * Remove leading characters.
+     *
+     * @param characters The characters to remove. If None, whitespace is removed.
+     *
+     * @result cell The stripped string.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", ["  ab  ", "~ bc ~", null]);
+     *     out column.transform((cell) -> cell.str.stripStart());
+     *     out column.transform((cell) -> cell.str.stripStart(characters=" ~"));
+     * }
+     */
+    @Pure
+    @PythonName("strip_start")
+    fun stripStart(
+        characters: ConvertibleToStringCell = null
+    ) -> cell: Cell<String?>
+
+    /**
+     * Convert a string to a date.
+     *
+     * The `format` parameter controls the presentation. It can be `"iso"` to target ISO 8601 or a custom string. The
+     * custom string can contain fixed specifiers (see below), which are replaced with the corresponding values. The
+     * specifiers are case-sensitive and always enclosed in curly braces. Other text is included in the output
+     * verbatim. To include a literal opening curly brace, use `\{`, and to include a literal backslash, use `\\`.
+     *
+     * The following specifiers are available:
+     *
+     * - `{Y}`, `{_Y}`, `{^Y}`: Year (zero-padded to four digits, space-padded to four digits, no padding).
+     * - `{Y99}`, `{_Y99}`, `{^Y99}`: Year modulo 100 (zero-padded to two digits, space-padded to two digits, no
+     *   padding).
+     * - `{M}`, `{_M}`, `{^M}`: Month (zero-padded to two digits, space-padded to two digits, no padding).
+     * - `{M-full}`: Full name of the month (e.g. "January").
+     * - `{M-short}`: Abbreviated name of the month with three letters (e.g. "Jan").
+     * - `{W}`, `{_W}`, `{^W}`: Week number as defined by ISO 8601 (zero-padded to two digits, space-padded to two
+     *   digits, no padding).
+     * - `{D}`, `{_D}`, `{^D}`: Day of the month (zero-padded to two digits, space-padded to two digits, no padding).
+     * - `{DOW}`: Day of the week as defined by ISO 8601 (1 = Monday, 7 = Sunday).
+     * - `{DOW-full}`: Full name of the day of the week (e.g. "Monday").
+     * - `{DOW-short}`: Abbreviated name of the day of the week with three letters (e.g. "Mon").
+     * - `{DOY}`, `{_DOY}`, `{^DOY}`: Day of the year, ranging from 1 to 366 (zero-padded to three digits, space-padded
+     *   to three digits, no padding).
+     *
+     * The specifiers follow certain conventions:
+     *
+     * - If a component may be formatted in multiple ways, we use shorter specifiers for ISO 8601. Specifiers for
+     *   other formats have a prefix (same value with different padding, see below) or suffix (other differences).
+     * - By default, value are zero-padded, where applicable.
+     * - A leading underscore (`_`) means the value is space-padded.
+     * - A leading caret (`^`) means the value has no padding (think of the caret in regular expressions).
+     *
+     * @param format The format to use.
+     *
+     * @result cell The parsed date.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", ["1999-02-03", "03.02.2001", "abc", null]);
+     *     out column.transform((cell) -> cell.str.toDate());
+     *     out column.transform((cell) -> cell.str.toDate(format="{D}.{M}.{Y}"));
+     * }
+     */
+    @Pure
+    @PythonName("to_date")
+    fun toDate(
+        format: String? = "iso"
+    ) -> cell: Cell<Date?>
+
+    /**
+     * Convert a string to a datetime.
+     *
+     * The `format` parameter controls the presentation. It can be `"iso"` to target ISO 8601 or a custom string. The
+     * custom string can contain fixed specifiers (see below), which are replaced with the corresponding values. The
+     * specifiers are case-sensitive and always enclosed in curly braces. Other text is included in the output
+     * verbatim. To include a literal opening curly brace, use `\{`, and to include a literal backslash, use `\\`.
+     *
+     * The following specifiers for _date components_ are available for **datetime** and **date**:
+     *
+     * - `{Y}`, `{_Y}`, `{^Y}`: Year (zero-padded to four digits, space-padded to four digits, no padding).
+     * - `{Y99}`, `{_Y99}`, `{^Y99}`: Year modulo 100 (zero-padded to two digits, space-padded to two digits, no
+     *   padding).
+     * - `{M}`, `{_M}`, `{^M}`: Month (zero-padded to two digits, space-padded to two digits, no padding).
+     * - `{M-full}`: Full name of the month (e.g. "January").
+     * - `{M-short}`: Abbreviated name of the month with three letters (e.g. "Jan").
+     * - `{W}`, `{_W}`, `{^W}`: Week number as defined by ISO 8601 (zero-padded to two digits, space-padded to two
+     *   digits, no padding).
+     * - `{D}`, `{_D}`, `{^D}`: Day of the month (zero-padded to two digits, space-padded to two digits, no padding).
+     * - `{DOW}`: Day of the week as defined by ISO 8601 (1 = Monday, 7 = Sunday).
+     * - `{DOW-full}`: Full name of the day of the week (e.g. "Monday").
+     * - `{DOW-short}`: Abbreviated name of the day of the week with three letters (e.g. "Mon").
+     * - `{DOY}`, `{_DOY}`, `{^DOY}`: Day of the year, ranging from 1 to 366 (zero-padded to three digits, space-padded
+     *   to three digits, no padding).
+     *
+     * The following specifiers for _time components_ are available for **datetime** and **time**:
+     *
+     * - `{h}`, `{_h}`, `{^h}`: Hour (zero-padded to two digits, space-padded to two digits, no padding).
+     * - `{h12}`, `{_h12}`, `{^h12}`: Hour in 12-hour format (zero-padded to two digits, space-padded to two digits, no
+     *   padding).
+     * - `{m}`, `{_m}`, `{^m}`: Minute (zero-padded to two digits, space-padded to two digits, no padding).
+     * - `{s}`, `{_s}`, `{^s}`: Second (zero-padded to two digits, space-padded to two digits, no padding).
+     * - `{.f}`: Fractional seconds with a leading decimal point.
+     * - `{ms}`: Millisecond (zero-padded to three digits).
+     * - `{us}`: Microsecond (zero-padded to six digits).
+     * - `{ns}`: Nanosecond (zero-padded to nine digits).
+     * - `{AM/PM}`: AM or PM (uppercase).
+     * - `{am/pm}`: am or pm (lowercase).
+     *
+     * The following specifiers are available for **datetime** only:
+     *
+     * - `{z}`: Offset of the timezone from UTC without a colon (e.g. "+0000").
+     * - `{:z}`: Offset of the timezone from UTC with a colon (e.g. "+00:00").
+     * - `{u}`: The UNIX timestamp in seconds.
+     *
+     * The specifiers follow certain conventions:
+     *
+     * - Generally, date components use uppercase letters and time components use lowercase letters.
+     * - If a component may be formatted in multiple ways, we use shorter specifiers for ISO 8601. Specifiers for
+     *   other formats have a prefix (same value with different padding, see below) or suffix (other differences).
+     * - By default, value are zero-padded, where applicable.
+     * - A leading underscore (`_`) means the value is space-padded.
+     * - A leading caret (`^`) means the value has no padding (think of the caret in regular expressions).
+     *
+     * @param format The format to use.
+     *
+     * @result cell The parsed datetime.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", ["1999-12-31T01:02:03Z", "12:30 Jan 23 2024", "abc", null]);
+     *     out column.transform((cell) -> cell.str.toDatetime());
+     *     out column.transform((cell) -> cell.str.toDatetime(
+     *         format="{h}:{m} {M-short} {D} {Y}"
+     *     ));
+     * }
+     */
+    @Pure
+    @PythonName("to_datetime")
+    fun toDatetime(
+        format: String? = "iso"
+    ) -> cell: Cell<Datetime?>
+
+    /**
+     * Convert the string to a float.
+     *
+     * @result cell The float value. If the string cannot be converted to a float, null is returned.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", ["1", "1.5", "abc", null]);
+     *     out column.transform((cell) -> cell.str.toFloat());
+     * }
+     */
+    @Pure
+    @PythonName("to_float")
+    fun toFloat() -> cell: Cell<Float?>
+
+    /**
+     * Convert the string to an integer.
+     *
+     * @param base The base of the integer.
+     *
+     * @result cell The integer value. If the string cannot be converted to an integer, null is returned.
+     *
+     * @example
+     * pipeline example {
+     *     val column1 = Column("a", ["1", "10", "abc", null]);
+     *     out column1.transform((cell) -> cell.str.toInt());
+     * }
+     *
+     * @example
+     * pipeline example {
+     *     val column2 = Column("a", ["1", "10", "abc", null]);
+     *     out column2.transform((cell) -> cell.str.toInt(base = 2));
+     * }
+     */
+    @Pure
+    @PythonName("to_int")
+    fun toInt(
+        base: ConvertibleToIntCell = 10
+    ) -> cell: Cell<Int?>
+
+    /**
+     * Convert the string to lowercase.
+     *
+     * @result cell The lowercase string.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", ["AB", "BC", null]);
+     *     out column.transform((cell) -> cell.str.toLowercase());
+     * }
+     */
+    @Pure
+    @PythonName("to_lowercase")
+    fun toLowercase() -> cell: Cell<String?>
+
+    /**
+     * Convert a string to a time.
+     *
+     * The `format` parameter controls the presentation. It can be `"iso"` to target ISO 8601 or a custom string. The
+     * custom string can contain fixed specifiers (see below), which are replaced with the corresponding values. The
+     * specifiers are case-sensitive and always enclosed in curly braces. Other text is included in the output
+     * verbatim. To include a literal opening curly brace, use `\{`, and to include a literal backslash, use `\\`.
+     *
+     * The following specifiers are available:
+     *
+     * - `{h}`, `{_h}`, `{^h}`: Hour (zero-padded to two digits, space-padded to two digits, no padding).
+     * - `{h12}`, `{_h12}`, `{^h12}`: Hour in 12-hour format (zero-padded to two digits, space-padded to two digits, no
+     *   padding).
+     * - `{m}`, `{_m}`, `{^m}`: Minute (zero-padded to two digits, space-padded to two digits, no padding).
+     * - `{s}`, `{_s}`, `{^s}`: Second (zero-padded to two digits, space-padded to two digits, no padding).
+     * - `{.f}`: Fractional seconds with a leading decimal point.
+     * - `{ms}`: Millisecond (zero-padded to three digits).
+     * - `{us}`: Microsecond (zero-padded to six digits).
+     * - `{ns}`: Nanosecond (zero-padded to nine digits).
+     * - `{AM/PM}`: AM or PM (uppercase).
+     * - `{am/pm}`: am or pm (lowercase).
+     *
+     * The specifiers follow certain conventions:
+     *
+     * - If a component may be formatted in multiple ways, we use shorter specifiers for ISO 8601. Specifiers for
+     *   other formats have a prefix (same value with different padding, see below) or suffix (other differences).
+     * - By default, value are zero-padded, where applicable.
+     * - A leading underscore (`_`) means the value is space-padded.
+     * - A leading caret (`^`) means the value has no padding (think of the caret in regular expressions).
+     *
+     * @param format The format to use.
+     *
+     * @result cell The parsed time.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", ["12:34", "12:34:56", "12:34:56.789", "abc", null]);
+     *     out column.transform((cell) -> cell.str.toTime());
+     *     out column.transform((cell) -> cell.str.toTime(format="{h}:{m}"));
+     * }
+     */
+    @Pure
+    @PythonName("to_time")
+    fun toTime(
+        format: String? = "iso"
+    ) -> cell: Cell<Time?>
+
+    /**
+     * Convert the string to uppercase.
+     *
+     * @result cell The uppercase string.
+     *
+     * @example
+     * pipeline example {
+     *     val column = Column("a", ["ab", "bc", null]);
+     *     out column.transform((cell) -> cell.str.toUppercase());
+     * }
+     */
+    @Pure
+    @PythonName("to_uppercase")
+    fun toUppercase() -> cell: Cell<String?>
+}

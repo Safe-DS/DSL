@@ -2,7 +2,7 @@ package safeds.ml.classical
 
 from safeds.data.labeled.containers import TabularDataset
 from safeds.data.tabular.containers import Table
-from safeds.data.tabular.typing import DataType
+from safeds.data.tabular.typing import ColumnType
 from safeds.data.tabular.typing import Schema
 
 /**
@@ -84,5 +84,5 @@ class SupervisedModel {
      */
     @Pure
     @PythonName("get_target_type")
-    fun getTargetType() -> targetType: DataType
+    fun getTargetType() -> targetType: ColumnType
 }

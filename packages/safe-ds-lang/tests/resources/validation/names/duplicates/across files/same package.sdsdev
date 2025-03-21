@@ -16,3 +16,5 @@ segment »duplicatePublicSegment«() {}
 internal segment »duplicateInternalSegment«() {}
 // $TEST$ no error r"Multiple declarations in this package have the name '\w*'\."
 private segment »duplicatePrivateSegment«() {}
+// $TEST$ error "Multiple declarations in this package have the name 'DuplicateAlias'."
+typealias »DuplicateAlias« = Int

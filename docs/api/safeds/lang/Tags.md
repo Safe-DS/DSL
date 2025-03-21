@@ -21,7 +21,16 @@ Tags to associate with a declaration. They can be used for filtering.
 
 ??? quote "Stub code in `ideIntegration.sdsstub`"
 
-    ```sds linenums="94"
+    ```sds linenums="85"
+    @Experimental
+    @Targets([
+        AnnotationTarget.Annotation,
+        AnnotationTarget.Class,
+        AnnotationTarget.Enum,
+        AnnotationTarget.Function,
+        AnnotationTarget.Pipeline,
+        AnnotationTarget.Segment,
+    ])
     annotation Tags(tags: List<String>)
     ```
     { data-search-exclude }

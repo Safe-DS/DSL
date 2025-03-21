@@ -16,6 +16,7 @@ import {
     SdsPlaceholder,
     SdsResult,
     SdsSegment,
+    SdsTypeAlias,
     SdsTypeParameter,
 } from '../generated/ast.js';
 import { NodeKindProvider } from 'langium/lsp';
@@ -57,6 +58,8 @@ export class SafeDsNodeKindProvider implements NodeKindProvider {
                 return SymbolKind.Variable;
             case SdsSegment:
                 return SymbolKind.Function;
+            case SdsTypeAlias:
+                return SymbolKind.Class;
             case SdsTypeParameter:
                 return SymbolKind.TypeParameter;
             default:
@@ -101,6 +104,8 @@ export class SafeDsNodeKindProvider implements NodeKindProvider {
                 return CompletionItemKind.Variable;
             case SdsSegment:
                 return CompletionItemKind.Function;
+            case SdsTypeAlias:
+                return CompletionItemKind.Class;
             case SdsTypeParameter:
                 return CompletionItemKind.TypeParameter;
             default:

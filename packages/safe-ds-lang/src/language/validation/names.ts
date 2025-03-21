@@ -1,7 +1,7 @@
 import { AstNodeDescription, AstUtils, ValidationAcceptor } from 'langium';
 import { duplicatesBy } from '../../helpers/collections.js';
 import { listBuiltinFiles } from '../builtins/fileFinder.js';
-import { BUILTINS_LANG_PACKAGE, BUILTINS_ROOT_PACKAGE } from '../builtins/packageNames.js';
+import { SAFEDS_LANG_PACKAGE, SAFEDS_ROOT_PACKAGE } from '../builtins/packageNames.js';
 import {
     isSdsQualifiedImport,
     SdsAnnotation,
@@ -22,6 +22,7 @@ import {
     SdsPlaceholder,
     SdsResult,
     SdsSegment,
+    SdsTypeAlias,
     SdsTypeParameter,
 } from '../generated/ast.js';
 import { CODEGEN_PREFIX } from '../generation/python/constants.js';
@@ -83,11 +84,11 @@ export const nameMustNotOccurOnCoreDeclaration = (services: SafeDsServices) => {
 
         // Prevents the error from showing when editing the builtin files
         const packageName = getPackageName(node);
-        if (packageName === BUILTINS_LANG_PACKAGE) {
+        if (packageName === SAFEDS_LANG_PACKAGE) {
             return;
         }
 
-        const coreDeclarations = packageManager.getDeclarationsInPackage(BUILTINS_LANG_PACKAGE);
+        const coreDeclarations = packageManager.getDeclarationsInPackage(SAFEDS_LANG_PACKAGE);
         if (coreDeclarations.some((it) => it.name === node.name)) {
             accept('error', 'Names of core declarations must not be used for own declarations.', {
                 node,
@@ -152,6 +153,8 @@ export const nameShouldHaveCorrectCasing = (services: SafeDsServices) => {
                 return nameShouldBeLowerCamelCase(node, 'results', accept);
             case SdsSegment:
                 return nameShouldBeLowerCamelCase(node, 'segments', accept);
+            case SdsTypeAlias:
+                return nameShouldBeUpperCamelCase(node, 'type aliases', accept);
             case SdsTypeParameter:
                 return nameShouldBeUpperCamelCase(node, 'type parameters', accept);
         }
@@ -305,9 +308,9 @@ export const moduleMemberMustHaveNameThatIsUniqueInPackage = (services: SafeDsSe
 
             let declarationsInPackage: AstNodeDescription[];
             let kind: string;
-            if (packageName.startsWith(BUILTINS_ROOT_PACKAGE)) {
+            if (packageName.startsWith(SAFEDS_ROOT_PACKAGE)) {
                 // For a builtin package, the simple names of declarations must be unique
-                declarationsInPackage = packageManager.getDeclarationsInPackageOrSubpackage(BUILTINS_ROOT_PACKAGE);
+                declarationsInPackage = packageManager.getDeclarationsInPackageOrSubpackage(SAFEDS_ROOT_PACKAGE);
                 kind = 'builtin declarations';
             } else {
                 declarationsInPackage = packageManager.getDeclarationsInPackage(packageName);

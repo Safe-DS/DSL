@@ -12,6 +12,7 @@ import {
     isSdsPipeline,
     isSdsResult,
     isSdsSegment,
+    isSdsTypeAlias,
     isSdsTypeParameter,
     SdsAnnotation,
     SdsAnnotationCall,
@@ -147,6 +148,11 @@ const getActualTarget = (node: SdsAnnotationCall): GetActualTargetResult | void 
         return {
             enumVariantName: 'Segment',
             prettyName: 'a segment',
+        };
+    } else if (isSdsTypeAlias(annotatedObject)) {
+        return {
+            enumVariantName: 'TypeAlias',
+            prettyName: 'a type alias',
         };
     } else if (isSdsTypeParameter(annotatedObject)) {
         return {
