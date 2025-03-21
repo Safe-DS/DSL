@@ -14,7 +14,8 @@ Get a baseline by fitting data on multiple different models and comparing the be
 
 ??? quote "Stub code in `BaselineRegressor.sdsstub`"
 
-    ```sds linenums="14"
+    ```sds linenums="13"
+    @Experimental
     class BaselineRegressor(
         @PythonName("extended_search") extendedSearch: Boolean = false
     ) {

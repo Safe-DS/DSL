@@ -3,6 +3,8 @@ package tests.validation.other.modules.declarationsInDevFiles
 // $TEST$ no error "A pipeline file must only declare pipelines and segments."
 annotation »MyAnnotation«
 // $TEST$ no error "A pipeline file must only declare pipelines and segments."
+attr »myAttribute«: Int
+// $TEST$ no error "A pipeline file must only declare pipelines and segments."
 class »MyClass« {
 
     // $TEST$ no error "A pipeline file must only declare pipelines and segments."

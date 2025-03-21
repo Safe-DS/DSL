@@ -1,0 +1,13 @@
+package safeds.scoping.namedTypes.acrossFiles.toTypeAliases
+
+// $TEST$ target safeds_MyAlias
+typealias »MyAlias« = Int
+
+// $TEST$ target safeds_PublicAliasInSafeDsPackage
+typealias »PublicAliasInSafeDsPackage« = Int
+
+// $TEST$ target safeds_InternalAliasInSafeDsPackage
+internal typealias »InternalAliasInSafeDsPackage« = Int
+
+// $TEST$ target safeds_PrivateAliasInSafeDsPackage
+private typealias »PrivateAliasInSafeDsPackage« = Int

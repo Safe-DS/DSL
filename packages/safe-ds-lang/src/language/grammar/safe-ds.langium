@@ -126,6 +126,10 @@ SdsAnnotatedModuleMember returns SdsModuleMember:
         {SdsAnnotation.annotationCallList=current}
         SdsAnnotationFragment
 
+      | {SdsAttribute.annotationCallList=current}
+        visibility=SdsVisibility?
+        SdsAttributeFragment
+
       | {SdsClass.annotationCallList=current}
         visibility=SdsVisibility?
         SdsClassFragment
@@ -143,12 +147,19 @@ SdsAnnotatedModuleMember returns SdsModuleMember:
 
       | {SdsSegment.annotationCallList=current}
         SdsSegmentFragment
+
+      | {SdsTypeAlias.annotationCallList=current}
+        SdsTypeAliasFragment
     )
 ;
 
 SdsUnannotatedModuleMember returns SdsModuleMember:
       {SdsAnnotation}
       SdsAnnotationFragment
+
+    | {SdsAttribute}
+      visibility=SdsVisibility?
+      SdsAttributeFragment
 
     | {SdsClass}
       visibility=SdsVisibility?
@@ -167,6 +178,9 @@ SdsUnannotatedModuleMember returns SdsModuleMember:
 
     | {SdsSegment}
       SdsSegmentFragment
+
+    | {SdsTypeAlias}
+      SdsTypeAliasFragment
 ;
 
 interface SdsAnnotation extends SdsCallable, SdsModuleMember {
@@ -228,6 +242,7 @@ SdsAnnotatedClassMember returns SdsClassMember:
     annotationCalls+=SdsAnnotationCall+
     (
         {SdsAttribute.annotationCallList=current}
+        isStatic?='static'?
         SdsAttributeFragment
 
       | {SdsClass.annotationCallList=current}
@@ -244,6 +259,7 @@ SdsAnnotatedClassMember returns SdsClassMember:
 
 SdsUnannotatedClassMember returns SdsClassMember:
       {SdsAttribute}
+      isStatic?='static'?
       SdsAttributeFragment
 
     | {SdsClass}
@@ -257,13 +273,12 @@ SdsUnannotatedClassMember returns SdsClassMember:
       SdsFunctionFragment
 ;
 
-interface SdsAttribute extends SdsClassMember {
+interface SdsAttribute extends SdsClassMember, SdsModuleMember {
     isStatic: boolean
     ^type?: SdsType
 }
 
 fragment SdsAttributeFragment:
-    isStatic?='static'?
     'attr'
     name=ID
     (':' ^type=SdsType)?
@@ -341,6 +356,16 @@ fragment SdsSegmentFragment:
     body=SdsBlock
 ;
 
+interface SdsTypeAlias extends SdsModuleMember, SdsNamedTypeDeclaration {
+    ^type: SdsType
+}
+
+fragment SdsTypeAliasFragment:
+    visibility=SdsVisibility?
+    'typealias'
+    name=ID
+    '=' ^type=SdsType
+;
 
 // -----------------------------------------------------------------------------
 // Annotation calls

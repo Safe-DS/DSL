@@ -1,0 +1,35 @@
+package tests.scoping.references.inSameFile.toGlobalAttributes
+
+// $TEST$ target PrivateBefore
+private attr »privateBefore«: Int
+// $TEST$ target InternalBefore
+internal attr »internalBefore«: Int
+// $TEST$ target PublicBefore
+attr »publicBefore«: Int
+
+pipeline myPipeline {
+    // $TEST$ references PrivateBefore
+    »privateBefore«;
+
+    // $TEST$ references InternalBefore
+    »internalBefore«;
+
+    // $TEST$ references PublicBefore
+    »publicBefore«;
+
+    // $TEST$ references PrivateAfter
+    »privateAfter«;
+
+    // $TEST$ references InternalAfter
+    »internalAfter«;
+
+    // $TEST$ references PublicAfter
+    »publicAfter«;
+}
+
+// $TEST$ target PrivateAfter
+private attr »privateAfter«: Int
+// $TEST$ target InternalAfter
+internal attr »internalAfter«: Int
+// $TEST$ target PublicAfter
+attr »publicAfter«: Int

@@ -104,7 +104,7 @@ describe('scoping', async () => {
     it('should resolve members on literals', async () => {
         const code = `
             pipeline myPipeline {
-                1.toString();
+                1.toFloat();
             }
         `;
         await expectNoLinkingErrors(code);
@@ -112,8 +112,8 @@ describe('scoping', async () => {
 
     it('should resolve members on literal types', async () => {
         const code = `
-            segment mySegment(p: literal<"">) {
-                p.toString();
+            segment mySegment(p: literal<1>) {
+                p.toFloat();
             }
         `;
         await expectNoLinkingErrors(code);

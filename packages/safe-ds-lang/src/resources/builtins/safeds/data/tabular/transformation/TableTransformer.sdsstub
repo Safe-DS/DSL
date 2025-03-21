@@ -4,8 +4,6 @@ from safeds.data.tabular.containers import Table
 
 /**
  * Learn a transformation for a set of columns in a `Table` and transform another `Table` with the same columns.
- *
- * @param columnNames The list of columns used to fit the transformer. If `None`, all suitable columns are used.
  */
 class TableTransformer {
     /**

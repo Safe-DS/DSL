@@ -18,7 +18,18 @@ The declaration might change without a major version bump.
 
 ??? quote "Stub code in `maturity.sdsstub`"
 
-    ```sds linenums="43"
+    ```sds linenums="32"
+    @Targets([
+        AnnotationTarget.Annotation,
+        AnnotationTarget.Attribute,
+        AnnotationTarget.Class,
+        AnnotationTarget.Enum,
+        AnnotationTarget.EnumVariant,
+        AnnotationTarget.Function,
+        AnnotationTarget.Parameter,
+        AnnotationTarget.Result,
+        AnnotationTarget.Segment,
+    ])
     annotation Experimental
     ```
     { data-search-exclude }

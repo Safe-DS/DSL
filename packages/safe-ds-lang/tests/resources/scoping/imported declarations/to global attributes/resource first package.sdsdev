@@ -1,0 +1,7 @@
+package tests.scoping.importedDeclarations.toGlobalAttributes.first
+
+// $TEST$ target firstPackage_attributeInFirstPackage
+attr »attributeInFirstPackage«: Int
+
+// $TEST$ target firstPackage_attributeInBothPackages
+attr »attributeInBothPackages«: Int

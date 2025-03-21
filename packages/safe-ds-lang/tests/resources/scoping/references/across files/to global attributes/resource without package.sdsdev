@@ -1,0 +1,11 @@
+// $TEST$ target without_myAttribute
+attr »myAttribute«: Int
+
+// $TEST$ target without_publicAttributeWithoutPackage
+attr »publicAttributeWithoutPackage«: Int
+
+// $TEST$ target without_internalAttributeInSamePackage
+internal attr »internalAttributeInSamePackage«: Int
+
+// $TEST$ target without_privateAttributeInSamePackage
+private attr »privateAttributeInSamePackage«: Int

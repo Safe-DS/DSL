@@ -24,6 +24,7 @@ Description of MyAnnotation2.
 - `Pipeline`
 - `Result`
 - `Segment`
+- `TypeAlias`
 - `TypeParameter`
 
 ??? quote "Stub code in `main.sdsstub`"

@@ -33,12 +33,14 @@ describe('SafeDsSemanticTokenProvider', async () => {
         {
             testName: 'attribute declaration',
             code: `
+                attr <|a|>
+
                 class C {
-                    attr <|a|>
-                    static attr <|b|>
+                    attr <|b|>
+                    static attr <|c|>
                 }
             `,
-            expectedTokenTypes: [SemanticTokenTypes.property, SemanticTokenTypes.property],
+            expectedTokenTypes: [SemanticTokenTypes.property, SemanticTokenTypes.property, SemanticTokenTypes.property],
         },
         {
             testName: 'block lambda result declaration',
@@ -155,6 +157,11 @@ describe('SafeDsSemanticTokenProvider', async () => {
                 }
             `,
             expectedTokenTypes: [SemanticTokenTypes.function],
+        },
+        {
+            testName: 'type alias declaration',
+            code: 'typealias <|A|>',
+            expectedTokenTypes: [SemanticTokenTypes.type],
         },
         {
             testName: 'type argument',

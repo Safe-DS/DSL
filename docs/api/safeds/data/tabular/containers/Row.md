@@ -9,53 +9,47 @@ search:
 
 A one-dimensional collection of named, heterogeneous values.
 
-This class cannot be instantiated directly. It is only used for arguments of callbacks.
+You only need to interact with this class in callbacks passed to higher-order functions.
 
 ??? quote "Stub code in `Row.sdsstub`"
 
     ```sds linenums="11"
     class Row {
         /**
-         * The names of the columns in the row.
-         */
-        @PythonName("column_names") attr columnNames: List<String>
-        /**
-         * The number of columns in the row.
+         * The number of columns.
          */
         @PythonName("column_count") attr columnCount: Int
         /**
-         * The schema of the row.
+         * The names of the columns.
+         */
+        @PythonName("column_names") attr columnNames: List<String>
+        /**
+         * The schema of the row, which is a mapping from column names to their types.
          */
         attr schema: Schema
 
         /**
-         * Get the value of the specified column. This is equivalent to the `[]` operator (indexed access).
+         * Get the cell in the specified column. This is equivalent to the `[]` operator (indexed access).
          *
          * @param name The name of the column.
          *
-         * @result value The value of the column.
+         * @result cell The cell in the specified column.
          *
          * @example
          * pipeline example {
          *     val table = Table({"col1": [1, 2], "col2": [3, 4]});
-         *     val result = table.removeRows((row) -> row.getValue("col1") == 1);
-         * }
-         *
-         * @example
-         * pipeline example {
-         *     val table = Table({"col1": [1, 2], "col2": [3, 4]});
-         *     val result = table.removeRows((row) -> row["col1"] == 1);
-         *     // Table({"col1": [2], "col2": [4]})
+         *     out table.removeRows((row) -> row.getCell("col1") == 1);
+         *     out table.removeRows((row) -> row["col1"] == 1);
          * }
          */
         @Pure
-        @PythonName("get_value")
-        fun getValue(
+        @PythonName("get_cell")
+        fun getCell(
             name: String
-        ) -> value: Cell
+        ) -> cell: Cell<Any>
 
         /**
-         * Get the type of the specified column.
+         * Get the type of a column.
          *
          * @param name The name of the column.
          *
@@ -65,10 +59,10 @@ This class cannot be instantiated directly. It is only used for arguments of cal
         @PythonName("get_column_type")
         fun getColumnType(
             name: String
-        ) -> type: DataType
+        ) -> type: ColumnType
 
         /**
-         * Check if the row has a column with the specified name.
+         * Check if the row has a column with a specific name. This is equivalent to the `in` operator.
          *
          * @param name The name of the column.
          *
@@ -85,52 +79,25 @@ This class cannot be instantiated directly. It is only used for arguments of cal
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `columnCount` {#safeds.data.tabular.containers.Row.columnCount data-toc-label='[attribute] columnCount'}
 
-The number of columns in the row.
+The number of columns.
 
 **Type:** [`Int`][safeds.lang.Int]
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `columnNames` {#safeds.data.tabular.containers.Row.columnNames data-toc-label='[attribute] columnNames'}
 
-The names of the columns in the row.
+The names of the columns.
 
 **Type:** [`List<String>`][safeds.lang.List]
 
 ## <code class="doc-symbol doc-symbol-attribute"></code> `schema` {#safeds.data.tabular.containers.Row.schema data-toc-label='[attribute] schema'}
 
-The schema of the row.
+The schema of the row, which is a mapping from column names to their types.
 
 **Type:** [`Schema`][safeds.data.tabular.typing.Schema]
 
-## <code class="doc-symbol doc-symbol-function"></code> `getColumnType` {#safeds.data.tabular.containers.Row.getColumnType data-toc-label='[function] getColumnType'}
+## <code class="doc-symbol doc-symbol-function"></code> `getCell` {#safeds.data.tabular.containers.Row.getCell data-toc-label='[function] getCell'}
 
-Get the type of the specified column.
-
-**Parameters:**
-
-| Name | Type | Description | Default |
-|------|------|-------------|---------|
-| `name` | [`String`][safeds.lang.String] | The name of the column. | - |
-
-**Results:**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `type` | [`DataType`][safeds.data.tabular.typing.DataType] | The type of the column. |
-
-??? quote "Stub code in `Row.sdsstub`"
-
-    ```sds linenums="58"
-    @Pure
-    @PythonName("get_column_type")
-    fun getColumnType(
-        name: String
-    ) -> type: DataType
-    ```
-    { data-search-exclude }
-
-## <code class="doc-symbol doc-symbol-function"></code> `getValue` {#safeds.data.tabular.containers.Row.getValue data-toc-label='[function] getValue'}
-
-Get the value of the specified column. This is equivalent to the `[]` operator (indexed access).
+Get the cell in the specified column. This is equivalent to the `[]` operator (indexed access).
 
 **Parameters:**
 
@@ -142,38 +109,59 @@ Get the value of the specified column. This is equivalent to the `[]` operator (
 
 | Name | Type | Description |
 |------|------|-------------|
-| `value` | [`Cell<Any?>`][safeds.data.tabular.containers.Cell] | The value of the column. |
+| `cell` | [`Cell<Any>`][safeds.data.tabular.containers.Cell] | The cell in the specified column. |
 
 **Examples:**
 
 ```sds hl_lines="3"
 pipeline example {
     val table = Table({"col1": [1, 2], "col2": [3, 4]});
-    val result = table.removeRows((row) -> row.getValue("col1") == 1);
-}
-```
-```sds
-pipeline example {
-    val table = Table({"col1": [1, 2], "col2": [3, 4]});
-    val result = table.removeRows((row) -> row["col1"] == 1);
-    // Table({"col1": [2], "col2": [4]})
+    out table.removeRows((row) -> row.getCell("col1") == 1);
+    out table.removeRows((row) -> row["col1"] == 1);
 }
 ```
 
 ??? quote "Stub code in `Row.sdsstub`"
 
-    ```sds linenums="45"
+    ```sds linenums="39"
     @Pure
-    @PythonName("get_value")
-    fun getValue(
+    @PythonName("get_cell")
+    fun getCell(
         name: String
-    ) -> value: Cell
+    ) -> cell: Cell<Any>
+    ```
+    { data-search-exclude }
+
+## <code class="doc-symbol doc-symbol-function"></code> `getColumnType` {#safeds.data.tabular.containers.Row.getColumnType data-toc-label='[function] getColumnType'}
+
+Get the type of a column.
+
+**Parameters:**
+
+| Name | Type | Description | Default |
+|------|------|-------------|---------|
+| `name` | [`String`][safeds.lang.String] | The name of the column. | - |
+
+**Results:**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `type` | [`ColumnType`][safeds.data.tabular.typing.ColumnType] | The type of the column. |
+
+??? quote "Stub code in `Row.sdsstub`"
+
+    ```sds linenums="52"
+    @Pure
+    @PythonName("get_column_type")
+    fun getColumnType(
+        name: String
+    ) -> type: ColumnType
     ```
     { data-search-exclude }
 
 ## <code class="doc-symbol doc-symbol-function"></code> `hasColumn` {#safeds.data.tabular.containers.Row.hasColumn data-toc-label='[function] hasColumn'}
 
-Check if the row has a column with the specified name.
+Check if the row has a column with a specific name. This is equivalent to the `in` operator.
 
 **Parameters:**
 
@@ -189,7 +177,7 @@ Check if the row has a column with the specified name.
 
 ??? quote "Stub code in `Row.sdsstub`"
 
-    ```sds linenums="71"
+    ```sds linenums="65"
     @Pure
     @PythonName("has_column")
     fun hasColumn(
