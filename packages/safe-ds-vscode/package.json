@@ -131,6 +131,27 @@
                 "path": "./snippets/safe-ds-dev.json"
             }
         ],
+        "customEditors": [
+            {
+                "displayName": "Safe DS",
+                "priority": "option",
+                "selector": [
+                    {
+                        "filenamePattern": "*.sds"
+                    }
+                ],
+                "viewType": "safe-ds.graphical-editor"
+            }
+        ],
+        "menus": {
+            "editor/title": [
+                {
+                    "command": "safe-ds.graphical-editor.open",
+                    "group": "navigation",
+                    "when": "resourceLangId == safe-ds && activeCustomEditorId != 'safe-ds.graphical-editor'"
+                }
+            ]
+        },
         "configuration": {
             "title": "Safe-DS",
             "properties": {
@@ -248,6 +269,11 @@
                 "command": "safe-ds.updateRunner",
                 "title": "Update the Safe-DS Runner",
                 "category": "Safe-DS"
+            },
+            {
+                "command": "safe-ds.graphical-editor.open",
+                "icon": "$(symbol-structure)",
+                "title": "Open in Graph View"
             }
         ]
     },

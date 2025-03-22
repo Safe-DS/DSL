@@ -59,7 +59,9 @@ import { SafeDsSyntheticProperties } from './helpers/safe-ds-synthetic-propertie
 import { SafeDsLinker } from './scoping/safe-ds-linker.js';
 import { SafeDsCodeActionProvider } from './codeActions/safe-ds-code-action-provider.js';
 import { SafeDsQuickfixProvider } from './codeActions/quickfixes/safe-ds-quickfix-provider.js';
+import { SafeDsGraphicalEditorProvider } from './graphical-editor/graphical-editor-provider.js';
 import { SafeDsTokenBuilder } from './grammar/safe-ds-token-builder.js';
+import { SafeDsDocumentUpdateHandler } from './lsp/safe-ds-document-update-handler.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -115,6 +117,9 @@ export type SafeDsAddedServices = {
     workspace: {
         PackageManager: SafeDsPackageManager;
         SettingsProvider: SafeDsSettingsProvider;
+    };
+    graphicalEditor: {
+        GraphicalEditorProvider: SafeDsGraphicalEditorProvider;
     };
 };
 
@@ -211,6 +216,9 @@ export const SafeDsModule: Module<SafeDsServices, PartialLangiumServices & SafeD
         PackageManager: (services) => new SafeDsPackageManager(services),
         SettingsProvider: (services) => new SafeDsSettingsProvider(services),
     },
+    graphicalEditor: {
+        GraphicalEditorProvider: (services) => new SafeDsGraphicalEditorProvider(services),
+    },
 };
 
 export const SafeDsSharedModule: Module<SafeDsSharedServices, DeepPartial<SafeDsSharedServices>> = {
@@ -219,6 +227,7 @@ export const SafeDsSharedModule: Module<SafeDsSharedServices, DeepPartial<SafeDs
         ExecuteCommandHandler: (sharedServices) => new SafeDsExecuteCommandHandler(sharedServices),
         FuzzyMatcher: () => new SafeDsFuzzyMatcher(),
         NodeKindProvider: () => new SafeDsNodeKindProvider(),
+        DocumentUpdateHandler: (sharedServices) => new SafeDsDocumentUpdateHandler(sharedServices),
     },
     workspace: {
         WorkspaceManager: (sharedServices) => new SafeDsWorkspaceManager(sharedServices),
