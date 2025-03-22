@@ -11,6 +11,7 @@ import {
     Disposable,
     URI,
     IndexManager,
+    TextDocument,
 } from 'langium';
 import {
     isSdsAnnotation,
@@ -22,7 +23,7 @@ import {
     isSdsReference,
     isSdsSegment,
 } from '../generated/ast.js';
-import { Connection, DidSaveTextDocumentParams } from 'vscode-languageserver';
+import { Connection } from 'vscode-languageserver';
 import { Collection } from './global.js';
 import {
     GraphicalEditorCloseSyncChannelRequest,
@@ -37,6 +38,8 @@ import { SafeDsAnnotations } from '../builtins/safe-ds-annotations.js';
 import { Parser } from './ast-parser/parser.js';
 import { SafeDsTypeComputer } from '../typing/safe-ds-type-computer.js';
 import { Buildin } from './types.js';
+import { URI as LangiumURI } from 'vscode-uri';
+import { TextDocuments } from 'langium/lsp';
 
 export class SafeDsGraphicalEditorProvider {
     private readonly logger: SafeDsLogger;
@@ -49,6 +52,7 @@ export class SafeDsGraphicalEditorProvider {
     private readonly Annotations: SafeDsAnnotations;
     private readonly TypeComputer: SafeDsTypeComputer;
     private readonly connection: Connection | undefined;
+    private readonly TextDocuments: TextDocuments<TextDocument>;
 
     private readonly SYNC_TRIGGER_STATE: DocumentState = 6;
     private readonly openChannel = new Map<string, Disposable>();
@@ -64,6 +68,7 @@ export class SafeDsGraphicalEditorProvider {
         this.Annotations = services.builtins.Annotations;
         this.TypeComputer = services.typing.TypeComputer;
         this.connection = services.shared.lsp.Connection;
+        this.TextDocuments = services.shared.workspace.TextDocuments;
 
         this.MessagingProvider.onRequest(GraphicalEditorParseDocumentRequest.type, this.parseDocument);
         this.MessagingProvider.onRequest(GraphicalEditorGetDocumentationRequest.type, this.getDocumentation);
@@ -91,7 +96,8 @@ export class SafeDsGraphicalEditorProvider {
             return { pipeline: graph, errorList, segmentList: [] };
         }
 
-        const document = await this.LangiumDocuments.getOrCreateDocument(uri);
+        const langiumUri = LangiumURI.file(uri.fsPath);
+        const document = await this.LangiumDocuments.getOrCreateDocument(langiumUri);
         await this.DocumentBuilder.build([document]);
 
         document.parseResult.lexerErrors.forEach(parser.pushLexerErrors);
@@ -117,7 +123,7 @@ export class SafeDsGraphicalEditorProvider {
         return { pipeline, errorList, segmentList };
     };
 
-    public async getDocumentation(params: { uri: Uri; uniquePath: string }): Promise<string | undefined> {
+    public getDocumentation = async (params: { uri: Uri; uniquePath: string }): Promise<string | undefined> => {
         const validTypes = ['.sds', '.sdsdev'];
 
         const fileType = extname(params.uri.path);
@@ -126,7 +132,8 @@ export class SafeDsGraphicalEditorProvider {
             return;
         }
 
-        const document = await this.LangiumDocuments.getOrCreateDocument(params.uri);
+        const langiumUri = LangiumURI.file(params.uri.fsPath);
+        const document = await this.LangiumDocuments.getOrCreateDocument(langiumUri);
         await this.DocumentBuilder.build([document]);
 
         const root = document.parseResult.value;
@@ -145,26 +152,30 @@ export class SafeDsGraphicalEditorProvider {
         const receiver = node.receiver;
         if (isSdsMemberAccess(receiver)) {
             const fun = receiver.member?.target.ref!;
-            return this.DocProvider.getDocumentation(fun);
+            const documentation = this.DocProvider.getDocumentation(fun) ?? '';
+            return documentation.slice(0, documentation.indexOf('**@example**')).trim();
         }
 
         if (isSdsReference(receiver)) {
             const cls = receiver.target.ref!;
-            return this.DocProvider.getDocumentation(cls);
+            const documentation = this.DocProvider.getDocumentation(cls) ?? '';
+            return documentation.slice(0, documentation.indexOf('**@example**')).trim();
         }
 
         this.logger.error(`GetDocumentation: Invalid call receiver <${node.$type}>`);
         return;
-    }
+    };
 
-    public closeSyncChannel(uri: Uri) {
-        if (!this.openChannel.has(uri.toString())) return;
+    public closeSyncChannel = (uri: Uri) => {
+        const key = uri.fsPath;
+        if (!this.openChannel.has(key)) return;
 
-        const channel = this.openChannel.get(uri.toString())!;
-        channel.dispose();
-    }
+        const channel = this.openChannel.get(key);
+        channel?.dispose();
+        this.openChannel.delete(key);
+    };
 
-    public openSyncChannel(uri: Uri) {
+    public openSyncChannel = async (uri: Uri) => {
         if (!this.connection) {
             this.logger.error('OpenSyncChannel: No connection to client');
             return;
@@ -172,36 +183,19 @@ export class SafeDsGraphicalEditorProvider {
 
         this.closeSyncChannel(uri);
 
-        const syncEventHandler = async (params: DidSaveTextDocumentParams) => {
-            const documentUri = URI.parse(params.textDocument.uri);
+        const channel = this.TextDocuments.onDidSave(async (event) => {
+            const documentUri = URI.parse(event.document.uri);
+            if (documentUri.fsPath !== uri.fsPath) return;
+
             const response = await this.parseDocument(documentUri);
-
             this.MessagingProvider.sendNotification(GraphicalEditorSyncEventNotification.type, response);
-        };
+        });
 
-        const channel = this.connection.onDidSaveTextDocument(syncEventHandler);
+        const key = uri.fsPath;
+        this.openChannel.set(key, channel);
+    };
 
-        /*
-            Man könnte über diese Methode ein Update des Graphen bei jedem Keystroke triggern.
-            Dieses Verhalten speziell ist vermutlich zu viel, aber eine debouncte Version könnte interessant sein.
-            
-            const syncHandler: DocumentBuildListener = () => {
-                const response: SyncChannelInterface.Response = {
-                    test: "THIS is a sync event",
-                };
-                connection.sendNotification(SyncChannelHandler.method, response);
-            };
-            
-            sharedServices.workspace.DocumentBuilder.onBuildPhase(
-                SYNC_TRIGGER_STATE,
-                syncHandler,
-            );
-        */
-
-        this.openChannel.set(uri.toString(), channel);
-    }
-
-    public async getBuildins(): Promise<Buildin[]> {
+    public getBuildins = async (): Promise<Buildin[]> => {
         const resultList: Buildin[] = [];
         const allElements = this.IndexManager.allElements();
 
@@ -250,5 +244,5 @@ export class SafeDsGraphicalEditorProvider {
         }
 
         return resultList;
-    }
+    };
 }

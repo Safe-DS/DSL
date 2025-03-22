@@ -5,13 +5,13 @@
     import type { Writable } from 'svelte/store';
     import { Buildin } from '$global';
     import { ScrollArea } from '$src/components/ui/scroll-area';
-    import Accordion from '$src/components/ui/accordion/accordion.svelte';
     import { type Node as XYNode } from '@xyflow/svelte';
     import CategoryIcon from '$src/assets/category/categoryIcon.svelte';
     import { getTypeName } from '$/src/components/sidebars/utils';
     import { Switch } from '$/src/components/ui/switch';
     import type { Category } from '$/src/components/ui/category/category-tree-node.svelte';
     import CategoryTreeNode from '$/src/components/ui/category/category-tree-node.svelte';
+    import Accordion from '$/src/components/ui/accordion/accordion.svelte';
 
     export let globalReferences: Writable<Buildin[]>;
     export let className: ClassValue;
@@ -91,11 +91,9 @@
 </script>
 
 <div class={cn('flex flex-col gap-2', className)}>
-    <div class="flex flex-row gap-1 px-3">
-        <div class="bg-menu-400 flex-grow cursor-grab justify-center rounded-sm p-1 py-3 text-center shadow">
-            Placeholder
-        </div>
-        <div class="bg-menu-400 flex-grow cursor-grab justify-center rounded-sm p-1 py-3 text-center shadow">
+    <div class="grid grid-cols-2 gap-1 px-3">
+        <div class="bg-menu-400 cursor-grab justify-center rounded-sm p-3 text-center shadow truncate">Placeholder</div>
+        <div class="bg-menu-400 cursor-grab justify-center rounded-sm p-3 text-center shadow truncate">
             GenericExpression
         </div>
     </div>

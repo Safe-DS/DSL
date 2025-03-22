@@ -178,8 +178,8 @@
     };
 </script>
 
-<div class=" relative h-full">
-    <div class=" absolute left-2 top-2 z-10 flex flex-row justify-center gap-2">
+<div class="relative h-full">
+    <div class="absolute left-2 top-2 z-10 flex flex-row justify-center gap-2">
         <button
             title="Relayout"
             class="bg-menu-400 hover:bg-menu-300 rounded p-1"
@@ -234,7 +234,13 @@
         on:nodeclick={triggerSelection}
         on:paneclick={triggerSelection}
     >
-        <Controls position="bottom-right" />
+        <Controls
+            position="bottom-right"
+            buttonBgColor={colorPallet.control.background}
+            buttonBgColorHover={colorPallet.control.hoverBackground}
+            buttonColor={colorPallet.control.color}
+            buttonColorHover={colorPallet.control.hoverColor}
+        />
         <Background
             class=" bg-menu-700"
             patternColor={colorPallet.grid.patternColor}

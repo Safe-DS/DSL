@@ -7,6 +7,7 @@
     import DataProcessing from './DataProcessing.svelte';
     import DataExploration from './DataExploration.svelte';
     import Utilities from './Utilities.svelte';
+    import { cn } from '$/src/pages/utils';
 
     const svgMap: { [key: string]: typeof ModelEvaluation } = {
         modelevaluation: ModelEvaluation,
@@ -28,5 +29,7 @@
 {#if SvgComponent}
     <SvgComponent {className} />
 {:else}
-    <div class="mr-2">-</div>
+    <div class={cn(`flex items-center justify-center`, className)}>
+        <p>-</p>
+    </div>
 {/if}

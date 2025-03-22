@@ -273,7 +273,7 @@
             {
                 "command": "safe-ds.graphical-editor.open",
                 "icon": "$(symbol-structure)",
-                "title": "Open in Graphical Editor"
+                "title": "Open in Graph View"
             }
         ]
     },

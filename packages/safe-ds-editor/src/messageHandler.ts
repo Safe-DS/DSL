@@ -1,7 +1,6 @@
 import {
     Buildin,
     type Collection,
-    type ExtractParams,
     type ExtractResult,
     GraphicalEditorParseDocumentRequest,
     GraphicalEditorGetBuildinsRequest,
@@ -119,11 +118,10 @@ export class MessageHandler {
             };
 
             window.addEventListener('message', responseHandler, { signal: controller.signal });
-            const messageObject: { command: string; value: Omit<ExtractParams<typeof GetDocumentation.type>, 'uri'> } =
-                {
-                    command: GetDocumentation.method,
-                    value: { uniquePath },
-                };
+            const messageObject: { command: string; value: string } = {
+                command: GetDocumentation.method,
+                value: uniquePath,
+            };
             MessageHandler.vsocde.postMessage(messageObject);
         });
 

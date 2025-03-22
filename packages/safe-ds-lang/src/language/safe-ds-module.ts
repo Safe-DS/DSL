@@ -61,6 +61,7 @@ import { SafeDsCodeActionProvider } from './codeActions/safe-ds-code-action-prov
 import { SafeDsQuickfixProvider } from './codeActions/quickfixes/safe-ds-quickfix-provider.js';
 import { SafeDsGraphicalEditorProvider } from './graphical-editor/graphical-editor-provider.js';
 import { SafeDsTokenBuilder } from './grammar/safe-ds-token-builder.js';
+import { SafeDsDocumentUpdateHandler } from './lsp/safe-ds-document-update-handler.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -226,6 +227,7 @@ export const SafeDsSharedModule: Module<SafeDsSharedServices, DeepPartial<SafeDs
         ExecuteCommandHandler: (sharedServices) => new SafeDsExecuteCommandHandler(sharedServices),
         FuzzyMatcher: () => new SafeDsFuzzyMatcher(),
         NodeKindProvider: () => new SafeDsNodeKindProvider(),
+        DocumentUpdateHandler: (sharedServices) => new SafeDsDocumentUpdateHandler(sharedServices),
     },
     workspace: {
         WorkspaceManager: (sharedServices) => new SafeDsWorkspaceManager(sharedServices),

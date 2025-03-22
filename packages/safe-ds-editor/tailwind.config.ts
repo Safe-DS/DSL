@@ -7,6 +7,13 @@ export const colorPallet = {
         patternColor: 'rgba(255, 255, 255, 0)',
     },
 
+    control: {
+        background: 'rgba(42, 45, 46, 1)',
+        hoverBackground: 'rgba(52, 55, 56, 1)',
+        color: 'rgba(204, 204, 204, 1)',
+        hoverColor: 'rgba(204, 204, 204, 1)',
+    },
+
     node: {
         normal: '#404040',
         dark: '#1E1E1E',

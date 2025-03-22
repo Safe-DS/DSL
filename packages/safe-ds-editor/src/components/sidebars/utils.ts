@@ -7,30 +7,6 @@ import { MessageHandler } from '$src/messageHandler';
 import { getContext } from 'svelte';
 import type { Parameter } from './section-parameter.svelte';
 
-export const getName = (xyNodeList: XYNode[]) => {
-    if (xyNodeList.length === 0) return '';
-
-    const nameList: string[] = xyNodeList.map((node) => {
-        if (Object.keys(node.data).includes('call')) {
-            const { call } = node.data as CallProps;
-            return call.name;
-        }
-        if (Object.keys(node.data).includes('placeholder')) {
-            const { placeholder } = node.data as PlaceholderProps;
-            return placeholder.name;
-        }
-        if (Object.keys(node.data).includes('genericExpression')) {
-            // const { genericExpression } = node.data as GenericExpressionProps;
-            return 'Expression';
-        }
-        return '';
-    });
-
-    if (nameList.length === 1) return nameList[0];
-
-    return `[${nameList.join(', ')}]`;
-};
-
 export const getDescription = async (xyNodeList: XYNode[]): Promise<string> => {
     if (xyNodeList.length !== 1) return '';
     const xyNode = xyNodeList[0];

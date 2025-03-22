@@ -50,6 +50,10 @@
 }
 
 @layer base {
+    :root {
+        --xy-controls-button-background-color: rgba(42, 45, 46, 1);
+    }
+
     * {
         @apply border-border;
     }

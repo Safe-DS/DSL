@@ -47,8 +47,8 @@ export class Segment extends Graph {
         const segment = new Segment(
             parameterList,
             resultList,
-            name,
             uniquePath,
+            name,
             graph.placeholderList,
             graph.callList,
             graph.genericExpressionList,
