@@ -13,12 +13,14 @@
     import DataTypeIcon from '$src/assets/type/typeIcon.svelte';
     import StatusIndicator, { type Status } from '$src/components/ui/status-indicator/status-indicator.svelte';
     import * as ContextMenu from '$src/components/ui/context-menu';
+    import { getPlaceholderIconName } from '$/src/components/nodes/utils';
 
     type $$Props = NodeProps;
     export let data: $$Props['data'];
     export let id: $$Props['id'];
     export let selected: $$Props['selected'] = undefined;
     $: ({ placeholder, runUntilHere, isSegment, status } = data as PlaceholderProps);
+    $: iconName = getPlaceholderIconName(placeholder.type);
     let isHovered = false;
 </script>
 
@@ -46,7 +48,7 @@
                 <div class="absolute left-0 top-0 h-24 w-24 rounded-xl bg-transparent py-1">
                     <div class="bg-node-normal h-full w-full rounded-xl">
                         <DataTypeIcon
-                            name={placeholder.type}
+                            name={iconName}
                             className={'overflow-hidden h-full w-full stroke-text-normal p-2'}
                         />
                         <Handle type="target" id="target" position={Position.Left} class=" absolute -ml-2.5 h-3 w-3" />

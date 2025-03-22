@@ -6,6 +6,7 @@ import type { CustomError } from '$global';
 import { MessageHandler } from '$src/messageHandler';
 import { getContext } from 'svelte';
 import type { Parameter } from './section-parameter.svelte';
+import { collapseExpression } from '$/src/components/nodes/utils';
 
 export const getDescription = async (xyNodeList: XYNode[]): Promise<string> => {
     if (xyNodeList.length !== 1) return '';
@@ -51,8 +52,26 @@ export const getParameterList = (xyNode: XYNode) => {
         return result;
     }
     if (Object.keys(xyNode.data).includes('genericExpression')) {
-        // const { genericExpression } = xyNode.data as GenericExpressionProps;
-        return [];
+        const { genericExpression } = xyNode.data as GenericExpressionProps;
+        const parameter: Parameter = {
+            name: 'text',
+            argumentText: collapseExpression(genericExpression.text),
+            defaultValue: '',
+            type: genericExpression.type,
+            isConstant: false,
+        };
+        return [parameter];
+    }
+    if (Object.keys(xyNode.data).includes('placeholder')) {
+        const { placeholder } = xyNode.data as PlaceholderProps;
+        const parameter: Parameter = {
+            name: 'name',
+            argumentText: placeholder.name,
+            defaultValue: '',
+            type: 'string',
+            isConstant: false,
+        };
+        return [parameter];
     }
     return [];
 };

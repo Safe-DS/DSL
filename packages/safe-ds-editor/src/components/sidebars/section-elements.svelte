@@ -12,6 +12,7 @@
     import type { Category } from '$/src/components/ui/category/category-tree-node.svelte';
     import CategoryTreeNode from '$/src/components/ui/category/category-tree-node.svelte';
     import Accordion from '$/src/components/ui/accordion/accordion.svelte';
+    import { renderCategoryName } from '$/src/components/ui/category/utils';
 
     export let globalReferences: Writable<Buildin[]>;
     export let className: ClassValue;
@@ -111,9 +112,8 @@
     </div>
     <ScrollArea>
         {#each categories as category}
-            <Accordion class="pl-3" name={category.name}>
-                <CategoryIcon slot="icon" name={category.name} className="mr-2 overflow-hidden stroke-text-normal " />
-
+            <Accordion class="pl-3" name={renderCategoryName(category)}>
+                <CategoryIcon slot="icon" name={category.name} className="mr-2 overflow-hidden stroke-text-normal" />
                 <div class="flex flex-col gap-2 py-2 pl-12">
                     <CategoryTreeNode {category} />
                 </div>

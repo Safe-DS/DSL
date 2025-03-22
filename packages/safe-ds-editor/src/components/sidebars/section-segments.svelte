@@ -18,7 +18,7 @@
             <span class="  cursor-grab">{segment.name}</span>
             <div class=" flex-grow" />
             <button
-                class=" bg-menu-400 hover:bg-menu-300 rounded p-1"
+                class=" bg-menu-400 hover:bg-menu-300 rounded p-1 px-4"
                 on:mousedown={() => dispatch('editSegment', segment.name)}>Edit</button
             >
         </div>

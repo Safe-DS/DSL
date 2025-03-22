@@ -22,13 +22,13 @@
         <div class=" flex-grow">
             <div class="absolute right-full top-1/2 flex -translate-y-1/2 flex-col gap-5">
                 {#each segment.parameterList as parameter}
-                    <div class="text-text-muted relative h-9 w-full text-lg">
-                        <p class="absolute right-full mr-2.5">{parameter.name}</p>
+                    <div class="text-text-muted relative h-9 text-lg flex items-center">
+                        <p class="absolute right-0 mr-2.5 flex items-center">{parameter.name}</p>
                         <Handle
                             type="source"
                             position={Position.Right}
                             id={parameter.name}
-                            class="absolute left-2.5 h-3 w-3"
+                            class="absolute left-1 h-3 w-3"
                         />
                     </div>
                 {/each}
@@ -37,13 +37,13 @@
         <div class=" flex-grow">
             <div class="absolute left-full top-1/2 flex -translate-y-1/2 flex-col gap-5">
                 {#each segment.resultList as result}
-                    <div class="text-text-muted relative h-9 w-full px-1 text-lg">
-                        <p class="absolute left-full mr-2.5">{result.name}</p>
+                    <div class="text-text-muted relative h-9 text-lg flex items-center">
+                        <p class="absolute left-0 ml-2.5 flex items-center">{result.name}</p>
                         <Handle
                             type="target"
                             position={Position.Left}
                             id={result.name}
-                            class=" absolute right-2.5 h-3 w-3"
+                            class="absolute -left-4 h-3 w-3"
                         />
                     </div>
                 {/each}
