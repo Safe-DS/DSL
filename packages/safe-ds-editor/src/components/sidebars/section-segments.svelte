@@ -10,8 +10,6 @@
     export let segmentList: Writable<Segment[]>;
 
     const dispatch = createEventDispatcher();
-
-    console.log('segment', JSON.stringify($segmentList[0]));
 </script>
 
 <div class={cn('flex h-full w-full flex-col p-2 pl-3', className)}>
