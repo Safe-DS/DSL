@@ -14,9 +14,9 @@ To set up a powerful _integrated development environment_ (_IDE_) for Safe-DS, f
 
 To run Safe-DS programs, you also need the [Safe-DS Runner](https://github.com/Safe-DS/Runner):
 
-1. **Install [Python](https://www.python.org/) (3.11 or 3.12)**. Make sure to add Python to your system's `PATH` during
-   installation. Verify installation by running `python --version` in a command line. You should get output similar to
-   `Python 3.12.2`.
+1. **Install [Python](https://www.python.org/) (3.11 or 3.12)**. Older or newer Python versions are not supported. Make sure to add Python
+   to your system's `PATH` during installation. Verify installation by running `python --version` in a command line. You
+   should get output similar to `Python 3.12.2`.
 2. **Open VS Code**.
 3. **Open the command palette** (Menu bar > View > Command Palette).
 4. **Type `Install the Safe-DS Runner`** and **Press Enter**.
