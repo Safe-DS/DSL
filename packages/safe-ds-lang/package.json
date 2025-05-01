@@ -56,7 +56,7 @@
     "devDependencies": {
         "@types/node": "^18.19.62",
         "@types/ws": "^8.18.1",
-        "langium-cli": "^3.4.0",
+        "langium-cli": "^3.5.0",
         "true-myth": "^8.5.0"
     },
     "engines": {
