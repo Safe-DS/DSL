@@ -19,6 +19,6 @@
         "@sveltejs/vite-plugin-svelte": "^3.1.2",
         "@types/lodash": "^4.17.16",
         "svelte-check": "^4.1.6",
-        "vite": "^6.2.7"
+        "vite": "^6.3.4"
     }
 }
