@@ -19,6 +19,7 @@
     class={cn(
         'relative overflow-hidden',
         [
+            'data-[status=error]:bg-red-500',
             'data-[status=done]:bg-green-400',
             'data-[status=none]:bg-neutral-400',
             'data-[status=waiting]:bg-yellow-500',
