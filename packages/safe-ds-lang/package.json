@@ -57,7 +57,7 @@
         "@types/node": "^18.19.62",
         "@types/ws": "^8.18.1",
         "langium-cli": "^3.5.0",
-        "true-myth": "^9.0.1"
+        "true-myth": "^9.2.0"
     },
     "engines": {
         "node": ">=18.0.0"
