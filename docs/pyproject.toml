@@ -11,8 +11,8 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.11"
 mkdocs = "^1.5.3"
-mkdocs-autorefs = "^1.4.2"
-mkdocs-glightbox = "^0.4.0"
+mkdocs-autorefs = "^1.4.3"
+mkdocs-glightbox = "^0.5.1"
 mkdocs-literate-nav = "^0.6.2"
 mkdocs-material = "^9.5.18"
 mkdocs-same-dir = "^0.1.3"
