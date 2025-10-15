@@ -17,7 +17,7 @@ const services = (await createSafeDsServices(NodeFileSystem)).SafeDs;
 const langiumDocuments = services.shared.workspace.LangiumDocuments;
 
 const rootResourceName = 'code actions';
-const commentRegex = /\s*apply\s*(?<titleIsRegex>r)?"(?<title>.*)"/gu;
+const commentRegex = /\s*apply\s*(?<titleIsRegex>r)?"(?<title>.*)"/u;
 
 export const createCodeActionsTests = async (): Promise<CodeActionsTest[]> => {
     const filesGroupedByParentDirectory = listTestSafeDsFilesGroupedByParentDirectory(rootResourceName);
