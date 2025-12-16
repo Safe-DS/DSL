@@ -204,18 +204,18 @@ i18n = ["Babel (>=2.7)"]
 
 [[package]]
 name = "markdown"
-version = "3.5"
+version = "3.10"
 description = "Python implementation of John Gruber's Markdown."
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "Markdown-3.5-py3-none-any.whl", hash = "sha256:4afb124395ce5fc34e6d9886dab977fd9ae987fc6e85689f08278cf0c69d4bf3"},
-    {file = "Markdown-3.5.tar.gz", hash = "sha256:a807eb2e4778d9156c8f07876c6e4d50b5494c5665c4834f67b06459dfd877b3"},
+    {file = "markdown-3.10-py3-none-any.whl", hash = "sha256:b5b99d6951e2e4948d939255596523444c0e677c669700b1d17aa4a8a464cb7c"},
+    {file = "markdown-3.10.tar.gz", hash = "sha256:37062d4f2aa4b2b6b32aefb80faa300f82cc790cb949a35b8caede34f2b68c0e"},
 ]
 
 [package.extras]
-docs = ["mdx-gh-links (>=0.2)", "mkdocs (>=1.5)", "mkdocs-gen-files", "mkdocs-literate-nav", "mkdocs-nature (>=0.6)", "mkdocs-section-index", "mkdocstrings[python]"]
+docs = ["mdx_gh_links (>=0.2)", "mkdocs (>=1.6)", "mkdocs-gen-files", "mkdocs-literate-nav", "mkdocs-nature (>=0.6)", "mkdocs-section-index", "mkdocstrings[python]"]
 testing = ["coverage", "pyyaml"]
 
 [[package]]
@@ -503,22 +503,22 @@ windows-terminal = ["colorama (>=0.4.6)"]
 
 [[package]]
 name = "pymdown-extensions"
-version = "10.3.1"
+version = "10.16.1"
 description = "Extension pack for Python Markdown."
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "pymdown_extensions-10.3.1-py3-none-any.whl", hash = "sha256:8cba67beb2a1318cdaf742d09dff7c0fc4cafcc290147ade0f8fb7b71522711a"},
-    {file = "pymdown_extensions-10.3.1.tar.gz", hash = "sha256:f6c79941498a458852853872e379e7bab63888361ba20992fc8b4f8a9b61735e"},
+    {file = "pymdown_extensions-10.16.1-py3-none-any.whl", hash = "sha256:d6ba157a6c03146a7fb122b2b9a121300056384eafeec9c9f9e584adfdb2a32d"},
+    {file = "pymdown_extensions-10.16.1.tar.gz", hash = "sha256:aace82bcccba3efc03e25d584e6a22d27a8e17caa3f4dd9f207e49b787aa9a91"},
 ]
 
 [package.dependencies]
-markdown = ">=3.2"
+markdown = ">=3.6"
 pyyaml = "*"
 
 [package.extras]
-extra = ["pygments (>=2.12)"]
+extra = ["pygments (>=2.19.1)"]
 
 [[package]]
 name = "python-dateutil"
