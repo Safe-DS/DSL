@@ -17,8 +17,8 @@
     },
     "devDependencies": {
         "@sveltejs/vite-plugin-svelte": "^3.1.2",
-        "@types/lodash": "^4.17.21",
-        "svelte-check": "^4.3.5",
+        "@types/lodash": "^4.17.23",
+        "svelte-check": "^4.3.6",
         "vite": "^7.3.0"
     }
 }
