@@ -43,15 +43,15 @@
         "watch": "tsc -b tsconfig.src.json --watch"
     },
     "dependencies": {
-        "chevrotain": "^11.0.3",
+        "chevrotain": "^11.1.1",
         "glob": "^11.0.3",
         "langium": "^3.3.1",
-        "semver": "^7.7.3",
+        "semver": "^7.7.4",
         "source-map-js": "^1.2.0",
         "tree-kill": "^1.2.2",
         "vscode-languageserver": "^9.0.1",
         "vscode-languageserver-textdocument": "^1.0.12",
-        "ws": "^8.18.3"
+        "ws": "^8.19.0"
     },
     "devDependencies": {
         "@types/node": "^18.19.62",
