@@ -263,7 +263,7 @@
         "deploy": "vsce publish"
     },
     "dependencies": {
-        "semver": "^7.7.3",
+        "semver": "^7.7.4",
         "vscode-languageclient": "^9.0.1"
     },
     "devDependencies": {
