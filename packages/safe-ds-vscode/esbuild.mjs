@@ -23,6 +23,7 @@ const plugins = [
         setup(build) {
             build.onStart(async () => {
                 await fs.rm('./dist/resources', { force: true, recursive: true });
+                await fs.rm('./dist/graphical-editor', { force: true, recursive: true });
             });
         },
     },
@@ -37,6 +38,13 @@ const plugins = [
         assets: {
             from: ['../safe-ds-eda/dist/main.js'],
             to: ['./eda-webview'],
+        },
+        watch,
+    }),
+    copy({
+        assets: {
+            from: ['../safe-ds-editor/dist/**/*'],
+            to: ['./graphical-editor'],
         },
         watch,
     }),
