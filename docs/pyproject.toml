@@ -16,7 +16,7 @@ mkdocs-glightbox = "^0.5.2"
 mkdocs-literate-nav = "^0.6.3"
 mkdocs-material = "^9.5.18"
 mkdocs-same-dir = "^0.1.4"
-pygments = "^2.19.2"
+pygments = "^2.20.0"
 
 [tool.poetry.plugins."pygments.lexers"]
 sds = "safe_ds_lexer:SafeDsLexer"
