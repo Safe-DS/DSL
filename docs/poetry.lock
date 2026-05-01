@@ -423,14 +423,14 @@ files = [
 
 [[package]]
 name = "mkdocs-same-dir"
-version = "0.1.4"
-description = "MkDocs plugin to allow placing mkdocs.yml in the same directory as documentation"
+version = "0.1.5"
+description = "ProperDocs plugin to allow placing properdocs.yml in the same directory as documentation"
 optional = false
-python-versions = ">=3.9"
+python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "mkdocs_same_dir-0.1.4-py3-none-any.whl", hash = "sha256:75103f722b2ab86a860c1a850d52ab2867b2e334f6b0c0dbe1c6d09ccd9c9897"},
-    {file = "mkdocs_same_dir-0.1.4.tar.gz", hash = "sha256:68e8a6cd023833d1b797563b57c0bc732156170a00f615404f1d0e8544ed7e39"},
+    {file = "mkdocs_same_dir-0.1.5-py3-none-any.whl", hash = "sha256:a9cc599caf438da288ba14b21d24db4bb7975106eef1cd56d0d92e6835c366aa"},
+    {file = "mkdocs_same_dir-0.1.5.tar.gz", hash = "sha256:677cf8d682d0ae6226620871c01906a1a631083f2b00fac58ffe9019b2cb2322"},
 ]
 
 [package.dependencies]
